@@ -9,7 +9,7 @@ import com.code.aon.common.enumeration.IStringEnum;
 /**
  * Enumeración de Afectados en embargos.
  */
-public enum PriceType implements IResourceable, IStringEnum {
+public enum DiscountFormat implements IResourceable, IStringEnum {
 
 	NO("0"),
 	CROSS_OUT("1"),
@@ -25,7 +25,7 @@ public enum PriceType implements IResourceable, IStringEnum {
     
     private String value;
     
-    PriceType( String value ) {
+    DiscountFormat( String value ) {
     	this.value = value;
 	}
     

@@ -19,8 +19,8 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ebackoffice.enumeration.LoginType;
-import com.code.aon.ebackoffice.enumeration.OriginalPrice;
-import com.code.aon.ebackoffice.enumeration.PriceType;
+import com.code.aon.ebackoffice.enumeration.ShowPrice;
+import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.SkinType;
 import com.code.aon.ebackoffice.enumeration.TaxType;
 import com.code.aon.ebackoffice.enumeration.WishList;
@@ -41,12 +41,11 @@ public class Ecconfig implements ITransferObject {
 	private String name;
 	private SkinType skin;	
 	private byte[] headerImg;
-	private byte[] footerImg;
 	private boolean commerce;
 	private LoginType showLogin;
-	private PriceType showPrice;
+	private ShowPrice price;
 	private TaxType taxInType;
-	private OriginalPrice showItemPrice;
+	private DiscountFormat discount;
 	private WishList wishList;
 	private PayMethod bankTransfer;
 	private PayMethod cashOnDelivery;
@@ -58,6 +57,9 @@ public class Ecconfig implements ITransferObject {
 	private String legalNote;
 	private String dataProtection;
 	private Tariff tariff;
+	private String headerColor;
+	private Integer rowItems;
+	private String telephone;
 	
 	
 	@Id
@@ -101,17 +103,7 @@ public class Ecconfig implements ITransferObject {
 	public void setHeaderImg(byte[] headerImg) {
 		this.headerImg = headerImg;
 	}
-	
-	@Lob
-	@Column(name = "footer_img")
-	public byte[] getFooterImg() {
-		return footerImg;
-	}
-	public void setFooterImg(byte[] footerImg) {
-		this.footerImg = footerImg;
-	}
-	
-	
+		
 	public boolean isCommerce() {
 		return commerce;
 	}
@@ -128,33 +120,35 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	@Column(name = "show_price", length = 1)
-	public PriceType getShowPrice() {
-		return showPrice;
+	public ShowPrice getPrice() {
+		return price;
 	}
-	public void setShowPrice(PriceType showPrice) {
-		this.showPrice = showPrice;
+	public void setPrice(ShowPrice price) {
+		this.price = price;
 	}
-	
+		
 	@Column(name = "tax_in_price", length = 1)
 	public TaxType getTaxInType() {
 		return taxInType;
 	}
+	
 	public void setTaxInType(TaxType taxInType) {
 		this.taxInType = taxInType;
 	}
 	
 	@Column(name = "show_item_price", length = 1)
-	public OriginalPrice getShowItemPrice() {
-		return showItemPrice;
+	public DiscountFormat getDiscount() {
+		return discount;
 	}
-	public void setShowItemPrice(OriginalPrice showItemPrice) {
-		this.showItemPrice = showItemPrice;
-	}
+	public void setDiscount(DiscountFormat discount) {
+		this.discount = discount;
+	}		
 	
 	@Column(name = "show_wish_list", length = 1)
 	public WishList getWishList() {
 		return wishList;
 	}
+	
 	public void setWishList(WishList wishList) {
 		this.wishList = wishList;
 	}
@@ -261,8 +255,35 @@ public class Ecconfig implements ITransferObject {
 	public Tariff getTariff() {
 		return tariff;
 	}
+	
 	public void setTariff(Tariff tariff) {
 		this.tariff = tariff;
+	}
+	
+	@Column(name = "header_color", length = 7)
+	public String getHeaderColor() {
+		return headerColor;
+	}
+	
+	public void setHeaderColor(String headerColor) {
+		this.headerColor = headerColor;
+	}
+	
+	@Column(name = "row_items")
+	public Integer getRowItems() {
+		return rowItems;
+	}
+	
+	public void setRowItems(Integer rowItems) {
+		this.rowItems = rowItems;
+	}
+	
+	@Column(length=12)
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
 	}
 	
 	
