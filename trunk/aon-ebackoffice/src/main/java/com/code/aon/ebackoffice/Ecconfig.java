@@ -41,12 +41,15 @@ public class Ecconfig implements ITransferObject {
 	private String name;
 	private SkinType skin;	
 	private byte[] headerImg;
+	private byte[] leftBanner;
+	private byte[] welcomeBanner;
+	private byte[] rightBanner;
 	private boolean commerce;
+	private boolean ecommerceStatus;
 	private LoginType showLogin;
 	private ShowPrice price;
 	private TaxType taxInType;
 	private DiscountFormat discount;
-	private WishList wishList;
 	private PayMethod bankTransfer;
 	private PayMethod cashOnDelivery;
 	private PayMethod visa;
@@ -59,6 +62,8 @@ public class Ecconfig implements ITransferObject {
 	private Tariff tariff;
 	private String headerColor;
 	private Integer rowItems;
+	private Integer shippingCosts;
+	private Integer freeShipping;
 	private String telephone;
 	
 	
@@ -144,15 +149,7 @@ public class Ecconfig implements ITransferObject {
 		this.discount = discount;
 	}		
 	
-	@Column(name = "show_wish_list", length = 1)
-	public WishList getWishList() {
-		return wishList;
-	}
-	
-	public void setWishList(WishList wishList) {
-		this.wishList = wishList;
-	}
-	
+		
 	@OneToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="bank_transfer")
 	@ForeignKey(name = "FK_ECCONFIG_BANK_TRANSFER")
@@ -285,6 +282,58 @@ public class Ecconfig implements ITransferObject {
 	public void setTelephone(String telephone) {
 		this.telephone = telephone;
 	}
+	
+	@Lob
+	@Column(name = "left_banner")
+	public byte[] getLeftBanner() {
+		return leftBanner;
+	}
+	public void setLeftBanner(byte[] leftBanner) {
+		this.leftBanner = leftBanner;
+	}
+	
+	@Lob
+	@Column(name = "welcome_banner")
+	public byte[] getWelcomeBanner() {
+		return welcomeBanner;
+	}
+	public void setWelcomeBanner(byte[] welcomeBanner) {
+		this.welcomeBanner = welcomeBanner;
+	}
+	
+	@Lob
+	@Column(name = "right_banner")
+	public byte[] getRightBanner() {
+		return rightBanner;
+	}
+	public void setRightBanner(byte[] rightBanner) {
+		this.rightBanner = rightBanner;
+	}
+	
+	@Column(name = "ecommerce_status")
+	public boolean isEcommerceStatus() {
+		return ecommerceStatus;
+	}
+	public void setEcommerceStatus(boolean ecommerceStatus) {
+		this.ecommerceStatus = ecommerceStatus;
+	}
+	
+	@Column(name = "shipping_costs")
+	public Integer getShippingCosts() {
+		return shippingCosts;
+	}
+	public void setShippingCosts(Integer shippingCosts) {
+		this.shippingCosts = shippingCosts;
+	}
+	
+	@Column(name = "free_shipping")
+	public Integer getFreeShipping() {
+		return freeShipping;
+	}
+	public void setFreeShipping(Integer freeShipping) {
+		this.freeShipping = freeShipping;
+	}
+	
 	
 	
 	
