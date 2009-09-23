@@ -9,7 +9,7 @@ import com.code.aon.common.enumeration.IStringEnum;
 /**
  * Enumeración de Afectados en embargos.
  */
-public enum OriginalPrice implements IResourceable, IStringEnum {
+public enum ShowPrice implements IResourceable, IStringEnum {
 
 	DEFAULT("0"),
 	YES("1"),
@@ -26,7 +26,7 @@ public enum OriginalPrice implements IResourceable, IStringEnum {
     
     private String value;
     
-    OriginalPrice( String value ) {
+    ShowPrice( String value ) {
     	this.value = value;
 	}
     
