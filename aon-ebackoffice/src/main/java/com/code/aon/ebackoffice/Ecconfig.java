@@ -119,7 +119,7 @@ public class Ecconfig implements ITransferObject {
 		this.showLogin = showLogin;
 	}
 	
-	@Column(name = "show_price", length = 1)
+	@Column(name = "price", length = 1)
 	public ShowPrice getPrice() {
 		return price;
 	}
@@ -136,7 +136,7 @@ public class Ecconfig implements ITransferObject {
 		this.taxInType = taxInType;
 	}
 	
-	@Column(name = "show_item_price", length = 1)
+	@Column(name = "discount", length = 1)
 	public DiscountFormat getDiscount() {
 		return discount;
 	}
