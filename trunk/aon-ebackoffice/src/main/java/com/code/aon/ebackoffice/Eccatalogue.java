@@ -13,17 +13,9 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.ebackoffice.enumeration.CatalogueType;
-import com.code.aon.ebackoffice.enumeration.LoginType;
-import com.code.aon.ebackoffice.enumeration.OriginalPrice;
-import com.code.aon.ebackoffice.enumeration.PriceType;
-import com.code.aon.ebackoffice.enumeration.SkinType;
-import com.code.aon.ebackoffice.enumeration.TaxType;
-import com.code.aon.ebackoffice.enumeration.WishList;
 import com.code.aon.product.Catalogue;
 
 
