@@ -16,6 +16,7 @@ import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.Registry;
@@ -33,6 +34,7 @@ public class ShoppingCartController {
 	private boolean registered;
 	private Double total;
 	private CartTarget cartTarget;
+	private String newPasswd;
 
 	public DataModel getModel() {
 		if (model == null) {
@@ -55,6 +57,13 @@ public class ShoppingCartController {
 
 	public void setList(List<CartItem> list) {
 		this.list = list;
+	}
+	
+	public String getNewPasswd() {
+		return newPasswd;
+	}
+	public void setNewPasswd(String newPasswd) {
+		this.newPasswd = newPasswd;
 	}
 	
 	public String budgetRequest() {
@@ -240,8 +249,14 @@ public class ShoppingCartController {
 		to.getTarget().setAdvertising(getCartTarget().getEcTarget().getTarget().getAdvertising());
 		to.getTarget().setRegistry(getCartTarget().getEcTarget().getTarget().getRegistry());
 		
-		tagetBean.insertOrUpdate(to.getTarget());
-		ecTagetBean.insertOrUpdate(to);
+		try{
+			tagetBean.insertOrUpdate(to.getTarget());
+			ecTagetBean.insertOrUpdate(to);
+		} catch (Exception e){
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+		
 		String message = "target guardado \n oo";
 		System.out.println(message);
 		//AonUtil.addInfoMessage(message);
@@ -302,6 +317,14 @@ public class ShoppingCartController {
 			throw new AbortProcessingException(message);
 		}
 	}
+	
+	public void checkUserPasswd(ActionEvent event){
+		if(!getCartTarget().getEcTarget().getPassword().equals(this.getNewPasswd())){
+			
+			AonUtil.addInfoMessage("passwd check failed");
+		}
+	}
+	
 
 
 	

@@ -7,76 +7,77 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-		<aon:div styleClass="aon-scroll-area">
-			<aon:dataTable id="cartList" value="#{shoppingCart.model}" rows="20"
-				var="to" style="width:100%"
-				columnClasses="
+	<aon:div styleClass="aon-scroll-area">
+		<aon:dataTable id="cartList" value="#{shoppingCart.model}" rows="20"
+			var="to" style="width:100%;" 
+			columnClasses="
 		aon-editDataTable-numberColumn,aon-editDataTable-textColumn,
 		aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,
 		aon-editDataTable-numberColumn,
 		aon-editDataTable-buttonsColumn aon-vertical-align-top">
 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_id}" />
-					</f:facet>
-					<aon:outputText value="#{to.item.id}" />
-				</aon:column>
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_name}" />
-					</f:facet>
-					<aon:outputText value="#{to.item.product.name}" />
-				</aon:column>
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{ecommerceBundle.aon_acommerce_quantity}" />
-					</f:facet>
-					<aon:inputText value="#{to.quantity}" size="2" maxlength="3" >
-						<f:convertNumber pattern="#,##0" />
-						<a4j:support event="onblur" reRender="shopForm" 
-							actionListener="#{shoppingCart.refreshPrice}"
-							ignoreDupResponses="true"/>
-					</aon:inputText>
-				</aon:column>
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{ecommerceBundle.aon_acommerce_price}" />
-					</f:facet>
-					<aon:outputText value="#{to.item.price}" />
-				</aon:column>
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{ecommerceBundle.aon_acommerce_amount}" />
-					</f:facet>
-					<aon:outputText value="#{to.total}" />
-					<f:facet name="footer">
-						<aon:outputText value="#{shoppingCart.total}">
-							<f:convertNumber pattern="#,##0.00" />
-						 </aon:outputText>
-					</f:facet>
-				</aon:column>
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="&#160;" />
-					</f:facet>
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_id}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.id}" />
+			</aon:column>
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.name}" />
+			</aon:column>
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_quantity}" />
+				</f:facet>
+				<aon:inputText value="#{to.quantity}" size="2" maxlength="3">
+					<f:convertNumber pattern="#,##0" />
+					<a4j:support event="onblur" reRender="shopForm"
+						actionListener="#{shoppingCart.refreshPrice}"
+						ignoreDupResponses="true" />
+				</aon:inputText>
+			</aon:column>
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.price}" />
+			</aon:column>
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_amount}" />
+				</f:facet>
+				<aon:outputText value="#{to.total}" />
+				<f:facet name="footer">
+					<aon:outputText value="#{shoppingCart.total}">
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
+				</f:facet>
+			</aon:column>
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
 
-					<aon:commandButton value="&#160;" action="shopItem_grid"
-						title="#{ecommerceBundle.aon_acommerce_extended_info}"
-						styleClass="aon-editDataTable-button aon-icon-info">
-						<aon:actionListener method="#{shoppingCart.onSelect}" />
-					</aon:commandButton>
-					<aon:commandButton value="&#160;" 
-						title="#{ecommerceBundle.aon_acommerce_del_list_item}"
-						styleClass="aon-editDataTable-button aon-icon-rubber">
-						<aon:actionListener method="#{shoppingCart.removeFromCart}" />
-					</aon:commandButton>
-					<f:facet name="footer">
-						<aon:outputText value="&#160; (#{ecommerceBundle.aon_acommerce_vat_included})" />
-					</f:facet>
-				</aon:column>
-			</aon:dataTable>
+				<aon:commandButton value="&#160;" action="shopItem_grid"
+					title="#{ecommerceBundle.aon_ecommerce_extended_info}"
+					styleClass="aon-editDataTable-button aon-icon-info">
+					<aon:actionListener method="#{shoppingCart.onSelect}" />
+				</aon:commandButton>
+				<aon:commandButton value="&#160;"
+					title="#{ecommerceBundle.aon_ecommerce_del_list_item}"
+					styleClass="aon-editDataTable-button aon-icon-rubber">
+					<aon:actionListener method="#{shoppingCart.removeFromCart}" />
+				</aon:commandButton>
+				<f:facet name="footer">
+					<aon:outputText
+						value="&#160; (#{ecommerceBundle.aon_ecommerce_vat_included})" />
+				</f:facet>
+			</aon:column>
+		</aon:dataTable>
 
-		</aon:div>
+	</aon:div>
 
 </ui:composition>

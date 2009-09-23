@@ -52,19 +52,19 @@ public class ECommerceUtil implements IECommerceConstants{
 		//**************************************
 		//**************************************
 		//**************************************
-		if(config.getActiveConfig().getBankDraft().getId()!=0){
+		if(config.getActiveConfig().getBankDraft()!=null){
 			payMethods.add(new SelectItem(config.getActiveConfig().getBankDraft(), config.getActiveConfig().getBankDraft().getName()));
 		}
-		if(config.getActiveConfig().getBankTransfer().getId()!=0){
+		if(config.getActiveConfig().getBankTransfer()!=null){
 			payMethods.add(new SelectItem(config.getActiveConfig().getBankTransfer(), config.getActiveConfig().getBankTransfer().getName()));
 		}
-		if(config.getActiveConfig().getCashOnDelivery().getId()!=0){
+		if(config.getActiveConfig().getCashOnDelivery()!=null){
 			payMethods.add(new SelectItem(config.getActiveConfig().getCashOnDelivery(), config.getActiveConfig().getCashOnDelivery().getName()));
 		}
-		if(config.getActiveConfig().getPaypal().getId()!=0){
+		if(config.getActiveConfig().getPaypal()!=null){
 			payMethods.add(new SelectItem(config.getActiveConfig().getPaypal(), config.getActiveConfig().getPaypal().getName()));
 		}
-		if(config.getActiveConfig().getVisa().getId()!=0){
+		if(config.getActiveConfig().getVisa()!=null){
 			payMethods.add(new SelectItem(config.getActiveConfig().getVisa(), config.getActiveConfig().getVisa().getName()));
 		}
 		

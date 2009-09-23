@@ -38,7 +38,7 @@ public class CartOfferController {
 
 	private Offer offer;
 	private List<OfferDetail> offerDetail;
-
+	
 	public Offer getOffer() {
 		return offer;
 	}
@@ -59,9 +59,6 @@ public class CartOfferController {
 	public void insertOffer() {
 		IManagerBean offerBean;
 		try {
-//			OfferController o = (OfferController)FormUtil.getController("offer");
-//			Offer offer = (Offer)o.getTo();
-			
 			offerBean = BeanManager.getManagerBean(Offer.class);
 			offerBean.insert(getOffer());
 		} catch (ManagerBeanException e) {
@@ -78,7 +75,6 @@ public class CartOfferController {
 		IManagerBean offerDetailBean;
 		try {
 			offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
-		
 			ShoppingCartController sc = (ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER);
 			List<CartItem> list = sc.getList();
 			Iterator<CartItem> it = list.iterator();
@@ -87,17 +83,14 @@ public class CartOfferController {
 				OfferDetail od = new OfferDetail();
 				od.setOffer(getOffer());
 				od.setItem(ci.getItem().getItem());
-				// line - not null
 				od.setLine(list.indexOf(ci)+1);
 				od.setDescription(ci.getItem().getProduct().getName());
 				od.setQuantity(ci.getQuantity());
 				od.setPrice(ci.getItem().getPrice());
 				od.setDiscountExpression(new DiscountExpression());
 				od.setStatus(OfferDetailStatus.PENDING);
-				
 				offerDetailBean.insert(od);
 			}
-			
 		} catch (ManagerBeanException e) {
 			AonUtil.addInfoMessage("Fallo al recuperar el offerDetail.");
 			throw new AbortProcessingException(e);
@@ -130,8 +123,9 @@ public class CartOfferController {
 		
 		// inicializa el offer, itemList y el backAction
 		//setOffer(null);
-		((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).setList(null);
-		((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setBackView(ViewEnum.ITEM_LIST);
+		//((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).setList(null);
+		((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).setModel(null);
+		((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setContentView(ViewEnum.ITEM_LIST);
 	}
 	
 	/**
@@ -204,6 +198,5 @@ public class CartOfferController {
 		
 		
 	}
-	
 	
 }

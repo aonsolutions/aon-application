@@ -11,16 +11,7 @@
 
 	<ui:define name="content">
 		<aon:form id="shopItemForm">
-			<!--  
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{ecommerceBundle.aon_acommerce_user_identification}" />
-				<ui:define name="toolbarContent">
-				</ui:define>
-			</ui:decorate>
-			-->
-			
+
 			<aon:div styleClass="menu" />
 			
 			<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
@@ -28,39 +19,36 @@
 				styleClass="aon-finding-toolbar-item aon-icon-cancel"
 				immediate="true" accesskey="#{bundle.aon_key_cancel}" />
 				
-			<aon:panelGrid columns="2" style="width:100%" columnClasses="registryColumn, registryColumn">
+			<aon:panelGrid columns="2" columnClasses="registryColumn, registryColumn">
 				<aon:div styleClass="user-login-box">
 					<aon:panel>
 						<f:facet name="header">
-							<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_identification}" />
+							<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_identification}" />
 						</f:facet>
-						<aon:outputText value="Introduzca sus datos de acceso si ya es un usuario registrado " />
+						<aon:div style="padding-bottom:20px;">
+							<aon:outputText value="#{ecommerceBundle.aon_ecommerce_login_request}" />
+						</aon:div>
 						<aon:panelGrid columns="2" dir="true">
-							<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
+							<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_ecommerce_user_name}" />
 							<aon:inputText id="Login" required="false" 
 								value="#{userLogin.login}" size="15" />
 	
-							<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_acommerce_user_passwd}" />
+							<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_ecommerce_user_passwd}" />
 							<aon:inputText id="Password" required="false" 
 								value="#{userLogin.password}" size="15" />
 	
-							<aon:outputLabel for="login-buttom" value="&#160;" />
+							<aon:commandLink id="login-request-buttom" 
+								value="#{ecommerceBundle.aon_ecommerce_login_request}"
+								style="color:#000;"
+								styleClass="aon-icon-login-request">
+								<aon:actionListener method="#{userLogin.onLoginRequest}" />
+							</aon:commandLink>
 							<aon:commandButton id="login-buttom" 
 								value="#{bundle.aon_accept}"
 								action="paymethod_form"
 								styleClass="aon-finding-toolbar-item aon-icon-accept">
 								<aon:actionListener method="#{userLogin.onLogin}" />
 							</aon:commandButton>
-								<!--  
-							<aon:commandButton id="login-buttom" value="#{bundle.aon_accept}"
-								action="new_registry_form"
-								styleClass="aon-finding-toolbar-item aon-icon-accept">
-								<aon:actionListener method="#{shopItem.addToCart}" />
-							</aon:commandButton>
-								-->
-							
-							
-							
 						</aon:panelGrid>
 					</aon:panel>
 				</aon:div>
@@ -68,21 +56,23 @@
 				<aon:div styleClass="new-user-registry">
 					<aon:panel>
 						<f:facet name="header">
-							<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
+							<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
 						</f:facet>
-						<aon:outputText value="Para darse de alta como usuario registrado pulse en el siguiente enlace" />
+						<aon:div style="padding-bottom:20px;">
+							<aon:outputText value="#{ecommerceBundle.aon_ecommerce_new_login_request}" />
+						</aon:div>
 						<aon:div>
-							<aon:commandButton id="newUser-buttom" value="#{ecommerceBundle.aon_acommerce_user_new}"
+							<aon:commandButton id="newUser-buttom" value="#{ecommerceBundle.aon_ecommerce_user_new}"
 								action="new_registry_form"
-								styleClass="aon-finding-toolbar-item aon-icon-new">
+								styleClass="aon-finding-toolbar-item aon-icon-new-user">
 								<aon:actionListener method="#{shoppingCart.onResetTarget}" />
 							</aon:commandButton>
 						</aon:div>
 	
 					</aon:panel>
 				</aon:div>
+				
 			</aon:panelGrid>
-			
 		</aon:form>
 	</ui:define>
 </ui:composition>

@@ -14,8 +14,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.ebackoffice.Ecconfig;
-import com.code.aon.ebackoffice.enumeration.OriginalPrice;
-import com.code.aon.ebackoffice.enumeration.PriceType;
+import com.code.aon.ebackoffice.enumeration.DiscountFormat;
+import com.code.aon.ebackoffice.enumeration.LoginType;
+import com.code.aon.ebackoffice.enumeration.ShowPrice;
 import com.code.aon.ebackoffice.enumeration.TaxType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
@@ -85,7 +86,7 @@ public class ConfigController {
 		return configList;
 	}
 	
-	public void paint(OutputStream out, Object data) throws IOException {
+	public void paintHeader(OutputStream out, Object data) throws IOException {
 		out.write(activeConfig.getHeaderImg());
 	}
 	
@@ -103,17 +104,28 @@ public class ConfigController {
 		return (getActiveConfig().getTaxInType() == TaxType.DEFAULT || getActiveConfig().getTaxInType() == TaxType.YES); 
 	}
 	public boolean isShowOriginalPrice() {
-		return (getActiveConfig().getShowItemPrice()  == OriginalPrice.DEFAULT || getActiveConfig().getShowItemPrice()  == OriginalPrice.YES); 
+		return (getActiveConfig().getPrice() == ShowPrice.DEFAULT || getActiveConfig().getPrice()  == ShowPrice.YES); 
 	}
 	public boolean isShowPriceCrossOut() {
-		return (getActiveConfig().getShowPrice()  == PriceType.CROSS_OUT); 
+		return (getActiveConfig().getDiscount() == DiscountFormat.CROSS_OUT); 
 	}
 	public boolean isShowDiscount() {
-		return (getActiveConfig().getShowPrice()  == PriceType.DISCOUNT); 
+		return (getActiveConfig().getDiscount() == DiscountFormat.DISCOUNT); 
 	}
 	public boolean isShowDiscountPercent() {
-		return (getActiveConfig().getShowPrice()  == PriceType.PERCENT); 
+		return (getActiveConfig().getDiscount() == DiscountFormat.PERCENT); 
 	}
+	
+	public boolean isNeverLogin() {
+		return (getActiveConfig().getShowLogin() == LoginType.NEVER); 
+	}
+	public boolean isAlwaisLogin() {
+		return (getActiveConfig().getShowLogin() == LoginType.ALWAYS); 
+	}
+	public boolean isOnDemandLogin() {
+		return (getActiveConfig().getShowLogin() == LoginType.ON_DEMAND); 
+	}
+	
 	
 	
 }
