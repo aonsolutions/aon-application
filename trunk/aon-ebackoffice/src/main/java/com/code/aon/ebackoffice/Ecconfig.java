@@ -1,5 +1,7 @@
 package com.code.aon.ebackoffice;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,8 +64,8 @@ public class Ecconfig implements ITransferObject {
 	private Tariff tariff;
 	private String headerColor;
 	private Integer rowItems;
-	private Integer shippingCosts;
-	private Integer freeShipping;
+	private double shippingCosts;
+	private double freeShipping;
 	private String telephone;
 	
 	
@@ -319,18 +321,18 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	@Column(name = "shipping_costs")
-	public Integer getShippingCosts() {
+	public double getShippingCosts() {
 		return shippingCosts;
 	}
-	public void setShippingCosts(Integer shippingCosts) {
+	public void setShippingCosts(double shippingCosts) {
 		this.shippingCosts = shippingCosts;
 	}
 	
 	@Column(name = "free_shipping")
-	public Integer getFreeShipping() {
+	public double getFreeShipping() {
 		return freeShipping;
 	}
-	public void setFreeShipping(Integer freeShipping) {
+	public void setFreeShipping(double freeShipping) {
 		this.freeShipping = freeShipping;
 	}
 	
