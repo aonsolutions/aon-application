@@ -54,12 +54,16 @@ public class CategoryGadget {
 	public void onSelect(ActionEvent event) {
 		try {
 			ProductCategory cat = (ProductCategory) getModel().getRowData();
-			Criteria c = new Criteria();
+			Criteria criteria = new Criteria();
 			String identifier = BeanManager.getManagerBean(Item.class)
 					.getFieldName(IECommerceConstants.CATEGORY_ALIAS);
-			c.addEqualExpression(identifier, cat.getId());
+			criteria.addEqualExpression(identifier, cat.getId());
+			/*
+			 * AINADIR AL CRITERIA EL internetVisible DE ITEM A true
+			 * 
+			 */
 			ShopItemsController shop = ECommerceUtil.getShopItems();
-			shop.resetCriteria(c);
+			shop.resetCriteria(criteria);
 			shop.onSearch(null);
 		} catch (ManagerBeanException e) {
 			String msg = "La búsqueda falló";

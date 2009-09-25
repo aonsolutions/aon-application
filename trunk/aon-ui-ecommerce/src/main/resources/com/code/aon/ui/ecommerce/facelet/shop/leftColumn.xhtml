@@ -8,22 +8,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-<!--  
-	<aon:dataTable id="cataloguesGadget" value="#{catalogueGadget.model}"
-		rows="20" var="to" style="width:90%">
-		<aon:rowSelector actionListener="#{catalogueGadget.onSelect}"
-			reRender="itemContent" />
-		<aon:column>
-			<f:facet name="header">
-				<aon:outputText value="#{ecommerceBundle.aon_ecommerce_catalogues}" />
-			</f:facet>
-			<aon:outputText value="#{to.name}" />
-		</aon:column>
-	</aon:dataTable>
-	<rich:spacer height="20" />
--->
-
-
 	<aon:dataTable id="categoriesGadget" value="#{categoryGadget.model}"
 		rows="20" var="to" style="width:100%" 
 		styleClass="searchGadget">
@@ -36,5 +20,11 @@
 			<aon:outputText value="#{to.name}" />
 		</aon:column>
 	</aon:dataTable>
+	
+	<aon:div id="left-banner-image" styleClass="left-banner-image">
+		<a4j:mediaOutput id="image-left" element="img"
+			cacheable="false" value="#{ecConfig.activeConfig.id}"
+			createContent="#{ecConfig.paintLeftBanner}" />
+	</aon:div>
 
 </ui:composition>

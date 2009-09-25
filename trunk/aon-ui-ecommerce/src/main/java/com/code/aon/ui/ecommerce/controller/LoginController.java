@@ -138,7 +138,11 @@ public class LoginController {
 		 * ENVIAR UN MAIL AL TARGET DEL EMAIL INDICADO
 		 */
 		// sendEmail();
-		AonUtil.addInfoMessage("Se le enviara un email con sus datos de acceso a la direccion "+getLogin()+". proximamente....");
+		String msg = "Se le enviara un email con sus datos de acceso a la direccion ";
+		msg += getLogin();
+		msg += ". proximamente....";
+		msg += "Sus datos: "+getEcTarget().getLogin()+" "+getEcTarget().getPassword();
+		AonUtil.addInfoMessage(msg);
 	}
 	
 }

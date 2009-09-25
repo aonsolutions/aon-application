@@ -3692,3 +3692,27 @@ padding-right:5px;
 .back-button{
 	padding-bottom:10px;
 	border-bottom:1px solid #F9E32B;}
+	.login-panel{width:700px;
+	margin:0 auto;
+	margin-top:20px;}
+.aon-panelGrid .itemDetailGallery{
+		border-color:#000;
+border-style:solid;
+border-width:20px 1px 1px;
+margin-left:6px;
+margin-right:6px;
+margin-top:20px;
+padding:6px;}
+.aon-panelGrid .itemDetailGallery-header{
+color:#fff;
+margin-top:-21px;}
+.aon-panelGrid .itemDetailGallery-header{
+color:#fff;}
+.aon-panelGrid .itemDetailDocument{
+		border-color:#000;
+border-style:solid;
+border-width:20px 1px 1px;
+margin-left:6px;
+margin-right:6px;
+margin-top:20px;
+padding:6px;}

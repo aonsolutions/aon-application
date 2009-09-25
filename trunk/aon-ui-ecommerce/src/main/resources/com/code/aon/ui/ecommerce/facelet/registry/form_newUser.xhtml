@@ -10,63 +10,61 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="shopItemForm">
-			<!--  
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
-				<ui:define name="toolbarContent">
-				</ui:define>
-			</ui:decorate>
-			-->
-			
+		<aon:form id="newUserForm">
+
 			<aon:div styleClass="menu" />
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="back-button">
 				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
 					action="shop_form"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-				
-
-				<aon:panel id="login-panel">
-					<f:facet name="header">
-						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
-					</f:facet>
-					<aon:panelGrid columns="2" style="width:100%;border:000 2px solid;">
-						<aon:outputLabel for="ectarget_email" value="#{bundle.aon_login_user}" />
-						<aon:div>
-							<aon:inputText id="ectarget_email" required="true"
-								value="#{shoppingCart.cartTarget.ecTarget.login}" size="20" maxlength="48"/>
-							<aon:outputLabel for="ectarget_email" value="*debe ser un email v&#225;lido" />
-						</aon:div>
-	
-						<aon:outputLabel for="ectarget_password" value="#{bundle.aon_login_passwd}" />
-						<aon:inputText id="ectarget_password" required="true"
-							value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"  maxlength="32"/>
-					
-						<aon:outputLabel for="ectarget_password_retype" value="#{bundle.aon_login_passwd}" />
-						<aon:inputText id="ectarget_password_retype" required="true"
-							value="#{shoppingCart.newPasswd}" size="20"  maxlength="32">
-							<a4j:support event="onblur" reRender="login-panel" focus="ectarget_password"
-								actionListener="#{shoppingCart.checkUserPasswd}"/>
-						</aon:inputText>
-					
-					</aon:panelGrid>
-					
-					<rich:spacer height="10"/>
-					
-					<ui:include
-						src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
-						<ui:param name="controller" value="#{shoppingCart}" />
-					</ui:include>
-					
-					
-				</aon:panel>
-				
 			</aon:div>
+
+			<aon:panel id="login-panel" styleClass="login-panel">
+				<f:facet name="header">
+					<aon:outputText
+						value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
+				</f:facet>
+				<aon:panelGrid columns="2" style="width:100%;border:000 2px solid;">
+					<aon:outputLabel for="ectarget_email"
+						value="#{bundle.aon_login_user}" />
+					<aon:div>
+						<aon:inputText id="ectarget_email" required="true"
+							value="#{shoppingCart.cartTarget.ecTarget.login}" size="20"
+							maxlength="48" />
+						<aon:outputLabel for="ectarget_email"
+							value="*debe ser un email v&#225;lido" />
+					</aon:div>
+
+					<aon:outputLabel for="ectarget_password"
+						value="#{bundle.aon_login_passwd}" />
+					<aon:inputText id="ectarget_password" required="true"
+						value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"
+						maxlength="32" />
+
+					<aon:outputLabel for="ectarget_password_retype"
+						value="#{bundle.aon_login_passwd}" />
+					<aon:inputText id="ectarget_password_retype" required="true"
+						value="#{shoppingCart.newPasswd}" size="20" maxlength="32">
+						<a4j:support event="onblur" reRender="login-panel"
+							focus="ectarget_password"
+							actionListener="#{shoppingCart.checkUserPasswd}" />
+					</aon:inputText>
+				</aon:panelGrid>
+
+				<rich:spacer height="10" />
+
+				<ui:include 
+					src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
+				</ui:include>
+<!--  
+				<ui:include 
+					src="form.xhtml">
+				</ui:include>
+-->
+
+			</aon:panel>
 		</aon:form>
-		
 	</ui:define>
 </ui:composition>
