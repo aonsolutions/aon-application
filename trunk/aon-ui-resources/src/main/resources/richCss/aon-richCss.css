@@ -442,6 +442,21 @@ color:#000;
  .aon-icon-exception{
 	background:transparent url(images/aon-icon/aon-icon-exception.png) scroll left center no-repeat;	
  }
+ .aon-icon-payment{
+	background:transparent url(images/aon-icon/aon-icon-payment.png) scroll left center no-repeat;	
+ }
+ .aon-icon-return{
+	background:transparent url(images/aon-icon/aon-icon-return.png) scroll left center no-repeat;	
+ }
+ .aon-icon-fraction{
+	background:transparent url(images/aon-icon/aon-icon-fraction.png) scroll left center no-repeat;	
+ }
+ .aon-icon-settle{
+	background:transparent url(images/aon-icon/aon-icon-settle.png) scroll left center no-repeat;	
+ }
+ .aon-icon-unsettle{
+	background:transparent url(images/aon-icon/aon-icon-unsettle.png) scroll left center no-repeat;	
+ }
 
 /* otros */
 .aon-icon-agenda{
