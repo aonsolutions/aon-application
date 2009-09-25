@@ -10,14 +10,16 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="shopItemForm">
+		<aon:form id="userLoginForm">
 
 			<aon:div styleClass="menu" />
 			
-			<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
-				action="shop_form"
-				styleClass="aon-finding-toolbar-item aon-icon-cancel"
-				immediate="true" accesskey="#{bundle.aon_key_cancel}" />
+			<aon:div styleClass="back-button" >
+				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
+					action="shop_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
+			</aon:div>
 				
 			<aon:panelGrid columns="2" columnClasses="registryColumn, registryColumn">
 				<aon:div styleClass="user-login-box">

@@ -11,7 +11,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
-import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.controller.ConfigController;
 import com.code.aon.ui.ecommerce.controller.ShopItemsController;

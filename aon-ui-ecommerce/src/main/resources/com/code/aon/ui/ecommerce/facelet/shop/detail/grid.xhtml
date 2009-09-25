@@ -34,7 +34,7 @@
 				<aon:outputText value="#{shopItem.item.product.category.name}" />
 
 				<aon:outputLabel value="#{bundle.aon_price}" />
-				<!-- 
+<!-- 
 				<aon:outputText value="#{shopItem.item.price}">
 					<f:convertNumber pattern="#,##0.00"/>
 				</aon:outputText>
@@ -119,20 +119,84 @@
 			</aon:panelGrid>
 		</aon:panelGrid>
 
-		<!-- 
-		<aon:panel styleClass="itemDetailAttach">
-			<f:facet name="header">
-				<h:outputText value="Archivos adjuntos -i18n-"></h:outputText>
-			</f:facet>
+<!-- 
+-->
+		<c:if test="#{shopItem.imageModel.rowCount>0}">
+			<aon:div styleClass="itemDetailGallery">
+				<aon:div styleClass="itemDetailGallery-header">
+					<aon:outputText
+						value="#{ecommerceBundle.aon_ecommerce_image_galery}"></aon:outputText>
+				</aon:div>
+				<rich:dataGrid id="imageAttachmentGrid"
+					value="#{shopItem.imageModel}" var="to" columns="3" elements="9"
+					style="width:600px">
+					<aon:outputLink value="#" id="image-attachment"
+						styleClass="aon-gallery-image">
+						<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
+							style="width:100px" createContent="#{shopItem.paintImage}">
+						</a4j:mediaOutput>
+						<rich:componentControl for="image-attachment-process"
+							attachTo="image-attachment" operation="show" event="onclick" />
+					</aon:outputLink>
+				</rich:dataGrid>
+			</aon:div>
+		</c:if>
 
-			<rich:dataGrid id="attchmentGrid" value="#{shopItem.model}" var="to"
-				columns="3" elements="9" style="width:600px">
-
-				<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
-					style="width:100px" createContent="#{shopItem.paint}" />
-			</rich:dataGrid>
-		</aon:panel>
- -->
+		<c:if test="#{shopItem.documentModel.rowCount>0}">
+			<aon:div styleClass="itemDetailDocument">
+				<aon:div styleClass="itemDetailGallery-header">
+					<aon:outputText
+						value="#{ecommerceBundle.aon_ecommerce_document_list}"></aon:outputText>
+				</aon:div>
+				<aon:dataTable id="documentAttachmentGrid"
+					value="#{shopItem.documentModel}" rows="20" var="to"
+					style="width:600px" 
+					columnClasses="document-attach-icon, document-attach-description">
+					<aon:column>
+						<h:graphicImage value="/css/icons/#{to.mimeType.extension}.png" />
+					</aon:column>
+					<aon:column>
+						<aon:div id="attachFile">
+							<h:commandLink id="download" target="_blank"
+								onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();"
+								actionListener="#{shopItem.downloadAttachment}"
+								style="line-height:16px;margin-right:0;color:#000;"
+								title="#{bundle.aon_fileupload_download}">
+								<f:param name="index" value="#{to.id}" />
+								<aon:outputText value="#{to.description}" />
+							</h:commandLink>
+						</aon:div>
+					</aon:column>
+				</aon:dataTable>
+			</aon:div>
+		</c:if>
 	</aon:div>
 
+	<rich:modalPanel id="image-attachment-process" height="490" width="570"
+		zindex="2000" style="top: 0px; left:0px;">
+		<rich:effect event="onshow" type="Highlight" params="duration:0.8" />
+		<f:facet name="header">
+			<aon:div styleClass="aon-popupWindow-title">
+				<aon:outputText value="POLITICA DE PRIVACIDAD" />
+			</aon:div>
+		</f:facet>
+		<aon:div styleClass="aon-popupWindow-content">
+			<aon:div styleClass="aon-popupWindow-content-internal">
+				<h:graphicImage id="image-attachment-hidelink"
+					value="/css/images/nophoto.gif">
+					<rich:componentControl for="image-attachment-process"
+						attachTo="image-attachment-hidelink" operation="hide"
+						event="onclick" />
+				</h:graphicImage>
+
+				<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
+					createContent="#{shopItem.paintImage}">
+					<rich:componentControl for="image-attachment-process"
+						attachTo="image-attachment-hidelink" operation="hide"
+						event="onclick" />
+				</a4j:mediaOutput>
+			</aon:div>
+		</aon:div>
+	</rich:modalPanel>
 </ui:composition>

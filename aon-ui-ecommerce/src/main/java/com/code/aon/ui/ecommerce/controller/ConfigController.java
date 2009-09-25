@@ -89,6 +89,15 @@ public class ConfigController {
 	public void paintHeader(OutputStream out, Object data) throws IOException {
 		out.write(activeConfig.getHeaderImg());
 	}
+	public void paintLeftBanner(OutputStream out, Object data) throws IOException {
+		out.write(activeConfig.getLeftBanner());
+	}
+	public void paintRightBanner(OutputStream out, Object data) throws IOException {
+		out.write(activeConfig.getRightBanner());
+	}
+	public void paintWelcomeBanner(OutputStream out, Object data) throws IOException {
+		out.write(activeConfig.getWelcomeBanner());
+	}
 	
 	public void searchCurrentCompany(){
 		((CompanyController)FormUtil.getController("company")).onSearch(null);

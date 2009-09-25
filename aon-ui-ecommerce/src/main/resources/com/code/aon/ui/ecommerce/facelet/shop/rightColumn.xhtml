@@ -112,5 +112,11 @@
 				</aon:commandButton>
 			</aon:panelGrid>
 		</aon:div>
+		
+		<aon:div id="right-banner-image" styleClass="right-banner-image">
+			<a4j:mediaOutput id="image-right" element="img"
+				cacheable="false" value="#{ecConfig.activeConfig.id}"
+				createContent="#{ecConfig.paintRightBanner}" />
+		</aon:div>
 
 </ui:composition>

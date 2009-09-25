@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<rich:dataGrid id="productList" value="#{shopItems.model}" columns="2"
+	<rich:dataGrid id="productList" value="#{shopItems.model}" columns="#{ecConfig.activeConfig.rowItems}"
 		var="to" elements="20" style="width:100%"
 		columnClasses="aon-width-300,aon-width-300">
 
@@ -22,6 +22,7 @@
 					reRender="shopForm"
 					styleClass="none">
 					<aon:actionListener method="#{shopItems.onSelect}" />
+					<aon:actionListener method="#{shopItem.onLoadAttachment}" />
 					<h:graphicImage style="width:70px; height: 70px;"
 						rendered="#{!to.thumbnailPresent}" value="/css/images/nophoto.gif" />
 					<a4j:mediaOutput element="img" cacheable="false"

@@ -59,7 +59,7 @@
 							</aon:commandButton>
 
 							<aon:commandButton id="aonToolbar-offer-request"
-								rendered="#{shop.cartView}"
+								rendered="#{shop.cartView and !(ecConfig.neverLogin)}"
 								value="#{ecommerceBundle.aon_ecommerce_offer_request}"
 								action="#{shoppingCart.budgetRequest}"
 								styleClass="aon-finding-toolbar-item aon-icon-predetermine">
@@ -67,6 +67,16 @@
 							</aon:commandButton>
 
 						</aon:div>
+<!--  
+						<c:if test="#{ecConfig.activeConfig.welcomeBanner != null}">
+							<aon:div id="welcome-banner-image" styleClass="welcome-banner-image">
+								<a4j:mediaOutput id="image-welcome" element="img"
+									cacheable="false" value="#{ecConfig.activeConfig.id}"
+									createContent="#{ecConfig.paintWelcomeBanner}" />
+							</aon:div>
+						</c:if>
+-->						
+						
 						<c:if test="#{shop.itemsView}">
 							<ui:include src="items/list.xhtml" />
 						</c:if>
