@@ -136,9 +136,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		Iterator iter = icc.getDetailList().iterator();
 		while(iter.hasNext()){
 			ICalculable calc = (ICalculable)iter.next();
-			if (calc.getItem() != null && calc.getItem().getId() != null) {
-				taxableBase += getBasePrice(calc);
-			}
+			taxableBase += getBasePrice(calc);
 		}
 		if(icc.getDiscountExpression().getDiscounts() != null){
 			for(int i = 0;i<icc.getDiscountExpression().getDiscounts().length;i++){
