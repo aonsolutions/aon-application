@@ -41,7 +41,7 @@ input:focus,select:focus,textarea:focus {
 }
 
 input,select,textarea {
-	font: 1em "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+	font: 11px; "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 }
 
 select {
@@ -496,7 +496,7 @@ a.aon-top-menu-item-icon:hover {
 }
 
 .aon-icon-commandButton-right {
-	padding: 0 16px 0 0px;
+	padding:0 12px 5px 2px;
 	text-align: left;
 	border: 0px;
 	width: auto;
@@ -504,7 +504,7 @@ a.aon-top-menu-item-icon:hover {
 	cursor: pointer;
 	background-position: right center !important;
 	width:30px;
-	height:30px;
+	
 	
 }
 
@@ -529,7 +529,7 @@ a.aon-top-menu-item-icon:hover {
 		left center no-repeat;
 		border:none;
 		padding-left:20px;
-		padding-right:20px;
+		padding-right:5px;
 
 }
 
@@ -680,7 +680,7 @@ no-repeat;
 		scroll left center no-repeat;
 		padding-left:20px;
 		border:none;
-			padding-right:20px;
+			padding-right:5px;
 	
 }
 
@@ -983,7 +983,7 @@ no-repeat;
 		left center no-repeat;
 		border:none;
 		padding-left:20px;
-			padding-right:20px;
+			padding-right:5px;
 }
 
 .aon-icon-open-popup {
@@ -1261,6 +1261,8 @@ no-repeat;
 	/***** PARA QUE QUEDE COMO UN FIELDSET   *******/
 #aon-content .aon-group {
 
+margin:0 auto;
+margin-top:20px;
 
 }
 
@@ -1410,6 +1412,7 @@ text-transform:uppercase;
 	border:1px solid #CCCCCC;
 		margin-bottom:5px;
 		margin-right:20px;
+		width:119px;
 	
 
 	
@@ -1673,7 +1676,9 @@ width:100%;
 	text-transform: uppercase;
 	background: #fde46d
 		scroll left top repeat-x;
-	border: #fff 4px solid;
+	border-top: #fff 4px solid;
+		border-left: #fff 4px solid;
+			border-right: #fff 4px solid;
 }
 
 .aon-dataTable-footer {
@@ -2373,7 +2378,8 @@ tr.aon-logo-name{height:150px;}
 	width: auto;
 	overflow: visible;
 	margin-left:20px;
-
+font-size:10px;
+	text-transform: uppercase;
 		margin-top:10px;}
 
 .aon-finding-toolbar-item-no-icon {
@@ -3392,9 +3398,9 @@ color:#C4C0B9;
 .aon-icon-cart{
 	background:transparent url(images/aon-icon/aon-icon-reset.png) no-repeat scroll left center;
 
-		margin-left:125px;
+		margin-left:131px;
 		padding-top:5px;
-		padding-right:21px;
+		padding-right:5px;
 		padding-left:21px;
 			border-left:none;
 		border-bottom:none;
@@ -3403,7 +3409,7 @@ color:#C4C0B9;
 		}
 	.aon-icon-accept{
 		padding-left:20px;
-		padding-right:20px;
+		padding-right:5px;
 	margin-left:150px;
 		margin-top:10px;
 		border-left:none;
@@ -3420,9 +3426,10 @@ color:#C4C0B9;
 	
 	
 }
-td.aon-panelGrid-even .aon-outputText { 
+.aon-panelGrid-even td .aon-outputText { 
 color:#999;
 text-transform:none;
+width:100px;
 
 /*	border:#c4c4c4 1px solid;*/
 	
@@ -3514,6 +3521,7 @@ text-transform:uppercase;
 		margin-left:6px;
 		margin-right:6px;
 		border-top:37px solid #000;
+		padding-bottom:10px;
 	}
 	
 
@@ -3532,9 +3540,9 @@ background:url(images/aon-icon/MESSENGERMSN.png) no-repeat scroll left center;
 	border-left:none;
 		border-bottom:none;
 		border-top:none;
-margin-left:-15px;
+margin-left:-3px;
 padding-left:20px;
-padding-right:20px;
+padding-right:5px;
 padding-top:3px;
 		}
 	.login-box-header-icon{
@@ -3542,32 +3550,35 @@ padding-top:3px;
 border-right:1px dotted #FFFFFF;
 float:left;
 font-size:15px;
-margin-top:-7px;
+margin-left:5px;
+margin-top:1px;
 padding-bottom:7px;
 
 padding-top:20px;
-width:40px;}
+width:25px;}
 		.list-info-box-header-icon
 		{
 		background:url(images/aon-icon/80-shopping-cart2.png) no-repeat;
 	border-right:1px dotted #FFFFFF;
 float:left;
 font-size:15px;
-margin-top:-3px;
+margin-left:5px;
+margin-top:1px;
 padding-bottom:7px;
 
 padding-top:20px;
-width:40px;}
+width:25px;}
 	
 		.helpdesk-box-header-icon{background:url(images/aon-icon/INFO1.png) no-repeat;
 	border-right:1px dotted #FFFFFF;
 float:left;
 font-size:15px;
-margin-top:-3px;
+margin-left:5px;
+margin-top:1px;
 padding-bottom:7px;
 
 padding-top:20px;
-width:40px;}
+width:25px;}
 
 /*	td.detailImageColumn
 	{
@@ -3645,14 +3656,19 @@ width:40px;}
 			 .right-panel .search-box{
 				width:245px;}
 				  .right-panel .login-box{
-				 width:250px;}
+			width:245px;
+				 	border:1px solid #000;
+					margin-bottom:10px;
+					padding-bottom:10px;}
 				  .right-panel .list-info-box{
 							border:1px solid #000;
+						padding-bottom:10px;
 
 width:245px;}
 				  .right-panel .helpdesk-box{
 					  margin-top:10px;
 				border:1px solid #000;
+				padding-bottom:10px;
 
 width:245px;}
 			.aon-vertical-align-top-right{vertical-align:top;
@@ -3663,4 +3679,16 @@ width:245px;}
 				width:230px;
 				padding-right:3px;}
 				
-					
+					.aon-icon-new-user{
+						background:transparent url(images/aon-icon/aon-icon-reset.png) no-repeat scroll left center;
+border-bottom:medium none;
+border-left:medium none;
+border-top:medium none;
+margin-left:225px;
+margin-top:60px;
+padding-left:21px;
+padding-right:5px;
+}
+.back-button{
+	padding-bottom:10px;
+	border-bottom:1px solid #F9E32B;}
