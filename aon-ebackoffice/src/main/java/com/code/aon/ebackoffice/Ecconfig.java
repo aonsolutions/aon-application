@@ -58,9 +58,12 @@ public class Ecconfig implements ITransferObject {
 	private PayMethod paypal;
 	private PayMethod bankDraft;
 	private String series;
-	private String privatePolicy;
-	private String legalNote;
-	private String dataProtection;
+	private String legalNote1;
+	private String legalNote2;
+	private String legalNote3;
+	private String noteTitle1;
+	private String noteTitle2;
+	private String noteTitle3;	
 	private Tariff tariff;
 	private String headerColor;
 	private Integer rowItems;
@@ -218,33 +221,60 @@ public class Ecconfig implements ITransferObject {
 	
 	@Lob
 	@Type(type="stringClob")
-	@Column(name = "private_policy")
-	public String getPrivatePolicy() {
-		return privatePolicy;
+	@Column(name = "legal_note1")
+	public String getLegalNote1() {
+		return legalNote1;
 	}
-	public void setPrivatePolicy(String privatePolicy) {
-		this.privatePolicy = privatePolicy;
+	public void setLegalNote1(String legalNote1) {
+		this.legalNote1 = legalNote1;
 	}
+	
 	
 	@Lob
 	@Type(type="stringClob")
-	@Column(name = "legal_note")
-	public String getLegalNote() {
-		return legalNote;
+	@Column(name = "legal_note2")
+	public String getLegalNote2() {
+		return legalNote2;
 	}
-	public void setLegalNote(String legalNote) {
-		this.legalNote = legalNote;
+	public void setLegalNote2(String legalNote2) {
+		this.legalNote2 = legalNote2;
 	}
-	
+		
 	@Lob
 	@Type(type="stringClob")
-	@Column(name = "data_protection")
-	public String getDataProtection() {
-		return dataProtection;
+	@Column(name = "legal_note3")
+	public String getLegalNote3() {
+		return legalNote3;
 	}
-	public void setDataProtection(String dataProtection) {
-		this.dataProtection = dataProtection;
+	public void setLegalNote3(String legalNote3) {
+		this.legalNote3 = legalNote3;
 	}
+	
+	@Column(name = "title_note1", length = 64)
+	public String getNoteTitle1() {
+		return noteTitle1;
+	}
+	public void setNoteTitle1(String noteTitle1) {
+		this.noteTitle1 = noteTitle1;
+	}
+	
+	@Column(name = "title_note2", length =64)
+	public String getNoteTitle2() {
+		return noteTitle2;
+	}
+	
+	public void setNoteTitle2(String noteTitle2) {
+		this.noteTitle2 = noteTitle2;
+	}
+	
+	@Column(name = "title_note3", length =64)
+	public String getNoteTitle3() {
+		return noteTitle3;
+	}
+	public void setNoteTitle3(String noteTitle3) {
+		this.noteTitle3 = noteTitle3;
+	}
+	
 	
 	
 	@OneToOne (fetch=FetchType.EAGER)
