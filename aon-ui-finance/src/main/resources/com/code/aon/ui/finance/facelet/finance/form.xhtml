@@ -22,7 +22,7 @@
 					<aon:commandButton id="paymentPopup" 
 						value="#{(finance.payment) ? (financeBundle.finance_to_pay) : (financeBundle.finance_to_charge)}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item-no-icon"
+						styleClass="aon-finding-toolbar-item aon-icon-payment"
 						actionListener="#{finance.onFinancePaymentShow}"
 						reRender="showFinancePaymentWindow">
 						<f:setPropertyActionListener target="#{finance.showFinancePaymentWindow}"
@@ -31,7 +31,7 @@
 					<aon:commandButton id="returnPopup" 
 						value="#{financeBundle.finance_to_return}"
 						immediate="#{true}" rendered="#{finance.paid}"
-						styleClass="aon-finding-toolbar-item-no-icon"
+						styleClass="aon-finding-toolbar-item aon-icon-return"
 						actionListener="#{finance.onFinanceReturnShow}"
 						reRender="showFinanceReturnWindow">
 						<f:setPropertyActionListener target="#{finance.showFinanceReturnWindow}"
@@ -40,12 +40,12 @@
 					<aon:commandButton id="settle" 
 						value="#{financeBundle.finance_to_settle}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item-no-icon"
+						styleClass="aon-finding-toolbar-item aon-icon-settle"
 						actionListener="#{finance.onSettleFinance}" />
 					<aon:commandButton id="fraction" 
 						value="#{financeBundle.finance_to_fraction}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item-no-icon"
+						styleClass="aon-finding-toolbar-item aon-icon-fraction"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
 					<h:commandLink value="#{financeBundle.finance_show_invoice}"
 						target="_blank" action="#{report.onExecute}" actionListener="#{finance.onShowInvoice}"
