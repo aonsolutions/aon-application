@@ -27,14 +27,15 @@ public class BankAccountType extends StringType {
 	
 	@Override
 	public Object fromStringValue(String xml) {
-		if (xml== null) {
+		String value = StringUtils.trimToNull(xml);
+		if (value== null) {
 			return null;
 		}
 		BankAccount ba = new BankAccount();
-		ba.setEntity(StringUtils.substring(xml,0,4));
-		ba.setOffice(StringUtils.substring(xml,4,8));
-		ba.setControl(StringUtils.substring(xml,8,10));
-		ba.setAccount(StringUtils.substring(xml,10));
+		ba.setEntity(StringUtils.substring(value,0,4));
+		ba.setOffice(StringUtils.substring(value,4,8));
+		ba.setControl(StringUtils.substring(value,8,10));
+		ba.setAccount(StringUtils.substring(value,10));
 		return ba;
 	}
 
