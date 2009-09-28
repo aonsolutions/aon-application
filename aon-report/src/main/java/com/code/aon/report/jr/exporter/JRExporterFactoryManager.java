@@ -63,6 +63,7 @@ public class JRExporterFactoryManager {
 		register(OutputFormat.CSV, new JRCsvExporterFactory());
 		register(OutputFormat.RTF, new JRRtfExporterFactory());
 		register(OutputFormat.TXT, new JRTxtExporterFactory());
+		register(OutputFormat.DOCX, new JRDocxExporterFactory());
 	}
 
 }
