@@ -16,7 +16,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class JournalReportController extends BasicController {
+public class LedgerReportController extends BasicController {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
@@ -24,9 +24,8 @@ public class JournalReportController extends BasicController {
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
-	private boolean journal;
 	private Integer previousAccountEntryDetail;
-	private Integer previousAccountEntry;
+	private String previousAccount;
 	private boolean currentValue = true;
 	private boolean odd = true;
 	private SecurityLevel securityLevel;
@@ -76,14 +75,6 @@ public class JournalReportController extends BasicController {
 		super.onReset(event);
 	}
 
-	public boolean isJournal() {
-		return journal;
-	}
-
-	public void setJournal(boolean journal) {
-		this.journal = journal;
-	}
-
 	private void initialize() {
 		try {
 			setPeriod(AccountingPeriodUtil.getDefaultPeriod());
@@ -94,9 +85,8 @@ public class JournalReportController extends BasicController {
 		setToDate(null);
 		setDate(new Date());
 		setSecurityLevel(null);
-		setJournal(false);
-		previousAccountEntry = null;
 		previousAccountEntryDetail = null;
+		previousAccount = null;
 		odd = true;
 	}
 
@@ -130,13 +120,8 @@ public class JournalReportController extends BasicController {
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
-			if (isJournal()) {
 				getCriteria().addOrder(
-						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
-			} else {
-				getCriteria().addOrder(
-						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
-			}
+						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID));
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -153,13 +138,13 @@ public class JournalReportController extends BasicController {
 			AccountEntryDetail acd = (AccountEntryDetail) getModel().getRowData();
 			if (previousAccountEntryDetail == null || !previousAccountEntryDetail.equals(acd.getId())) {
 				previousAccountEntryDetail = acd.getId();
-				Integer current = acd.getAccountEntry().getId();
-				if (previousAccountEntry == null) {
-					previousAccountEntry = current;
+				String current = acd.getAccount().getId();
+				if (previousAccount == null) {
+					previousAccount = current;
 					currentValue = true;
 				} else {
-					if (!previousAccountEntry.equals(current)) {
-						previousAccountEntry = current;
+					if (!previousAccount.equals(current)) {
+						previousAccount = current;
 						odd = !odd;
 						currentValue = true;
 					} else {
@@ -188,7 +173,7 @@ public class JournalReportController extends BasicController {
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
-			entryController.setBackAction("journal_list");
+			entryController.setBackAction("ledger_list");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);

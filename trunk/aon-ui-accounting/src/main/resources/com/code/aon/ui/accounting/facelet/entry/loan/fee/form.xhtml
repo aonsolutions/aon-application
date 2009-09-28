@@ -89,8 +89,19 @@
 
 					<aon:outputLabel for="Account_description"
 						value="#{bundle.aon_concept}" />
+<!-- 
 					<aon:inputText id="Account_description" required="true"
 						value="#{loanFeeEntry.header.description}" size="60" />
+ -->
+					<rich:comboBox id="Account_concept"
+						suggestionValues="#{accountingCollections.conceptsDescriptions}"
+						value="#{loanFeeEntry.header.description}" required="true"
+						maxlength="32" width="200" 
+						directInputSuggestions="true"
+						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
+						buttonDisabledStyle="display:none;"
+						buttonInactiveStyle="display:none;"
+						buttonStyle="display:none;"/>
 
 					<aon:outputLabel for="Account_amortization"
 						value="#{accountingBundle.accounting_amortization}" />
