@@ -81,9 +81,20 @@
 
 						<aon:outputLabel for="AccountEntry_balancingConcept"
 							value="#{bundle.aon_concept}" />
+<!--
 						<aon:inputText id="AccountEntry_balancingConcept"
 							value="#{financeEntry.concept}" size="50" maxlength="32">
 						</aon:inputText>
+-->
+					<rich:comboBox id="AccountEntry_balancingConcept"
+						suggestionValues="#{accountingCollections.conceptsDescriptions}"
+						value="#{financeEntry.concept}" required="true"
+						maxlength="32" width="200" 
+						directInputSuggestions="true"
+						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
+						buttonDisabledStyle="display:none;"
+						buttonInactiveStyle="display:none;"
+						buttonStyle="display:none;"/>
 
 						<aon:outputLabel for="AccountEntry_accountPeriod"
 							value="#{accountingBundle.accounting_period}" />

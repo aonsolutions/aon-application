@@ -227,6 +227,22 @@
 		</params>
 	</report>
 	
+	<!--  LISTADO MAYOR -->
+	<report id="ledgerBook" description="Listado Mayor">
+		<template path="/com/code/aon/ui/accounting/report/ledgerBook.jasper"/>
+		<bean key="com.code.aon.accounting.AccountEntryDetail" />
+		<criteria provider="#{ledgerReport}"/>
+		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{ledgerReport.getFromDate}" />
+			<param id="toDate" value="#{ledgerReport.getToDate}" />
+			<param id="date" value="#{ledgerReport.getDate}" />
+			<param id="period" value="#{ledgerReport.getPeriod}" />
+		</params>
+	</report>
+
 	<!--  BALANCES OFICIALES  -->
 	<report id="officialBalance" description="Official Balance Report">
 		<template path="/com/code/aon/ui/accounting/report/officialBalanceSheet.jasper" />

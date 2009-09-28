@@ -41,7 +41,9 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> accountEntryTypes;
 	private LinkedList<SelectItem> amortizationPeriods;
 	private LinkedList<SelectItem> periodStatuses;
-	private LinkedList<String> concepts;
+
+	private List<SelectItem> autoConcepts;
+	private List<String> concepts;
 
 	private String periodStatusAlias;
 	private String periodIdAlias;
@@ -161,23 +163,30 @@ public class AccountingCollectionsController {
 		return periodStatuses;
 	}
 
+	public void setAutoConcepts(List<SelectItem> autoConcepts ) {
+		this.autoConcepts = autoConcepts;
+	}
 	public List<SelectItem> getAutoConcepts() throws ManagerBeanException {
-		List<SelectItem> autoConcepts = new LinkedList<SelectItem>();
-		IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION),
-				false);
-		Iterator<?> iter = conceptBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			AutoConcept concept = (AutoConcept) iter.next();
-			SelectItem item = new SelectItem(concept, concept.getDescription());
-			autoConcepts.add(item);
+		if (autoConcepts == null) {
+			autoConcepts = new LinkedList<SelectItem>();
+			IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
+			Criteria criteria = new Criteria();
+			criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION),
+					false);
+			Iterator<?> iter = conceptBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				AutoConcept concept = (AutoConcept) iter.next();
+				SelectItem item = new SelectItem(concept, concept.getDescription());
+				autoConcepts.add(item);
+			}
 		}
 		return autoConcepts;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List getConceptsDescriptions() {
+	public void setConceptsDescriptions(List<String> concepts ) {
+		this.concepts = concepts ;
+	}
+	public List<String> getConceptsDescriptions() {
 		try {
 			if (concepts == null) {
 				concepts = new LinkedList<String>();

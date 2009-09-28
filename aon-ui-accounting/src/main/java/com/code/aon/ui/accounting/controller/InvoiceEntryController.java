@@ -314,6 +314,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setAccount(null);
 		getHeader().setType(type);
 		getHeader().setSeries(series);
+		seriesChanged(series);
 		getHeader().setPeriod(period);
 		getHeader().setDate(date);
 		getHeader().setTaxDate(taxDate);
@@ -1287,8 +1288,12 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String) event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String) event.getNewValue());
+		String series = (String) event.getNewValue();
+		seriesChanged(series);
+	}
+	private void seriesChanged( String series ) throws ManagerBeanException {
+		int number = obtainMaxNumber(series);
+		SecurityLevel securityLevel = obtainSeriesSecurityLevel(series);
 		if (getHeader() != null) {
 			getHeader().setNumber(number);
 			getHeader().setSecurityLevel(securityLevel);
