@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.report</artifactId>
-	<version>3.4.2</version>
+	<version>4.1.0</version>
 	<description>AON REPORT</description>
 	<name>AON REPORT</name>
 	<dependencies>
@@ -23,17 +23,9 @@
 		<dependency>
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>3.1.2</version>
+			<version>3.5.3</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>jfree</groupId>
-					<artifactId>jcommon</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jfree</groupId>
-					<artifactId>jfreechart</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>javax.servlet</groupId>
 					<artifactId>servlet-api</artifactId>
@@ -97,6 +89,26 @@
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>gnujaxp</groupId>
+					<artifactId>gnujaxp</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.2-FINAL</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
