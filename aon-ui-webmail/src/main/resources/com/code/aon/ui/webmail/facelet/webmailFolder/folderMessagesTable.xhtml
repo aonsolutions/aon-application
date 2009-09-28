@@ -35,7 +35,7 @@
 					
 					<aon:dataTable id="messageDataTable" style="border-right:#ccc 1px solid;"
 						value="#{webmailFolder.model}" var="to" rows="#{webmailFolder.folder.pageSize}"
-						columnClasses="aon-width-80,
+						columnClasses="aon-width-70,
 								aon-width-150 aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn,
 								aon-width-150 aon-editDataTable-textColumn,
@@ -47,15 +47,15 @@
 						<aon:column id="folderCol">
 							<f:facet name="header" >
 								<aon:div>
-									<aon:commandButton id="selectButton" style="margin-right:10px;"
+									<aon:commandButton id="selectButton" 
 										actionListener="#{webmailFolder.selectAllPageMessages}"
-										reRender="messageGrid"
+										reRender="messageGrid" style="margin-right:10px;padding-top: 2px;"
 										styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
 									</aon:commandButton>
 					
 									<aon:commandButton id="deselectButton"
 										actionListener="#{webmailFolder.deselectAllPageMessages}"
-										reRender="messageGrid"
+										reRender="messageGrid" style="padding-top: 2px;"
 										styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
 									</aon:commandButton>
 								</aon:div>
@@ -68,13 +68,13 @@
 	 							<rich:dragSupport dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />
 								<aon:outputText rendered="#{!to.readed}" value="&#160;"
 									styleClass="aon-icon aon-icon-mailInbox"
-									style="cursor: pointer;width:16px;" />
+									style="margin-right: 0px" />
 								<aon:outputText rendered="#{to.readed and !to.answered}"
 									value="&#160;" styleClass="aon-icon aon-icon-mailInbox-read"
-									style="cursor: pointer;width:16px;" />
+									style="margin-right: 0px" />
 								<aon:outputText rendered="#{to.answered}" value="&#160;"
 									styleClass="aon-icon aon-icon-mailInbox-answered"
-									style="cursor: pointer;width:16px;" />
+									style="margin-right: 0px" />
 							</aon:div>
 							<aon:div styleClass="aon-float-left">
 								<aon:graphicImage
