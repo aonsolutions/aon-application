@@ -239,10 +239,14 @@ public class AonFolder extends AonMessageSortableList {
     	return false;
     }
 
-    public String getName(){
+    public String getName() {
     	return folder.getName();
     }
 
+    public String getFullName() {
+    	return folder.getFullName();
+    }
+    
     public boolean isOpen(){
     	return folder.isOpen();
     }
