@@ -182,7 +182,7 @@ public class AonServer {
 			if (parent == null){
 				new_folder = getRoot().getFolder(folderName);	
 			}else{
-				new_folder = getRoot().getFolder(parent.getFolder().getName()+getRoot().getSeparator()+folderName);
+				new_folder = getRoot().getFolder(parent.getFolder().getFullName()+getRoot().getSeparator()+folderName);
 			}
 			if (!new_folder.exists()) {
 				LOGGER.log(Level.INFO, "Creating folder : " + folderName);
