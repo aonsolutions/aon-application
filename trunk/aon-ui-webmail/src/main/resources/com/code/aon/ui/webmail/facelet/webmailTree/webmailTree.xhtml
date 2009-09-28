@@ -17,11 +17,13 @@
 			rendered="#{webmailTree.treeLoaded}" style="padding-bottom:0;">					
 							
 			<aon:commandButton
-				id="newFolder" reRender="aonStatus"
+				id="newFolder" reRender="createSubFolderGrid"
 				title="#{webmailBundle.webmail_newfolder}"
 				styleClass="aon-icon-commandButton aon-icon-newFolder"
 				actionListener="#{webmailFolder.openNewFolderPanelPopup}">
 				<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
+				<f:setPropertyActionListener value="#{false}" target="#{webmailFolder.createAsSubfolder}" />
+				<f:setPropertyActionListener value="#{null}" target="#{webmailFolder.newFolderName}" />
 			</aon:commandButton>
 				
 			<aon:commandButton
