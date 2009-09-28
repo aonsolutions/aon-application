@@ -14,6 +14,7 @@ import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
+import javax.mail.Flags.Flag;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -40,6 +41,8 @@ public class FolderController implements WebMailConstants {
 	private WebMailController webMailController;
 	
 	private FoldersTreeBean treeController;
+	
+	private boolean createAsSubfolder;
 	
 	private int currentPage = 1;
 	
@@ -275,7 +278,11 @@ public class FolderController implements WebMailConstants {
     //*************************************************************
 
 	public void createFolder(ActionEvent event) {
-       	getWebMailController().getServer().createAonFolder(null, newFolderName, Folder.HOLDS_MESSAGES);
+		AonFolder parent = null;
+		if ( isCreateAsSubfolder() ) {
+			parent = getTreeController().getCurrent();
+		}
+       	getWebMailController().getServer().createAonFolder(parent, newFolderName, Folder.HOLDS_MESSAGES);
     	getTreeController().loadTree();
     }
 
@@ -463,5 +470,35 @@ public class FolderController implements WebMailConstants {
     public AonMessage getSelectedMessage() {
     	return (AonMessage) getModel().getRowData();
     }
+
+    public void markAsReadCheckedMessages(ActionEvent event) {
+    	try{
+    		for( AonMessage message : folder.getSelectedMessages() ) {
+    			message.getMessage().setFlag( Flag.SEEN, true );
+    		}
+		} catch (MessagingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+    }
+
+    public void markAsUnreadCheckedMessages(ActionEvent event) {
+    	try{
+    		for( AonMessage message : folder.getSelectedMessages() ) {
+    			message.getMessage().setFlag( Flag.SEEN, false );
+    		}
+		} catch (MessagingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+    }
+
+	public boolean isCreateAsSubfolder() {
+		return createAsSubfolder;
+	}
+
+	public void setCreateAsSubfolder(boolean createAsSubfolder) {
+		this.createAsSubfolder = createAsSubfolder;
+	}
     
 }
