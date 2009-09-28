@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.1.3</version>
+			<version>4.1.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
