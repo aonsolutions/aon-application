@@ -60,7 +60,7 @@ public class ReportManager {
 	 * Report idetifier.
 	 */
 	private String reportKey;
-	
+
 	private ICollectionProvider collectionProvider;
 
 	/**
@@ -100,7 +100,7 @@ public class ReportManager {
 	public void setOutputFormat(OutputFormat outputFormat) {
 		this.outputFormat = outputFormat;
 	}
-	
+
 	/**
 	 * Gets the collection provider.
 	 * 
@@ -113,7 +113,8 @@ public class ReportManager {
 	/**
 	 * Sets the collection provider.
 	 * 
-	 * @param collectionProvider the new collection provider
+	 * @param collectionProvider
+	 *            the new collection provider
 	 */
 	public void setCollectionProvider(ICollectionProvider collectionProvider) {
 		this.collectionProvider = collectionProvider;
@@ -136,7 +137,7 @@ public class ReportManager {
 				new SelectItem(OutputFormat.TXT, OutputFormat.TXT.getType()) };
 		return items;
 	}
-	
+
 	/**
 	 * Runs the report. Obtains a
 	 * <code>com.code.aon.ui.report.jr.JRReport</code> calling the
@@ -149,12 +150,25 @@ public class ReportManager {
 	 *             If an error ocurred.
 	 * @throws DAOException
 	 */
-	public String onExecute() throws ReportException {
-		ensureParams();
-		String out = execute(getOutputStream(), getReportKey());
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ctx.responseComplete();
-		return out;
+	public String onExecute() {
+		try {
+			ensureParams();
+			String outcome = execute(getOutputStream(), getReportKey());
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			ctx.responseComplete();
+			return outcome;
+		} catch (ReportException e) {
+			try {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			ExternalContext ec = ctx.getExternalContext();
+			HttpServletResponse res = (HttpServletResponse) ec.getResponse();
+				res.getWriter().print("Se ha producido un error durante la ejecución del listado.");
+				e.printStackTrace(res.getWriter());
+			} catch (IOException e1) {
+				// Nothing
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -169,15 +183,15 @@ public class ReportManager {
 	 *             If an error ocurred.
 	 * @throws DAOException
 	 */
-	public String execute( File file, String reportKey ) throws ReportException {
+	public String execute(File file, String reportKey) throws ReportException {
 		OutputStream out = null;
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(file));
 			return execute(out, reportKey);
-		} catch ( IOException e ) {
-			throw new ReportException(e.getMessage(), e);	
+		} catch (IOException e) {
+			throw new ReportException(e.getMessage(), e);
 		} finally {
-			if ( out != null ) {
+			if (out != null) {
 				try {
 					out.close();
 				} catch (IOException e) {
@@ -186,7 +200,7 @@ public class ReportManager {
 			}
 		}
 	}
-	
+
 	/**
 	 * Runs the report. Obtains a
 	 * <code>com.code.aon.ui.report.jr.JRReport</code> calling the
@@ -199,7 +213,8 @@ public class ReportManager {
 	 *             If an error ocurred.
 	 * @throws DAOException
 	 */
-	public String execute( OutputStream os, String reportKey ) throws ReportException {
+	@SuppressWarnings("unchecked")
+	public String execute(OutputStream os, String reportKey) throws ReportException {
 
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
@@ -217,9 +232,10 @@ public class ReportManager {
 			HibernateUtil.beginTransaction(sessionFactoryName);
 
 			String dp = report.getReportConfig().getDynamicParamsProvider();
-			LOGGER.info(dp);
 			if (dp != null) {
-				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) AonUtil.getRegisteredBean(dp);
+				LOGGER.info(dp);
+				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) AonUtil
+						.getRegisteredBean(dp);
 				Map<String, Object> dynParams = dpp.getDynamicParamsMap();
 				LOGGER.info("" + dynParams.size());
 				report.setDynamicParams(dynParams);
@@ -231,14 +247,17 @@ public class ReportManager {
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);
 			return out;
-		} catch (Throwable t ){
-		    try {
+		} catch (Throwable t) {
+			try {
 				HibernateUtil.rollbackTransaction(sessionFactoryName);
 			} catch (DAOException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
-		    AonUtil.addFatalMessage("Report Error:" + t.getMessage());
-		    return null;
+			AonUtil.addFatalMessage("Report Error:" + t.getMessage());
+			if (t instanceof ReportException) {
+				throw (ReportException) t;
+			}
+			throw new ReportException(t.getMessage(), t);
 		} finally {
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);
@@ -248,8 +267,8 @@ public class ReportManager {
 			}
 		}
 	}
-	
-	private void ensureParams() throws ReportException{
+
+	private void ensureParams() throws ReportException {
 		ensureReportKey();
 		ensureOutputFormat();
 	}
@@ -257,7 +276,8 @@ public class ReportManager {
 	private void ensureReportKey() throws ReportException {
 		String key = getReportKey();
 		if (key == null) {
-			Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+			Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext()
+					.getRequestParameterMap();
 			key = parameters.get("reportKey");
 			if (key == null) {
 				throw new ReportException("Empty reportKey!");
@@ -269,14 +289,15 @@ public class ReportManager {
 	private void ensureOutputFormat() throws ReportException {
 		OutputFormat f = getOutputFormat();
 		if (f == null) {
-			Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+			Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext()
+					.getRequestParameterMap();
 			String of = parameters.get("outputFormat");
 			if (of == null) {
 				setOutputFormat(OutputFormat.PDF);
 			} else {
 				OutputFormat ouf = OutputFormat.get(of);
 				if (ouf == null) {
-					throw new ReportException("Invalid outputFormat '"+of+"'!");
+					throw new ReportException("Invalid outputFormat '" + of + "'!");
 				}
 				setOutputFormat(ouf);
 			}
@@ -287,9 +308,9 @@ public class ReportManager {
 	 * Obtains the OutputStream where the report will be writen. <br>
 	 * <code>
 	 * 		FacesContext ctx = FacesContext.getCurrentInstance();<br>
-	 *		ExternalContext ec = ctx.getExternalContext();<br>
-	 *		HttpServletResponse res = (HttpServletResponse) ec.getResponse();<br>
-	 *		return res.getOutputStream();
+	 * 		ExternalContext ec = ctx.getExternalContext();<br>
+	 * 		HttpServletResponse res = (HttpServletResponse) ec.getResponse();<br>
+	 * 		return res.getOutputStream();
 	 * </code>
 	 * 
 	 * @return The OutputStream where the report will be writen.
@@ -326,6 +347,8 @@ public class ReportManager {
 			return "attachment; filename=\"report.txt\";";
 		} else if (getOutputFormat() == OutputFormat.RTF) {
 			return "attachment; filename=\"report.rtf\";";
+		} else if (getOutputFormat() == OutputFormat.DOCX) {
+			return "attachment; filename=\"report.docx\";";
 		}
 		return null;
 	}
@@ -334,10 +357,10 @@ public class ReportManager {
 	 * Obtains the ResourceBundle needed for the report. <br>
 	 * <code>
 	 * 		FacesContext ctx = FacesContext.getCurrentInstance();<br>
-	 *		Application app = ctx.getApplication();<br>
-	 *		String baseName = app.getMessageBundle();<br>
-	 *		Locale locale = ctx.getViewRoot().getLocale();<br>
-	 *		return ResourceBundle.getBundle(baseName, locale);<br>
+	 * 		Application app = ctx.getApplication();<br>
+	 * 		String baseName = app.getMessageBundle();<br>
+	 * 		Locale locale = ctx.getViewRoot().getLocale();<br>
+	 * 		return ResourceBundle.getBundle(baseName, locale);<br>
 	 * </code>
 	 * 
 	 * @return The ResourceBundle needed for the report.
@@ -374,7 +397,8 @@ public class ReportManager {
 				// faces context.
 				if (provider.startsWith("#")) {
 					String providerName = strip(provider);
-					ICriteriaProvider crpr = (ICriteriaProvider) AonUtil.getRegisteredBean(providerName);
+					ICriteriaProvider crpr = (ICriteriaProvider) AonUtil
+							.getRegisteredBean(providerName);
 					return crpr.getCriteria();
 				}
 				// Criteria provider is a class.
@@ -411,11 +435,12 @@ public class ReportManager {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
+	@SuppressWarnings("unchecked")
 	private Collection getCollection(JRReport report) throws ReportException {
 		ReportConfig config = report.getReportConfig();
 		String provider = config.getCollectionProvider();
 		ICollectionProvider collectionProvider = getCollectionProvider();
-		if ( (collectionProvider == null) && (provider != null) ) {		
+		if ((collectionProvider == null) && (provider != null)) {
 			if (provider.startsWith("#")) {
 				String providerName = strip(provider);
 				Object c = AonUtil.getRegisteredBean(providerName);
@@ -427,24 +452,24 @@ public class ReportManager {
 			} else {
 				try {
 					Class<?> collectionProviderClass = Class.forName(provider);
-					collectionProvider = (ICollectionProvider) collectionProviderClass.newInstance();
-				} catch ( Throwable th ) {
-					throw new ReportException(th.getMessage(), th);		
-				}					
+					collectionProvider = (ICollectionProvider) collectionProviderClass
+							.newInstance();
+				} catch (Throwable th) {
+					throw new ReportException(th.getMessage(), th);
+				}
 			}
 		}
-		if ( collectionProvider != null ) {
+		if (collectionProvider != null) {
 			try {
 				return collectionProvider.getCollection(config.isForceRefresh());
 			} catch (ManagerBeanException e) {
 				throw new ReportException(e.getMessage(), e);
-			}				
-		}		
+			}
+		}
 		return null;
 	}
 
-	private void resolveCustomParameters(JRReport report)
-			throws ReportException {
+	private void resolveCustomParameters(JRReport report) {
 		ReportConfig config = report.getReportConfig();
 		if (config.getParams() != null) {
 			LOGGER.fine("Passing Custom Parameters");
@@ -454,31 +479,31 @@ public class ReportManager {
 				String key = (String) iter.next();
 				String value = (String) config.getParams().get(key);
 				if (value.startsWith("#")) {
-					String controllerName = value.substring(
-							value.indexOf("{") + 1, value.indexOf("."));
-					String methodName = value.substring(value.indexOf(".") + 1,
-							value.indexOf("}"));
-					Object o = AonUtil.getRegisteredBean( controllerName );
+					String controllerName = value.substring(value.indexOf("{") + 1, value
+							.indexOf("."));
+					String methodName = value.substring(value.indexOf(".") + 1, value.indexOf("}"));
+					Object o = AonUtil.getRegisteredBean(controllerName);
 					try {
 						Method m = o.getClass().getMethod(methodName, new Class[0]);
 						Object obj = m.invoke(o, new Object[0]);
 						map.put(key, obj);
 					} catch (Throwable th) {
-						LOGGER.log(Level.SEVERE, "Error resolving expression " + value + ". " + th.getMessage(), th);
+						LOGGER.log(Level.SEVERE, "Error resolving expression " + value + ". "
+								+ th.getMessage(), th);
 					}
 				}
 			}
 			report.setCustomParams(map);
 		}
 	}
-	
-	private String strip( String expression ) {
-		int start = StringUtils.indexOf(expression, "#{" );
-		int end = StringUtils.lastIndexOf(expression, '}' );
-		if ( (start != -1) && (end != -1) ) {
-			return StringUtils.substring( expression, start+2, end);
+
+	private String strip(String expression) {
+		int start = StringUtils.indexOf(expression, "#{");
+		int end = StringUtils.lastIndexOf(expression, '}');
+		if ((start != -1) && (end != -1)) {
+			return StringUtils.substring(expression, start + 2, end);
 		}
 		return expression;
 	}
-	
+
 }

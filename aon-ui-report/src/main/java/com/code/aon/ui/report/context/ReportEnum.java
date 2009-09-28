@@ -39,7 +39,7 @@ public class ReportEnum {
 		return list.get(0);
 	}
 	
-	public List getEnumElements(){
+	public List<ReportEnumElement> getEnumElements(){
 		return list;
 	}
 }
