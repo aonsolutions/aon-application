@@ -12,7 +12,7 @@
 	<artifactId>aon.webmail</artifactId>
 	<packaging>jar</packaging>
 	<name>AON WEBMAIL</name>
-	<version>3.7.0</version>
+	<version>3.7.1</version>
 	<description>AON WEBMAIL</description>
 	<repositories>
 		<repository>
