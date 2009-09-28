@@ -101,7 +101,21 @@
 								value="#{webmailBundle.webmail_refresh}"
 								styleClass="aon-finding-toolbar-item aon-icon-refresh">
 							</aon:commandButton> 
-				
+
+							<!--  Mark buttons button -->
+							<aon:commandButton id="markRead" action="folder" 
+								actionListener="#{webmailFolder.markAsReadCheckedMessages}"
+								title="#{webmailBundle.webmail_mark_read}" value="&#160;"
+								style="padding-left: 10px;"
+								styleClass="aon-finding-toolbar-item aon-icon-mailInbox-read aon-finding-toolbar-item-no-border">
+							</aon:commandButton> 				
+
+							<aon:commandButton id="markUnread" action="folder" 
+								actionListener="#{webmailFolder.markAsUnreadCheckedMessages}"
+								title="#{webmailBundle.webmail_mark_unread}"
+								value="#{webmailBundle.webmail_mark}"
+								styleClass="aon-finding-toolbar-item aon-icon-mailInbox">
+							</aon:commandButton> 				
 						</aon:div>
 					</aon:panelGrid>
 					<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml" />
