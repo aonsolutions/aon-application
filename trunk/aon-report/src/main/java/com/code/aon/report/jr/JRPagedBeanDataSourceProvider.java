@@ -51,7 +51,7 @@ public class JRPagedBeanDataSourceProvider extends
 	 * @param count
 	 *            Number of beans recovered per reading.
 	 */
-	public JRPagedBeanDataSourceProvider(Class clazz, IFinderBean bean,
+	public JRPagedBeanDataSourceProvider(Class<?> clazz, IFinderBean bean,
 			Criteria criteria, int count) {
 		super(clazz);
 		this.criteria = criteria;

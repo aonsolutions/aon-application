@@ -12,8 +12,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.time.DateUtils;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRDataSourceProvider;
 import net.sf.jasperreports.engine.JRException;
@@ -98,7 +96,7 @@ public class JRReport {
 	public JRDataSourceProvider getJRPagedDataSourceProvider(Criteria criteria, int count)
 			throws ReportException {
 		IFinderBean bean = getFinderBean();
-		Class clazz = bean.getPOJOClass();
+		Class<?> clazz = bean.getPOJOClass();
 		JRPagedBeanDataSourceProvider dsp = new JRPagedBeanDataSourceProvider(
 				clazz, bean, criteria, count);
 		return dsp;
@@ -117,7 +115,7 @@ public class JRReport {
 	public JRDataSourceProvider getJRDataSourceProvider(Criteria criteria)
 			throws ReportException {
 		IFinderBean bean = getFinderBean();
-		Class clazz = bean.getPOJOClass();
+		Class<?> clazz = bean.getPOJOClass();
 		JRBeanCollectionDataSourceProvider dsp = new JRBeanCollectionDataSourceProvider(
 				clazz, bean, criteria);
 		return dsp;
@@ -178,7 +176,7 @@ public class JRReport {
 	 *             Si se produce algún error. If an error ocurred.
 	 */
 	public String run(OutputFormat outputFormat, OutputStream out,
-			ResourceBundle bundle, Criteria criteria, Collection collection) throws ReportException {
+			ResourceBundle bundle, Criteria criteria, Collection<?> collection) throws ReportException {
 		try {
 
 			if (JRExporterFactoryManager.accept(outputFormat)) {
@@ -231,7 +229,6 @@ public class JRReport {
 				JRExporter exporter = factory.getJRExporter();
 				exporter.setParameters(map);
 				exporter.exportReport();
-				Date endDate = new Date();
 				long  delay = (new Date()).getTime() - startDate.getTime(); 
 				LOGGER.info(" Report execution : " + ((double)(delay/1000)) + " seconds.");
 				if (hasCache) {
@@ -300,7 +297,7 @@ public class JRReport {
 	 * @param map
 	 *            The parameters map.
 	 */
-	private void cleanCache(Map map) {
+	private void cleanCache(Map<?,?> map) {
 		JRFileVirtualizer virt;
 		virt = (JRFileVirtualizer) map.get(JRParameter.REPORT_VIRTUALIZER);
 		virt.cleanup();

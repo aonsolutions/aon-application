@@ -46,8 +46,8 @@ public class JRBeanCollectionDataSource extends JRAbstractBeanDataSource impleme
 	/**
 	 *
 	 */
-	private Collection data = null;
-	private Iterator iterator = null;
+	private Collection<?> data = null;
+	private Iterator<?> iterator = null;
 	private Object currentBean = null;
 	
 
@@ -55,7 +55,7 @@ public class JRBeanCollectionDataSource extends JRAbstractBeanDataSource impleme
 	 * @param beanCollection
 	 *            The collection of the data.
 	 */
-	public JRBeanCollectionDataSource(Collection beanCollection)
+	public JRBeanCollectionDataSource(Collection<?> beanCollection)
 	{
 		this(beanCollection, true);
 	}
@@ -67,7 +67,7 @@ public class JRBeanCollectionDataSource extends JRAbstractBeanDataSource impleme
 	 * @param isUseFieldDescription
 	 *            The collection of the data.
 	 */
-	public JRBeanCollectionDataSource(Collection beanCollection, boolean isUseFieldDescription)
+	public JRBeanCollectionDataSource(Collection<?> beanCollection, boolean isUseFieldDescription)
 	{
 		super(isUseFieldDescription);
 		

@@ -154,10 +154,16 @@ public class ReportConfig {
 		this.criteriaProvider = criteriaProvider;
 	}
 
+	/**
+	 * @return forceRefresh
+	 */
 	public boolean isForceRefresh() {
 		return forceRefresh;
 	}
 
+	/**
+	 * @param forceRefresh
+	 */
 	public void setForceRefresh(boolean forceRefresh) {
 		this.forceRefresh = forceRefresh;
 	}
