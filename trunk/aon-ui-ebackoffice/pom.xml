@@ -21,6 +21,26 @@
 			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>	
+		
+		<dependency>
+			<groupId>com.code.aon</groupId> 
+			<artifactId>aon.security</artifactId>
+			<version>1.8.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>3.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>4.1.0</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
