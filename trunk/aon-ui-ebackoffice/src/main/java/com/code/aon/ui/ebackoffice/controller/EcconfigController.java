@@ -46,6 +46,7 @@ public class EcconfigController extends BasicController {
 	private AonFile leftBanner;
 	private AonFile rightBanner;
 	private AonFile welcomeBanner;
+	private String domain;
 
 
 	public List<SelectItem> getSkins() {
@@ -313,6 +314,18 @@ public class EcconfigController extends BasicController {
 		
 		System.out.println("dcfdf");
 		
+	}
+	
+	public String getDomain(){
+//		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+//		String domain = user.getDomain();
+//		String domain = UserUtils.getInstance().getPrincipal().getDomain();
+//		return "192.168.2.40";
+		return "localhost:8080";
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 	
 
