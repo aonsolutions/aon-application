@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -29,8 +30,10 @@ import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.ShowPrice;
 import com.code.aon.ebackoffice.enumeration.SkinType;
 import com.code.aon.ebackoffice.enumeration.TaxType;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 
 public class EcconfigController extends BasicController {
@@ -46,8 +49,6 @@ public class EcconfigController extends BasicController {
 	private AonFile leftBanner;
 	private AonFile rightBanner;
 	private AonFile welcomeBanner;
-	private String domain;
-
 
 	public List<SelectItem> getSkins() {
 		if (skins == null) {
@@ -317,16 +318,20 @@ public class EcconfigController extends BasicController {
 	}
 	
 	public String getDomain(){
-//		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-//		String domain = user.getDomain();
-//		String domain = UserUtils.getInstance().getPrincipal().getDomain();
-//		return "192.168.2.40";
-		return "localhost:8080";
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
+		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+		return user.getDomain();
 	}
 	
-
+	public String getUrl(){
+		StringBuffer url = new StringBuffer( "http://" );
+		url.append( getDomain() );
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		if ( request.getRemotePort() != 80 ) {
+			url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+		}
+		url.append( "/aon-ecommerce" );
+		url.append( "?aonEbackoffice=true" );
+		return url.toString();	
+	}
 }

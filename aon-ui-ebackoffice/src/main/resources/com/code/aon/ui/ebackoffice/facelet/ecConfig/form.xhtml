@@ -25,9 +25,16 @@
 					<!-- <h:commandLink value="http://192.168.2.40/aon-ecommerce/"
 						target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-advanced-search" />-->
+<!--  
 					<aon:outputLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-advanced-search"
 						value="http://#{ecconfig.domain}/aon-ecommerce?aonEbackoffice=true">
+						<f:verbatim>SHOW ECOMMERCE</f:verbatim>
+					</aon:outputLink>
+-->
+					<aon:outputLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-advanced-search"
+						value="#{ecconfig.url}">
 						<f:verbatim>SHOW ECOMMERCE</f:verbatim>
 					</aon:outputLink>
 
