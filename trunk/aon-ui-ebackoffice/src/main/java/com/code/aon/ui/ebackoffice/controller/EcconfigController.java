@@ -7,11 +7,10 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.IOUtils;
@@ -25,32 +24,28 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.ebackoffice.Ecconfig;
+import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.LoginType;
-import com.code.aon.ebackoffice.enumeration.OriginalPrice;
-import com.code.aon.ebackoffice.enumeration.PriceType;
+import com.code.aon.ebackoffice.enumeration.ShowPrice;
 import com.code.aon.ebackoffice.enumeration.SkinType;
 import com.code.aon.ebackoffice.enumeration.TaxType;
-import com.code.aon.ebackoffice.enumeration.WishList;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.BasicController;
 
 public class EcconfigController extends BasicController {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(EcconfigController.class.getName());
 	private List<SelectItem> skins;
 	private List<SelectItem> loginTypes;
 	private List<SelectItem> priceTypes;
 	private List<SelectItem> taxPriceTypes;
-	private List<SelectItem> originalPriceTypes;
-	private List<SelectItem> wishListTypes;
+	private List<SelectItem> discountTypes;
 	private List<SelectItem> paymethods;
 	private List<SelectItem> tariffs;
-	/** The uploaded file. */
-	private AonFile aonFile;
+	private AonFile headerImage;
+	private AonFile leftBanner;
+	private AonFile rightBanner;
+	private AonFile welcomeBanner;
 
 
 	public List<SelectItem> getSkins() {
@@ -90,7 +85,7 @@ public class EcconfigController extends BasicController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
 					.getLocale();
 			priceTypes = new LinkedList<SelectItem>();
-			for (PriceType e : PriceType.values()) {
+			for (ShowPrice e : ShowPrice.values()) {
 				String name = e.getName(locale);
 				SelectItem item = new SelectItem(e, name);
 				priceTypes.add(item);
@@ -117,38 +112,22 @@ public class EcconfigController extends BasicController {
 		return taxPriceTypes;
 	}
 
-	public List<SelectItem> getOriginalPriceTypes() {
-		if (originalPriceTypes == null) {
+	public List<SelectItem> getDiscountTypes() {
+		if (discountTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
 					.getLocale();
-			originalPriceTypes = new LinkedList<SelectItem>();
-			for (OriginalPrice e : OriginalPrice.values()) {
+			discountTypes = new LinkedList<SelectItem>();
+			for (DiscountFormat e : DiscountFormat.values()) {
 				String name = e.getName(locale);
 				SelectItem item = new SelectItem(e, name);
-				originalPriceTypes.add(item);
+				discountTypes.add(item);
 
 			}
 		}
 
-		return originalPriceTypes;
+		return discountTypes;
 	}
-
-	public List<SelectItem> getWishListTypes() {
-		if (wishListTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale();
-			wishListTypes = new LinkedList<SelectItem>();
-			for (WishList e : WishList.values()) {
-				String name = e.getName(locale);
-				SelectItem item = new SelectItem(e, name);
-				wishListTypes.add(item);
-
-			}
-		}
-
-		return wishListTypes;
-	}
-
+	
 	public void refreshPaymethods() throws ManagerBeanException {
 		paymethods = new LinkedList<SelectItem>();
 		IManagerBean paymethodBean = BeanManager
@@ -193,7 +172,6 @@ public class EcconfigController extends BasicController {
 		this.paymethods = paymethods;
 	}
 
-
 	public List<SelectItem> getTariffs() throws ManagerBeanException {
 		tariffs=null;
 		if (tariffs == null) {
@@ -206,12 +184,36 @@ public class EcconfigController extends BasicController {
 		this.tariffs = tariffs;
 	}
 
-	public AonFile getAonFile() {
-		return aonFile;
+	public AonFile getHeaderImage() {
+		return headerImage;
 	}
 
-	public void setAonFile(AonFile aonFile1) {
-		this.aonFile = aonFile1;
+	public void setHeaderImage(AonFile aonFile1) {
+		this.headerImage = aonFile1;
+	}
+
+	public AonFile getLeftBanner() {
+		return leftBanner;
+	}
+
+	public void setLeftBanner(AonFile leftBanner) {
+		this.leftBanner = leftBanner;
+	}
+
+	public AonFile getRightBanner() {
+		return rightBanner;
+	}
+
+	public void setRightBanner(AonFile rightBanner) {
+		this.rightBanner = rightBanner;
+	}
+
+	public AonFile getWelcomeBanner() {
+		return welcomeBanner;
+	}
+
+	public void setWelcomeBanner(AonFile welcomeBanner) {
+		this.welcomeBanner = welcomeBanner;
 	}
 
 	public void headerUploaded(UploadEvent event) {
@@ -225,16 +227,93 @@ public class EcconfigController extends BasicController {
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			setAonFile(f);
+			setHeaderImage(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 
 	public void paintHeader(OutputStream out, Object data) throws IOException {
-		if (getAonFile().getData() != null) {
-			out.write(getAonFile().getData());
+		if (getHeaderImage().getData() != null) {
+			out.write(getHeaderImage().getData());
 		}
 	}
+	
+	
+	public void leftBannerUploaded(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+			}
+			f.setFileName(item.getFileName());
+			setLeftBanner(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
+	public void paintLeftBanner(OutputStream out, Object data) throws IOException {
+		if (getLeftBanner().getData() != null) {
+			out.write(getLeftBanner().getData());
+		}
+	}
+	
+	public void rightBannerUploaded(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+			}
+			f.setFileName(item.getFileName());
+			setRightBanner(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
+	public void paintRightBanner(OutputStream out, Object data) throws IOException {
+		if (getRightBanner().getData() != null) {
+			out.write(getRightBanner().getData());
+		}
+	}
+	
+	public void welcomeBannerUploaded(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+			}
+			f.setFileName(item.getFileName());
+			setWelcomeBanner(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
+	public void paintWelcomeBanner(OutputStream out, Object data) throws IOException {
+		if (getWelcomeBanner().getData() != null) {
+			out.write(getWelcomeBanner().getData());
+		}
+	}
+	
+	public void checkValue(ValueChangeEvent event){
+		
+		System.out.println("dcfdf");
+		
+	}
+	
 
 }
