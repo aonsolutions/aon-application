@@ -10,10 +10,13 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.component.UIComponent;
+import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,7 +47,10 @@ public class EccatalogueController extends BasicController {
 	private AonFile icon;
 	private List<SelectItem> catalogues;
 	private List<SelectItem> catalogueTypes;
+	private List<SelectItem> catalogueIcons;
+	
 
+	
 	public List<SelectItem> getCatalogueTypes() {
 		if (catalogueTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
@@ -57,6 +63,22 @@ public class EccatalogueController extends BasicController {
 			}
 		}
 		return catalogueTypes;
+	}
+	
+	public List<SelectItem> getCatalogueIcons() {
+		if (catalogueIcons == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
+			catalogueIcons = new LinkedList<SelectItem>();
+			SelectItem item = new  SelectItem( );
+			catalogueIcons.add(item);
+			/*for (CatalogueType e : CatalogueType.values()) {
+				String name = e.getName(locale);
+				SelectItem item = new SelectItem(e, name);
+				catalogueTypes.add(item);
+			}*/
+		}
+		return catalogueIcons;
 	}
 
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
@@ -120,18 +142,20 @@ public class EccatalogueController extends BasicController {
 		}
 	}
 
-	public void uploadIcon(UploadEvent event) {
+	public void uploadIcon(ActionEvent event) {
 		try {
-			UploadItem item = event.getUploadItem();
+			
+			UIComponent c = event.getComponent().getParent();
+			HtmlGraphicImage image = (HtmlGraphicImage) c;
+			File filee= (File)image.getValue();
 			AonFile f = new AonFile();
-			File file = item.getFile();
+			File file = filee;
 			if (file != null) {
 				FileInputStream in = new FileInputStream(file);
 				byte[] data = IOUtils.toByteArray(in);
 				f.setData(data);
 			}
-			f.setFileName(item.getFileName());
-			setIcon(f);
+		   	setIcon(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
@@ -173,5 +197,7 @@ public class EccatalogueController extends BasicController {
 		}
 
 	}
+	
+	
 
 }
