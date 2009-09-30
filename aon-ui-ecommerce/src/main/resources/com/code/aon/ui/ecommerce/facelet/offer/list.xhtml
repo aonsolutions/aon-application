@@ -39,7 +39,9 @@
 					<f:facet name="header">
 						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_price}" />
 					</f:facet>
-					<aon:outputText value="#{to.item.price}" />
+					<aon:outputText value="#{to.item.price}" >
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
 				</aon:column>
 				<aon:column>
 					<f:facet name="header">
@@ -47,7 +49,9 @@
 					</f:facet>
 					<aon:outputText value="#{to.total}" />
 					<f:facet name="footer">
-						<aon:outputText value="#{shoppingCart.total} &#160; (#{ecommerceBundle.aon_ecommerce_vat_included})" />
+						<aon:outputText value="#{shoppingCart.total} &#160; (#{ecommerceBundle.aon_ecommerce_vat_included})" >
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
 					</f:facet>
 				</aon:column>
 			</aon:dataTable>

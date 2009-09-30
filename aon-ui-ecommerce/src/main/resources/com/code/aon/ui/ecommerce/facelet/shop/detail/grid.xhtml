@@ -135,8 +135,10 @@
 						<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
 							style="width:100px" createContent="#{shopItem.paintImage}">
 						</a4j:mediaOutput>
+<!--  
 						<rich:componentControl for="image-attachment-process"
 							attachTo="image-attachment" operation="show" event="onclick" />
+-->						
 					</aon:outputLink>
 				</rich:dataGrid>
 			</aon:div>
@@ -173,6 +175,7 @@
 		</c:if>
 	</aon:div>
 
+<!--  
 	<rich:modalPanel id="image-attachment-process" height="490" width="570"
 		zindex="2000" style="top: 0px; left:0px;">
 		<rich:effect event="onshow" type="Highlight" params="duration:0.8" />
@@ -199,4 +202,5 @@
 			</aon:div>
 		</aon:div>
 	</rich:modalPanel>
+-->
 </ui:composition>

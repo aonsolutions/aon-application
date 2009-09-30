@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+<!--  
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{cartOffer.list}" />
+		<ui:param name="rows" value="0" />
+		<ui:param name="showNote" value="false" />
+		<ui:param name="skipResetButton" value="true" />
+		<ui:param name="skipLineEdition" value="true" />
+		<ui:param name="newSaveButtonReRender" value="Offer_total" />
+		<ui:param name="saveButtonReRender" value="Offer_total" />
+		<ui:param name="removeButtonReRender" value="Offer_total" />
+		<ui:param name="focusOnAdd" value="OfferDetail_item_product_code-New" />
+		<ui:param name="focusOnSelect"
+			value="OfferDetail_item_product_code-Edit" />
+		<ui:param name="columnClasses"
+			value="aon-editDataTable-textColumn,
+							aon-editDataTable-numberColumn aon-width-80,
+							aon-editDataTable-numberColumn aon-width-80,
+							aon-editDataTable-numberColumn aon-width-80,
+							aon-editDataTable-numberColumn aon-width-80" />
+
+		<ui:define name="columns">
+-->
+
+<aon:dataTable id="cartList" value="#{cartOffer.model}" rows="20"
+				var="to" style="width:100%"
+				columnClasses="
+		aon-editDataTable-numberColumn,aon-editDataTable-textColumn,
+		aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,
+		aon-editDataTable-numberColumn,
+		aon-editDataTable-buttonsColumn aon-vertical-align-top">	
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_item_product_code"
+						value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" rendered="#{formList}" />
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<aon:lookupInputText id="OfferDetail_item_product_code"
+						value="#{cartOfferDetail.to.item.product.code}"
+						lookup="#{itemLookup}"
+						reRender="OfferDetail_item_product_name-Edit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
+						lookupChangeListener="#{cartOfferDetail.onItemChanged}"
+						onblur="toUpperCase(this);" required="true" size="10">
+						<aon:joinProperty alias="Item_product_code"
+							value="#{cartOfferDetail.to.item.product.code}" />
+					</aon:lookupInputText>
+					<aon:lookupButton
+						windowTitle="#{productBundle.product_item_selection}"
+						actionType="search" property="#{cartOfferDetail.to.item}"
+						selectReRender="OfferDetail_item_product_code,OfferDetail_item_product_name-Edit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
+						lookup="#{itemLookup}" minHeight="460" minWidth="650"
+						lookupChangeListener="#{cartOfferDetail.onItemChanged}">
+					</aon:lookupButton>
+					<aon:inputText id="OfferDetail_item_product_name-Edit"
+						value="#{(cartOfferDetail.to.item.product.name!=null)?(cartOfferDetail.to.item.product.name):('')}"
+						disabled="true" size="60" />
+				</aon:div>
+				<f:facet name="footer">
+					<!--  
+								<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+									<aon:lookupInputText id="OfferDetail_item_product_code-New" value="#{cartOfferDetail.to.item.product.code}"
+										lookup="#{itemLookup}" reRender="OfferDetail_item_product_name-New,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"  
+										lookupChangeListener="#{cartOfferDetail.onItemChanged}" onblur="toUpperCase(this);"
+										required="true" size="10">
+										<aon:joinProperty alias="Item_product_code"	value="#{cartOfferDetail.to.item.product.code}" />
+									</aon:lookupInputText>
+									<aon:lookupButton
+										windowTitle="#{productBundle.product_item_selection}" actionType="search"
+										property="#{cartOfferDetail.to.item}" selectReRender="OfferDetail_item_product_code-New,OfferDetail_item_product_name-New,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
+										lookup="#{itemLookup}" minHeight="460" minWidth="650"
+										lookupChangeListener="#{cartOfferDetail.onItemChanged}">
+									</aon:lookupButton>
+									<aon:inputText id="OfferDetail_item_product_name-New" 
+										value="#{(cartOfferDetail.to.item.product.name!=null)?(cartOfferDetail.to.item.product.name):('')}"
+										disabled="true" size="60" />
+								</aon:div>
+-->
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_quantity"
+						value="#{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="OfferDetail_quantity"
+					value="#{controller.to.quantity}"
+					valueChangeListener="#{controller.onQuantityChanged}"
+					reRender="OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
+					rendered="#{formEdit}" required="true" size="7" />
+				<f:facet name="footer">
+					<!--  
+								<aon:inputText id="OfferDetail_quantity-New" value="#{controller.to.quantity}"
+									valueChangeListener="#{controller.onQuantityChanged}" reRender="OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" 
+									rendered="#{formNew}" required="true" size="7" />
+-->
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_price"
+						value="#{bundle.aon_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.price}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="OfferDetail_price" value="#{controller.to.price}"
+					reRender="OfferDetail_amount" rendered="#{formEdit}"
+					required="true" size="7" />
+				<f:facet name="footer">
+					<!--  
+								<aon:inputText id="OfferDetail_price-New" value="#{controller.to.price}"
+									reRender="OfferDetail_amount-New" 
+									rendered="#{formNew}" required="true" size="7" />
+-->
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_discount"
+						value="#{bundle.aon_discount}" />
+				</f:facet>
+				<aon:outputText value="#{to.discountExpression.discountExpr}"
+					rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="OfferDetail_discount"
+					value="#{controller.to.discountExpression.discountExpr}"
+					reRender="OfferDetail_amount" rendered="#{formEdit}"
+					required="true" size="7" />
+				<f:facet name="footer">
+					<!--  
+								<aon:inputText id="OfferDetail_discount-New" value="#{controller.to.discountExpression.discountExpr}"
+									reRender="OfferDetail_amount-New" 
+									rendered="#{formNew}" required="true" size="7" />
+-->
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="OfferDetail_amount"
+						value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{controller.modelAmount}"
+					rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText id="OfferDetail_amount" value="#{controller.amount}"
+					rendered="#{formEdit}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:div style="text-align:right;">
+						<aon:outputText id="OfferDetail_amount-New"
+							value="#{controller.amount}" rendered="#{formNew}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText id="Offer_taxableBase"
+							value="#{cartOffer.taxableBase}" rendered="#{!formNew}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+</aon:dataTable>
+
+<!--  
+		</ui:define>
+	</ui:decorate>
+-->
+
+</ui:composition>

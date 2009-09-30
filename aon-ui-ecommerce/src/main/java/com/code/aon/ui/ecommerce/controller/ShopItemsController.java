@@ -16,6 +16,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -50,8 +51,10 @@ public class ShopItemsController {
 				ConfigController cc = (ConfigController) AonUtil
 						.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER);
 				Tariff tariff = cc.getActiveConfig().getTariff();
-				IManagerBean bean = BeanManager.getManagerBean(Item.class);
-				List<ITransferObject> itemList = bean.getList(getCriteria());
+				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+				String identifier = itemBean.getFieldName(IProductAlias.ITEM_INTERNET);
+				getCriteria().addEqualExpression(identifier, true);
+				List<ITransferObject> itemList = itemBean.getList(getCriteria());
 				setList(new LinkedList<ShopItem>());
 				for (ITransferObject to : itemList) {
 					Item item = (Item) to;
@@ -83,6 +86,9 @@ public class ShopItemsController {
 	}
 
 	public Criteria getCriteria() {
+		if(criteria==null){
+			criteria = new Criteria();
+		}
 		return criteria;
 	}
 
@@ -96,8 +102,7 @@ public class ShopItemsController {
 	}
 
 	public void onReset(ActionEvent event) {
-		Criteria criteria = null;
-		resetCriteria(criteria);
+		resetCriteria(new Criteria());
 	}
 
 	public void onSearch(ActionEvent event) {

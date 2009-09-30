@@ -17,6 +17,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ****** EMAIL SENDING ****** -->
+	<managed-bean>
+		<managed-bean-name>ecContact</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ecommerce.controller.ContactController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ****** CATEGORY SEARCH GADGET ****** -->
 	<managed-bean>
 		<managed-bean-name>categoryGadget</managed-bean-name>
@@ -98,7 +106,12 @@
 			<to-view-id>/com/code/aon/ui/ecommerce/facelet/shop/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>ec_contact_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/ecommerce/facelet/contact/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>registry_form</from-outcome>

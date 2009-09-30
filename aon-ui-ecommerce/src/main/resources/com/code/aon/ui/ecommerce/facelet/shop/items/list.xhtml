@@ -54,23 +54,25 @@
 				<h:panelGrid columns="3" style="width: 100%;"
 					columnClasses="aon-width-auto,aon-width-20,aon-width-20">
 					<aon:div style="text-align: center;">
-						<c:if test="#{ecConfig.taxIncluded}">
-							<aon:outputText value="#{to.total}" style="font-size: 1.4em;">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
+						<c:if test="#{ecConfig.showOriginalPrice}">
+							<c:if test="#{ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.total}" style="font-size: 1.4em;">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<c:if test="#{!ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.price}" style="font-size: 1.4em;">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<aon:outputText value="&#8364;" style="font-size: 1.4em;" />
 						</c:if>
-						<c:if test="#{!ecConfig.taxIncluded}">
-							<aon:outputText value="#{to.price}" style="font-size: 1.4em;">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</c:if>
-						<aon:outputText value="&#8364;" style="font-size: 1.4em;" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
 					<aon:outputText rendered="#{to.samePrice}"  value="&#160;" />
 					<aon:div rendered="#{!to.samePrice}" style="text-align: right;" styleClass="aon-nowrap">
-						<c:if test="#{ecConfig.showOriginalPrice}">
+						<c:if test="#{ecConfig.showDiscount}">
 							<c:if test="#{ecConfig.showPriceCrossOut}">
 								<c:if test="#{ecConfig.taxIncluded}">
 									<aon:outputText value="#{to.originalTotalPrice}"
@@ -87,7 +89,7 @@
 								<aon:outputText value="&#8364;" />
 							</c:if>
 
-							<c:if test="#{ecConfig.showDiscount}">
+							<c:if test="#{ecConfig.showDiscountValue}">
 								<c:if test="#{ecConfig.taxIncluded}">
 									<aon:outputText value="#{to.totalDiscount}">
 										<f:convertNumber pattern="#,##0.00" />
@@ -119,16 +121,21 @@
 					</aon:div>
 
 
-					<c:if test="#{!ecConfig.taxIncluded}">
+					<c:if test="#{!ecConfig.taxIncluded and ecConfig.showOriginalPrice}">
 						<aon:div style="text-align: center;">
 							<aon:outputText
 								value="#{ecommerceBundle.aon_ecommerce_vat_not_included}" />
 						</aon:div>
 					</c:if>
-					<c:if test="#{ecConfig.taxIncluded}">
+					<c:if test="#{ecConfig.taxIncluded and ecConfig.showOriginalPrice}">
 						<aon:div style="text-align: center;">
 							<aon:outputText
 								value="#{ecommerceBundle.aon_ecommerce_vat_included}" />
+						</aon:div>
+					</c:if>
+					<c:if test="#{!ecConfig.showOriginalPrice}">
+						<aon:div style="text-align: center;">
+							<aon:outputText value="&#160;" />
 						</aon:div>
 					</c:if>
 					<aon:commandButton value="&#160;" action="shop_form"
