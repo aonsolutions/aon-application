@@ -33,7 +33,9 @@
 			
 				<aon:panelGrid columns="2" dir="true" rendered="#{shop.logged}">
 					<aon:outputLabel for="User" value="#{ecommerceBundle.aon_ecommerce_user_registered}" />
+					<aon:outputLabel value="&#160;" />
 					<aon:outputText id="User" value="#{userLogin.login}" />
+					<aon:outputLabel value="&#160;" />
 				</aon:panelGrid>
 				<aon:commandButton style="border-right:0;" 
 					value="#{securityBundle.aon_login_user_logout}"
@@ -72,7 +74,7 @@
 				<aon:outputText value="#{ecommerceBundle.aon_ecommerce_cart_summary}" />
 			</aon:div>
 			
-			<aon:panelGrid columns="2" dir="true">
+			<aon:panelGrid columns="2" dir="true" styleClass="none">
 				<aon:outputLabel for="cart_quantity" value="#{ecommerceBundle.aon_ecommerce_list_size}" />
 				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
 	
@@ -99,22 +101,37 @@
 				<aon:outputText value="#{ecommerceBundle.aon_ecommerce_contact}" />
 			</aon:div>
 			
-			<aon:panelGrid columns="2" dir="true">
+			<aon:panelGrid columns="2" dir="true" styleClass="none">
 				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_telephone}" />
 				<aon:outputText value="#{ecConfig.activeConfig.telephone}" />
 				
 				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_contact}" />
 				<aon:commandButton rendered="true"
 					value="#{ecommerceBundle.aon_ecommerce_email}" 
-					action="shop_from" immediate="true"
+					action="ec_contact_form" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-letter">
-					<aon:actionListener method="#{shop.onViewCart}" />
+<!--  
+					<aon:actionListener method="#{ecEmail.onEmail}" />
+-->
 				</aon:commandButton>
+
+<!--  
+				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_contact}" />
+				<aon:commandButton id="activityDialog-email"
+					value="#{assetBundle.asset_activity_send_request}"
+					rendered="#{activityDialog.new and activityDialog.request}"
+					actionListener="#{activityDialog.onEmail}"
+					action="activityDialog_form" 
+					styleClass="aon-finding-toolbar-item aon-icon-webmail2"
+					accesskey="#{bundle.aon_key_new}" />
+-->
 			</aon:panelGrid>
 		</aon:div>
-		
+<!--  
+		BANNER
+-->		
 		<aon:div id="right-banner-image" styleClass="right-banner-image">
-			<a4j:mediaOutput id="image-right" element="img"
+			<a4j:mediaOutput id="image-right" element="img" style="margin:0 auto;"
 				cacheable="false" value="#{ecConfig.activeConfig.id}"
 				createContent="#{ecConfig.paintRightBanner}" />
 		</aon:div>

@@ -14,6 +14,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ebackoffice.Eccatalogue;
+import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
 import com.code.aon.product.dao.IProductAlias;
@@ -69,7 +70,20 @@ public class CatalogueGadget {
 	}
 
 	private Criteria buildItemCriteria() {
+		Criteria criteria;
 		try {
+			criteria = new Criteria();
+			criteria.addExpression(buildCatalogueItemCriteria().getExpression());
+			criteria.addOrExpression(buildCatalogueCategoryCriteria().getExpression());
+		} catch (ManagerBeanException e) {
+			String message = "Error al realizar la búsqueda";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message, e);
+		}
+		return criteria;
+	}
+	
+	private Criteria buildCatalogueItemCriteria() throws ManagerBeanException {
 			Eccatalogue ecCat = (Eccatalogue) getModel().getRowData();
 			String identifier = BeanManager.getManagerBean(Item.class)
 					.getFieldName(IECommerceConstants.ITEM_ALIAS);
@@ -98,10 +112,35 @@ public class CatalogueGadget {
 				criteria.addEqualExpression(identifier, null);
 			}
 			return criteria;
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		return null;
+	}
+
+	private Criteria buildCatalogueCategoryCriteria() throws ManagerBeanException{
+			Eccatalogue ecCat = (Eccatalogue) getModel().getRowData();
+			String identifier = BeanManager.getManagerBean(Item.class)
+					.getFieldName(IProductAlias.ITEM_PRODUCT_CATEGORY_ID);
+			Criteria criteria = null;
+			IManagerBean bean = BeanManager.getManagerBean(CatalogueCategory.class);
+			Criteria crit = new Criteria();
+			crit.addEqualExpression(bean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID) , ecCat.getCatalogue().getId());
+			List<ITransferObject> cata = bean.getList(crit); 
+			for (ITransferObject to : cata) {
+				CatalogueCategory c = (CatalogueCategory) to;
+				if (criteria == null) {
+					criteria = new Criteria();
+					criteria.addEqualExpression(identifier, c.getCategory().getId());
+				} else {
+					try {
+						criteria.addOrExpression(identifier, c.getCategory().getId().toString());
+					} catch (ExpressionException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			if (criteria == null) {
+				criteria = new Criteria();
+				criteria.addEqualExpression(identifier, null);
+			}
+			return criteria;
 	}
 	
 	public void paint(OutputStream out, Object data) throws IOException {

@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
 
@@ -20,6 +21,7 @@ import com.code.aon.ebackoffice.enumeration.ShowPrice;
 import com.code.aon.ebackoffice.enumeration.TaxType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
+import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -30,11 +32,13 @@ public class ConfigController {
 	private List<ITransferObject> configList;
 	private Ecconfig activeConfig;
 	private Company company;
+	private boolean aonEbackoffice;
 	
 	public Ecconfig getActiveConfig() {
 		if (activeConfig == null) {
 			searchActiveConfig();
 		}
+		searchActiveConfig();
 		return activeConfig;
 	}
 
@@ -47,6 +51,15 @@ public class ConfigController {
 			searchCurrentCompany();
 		}
 		return company;
+	}
+
+	public boolean getAonEbackoffice(){
+		aonEbackoffice=Boolean.parseBoolean(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(IECommerceConstants.AON_EBACKOFFICE));
+		return aonEbackoffice;
+	}
+	
+	public void setAonEbackoffice(boolean aonEbackoffice) {
+		this.aonEbackoffice = aonEbackoffice;
 	}
 
 	public void setCompany(Company company) {
@@ -115,10 +128,13 @@ public class ConfigController {
 	public boolean isShowOriginalPrice() {
 		return (getActiveConfig().getPrice() == ShowPrice.DEFAULT || getActiveConfig().getPrice()  == ShowPrice.YES); 
 	}
+	public boolean isShowDiscount() {
+		return (getActiveConfig().getDiscount() != DiscountFormat.NO); 
+	}
 	public boolean isShowPriceCrossOut() {
 		return (getActiveConfig().getDiscount() == DiscountFormat.CROSS_OUT); 
 	}
-	public boolean isShowDiscount() {
+	public boolean isShowDiscountValue() {
 		return (getActiveConfig().getDiscount() == DiscountFormat.DISCOUNT); 
 	}
 	public boolean isShowDiscountPercent() {

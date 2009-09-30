@@ -1,9 +1,12 @@
 package com.code.aon.ui.ecommerce.controller;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+
+import org.apache.commons.lang.SystemUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,7 +21,9 @@ import com.code.aon.ui.util.AonUtil;
 
 
 
-public class LoginController {
+public class LoginController extends EmailParentController{
+	
+	private static final String ECOMMERCE_BUNDLE = "ecommerceBundle";
 	
 	private String login;
 	private String password;
@@ -77,6 +82,16 @@ public class LoginController {
 					.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER));
 			cartOfferController.initialize();
 			cartOfferController.getOffer().setTarget(ecTarget.getTarget());
+			try {
+				Ectarget ect = getEcTarget();
+				ect.setLastAccess(Calendar.getInstance().getTime());
+				// se actualiza la fecha del ultimo acceso
+				IManagerBean ectBean = BeanManager.getManagerBean(Ectarget.class);
+				ectBean.update(ect);
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -98,9 +113,6 @@ public class LoginController {
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list.isEmpty()) {
 				setEcTarget(null);
-//				String msg = "No existe ningun usuario asociado a esa cuenta de correo.";
-//				AonUtil.addErrorMessage(msg);
-//				throw new AbortProcessingException(msg);
 			} else {
 				setEcTarget((Ectarget) list.get(0));
 			}
@@ -137,12 +149,33 @@ public class LoginController {
 		/*
 		 * ENVIAR UN MAIL AL TARGET DEL EMAIL INDICADO
 		 */
-		// sendEmail();
-		String msg = "Se le enviara un email con sus datos de acceso a la direccion ";
+		sendEmail();
+		String msg = "Se le ha enviado un email con sus datos de acceso a la direccion ";
 		msg += getLogin();
-		msg += ". proximamente....";
-		msg += "Sus datos: "+getEcTarget().getLogin()+" "+getEcTarget().getPassword();
 		AonUtil.addInfoMessage(msg);
+	}
+	
+	public void sendEmail(){
+		String from=null;
+		try {
+			from = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getCompany().getEmail().getValue();
+		} catch (ManagerBeanException e1) {
+			String msg = "En los Datos de la Empresa no esta indicado el email";
+			AonUtil.addErrorMessage(msg);
+			new AbortProcessingException(msg,e1);
+		}
+		String to = getLogin();
+		
+		String subject = "AON-ECOMMERCE - datos de acceso.";
+		StringBuffer content = new StringBuffer();
+		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_user_login")).append(SystemUtils.LINE_SEPARATOR);
+		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_user_name")).append(": ");
+		content.append( getEcTarget().getLogin() ).append(SystemUtils.LINE_SEPARATOR);
+		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_user_passwd")).append(": ");
+		content.append( getEcTarget().getPassword() ).append(SystemUtils.LINE_SEPARATOR);
+		
+		super.email(subject, from, to, content.toString());
+		AonUtil.addInfoMessage("Mensaje enviado correctamente.");
 	}
 	
 }

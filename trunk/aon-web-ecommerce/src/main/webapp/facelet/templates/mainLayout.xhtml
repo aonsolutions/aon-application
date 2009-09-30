@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:c="http://java.sun.com/jstl/core"			
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
@@ -26,21 +27,31 @@
  -->
 </head>
 <body>
-	<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin)}">
-		<aon:div id="aon-content">			
-			<ui:insert name="mainHeader" />
-			<ui:insert name="mainContent" />
-			<ui:insert name="mainFooter" />
-		</aon:div>
-	</c:if>
-	<c:if test="#{ecConfig.alwaisLogin}">
-		<aon:div id="aon-content">			
-			<ui:insert name="mainHeader" />
-			<!--  
-			-->
-			<ui:insert name="/facelet/login/login.xhtml" />
-		</aon:div>
-	</c:if>
+	<c:choose>
+		<c:when test="#{ecConfig.activeConfig.ecommerceStatus or ecConfig.aonEbackoffice}">
+			<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin)}">
+				<aon:div id="aon-content">			
+					<ui:insert name="mainHeader" />
+					<ui:insert name="mainContent" />
+					<ui:insert name="mainFooter" />
+				</aon:div>
+			</c:if>
+			<c:if test="#{ecConfig.alwaisLogin}">
+				<aon:div id="aon-content">			
+					<ui:insert name="mainHeader" />
+					<ui:include src="/facelet/login/login.xhtml" />
+					<ui:insert name="mainFooter" />
+				</aon:div>
+			</c:if>
+		</c:when>
+		<c:otherwise>
+			<aon:div id="aon-content">			
+				<ui:insert name="mainHeader" />
+				<ui:include src="/facelet/homepage/in_construction.xhtml" />
+				<ui:insert name="mainFooter" />
+			</aon:div>
+		</c:otherwise>
+	</c:choose>
 </body>
 </f:view>
 </html>

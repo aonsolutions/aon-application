@@ -58,7 +58,12 @@
 			<scope>compile</scope>
 		</dependency>
  -->
- 		
+ 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.webmail</artifactId>
+			<version>3.7.0</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>

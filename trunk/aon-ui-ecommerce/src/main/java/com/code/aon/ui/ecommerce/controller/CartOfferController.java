@@ -8,6 +8,8 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.SystemUtils;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
@@ -34,7 +36,10 @@ import com.code.aon.ui.util.AonUtil;
 * @since 1.0
 *  
 */
-public class CartOfferController {
+public class CartOfferController extends EmailParentController {
+	
+	private static final String ECOMMERCE_BUNDLE = "ecommerceBundle";
+	private static final String BUNDLE = "bundle";
 
 	private Offer offer;
 	private List<OfferDetail> offerDetail;
@@ -97,14 +102,6 @@ public class CartOfferController {
 		}
 	}
 	
-	/**
-	 * Adds a new item to the offer detail list
-	 */
-	public void addItem(){
-		
-	}
-	
-	
 	public void onAccept(ActionEvent event) {
 		Target target = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().getEcTarget().getTarget();
 		getOffer().setTarget(target);
@@ -116,40 +113,16 @@ public class CartOfferController {
 		}
 		insertOffer();
 		insertOfferDetail();
-//		try {
-//		} catch (ManagerBeanException e) {
-//			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
-//		}
-		
-		// inicializa el offer, itemList y el backAction
-		//setOffer(null);
-		//((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).setList(null);
 		((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).setModel(null);
 		((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setContentView(ViewEnum.ITEM_LIST);
+		sendEmail();
 	}
 	
 	/**
 	 * creacion del presupuesto 
 	 */
 	public void initialize() {
-		
-//		OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
-//		offerController.setOffer(new Offer());
-		
 		setOffer(new Offer());
-		
-//		Offer offer = offerController.getOffer();
-		//Target target = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().getEcTarget().getTarget();
-		//offer.setTarget(target);
-		
-//		try {
-//			//offer.setWorkPlace((WorkPlace)((CompanyCollectionsController)AonUtil.getRegisteredBean("companyCollections")).getWorkPlaces().get(0).getValue());
-//			//offer.setWorkPlace((WorkPlace)(WorkPlace)ECommerceUtil.getWorkPlaces().get(0));
-//		} catch (ManagerBeanException e) {
-//			//offer.setWorkPlace(new WorkPlace());
-//			AonUtil.addInfoMessage("Fallo al recuperar el workplace.");
-//		}
-		
 		
 		String series = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getActiveConfig().getSeries();
 
@@ -179,10 +152,7 @@ public class CartOfferController {
 		IManagerBean scopeBean;
 		try {
 			scopeBean = BeanManager.getManagerBean(Scope.class);
-			//Criteria criteria = new Criteria();
-			//criteria.addOrder(scopeBean.getFieldName(IConfigAlias.SCOPE_DESCRIPTION));
 			scope = (Scope)scopeBean.getList(null).get(0);
-			//#{configCollections.currentUserScopes}
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -195,8 +165,42 @@ public class CartOfferController {
 		offer.setPaymentDays("");
 		offer.setBank(null);
 		offer.setBankAccount(null);
+	}
+	
+	public void sendEmail(){
+		String from=null;
+		String to = null;
+		try {
+			from = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getCompany().getEmail().getValue();
+		} catch (ManagerBeanException e1) {
+			String msg = "En los Datos de la Empresa no esta indicado el email";
+			AonUtil.addErrorMessage(msg);
+			new AbortProcessingException(msg,e1);
+		}
+		String subject = "AON-ECOMMERCE - Resumen de compra.";
+		StringBuffer content = new StringBuffer();
+		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_cart_summary")).append(SystemUtils.LINE_SEPARATOR);
+
+		ShoppingCartController sc = (ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER);
+		List<CartItem> list = sc.getList();
+		Iterator<CartItem> it = list.iterator();
+		while(it.hasNext()){
+			CartItem ci = it.next();
+			
+			content.append(	AonUtil.getMessage(BUNDLE,"aon_name")).append(": ");
+			content.append( ci.getItem().getProduct().getName() ).append("\t");
+			content.append(	AonUtil.getMessage(BUNDLE,"aon_price")).append(": ");
+			content.append( ci.getItem().getPrice() ).append("\t");
+			content.append(	AonUtil.getMessage(BUNDLE,"aon_quantity")).append(": ");
+			content.append( ci.getItem().getQuantity() ).append("\t");
+			content.append(	AonUtil.getMessage(BUNDLE,"aon_total")).append(": ");
+			content.append( ci.getItem().getTotal() ).append(SystemUtils.LINE_SEPARATOR);
+		}
+		content.append(	AonUtil.getMessage(BUNDLE,"aon_total")).append(": ");
+		content.append( sc.getTotal() ).append(SystemUtils.LINE_SEPARATOR);
+		to = sc.getCartTarget().getEcTarget().getLogin();
 		
-		
+		super.email(subject, from, to, content.toString());
 	}
 	
 }
