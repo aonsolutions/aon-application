@@ -84,6 +84,11 @@ public class Item implements ITransferObject {
 	 * Last purchase price.
 	 */
     private double purchasePrice;
+    
+    /**
+	 * Visible in internet.
+	 */
+    private boolean internet;
 
     /**
      * Returns the unique key.
@@ -288,6 +293,23 @@ public class Item implements ITransferObject {
     public void setPurchasePrice(double purchasePrice) {
 		this.purchasePrice = purchasePrice;
 	}
+      
+    
+	/**
+	 *  Returns if the product is visible in internet or not
+	 * @return
+	 */
+	public boolean isInternet() {
+		return internet;
+	}
+
+	
+	/**
+	 * @param internet
+	 */
+	public void setInternet(boolean internet) {
+		this.internet = internet;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -300,7 +322,8 @@ public class Item implements ITransferObject {
 				.append(this.description, o.description)				
 				.append(this.detail, o.detail)				
 				.append(this.expensesFixed, o.expensesFixed)				
-				.append(this.expensesPercent, o.expensesPercent)								
+				.append(this.expensesPercent, o.expensesPercent)
+				.append(this.internet, o.internet)
 				.append(this.price, o.price)				
 				.append(this.product, o.product)				
 				.append(this.profitPercent, o.profitPercent)				
@@ -318,7 +341,8 @@ public class Item implements ITransferObject {
 			.append(detail)
 			.append(expensesFixed)			
 			.append(expensesPercent)						
-			.append(id)						
+			.append(id)
+			.append(internet)	
 			.append(price)						
 			.append(product)			
 			.append(profitPercent)						
