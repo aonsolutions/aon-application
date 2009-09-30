@@ -187,7 +187,8 @@ public class ItemAttachController extends LinesController {
 		try {
 			IManagerBean attachmentBean = BeanManager.getManagerBean(ItemAttachment.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(attachmentBean.getFieldName(IProductAlias.ITEM_ATTACHMENT_TYPE),AttachmentType.THUMBNAIL);
+			criteria.addExpression(getCriteria().getExpression());
+			criteria.addEqualExpression(getFieldName(IProductAlias.ITEM_ATTACHMENT_TYPE),AttachmentType.THUMBNAIL);
 			Iterator<ITransferObject> iter = attachmentBean.getList(criteria).iterator();
 			return iter.hasNext();
 		} catch (ManagerBeanException e) {
