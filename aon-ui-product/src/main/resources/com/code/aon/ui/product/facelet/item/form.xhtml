@@ -66,8 +66,11 @@
 						<f:selectItems value="#{productCollections.productTypes}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel value="&#160;"/>
-					<aon:outputText value="&#160;"/>
+					<aon:outputLabel for="Item_internet" value="#{productBundle.product_internet}" />
+					<aon:selectOneRadio id="Item_internet" value="#{item.to.internet}">
+						<f:selectItem  itemValue="#{false}" itemLabel="NO"/>
+						<f:selectItem itemValue="#{true}" itemLabel="SI" />
+					</aon:selectOneRadio>
 					
 					<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
 					<aon:inputText id="Item_purchase_price" value="#{item.to.purchasePrice}"
