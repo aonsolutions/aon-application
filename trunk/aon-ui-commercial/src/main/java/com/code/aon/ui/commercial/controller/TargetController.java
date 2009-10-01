@@ -48,7 +48,6 @@ public class TargetController extends BasicController {
 		return segments;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void refreshSegments() throws ManagerBeanException {
 		segments = new LinkedList<SelectItem>();
 		IManagerBean segmentBean = BeanManager.getManagerBean(CommercialSegment.class);
