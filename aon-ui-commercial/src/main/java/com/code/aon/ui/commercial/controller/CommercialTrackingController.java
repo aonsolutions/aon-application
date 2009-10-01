@@ -1,7 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
 import java.util.Date;
-import java.util.logging.Logger;
 
 import javax.faces.event.ValueChangeEvent;
 
@@ -14,8 +13,6 @@ import com.code.aon.ui.form.BasicController;
  * Controller used in the offer maintenance.
  */
 public class CommercialTrackingController extends BasicController {
-	
-	private static final Logger LOGGER = Logger.getLogger(CommercialTrackingController.class.getName());
 	
 	private Date lastDate;
 	
