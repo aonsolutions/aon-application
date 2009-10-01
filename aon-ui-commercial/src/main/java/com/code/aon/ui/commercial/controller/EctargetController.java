@@ -25,11 +25,8 @@ public class EctargetController extends LinesController {
 				
 			}
 		}
-		
+
 		return targetTypes;
 	}
-	
-	
 
-	
 }
