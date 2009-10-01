@@ -14,8 +14,8 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum OfferType implements IResourceable {
 
-	/** STANDARD. */
-	STANDARD,
+	/** NORMAL. */
+	NORMAL,
 
     /** INTERNET. */
     INTERNET,
