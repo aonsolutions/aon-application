@@ -3,9 +3,6 @@
     <wb-module deploy-name="aon-web-ecommerce">
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-ecommerce/aon-ui-ecommerce">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="aon-web-ecommerce"/>
         <property name="java-output-path"/>
     </wb-module>
