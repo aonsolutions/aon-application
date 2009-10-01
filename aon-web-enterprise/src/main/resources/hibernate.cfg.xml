@@ -7,6 +7,21 @@
 
 	<session-factory>
 
+		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
+		<property name="connection.service">jboss.admin:service=AonLdap</property>
+		<property name="connection.datasource">java:comp/env/jdbc/AonEnterprise</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="show_sql">true</property>
+
+		<!-- C3P0 Stuff -->
+		<property name="c3p0.acquire_increment">1</property>
+		<property name="c3p0.idle_test_period">1900</property>
+		<property name="c3p0.timeout">3600</property>
+		<property name="c3p0.max_size">30</property>
+		<property name="c3p0.min_size">1</property>
+		<property name="c3p0.max_statements">0</property>
+		<property name="c3p0.preferredTestQuery">select 1;</property>
+
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-ACCOUNT Mapping files -->
