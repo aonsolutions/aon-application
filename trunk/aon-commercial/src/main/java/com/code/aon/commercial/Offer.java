@@ -69,7 +69,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
     /** The id. */
     private Integer id;
 
-    /** The serie. */
+    /** The series. */
     private String series;
 
     /** The number. */
@@ -158,7 +158,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	/**
 	 * Gets the serie.
 	 * 
-	 * @return the serie
+	 * @return the series
 	 */
 	@Column(length=5)
 	public String getSeries() {
@@ -166,9 +166,9 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	/**
-	 * Sets the serie.
+	 * Sets the series.
 	 * 
-	 * @param series the serie
+	 * @param series the series
 	 */
 	public void setSeries(String series) {
 		this.series = series;
@@ -283,7 +283,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	/**
-	 * Gets the discount expression to be applied.
+	 * Gets the discount expression.
 	 * 
 	 * @return the discount expression
 	 */
@@ -294,7 +294,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	/**
-	 * Sets the discount expression to be applied.
+	 * Sets the discount expression.
 	 * 
 	 * @param discountExpression the discount expression
 	 */
@@ -572,7 +572,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 * @return the lines
 	 */
 	@OneToMany(mappedBy = "offer", cascade={CascadeType.REMOVE})
-	@OrderBy("id")
+	@OrderBy("line")
 	public Set<OfferDetail> getLines() {
 		return this.lines;
 	}
