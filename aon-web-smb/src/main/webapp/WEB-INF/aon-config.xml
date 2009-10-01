@@ -55,4 +55,11 @@
 			showAttachment="false"
 		/>
 	</product:config>
+
+	<commercial:config version="1.0" xmlns:commercial="http://www.esferalia.com/commercial">
+		<commercial:commercial
+			showEcommerceTab="false"
+			showInvoicing="true"
+		/>
+	</commercial:config>
 </config>
