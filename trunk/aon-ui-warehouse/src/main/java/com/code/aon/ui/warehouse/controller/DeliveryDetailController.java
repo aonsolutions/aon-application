@@ -2,11 +2,12 @@ package com.code.aon.ui.warehouse.controller;
 
 import java.util.Date;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
-import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -17,13 +18,31 @@ import com.code.aon.warehouse.DeliveryDetail;
 
 public class DeliveryDetailController extends LinesController {
 
+	private boolean longDescription;
+
 	private IPriceStrategy priceStrategy;
 	
+	public boolean isLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(boolean longDescription) {
+		this.longDescription = longDescription;
+	}
+
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public void onLongDescription(ActionEvent event) {
+		setLongDescription(true);
+	}
+
+	public void onShortDescription(ActionEvent event) {
+		setLongDescription(false);
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -64,39 +83,6 @@ public class DeliveryDetailController extends LinesController {
 
 	public double getModelAmount() throws ManagerBeanException {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	private boolean importingOffer;
-	
-	public boolean isImportingOffer() {
-		return importingOffer;
-	}
-
-	public void setImportingOffer(boolean importingOffer) {
-		this.importingOffer = importingOffer;
 	}
 
 }
