@@ -33,7 +33,7 @@ public class DeliveryDetailListener extends ManagerBeanListenerAdapter {
 		DeliveryDetail deliveryDetail = (DeliveryDetail)evt.getTo();
 		if(deliveryDetail.getSalesDetail()!=null){
 			SalesDetail salesDetail = deliveryDetail.getSalesDetail();
-			salesDetail.setSalesDetailStatus(SalesDetailStatus.CLOSED);
+			salesDetail.setStatus(SalesDetailStatus.SETTLED);
 			try {
 				IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 				salesDetailBean.update(salesDetail);
