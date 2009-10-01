@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.rich.components</artifactId>
-	<version>4.2.10</version>
+	<version>4.2.1</version>
 	<description>AON RICH COMPONENTS</description>
 	<name>AON RICH COMPONENTS</name>
 	<dependencies>
