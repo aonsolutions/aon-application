@@ -133,9 +133,7 @@
 
 		<!-- AON-SALES Mapping files -->	
 		<mapping class="com.code.aon.sales.Sales"/>
-		<mapping class="com.code.aon.sales.SalesAttachment"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
-		<mapping class="com.code.aon.sales.SalesType"/>
 
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
