@@ -27,7 +27,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -40,22 +39,23 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.sales.bridge.SalesManager;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 
 /**
  * Controller used in the offer maintenance.
  */
 public class OfferController extends BasicController {
 
-	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
-
 	private List<SelectItem> addresses;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
+	private boolean showSalesWindow;
+	private String salesSeries;
+	private int salesNumber;
+	private Date salesDate;
 	private boolean showInvoiceWindow;
 	private String invoiceSeries;
 	private int invoiceNumber;
@@ -85,6 +85,38 @@ public class OfferController extends BasicController {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public boolean isShowSalesWindow() {
+		return showSalesWindow;
+	}
+
+	public void setShowSalesWindow(boolean value) {
+		this.showSalesWindow = value;
+	}
+	
+	public String getSalesSeries() {
+		return salesSeries;
+	}
+
+	public void setSalesSeries(String salesSeries) {
+		this.salesSeries = salesSeries;
+	}
+
+	public int getSalesNumber() {
+		return salesNumber;
+	}
+
+	public void setSalesNumber(int salesNumber) {
+		this.salesNumber = salesNumber;
+	}
+
+	public Date getSalesDate() {
+		return salesDate;
+	}
+
+	public void setSalesDate(Date salesDate) {
+		this.salesDate = salesDate;
 	}
 
 	public boolean isShowInvoiceWindow() {
@@ -285,6 +317,27 @@ public class OfferController extends BasicController {
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 
+	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
+		Offer to = (Offer)this.getTo();
+		setSalesSeries(to.getSeries());
+		setSalesNumber(obtainMaxSalesNumber(to.getSeries()));
+		setSalesDate(new Date());
+	}
+
+	public void onSalesSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		setSalesNumber(obtainMaxSalesNumber((String)event.getNewValue()));
+	}
+
+	private int obtainMaxSalesNumber(String seriesId) {
+		return SeriesNumberUtil.obtainNumber(seriesId, "Sales");
+	}
+
+	public void onSales(ActionEvent event) throws ManagerBeanException {
+		Offer to = (Offer)this.getTo();
+		SalesManager salesManager = new SalesManager();
+		salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
+	}
+
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = (Offer)this.getTo();
 		setInvoiceSeries(to.getSeries());
@@ -305,67 +358,7 @@ public class OfferController extends BasicController {
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Offer to = (Offer)this.getTo();
 		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
-
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		IController saleInvoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-		saleInvoiceController.clearCriteria();
-		saleInvoiceController.getCriteria().addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		saleInvoiceController.onSearch(null);
+		invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 	}
-
-
-	/***************************************************************************************
-	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
-	 ***************************************************************************************/
-/*
-	public void createSales(ActionEvent event) throws ManagerBeanException {
-		Offer offer = (Offer)getTo();
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-
-		Sales sales = new Sales();
-		sales.setSeries(offer.getSeries()); //Pedir!!
-		sales.setNumber(SeriesNumberUtil.obtainNumber(offer.getSeries(), "Sales"));
-		sales.setCustomer(obtainCustomer(offer));
-		sales.setShippingAddress(offer.getAddress());
-		sales.setSeller(offer.getSeller());
-		sales.setIssueDate(offer.getIssueDate());
-		sales.setPayMethod(offer.getPayMethod());
-		sales.setDocumentType(DocumentType.NORMAL);
-		sales.setSecurityLevel(offer.getSecurityLevel());
-		sales.setStatus(SalesStatus.PENDING);
-		sales.setWorkPlace(offer.getWorkPlace());
-		sales = (Sales)salesBean.insert(sales);
-
-		Iterator iterator = offer.getDetailList().iterator();
-		while (iterator.hasNext()) {
-			OfferDetail offerDetail = (OfferDetail)iterator.next();
-
-			SalesDetail salesDetail = new SalesDetail();
-			salesDetail.setSales(sales);
-			salesDetail.setItem(offerDetail.getItem());
-			salesDetail.setDescription(offerDetail.getDescription());
-			salesDetail.setQuantity(offerDetail.getQuantity());
-			salesDetail.setPrice(offerDetail.getPrice());
-			salesDetail.setDiscountExpression(offerDetail.getDiscountExpression());
-			salesDetail.setSalesDetailStatus(SalesDetailStatus.PENDING);
-			salesDetailBean.insert(salesDetail);
-		}
-
-		offer.setStatus(OfferStatus.PROCESSED);
-		offerBean.update(offer);
-
-		IController salesController = FormUtil.getController("sales");
-		salesController.clearCriteria();
-		salesController.getCriteria().addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_ID), sales.getId());
-		salesController.onSearch(null);
-	}
-
-*/
-	/***************************************************************************************
-	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
-	 ***************************************************************************************/
 
 }
