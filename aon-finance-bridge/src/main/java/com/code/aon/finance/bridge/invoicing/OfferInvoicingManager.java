@@ -54,6 +54,7 @@ public class OfferInvoicingManager {
 	}
 
 	public Invoice invoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
+		updateOfferStatus(offer);
 		Invoice invoice = createInvoice(offer, series, number, issueDate);
 		createInvoiceDetails(invoice, offer);
 		if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
@@ -61,9 +62,14 @@ public class OfferInvoicingManager {
 		} else {
 			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice), true);
 		}
-		updateOfferStatus(offer);
-
 		return invoice;
+	}
+
+	private void updateOfferStatus(Offer offer) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		offer.setStatus(OfferStatus.INVOICED);
+		offerBean.restoreNullSubPOJOs(offer);
+		offerBean.update(offer);
 	}
 
 	private Invoice createInvoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
@@ -105,6 +111,7 @@ public class OfferInvoicingManager {
 			OfferDetail offerDetail = (OfferDetail)iterator.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setLine(offerDetail.getLine());
 			invoiceDetail.setItem(offerDetail.getItem());
 			invoiceDetail.setDescription(offerDetail.getDescription());
 			invoiceDetail.setQuantity(offerDetail.getQuantity());
@@ -119,13 +126,6 @@ public class OfferInvoicingManager {
 			offerDetail.setStatus(OfferDetailStatus.ON_INVOICE);
 			offerDetailBean.update(offerDetail);
 		}
-	}
-
-	private void updateOfferStatus(Offer offer) throws ManagerBeanException {
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		offer.setStatus(OfferStatus.INVOICED);
-		offerBean.restoreNullSubPOJOs(offer);
-		offerBean.update(offer);
 	}
 
 }
