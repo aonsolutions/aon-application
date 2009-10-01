@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.purchase</artifactId>
-	<version>4.0.1</version>
+	<version>4.0.2</version>
 	<description>AON PURCHASE</description>
 	<name>AON-PURCHASE</name>
 	<dependencies>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>4.2.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
