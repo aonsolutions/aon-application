@@ -50,7 +50,7 @@ public class Ecconfig implements ITransferObject {
 	private boolean ecommerceStatus;
 	private LoginType showLogin;
 	private ShowPrice price;
-	private TaxType taxInType;
+	private TaxType taxInPrice;
 	private DiscountFormat discount;
 	private PayMethod bankTransfer;
 	private PayMethod cashOnDelivery;
@@ -138,12 +138,12 @@ public class Ecconfig implements ITransferObject {
 	}
 		
 	@Column(name = "tax_in_price", length = 1)
-	public TaxType getTaxInType() {
-		return taxInType;
+	public TaxType getTaxInPrice() {
+		return taxInPrice;
 	}
 	
-	public void setTaxInType(TaxType taxInType) {
-		this.taxInType = taxInType;
+	public void setTaxInPrice(TaxType taxInPrice) {
+		this.taxInPrice = taxInPrice;
 	}
 	
 	@Column(name = "discount", length = 1)
