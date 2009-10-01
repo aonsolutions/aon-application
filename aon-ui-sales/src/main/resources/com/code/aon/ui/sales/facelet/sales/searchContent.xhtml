@@ -8,45 +8,58 @@
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
+	<aon:outputLabel for="Sales_customer_id"
+		value="#{customerBundle.customer_customer}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Sales_customer_id"  
+			value="#{salesSearch.customer.id}"
+			lookup="#{customerLookup}"
+			reRender="Sales_customer_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{customerBundle.customer_selection}" 
+			minHeight="460" minWidth="650" 
+			property="#{salesSearch.customer}" lookup="#{customerLookup}" 
+			selectReRender="Sales_customer_id,Sales_customer_full_name" 
+			actionType="search">
+		</aon:lookupButton>
+		<aon:inputText id="Sales_customer_full_name"
+			value="#{(salesSearch.customer.registry.fullName!=null)?(salesSearch.customer.registry.fullName):('')}"
+			disabled="true" size="50" />							
+	</aon:div>
+
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>
 		<aon:outputLabel for="Sales_issueDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Sales_issueDate-From"
-			valueChangeListener="#{finance.addGreaterThanOrEqualExpression}" 
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 		<aon:outputLabel for="Sales_issueDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Sales_issueDate-To"
-			valueChangeListener="#{finance.addLessThanOrEqualExpression}"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
-	<aon:outputLabel for="Sales_customer_id"
-		value="#{customerBundle.customer_customer}" />
-	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Sales_customer_id" value="#{salesSearch.customer.id}"
-			lookup="#{customerLookup}" reRender="Sales_customer_full_name"
-			size="5" />
-		<aon:lookupButton 
-			windowTitle="#{customerBundle.customer_selection}" actionType="search"
-			property="#{salesSearch.customer}" selectReRender="Sales_customer_id,Sales_customer_full_name" 
-			lookup="#{customerLookup}" minHeight="460" minWidth="650">
-		</aon:lookupButton>
-		<aon:inputText id="Sales_customer_full_name"
-			value="#{(salesSearch.customer.registry.name!=null)?(salesSearch.customer.registry.fullName):('')}"
-			size="50" disabled="true" />							
-	</aon:div>
+	<aon:outputLabel for="Sales_securityLevel"
+		value="#{bundle.aon_security_level}" />
+	<aon:selectOneMenu id="Sales_securityLevel"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commonCollections.securityLevels}" />
+	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Sales_status"
 		value="#{bundle.aon_status}" />
 	<aon:selectOneMenu id="Sales_status"
 		converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{salesCollections.salesStatuses}" />
 	</aon:selectOneMenu>
 
