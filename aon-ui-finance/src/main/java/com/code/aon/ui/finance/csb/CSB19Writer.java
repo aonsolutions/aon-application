@@ -154,13 +154,13 @@ public class CSB19Writer implements IFinanceConstants {
 		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 		for(int i=0; i<5&&iter.hasNext(); i++){
 			InvoiceDetail detail = (InvoiceDetail)iter.next();
-			String descConcept = new String();
+			String descConcept = detail.getDescription();
+			descConcept = descConcept.replace("\r", " ");
+			descConcept = descConcept.replace("\n", " ");
 			String priceConcept = new String();
-			if(detail.getDescription().length() > 40){
-				descConcept = detail.getDescription().substring(0, 40);
-				priceConcept = (detail.getDescription().length() > 48)?detail.getDescription().substring(40, 48):detail.getDescription().substring(40, detail.getDescription().length());
-			}else{
-				descConcept = detail.getDescription();
+			if(descConcept.length() > 40){
+				priceConcept = (descConcept.length() > 48)?descConcept.substring(40, 48):descConcept.substring(40, descConcept.length());
+				descConcept = descConcept.substring(0, 40);
 			}
 			individual.addConcept(descConcept);
 
