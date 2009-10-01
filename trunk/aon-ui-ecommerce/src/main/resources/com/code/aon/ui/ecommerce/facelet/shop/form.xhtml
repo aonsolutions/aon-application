@@ -48,7 +48,8 @@
 
 						<aon:div>
 							<aon:commandButton id="aonToolbar-back"
-								rendered="#{!shop.itemsView}" value="#{bundle.aon_back}"
+								rendered="#{(!shop.itemsView) and (!shop.welcomeView)}" 
+								value="#{bundle.aon_back}"
 								action="shop_from"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel"
 								immediate="true" accesskey="#{bundle.aon_key_cancel}">
@@ -81,6 +82,10 @@
 							</aon:div>
 						</c:if>
 -->						
+						
+						<c:if test="#{shop.welcomeView}">
+							<ui:include src="homepage.xhtml" />
+						</c:if>
 						
 						<c:if test="#{shop.itemsView}">
 							<ui:include src="items/list.xhtml" />

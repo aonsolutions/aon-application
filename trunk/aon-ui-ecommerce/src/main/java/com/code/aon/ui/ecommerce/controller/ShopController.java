@@ -12,7 +12,7 @@ public class ShopController {
 	
 	public ShopController() {
 		setBackView(ViewEnum.ITEM_LIST);
-		setContentView(ViewEnum.ITEM_LIST);
+		setContentView(ViewEnum.WELCOME);
 	}
 
 	public ViewEnum getBackView() {
@@ -44,6 +44,9 @@ public class ShopController {
 	public boolean isCartView() {
 		return getContentView() == ViewEnum.SHOPPING_CART;
 	}
+	public boolean isWelcomeView() {
+		return getContentView() == ViewEnum.WELCOME;
+	}
 
 	public boolean isLogged() {
 		return logged;
@@ -61,6 +64,10 @@ public class ShopController {
 	public void onViewCart(ActionEvent event) {
 		setContentView(ViewEnum.SHOPPING_CART);
 		setBackView(ViewEnum.ITEM_LIST);
+	}
+	
+	public void goList(ActionEvent event) {
+		setContentView(ViewEnum.ITEM_LIST);
 	}
 	
 }
