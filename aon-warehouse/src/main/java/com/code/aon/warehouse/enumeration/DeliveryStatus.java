@@ -20,14 +20,9 @@ public enum DeliveryStatus implements IResourceable {
     PENDING,
     
     /**
-     * Settled.
+     * Invoiced.
      */
-    SETTLED,
-    
-    /**
-     * Closed.
-     */
-    CLOSED;
+    INVOICED;
     
     
     /**
@@ -38,7 +33,7 @@ public enum DeliveryStatus implements IResourceable {
     /**
      * Message key prefix. 
      */
-    private static final String MSG_KEY_PREFIX = "aon_enum_deliverystatus_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_delivery_status_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
