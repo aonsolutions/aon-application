@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -18,22 +19,28 @@
 					<ui:param name="skipSaveButton" value="#{!offer.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!offer.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
-	<!-- 
-						<aon:commandButton id="sales"
-							value="Hacer Pedido"
-							actionListener="#{offer.createSales}" action="sales_list"
-							rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-							styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
-	 -->
-						<aon:commandButton id="invoice"
-							value="#{commercialBundle.commercial_offer_to_invoice}"
-							immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offerDetail.model.rowCount > 0}"
-							styleClass="aon-finding-toolbar-item aon-icon-favorite"
-							actionListener="#{offer.onInvoiceShow}"
-							reRender="showInvoiceWindow">
-							<f:setPropertyActionListener target="#{offer.showInvoiceWindow}"
-								value="#{true}" />
-						</aon:commandButton>
+						<c:if test="#{aonConfiguration.bean.commercial.showInvoicing}">
+							<aon:commandButton id="invoice"
+								value="#{commercialBundle.commercial_offer_to_invoice}"
+								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offerDetail.model.rowCount > 0}"
+								styleClass="aon-finding-toolbar-item aon-icon-favorite"
+								actionListener="#{offer.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{offer.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
+						<c:if test="#{!aonConfiguration.bean.commercial.showInvoicing}">
+							<aon:commandButton id="sales"
+								value="#{commercialBundle.commercial_offer_to_sales}"
+								immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
+								styleClass="aon-finding-toolbar-item aon-icon-settle" 
+								actionListener="#{offer.onSalesShow}"
+								reRender="showSalesWindow">
+								<f:setPropertyActionListener target="#{offer.showSalesWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
 						<h:commandLink id="offer" value="#{bundle.aon_report}"
 							target="_new" rendered="#{!offer.new}"
 							action="#{report.onExecute}"
@@ -79,7 +86,7 @@
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{offer.to.status}" />
 						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(Factura:"
+							value="(#{financeBundle.finance_invoice}:"
 							rendered="#{offer.invoiced}" />
 						<aon:outputText styleClass="aon-bold"
 							value="#{offer.invoiceCode}"
@@ -140,12 +147,12 @@
 							styleClass="aon-italic" />
 					</aon:div>
 
-					<aon:outputLabel for="Offer_type" 
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Offer_type" 
-						value="#{offer.to.type}"
+					<aon:outputLabel for="Offer_scope" 
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Offer_scope" 
+						value="#{offer.to.scope}"
 						disabled="#{!offer.pending}">
-						<f:selectItems value="#{commercialCollections.offerTypes}" />
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Seller_id" 
@@ -173,12 +180,12 @@
 						</a4j:region>
 					</aon:div>
 
-					<aon:outputLabel for="Offer_scope" 
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Offer_scope" 
-						value="#{offer.to.scope}"
+					<aon:outputLabel for="Offer_workPlace" 
+						value="#{companyBundle.company_workplace}" />
+					<aon:selectOneMenu id="Offer_workPlace" 
+						value="#{offer.to.workPlace}"
 						disabled="#{!offer.pending}">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
+						<f:selectItems value="#{companyCollections.workPlaces}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_tariff" 
@@ -190,12 +197,12 @@
 						<f:selectItems value="#{configCollections.tariffs}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Offer_workPlace" 
-						value="#{companyBundle.company_workplace}" />
-					<aon:selectOneMenu id="Offer_workPlace" 
-						value="#{offer.to.workPlace}"
+					<aon:outputLabel for="Offer_type" 
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Offer_type" 
+						value="#{offer.to.type}"
 						disabled="#{!offer.pending}">
-						<f:selectItems value="#{companyCollections.workPlaces}" />
+						<f:selectItems value="#{commercialCollections.offerTypes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_defaultPayMethod" 
@@ -334,7 +341,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 									<f:facet name="header">
-										<aon:outputLabel for="OfferDetail_line" value="Linea" />
+										<aon:outputLabel value="#{commercialBundle.commercial_offer_detail_line}" />
 									</f:facet>
 									<aon:outputText value="#{to.line}"
 										rendered="#{formList}" />
@@ -357,7 +364,6 @@
 										style="#{to.item == null or to.item.id == null?'font-weight:bold;':'padding-left:10px;'}">
 										<aon:abbreviateConverter maxWidth="64" />
 									</aon:outputText>
-
 									<aon:div id="offerDetailItemEdit" styleClass="aon-lookup" rendered="#{formEdit}">
 										<a4j:region>
 											<aon:lookupInputText id="OfferDetail_item_product_code" 
@@ -365,7 +371,8 @@
 												lookup="#{itemLookup}"   
 												lookupChangeListener="#{offerDetail.onItemChanged}"
 												reRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
-												ajaxSingle="false" size="10" onblur="toUpperCase(this);">
+												ajaxSingle="false" size="10" 
+												onblur="toUpperCase(this);" focus="OfferDetail_item_product_name">
 												<aon:joinProperty alias="Item_product_code"	value="#{offerDetail.to.item.product.code}" />
 											</aon:lookupInputText>
 											<aon:lookupButton
@@ -390,7 +397,6 @@
 											actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_item_product_name"
 											rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 									</aon:div>
-
 									<f:facet name="footer">
 										<aon:div id="offerDetailItemNew" styleClass="aon-lookup" rendered="#{formNew}">
 											<a4j:region>
@@ -399,7 +405,8 @@
 													lookup="#{itemLookup}"   
 													lookupChangeListener="#{offerDetail.onItemChanged}"
 													reRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
-													ajaxSingle="false" size="10" onblur="toUpperCase(this);">
+													ajaxSingle="false" size="10" 
+													onblur="toUpperCase(this);" focus="OfferDetail_item_product_name-New">
 													<aon:joinProperty alias="Item_product_code"	value="#{offerDetail.to.item.product.code}" />
 												</aon:lookupInputText>
 												<aon:lookupButton
@@ -429,7 +436,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel for="OfferDetail_quantity" value="#{bundle.aon_quantity}" />
+										<aon:outputLabel value="#{bundle.aon_quantity}" />
 									</f:facet>
 									<aon:outputText value="#{to.quantity}"
 										rendered="#{formList and to.item != null and to.item.id != null}">
@@ -451,7 +458,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel for="OfferDetail_price" value="#{bundle.aon_price}" />
+										<aon:outputLabel value="#{bundle.aon_price}" />
 									</f:facet>
 									<aon:outputText value="#{to.price}"
 										rendered="#{formList and to.item != null and to.item.id != null}">
@@ -471,7 +478,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel for="OfferDetail_discount" value="#{bundle.aon_discount}" />
+										<aon:outputLabel value="#{bundle.aon_discount}" />
 									</f:facet>
 									<aon:outputText value="#{to.discountExpression.discountExpr}"
 										rendered="#{formList and to.item != null and to.item.id != null}">
@@ -491,7 +498,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel for="OfferDetail_amount" value="#{bundle.aon_amount}" />
+										<aon:outputLabel value="#{bundle.aon_amount}" />
 									</f:facet>
 									<aon:outputText value="#{controller.modelAmount}"
 										rendered="#{formList and to.item != null and to.item.id != null}">
@@ -526,5 +533,6 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalSales.xhtml" />
 	</ui:define>
 </ui:composition>
