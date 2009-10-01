@@ -21,7 +21,7 @@ public class OfferControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		OfferController controller = (OfferController)event.getController();
 		((Offer)controller.getTo()).setStatus(OfferStatus.PENDING);
-		((Offer)controller.getTo()).setType(OfferType.STANDARD);
+		((Offer)controller.getTo()).setType(OfferType.NORMAL);
 		controller.setAddresses(null);
 		controller.setDefaultPayMethod(null);
 		controller.resetOfferPayMethod();
