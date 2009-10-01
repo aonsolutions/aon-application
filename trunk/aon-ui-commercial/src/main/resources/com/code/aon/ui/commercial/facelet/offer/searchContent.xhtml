@@ -11,18 +11,21 @@
 	<aon:outputLabel for="Offer_target_id"
 		value="#{target.bundle.commercial_target}" />
 	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Offer_target_id" lookup="#{targetLookup}"
- 			reRender="Offer_target_full_name"
+		<aon:lookupInputText id="Offer_target_id" 
 			value="#{offerSearch.target.id}"
+			lookup="#{targetLookup}"
+ 			reRender="Offer_target_full_name"
 			size="5" />
 		<aon:lookupButton 
-			windowTitle="#{commercialBundle.commercial_target_selection}" actionType="search"
-			property="#{offerSearch.target}" selectReRender="Offer_target_id,Offer_target_full_name" 
-			lookup="#{targetLookup}" minHeight="460" minWidth="650">
+			windowTitle="#{commercialBundle.commercial_target_selection}" 
+			minHeight="460" minWidth="650"
+			property="#{offerSearch.target}" lookup="#{targetLookup}" 
+			selectReRender="Offer_target_id,Offer_target_full_name" 
+			actionType="search">
 		</aon:lookupButton>
 		<aon:inputText id="Offer_target_full_name"
-			value="#{(offerSearch.target.registry.name!=null)?(offerSearch.target.registry.fullName):('')}"
-			size="50" disabled="true" />							
+			value="#{(offerSearch.target.registry.fullName!=null)?(offerSearch.target.registry.fullName):('')}"
+			disabled="true" size="50" />							
 	</aon:div>
 
 	<aon:outputLabel value="#{bundle.aon_date}" />
@@ -30,14 +33,14 @@
 		<aon:outputLabel for="Offer_issueDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Offer_issueDate-From"
-			value="#{offerSearch.issueDateFrom}" 
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 		<aon:outputLabel for="Offer_issueDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Offer_issueDate-To"
-			value="#{offerSearch.issueDateTo}"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
