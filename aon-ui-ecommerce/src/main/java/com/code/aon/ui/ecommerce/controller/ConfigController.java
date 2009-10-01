@@ -123,7 +123,7 @@ public class ConfigController {
 	}
 
 	public boolean isTaxIncluded() {
-		return (getActiveConfig().getTaxInType() == TaxType.DEFAULT || getActiveConfig().getTaxInType() == TaxType.YES); 
+		return (getActiveConfig().getTaxInPrice() == TaxType.DEFAULT || getActiveConfig().getTaxInPrice() == TaxType.YES); 
 	}
 	public boolean isShowOriginalPrice() {
 		return (getActiveConfig().getPrice() == ShowPrice.DEFAULT || getActiveConfig().getPrice()  == ShowPrice.YES); 
