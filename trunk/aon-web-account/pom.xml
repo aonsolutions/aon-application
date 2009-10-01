@@ -116,7 +116,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.0.6</version>
+			<version>4.0.7</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
