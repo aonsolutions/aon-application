@@ -16,16 +16,9 @@
 		<finalName>aon-ebackoffice</finalName>
 	</build>
 	<properties>
-		<dbVersion>3.5.0</dbVersion>
+		<dbVersion>4.3.0</dbVersion>
 	</properties>
 	<dependencies>
-
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.rich.components</artifactId>
-			<version>4.2.0</version>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
@@ -34,27 +27,21 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.company</artifactId>
-			<version>4.1.3</version>
-			<scope>runtime</scope>
-		</dependency>
-			<dependency>
+			<artifactId>aon.rich.components</artifactId>
+			<version>4.2.1</version>
+			<scope>compile</scope>
+		</dependency>	
+		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.config</artifactId>
-			<version>4.1.0</version>
+			<artifactId>aon.ui.company</artifactId>
+			<version>4.1.5</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.ebackoffice</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.form</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -65,7 +52,7 @@
 			<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>4.0.3</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 				

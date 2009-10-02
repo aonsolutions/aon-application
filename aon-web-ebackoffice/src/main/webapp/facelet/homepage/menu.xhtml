@@ -62,14 +62,17 @@
 					<aon:menuItem id="EC-CATALOGUE"
 						value="#{appBundle.menu_ecatalogues}" action="eccatalogue_grid"
 						immediate="true" />
-
 				</rich:menuGroup>
-
-
-
 			</aon:dropDownMenu>
-
+			
+			
+			<aon:outputLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-advanced-search"
+						value="#{ecconfig.url}">
+						<f:verbatim>SHOW ECOMMERCE</f:verbatim>
+					</aon:outputLink>
+			
 		</aon:menuBar>
 	</aon:form>
-
-</ui:composition>
+	
+	</ui:composition>
