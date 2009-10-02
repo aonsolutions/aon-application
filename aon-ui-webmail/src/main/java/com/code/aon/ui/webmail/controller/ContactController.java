@@ -8,6 +8,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
@@ -55,6 +57,24 @@ public class ContactController extends BasicController {
 		addMessage( bundle.getString(messageId) );
 	}
 	
+	@Override
+	public void onSelect(ActionEvent event) {
+		super.onSelect(event);
+		Contact contact = (Contact) getTo();
+		if (! StringUtils.isEmpty(contact.getName()) ) {
+			contact.setOutlookName( contact.getName() );
+			contact.setName(null);
+		}
+		if (! StringUtils.isEmpty(contact.getCity()) ) {
+			contact.setOutlookCity( contact.getCity() );
+			contact.setCity(null);
+		}
+		if (! StringUtils.isEmpty(contact.getCategory()) ) {
+			contact.setTitle( contact.getCategory() );
+			contact.setCategory(null);
+		}
+	}
+
 	@Override
 	public void accept(ActionEvent event) {		
 		try {
