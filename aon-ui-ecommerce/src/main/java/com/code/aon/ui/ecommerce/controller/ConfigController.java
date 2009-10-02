@@ -35,10 +35,9 @@ public class ConfigController {
 	private boolean aonEbackoffice;
 	
 	public Ecconfig getActiveConfig() {
-		if (activeConfig == null) {
+		if (activeConfig == null || getAonEbackoffice()==true) {
 			searchActiveConfig();
 		}
-		searchActiveConfig();
 		return activeConfig;
 	}
 
