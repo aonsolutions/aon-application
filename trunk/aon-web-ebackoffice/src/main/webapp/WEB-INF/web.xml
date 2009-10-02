@@ -301,7 +301,7 @@
 	<security-role><role-name>Invitado</role-name></security-role>
 
 	<resource-env-ref>
-	  <resource-env-ref-name>jdbc/AonSMB</resource-env-ref-name>
+	  <resource-env-ref-name>jdbc/AonEcommerce</resource-env-ref-name>
 	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
 	</resource-env-ref>
 

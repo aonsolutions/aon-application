@@ -23,8 +23,8 @@
 	<context-root>/aon-ebackoffice</context-root>
 	
 	<resource-env-ref>
-	  <resource-env-ref-name>jdbc/AonSMB</resource-env-ref-name>
-	  <jndi-name>java:/AonSMBDS</jndi-name>
+	  <resource-env-ref-name>jdbc/AonEcommerce</resource-env-ref-name>
+	  <jndi-name>java:/AonEcommerceds</jndi-name>
 	</resource-env-ref>
 
 </jboss-web>

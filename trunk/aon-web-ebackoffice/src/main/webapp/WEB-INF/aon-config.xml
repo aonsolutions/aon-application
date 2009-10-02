@@ -4,14 +4,18 @@
 
 	<product:config version="1.0"
 		xmlns:product="http://www.esferalia.com/product">
-		<product:product showStock="true" showAccount="true"
-			showAttachment="true" />
+		<product:product
+		 showStock="true"
+		 showAccount="false"
+		 showAttachment="true" />
 	</product:config>
 
 
 	<commercial:config version="1.0"
 		xmlns:commercial="http://www.esferalia.com/commercial">
-		<commercial:commercial showEcommerceTab="true" />
+		<commercial:commercial 
+		showInvoicing="true"
+		showEcommerceTab="true" />
 	</commercial:config>
 
 
