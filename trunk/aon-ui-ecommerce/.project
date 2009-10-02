@@ -3,7 +3,6 @@
 	<name>aon-ui-ecommerce</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ebackoffice</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
