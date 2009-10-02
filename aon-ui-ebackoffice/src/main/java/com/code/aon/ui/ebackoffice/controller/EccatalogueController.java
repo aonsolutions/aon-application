@@ -7,18 +7,11 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.component.UIComponent;
-import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -28,12 +21,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.PayMethod;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ebackoffice.Eccatalogue;
 import com.code.aon.ebackoffice.enumeration.CatalogueType;
 import com.code.aon.product.Catalogue;
-import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
@@ -142,20 +132,21 @@ public class EccatalogueController extends BasicController {
 		}
 	}
 
-	public void uploadIcon(ActionEvent event) {
+	public void uploadIcon(UploadEvent event) {
 		try {
 			
-			UIComponent c = event.getComponent().getParent();
-			HtmlGraphicImage image = (HtmlGraphicImage) c;
-			File filee= (File)image.getValue();
+			UploadItem item = event.getUploadItem();
 			AonFile f = new AonFile();
-			File file = filee;
+			File file = item.getFile();
 			if (file != null) {
 				FileInputStream in = new FileInputStream(file);
 				byte[] data = IOUtils.toByteArray(in);
 				f.setData(data);
 			}
-		   	setIcon(f);
+			f.setFileName(item.getFileName());
+			setIcon(f);
+			
+			
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
