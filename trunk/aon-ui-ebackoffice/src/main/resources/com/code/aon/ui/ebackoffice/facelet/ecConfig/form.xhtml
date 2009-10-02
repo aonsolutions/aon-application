@@ -156,7 +156,7 @@
 									
 									<!--  <c:if test="#{ecconfig.headerAvailable}"> -->
 										<a4j:mediaOutput id="header_preview" element="img"
-											cacheable="false" style="width:500px"
+											cacheable="false" style="width:300px" 
 											value="#{ecconfig.headerImage.key}"
 											createContent="#{ecconfig.paintHeader}" />
 								<!-- 		
@@ -171,22 +171,18 @@
 											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
 											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 											fileUploadListener="#{ecconfig.headerUploaded}" listWidth="0px"
-											listHeight="0px" immediateUpload="true" autoclear="true">
-											
+											listHeight="0px" immediateUpload="true" autoclear="true">											
 											<f:facet name="label">
 												<h:outputText value="Cambiar header" />
 											</f:facet>
 											<a4j:support event="onuploadcomplete" reRender="header" />
-										</aon:fileUpload>
-										
+										</aon:fileUpload>						
 																				
 										<aon:commandButton value="borrar" styleClass=" aon-icon-remove"  id="deleteImag1" actionListener="#{ecconfig.deleteHeader}" reRender="Images"
 										/>
 										</h:panelGrid>
-									</a4j:region>
-									
+									</a4j:region>									
 								</aon:div>
-
 
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_leftBanner}" />

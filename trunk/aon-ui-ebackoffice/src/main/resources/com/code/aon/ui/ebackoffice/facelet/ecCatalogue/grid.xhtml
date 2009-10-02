@@ -107,7 +107,7 @@
 								</f:facet>
 							</aon:column>
 
-							<aon:column>
+							<aon:column style="background-color:#787878;margin 0;">
 								<f:facet name="header">
 									<aon:outputLabel for="Eccatalogue_catalogueIcon"
 										value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ico}" />
@@ -115,7 +115,7 @@
 
 								<aon:div id="icon">
 
-									<aon:div  style="background-color:#e8e8e8;"
+									<aon:div 
 										rendered="#{formList}">
 										<a4j:mediaOutput element="img" cacheable="false"
 											value="#{to.id}" style="width:30px"
@@ -129,27 +129,8 @@
 											createContent="#{eccatalogue.paintIconn}" />
 									</aon:div>
 
-									<h:panelGrid columns="3" rendered="#{formEdit}" >
 									
-									<aon:div 	style="background-color:#e8e8e8;margin:0;">		
-									<h:graphicImage  value="/css/catalogue_images/catalogo1.png"  >    
-									         <a4j:support event="onclick" actionListener="#{eccatalogue.uploadIcon}"/>
-									 </h:graphicImage>
-									</aon:div>
-									
-									<aon:div 	style="background-color:#e8e8e8;margin:0;">
-									<h:graphicImage value="/css/catalogue_images/catalogo2.png"  >    
-									         <a4j:support event="onclick" actionListener="#{eccatalogue.uploadIcon}"/>
-									 </h:graphicImage>
-									</aon:div>	
-									
-								    <h:graphicImage value="/css/catalogue_images/catalogo3.png"  />
-								    <h:graphicImage value="/css/catalogue_images/catalogo4.png"  />
-								    <h:graphicImage value="/css/catalogue_images/catalogo5.png"  />
-								    <h:graphicImage value="/css/catalogue_images/general.png"  />
-								    <h:graphicImage value="/css/catalogue_images/novedad.png"  />
-									</h:panelGrid>	
-									<!-- <aon:div rendered="#{formEdit}">
+									 <aon:div rendered="#{formEdit}">
 									<a4j:region>
 										<aon:fileUpload id="Eccatalogue_catalogueIcon"
 											addControlLabel="#{bundle.aon_fileUpload_add}"
@@ -161,7 +142,7 @@
 										<a4j:support event="onuploadcomplete" reRender="icon" />
 										</aon:fileUpload>
 									</a4j:region>
-								</aon:div> -->
+								</aon:div> 
 								</aon:div>
 
 								<f:facet name="footer">
