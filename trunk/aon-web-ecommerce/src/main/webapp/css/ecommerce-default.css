@@ -3450,6 +3450,7 @@ background-color:#FDE46D;
 border-left:3px solid #FFFFFF;
 color:#FFFFFF;
 padding-left:15px;
+cursor: pointer;
 }
 
 .header-image{

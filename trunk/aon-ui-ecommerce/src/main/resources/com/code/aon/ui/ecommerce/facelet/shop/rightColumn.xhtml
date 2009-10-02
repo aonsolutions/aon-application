@@ -132,6 +132,7 @@
 -->		
 		<aon:div id="right-banner-image" styleClass="right-banner-image">
 			<a4j:mediaOutput id="image-right" element="img" style="margin:0 auto;"
+				rendered="#{ecConfig.rightBanner}"
 				cacheable="false" value="#{ecConfig.activeConfig.id}"
 				createContent="#{ecConfig.paintRightBanner}" />
 		</aon:div>

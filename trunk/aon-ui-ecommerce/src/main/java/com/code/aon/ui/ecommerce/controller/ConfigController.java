@@ -123,6 +123,18 @@ public class ConfigController {
 		return ECommerceUtil.payMethodList();
 	}
 
+	public boolean isHeaderImage() {
+		return (getActiveConfig().getHeaderImg()!=null); 
+	}
+	public boolean isLeftBanner() {
+		return (getActiveConfig().getLeftBanner()!=null); 
+	}
+	public boolean isRightBanner() {
+		return (getActiveConfig().getRightBanner()!=null); 
+	}
+	public boolean isWelcomeBanner() {
+		return (getActiveConfig().getWelcomeBanner()!=null); 
+	}
 	public boolean isTaxIncluded() {
 		return (getActiveConfig().getTaxInPrice() == TaxType.DEFAULT || getActiveConfig().getTaxInPrice() == TaxType.YES); 
 	}

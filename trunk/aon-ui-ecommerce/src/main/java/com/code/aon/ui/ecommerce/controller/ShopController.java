@@ -2,17 +2,24 @@ package com.code.aon.ui.ecommerce.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.util.AonUtil;
+
 
 public class ShopController {
 	
 	private boolean logged;
-
 	private ViewEnum backView;
 	private ViewEnum contentView;
 	
 	public ShopController() {
 		setBackView(ViewEnum.ITEM_LIST);
-		setContentView(ViewEnum.WELCOME);
+		ConfigController cc = (ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER);
+		if(cc.isWelcomeBanner()){
+			setContentView(ViewEnum.WELCOME);
+		} else {
+			setContentView(ViewEnum.ITEM_LIST);
+		}
 	}
 
 	public ViewEnum getBackView() {

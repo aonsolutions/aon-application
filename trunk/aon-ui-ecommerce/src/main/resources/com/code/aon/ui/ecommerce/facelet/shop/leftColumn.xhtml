@@ -23,6 +23,7 @@
 	
 	<aon:div id="left-banner-image" styleClass="left-banner-image">
 		<a4j:mediaOutput id="image-left" element="img"
+			rendered="#{ecConfig.leftBanner}"
 			cacheable="false" value="#{ecConfig.activeConfig.id}"
 			createContent="#{ecConfig.paintLeftBanner}" />
 	</aon:div>
