@@ -26,19 +26,19 @@
 						<aon:outputLabel for="Contact_displayName"
 							value="#{webmailBundle.webmail_contact_displayName}" />
 						<aon:inputText id="Contact_displayName"
-							maxlength="64" size="60" required="true"
+							maxlength="128" size="77" required="true"
 							value="#{contact.to.displayName}" />
 	
-						<aon:outputLabel for="Contact_name"
+						<aon:outputLabel for="Contact_outlookName"
 							value="#{bundle.aon_name}" />
-						<aon:inputText id="Contact_name"
-							maxlength="64" size="95"
-							value="#{contact.to.name}" />
+						<aon:inputText id="Contact_outlookName"
+							maxlength="128" size="95"
+							value="#{contact.to.outlookName}" />
 	
 						<aon:outputLabel for="Contact_surname"
 							value="#{webmailBundle.webmail_contact_surname}" />
 						<aon:inputText id="Contact_surname"
-							maxlength="64" size="95"
+							maxlength="128" size="95"
 							value="#{contact.to.surname}" />
 	
 						<aon:outputLabel for="Contact_address"
@@ -52,39 +52,46 @@
 						<aon:panelGrid id="contactAddress" columns="5" dir="true" 
 							columnClasses="aon-text-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left">
 							<aon:inputText id="Contact_postal_code"
-								maxlength="16" size="11"
+								maxlength="40" size="11"
 								value="#{contact.to.postalCode}" />
 	
-							<aon:outputLabel for="Contact_city"
+							<aon:outputLabel for="Contact_outlookCity"
 								value="#{webmailBundle.webmail_contact_city}" />
-							<aon:inputText id="Contact_city"
-								maxlength="64" size="22"
-								value="#{contact.to.city}" />
+							<aon:inputText id="Contact_outlookCity"
+								maxlength="128" size="22"
+								value="#{contact.to.outlookCity}" />
 	
 							<aon:outputLabel for="Contact_state"
 								value="#{webmailBundle.webmail_contact_state}" />
 							<aon:inputText id="Contact_state"
-								maxlength="64" size="22"
+								maxlength="128" size="22"
 								value="#{contact.to.state}" />
 						</aon:panelGrid>
+						
+						<aon:outputLabel for="Contact_country"
+							value="#{webmailBundle.webmail_contact_country}" />
+						<aon:inputText id="Contact_country"
+							maxlength="128" size="77"
+							value="#{contact.to.country}" />
+						
 						<aon:outputLabel for="Contact_phone"
 							value="#{webmailBundle.webmail_contact_phone}" />
 						<aon:panelGrid id="contactPhone" columns="5" dir="true" 
 							columnClasses="aon-text-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left">
 							<aon:inputText id="Contact_phone"
-								maxlength="20" size="16"
+								maxlength="128" size="16"
 								value="#{contact.to.phone}" />
 		
 							<aon:outputLabel for="Contact_cellularPhone"
 								value="#{webmailBundle.webmail_contact_cellular_phone}" />
 							<aon:inputText id="Contact_cellularPhone"
-								maxlength="20" size="16"
+								maxlength="128" size="16"
 								value="#{contact.to.cellularPhone}" />
 		
 							<aon:outputLabel for="Contact_fax"
 								value="#{webmailBundle.webmail_contact_fax}" />
 							<aon:inputText id="Contact_fax"
-								maxlength="20" size="16"
+								maxlength="128" size="16"
 								value="#{contact.to.fax}" />
 	
 						</aon:panelGrid>
@@ -92,13 +99,15 @@
 						<aon:outputLabel for="Contact_email"
 							value="#{webmailBundle.webmail_contact_email}" />
 						<aon:inputText id="Contact_email"
-							maxlength="64" size="77"
+							maxlength="256" size="95"
 							value="#{contact.to.email}" />
 	
 						<aon:outputLabel for="Contact_note" 
 							value="#{webmailBundle.webmail_contact_note}" />
 						<aon:inputTextarea id="Contact_note"
-							value="#{contact.to.note}" cols="98" rows="7" />
+							value="#{contact.to.note}" cols="98" rows="7" >
+							<f:validateLength maximum="2048" />
+						</aon:inputTextarea>
 					</aon:panelGrid>
 				</aon:div>
 
@@ -115,11 +124,11 @@
 							maxlength="64" size="95"
 							value="#{contact.to.organization}" />
 
-						<aon:outputLabel for="Contact_category"
+						<aon:outputLabel for="Contact_title"
 							value="#{webmailBundle.webmail_contact_category}" />
-						<aon:inputText id="Contact_category"
-							maxlength="64" size="95"
-							value="#{contact.to.category}" />
+						<aon:inputText id="Contact_title"
+							maxlength="128" size="95"
+							value="#{contact.to.title}" />
 
 						<aon:outputLabel for="Contact_organization_address"
 							value="#{webmailBundle.webmail_contact_address}" />
@@ -144,7 +153,7 @@
 							<aon:outputLabel for="Contact_organization_state"
 								value="#{webmailBundle.webmail_contact_state}" />
 							<aon:inputText id="Contact_organization_state"
-								maxlength="64" size="22"
+								maxlength="128" size="22"
 								value="#{contact.to.organizationState}" />
 						</aon:panelGrid>
 						<aon:outputLabel for="Contact_organization_phone"
@@ -152,7 +161,7 @@
 						<aon:panelGrid id="contactOrganizationPhone" columns="5" dir="true" 
 							columnClasses="aon-text-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left">
 							<aon:inputText id="Contact_organization_phone"
-								maxlength="20" size="16"
+								maxlength="32" size="16"
 								value="#{contact.to.organizationPhone}" />
 		
 							<aon:outputLabel for="Contact_organization_fax"
