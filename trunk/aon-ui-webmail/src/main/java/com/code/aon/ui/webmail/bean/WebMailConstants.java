@@ -35,4 +35,12 @@ public interface WebMailConstants {
 	String BEAN_SPAM = "spam";
 	String BEAN_LOGGED_USER = "loggedUser";
 	
+	// ************************************************************
+	// LDAP
+	// ************************************************************
+
+	String WEBMAIL_CONFIG = "aonWebmailConfig";
+	String REJECTED_EXTENSIONS = "webmailRejectedExtension";
+	String MAX_ATTACHMENT_SIZE = "webmailMaxAttachmentSize";
+
 }
