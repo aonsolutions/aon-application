@@ -234,7 +234,18 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_ORGANIZATION_STATE = "Contact_organizationState";
 	
-	
+	/**
+	* Alias value: Contact_outlookCity
+	* Hibernate value: Contact.outlookCity
+	*/
+	String CONTACT_OUTLOOK_CITY = "Contact_outlookCity";
+
+	/**
+	* Alias value: Contact_outlookName
+	* Hibernate value: Contact.outlookName
+	*/
+	String CONTACT_OUTLOOK_NAME = "Contact_outlookName";
+
 	/**
 	* Alias value: Contact_phone
 	* Hibernate value: Contact.phone

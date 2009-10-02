@@ -141,7 +141,10 @@
 							</f:facet>								
 							<a4j:support event="onuploadcomplete" reRender="attachDataTable" />
 						</aon:fileUpload>								
-						<aon:div id="attachDataTable">					
+						<aon:div id="attachDataTable">
+							<aon:outputText rendered="#{webmailMessage.errorMessage != null}"
+								styleClass="aon-message-error" 
+								value="#{webmailMessage.errorMessage}" />
 							<aon:dataTable value="#{webmailMessage.files}" rowKeyVar="row"
 								var="attachment" styleClass="aon-panelGrid-formatting">
 								<aon:column>
@@ -156,7 +159,7 @@
 							            	actionListener="#{webmailMessage.onRemoveAttachment}" />											
 									</aon:commandLink>
 								</aon:column>
-							</aon:dataTable>									
+							</aon:dataTable>						
 						</aon:div>		
 					</aon:div>
 
