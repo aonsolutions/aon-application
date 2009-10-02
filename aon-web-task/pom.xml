@@ -10,7 +10,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.task</artifactId>
 	<packaging>war</packaging>
-	<version>4.0.0</version>
+	<version>4.0.1</version>
 	<description>AON TASK</description>
 	<name>AON TASK</name>
 	<properties>
