@@ -35,7 +35,9 @@ public class ConfigController {
 	private boolean aonEbackoffice;
 	
 	public Ecconfig getActiveConfig() {
-		if (activeConfig == null || getAonEbackoffice()==true) {
+		if (activeConfig == null) {
+			searchActiveConfig();
+		} else if(isAonEbackoffice()==true){
 			searchActiveConfig();
 		}
 		return activeConfig;
@@ -52,7 +54,7 @@ public class ConfigController {
 		return company;
 	}
 
-	public boolean getAonEbackoffice(){
+	public boolean isAonEbackoffice(){
 		aonEbackoffice=Boolean.parseBoolean(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(IECommerceConstants.AON_EBACKOFFICE));
 		return aonEbackoffice;
 	}
