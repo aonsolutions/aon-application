@@ -55,21 +55,7 @@ public class EccatalogueController extends BasicController {
 		return catalogueTypes;
 	}
 	
-	public List<SelectItem> getCatalogueIcons() {
-		if (catalogueIcons == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale();
-			catalogueIcons = new LinkedList<SelectItem>();
-			SelectItem item = new  SelectItem( );
-			catalogueIcons.add(item);
-			/*for (CatalogueType e : CatalogueType.values()) {
-				String name = e.getName(locale);
-				SelectItem item = new SelectItem(e, name);
-				catalogueTypes.add(item);
-			}*/
-		}
-		return catalogueIcons;
-	}
+	
 
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
 		catalogues = null;
@@ -177,13 +163,13 @@ public class EccatalogueController extends BasicController {
 		}
 	}
 	public void paintIconn(OutputStream out, Object data) throws IOException {
-		if (icon != null && icon.getData() != null) {
+		if (icon != null) {
 			out.write(icon.getData());
 		}
 	}
 
 	public void paintImagee(OutputStream out, Object data) throws IOException {
-		if (icon != null && image.getData() != null) {
+		if (image != null) {
 			out.write(image.getData());
 		}
 

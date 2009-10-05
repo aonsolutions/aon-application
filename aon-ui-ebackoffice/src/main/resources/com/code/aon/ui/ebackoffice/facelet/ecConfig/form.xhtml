@@ -19,10 +19,10 @@
 				<ui:param name="controller" value="#{ecconfig}" />
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
-				<ui:param name="skipRemoveButton" value="true" />				
+				<ui:param name="skipRemoveButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSpin" value="true" />
-				
+
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
@@ -50,18 +50,20 @@
 								<aon:selectOneMenu value="#{ecconfig.to.showLogin}"
 									style="width:130px">
 									<f:selectItems value="#{ecconfig.loginTypes}" />
-									<a4j:support event="onchange"  actionListener="#{ecconfig.getLoginState}" reRender="options">
-											</a4j:support>
+									<a4j:support event="onchange"
+										actionListener="#{ecconfig.getLoginState}" reRender="options">
+									</a4j:support>
 								</aon:selectOneMenu>
 
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_commerce}" />
 
-								<aon:selectBooleanCheckbox disabled="#{ecconfig.login}"  value="#{ecconfig.to.commerce}" />
+								<aon:selectBooleanCheckbox disabled="#{ecconfig.login}"
+									value="#{ecconfig.to.commerce}" />
 
 								<aon:outputLabel for="Offer_series-New"
 									value="#{bundle.aon_series}/#{bundle.aon_number}" />
-								<aon:selectOneMenu id="Offer_series-New" 
+								<aon:selectOneMenu id="Offer_series-New"
 									value="#{ecconfig.to.series}" style="width:130px"
 									valueChangeListener="#{offer.onSeriesChanged}">
 									<f:selectItem itemLabel=" " itemValue="#{null}" />
@@ -72,19 +74,20 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_pricetype}" />
 
 								<aon:selectOneMenu value="#{ecconfig.to.price}"
-									style="width:130px"
-									>
+									style="width:130px">
 									<f:selectItems value="#{ecconfig.priceTypes}" />
-									<a4j:support event="onchange"  actionListener="#{ecconfig.getShowPriceState}" reRender="options">
-											</a4j:support>
+									<a4j:support event="onchange"
+										actionListener="#{ecconfig.getShowPriceState}"
+										reRender="options">
+									</a4j:support>
 								</aon:selectOneMenu>
 
 
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_discount}" />
 
-								<aon:selectOneMenu value="#{ecconfig.to.discount}" disabled="#{ecconfig.showPrice}"
-									style="width:130px">
+								<aon:selectOneMenu value="#{ecconfig.to.discount}"
+									disabled="#{ecconfig.showPrice}" style="width:130px">
 									<f:selectItems value="#{ecconfig.discountTypes}" />
 								</aon:selectOneMenu>
 
@@ -92,8 +95,8 @@
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_taxinprice}" />
 
-								<aon:selectOneMenu value="#{ecconfig.to.taxInPrice}" disabled="#{ecconfig.showPrice}"
-									style="width:130px">
+								<aon:selectOneMenu value="#{ecconfig.to.taxInPrice}"
+									disabled="#{ecconfig.showPrice}" style="width:130px">
 									<f:selectItems value="#{ecconfig.taxPriceTypes}" />
 								</aon:selectOneMenu>
 
@@ -101,8 +104,8 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_tariff}" />
 
 
-								<aon:selectOneMenu value="#{ecconfig.to.tariff}" disabled="#{ecconfig.showPrice}"
-									style="width:130px">
+								<aon:selectOneMenu value="#{ecconfig.to.tariff}"
+									disabled="#{ecconfig.showPrice}" style="width:130px">
 									<f:selectItems value="#{ecconfig.tariffs}" />
 								</aon:selectOneMenu>
 
@@ -153,64 +156,86 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_header}" />
 								<aon:div id="header">
 									<a4j:region>
-									
-									<!--  <c:if test="#{ecconfig.headerAvailable}"> -->
-										<a4j:mediaOutput id="header_preview" element="img"
-											cacheable="false" style="width:300px" 
-											value="#{ecconfig.headerImage.key}"
-											createContent="#{ecconfig.paintHeader}" />
-								<!-- 		
-									</c:if>	
-										
-									<c:if test="#{!ecconfig.headerAvailable}">	
-									
-									</c:if> -->
-									<h:panelGrid columns="2">
-										<aon:fileUpload addControlLabel="Cambiar "
-											stopControlLabel="#{bundle.aon_fileUpload_stop}"
-											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-											fileUploadListener="#{ecconfig.headerUploaded}" listWidth="0px"
-											listHeight="0px" immediateUpload="true" autoclear="true">											
-											<f:facet name="label">
-												<h:outputText value="Cambiar header" />
-											</f:facet>
-											<a4j:support event="onuploadcomplete" reRender="header" />
-										</aon:fileUpload>						
-																				
-										<aon:commandButton value="borrar" styleClass=" aon-icon-remove"  id="deleteImag1" actionListener="#{ecconfig.deleteHeader}" reRender="Images"
-										/>
+
+										<c:if test="#{ecconfig.headerImage!=null}">
+											<a4j:mediaOutput id="header_preview" element="img"
+												cacheable="false" style="width:500px"
+												value="#{ecconfig.headerImage.key}"
+												createContent="#{ecconfig.paintHeader}" />
+
+										</c:if>
+
+										<c:if test="#{ecconfig.headerImage==null}">
+
+											<h:graphicImage id="nophoto"
+												style="width:100px; height: 100px;"
+												value="/css/images/nophoto.gif" />
+
+										</c:if>
+										<h:panelGrid columns="2">
+											<aon:fileUpload addControlLabel="Cambiar "
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												fileUploadListener="#{ecconfig.headerUploaded}"
+												listWidth="0px" listHeight="0px" immediateUpload="true"
+												autoclear="true">
+												<f:facet name="label">
+													<h:outputText value="Cambiar header" />
+												</f:facet>
+												<a4j:support event="onuploadcomplete" reRender="header" />
+											</aon:fileUpload>
+
+											<aon:commandButton value="borrar"
+												styleClass=" aon-icon-remove" id="deleteImag1"
+												actionListener="#{ecconfig.deleteHeader}" reRender="Images" />
 										</h:panelGrid>
-									</a4j:region>									
+									</a4j:region>
 								</aon:div>
 
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_leftBanner}" />
 								<aon:div id="leftBanner">
 									<a4j:region>
-										<a4j:mediaOutput id="bannerL_preview" element="img"
-											cacheable="false" style="width:100px"
-											value="#{ecconfig.leftBanner.key}"
-											createContent="#{ecconfig.paintLeftBanner}" />
-											
-										<h:panelGrid columns="2">	
-										<aon:fileUpload addControlLabel="Cambiar "
-											stopControlLabel="#{bundle.aon_fileUpload_stop}"
-											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-											fileUploadListener="#{ecconfig.leftBannerUploaded}" listWidth="0px"
-											listHeight="0px" immediateUpload="true" autoclear="true">
-											<f:facet name="label">
-												<h:outputText value="Cambiar header" />
-											</f:facet>
-											<a4j:support event="onuploadcomplete" reRender="leftBanner" />
-										</aon:fileUpload>
-										<aon:commandButton value="borrar" styleClass=" aon-icon-remove"  id="deleteImag2" actionListener="#{ecconfig.deleteLeftBanner}" reRender="Images"
-										/>
-										 </h:panelGrid>
+
+										<c:if test="#{ecconfig.leftBanner!=null}">
+											<a4j:mediaOutput id="bannerL_preview" element="img"
+												cacheable="false" style="width:100px"
+												value="#{ecconfig.leftBanner.key}"
+												createContent="#{ecconfig.paintLeftBanner}" />
+
+										</c:if>
+
+										<c:if test="#{ecconfig.leftBanner==null}">
+
+											<h:graphicImage id="nophoto2"
+												style="width:100px; height: 100px;"
+												value="/css/images/nophoto.gif" />
+
+										</c:if>
+
+
+										<h:panelGrid columns="2">
+											<aon:fileUpload addControlLabel="Cambiar "
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												fileUploadListener="#{ecconfig.leftBannerUploaded}"
+												listWidth="0px" listHeight="0px" immediateUpload="true"
+												autoclear="true">
+												<f:facet name="label">
+													<h:outputText value="Cambiar header" />
+												</f:facet>
+												<a4j:support event="onuploadcomplete" reRender="leftBanner" />
+											</aon:fileUpload>
+											<aon:commandButton value="borrar"
+												styleClass=" aon-icon-remove" id="deleteImag2"
+												actionListener="#{ecconfig.deleteLeftBanner}"
+												reRender="Images" />
+										</h:panelGrid>
 									</a4j:region>
-									
-									
+
+
 								</aon:div>
 
 
@@ -218,24 +243,43 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_rightBanner}" />
 								<aon:div id="rightBanner">
 									<a4j:region>
-										<a4j:mediaOutput id="bannerR_preview" element="img"
-											cacheable="false" style="width:100px"
-											value="#{ecconfig.rightBanner.key}"
-											createContent="#{ecconfig.paintRightBanner}" />
-											<h:panelGrid columns="2">
-										<aon:fileUpload addControlLabel="Cambiar "
-											stopControlLabel="#{bundle.aon_fileUpload_stop}"
-											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-											fileUploadListener="#{ecconfig.rightBannerUploaded}" listWidth="0px"
-											listHeight="0px" immediateUpload="true" autoclear="true">
-											<f:facet name="label">
-												<h:outputText value="Cambiar header" />
-											</f:facet>
-											<a4j:support event="onuploadcomplete" reRender="rightBanner" />
-										</aon:fileUpload>
-										<aon:commandButton value="borrar" styleClass=" aon-icon-remove"  id="deleteImag3" actionListener="#{ecconfig.deleteRightBanner}" reRender="Images"
-										/>
+
+
+										<c:if test="#{ecconfig.rightBanner!=null}">
+
+											<a4j:mediaOutput id="bannerR_preview" element="img"
+												cacheable="false" style="width:100px"
+												value="#{ecconfig.rightBanner.key}"
+												createContent="#{ecconfig.paintRightBanner}" />
+
+										</c:if>
+
+										<c:if test="#{ecconfig.rightBanner==null}">
+
+											<h:graphicImage id="nophoto3"
+												style="width:100px; height: 100px;"
+												value="/css/images/nophoto.gif" />
+
+										</c:if>
+
+
+										<h:panelGrid columns="2">
+											<aon:fileUpload addControlLabel="Cambiar "
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												fileUploadListener="#{ecconfig.rightBannerUploaded}"
+												listWidth="0px" listHeight="0px" immediateUpload="true"
+												autoclear="true">
+												<f:facet name="label">
+													<h:outputText value="Cambiar header" />
+												</f:facet>
+												<a4j:support event="onuploadcomplete" reRender="rightBanner" />
+											</aon:fileUpload>
+											<aon:commandButton value="borrar"
+												styleClass=" aon-icon-remove" id="deleteImag3"
+												actionListener="#{ecconfig.deleteRightBanner}"
+												reRender="Images" />
 										</h:panelGrid>
 									</a4j:region>
 								</aon:div>
@@ -244,30 +288,42 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_welcomeBanner}" />
 								<aon:div id="welcomeBanner">
 									<a4j:region>
+										<c:if test="#{ecconfig.welcomeBanner!=null}">
 										<a4j:mediaOutput id="bannerW_preview" element="img"
 											cacheable="false" style="width:100px"
 											value="#{ecconfig.welcomeBanner.key}"
 											createContent="#{ecconfig.paintWelcomeBanner}" />
-											
+										</c:if>	
+											<c:if test="#{ecconfig.welcomeBanner==null}">
+
+											<h:graphicImage id="nophoto4"
+												style="width:100px; height: 100px;"
+												value="/css/images/nophoto.gif" />
+
+										</c:if>
+
 										<h:panelGrid columns="2">
-										<aon:fileUpload addControlLabel="Cambiar "
-											stopControlLabel="#{bundle.aon_fileUpload_stop}"
-											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-											uploadControlLabel="#{bundle.aon_fileUpload_upload}" listWidth="0px"
-											fileUploadListener="#{ecconfig.welcomeBannerUploaded}"
-											listHeight="0px" immediateUpload="true" autoclear="true">
-											<f:facet name="label">
-												<h:outputText value="Cambiar header" />
-											</f:facet>
-											<a4j:support event="onuploadcomplete"
-												reRender="welcomeBanner" />
-										</aon:fileUpload>
-										<aon:commandButton value="borrar" styleClass=" aon-icon-remove"  id="deleteImag4" actionListener="#{ecconfig.deleteWelcomeBanner}" reRender="Images"
-										/>
+											<aon:fileUpload addControlLabel="Cambiar "
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												listWidth="0px"
+												fileUploadListener="#{ecconfig.welcomeBannerUploaded}"
+												listHeight="0px" immediateUpload="true" autoclear="true">
+												<f:facet name="label">
+													<h:outputText value="Cambiar header" />
+												</f:facet>
+												<a4j:support event="onuploadcomplete"
+													reRender="welcomeBanner" />
+											</aon:fileUpload>
+											<aon:commandButton value="borrar"
+												styleClass=" aon-icon-remove" id="deleteImag4"
+												actionListener="#{ecconfig.deleteWelcomeBanner}"
+												reRender="Images" />
 										</h:panelGrid>
 									</a4j:region>
 								</aon:div>
-								
+
 							</aon:panelGrid>
 
 						</rich:tab>
@@ -368,7 +424,7 @@
 								rows="30" size="700" maxlength="150" />
 
 						</rich:tab>
-						
+
 						<rich:tab id="tab5"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_note2}">
 
@@ -384,7 +440,7 @@
 								rows="30" size="300" maxlength="150" />
 
 						</rich:tab>
-						
+
 						<rich:tab id="tab6"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_note3}">
 
@@ -399,9 +455,9 @@
 								rows="30" size="300" maxlength="150" />
 
 						</rich:tab>
-						
+
 					</rich:tabPanel>
-					
+
 				</aon:panel>
 
 			</aon:div>

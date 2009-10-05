@@ -26,6 +26,12 @@
     PATH="/com/code/aon/ui/ebackoffice/facelet/ecCatalogue/grid.xhtml"
     TARGET="rules:#com#code#aon#ui#ebackoffice#facelet#ecCatalogue#grid.xhtml"
     TITLE="eccatalogue_grid" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="eccatalogue_icons::#com#code#aon#ui#ebackoffice#facelet#images#form.xhtml"
+    NAME="output4"
+    PATH="/com/code/aon/ui/ebackoffice/facelet/images/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#ebackoffice#facelet#images#form.xhtml"
+    TITLE="eccatalogue_icons" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM
@@ -44,4 +50,8 @@
   NAME="rules:#com#code#aon#ui#ebackoffice#facelet#ecConfig#form.xhtml"
   PATH="/com/code/aon/ui/ebackoffice/facelet/ecConfig/form.xhtml"
   SHAPE="288,465,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#ebackoffice#facelet#images#form.xhtml"
+  PATH="/com/code/aon/ui/ebackoffice/facelet/images/form.xhtml"
+  SHAPE="304,497,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>
