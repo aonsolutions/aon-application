@@ -1116,10 +1116,13 @@ public class MessageController implements WebMailConstants, BundleConstants {
 					Criteria criteria = new Criteria();
 					String displayName = bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME);
 					String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
+					String contacts = bean.getFieldName(IWebMailAlias.CONTACT_CONTACTS);
 					Expression exp1 = ExpressionUtilities.getLikeExpression(displayName, text + "*");
 					Expression exp2 = ExpressionUtilities.getLikeExpression(email, text + "*");
 					criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-					criteria.addNotNullExpression(email);
+					Expression exp3 = ExpressionUtilities.getNotNullExpression(email);
+					Expression exp4 = ExpressionUtilities.getNotNullExpression(contacts);
+					criteria.addExpression(ExpressionUtilities.getOrExpression(exp3, exp4));
 					criteria.addOrder(displayName);
 					return bean.getList(criteria);
 		    	} catch (ManagerBeanException e) {

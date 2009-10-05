@@ -12,6 +12,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.Contact;
@@ -51,9 +53,13 @@ public class MultiSelectionEmailBean {
 	        emails = new ArrayList<SelectionEmail>();
 	    	try{
 				IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
-				Criteria criteria = new Criteria();
-				criteria.addNotNullExpression(bean.getFieldName(IWebMailAlias.CONTACT_EMAIL));
-				criteria.addOrder(bean.getFieldName(IWebMailAlias.CONTACT_NAME));
+				Criteria criteria = new Criteria();			
+				String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
+				String contacts = bean.getFieldName(IWebMailAlias.CONTACT_CONTACTS);
+				Expression exp1 = ExpressionUtilities.getNotNullExpression(email);
+				Expression exp2 = ExpressionUtilities.getNotNullExpression(contacts);
+				criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));				
+				criteria.addOrder(bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME));
 				List<ITransferObject> lst = bean.getList(criteria);
 	            for (int i = 0, max = lst.size(); i < max; i++) {
 	            	SelectionEmail se = new SelectionEmail();

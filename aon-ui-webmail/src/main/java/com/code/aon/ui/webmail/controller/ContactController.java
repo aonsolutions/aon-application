@@ -2,8 +2,6 @@ package com.code.aon.ui.webmail.controller;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,19 +34,17 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class ContactController extends BasicController implements WebMailConstants {
 	
-	private static final String RESOURCE_BUNDLE = "com.code.aon.ui.groupware.i18n.messages";
-	
-	private static final String CONTACT_DUPLICATED = "contact_duplicated";
-	
 	private static final Logger LOGGER = Logger.getLogger(ContactController.class.getName());
 
-	private LdapDAO dao;
+	private LdapDAO contactDAO;
+	
+	private LdapDAO groupContactDAO;
 	
 	private BasicManagerBean ldapManagerBean;
 	
 	private List<SelectItem> groupContacts;
 
-	public LdapDAO getDAO( Class<? extends ITransferObject> _class ) {
+	private LdapDAO getDAO( Class<? extends ITransferObject> _class ) {
 		LdapDAO dao = new LdapDAO(_class);
 		AuthPrincipal principal = Utils.getAuthPrincipal();
 		Name baseDN = NameResolver.getUserAddressBookDN(principal.getDomain(), principal.getShortName());
@@ -56,21 +52,28 @@ public class ContactController extends BasicController implements WebMailConstan
 		dao.setBaseDN( baseDN );
 		return dao;
 	}
+
+	public LdapDAO getGroupContactDAO() {
+		if ( this.groupContactDAO == null ) {
+			this.groupContactDAO = getDAO(GroupContact.class);
+		}
+		return this.groupContactDAO;
+	}
+	
+	public LdapDAO getContactDAO() {
+		if ( this.contactDAO == null ) {
+			this.contactDAO = getDAO(Contact.class);
+		}
+		return this.contactDAO;
+	}		
 	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
-			this.dao = getDAO(Contact.class);
-			this.ldapManagerBean = new BasicManagerBean(dao);
+			this.ldapManagerBean = new BasicManagerBean(getContactDAO());
 		}
 		return this.ldapManagerBean;
 	}	
-	
-	private void addMessageExpression( String messageId ) {
-		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale);
-		addMessage( bundle.getString(messageId) );
-	}
 	
 	public List<SelectItem> getAvailableContacts() {
 		return this.groupContacts;
@@ -79,7 +82,7 @@ public class ContactController extends BasicController implements WebMailConstan
 	public void updateAvailableContacts() {
 		this.groupContacts = new LinkedList<SelectItem>();
     	try{
-    		LdapDAO dao = getDAO(GroupContact.class);
+    		LdapDAO dao = getGroupContactDAO();
 			Criteria criteria = new Criteria();
 			criteria.addNotNullExpression(dao.getFieldName(IWebMailAlias.GROUP_CONTACT_EMAIL));
 			criteria.addOrder(dao.getFieldName(IWebMailAlias.GROUP_CONTACT_DISPLAY_NAME));
@@ -130,45 +133,20 @@ public class ContactController extends BasicController implements WebMailConstan
 	}
 
 	@Override
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		Contact contact = (Contact) getTo();
-		if ( contact.getContactGroup() ) {
-			updateAvailableContacts();	
-		}
-		if (! StringUtils.isEmpty(contact.getName()) ) {
-			contact.setOutlookName( contact.getName() );
-			contact.setName(null);
-		}
-		if (! StringUtils.isEmpty(contact.getCity()) ) {
-			contact.setOutlookCity( contact.getCity() );
-			contact.setCity(null);
-		}
-		if (! StringUtils.isEmpty(contact.getCategory()) ) {
-			contact.setTitle( contact.getCategory() );
-			contact.setCategory(null);
-		}
-	}
-
-	@Override
 	public void accept(ActionEvent event) {		
 		try {
-			Name currentId = this.dao.calculateDN(getTo());
-			if ( isNew() ) {
-				if ( dao.exists(currentId) ) {
-					addMessageExpression(CONTACT_DUPLICATED);
-		            return;
-				}			
-			} else {
+			ITransferObject to = getTo();
+			Name currentId = getContactDAO().calculateDN(to);
+			if (! isNew() ) {
 				Name oldId = (Name) this.savedToId;
 				if (! oldId.equals(currentId) ) {
-					if ( dao.exists(currentId) ) {
-						addMessageExpression(CONTACT_DUPLICATED);
+					if ( getContactDAO().exists(currentId) ) {
+						AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, CONTACT_DUPLICATED );
 						return;
 					}			
-					getManagerBean().setId( getTo(), oldId );
-					getManagerBean().remove( getTo() );
-					getManagerBean().setId( getTo(), null );
+					getManagerBean().setId( to, oldId );
+					getManagerBean().remove( to );
+					getManagerBean().setId( to, null );
 					setNew(true);
 				}
 			}
