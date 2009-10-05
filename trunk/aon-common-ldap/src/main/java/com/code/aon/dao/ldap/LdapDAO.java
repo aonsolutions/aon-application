@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -12,6 +13,7 @@ import javax.naming.Name;
 import javax.naming.ldap.Rdn;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -167,7 +169,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@SuppressWarnings("unchecked")
 	private IDAO getDAO( PropertyInfo info ) {
-		LdapDAO dao = new LdapDAO( getProperties(), (Class<ITransferObject>) info.getPropertyClass() );
+		LdapDAO dao = new LdapDAO( getProperties(), (Class<ITransferObject>) info.getBaseClass() );
 		if ( info.getBaseDN() != null ) {
 			String baseDN = info.getBaseDN();
 			if (! StringUtils.isEmpty(baseDN) ) {
@@ -182,12 +184,27 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return dao;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object getValue( ITransferObject to, PropertyInfo info ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, DAOException {
 		Object value = PropertyUtils.getProperty(to, info.getAccesPath());
-		return getValue(value, info);
+		if ( info.isCollection() ) {
+			return getCollectionValue( (List<Object>) value, info);
+		}
+		return getSingleValue(value, info);
+	}
+	
+	private Object getCollectionValue( List<Object> list, PropertyInfo info ) throws DAOException {
+		if ( list != null ) {
+			List<Object> result = new LinkedList<Object>();	
+			for( Object object : list ) {
+				result.add( getSingleValue(object, info) );
+			}
+			return result;
+		}
+		return null;
 	}
 
-	private Object getValue( Object value, PropertyInfo info ) throws DAOException {
+	private Object getSingleValue( Object value, PropertyInfo info ) throws DAOException {
 		Object result = value; 
 		if ( result != null ) {
 			if ( info.isTransferObject() && (value instanceof ITransferObject) ) {
@@ -206,12 +223,19 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void setProperties( ITransferObject to, Entry entry ) throws DAOException {
 		for( PropertyInfo info : metadata.getMappings()) {
 			try {
 				Object value = getValue(to, info);
 				if ( value != null ) {
-					entry.put( info.getLdapName(), value );						
+					if ( info.isCollection() ) {
+						for( Object object : (List) value ) {
+							entry.put( info.getLdapName(), object );
+						}
+					} else {
+						entry.put( info.getLdapName(), value );						
+					}
 				}
 			} catch (Exception e) {
 				throw new DAOException( e );
@@ -265,7 +289,9 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			LdapRenderer renderer = new LdapRenderer();
 			renderer.visitCriteria(criteria);
 			String filter = renderer.getExpression();
-			expression = NameResolver.getAndExpression( expression, filter );
+			if (! StringUtils.isEmpty(filter) ) {
+				expression = NameResolver.getAndExpression( expression, filter );	
+			}
 		}
 		return expression;
 	}
@@ -292,15 +318,35 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		}
 		return list;
 	}
+
+	private Object convert( Object value, PropertyInfo info ) throws DAOException {
+		Object result = null;
+		if ( info.isTransferObject() ) {
+			IDAO dao = getDAO(info);
+			Name id = NameResolver.getName( value.toString() );
+			result = dao.get( (Serializable) id );								
+		} else {
+			result = ConvertUtils.convert(value, info.getBaseClass());	
+		}
+		return result;
+	}
+	
+	private Object convertCollection( List<Object> list, PropertyInfo info ) throws DAOException {
+		List<Object> result = new LinkedList<Object>();
+		for( Object object : list ) {
+			result.add( convert(object, info) );	
+		}
+		return result;
+	}
 	
 	private void setProperty( ITransferObject to, PropertyInfo info, Entry entry ) throws InstantiationException, IllegalAccessException, InvocationTargetException, DAOException {
 		if ( entry.containsKey(info.getLdapName()) ) {
-			Object value = entry.getAsObject( info.getLdapName() );
-			if ( value != null ) {
-				if ( info.isTransferObject() ) {
-					IDAO dao = getDAO(info);
-					Name id = NameResolver.getName( value.toString() );
-					value = dao.get( (Serializable) id );
+			if ( entry.containsKey(info.getLdapName()) ) {
+				Object value = null;
+				if ( info.isCollection() ) {
+					value = convertCollection(entry.get(info.getLdapName()), info);
+				} else {
+					value = convert(entry.getAsObject(info.getLdapName()), info);
 				}
 				BeanUtils.setProperty(to, info.getAccesPath(), value);						
 			}
@@ -382,6 +428,13 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return to;
 	}
 	
+	private Object getValue( Entry entry, String name, PropertyInfo info ) throws DAOException {
+		if ( info.isCollection() ) {
+			return getCollectionValue(entry.get(name), info);
+		}
+		return getSingleValue(entry.getAsObject(name), info);
+	}
+	
 	@Override
 	public ITransferObject update(ITransferObject to) throws DAOException {
 		try {
@@ -395,7 +448,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 					String name = info.getLdapName();
 					Object oldValue = null;
 					if ( entry.containsKey(name) ) {
-						oldValue = getValue(entry.getAsObject(name), info);
+						oldValue = getValue(entry, name, info);
 					}
 					session.updateAttribute(dn, name, oldValue, newValue);
 				} catch (Exception e) {

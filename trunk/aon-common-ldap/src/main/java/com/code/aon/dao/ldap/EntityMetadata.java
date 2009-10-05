@@ -69,11 +69,18 @@ public class EntityMetadata {
 		Attribute attribute = method.getAnnotation(Attribute.class);
 		String accessPath = StringUtils.defaultIfEmpty(attribute.accessPath(), pd.getName());
 		String ldapName = StringUtils.defaultIfEmpty(attribute.name(), pd.getName());
-		PropertyInfo info = new PropertyInfo( accessPath, ldapName );
-		info.setPropertyClass( pd.getPropertyType() );
+		PropertyInfo info = new PropertyInfo( accessPath, ldapName, pd.getPropertyType() );
 		info.setLength( attribute.length() );
 		info.setNullable( attribute.nullable() );
 		info.setAlias( getAlias(accessPath) );
+		if (! StringUtils.isEmpty(attribute.baseClass()) ) {
+			try {
+				Class<?> baseClass = ClassUtils.getClass(attribute.baseClass());
+				info.setBaseClass( baseClass );
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException( e );
+			}			
+		}
 		if ( method.isAnnotationPresent(BaseDN.class) ) {
 			String name = method.getAnnotation(BaseDN.class).value();
 			info.setBaseDN( name );
