@@ -10,15 +10,25 @@
 
 		<aon:form id="contactList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_contacts}" />
 				<ui:param name="controller" value="#{contact}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="#{toolbarID}-resetGroup"
+						value="#{webmailBundle.webmail_reset_contactGroup}"
+						action="#{resetAction}" actionListener="#{controller.onResetGroup}"
+						styleClass="aon-finding-toolbar-item aon-icon-new" />				
+				</ui:define>
+			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="contactDataList" value="#{contact.model}"
-					var="to" rows="20" rendered="#{contact.model.rowCount > 0}">
+					var="to" rows="20" rendered="#{contact.model.rowCount > 0}"
+					columnClasses="aon-width-180 aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn,
+						aon-width-100 aon-editDataTable-textColumn,
+						aon-width-100 aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="contact_form" actionListener="#{contact.onSelect}" />
 
@@ -26,21 +36,15 @@
 						<f:facet name="header">
 							<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
 						</f:facet>
-						<aon:outputText value="#{to.displayName}"/>
+						<aon:outputText value="#{to.displayName}"
+							styleClass="aon-list-icon #{to.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{webmailBundle.webmail_contact_email}" />
 						</f:facet>
-						<aon:outputText value="#{to.email}"/>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{webmailBundle.webmail_contact_organization}" />
-						</f:facet>
-						<aon:outputText value="#{to.organization}"/>
+						<aon:outputText value="#{to.emails}"/>
 					</aon:column>
 
 					<aon:column>
@@ -51,6 +55,7 @@
 					</aon:column>
 
 					<aon:column>
+					
 						<f:facet name="header">
 							<aon:outputText value="#{webmailBundle.webmail_contact_cellular_phone}" />
 						</f:facet>
