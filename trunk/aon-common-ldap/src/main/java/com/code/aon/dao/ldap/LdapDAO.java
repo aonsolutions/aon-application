@@ -341,15 +341,13 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	private void setProperty( ITransferObject to, PropertyInfo info, Entry entry ) throws InstantiationException, IllegalAccessException, InvocationTargetException, DAOException {
 		if ( entry.containsKey(info.getLdapName()) ) {
-			if ( entry.containsKey(info.getLdapName()) ) {
-				Object value = null;
-				if ( info.isCollection() ) {
-					value = convertCollection(entry.get(info.getLdapName()), info);
-				} else {
-					value = convert(entry.getAsObject(info.getLdapName()), info);
-				}
-				BeanUtils.setProperty(to, info.getAccesPath(), value);						
+			Object value = null;
+			if ( info.isCollection() ) {
+				value = convertCollection(entry.get(info.getLdapName()), info);
+			} else {
+				value = convert(entry.getAsObject(info.getLdapName()), info);
 			}
+			BeanUtils.setProperty(to, info.getAccesPath(), value);						
 		}
 	}
 	

@@ -143,6 +143,11 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_CITY = "Contact_city";
 	
+	/**
+	* Alias value: Contact_contacts
+	* Hibernate value: Contact.member
+	*/
+	String CONTACT_CONTACTS = "Contact_contacts";
 	
 	/**
 	* Alias value: Contact_displayName
