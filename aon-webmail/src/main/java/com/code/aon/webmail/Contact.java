@@ -1,5 +1,8 @@
 package com.code.aon.webmail;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.naming.Name;
 import javax.persistence.Id;
 
@@ -9,14 +12,15 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
+import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
 
 @EntryObject(mainObjectClass=IAonObjectClasses.CONTACT, objectClasses={IAonObjectClasses.TOP})
-public class Contact implements ITransferObject {
+public class Contact implements ILdapTransferObject {
 
 	private static final long serialVersionUID = 7825997921660369372L;
 
@@ -72,7 +76,9 @@ public class Contact implements ITransferObject {
 	
 	private String title;
 	
-	private Boolean contactGroup;
+	private Boolean contactGroup = Boolean.FALSE;
+	
+	private List<GroupContact> contacts;
 	
 	@Id
 	public Name getId() {
@@ -310,14 +316,24 @@ public class Contact implements ITransferObject {
 	}
 
 	@Attribute(name="contactGroup")
-	public Boolean getDnsManagement() {
+	public Boolean getContactGroup() {
 		return contactGroup;
 	}
 
-	public void setDnsManagement(Boolean contactGroup) {
+	public void setContactGroup(Boolean contactGroup) {
 		this.contactGroup = contactGroup;
 	}
-	
+		
+	@BaseDN("{this}")	
+	@Attribute(name="member",baseClass="com.code.aon.webmail.GroupContact")
+	public List<GroupContact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<GroupContact> contacts) {
+		this.contacts = contacts;
+	}
+
 	public String getEmailLarge() {
 		if ( getEmail() != null ) {
 			String name = getDisplayName();
@@ -329,6 +345,23 @@ public class Contact implements ITransferObject {
 		return null;
 	}
 
+	public String getEmails() {
+		if ( getContactGroup() ) {
+			List<String> list = new LinkedList<String>();
+			if ( getContacts() != null ) {
+				for( GroupContact gc : getContacts() ) {
+					if ( ! StringUtils.isBlank(gc.getEmail()) ) {
+						list.add( gc.getEmail() );						
+					}
+				}				
+			}
+			String emails = StringUtils.join( list, ", " );
+			return StringUtils.trimToNull( emails );
+		} else {
+			return getEmail();
+		}
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -340,7 +373,8 @@ public class Contact implements ITransferObject {
 				.append(this.address, o.address)
 				.append(this.category, o.category)				
 				.append(this.cellularPhone, o.cellularPhone)
-				.append(this.city, o.city)				
+				.append(this.city, o.city)		
+				.append(this.contactGroup, o.contactGroup)
 				.append(this.country, o.country)
 				.append(this.displayName, o.displayName)
 				.append(this.email, o.email)				
@@ -374,6 +408,7 @@ public class Contact implements ITransferObject {
 			.append(category)
 			.append(cellularPhone)
 			.append(city)
+			.append(contactGroup)
 			.append(country)
 			.append(displayName)
 			.append(email)
