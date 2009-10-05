@@ -11,10 +11,10 @@
 		suggestionAction="#{webmailMessage.suggestionEmails}" 
 		fetchValue="#{contact.emailLarge}, " tokens=",;">
 		<h:column>
-			<h:outputText value="#{contact.displayName}" />
+			<aon:outputText value="#{contact.displayName}" />
 		</h:column>
 		<h:column>
-			<h:outputText value="&lt;#{contact.email}&gt;" styleClass="aon-italic" />
+			<aon:outputText value="#{contact.emailSummary}" styleClass="aon-italic" />
 		</h:column>
 	</rich:suggestionbox>
 	
