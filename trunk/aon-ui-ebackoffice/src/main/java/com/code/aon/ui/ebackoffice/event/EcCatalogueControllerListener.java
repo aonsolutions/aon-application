@@ -50,15 +50,30 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
-			throws ControllerListenerException {
+			throws ControllerListenerException {		
+		
 		EccatalogueController controller  = (EccatalogueController) event.getController();
 		Eccatalogue cat = (Eccatalogue) getController().getTo();
+		
+		if (cat.getCatalogueImg() != null) {
+			AonFile image = new AonFile();
+			image.setData(cat.getCatalogueImg());
+			controller.setImage(image);
+		}
+		
+		if (cat.getCatalogueIcon() != null) {
+			AonFile icon = new AonFile();
+			icon.setData(cat.getCatalogueIcon());
+			controller.setIcon(icon);
+		}
+		
+	/*	
 		AonFile image = new AonFile();
 		AonFile icon = new AonFile();
 		image.setData(cat.getCatalogueImg());
 		icon.setData(cat.getCatalogueIcon());
 		controller.setImage(image);
-		controller.setIcon(icon);
+		controller.setIcon(icon);*/
 	}
 	
 	
