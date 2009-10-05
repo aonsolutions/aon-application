@@ -333,16 +333,38 @@ public class Contact implements ILdapTransferObject {
 	public void setContacts(List<GroupContact> contacts) {
 		this.contacts = contacts;
 	}
-
-	public String getEmailLarge() {
-		if ( getEmail() != null ) {
-			String name = getDisplayName();
+	
+	private String getEmailLarge( String displayName, String email ) {
+		if ( email != null ) {
+			String name = displayName;
 			if (! StringUtils.isAsciiPrintable(name) ) {
 				name = "\"" + name + "\"";
 			}
-			return name + " &lt;" + getEmail() + "&gt;";			
+			return name + " &lt;" + email + "&gt;";			
 		}
 		return null;
+	}
+
+	public String getEmailLarge() {
+		if ( getContactGroup() ) {
+			List<String> list = new LinkedList<String>();
+			if ( getContacts() != null ) {
+				for( GroupContact gc : getContacts() ) {
+					if ( ! StringUtils.isBlank(gc.getEmail()) ) {
+						String email = getEmailLarge( gc.getDisplayName(), gc.getEmail() );
+						list.add( email );						
+					}
+				}				
+			}
+			String emails = StringUtils.join( list, ", " );
+			return StringUtils.trimToNull( emails );			
+		}
+		return getEmailLarge( getDisplayName(), getEmail() );
+	}
+	
+	public String getEmailSummary() {
+		String emails = getEmails();
+		return StringUtils.abbreviate( emails, 80 );
 	}
 
 	public String getEmails() {
