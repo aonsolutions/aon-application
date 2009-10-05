@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.enterprise</artifactId>
 	<packaging>war</packaging>
-	<version>4.1.0</version>
+	<version>4.1.1</version>
 	<description>AON WEB ENTERPRISE</description>
 	<name>AON WEB ENTERPRISE</name>
 	<properties>
