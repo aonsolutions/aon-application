@@ -143,6 +143,18 @@ color:#000;
 .aon-width-150{
 	width:150px;
 }	
+.aon-width-160{
+	width:160px;
+}	
+.aon-width-170{
+	width:170px;
+}	
+.aon-width-180{
+	width:180px;
+}	
+.aon-width-190{
+	width:190px;
+}	
 .aon-width-200{
 	width:200px;
 }	
@@ -461,6 +473,12 @@ color:#000;
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
+	}
+.aon-icon-contact{
+	background:transparent url(images/aon-icon/aon-icon-contact.png) scroll left center no-repeat;
+	}
+.aon-icon-contactGroup{
+	background:transparent url(images/aon-icon/aon-icon-contactGroup.gif) scroll left center no-repeat;
 	}
 .aon-icon-agenda-newContact{
 	background:transparent url(images/aon-icon/aon-icon-agenda-newContact.png) scroll left center no-repeat;
@@ -1958,4 +1976,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	margin:0;
 	border:transparent 1px solid;
 	width:100px;
+}
+
+.aon-list-icon {
+ 	display:block;
+ 	padding:2px 5px 1px 18px; 	
 }
