@@ -280,4 +280,24 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_WEB = "Contact_web";
 	
+
+	/**
+	* Alias value: GroupContact_displayName
+	* Hibernate value: GroupContact.displayName
+	*/
+	String GROUP_CONTACT_DISPLAY_NAME = "GroupContact_displayName";
+	
+	
+	/**
+	* Alias value: GroupContact_email
+	* Hibernate value: GroupContact.email
+	*/
+	String GROUP_CONTACT_EMAIL = "GroupContact_email";
+
+	/**
+	* Alias value: GroupContact_id
+	* Hibernate value: GroupContact.id
+	*/
+	String GROUP_CONTACT_ID = "GroupContact_id";
+
 }
