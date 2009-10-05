@@ -13,15 +13,16 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.IAonObjectClasses;
 
 @Entity
 @Table(name="signature")
-@EntryObject(mainObjectClass="aonSignature", objectClasses={"top"})
-public class Signature implements ITransferObject{
+@EntryObject(mainObjectClass=IAonObjectClasses.SIGNATURE, objectClasses={IAonObjectClasses.TOP})
+public class Signature implements ILdapTransferObject {
 
 	private static final long serialVersionUID = 714322089783136934L;
 

@@ -12,13 +12,15 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass="aonMailAccount", objectClasses={"top"})
-public class MailAccount implements ITransferObject{
+@EntryObject(mainObjectClass=IAonObjectClasses.MAIL_ACCOUNT, objectClasses={IAonObjectClasses.TOP})
+public class MailAccount implements ILdapTransferObject {
 	
 	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
 
