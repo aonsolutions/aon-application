@@ -230,10 +230,10 @@ public interface IEbackofficeAlias {
 	String  ECCONFIG_TARIFF_ID = ECCONFIG_ENTRY.getAliasNames()[27];
 
 	/** 
-	* Alias value: Ecconfig_taxInType
-	* Hibernate value: Ecconfig.taxInType
+	* Alias value: Ecconfig_taxInPrice
+	* Hibernate value: Ecconfig.taxInPrice
 	*/
-	String  ECCONFIG_TAX_IN_TYPE = ECCONFIG_ENTRY.getAliasNames()[28];
+	String  ECCONFIG_TAX_IN_PRICE = ECCONFIG_ENTRY.getAliasNames()[28];
 
 	/** 
 	* Alias value: Ecconfig_telephone
@@ -261,16 +261,16 @@ public interface IEbackofficeAlias {
 	DAOConstantsEntry ECCATALOGUE_ENTRY = DAOConstants.getDAOConstant(Eccatalogue.class);
 
 	/** 
-	* Alias value: Eccatalogue_catalogueIcon
-	* Hibernate value: Eccatalogue.catalogueIcon
+	* Alias value: Eccatalogue_id
+	* Hibernate value: Eccatalogue.id
 	*/
-	String  ECCATALOGUE_CATALOGUE_ICON = ECCATALOGUE_ENTRY.getAliasNames()[0];
+	String  ECCATALOGUE_ID = ECCATALOGUE_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Eccatalogue_catalogueImg
-	* Hibernate value: Eccatalogue.catalogueImg
+	* Alias value: Eccatalogue_catalogue
+	* Hibernate value: Eccatalogue.catalogue
 	*/
-	String  ECCATALOGUE_CATALOGUE_IMG = ECCATALOGUE_ENTRY.getAliasNames()[1];
+	String  ECCATALOGUE_CATALOGUE = ECCATALOGUE_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Eccatalogue_catalogue_id
@@ -279,16 +279,34 @@ public interface IEbackofficeAlias {
 	String  ECCATALOGUE_CATALOGUE_ID = ECCATALOGUE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Eccatalogue_id
-	* Hibernate value: Eccatalogue.id
+	* Alias value: Eccatalogue_catalogue_endDate
+	* Hibernate value: Eccatalogue.catalogue.endDate
 	*/
-	String  ECCATALOGUE_ID = ECCATALOGUE_ENTRY.getAliasNames()[3];
+	String  ECCATALOGUE_CATALOGUE_END_DATE = ECCATALOGUE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Eccatalogue_catalogue_startDate
+	* Hibernate value: Eccatalogue.catalogue.startDate
+	*/
+	String  ECCATALOGUE_CATALOGUE_START_DATE = ECCATALOGUE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Eccatalogue_catalogueImg
+	* Hibernate value: Eccatalogue.catalogueImg
+	*/
+	String  ECCATALOGUE_CATALOGUE_IMG = ECCATALOGUE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Eccatalogue_catalogueIcon
+	* Hibernate value: Eccatalogue.catalogueIcon
+	*/
+	String  ECCATALOGUE_CATALOGUE_ICON = ECCATALOGUE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Eccatalogue_type
 	* Hibernate value: Eccatalogue.type
 	*/
-	String  ECCATALOGUE_TYPE = ECCATALOGUE_ENTRY.getAliasNames()[4];
+	String  ECCATALOGUE_TYPE = ECCATALOGUE_ENTRY.getAliasNames()[7];
 
 
 }
