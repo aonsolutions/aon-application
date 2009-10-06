@@ -29,14 +29,14 @@
 							<f:facet name="header">
 								<aon:outputText value="#{day.diasem}" />
 							</f:facet>
-							<aon:div>
-								<aon:outputText id="pic#{m.desc}#{idx}"
+							<aon:div >
+								<h:commandLink  id="pic#{m.desc}#{idx}"
 									value="#{m.days[idx].cdg}"
 									style="text-align:center;background-color:#{m.days[idx].color};color:#{day.weekend};font-size: larger;display:block;">
 									<a4j:support ajaxSingle="true" event="onclick"
 										actionListener="#{calendar.onChangeDay}"
-										reRender="calendarForm" />
-								</aon:outputText>
+										reRender="tabla" />
+								</h:commandLink>
 							</aon:div>
 						</rich:columns>
 					</rich:dataTable>

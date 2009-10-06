@@ -4,10 +4,10 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-payroll/aon-payroll">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-payroll/aon-ui-payroll">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-payroll/aon-ui-payroll">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-payroll/aon-payroll">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="aon-payroll"/>

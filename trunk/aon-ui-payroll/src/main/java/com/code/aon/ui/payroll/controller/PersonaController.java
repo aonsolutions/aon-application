@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -23,6 +24,8 @@ import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Tipovia;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class PersonaController extends PayrollBasicController {
@@ -52,7 +55,7 @@ public class PersonaController extends PayrollBasicController {
 		selectedList = new LinkedList<ITransferObject>();
 		super.onSelect(event);		
 		selectedList.add(this.getTo());		
-						
+		this.setMessage("");				
 	}
 
 	
@@ -84,7 +87,16 @@ public class PersonaController extends PayrollBasicController {
     private Provincia provincia1;
     private Tipovia tipovia;
     private Date fecnac;
+    private String message;
     
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
 	public Documento getTipdoc() {
 		return tipdoc;
 	}
@@ -146,16 +158,39 @@ public class PersonaController extends PayrollBasicController {
 		provincia1 = new Provincia();
 		tipovia = new Tipovia();
 		tabName = null;
-		
+		message="";
 		super.onEditSearch(arg0);
 		
 	}
 	
 	
-	public void onProvince(ActionEvent e){
+	public void onCodpos(ActionEvent e){
 		
-		this.getProvincia().setCdg(((Persona)this.getTo()).getCodpos().substring(0, 1));
+		((Persona)this.getTo()).getProvincia().setCdg(((Persona)this.getTo()).getCodpos().substring(0, 2));
+	
 	}
+	
+	
+	public void onNumdoc(ActionEvent e){
+		//System.out.println(((Persona) this.getTo()).getNumdoc().length());
+		//System.out.println(((Persona) this.getTo()).getTipdoc().getCdg());
+				
+	if(Utils.isValidNif(((Persona)this.getTo()).getNumdoc())){
+		this.setMessage("");
+	}else{
+		if	(((Persona) this.getTo()).getNumdoc().length()==8 &&((Persona) this.getTo()).getTipdoc().getCdg().equals("1")){
+			System.out.println("numero sin letra!!!!");
+			char[] dni=((Persona) this.getTo()).getNumdoc().toCharArray() ;
+			System.out.println(Utils.getDniLetter(dni));
+			((Persona) this.getTo()).setNumdoc(((Persona) this.getTo()).getNumdoc()+Utils.getDniLetter(dni));
+			System.out.println(((Persona)this.getTo()).getNumdoc());
+			this.setMessage("Se añadió la letra del Dni automaticamente");
+		}else{
+		this.setMessage(" Numero Incorrecto");}
+	
+	}
+	}
+	
 	
 	public void onOtraperc(ActionEvent e){
 		
@@ -173,16 +208,16 @@ public class PersonaController extends PayrollBasicController {
 			 * Búsqueda por campos lookup
 			 */
 			if ((tipdoc.getCdg() != null) && (! StringUtils.isEmpty(tipdoc.getCdg()))) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_TIPDOC_CDG), tipdoc.getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERSONA_TIPDOC_CDG), tipdoc.getCdg());
 			}
 			if ((nacion.getCdg() != null) && (! StringUtils.isEmpty(nacion.getCdg()))) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERSONA_NACION_CDG), nacion.getCdg());
 			}
 			if ((pais.getCdg() != null) && (! StringUtils.isEmpty(pais.getCdg()))) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_PAIS_CDG), pais.getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERSONA_PAIS_CDG), pais.getCdg());
 			}
 			if ((pais1.getCdg() != null) && (! StringUtils.isEmpty(pais1.getCdg()))) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_PAIS1_CDG), pais1.getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERSONA_PAIS1_CDG), pais1.getCdg());
 			}
 			if ((provincia.getCdg() != null) && (! StringUtils.isEmpty(provincia.getCdg()))) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERSONA_PROVINCIA_CDG), provincia.getCdg());

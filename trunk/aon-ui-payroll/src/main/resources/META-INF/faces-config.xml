@@ -7378,5 +7378,23 @@
 		</managed-property>
 		
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>empresaLookUpListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.EmpresaLookUpListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+
+	<managed-bean>
+		<managed-bean-name>actividadLookUpListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ActividadLookUpListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 
 </faces-config>

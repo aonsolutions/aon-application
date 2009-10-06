@@ -58,11 +58,11 @@
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposDocumento.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==tiposDocumento.to}" size="1"
-								value="#{tiposDocumento.to.cdg}" maxlength="1" />
+								value="#{tiposDocumento.to.cdg}" maxlength="2" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
 									rendered="#{tiposDocumento.new}" size="1"
-									value="#{tiposDocumento.to.cdg}" maxlength="1" />
+									value="#{tiposDocumento.to.cdg}" maxlength="2" />
 							</f:facet>
 						</aon:column>
 	

@@ -71,30 +71,35 @@
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_trabajador_empresa}" />
 						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="empresa_cdg" required="#{true}"
-								lookup="#{empresaLookup}" reRender="empresa_descripcion"
+						<a4j:region>
+							<aon:lookupInputText id="empresa_cdg" required="#{true}"  
+							    lookupChangeListener="#{trabajador.onCompanyChanged}" ajaxSingle="false"
+								lookup="#{empresaLookup}" reRender="empresa_descripcion,trabajadorForm"
 								value="#{trabajador.to.empresa.cdg}" size="5">
 							</aon:lookupInputText>
-							<aon:lookupButton id="empresa_lookup"
+							<aon:lookupButton id="empresa_lookup" 
 								windowTitle="#{appBundle.aon_payroll_principales_trabajador_empresa}"
-								selectReRender="empresa_cdg,empresa_descripcion"
+								selectReRender="empresa_cdg,empresa_descripcion,trabajadorForm"
+								lookupChangeListener="#{trabajador.onCompanyChanged}"
 								lookup="#{empresaLookup}" minHeight="440"
-								property="#{trabajador.to.empresa}">
+								property="#{trabajador.to.empresa}" actionType="search" >
 							</aon:lookupButton>
 							<aon:inputText id="empresa_descripcion"
+							 lookupChangeListener="#{trabajador.onCompanyChanged}"
 								value="#{(trabajador.to.empresa.descripcion!=null)?(trabajador.to.empresa.descripcion):('')}"
 								size="45" disabled="true" />
+						</a4j:region>
 						</aon:div>	
 						
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_trabajador_activ}" />
 						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="actividad_cdg" required="#{true}"
+							<aon:lookupInputText id="actividad_cdg" required="#{true}" controllerListener="#{empresaLookUpListener}"
 								lookup="#{actividadLookup}" reRender="actividad_descripcion"
 								value="#{trabajador.to.actividad.cdg}" size="5">
 							</aon:lookupInputText>
-							<aon:lookupButton id="actividad_lookup"
+							<aon:lookupButton id="actividad_lookup" controllerListener="#{empresaLookUpListener}"
 								windowTitle="#{appBundle.aon_payroll_principales_trabajador_activ}"
 								selectReRender="actividad_cdg,actividad_descripcion"
 								lookup="#{actividadLookup}" minHeight="440"
@@ -108,11 +113,7 @@
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_trabajador_centro_trab}" />
 						<aon:div styleClass="aon-lookup">
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_trabajador_datos_centro_trab}" />
-								</f:facet>
+							
 								<aon:lookupInputText id="domicilio_cdg" required="#{true}"
 									lookup="#{domicilioLookup}" reRender="domicilio_descripcion"
 									value="#{trabajador.domicilio.cdg}" size="5">
@@ -132,18 +133,13 @@
 								<aon:inputText id="domicilio_descripcion"
 									value="#{(trabajador.domicilio.nomvia!=null)?(trabajador.domicilio.nomvia):('')}"
 									size="45" disabled="true" />
-							</aon:panel>
+						
 						</aon:div>
 							
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_trabajador_centro_coste}" />
 						<aon:div styleClass="aon-lookup">
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_trabajador_datos_centro_coste}" />
-								</f:facet>
-								<aon:lookupInputText id="emprccos_cdg" 
+								<aon:lookupInputText id="emprccos_cdg"  controllerListener="#{actividadLookUpListener}"
 									lookup="#{emprccosLookup}" reRender="emprccos_descripcion"
 									value="#{trabajador.to.emprccos.cdg}" size="5">
 									<!-- 
@@ -153,7 +149,7 @@
 									</a4j:support>
 									 -->
 								</aon:lookupInputText>
-								<aon:lookupButton id="emprccos_lookup"
+								<aon:lookupButton id="emprccos_lookup" controllerListener="#{actividadLookUpListener}"
 									windowTitle="#{appBundle.aon_payroll_principales_trabajador_centro_coste}"
 									selectReRender="emprccos_cdg,emprccos_descripcion"
 									lookup="#{emprccosLookup}" minHeight="440"
@@ -162,7 +158,7 @@
 								<aon:inputText id="emprccos_descripcion"
 									value="#{(trabajador.to.emprccos.descripcion!=null)?(trabajador.to.emprccos.descripcion):('')}"
 									size="45" disabled="true" />
-							</aon:panel>
+							
 						</aon:div>
 
 						<aon:outputLabel
