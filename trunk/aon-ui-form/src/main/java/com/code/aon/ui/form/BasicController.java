@@ -26,7 +26,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -316,7 +315,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 
 	/**
-	 * Method that synchronizes current TO with its corresponding asset in then model, so that changes made in current TO will be reflected
+	 * Method that synchronizes current TO with its corresponding asset in the model, so that changes made in current TO will be reflected
 	 * in the model too.
 	 */
 	@SuppressWarnings("unchecked")
@@ -344,7 +343,6 @@ public class BasicController extends AbstractPojoController implements IControll
 				this.to = add();
 				controllerListenerSupport.fireAfterBeanAdded(evt);
 			} else {
-				this.to = (ITransferObject)HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).merge(this.getTo());
 				controllerListenerSupport.fireBeforeBeanUpdated(evt);
 				this.to = update();
 				controllerListenerSupport.fireAfterBeanUpdated(evt);
