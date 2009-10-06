@@ -80,9 +80,20 @@ public class CompanyController extends CompanyParentController implements IAonFi
 	 * @param data
 	 * @throws IOException
 	 */
-	public void createLogoContent(OutputStream out, Object data) throws IOException {
+	public void createCurrentLogoContent(OutputStream out, Object data) throws IOException {
 		if (getAonFile() != null && getAonFile().getData() != null) {
 			out.write(getAonFile().getData());
+		}
+	}
+
+	/**
+	 * @param out
+	 * @param data
+	 * @throws IOException
+	 */
+	public void createLogoContent(OutputStream out, Object data) throws IOException {
+		if (getAttach() != null) {
+			out.write(getAttach().getData());
 		}
 	}
 	

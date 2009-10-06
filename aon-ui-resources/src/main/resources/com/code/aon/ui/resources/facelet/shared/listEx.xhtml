@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:dataTable id="#{dataTableId}" var="to"
+		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
+		columnClasses="#{columnClasses}">
+
+		<aon:rowSelector id="#{dataTableId}-select" 
+			actionListener="#{controller.onSelect}" action="#{rowSelectorAction}"
+			focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
+
+		<ui:insert name="columns"/>
+
+	</aon:dataTable>
+
+	<c:if test="#{showDataScroller}">
+		<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" />
+	</c:if>	
+
+</ui:composition>
