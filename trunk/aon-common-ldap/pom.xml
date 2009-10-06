@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.common.ldap</artifactId>
-	<version>1.0.1</version>
+	<version>1.1.0</version>
 	<description>AON COMMON LDAP</description>
 	<name>AON COMMON LDAP</name>
 	<dependencies>
