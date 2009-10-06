@@ -1,0 +1,74 @@
+.aon-tree-column{
+	width:200px;
+	padding:5px 5px 5px 5px;	
+	vertical-align:top !important;
+	
+	}
+.aon-messages-column{
+	width:auto;
+	padding:5px 5px 5px 0;
+	vertical-align:top;	
+	}
+.aon-width-50percent{
+	width:50%;
+	}
+.modalPanel-scroll1{
+	height:325px;
+	overflow:scroll;
+ }
+.aon-border-newmessage{
+	 border:#ccc 1px solid;
+	 border-top-width:0;
+ }
+.dr-table-cell{
+	border-right:0;
+}
+/* botones menu top */
+.aon-top-menu{
+	padding:4px 1em;
+	}
+.aon-top-menu .aon-top-menu-item, .aon-top-menu .aon-top-menu-item:hover{
+	display:inline;
+	border:transparent 1px solid;
+}
+.aon-top-menu .aon-top-menu-item:hover{
+	border:transparent 1px solid;
+}
+.aon-tree-node-active{
+	background-color:#fffadc;
+	border:#d3c061 1px solid;
+	font-weight:bold;
+	}
+.aon-tree-node-active:hover{
+	text-decoration:none;
+	color:#000000;
+	}
+/* para evitar el parpadeo del hover */
+.aon-top-menu-item{
+	border:0 !important;
+}
+/* sin fondo blanco porque no tienen desplegales */
+.aon-top-menu-item:hover{
+	background-color:transparent;
+	border:0 !important;
+	}
+ .aon-text-smaller{
+	font-size:0.8em;
+ }
+ .aon-search-commandButton-left{
+ 	background-position:left center;
+ }
+ .aon-search-commandButton-right{
+ 	background-position:right center;
+ 	height:24px;
+ }
+.aon-icon-dropDown{
+	background:transparent url(../images/aon-icon-dropwDown.png) scroll left center no-repeat;
+}
+
+.aon-message-server-error {
+	padding:5px 1em 5px 0px;
+	font-size:1.1em;
+	font-weight:bold;
+	background-position:left center !important;	
+}
