@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="#{dataTableId}Div">
+
+		<aon:editDataTable id="#{dataTableId}" var="to"
+			value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
+			columnClasses="none, #{columnClasses}, none">
+	
+			<aon:rowSelector id="#{dataTableId}-select" 
+				toggleOnClick="#{controller.to == null and !skipLineEdition}"
+				actionListener="#{controller.onSelect}" reRender="#{rowSelectorReRender}"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
+	
+			<c:if test="#{!skipResetButton}">
+				<aon:column id="#{dataTableId}-selectColumn" 
+					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:div rendered="#{formList}" layout="none">
+						<ui:insert name="beginFormListContent"/>
+					</aon:div>					
+					<aon:div rendered="#{formEdit}" layout="none">
+						<ui:insert name="beginFormEditContent"/>
+					</aon:div>
+					<f:facet name="footer">
+						<aon:div>
+							<aon:commandButton
+								id="#{dataTableId}-reset" title="#{bundle.aon_reset}"
+								action="#{resetAction}" actionListener="#{resetActionListener}"
+								rendered="#{!formNew}" reRender="#{resetButtonReRender}"
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" 
+								focus="#{(focusOnAdd != null)?(focusOnAdd):''}"/>
+	
+						</aon:div>
+					</f:facet>
+				</aon:column>
+			</c:if>
+	
+			<ui:insert name="columns"/>
+			
+			<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div rendered="#{formList}" layout="none">
+					<ui:insert name="endFormListContent"/>				
+				</aon:div>
+				<aon:div rendered="#{formEdit}">			
+					<c:if test="#{!skipSaveButton}">		
+						<aon:commandButton
+							id="#{dataTableId}-save" title="#{bundle.aon_accept}"
+							action="#{saveAction}" actionListener="#{saveActionListener}"
+							reRender="#{dataTableId}Div#{(saveButtonReRender != null)?',':''}#{saveButtonReRender}"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							accesskey="#{bundle.aon_key_save_line}" />
+					</c:if>
+					<c:if test="#{!skipCancelButton}">
+						<aon:commandButton
+							id="#{dataTableId}-cancel" title="#{bundle.aon_cancel}"
+							action="#{cancelEditAction}" actionListener="#{cancelEditActionListener}"
+							immediate="true" reRender="#{cancelButtonReRender}"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</c:if>
+					<c:if test="#{!skipRemoveButton}">				
+						<aon:confirmButton
+							id="#{dataTableId}-remove" title="#{bundle.aon_remove}"
+							immediate="true"
+							reRender="#{dataTableId}Div#{(removeButtonReRender != null)?',':''}#{removeButtonReRender}"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{removeActionListener}"
+							confirmAction="#{removeAction}"
+							styleClass="aon-editDataTable-button aon-icon-delete"
+							accesskey="#{bundle.aon_key_remove_line}" />
+					</c:if>
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<aon:outputText rendered="#{!formNew}" value="&#160;" />
+						<c:if test="#{!skipSaveButton}">		
+							<aon:commandButton
+								id="#{dataTableId}-new-save" title="#{bundle.aon_save}"
+								action="#{newSaveAction}" actionListener="#{newSaveActionListener}"
+								rendered="#{formNew}"
+								reRender="#{dataTableId}Div#{(newSaveButtonReRender != null)?',':''}#{newSaveButtonReRender}"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								accesskey="#{bundle.aon_key_save_line}" />
+						</c:if>
+						<c:if test="#{!skipCancelButton}">
+							<aon:confirmButton
+								id="#{dataTableId}-new-cancel" title="#{bundle.aon_cancel}"
+								rendered="#{formNew}" reRender="#{newCancelButtonReRender}"
+								immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}"
+								confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmActionListener="#{cancelEditActionListener}"
+								confirmAction="#{cancelEditAction}"					
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								accesskey="#{bundle.aon_key_cancel_line}" />
+						</c:if>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</aon:editDataTable>
+
+		<c:if test="#{showDataScroller}">
+			<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" />
+		</c:if>	
+
+	</aon:div>
+
+</ui:composition>
