@@ -11,9 +11,13 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
+import org.richfaces.function.RichFunction;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.IndiceAgrario;
 import com.code.aon.payroll.enumeration.IndiceGrupo;
@@ -22,9 +26,14 @@ import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprccos;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.principales.personas.Persona;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 
-public class TrabajadorController extends LinesController {
+public class TrabajadorController extends LinesController implements IPayrollConstants{
 	
 	private static final Logger LOGGER = Logger.getLogger(CotizacionBonificacionController.class.getName());
 
@@ -35,7 +44,9 @@ public class TrabajadorController extends LinesController {
 	private Actividad actividad;
 	private Domicilio domicilio;
 	private Emprccos emprccos;
-		
+	
+	
+	
 	public List<SelectItem> getIndagrario() {
 		return indagrario;
 	}
@@ -77,6 +88,12 @@ public class TrabajadorController extends LinesController {
 		}
 		return indgrupo;
 	}
+	
+	public void onChangeCompany (ActionEvent e) {
+		
+		System.out.println("Holaddddddddddddddddddddddddddddddd");
+		
+		}
 	
 	@Override
 	public void onEditSearch(ActionEvent arg0) {
@@ -186,9 +203,25 @@ public class TrabajadorController extends LinesController {
 		this.setDomicilio(new Domicilio());
 		Integer cdg = Integer.parseInt(Utils.maxCode("Trabajador", "cdg"));
 		((Trabajador)this.getTo()).setCdg(cdg+1);
+		((Trabajador)this.getTo()).getPersona().setCdg(((Persona)(FormUtil.getController(PERSONA_CONTROLLER_NAME)).getTo()).getCdg());
 	}
 
+	public void onCompanyChanged(LookupChangeEvent event) throws ManagerBeanException, ExpressionException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			
+			((Trabajador)this.getTo()).setActividad(null);
+			
+			((Trabajador)this.getTo()).setEmprccos(null);
+			this.setDomicilio(null);
+			
+						
+		/*
+			RichLookupBean actividadLookup = (RichLookupBean)AonUtil.getRegisteredBean("actividadLookup");
+			actividadLookup.getController().clearCriteria();
+			actividadLookup.getController().getCriteria().addEqualExpression(actividadLookup.getController().getFieldName(IPayrollAlias.ACTIVIDAD_EMPRESA_CDG),((Empresa)event.getNewValue()).getCdg().toString());
+			System.out.println(actividadLookup.getController().getCriteria());*/
+			
+	}
 	
-	
-	
+	}
 }

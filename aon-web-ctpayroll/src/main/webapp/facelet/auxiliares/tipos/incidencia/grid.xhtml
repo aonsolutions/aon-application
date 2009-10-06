@@ -73,16 +73,16 @@
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposIncidencia.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposIncidencia.to}" size="25"
+								rendered="#{to==tiposIncidencia.to}" size="50"
 								value="#{tiposIncidencia.to.description}" maxlength="25" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposIncidencia.new}" size="25"
+									rendered="#{tiposIncidencia.new}" size="50"
 									value="#{tiposIncidencia.to.description}" maxlength="25" />
 							</f:facet>
 						</aon:column>
 						
-						 <aon:column>
+						   <aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_indresta}" />
 							</f:facet>
@@ -90,7 +90,7 @@
 								styleClass="#{(to.indresta=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
 								rendered="#{to!=tiposIncidencia.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"
-									value="#{tiposIncidencia.to.indresta}" />
+									value="#{tiposIncidencia.to.indrestabol}" />
 							<f:facet name="footer">
 								<aon:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"
 										value="#{tiposIncidencia.to.indrestabol}" />

@@ -1,5 +1,7 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -22,7 +24,10 @@ import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprccos;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.payroll.principales.personas.Persona;
+import com.code.aon.payroll.principales.personas.Trabajo;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 
 public class TrabajoController extends LinesController {
 	
@@ -81,9 +86,9 @@ public class TrabajoController extends LinesController {
 	
 	@Override
 	public void onEditSearch(ActionEvent arg0) {
-
-		
-		
+	
+		Calendar c = new GregorianCalendar();
+		((Trabajo)this.getTo()).setFecfincont(c.getTime());
 		setEmpresa(new Empresa());
 		setActividad(new Actividad());
 		setDomicilio(new Domicilio());
@@ -91,7 +96,24 @@ public class TrabajoController extends LinesController {
 
 		super.onEditSearch(arg0);
 	}
+	public void onAccountEntered(ActionEvent e) {
+		
+	if(	Utils.isValidAccount(((Trabajo)this.getTo()).getEntidad().getCdg(),((Trabajo)this.getTo()).getSucursal().getId().getCdg(), ((Trabajo)this.getTo()).getDc(),((Trabajo)this.getTo()).getNumcta())){
+					
+	}else AonUtil.addErrorMessage("Fallo en la cuenta");
+	}
 	
+	@Override
+	public void onReset(ActionEvent event) {
+		
+		super.onReset(event);
+	    Calendar d = new GregorianCalendar();
+	    System.out.println(d.getTime());
+	    ((Trabajo)this.getTo()).setFecfin(d.getTime());
+	    ((Trabajo)this.getTo()).setFecant(d.getTime());
+	    ((Trabajo)this.getTo()).getId().setFecini(d.getTime());
+	}
+
 	@Override
 	public void onSearch(ActionEvent event) {
 		

@@ -316,9 +316,10 @@
 		<managed-property>
 			<property-name>searchPagePath</property-name>
 			<value>/facelet/principales/clientes/integral/empresaLookup/search.xhtml</value>
-		</managed-property>
+	 	</managed-property>
 	</managed-bean>	
 	
+
 		<!--  ************ actividades  LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>actividadLookup</managed-bean-name>
@@ -356,6 +357,7 @@
 			<property-name>listPagePath</property-name>
 			<value>/facelet/principales/clientes/integral/domicilioLookup/list.xhtml</value>
 		</managed-property>
+	
 	</managed-bean>	
 	
 				<!--  ************ cuentas  LOOKUP **************  -->	

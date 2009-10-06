@@ -112,8 +112,16 @@
 								<br />
 								<aon:inputText id="Persona_numdoc"
 									value="#{persona.to.numdoc}" size="10" maxlength="10"  required="#{true}" >
-									
-								</aon:inputText>
+								<a4j:support event="onblur" reRender="personaForm,Persona_numdoc">
+								<aon:actionListener method="#{persona.onNumdoc}" />
+								</a4j:support>
+							</aon:inputText>
+							
+							<aon:outputText style="color:red;font-weight:bold"
+									value="#{persona.message}"
+									size="55"  />
+							
+								
 							</aon:div>
 
 							<aon:outputLabel for="Pais_cdg"
@@ -174,11 +182,11 @@
 								size="15" maxlength="12" />
 
 							<aon:outputLabel
-								value="#{appBundle.aon_payroll_pricipales_personas_cp} iudsoghioufwehsihis" />
+								value="#{appBundle.aon_payroll_pricipales_personas_cp}" />
 							<aon:inputText value="#{persona.to.codpos}"
 								size="5" maxlength="5">
-								<a4j:support event="onblur" rendered="address">
-								<aon:actionListener method="#{persona.onProvince}" />
+								<a4j:support event="onblur" reRender="personaForm,Provincia_description">
+								<aon:actionListener method="#{persona.onCodpos}" />
 								</a4j:support>
 							</aon:inputText>
 							

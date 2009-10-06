@@ -12,6 +12,7 @@ import java.util.Locale;
 
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.html.HtmlCommandLink;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -224,7 +225,7 @@ public class CalendarController extends LinesController implements
 	public void onChangeDay(ActionEvent event) {
 		Mes mes = (Mes) getYearModel().getRowData();
 		UIComponent c = event.getComponent().getParent();
-		HtmlOutputText o = (HtmlOutputText) c;
+		HtmlCommandLink o = (HtmlCommandLink) c;
 		int idx = (Integer) o.getValue();
 		MyCalendario cal = mes.getDays()[(idx + listBlanks[mes.getCdg()]) - 1];
 

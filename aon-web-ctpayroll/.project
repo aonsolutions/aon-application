@@ -5,6 +5,7 @@
 	<projects>
 		<project>aon-payroll</project>
 		<project>aon-ui-payroll</project>
+		<project>aon-ldap</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

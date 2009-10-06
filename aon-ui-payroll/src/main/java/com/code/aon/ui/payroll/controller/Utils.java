@@ -11,6 +11,8 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 
 public class Utils {
+	
+	private static final int[] DIGITS = new int[] { 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 };
 
 	@SuppressWarnings("unchecked")
 	public static final boolean hasOverlap(Date fecini, Date fecfin, Iterator iter) {
@@ -171,6 +173,22 @@ public class Utils {
 		return ( nif[8] == letters[rest] );
 	}
 
+	public static String getDniLetter (char[] dni){
+		String s="";
+		char[] letters = {'T','R','W','A','G','M','Y','F','P','D','X','B','N','J',
+											'Z','S','Q','V','H','L','C','K','E'};
+		String numbers = new String(dni, 0, 8);
+		int iDni = 0;
+		try {
+			iDni = Integer.parseInt(numbers);
+		} catch (NumberFormatException ex) {
+			return s;
+		}
+		int rest = iDni % 23;
+		String se = String.valueOf(letters[rest]);
+		return se ;
+	}
+	
 	public static boolean checkNIF ( char[] nif ){
 		int lInDC = 0;
 		for (int i = 1; i < 8 ; ++i ) {
@@ -210,6 +228,49 @@ public class Utils {
 		}
 	}
 	
+	
+	public static boolean isValidAccount(String entidad, String sucursal, String dc, String numcta) {
+		String cd = calculateControlDigit( entidad,  sucursal, dc, numcta);
+		return cd != null && cd.equals(dc);
+	}
+
+	public static String calculateControlDigit(String entidad, String sucursal, String dc, String numcta) {
+		if (entidad == null || entidad.length() != 4 || sucursal == null
+				|| sucursal.length() != 4 || numcta == null || numcta.length() != 10) {
+			return "XX";
+		}
+		String entoff = entidad + sucursal;
+		int sum = 0;
+		int total = 0;
+		for (int i = 0; i < entoff.length(); i++) {
+			int digito = Integer.parseInt(String.valueOf(entoff.charAt(entoff.length() - 1 - i)));
+			sum = digito * DIGITS[i];
+			total = total + sum;
+		}
+		total = 11 - (total % 11);
+		if (total == 10) {
+			total = 1;
+		}
+		if (total == 11) {
+			total = 0;
+		}
+		int number = 0;
+		int control = 0;
+		int c = 0;
+		for (int i = 0; i < numcta.length(); i++) {
+			number = Integer.parseInt(String.valueOf(numcta.charAt(	numcta.length() - 1 - i)));
+			control = number * DIGITS[i];
+			c = c + control;
+		}
+		c = 11 - (c % 11);
+		if (c == 10) {
+			c = 1;
+		}
+		if (c == 11) {
+			c = 0;
+		}
+		return String.valueOf(total) + String.valueOf(c);
+	}
 	
 	
 }

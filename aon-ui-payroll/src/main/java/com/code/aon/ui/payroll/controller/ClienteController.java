@@ -110,15 +110,15 @@ public class ClienteController extends PayrollBasicController {
 	@Override
 	public void onSearch(ActionEvent event) {
 
-		try {
-			this.clearCriteria();
+	/*	try {
+		this.clearCriteria();
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 
 		try {
-			if ((cliente.getCdg() != null) && (cliente != null)) {
+			if (cliente.getCdg() != null) {
 				getCriteria().addEqualExpression(
 						getFieldName(IPayrollAlias.CLIENTE_CDG),
 						getCliente().getCdg());

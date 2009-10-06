@@ -621,7 +621,7 @@ public class Trabajo implements ITransferObject {
 		this.tipocont = tipocont;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codent", insertable = false, updatable = false)
 	public Entidad getEntidad() {
 		return this.entidad;
@@ -651,7 +651,7 @@ public class Trabajo implements ITransferObject {
 		this.porcoti = porcoti;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumns( {
 			@JoinColumn(name = "codent", referencedColumnName = "codent"),
 			@JoinColumn(name = "codsuc", referencedColumnName = "cdg") })
