@@ -6,6 +6,7 @@ import java.util.List;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.resources.Employee;
 import com.code.aon.ql.Criteria;
 import com.code.aon.record.Contract;
 import com.code.aon.record.dao.IRecordAlias;
@@ -30,6 +31,10 @@ public class EmployeeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		EmployeeController ec = (EmployeeController) event.getController();
+		Employee e = (Employee)ec.getTo();
+		if (e.getSocialSecurityNumber() != null && e.getSocialSecurityNumber().trim().equals("")) {
+			e.setSocialSecurityNumber(null);
+		}
 		ContractController cc = 
 			(ContractController) AonUtil.getController( ContractController.MANAGER_BEAN_NAME );
 		cc.onReset( null );
