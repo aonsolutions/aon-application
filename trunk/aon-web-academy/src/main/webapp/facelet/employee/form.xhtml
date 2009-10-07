@@ -109,16 +109,6 @@
 							<f:validateLength minimum="1" maximum="16" />
 						</t:inputText>
 
-						<t:outputLabel for="Employee_socialSecurityNumber"
-							styleClass="aon-form-input-text-label"
-							value="#{registryBundle.aon_social_security_number}" />
-						<t:inputText id="Employee_socialSecurityNumber"
-							styleClass="aon-form-input-text" forceId="#{true}"
-							value="#{employee.to.socialSecurityNumber}" size="16"
-							onblur="toUpperCase(this);">
-							<f:validateLength minimum="1" maximum="16" />
-						</t:inputText>
-
 						<t:outputLabel for="Employee_registry_name"
 							styleClass="aon-form-input-text-label"
 							value="#{registryBundle.aon_name}" />
