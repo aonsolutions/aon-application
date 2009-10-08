@@ -77,7 +77,7 @@ function aonChangeRowSelection(rowIndex) {
 
 function aon_focusOnRow(row) {
 	try {
-	    inputs = row.getElementsByTagName("input");
+	    inputs = row.getElementsByTagName("a");
 	    if (inputs && inputs.length>0) {
 	    	for (i=0; i<inputs.length; i++) {
 	    		input = inputs[i];
