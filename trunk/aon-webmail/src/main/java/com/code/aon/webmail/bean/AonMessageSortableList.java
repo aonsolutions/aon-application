@@ -35,12 +35,15 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 
 	protected Folder folder;
 	
+	private boolean sortable;
+	
 	public AonMessageSortableList(Folder folder) {
-		this(AonMessageSortableList.DATE_COLUMN,folder);
+		this(AonMessageSortableList.DATE_COLUMN,folder,true);
 	}
 
-	public AonMessageSortableList(String column,Folder folder) {
+	public AonMessageSortableList(String column, Folder folder, boolean sortable) {
 		super(column);
+		this.sortable = sortable;
 		this.folder = folder;
 		if (this.folder != null) {
 			this.folder.addMessageCountListener(this);
@@ -101,7 +104,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 * Sort the list.
 	 */
 	protected void sort(final String column, final boolean ascending) {
-		if (messageList != null) {
+		if ( (messageList != null) && sortable) {
 			try {
 				Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
 				Arrays.sort(messageList, comparator);
