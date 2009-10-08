@@ -158,7 +158,10 @@ public class ResourceServlet extends HttpServlet {
 		int pos = resource.lastIndexOf('.');
 		if (pos != -1) {
 			String extension = resource.substring(pos + 1);
-			result = MimeType.getByExtension(extension).getName();
+			MimeType mimeType = MimeType.getByExtension(extension);
+			if ( mimeType != null ) {
+				result = mimeType.getName();	
+			}
 		}
 		if (result == null) {
 			try {
