@@ -9,6 +9,7 @@ import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 import org.richfaces.component.html.HtmlDataTable;
+import org.richfaces.component.html.HtmlExtendedDataTable;
 
 import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
@@ -63,7 +64,7 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 		return value;
 	}
 
-	private void addRowClasses(FaceletContext ctx, HtmlDataTable dataTable) {
+	private void addRowClasses(FaceletContext ctx, IDataTable dataTable) {
 		String selectedClass = getValue(ctx, SELECTED_CLASS_ATTRIBUTE, SELECTED_CLASS_VALUE);
 		StringBuffer mouseOut = new StringBuffer();
 		mouseOut.append("onDataTableOut(this,'").append(selectedClass)
@@ -100,16 +101,25 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 		return new AjaxSupportHandler(aonConfig);
 	}
 	
+	private IDataTable getDataTable( UIComponent component ) {
+		if ( component instanceof HtmlDataTable ) {
+			return new DataTableWrapper( (HtmlDataTable) component );
+		} else if ( component instanceof HtmlExtendedDataTable ) {
+			return new ExtendedDataTableWrapper( (HtmlExtendedDataTable) component );
+		}
+		return null;
+	}
+	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) throws IOException {
-		if (parent instanceof HtmlDataTable) {
-			HtmlDataTable dataTable = (HtmlDataTable) parent;
+		IDataTable dataTable = getDataTable(parent);
+		if ( dataTable != null ) {
 			if (ComponentSupport.isNew(parent)) {
 				addRowClasses( ctx, dataTable );
 			}
 		} else {
 			throw new TagException(this.tag,
-					"Parent is not of type org.richfaces.component.html.HtmlDataTable, type is: " + parent);
+					"Parent is not an HtmlDataTable, type is: " + parent);
 		}
 		getSupportHandler(ctx, parent).apply(ctx, parent);
 	}
