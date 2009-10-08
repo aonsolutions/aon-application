@@ -38,26 +38,24 @@ public class AonFolder extends AonMessageSortableList {
 	
 	private static final Logger LOGGER = Logger.getLogger(AonFolder.class.getName());
 	
-	private int pageSize = 20;
-	
 	private AonServer server;
 
 	public AonFolder(Folder folder, AonServer server) {
-		super(DATE_COLUMN,folder);
-		this.server = server;
+		this( folder, server, false );
 	}
 
+	public AonFolder(Folder folder, AonServer server, boolean sortable) {
+		super(DATE_COLUMN,folder, sortable);
+		this.server = server;		
+	}
+	
 	public AonServer getServer() {
 		return server;
 	}
 
-	public int getPageSize() {
-		return pageSize;
-	}
-
     public void refresh() throws WebmailException {
     	refreshMessageList();
-    	sort();
+       	sort();	
     }
 
 	public ArrayList<AonFolder> getFolderList() throws WebmailException {
@@ -200,15 +198,16 @@ public class AonFolder extends AonMessageSortableList {
 		}
     }
     
-    public int getUnreadMessageCount() throws WebmailException {
+    public int getUnreadMessageCount() {
+    	int count = 0;
 		try {
 			if ( isHoldMessages() ) {
-				return folder.getUnreadMessageCount();				
+				count = folder.getUnreadMessageCount();				
 			}
-			return 0;
 		} catch (MessagingException e) {
-			throw new WebmailException(e);
+			LOGGER.log( Level.WARNING, "Error getting unread message count", e );
 		}    	
+		return count;
     }
     
     public boolean isDeleteable() throws WebmailException{
@@ -238,10 +237,14 @@ public class AonFolder extends AonMessageSortableList {
     	return false;
     }
 
-    public String getName(){
+    public String getName() {
     	return folder.getName();
     }
 
+    public String getFullName() {
+    	return folder.getFullName();
+    }
+    
     public boolean isOpen(){
     	return folder.isOpen();
     }

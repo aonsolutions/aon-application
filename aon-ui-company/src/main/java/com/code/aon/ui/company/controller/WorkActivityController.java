@@ -6,8 +6,6 @@ import com.code.aon.ui.form.BasicController;
 
 public class WorkActivityController extends BasicController {
 	
-	public static final String MANAGER_BEAN_NAME = "workactivity";
-
     /*
      * (non-Javadoc)
      * @see com.code.aon.ui.form.BasicController#onAccept(javax.faces.event.ActionEvent)

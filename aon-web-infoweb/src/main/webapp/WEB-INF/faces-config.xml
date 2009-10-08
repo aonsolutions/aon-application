@@ -27,7 +27,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.5.0</value>
+			<value>/aonResource/3.6.1</value>
 		</managed-property>		
 	</managed-bean>
 	
@@ -49,30 +49,20 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>companyListeners</managed-bean-name>
+		<managed-bean-name>companyOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
+		<managed-bean-scope>session</managed-bean-scope>
 		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<value>#{webInfoControllerListener}</value>
-			<value>#{companyControllerImagesListener}</value>
-		</list-entries>
+			<value>#{companyImagesChildListener}</value>
+		</list-entries>		
 	</managed-bean>
-		
+
 	<managed-bean>
 		<managed-bean-name>webInfoControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.infoweb.event.WebInfoControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>companyControllerImagesListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.infoweb.event.CompanyControllerImagesListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -98,38 +88,6 @@
 	</managed-bean>
 
 
-	<!-- **** COMPANY IMAGES **** --> 
-	<managed-bean>
-		<managed-bean-name>companyImages</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.infoweb.controller.FileController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryAttachment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>maximumSize</property-name>
-			<value>65535</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{companyImagesControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>companyImagesControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.infoweb.event.CompanyImagesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
 	<managed-bean>
 		<managed-bean-name>webPage</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.infoweb.controller.CompanyWebInfoPageController</managed-bean-class>
@@ -141,6 +99,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.infoweb.WebInfoPage</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WebInfoPage_position</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -178,9 +140,7 @@
 
 	<managed-bean>
 		<managed-bean-name>generator</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.infoweb.controller.GeneratorController
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.infoweb.controller.GeneratorController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -188,10 +148,6 @@
 		<navigation-case>
 			<from-outcome>otherdata</from-outcome>
 			<to-view-id>/facelet/registry/company/tabs/web-info.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>images</from-outcome>
-			<to-view-id>/facelet/registry/company/tabs/images.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>pages</from-outcome>

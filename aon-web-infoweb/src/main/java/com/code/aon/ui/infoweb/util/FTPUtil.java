@@ -2,7 +2,11 @@ package com.code.aon.ui.infoweb.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -10,69 +14,111 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FTPUtil {
 
-	private static String server = "192.168.3.47";
-	private static String user = "ftpcms";
-	private static String password = "cms2001";
+	private static final Logger LOGGER = Logger.getLogger(FTPUtil.class.getName());
 	
-	public static void uploadFTP(String source, String destination, String domain) {
-
-		try {
-			FTPClient ftp = new FTPClient();
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting to aon-web-server (47)" );
-			ftp.connect(server); // + domain
-			ftp.login(user, password);
-			ftp.changeWorkingDirectory(destination);
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connected.");
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getSystemName());
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.printWorkingDirectory());
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
-			FTPFile files[] = ftp.listFiles();
-			if (files.length > 0) {
-				if (!files[0].hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ) {
-					System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> WRITE PERMISSION DENIED");
-					AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
-				}
+	private static final String PATH_SEPARATOR = "/";
+	
+	private static final String SERVER = "192.168.3.47";
+	private static final String USER = "ftpcms";
+	private static final String PASSWORD = "cms2001";
+	
+	public static void uploadFTP(File source, String destination) throws IOException {
+		FTPClient ftp = new FTPClient();
+		LOGGER.fine("Connecting to: " + SERVER );
+		ftp.connect(SERVER);
+		ftp.login(USER, PASSWORD);
+		ftp.enterLocalPassiveMode();
+		ftp.changeWorkingDirectory(destination);
+		LOGGER.fine("Connected.");
+		LOGGER.fine("Reply String: " + ftp.getReplyString());
+		LOGGER.fine("System Name: " + ftp.getSystemName());
+		LOGGER.fine("Working Directory: " + ftp.printWorkingDirectory());
+		LOGGER.fine("File Type: " + ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
+		FTPFile files[] = ftp.listFiles();
+		if (! ArrayUtils.isEmpty(files)) {
+			if (! hasWritePermission(files[0]) ) {
+				LOGGER.severe("Write permission denied for " + files[0]);
+				AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
 			}
-			ftpDir(source, ftp, destination);
+		}
+		ftpDelete(ftp, destination);
+		ftpDir(source, ftp, destination);
 
-			ftp.logout();
-			ftp.disconnect();
-			//addMessage("La publicacion por FTP de la pagina web a finalizado.", GEN_INFO);
-		} catch (Exception e) {
-			e.printStackTrace();
-			AonUtil.addErrorMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.");
+		ftp.logout();
+		ftp.disconnect();
+	}
+	
+	private static boolean hasWritePermission( FTPFile file ) {
+		return file.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ||
+			file.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION) ||
+			file.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION);
+	}
+	
+	private static void deleteFile(FTPClient ftp, String pathname) {
+		try {
+			if (! ftp.deleteFile(pathname) ) {
+				LOGGER.severe("File no deleted " + pathname);
+			}
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, "Error deleting file " + pathname, th);
 		}
 	}
 
-	private static void ftpDir(String dir2ftp, FTPClient fc, String breadCrum) {
+	private static void deleteDirectory(FTPClient ftp, String pathname) {
 		try {
-			File ftpDir = new File(dir2ftp);
-			String[] dirList = ftpDir.list();
-			for (int i = 0; i < dirList.length; i++) {
-				File f = new File(ftpDir, dirList[i]);
-				if (f.isDirectory()) {
-					System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Creating directory: " + breadCrum + "/" + f.getName());
-					if (!fc.makeDirectory(breadCrum + "/" + f.getName())) {
-						System.out.println(">>>>>>>>>> FTP ERROR, Can not create " + f.getName() + " directory");
+			if (! ftp.removeDirectory(pathname) ) {
+				LOGGER.severe("Directory no deleted " + pathname);
+			}
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, "Error deleting directory " + pathname, th);
+		}
+	}
+	
+	private static void ftpDelete(FTPClient ftp, String destination) throws IOException {
+		if ( ftp.changeWorkingDirectory(destination) ) {
+			FTPFile files[] = ftp.listFiles(destination);
+			if (! ArrayUtils.isEmpty(files)) {
+				for( FTPFile file : files ) {
+					if ( file != null ) {
+						String name = destination + PATH_SEPARATOR + file.getName();
+						if ( file.isFile() ) {
+							deleteFile(ftp, name);
+						} else if ( file.isDirectory() ) {
+							ftpDelete(ftp, name);
+							deleteDirectory(ftp, name);	
+						}
 					}
-					String filePath = f.getPath();
-					ftpDir(filePath, fc, breadCrum + "/" + f.getName());
-					continue;
 				}
+			}
+		} else {
+			LOGGER.severe( "Error in change of working directory: " + destination );
+		}
+	}
+
+	private static void ftpDir(File ftpDir, FTPClient fc, String breadCrum) throws IOException {
+		String[] dirList = ftpDir.list();
+		for (int i = 0; i < dirList.length; i++) {
+			File f = new File(ftpDir, dirList[i]);
+			if (f.isDirectory()) {
+				String directory = breadCrum + PATH_SEPARATOR + f.getName();
+				LOGGER.fine("Creating directory: " + directory);
+				if ( fc.makeDirectory(directory) ) {
+					ftpDir(f, fc, directory);
+				} else {
+					AonUtil.addErrorMessage("FTP ERROR: No se ha podido crear el directorio " + directory);
+					LOGGER.severe("Can not create directory " + directory);
+				}
+			} else {
 				FileInputStream fis = new FileInputStream(f);
-				//fc.deleteFile(breadCrum + "/" + f.getName());
-				System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Creating file: " + breadCrum + "/" + f.getName());
-				if (!fc.storeFile(breadCrum + "/" + f.getName(), fis)) {
-					System.out.println(">>>>>>>>>>>>> FTP ERROR, Can not write " + f.getName());
+				String name = breadCrum + PATH_SEPARATOR + f.getName();
+				LOGGER.fine("Creating file: " + name);
+				if (!fc.storeFile(name, fis)) {
+					AonUtil.addErrorMessage("FTP ERROR: No se ha podido escribir el fichero " + name);
+					LOGGER.severe("Can not write " + name);
 				}
 				fis.close();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			AonUtil.addErrorMessage("FTP Error. Se produjo un error al intentar subir los ficheros.");
 		}
 	}
-
-
+	
 }

@@ -16,13 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -99,8 +95,6 @@ public class FinanceBatch implements ITransferObject {
 	 */
     @ManyToOne
     @JoinColumn(name="rbank")
-    @ForeignKey(name="FK_FBATCH_RBANK")
-    @Index(name="IDX_FBATCH_RBANK")            
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -119,7 +113,6 @@ public class FinanceBatch implements ITransferObject {
 	 * 
 	 * @return the description
 	 */
-	@Column(length=32)
 	public String getDescription() {
 		return description;
 	}
@@ -177,7 +170,6 @@ public class FinanceBatch implements ITransferObject {
 	 * @return the issue date
 	 */
 	@Column(name="issue_date")
-	@Temporal(TemporalType.DATE)
 	public Date getIssueDate() {
 		return issueDate;
 	}

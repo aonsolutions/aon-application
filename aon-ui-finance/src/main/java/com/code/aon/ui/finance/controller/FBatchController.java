@@ -293,8 +293,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				financeBatchDetailBean.insert(fBatchDetail);
 
-				String tracking = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED) + " " + fBatch.getId() + " - " + fBatch.getDescription();
-				FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, tracking);
+                FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED));
             }
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error adding selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
@@ -370,7 +369,7 @@ public class FBatchController extends BasicController implements ICollectionProv
     					"from FinanceBatchDetail as fbatchDetail " +
     					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
     					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.invoice.registry.id";
-    	Session session = HibernateUtil.getSession(null);
+    	Session session = HibernateUtil.getSession();
     	Query query = session.createQuery(select);
     	return query.list(); 
 	}
@@ -450,8 +449,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
             financeBean.update(fbatchDetail.getFinance());
 
-            String tracking = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, tracking);
+            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED));
         }
 
         fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);

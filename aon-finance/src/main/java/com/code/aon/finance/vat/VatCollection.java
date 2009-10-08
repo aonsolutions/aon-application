@@ -90,11 +90,10 @@ public class VatCollection {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) "; 
-			StringWriter stmt = new StringWriter();
+		StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.type,i.transaction,i.issue_date,i.reference_code,i.rdocument,i.rname ");
-			stmt.append("  ,it.percentage,it.surcharge,SUM(id.taxable_base), ");
-			stmt.append(operation + " vatType ");
+			stmt.append("  ,it.percentage,it.surcharge,id.taxable_base, ");
+			stmt.append("  CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) vatType ");
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
@@ -112,7 +111,7 @@ public class VatCollection {
 				stmt.append(" AND it.surcharge = ?");
 			}
 			if (params.getVatType() != null) {
-				stmt.append(" AND " + operation + " = "+ (params.getVatType().ordinal() + 1));	
+				stmt.append(" AND CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) = "+ (params.getVatType().ordinal() + 1));	
 			}
 			if (params.getVatReportType() != null) {
 				if (params.getVatReportType() == VatReportType.GENERAL) {
@@ -130,9 +129,6 @@ public class VatCollection {
 			if (params.getSecurityLevel() != null) {
 				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 			}
-			stmt.append(" GROUP BY i.type,i.transaction,i.issue_date,i.reference_code,i.rdocument,i.rname ");
-			stmt.append("  ,it.percentage,it.surcharge,");
-			stmt.append(operation);
 			stmt.append(" ORDER BY vatType,i.transaction,i.issue_date,i.reference_code");
 			
 			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(),

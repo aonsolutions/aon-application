@@ -18,12 +18,12 @@ public class FinanceTrackingWriter {
 
     private static final Logger LOGGER = Logger.getLogger(FinanceTrackingWriter.class.getName());
 
-    public static FinanceTracking addFinanceTracking(Finance finance, Date trackingDate, FinanceTrackingType trackingType, String description) {
+    public static FinanceTracking addFinanceTracking(Finance finance, FinanceTrackingType trackingType, String description) {
         FinanceTracking tracking = new FinanceTracking();
         try {
             IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
             tracking.setFinance(finance);
-            tracking.setTrackingDate(trackingDate);
+            tracking.setTrackingDate(new Date());
             tracking.setType(trackingType);
             tracking.setDescription(description);
             tracking.setAmount(finance.getTotalAmount());

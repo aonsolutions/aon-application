@@ -13,6 +13,9 @@ a{
 	color:#427ab3;
 	text-decoration:none;
 	}
+input:focus{
+	background-color: #FBEDB6;
+}
 .aon-bold{
 font-weight:bold;
 }

@@ -10,13 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -112,7 +108,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 * 
 	 * @return the amount
 	 */
-	@Column(nullable=true)
 	public double getAmount() {
 		return amount;
 	}
@@ -131,7 +126,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 * 
 	 * @return the expenses
 	 */
-	@Column(nullable=true,precision=15,scale=3)
 	public double getExpenses() {
 		return expenses;
 	}
@@ -152,8 +146,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="bank")
-    @ForeignKey(name="FK_FINANCE_BANK")
-    @Index(name="IDX_FINANCE_BANK")        
 	public Bank getBank() {
 		return bank;
 	}
@@ -192,7 +184,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 * 
 	 * @return the concept
 	 */
-	@Column(length=64)
 	public String getConcept() {
 		return concept;
 	}
@@ -212,8 +203,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 * @return the due date
 	 */
 	@Column(name="due_date")
-	@Temporal(TemporalType.DATE)
-	@Index(name="IDX_FINANCE_DUE_DATE")
 	public Date getDueDate() {
 		return dueDate;
 	}
@@ -253,8 +242,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="invoice")
-    @ForeignKey(name="FK_FINANCE_INVOICE")
-    @Index(name="IDX_FINANCE_INVOICE")            
 	public Invoice getInvoice() {
 		return invoice;
 	}
@@ -294,8 +281,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="pay_method")
-    @ForeignKey(name="FK_FINANCE_PAY_METHOD")
-    @Index(name="IDX_FINANCE_PAY_METHOD")    
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
@@ -316,8 +301,6 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry")
-    @ForeignKey(name="FK_FINANCE_REGISTRY")
-    @Index(name="IDX_FINANCE_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}

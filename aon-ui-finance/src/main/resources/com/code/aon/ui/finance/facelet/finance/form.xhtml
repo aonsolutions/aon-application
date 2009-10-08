@@ -109,7 +109,7 @@
 						valueChangeListener="#{finance.onPayMethodChanged}"
 						reRender="Finance_registryBank_id,Finance_bankAccount"
 						disabled="#{!finance.pending and !finance.returned}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItem itemLabel ="-" value="#{null}" />
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 
@@ -174,7 +174,7 @@
 						value="#{registryCollections.registryBank}" reRender="Finance_bankAccount"
 						valueChangeListener="#{finance.onRegistryBankChanged}"
 						disabled="#{!finance.pending and !finance.returned}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItem itemLabel ="-" value="#{null}" />
 						<f:selectItems value="#{finance.banks}" />
 					</aon:selectOneMenu>
 

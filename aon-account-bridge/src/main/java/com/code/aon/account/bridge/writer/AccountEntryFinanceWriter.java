@@ -18,7 +18,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -97,64 +96,55 @@ public class AccountEntryFinanceWriter {
 		list.add(finance);
 
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-		recordingTo.setType((finance.isPayment())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
+		recordingTo.setType((finance.isPayment()?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION));
 		recordingTo.setDate(paymentDate);
 		recordingTo.setRegistryBank(registryBank);
-		recordingTo.setSecurityLevel((finance.getSecurityLevel()==null)?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
+		recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
 		recordingTo.setFinanceList(list);
-		return recordFinances(recordingTo, null);
+		return recordFinances(recordingTo);
 	}
 
-	public AccountEntry recordFinances(FinanceRecordingTo to, AccountEntry entry) throws ManagerBeanException {
-		Account bankAccount = (to.getRegistryBank()!= null)?AccountUtil.obtainRBankAccount(to.getRegistryBank()):AccountUtil.obtainCashAccount();
-		if (entry == null) {
-			entry = createAccountEntry(to);
+	private AccountEntry recordFinances(FinanceRecordingTo to) throws ManagerBeanException {
+		AccountEntry entry = createAccountEntry(to);
+		Account bankAccount = (to.getRegistryBank() != null?AccountUtil.obtainRBankAccount(to.getRegistryBank()):AccountUtil.obtainCashAccount());
+		if (to.getFinanceList().size() > 0) {
+			Finance finance = to.getFinanceList().get(0);
+			insertFinanceEntryDetails(bankAccount, entry, finance);
 		}
-		insertFinanceEntryDetails(bankAccount, entry, to);
 		return entry;
 	}
 
-	private void insertFinanceEntryDetails(Account bankAccount, AccountEntry entry, FinanceRecordingTo recordingTo) throws ManagerBeanException {
+	private void insertFinanceEntryDetails(Account bankAccount, AccountEntry entry, Finance finance) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		Invoice invoice = null;
-		Account registryAccount = null;
-		double balancingAmount = 0;
 		// Primer Apunte
-		Iterator<Finance> iterator = recordingTo.getFinanceList().iterator();
-		while (iterator.hasNext()) {
-			Finance finance = iterator.next();
-			invoice = finance.getInvoice();
-			balancingAmount += finance.getTotalAmount();
-
-			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccountEntry(entry);
-			if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
-				registryAccount = AccountUtil.obtainCustomerAccount(finance.getRegistry());
-				detail.setCredit(finance.getTotalAmount());
-			} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
-				registryAccount = AccountUtil.obtainSupplierAccount(finance.getRegistry());
-				detail.setDebit(finance.getTotalAmount());
-			} else {
-				registryAccount = AccountUtil.obtainCreditorAccount(finance.getRegistry());
-				detail.setDebit(finance.getTotalAmount());
-			}
-			detail.setAccount(registryAccount);
-			detail.setConcept(obtainConcept(finance.getInvoice(), finance.getTotalAmount(), null));
-			detail.setBalancingAccount(bankAccount);
-			accountEntryDetailBean.insert(detail);
-		}
-
-		balancingAmount = CommonUtil.round(balancingAmount);
-		// Segundo Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
+		Account registryAccount = null;
+		if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
+			registryAccount = AccountUtil.obtainCustomerAccount(finance.getRegistry());
+			detail.setCredit(finance.getTotalAmount());
+		} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
+			registryAccount = AccountUtil.obtainSupplierAccount(finance.getRegistry());
+			detail.setDebit(finance.getTotalAmount());
+		} else {
+			registryAccount = AccountUtil.obtainCreditorAccount(finance.getRegistry());
+			detail.setDebit(finance.getTotalAmount());
+		}
+		detail.setAccount(registryAccount);
+		detail.setConcept(obtainConcept(finance.getInvoice(), finance.getTotalAmount(), null));
+		detail.setBalancingAccount(bankAccount);
+		accountEntryDetailBean.insert(detail);
+
+		// Segundo Apunte
+		detail = new AccountEntryDetail();
+		detail.setAccountEntry(entry);
 		detail.setAccount(bankAccount);
-		detail.setConcept((recordingTo.getFinanceList().size()==1)?obtainConcept(invoice, balancingAmount, null):recordingTo.getBalancingConcept());
-		detail.setBalancingAccount((recordingTo.getFinanceList().size()==1)?registryAccount:null);
+		detail.setConcept(obtainConcept(finance.getInvoice(), finance.getTotalAmount(), null));
+		detail.setBalancingAccount(registryAccount);
 		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
-			detail.setDebit(balancingAmount);
+			detail.setDebit(finance.getTotalAmount());
 		} else{
-			detail.setCredit(balancingAmount);
+			detail.setCredit(finance.getTotalAmount());
 		}
 		accountEntryDetailBean.insert(detail);
 	}

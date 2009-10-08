@@ -30,18 +30,19 @@
 							image="/images/icons/webinfo-icon-otherdata.png"
 							styleClass="aon-icon-commandButton" 
 							action="otherdata">
-							<aon:actionListener method="#{company.onLoad}" />
+							<aon:actionListener method="#{companyWebInfo.onInit}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-images"
-							value="#{appBundle.infoweb_images}"
+							value="#{companyBundle.company_images_module}"
 							image="/images/icons/webinfo-icon-images.png"
 							styleClass="aon-icon-commandButton" 
-							action="images">
-							<aon:actionListener method="#{company.onLoad}" />
+							action="companyImages">
+							<aon:actionListener method="#{companyWebInfo.onInit}" />
+							<aon:actionListener method="#{companyImages.onCancel}" />
 						</aon:commandButton> 
 		                <aon:outputText value="#{companyBundle.company_data_module}"/>
 		                <aon:outputText value="#{appBundle.infoweb_data}"/>
-		                <aon:outputText value="#{appBundle.infoweb_images}"/>
+		                <aon:outputText value="#{companyBundle.company_images_module}"/>
 					</h:panelGrid>
 					<h:panelGrid columns="3" styleClass="aon-text-center" style="width:100%">
 						<aon:commandButton id="webinfo-icon-pages"
@@ -49,14 +50,14 @@
 							image="/images/icons/webinfo-icon-pages.png"
 							styleClass="aon-icon-commandButton" 
 							action="pages">
-							<aon:actionListener method="#{company.onLoad}" />
+							<aon:actionListener method="#{companyWebInfo.onInit}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-templates"
 							value="#{appBundle.infoweb_template}"
 							image="/images/icons/webinfo-icon-templates.png"
 							styleClass="aon-icon-commandButton" 
 							action="templates">
-							<aon:actionListener method="#{company.onLoad}" />
+							<aon:actionListener method="#{companyWebInfo.onInit}" />
 							<aon:actionListener method="#{webPageStyle.onLoad}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-generator"
@@ -64,7 +65,7 @@
 							image="/images/icons/webinfo-icon-generator.png"
 							styleClass="aon-icon-commandButton" 
 							action="generate">
-							<aon:actionListener method="#{company.onLoad}" />
+							<aon:actionListener method="#{companyWebInfo.onInit}" />
 						</aon:commandButton> 
 		                <aon:outputText value="#{appBundle.infoweb_pages}"/>
 		                <aon:outputText value="#{appBundle.infoweb_template}"/>

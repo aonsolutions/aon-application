@@ -143,7 +143,7 @@
 											<a4j:mediaOutput element="img" cacheable="false"
 												style="width: 100px;" value="#{company.aonFile.key}"
 												rendered="#{company.aonFile.size > 0}"
-												createContent="#{company.createLogoContent}">
+												createContent="#{company.createCurrentLogoContent}">
 												<f:param value="#{company.timeStamp}" name="time" />
 											</a4j:mediaOutput>
 											<aon:fileUpload id="attach_file"

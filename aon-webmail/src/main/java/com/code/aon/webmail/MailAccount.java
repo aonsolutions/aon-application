@@ -1,27 +1,26 @@
 package com.code.aon.webmail;
 
 import javax.naming.Name;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.IAonObjectClasses;
 
-@Entity
-@Table(name="mail_account")
-@EntryObject(mainObjectClass="aonMailAccount", objectClasses={"top"})
-public class MailAccount implements ITransferObject{
+@EntryObject(mainObjectClass=IAonObjectClasses.MAIL_ACCOUNT, objectClasses={IAonObjectClasses.TOP})
+public class MailAccount implements ILdapTransferObject {
 	
 	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
 
@@ -134,8 +133,6 @@ public class MailAccount implements ITransferObject{
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue
-	@Column(nullable=false)
 	public Name getId() {
 		return id;
 	}
@@ -150,7 +147,6 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the incomingHost
 	 */
-	@Column(name="incoming_host")
 	@Attribute(name="incomingHost", length=256)
 	public String getIncomingHost() {
 		return incomingHost;
@@ -166,7 +162,6 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the incomingPort
 	 */
-	@Column(name="incoming_port")
 	@Attribute(name="incomingPort")
 	public int getIncomingPort() {
 		return incomingPort;
@@ -182,7 +177,6 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the incomingSsl
 	 */
-	@Column(name="incoming_ssl")
 	@Attribute(name="incomingSsl")
 	public boolean isIncomingSsl() {
 		return incomingSsl;
@@ -198,7 +192,6 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the mailUsername
 	 */
-	@Column(name="mail_username")
 	@Attribute(name="uid",length=256)
 	public String getMailUsername() {
 		return mailUsername;
@@ -214,7 +207,6 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the outgoingHost
 	 */
-	@Column(name="outgoing_host")
 	@Attribute(name="outgoingHost",length=256)
 	public String getOutgoingHost() {
 		return outgoingHost;
@@ -230,7 +222,6 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the outgoingPort
 	 */
-	@Column(name="outgoing_port")
 	@Attribute(name="outgoingPort")
 	public int getOutgoingPort() {
 		return outgoingPort;
@@ -246,7 +237,6 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the outgoingSsl
 	 */
-	@Column(name="outgoing_ssl")
 	@Attribute(name="outgoingSsl")
 	public boolean isOutgoingSsl() {
 		return outgoingSsl;
@@ -262,7 +252,7 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the outgoingVerification
 	 */
-	@Column(name="outgoing_verification")
+
 	@Attribute(name="outgoingVerification")
 	public boolean isOutgoingVerification() {
 		return outgoingVerification;
@@ -275,7 +265,6 @@ public class MailAccount implements ITransferObject{
 		this.outgoingVerification = outgoingVerification;
 	}
 
-	@Transient
 	public String getPasswordString() {
 		return (password != null) ? new String( password ) : null;
 	}
@@ -325,7 +314,6 @@ public class MailAccount implements ITransferObject{
 		this.signature = signature;
 	}
 	
-	@Transient
 	public boolean isDefault() {
 		return StringUtils.equalsIgnoreCase(DEFAULT_MAIL_ACCOUNT_NAME, getName());
 	}
@@ -364,6 +352,67 @@ public class MailAccount implements ITransferObject{
 
 	public void setTrashFolder(String trashFolder) {
 		this.trashFolder = trashFolder;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final MailAccount o = (MailAccount) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.draftFolder, o.draftFolder)
+				.append(this.email, o.email)				
+				.append(this.host, o.host)
+				.append(this.incomingHost, o.incomingHost)				
+				.append(this.incomingPort, o.incomingPort)
+				.append(this.incomingSsl, o.incomingSsl)
+				.append(this.mailUsername, o.mailUsername)				
+				.append(this.name, o.name)
+				.append(this.outgoingHost, o.outgoingHost)				
+				.append(this.outgoingPort, o.outgoingPort)
+				.append(this.outgoingSsl, o.outgoingSsl)
+				.append(this.outgoingVerification, o.outgoingVerification)				
+				.append(this.password, o.password)
+				.append(this.protocol, o.protocol)				
+				.append(this.sentFolder, o.sentFolder)
+				.append(this.signature, o.signature)
+				.append(this.spamFolder, o.spamFolder)				
+				.append(this.trashFolder, o.trashFolder)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(draftFolder)
+			.append(email)
+			.append(host)
+			.append(id)	
+			.append(incomingHost)			
+			.append(incomingPort)
+			.append(incomingSsl)			
+			.append(mailUsername)
+			.append(name)			
+			.append(outgoingHost)
+			.append(outgoingPort)			
+			.append(outgoingSsl)
+			.append(outgoingVerification)			
+			.append(password)			
+			.append(protocol)
+			.append(sentFolder)			
+			.append(signature)
+			.append(spamFolder)
+			.append(trashFolder)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }

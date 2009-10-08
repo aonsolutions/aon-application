@@ -9,10 +9,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.config.Series;
 import com.code.aon.registry.Registry;
 
 /**
@@ -65,8 +65,6 @@ public class InvoicingGroupDetail implements ITransferObject {
      */
 	@ManyToOne
     @JoinColumn(name="invoicing_group", nullable = false)
-    @ForeignKey(name="FK_INVOICING_GROUP_DETAIL_INVOICING_GROUP")
-    @Index(name="IDX_INVOICING_GROUP_DETAIL_INVOICING_GROUP")                                                    
     public InvoicingGroup getInvoicingGroup() {
 		return invoicingGroup;
 	}
@@ -87,8 +85,6 @@ public class InvoicingGroupDetail implements ITransferObject {
 	 */
 	@ManyToOne
     @JoinColumn(name="child", nullable = false)
-    @ForeignKey(name="FK_INVOICING_GROUP_DETAIL_CHILD")
-    @Index(name="IDX_INVOICING_GROUP_DETAIL_CHILD")                                                
 	public Registry getChild() {
 		return child;
 	}
@@ -107,7 +103,6 @@ public class InvoicingGroupDetail implements ITransferObject {
 	 * 
 	 * @return true, if is grouped
 	 */
-	@Column(nullable=true)
 	public boolean isGrouped() {
 		return grouped;
 	}

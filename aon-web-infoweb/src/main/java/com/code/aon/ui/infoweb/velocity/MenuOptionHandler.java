@@ -1,6 +1,5 @@
 package com.code.aon.ui.infoweb.velocity;
 
-import com.code.aon.infoweb.enumeration.WebInfoPageType;
 
 public class MenuOptionHandler {
 
@@ -19,6 +18,10 @@ public class MenuOptionHandler {
 
 	public String getLink() {
 		return link;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 }

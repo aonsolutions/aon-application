@@ -8,26 +8,29 @@
 
 	<aon:div styleClass="aon-scroll-area">
 		
-			<aon:div styleClass="aon-panelGrid-search">
-				<aon:div styleClass="aon-panelGrid-search-info">
-					<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
-				</aon:div>			
-				
-				<aon:panelGrid id="#{searchContentID}" columns="2">
-					<ui:insert name="searchContent" />
-					<c:if test="#{!skipSearchButton}">
+		<aon:div styleClass="aon-panelGrid-search">
+			<aon:div styleClass="aon-panelGrid-search-info">
+				<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+			</aon:div>			
+			
+			<aon:panelGrid id="#{searchContentID}" columns="2">
+				<ui:insert name="searchContent" />
+				<c:if test="#{!skipSearchButton}">
 					<aon:outputText value="" />
 					<aon:div >
 						<aon:commandButton id="#{searchButtonId}"
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 							action="#{searchAction}" actionListener="#{searchActionListener}"
-							reRender="#{searchReRender}"
-							accesskey="#{bundle.aon_key_search}" />							
+							reRender="#{searchReRender}" oncomplete="#{searchOnComplete}"
+							requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+							<c:if test="#{!disableSearchHotKey}" >
+								<aon:actionHotKey key="return" />
+							</c:if>
+						</aon:commandButton> 
 					</aon:div>	
-					</c:if>			
-				</aon:panelGrid>
-			</aon:div>
-		
+				</c:if>			
+			</aon:panelGrid>
+		</aon:div>		
 	</aon:div>
 	
 </ui:composition>

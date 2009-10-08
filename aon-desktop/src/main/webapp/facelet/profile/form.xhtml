@@ -14,24 +14,24 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_profiles}" />
-				<ui:param name="toolbarDescription" value="#{appBundle.aon_application} : #{currentDomain.da.id} / #{appBundle.aon_profile} : #{currentDomain.newProfile?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:param name="toolbarDescription" value="#{appBundle.aon_application} : #{domain.da.id} / #{appBundle.aon_profile} : #{domain.newProfile?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{bundle.aon_save}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{currentDomain.acceptProfile}"
+						actionListener="#{domain.acceptProfile}"
 						accesskey="#{bundle.aon_key_save}"
-						rendered="#{!currentDomain.selectedSystemProfile}" reRender="aonToolbar" />
+						rendered="#{!domain.selectedSystemProfile}" reRender="aonToolbar" />
 					<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-						rendered="#{(!currentDomain.newProfile) and (!currentDomain.selectedSystemProfile)}"
+						rendered="#{(!domain.newProfile) and (!domain.selectedSystemProfile)}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{bundle.aon_remove_confirm}"
-						confirmActionListener="#{currentDomain.removeProfile}"
+						confirmActionListener="#{domain.removeProfile}"
 						confirmAction="profile_list"/>
 					<aon:commandButton id="back" value="#{bundle.aon_back}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
-						actionListener="#{currentDomain.cancel}"
+						actionListener="#{domain.cancel}"
 						action="profile_list"
 						accesskey="#{bundle.aon_key_cancel}" />
 				</ui:define>
@@ -43,16 +43,16 @@
 
 					<aon:outputLabel for="profileId"
 						value="#{appBundle.aon_profile}" />
-					<aon:inputText id="profileId" disabled="#{!currentDomain.newProfile}"
+					<aon:inputText id="profileId" disabled="#{!domain.newProfile}"
 						required="true" size="20"
-						maxlength="16" value="#{currentDomain.domainManager.relation.id}" />
+						maxlength="16" value="#{domain.domainManager.relation.id}" />
 
 					<aon:outputLabel for="profileData"
 						value="#{securityBundle.aon_security_roles}" />
-					<aon:selectManyCheckbox id="profileData" disabled="#{currentDomain.selectedSystemProfile}"
-						value="#{currentDomain.domainManager.relations}" layout="pageDirection" required="true"
+					<aon:selectManyCheckbox id="profileData" disabled="#{domain.selectedSystemProfile}"
+						value="#{domain.domainManager.relations}" layout="pageDirection" required="true"
 						layoutWidth="5">
-						<f:selectItems value="#{currentDomain.domainManager.availableRoles}" />
+						<f:selectItems value="#{domain.domainManager.availableRoles}" />
 					</aon:selectManyCheckbox>
 
 				</aon:panelGrid>

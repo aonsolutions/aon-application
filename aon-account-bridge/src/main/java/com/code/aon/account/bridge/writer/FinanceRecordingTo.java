@@ -21,9 +21,7 @@ public class FinanceRecordingTo implements ITransferObject {
 	private RegistryBank registryBank;
 	
 	private SecurityLevel securityLevel;
-
-	private String balancingConcept;
-
+	
 	private List<Finance> financeList;
 
 	private List<FinanceBatchDetail> fbatchDetailList;
@@ -58,14 +56,6 @@ public class FinanceRecordingTo implements ITransferObject {
 
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
-	}
-
-	public String getBalancingConcept() {
-		return balancingConcept;
-	}
-
-	public void setBalancingConcept(String balancingConcept) {
-		this.balancingConcept = balancingConcept;
 	}
 
 	public List<Finance> getFinanceList() {

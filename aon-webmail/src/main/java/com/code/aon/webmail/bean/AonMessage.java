@@ -2,8 +2,10 @@ package com.code.aon.webmail.bean;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +33,7 @@ import javax.mail.search.SearchTerm;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.webmail.WebmailException;
 
@@ -39,6 +42,14 @@ public class AonMessage implements IMimeType, BundleConstants {
 	private static final Logger LOGGER = Logger.getLogger(AonMessage.class
 			.getName());
 
+	private static final DateFormat TODAY_FORMAT = new SimpleDateFormat("hh:mm a");
+	
+	private static final DateFormat THIS_YEAR_FORMAT = new SimpleDateFormat("MMM d");
+	
+	private static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.SHORT);
+	
+	private static final DateFormat DATE_TIME_FORMAT = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
+	
 	private AonFolder parent;
 	
 	protected MimeMessage message;
@@ -176,28 +187,78 @@ public class AonMessage implements IMimeType, BundleConstants {
 	}
 
 	/**
+	 * Gets the send date of this message. If the message has not yet been send
+	 * then the current date is returned.
+	 * 
+	 * @return messages sent date if set, todays date if the message has no date
+	 *         value.
+	 * @throws WebmailException 
+	 */
+	public Date getDate() throws WebmailException {
+		Date date = null;
+		try {
+			date = message.getSentDate();
+			if ( date == null ) {
+				date = message.getReceivedDate();
+			}
+		} catch (MessagingException e) {
+			LOGGER.log(Level.SEVERE, "Error getting message send date", e);
+			throw new WebmailException(e);
+		}
+		return date;		
+	}	
+	
+	/**
 	* Returns the date the message was sent (or received if the sent date
 	* is null.
 	 * @throws WebmailException 
 	*/
 	public String getSentDateString() throws WebmailException{
-		try{
-			Date date;
-			SimpleDateFormat df = new SimpleDateFormat("EEE,dd/MM/yy-HH:mm");
-			if ((date = message.getSentDate()) != null) {
-				return (df.format(date));
-			}	else if ((date = message.getReceivedDate()) != null) {
-				return (df.format(date));
-			}	else {
-				return "";
+		String value = "";
+		try {
+			Date date = getDate();
+			if ( date != null ) {
+				Date today = new Date();
+				if ( DateUtils.isSameDay(date, today) ) {
+					value = TODAY_FORMAT.format(date);
+				} else {
+			        Calendar calendar = Calendar.getInstance();
+			        calendar.setTime(date);
+			        int year = calendar.get(Calendar.YEAR);
+			        calendar.setTime(today);
+			        if ( year == calendar.get(Calendar.YEAR) ) {
+			        	value = THIS_YEAR_FORMAT.format(date);
+			        } else {
+			        	value = DATE_FORMAT.format(date);
+			        }
+				}
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error getting send date", e);
 			throw new WebmailException(e);
 		}
+		return value;
 	}
 
-
+	/**
+	* Returns the date the message was sent (or received if the sent date
+	* is null.
+	 * @throws WebmailException 
+	*/
+	public String getSentDateFullString() throws WebmailException{
+		String value = "";
+		try {
+			Date date = getDate();
+			if ( date != null ) {
+				value = DATE_TIME_FORMAT.format(date);
+			}
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error getting send date", e);
+			throw new WebmailException(e);
+		}
+		return value;
+	}
+	
 	/**
 	 * Gets the message subject.
 	 * 
@@ -584,18 +645,16 @@ public class AonMessage implements IMimeType, BundleConstants {
 	//**************************************************************************
 	//**************************************************************************
 	private boolean isAttachment( BodyPart part ) throws MessagingException {
-		boolean attachment = false;
 		String disposition = part.getDisposition();
-		if ( (disposition != null) ) {
-			if (disposition.equalsIgnoreCase(Part.ATTACHMENT) ) {
-				attachment = true;
-			} else if (part.getFileName() != null) {
-				if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
-					attachment = part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
-				}
-			}
+		if ( (disposition != null) && disposition.equalsIgnoreCase(Part.ATTACHMENT) ) {
+			return true;
 		}		
-		return attachment;
+		if (part.getFileName() != null) {
+			if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
+				return part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
+			}
+		}
+		return false;
 	}
 	
 	public List<Part> getAttachmentParts( Part part ) throws MessagingException, IOException {

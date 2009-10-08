@@ -12,6 +12,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -61,8 +62,8 @@ public class AccountUtils {
 		if (details.size() > 0) {
 			for (ITransferObject to : details) {
 				AccountEntryDetail detail = (AccountEntryDetail) to;
-				debit = round(debit + detail.getDebit());
-				credit = round(credit + detail.getCredit());
+				debit = CommonUtil.round(debit + detail.getDebit());
+				credit = CommonUtil.round(credit + detail.getCredit());
 			}
 		}
 		Balance balance = null;
@@ -115,11 +116,11 @@ public class AccountUtils {
 		if (excludeClosingEntry) {
 			substractAmounts(balance, fromDate, accountId, AccountEntryType.CLOSING);
 		}
-		double bal = round(debit - credit);
+		double bal = CommonUtil.round(debit - credit);
 		if (bal > 0) {
 			balance.setUnpaidBalance(bal);
 		} else {
-			balance.setCreditBalance(round(bal * (-1)));
+			balance.setCreditBalance(CommonUtil.round(bal * (-1)));
 		}
 		return balance;
 	}
@@ -134,15 +135,10 @@ public class AccountUtils {
 				inRange = (fromDate.compareTo(openingEntryDate) > 0);
 			}
 			if (!inRange) {
-				balance.setDebit(round(balance.getDebit() - openingBalance.getDebit()));
-				balance.setCredit(round(balance.getCredit() - openingBalance.getCredit()));
+				balance.setDebit(CommonUtil.round(balance.getDebit() - openingBalance.getDebit()));
+				balance.setCredit(CommonUtil.round(balance.getCredit() - openingBalance.getCredit()));
 			}
 		}
-	}
-
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
 	}
 
 }

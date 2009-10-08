@@ -12,13 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -27,10 +23,10 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
-import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.finance.enumeration.BillingPeriod;
 
 /**
  * Transfer Object that represents a customer fee.
@@ -112,7 +108,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
      * @return the billing date
      */
 	@Column(name="billing_date")
-	@Temporal(TemporalType.DATE)
     public Date getBillingDate() {
         return billingDate;
     }
@@ -131,7 +126,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
      * 
      * @return the description
      */
-    @Column(length=64)
     public String getDescription() {
         return description;
     }
@@ -150,7 +144,7 @@ public class CustomerFee implements ITransferObject, ICalculable {
 	 * 
 	 * @return the discount expression
 	 */
-	@Column(name="discount_expr", length = 32)
+	@Column(name="discount_expr")
 	@Type(type="com.code.aon.product.util.DiscountExpressionUserType")
     public DiscountExpression getDiscountExpression() {
         return discountExpression;
@@ -171,7 +165,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
      * @return the final date
      */
     @Column(name="final_date")
-    @Temporal(TemporalType.DATE)
     public Date getFinalDate() {
         return finalDate;
     }
@@ -191,7 +184,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
      * @return the initial date
      */
     @Column(name="initial_date")
-    @Temporal(TemporalType.DATE)
     public Date getInitialDate() {
         return initialDate;
     }
@@ -212,8 +204,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="item" )
-	@ForeignKey(name="FK_CUSTOMER_FEE_ITEM")
-	@Index(name="IDX_CUSTOMER_FEE_ITEM")	
     public Item getItem() {
         return item;
     }
@@ -232,7 +222,7 @@ public class CustomerFee implements ITransferObject, ICalculable {
 	 * 
 	 * @return the period
 	 */
-	@Column(nullable=true)
+	@Column(nullable=false)
     public BillingPeriod getPeriod() {
         return period;
     }
@@ -251,7 +241,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
      * 
      * @return the price
      */
-    @Column(precision=15, scale=3)
     public double getPrice() {
         return price;
     }
@@ -270,7 +259,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
      * 
      * @return the quantity
      */
-    @Column(precision=15, scale=3)    
     public double getQuantity() {
         return quantity;
     }
@@ -291,8 +279,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
 	 */
 	@ManyToOne
 	@JoinColumn( name="customer", nullable = true, updatable = false )
-	@ForeignKey(name="FK_CUSTOMER_FEE_CUSTOMER")
-	@Index(name="IDX_CUSTOMER_FEE_CUSTOMER")
     public Customer getCustomer() {
         return customer;
     }
@@ -311,7 +297,7 @@ public class CustomerFee implements ITransferObject, ICalculable {
 	 * 
 	 * @return the security level
 	 */
-	@Column(name = "security_level")
+	@Column(name = "security_level", nullable=false)
     public SecurityLevel getSecurityLevel() {
         return securityLevel;
     }
@@ -327,8 +313,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
     
 	@ManyToOne
 	@JoinColumn( name="workplace", nullable=false)
-	@ForeignKey(name="FK_CUSTOMER_FEE_WORKPLACE")
-	@Index(name="IDX_CUSTOMER_FEE_WORKPLACE")		
     public WorkPlace getWorkPlace() {
 		return workPlace;
 	}

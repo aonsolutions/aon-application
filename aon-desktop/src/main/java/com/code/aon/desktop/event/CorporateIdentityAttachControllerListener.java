@@ -18,7 +18,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.CorporateIdentityAttachController;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -34,9 +33,11 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.faces.util.MessageFactory;
 
-public class CorporateIdentityAttachControllerListener extends ControllerAdapter implements IDesktopConstants {
+public class CorporateIdentityAttachControllerListener extends ControllerAdapter {
 
 	private static final Logger LOGGER = Logger.getLogger(CorporateIdentityAttachControllerListener.class.getName());
+	
+	private static final String COMPANY_CONTROLLER_NAME = "company"; 
 
     /** BASE_NAME. */
     private static final String BASE_NAME = "com.code.aon.desktop.i18n.messages";
@@ -131,6 +132,8 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 						attach.setDescription(attach.getDescription() + "." + ext);
 					}
 				}
+			} else {
+				throw new ControllerListenerException("Borracho !!");
 			}
 		} catch (Throwable th) {
 			throw new ControllerListenerException("Error uploading file");

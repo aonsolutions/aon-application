@@ -2,11 +2,18 @@ package com.code.aon.ui.infoweb.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,54 +25,44 @@ import com.code.aon.infoweb.WebInfoPageResource;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
-public class CompanyWebInfoPageController extends GridController {
+public class CompanyWebInfoPageController extends BasicController implements IInfoWebConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
-
-	public boolean showGenericModalPanel = false;
-
-	public boolean showLocationModalPanel = false;
-
-	public boolean showResourceModalPanel = false;
 	
-	public boolean richTextEnabled = false;
+	private static final char[] VALID_CHARS = new char[] {' ', '-', '_', '(', ')', '$', '&', '{', '}'};
+
+	public boolean showGenericModalPanel;
+
+	public boolean showLocationModalPanel;
+
+	public boolean showResourceModalPanel;
+	
+	public boolean richTextEnabled;
 
 	public WebInfoPage current;
 	
 	public WebInfoPageDetail detail;
 
-	public boolean newResource = false;
+	public boolean newResource;
 	
-	public String rattachId;
+	public RegistryAttachment attachment;
 
 	public ListDataModel resources;
 	
 	public WebInfoPageResource resource;
-
+	
 	public CompanyWebInfoPageController() {
-		super();
+		this.richTextEnabled = true;
 	}
-
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event){
-		cancel(event);
-		super.onSelect(event);
-	}
-
-	/* (non-Javadoc)
-     * @see com.code.aon.ui.form.IController#onAccept(javax.faces.event.ActionEvent)
-     */
-    public void onAccept(ActionEvent event) {
-    	accept(event);
-    	onSelectDetail(event);
-    	cancel(event);
-    }
 
 	public int getLastPosition() {
 		int position = 0;
@@ -79,7 +76,7 @@ public class CompanyWebInfoPageController extends GridController {
 				++position;
 			}
 		}catch (ManagerBeanException e) {
-			
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return position;
 	}
@@ -141,16 +138,10 @@ public class CompanyWebInfoPageController extends GridController {
 		setSelectedData(wip);
 		if (wip.getType().equals(WebInfoPageType.GENERIC)) {
 			setShowGenericModalPanel(true);
-		}
-		else {
-			if (wip.getType().equals(WebInfoPageType.LOCATION)) {
-				setShowLocationModalPanel(true);
-			}
-			else {
-				if (wip.getType().equals(WebInfoPageType.GALLERY)) {
-					setShowResourceModalPanel(true);
-				}
-			}
+		} else if (wip.getType().equals(WebInfoPageType.LOCATION)) {
+			setShowLocationModalPanel(true);
+		} else if (wip.getType().equals(WebInfoPageType.GALLERY)) {
+			setShowResourceModalPanel(true);
 		}
 	}
 
@@ -194,7 +185,7 @@ public class CompanyWebInfoPageController extends GridController {
 			resources = new ListDataModel(listWipr);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -212,7 +203,7 @@ public class CompanyWebInfoPageController extends GridController {
 			if (detail.getId() != null) wipdBean.update(detail);
 			else wipdBean.insert(detail);
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
@@ -231,10 +222,9 @@ public class CompanyWebInfoPageController extends GridController {
 	@SuppressWarnings("unused")
 	public void onSelectResource(ActionEvent event) {
 		WebInfoPageResource wipr = (WebInfoPageResource)this.resources.getRowData();
-		resource = wipr;
-		rattachId = ""+resource.getRattach().getId();
+		resource = wipr; 
+		attachment = resource.getRattach();
 		setNewResource(false);
-		LOGGER.fine(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " WITH IMAGE " + resource.getRattach().getId() + " SELECTED.");
 	}
 
 	/* (non-Javadoc)
@@ -243,17 +233,13 @@ public class CompanyWebInfoPageController extends GridController {
     public void onAcceptResource(ActionEvent event) {
 		try {
 			IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
-			LOGGER.fine(">>>>>> INSERTANDO EN BASE DE DATOS " + resource.getContent() + " CON LA IMAGEN "+ rattachId + ".");
 			resource.setWebInfoPage(current);
-			RegistryAttachment ra = new RegistryAttachment();
-			ra.setId(Integer.parseInt(rattachId));
-			resource.setRattach(ra);
-			if (resource.getId() != null) wiprBean.update(resource);
-			else wiprBean.insert(resource);
+			resource.setRattach(attachment);
+			wiprBean.insertOrUpdate(resource);
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
@@ -267,7 +253,7 @@ public class CompanyWebInfoPageController extends GridController {
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
@@ -279,10 +265,7 @@ public class CompanyWebInfoPageController extends GridController {
 		List<ITransferObject> list = rattachBean.getList(criteria);
 		for (int i=0; i <list.size(); i++) {
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
-			Integer id = rattach.getId();
-			String name = rattach.getDescription();
-			LOGGER.fine(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
-			SelectItem item = new SelectItem(id, name);
+			SelectItem item = new SelectItem(rattach, rattach.getDescription());
 			images.add(item);
 		}
 		return images;
@@ -308,14 +291,12 @@ public class CompanyWebInfoPageController extends GridController {
 		this.newResource = newResource;
 	}
 
-	public String getRattachId() {
-		LOGGER.fine(">>>>>>>>>>>>>> GETTING RATTACH ID: " + rattachId);
-		return rattachId;
+	public RegistryAttachment getAttachment() {
+		return attachment;
 	}
 
-	public void setRattachId(String rattachId) {
-		LOGGER.fine(">>>>>>>>>>>>>> SETTING RATTACH ID: " + rattachId);
-		this.rattachId = rattachId;
+	public void setAttachment(RegistryAttachment attachment) {
+		this.attachment = attachment;
 	}
 
 	public boolean isRichTextEnabled() {
@@ -329,6 +310,38 @@ public class CompanyWebInfoPageController extends GridController {
 	private void resetResource() {
 		setResource(null);
 		setNewResource(false);
+	}
+	
+	private boolean isValidChar( char c ) {
+		return Character.isLetter(c) || Character.isDigit(c) || ArrayUtils.contains(VALID_CHARS, c);
+	}
+	
+	public void pageNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
+		String pageName = value.toString();
+		IManagerBean bean = getManagerBean();
+		Criteria criteria = new Criteria();
+		WebInfoPage wip = (WebInfoPage) getTo();
+		if ( wip.getId() != null ) {
+			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ID), wip.getId());
+			criteria.addExpression(exp);
+		}		
+		criteria.addEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_NAME), pageName);
+		int count = bean.getCount(criteria);
+		if ( count > 0 ) {
+			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_duplicated_name"));
+			message.setSeverity(FacesMessage.SEVERITY_ERROR);
+			throw new ValidatorException( message );
+		}
+		for( int i = 0; i < pageName.length(); i++ ) {
+			char c = pageName.charAt(i);
+			if (! isValidChar(c) ) {
+				String text = AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_invalid_character");
+				String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), text, new Object[]{c});
+				FacesMessage message = new FacesMessage(formatted);
+				message.setSeverity(FacesMessage.SEVERITY_ERROR);				
+				throw new ValidatorException( message );										
+			}
+		}
 	}
 	
 }

@@ -100,14 +100,10 @@
 	<!-- =================== Corporate Identity Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>corporateIdentityAttach_list</from-outcome>
+			<from-outcome>corporate_identity</from-outcome>
 			<to-view-id>/facelet/corporateIdentity/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>corporateIdentityAttach_search</from-outcome>
-			<to-view-id>/facelet/corporateIdentity/search.xhtml</to-view-id>
-		</navigation-case>		
-		<navigation-case>
 			<from-outcome>corporate_identity_fax</from-outcome>
 			<to-view-id>/facelet/corporateIdentity/fax/form.xhtml</to-view-id>
 		</navigation-case>
@@ -146,34 +142,6 @@
 		<navigation-case>
 			<from-outcome>corporate_identity_abonare</from-outcome>
 			<to-view-id>/facelet/corporateIdentity/abonare/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>corporate_identity_category</from-outcome>
-			<to-view-id>/facelet/corporateIdentity/category/grid.xhtml</to-view-id>
-		</navigation-case>			
-	</navigation-rule>
-
-	<!-- =================== Domain ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>domain_list</from-outcome>
-			<to-view-id>/facelet/domain/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_form</from-outcome>
-			<to-view-id>/facelet/domain/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_search</from-outcome>
-			<to-view-id>/facelet/domain/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_select</from-outcome>
-			<to-view-id>/facelet/domain/select.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_selectSearch</from-outcome>
-			<to-view-id>/facelet/domain/selectSearch.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

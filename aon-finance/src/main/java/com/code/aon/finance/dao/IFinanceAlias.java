@@ -641,28 +641,22 @@ public interface IFinanceAlias {
 	String  INVOICE_TAX_INVOICE_DETAIL_ID = INVOICE_TAX_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: InvoiceTax_invoiceDetail_invoice_id
-	* Hibernate value: InvoiceTax.invoiceDetail.invoice.id
-	*/
-	String  INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID = INVOICE_TAX_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: InvoiceTax_taxType
-	* Hibernate value: InvoiceTax.taxType
-	*/
-	String  INVOICE_TAX_TAX_TYPE = INVOICE_TAX_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: InvoiceTax_percentage
 	* Hibernate value: InvoiceTax.percentage
 	*/
-	String  INVOICE_TAX_PERCENTAGE = INVOICE_TAX_ENTRY.getAliasNames()[4];
+	String  INVOICE_TAX_PERCENTAGE = INVOICE_TAX_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: InvoiceTax_surcharge
 	* Hibernate value: InvoiceTax.surcharge
 	*/
-	String  INVOICE_TAX_SURCHARGE = INVOICE_TAX_ENTRY.getAliasNames()[5];
+	String  INVOICE_TAX_SURCHARGE = INVOICE_TAX_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: InvoiceTax_taxType
+	* Hibernate value: InvoiceTax.taxType
+	*/
+	String  INVOICE_TAX_TAX_TYPE = INVOICE_TAX_ENTRY.getAliasNames()[4];
 
 
 

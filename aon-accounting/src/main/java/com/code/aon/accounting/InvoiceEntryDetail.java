@@ -2,6 +2,7 @@ package com.code.aon.accounting;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.util.CommonUtil;
 
 public class InvoiceEntryDetail implements ITransferObject {
 
@@ -38,7 +39,7 @@ public class InvoiceEntryDetail implements ITransferObject {
 	}
 
 	public double getSurcharge() {
-		return round(this.getTaxableBase() * this.getSurchargePercent() / 100, 2);
+		return CommonUtil.round(this.getTaxableBase() * this.getSurchargePercent() / 100, 2);
 	}
 
 	public double getSurchargePercent() {
@@ -68,7 +69,7 @@ public class InvoiceEntryDetail implements ITransferObject {
 	public double getVatQuota() {
 		double vatQuota = 0.0;
 		if(this.getVatPercent() != 0){
-			vatQuota = round(this.getTaxableBase() * getVatPercent() / 100, 2);
+			vatQuota = CommonUtil.round(this.getTaxableBase() * getVatPercent() / 100, 2);
 		}
 		return vatQuota;
 	}
@@ -81,7 +82,7 @@ public class InvoiceEntryDetail implements ITransferObject {
 	public double getRetentionQuota() {
 		double retentionQuota = 0.0;
 		if(this.getRetentionPercent() != 0){
-			retentionQuota = round(this.getTaxableBase() * this.getRetentionPercent() / 100, 2);
+			retentionQuota = CommonUtil.round(this.getTaxableBase() * this.getRetentionPercent() / 100, 2);
 		}
 		return retentionQuota;
 	}
@@ -92,19 +93,7 @@ public class InvoiceEntryDetail implements ITransferObject {
 	 * @return the total
 	 */
 	public double getTotal() {
-		return round((getTaxableBase() + getSurcharge() + getVatQuota()) - getRetentionQuota(), 2);
+		return CommonUtil.round((getTaxableBase() + getSurcharge() + getVatQuota()) - getRetentionQuota(), 2);
 	}
 	
-	/**
-     * Round the <code>value</code> using the <code>precision</code> passed as a parameter
-     * 
-     * @param value the value
-     * @param precision the precision
-     * 
-     * @return the double
-     */
-    private double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
 }

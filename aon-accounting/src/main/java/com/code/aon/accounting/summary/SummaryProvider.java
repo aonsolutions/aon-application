@@ -16,6 +16,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -37,7 +38,7 @@ public class SummaryProvider {
 			if (!params.isBudgeted()) {
 				sumStmt.append(" FROM account_summary s ");
 			} else {
-				sumStmt.append(" FROM account_budget s ");
+				sumStmt.append(" FROM account_budget_detail s ");
 			}
 
 			sumStmt.append(" WHERE s.account LIKE ?");
@@ -54,8 +55,9 @@ public class SummaryProvider {
 				sumStmt.append(" AND s.security_level = ?");
 			}
 			if (params.isMonthlyGrouping()) {
-				sumStmt.append("GROUP BY MONTH(s.entry_date)");
+				sumStmt.append(" GROUP BY MONTH(s.entry_date)");
 			}
+
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 
 			Criteria criteria = new Criteria();
@@ -89,6 +91,7 @@ public class SummaryProvider {
 						.getFieldName(IAccountAlias.ACCOUNT_LEVEL), params.getAccountLevel());
 				criteria.addExpression(e);
 			}
+			criteria.addOrder(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID)); 
 
 			List<ITransferObject> accountList = accountBean.getList(criteria);
 			sum = HibernateUtil.getSQLConnection().prepareStatement(sumStmt.toString());
@@ -120,8 +123,8 @@ public class SummaryProvider {
 				Summary s = null;
 				if (!params.isMonthlyGrouping()) {
 					if (sumSet.next()) {
-						debit = round(sumSet.getDouble(1));
-						credit = round(sumSet.getDouble(2));
+						debit = CommonUtil.round(sumSet.getDouble(1));
+						credit = CommonUtil.round(sumSet.getDouble(2));
 					}
 					s = new Summary();
 				} else {
@@ -130,12 +133,12 @@ public class SummaryProvider {
 						months.add(new Double(0));
 					}
 					while (sumSet.next()) {
-						debit = round(sumSet.getDouble(1));
-						credit = round(sumSet.getDouble(2));
+						debit = CommonUtil.round(sumSet.getDouble(1));
+						credit = CommonUtil.round(sumSet.getDouble(2));
 						if (account.getId().startsWith("7")) {
-							months.set((sumSet.getInt(3) - 1), round(credit - debit));
+							months.set((sumSet.getInt(3) - 1), CommonUtil.round(credit - debit));
 						} else {
-							months.set((sumSet.getInt(3) - 1), round(debit - credit));
+							months.set((sumSet.getInt(3) - 1), CommonUtil.round(debit - credit));
 						}
 
 					}
@@ -143,7 +146,8 @@ public class SummaryProvider {
 					sm.setMonths(months);
 					s = sm;
 				}
-				if (!params.isZeroSumVisible() && (round(debit) == round(credit))) {
+				if (!params.isNoTouchedAccountVisible() && 
+					(CommonUtil.round(debit) == 0 && CommonUtil.round(credit) == 0)) {
 					add = false;
 				}
 				if (!params.isLowerLevelVisible() && !account.isEntryEnabled()
@@ -194,11 +198,6 @@ public class SummaryProvider {
 		String accountExpression = "60*|7*";
 		params.setAccountExpression(accountExpression);
 		return getSummaryCollection(params);
-	}
-
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
 	}
 
 }

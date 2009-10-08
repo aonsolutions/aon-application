@@ -1,5 +1,8 @@
 package com.code.aon.ui.config.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
@@ -7,15 +10,34 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.bridge.plugin.UserManager;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 
 public class UserController extends BasicController {
 	
-	public static final String MANAGER_BEAN_NAME = "user";
-
+	private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
+	
 	/** User manager. */
     private UserManager userManager = new UserManager();
+    
+    private boolean firstSearch = true;
+    
+	@Override
+	public void onSearch(ActionEvent event) {
+		if ( firstSearch ) {
+			try {
+				Criteria criteria = getCriteria(); 
+				criteria.addEqualExpression(getFieldName(IConfigAlias.USER_AVAILABLE), Boolean.TRUE);
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
+			this.firstSearch = false;
+		}
+		super.onSearch(event);
+	}
 
 	/**
 	 * @return Returns the userManager.
