@@ -137,6 +137,14 @@
     	<attribute name="cellspacing" value="0" />
 	</component>
 
+	<component localName="extendedDataTable">
+    	<attribute name="headerClass" value="aon-dataTable-header" />
+    	<attribute name="footerClass" value="aon-dataTable-footer" />    	
+    	<attribute name="rowClasses" value="aon-dataTable-row-odd, aon-dataTable-row-even" />
+    	<attribute name="cellpadding" value="0" />
+    	<attribute name="cellspacing" value="0" />
+	</component>
+
 	<component localName="editDataTable">
     	<attribute name="styleClass" value="aon-editDataTable" />			
     	<attribute name="headerClass" value="aon-editDataTable-header" />
