@@ -3,6 +3,8 @@
 	<name>aon-web-ecommerce</name>
 	<comment></comment>
 	<projects>
+		<project>aon-ui-ecommerce</project>
+		<project>aon-ebackoffice</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -21,16 +23,16 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.iam.jdt.core.mavenIncrementalBuilder</name>
+			<name>org.devzuz.q.maven.jdt.core.mavenIncrementalBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
 		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-		<nature>org.eclipse.iam.jdt.core.mavenNature</nature>
-		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
 </projectDescription>
