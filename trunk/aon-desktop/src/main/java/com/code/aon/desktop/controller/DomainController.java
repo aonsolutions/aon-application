@@ -64,6 +64,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	private String domainSuffix;
 	
+	private int domainNameMaxLength;
+	
 	private LdapDAO dbConnectionDAO;
 	
 	private BasicManagerBean dbConnectionManagerBean;
@@ -85,6 +87,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 		if ( ArrayUtils.getLength(parts) > 0 ) {
 			this.domainSuffix = parts[parts.length-1]; 
 		}
+		this.domainNameMaxLength = 14 - StringUtils.length(this.domainSuffix);
 		manager = new DBManager();
 	}
 
@@ -118,6 +121,10 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	public String getDomainSuffix() {
 		return domainSuffix;
+	}
+	
+	public int getDomainNameMaxLength() {
+		return domainNameMaxLength;
 	}
 
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) {
