@@ -13,7 +13,7 @@
 	<artifactId>aon-web-webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
-	<version>4.13.3</version>
+	<version>4.14.0</version>
 	<description>AON WEB WEBMAIL</description>
 	<build>
 		<finalName>aon-webmail</finalName>
@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.14.0</version>
+			<version>4.15.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
