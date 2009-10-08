@@ -389,11 +389,11 @@ public class DesktopController extends BasicController implements IDesktopConsta
 			try {
 				BufferedImage image = ImageIO.read(in);
 				return (image.getWidth() > 200);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, "Error reading logo. " + e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, "Error reading logo. " + th.getMessage(), th);
 			}
 		}
-		return false;
+		return true;
 	}
 	
 }
