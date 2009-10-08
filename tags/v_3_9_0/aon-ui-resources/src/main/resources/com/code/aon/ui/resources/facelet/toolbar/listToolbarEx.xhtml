@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:define name="toolbarContent">
+			<c:if test="#{!skipSearchButton}">
+				<aon:commandButton id="#{toolbarID}-search"
+					value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
+					action="#{searchAction}" actionListener="#{searchActionListener}"
+					styleClass="aon-finding-toolbar-item aon-icon-search"
+					accesskey="#{bundle.aon_key_search}" />
+			</c:if>
+			<c:if test="#{!skipResetButton}">								
+				<aon:commandButton id="#{toolbarID}-reset"
+					value="#{bundle.aon_reset}" reRender="#{resetButtonReRender}"
+					action="#{resetAction}" actionListener="#{resetActionListener}"
+					styleClass="aon-finding-toolbar-item aon-icon-new"
+					accesskey="#{bundle.aon_key_new}" />
+			</c:if>		
+		</ui:define>
+	</ui:decorate>
+	
+</ui:composition>

@@ -1,0 +1,117 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.account.i18n.messages</base-name>
+			<var>accountBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!--  *************** CONVERTER ***************** -->
+	<converter>
+		<description>Conversor para las cuentas contables.</description>
+		<converter-for-class>com.code.aon.account.Account</converter-for-class>
+		<converter-class>com.code.aon.ui.account.converter.AccountConverter</converter-class>
+	</converter>
+
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>accountCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountCollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **************** ACCOUNT ************************** -->
+	<managed-bean>
+		<managed-bean-name>account</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.Account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			 <list-entries>
+            <value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{accountAppParamsControllerListener}</value>
+            </list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{accountOptionalListeners}</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountAppParamsControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AccountAppParamsControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountOptionalListeners</managed-bean-name>
+		<managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>  
+   	<!-- ************ ACCOUNT LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>accountLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.account.Account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/account/facelet/lookup/account/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/account/facelet/lookup/account/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  ********* ACCOUNT WIZARD  ***************** -->
+	<managed-bean>
+		<managed-bean-name>accountWizard</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountWizard</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+  <!-- ****************************************** -->
+  <!-- ******** NAVIGATION RULES **************** -->
+  <!-- ****************************************** -->
+
+  <!-- ****************** ACCOUNT **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/account/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/account/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/account/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+</faces-config>

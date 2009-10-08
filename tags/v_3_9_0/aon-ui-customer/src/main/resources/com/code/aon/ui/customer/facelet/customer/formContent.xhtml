@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include
+		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+		<ui:param name="controller" value="#{controller}" />
+	</ui:include>
+
+	<aon:outputText value="#{customerBundle.customer_taxes}" />
+	<aon:div>
+		<aon:selectBooleanCheckbox id="Customer_surcharge" styleClass="aon-margin-left"
+			value="#{controller.to.surcharge}" />
+		<aon:outputLabel for="Customer_surcharge" styleClass="aon-italic"
+			value="#{customerBundle.customer_surcharge}" />
+		<aon:selectBooleanCheckbox id="Customer_withholding" styleClass="aon-margin-left"
+			value="#{controller.to.withholding}" />
+		<aon:outputLabel for="Customer_withholding" styleClass="aon-italic"
+			value="#{bundle.aon_retention}" />
+		<aon:selectBooleanCheckbox id="Customer_taxFree" styleClass="aon-margin-left"
+			value="#{controller.to.taxFree}" />
+		<aon:outputLabel for="Customer_taxFree" styleClass="aon-italic"
+			value="#{customerBundle.customer_taxFree}" />
+	</aon:div>
+
+	<aon:outputLabel for="Customer_scope_id" value="#{bundle.aon_scope}" />
+	<aon:selectOneMenu id="Customer_scope_id"
+		value="#{controller.to.scope}">
+		<f:selectItems value="#{configCollections.scopes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
+	<aon:selectOneRadio id="Customer_status" value="#{controller.to.status}">
+		<f:selectItems value="#{customerCollections.customerStatuses}" />
+	</aon:selectOneRadio>
+
+	<c:if test="#{customer.showTariff}">
+		<aon:outputLabel for="Customer_tariff_id"
+			value="#{productBundle.product_tariff}" />
+		<aon:selectOneMenu id="Customer_tariff_id"
+			value="#{controller.to.tariff}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{configCollections.tariffs}" />
+		</aon:selectOneMenu>
+	</c:if>
+
+	<c:if test="#{customer.showSegment}">
+		<aon:outputLabel for="Customer_customerSegment_id"
+			value="#{bundle.aon_segment}" />
+		<aon:selectOneMenu id="Customer_customerSegment_id"
+			value="#{controller.to.customerSegment}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{customerCollections.customerSegments}" />
+		</aon:selectOneMenu>
+	</c:if>
+
+</ui:composition>
