@@ -306,6 +306,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{supplierLookupListener}</value>
+				<value>#{supplierScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
