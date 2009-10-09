@@ -27,6 +27,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -39,15 +40,22 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.SalesManager;
+import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 
 /**
  * Controller used in the offer maintenance.
  */
 public class OfferController extends BasicController {
+
+	private final String SALES_CONTROLLER = "sales";
+	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
 	private List<SelectItem> addresses;
 	private Boolean defaultPayMethod;
@@ -151,7 +159,7 @@ public class OfferController extends BasicController {
 		this.invoiceDate = invoiceDate;
 	}
 
-	public boolean isPending(){
+	public boolean isPending() {
 		Offer offer = (Offer)this.getTo();
 		if (offer.getStatus() != null) {
 			return offer.getStatus().equals(OfferStatus.PENDING);
@@ -159,7 +167,7 @@ public class OfferController extends BasicController {
 		return false;
 	}
 
-	public boolean isApproved(){
+	public boolean isApproved() {
 		Offer offer = (Offer)this.getTo();
 		if (offer.getStatus() != null) {
 			return offer.getStatus().equals(OfferStatus.APPROVED);
@@ -167,7 +175,7 @@ public class OfferController extends BasicController {
 		return false;
 	}
 
-	public boolean isInvoiced(){
+	public boolean isInvoiced() {
 		Offer offer = (Offer)this.getTo();
 		if (offer.getStatus() != null) {
 			return offer.getStatus().equals(OfferStatus.INVOICED);
@@ -175,30 +183,13 @@ public class OfferController extends BasicController {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
-	public String getInvoiceCode() throws ManagerBeanException {
+	public boolean isLinesPending() throws ManagerBeanException {
 		Offer offer = (Offer)this.getTo();
-		if (offer != null && offer.getId() != null) {
-			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
-			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_INVOICE);
-			Iterator<?> iterator = offerDetailBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				OfferDetail offerDetail = (OfferDetail)iterator.next();
-
-				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.OFFER);
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), offerDetail.getId());
-				Iterator iter = invoiceDetailBean.getList(criteria).iterator();
-				if (iter.hasNext()) {
-					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					return invoiceDetail.getInvoice().getReferenceCode();
-				}
-			}
-		}
-    	return null;
+		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
+		return (offerDetailBean.getCount(criteria) > 0);
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -317,6 +308,18 @@ public class OfferController extends BasicController {
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 
+	public void onApprove(ActionEvent event) {
+		Offer to = (Offer)this.getTo();
+		to.setStatus(OfferStatus.APPROVED);
+		accept(event);
+	}
+
+	public void onRefuse(ActionEvent event) {
+		Offer to = (Offer)this.getTo();
+		to.setStatus(OfferStatus.REFUSED);
+		accept(event);
+	}
+
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = (Offer)this.getTo();
 		setSalesSeries(to.getSeries());
@@ -333,9 +336,18 @@ public class OfferController extends BasicController {
 	}
 
 	public void onSales(ActionEvent event) throws ManagerBeanException {
+		setShowSalesWindow(false);
+
 		Offer to = (Offer)this.getTo();
 		SalesManager salesManager = new SalesManager();
-		salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
+		Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
+
+		IController salesController = FormUtil.getController(SALES_CONTROLLER);
+		salesController.clearCriteria();
+		salesController.getCriteria().addEqualExpression(salesController.getFieldName(ISalesAlias.SALES_ID), sales.getId());
+		salesController.onSearch(null);
+		salesController.getModel().setRowIndex(0);
+		salesController.onSelect(null);
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
@@ -356,9 +368,43 @@ public class OfferController extends BasicController {
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
+		setShowInvoiceWindow(false);
+
 		Offer to = (Offer)this.getTo();
 		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-		invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+
+		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+		invoiceController.clearCriteria();
+		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		invoiceController.onSearch(null);
+		invoiceController.getModel().setRowIndex(0);
+		invoiceController.onSelect(null);
+	}
+
+	public String getInvoiceCode() throws ManagerBeanException {
+		Offer offer = (Offer)this.getTo();
+		if (offer != null && offer.getId() != null) {
+			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
+			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_INVOICE);
+			Iterator<?> iterator = offerDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				OfferDetail offerDetail = (OfferDetail)iterator.next();
+
+				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.OFFER);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), offerDetail.getId());
+				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+					return invoiceDetail.getInvoice().getReferenceCode();
+				}
+			}
+		}
+    	return null;
 	}
 
 }
