@@ -42,7 +42,6 @@ public class InvoiceRemoverFactory {
 		} catch (IllegalAccessException e) {
 			throw new InvoicingException("Can not instantiate " + clazz.getName(),e);
 		}
-		
 	}
 
 	public static IInvoiceDetailRemover getInvoiceDetailRemover(InvoiceSource source) throws InvoicingException{
@@ -56,17 +55,14 @@ public class InvoiceRemoverFactory {
 
 	static {
 		try {
+			register(DeliveryInvoiceDetailRemover.class);
 			register(FeeInvoiceDetailRemover.class);
 			register(AccountInvoiceDetailRemover.class);
+			register(DirectInvoiceDetailRemover.class);
 			register(OfferInvoiceDetailRemover.class);
 		} catch (InvoicingException e) {
 			e.printStackTrace();
 		}
-				
-		// TODO Añadir las dos factorias que faltan;
-		// DeliveryInvoiceDetailRemover
-		// DirectInvoiceDetailRemover
-		
 	}
 	
 }
