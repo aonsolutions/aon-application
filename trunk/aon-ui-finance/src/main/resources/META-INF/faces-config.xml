@@ -1516,6 +1516,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{creditorLookupListener}</value>
+				<value>#{creditorScopeListener}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
