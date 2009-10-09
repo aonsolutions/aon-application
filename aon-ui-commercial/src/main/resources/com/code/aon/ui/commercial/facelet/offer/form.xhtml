@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
@@ -19,6 +20,27 @@
 					<ui:param name="skipSaveButton" value="#{!offer.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!offer.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
+						<aon:commandButton id="approve" 
+							value="#{commercialBundle.commercial_offer_to_approve}"
+							immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
+							styleClass="aon-finding-toolbar-item aon-icon-settle"
+							actionListener="#{offer.onApprove}" />
+						<aon:commandButton id="refuse" 
+							value="#{commercialBundle.commercial_offer_to_refuse}"
+							immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
+							styleClass="aon-finding-toolbar-item aon-icon-unsettle"
+							actionListener="#{offer.onRefuse}" />
+						<c:if test="#{!aonConfiguration.bean.commercial.showInvoicing}">
+							<aon:commandButton id="sales"
+								value="#{commercialBundle.commercial_offer_to_sales}"
+								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending}"
+								styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
+								actionListener="#{offer.onSalesShow}"
+								reRender="showSalesWindow">
+								<f:setPropertyActionListener target="#{offer.showSalesWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
 						<c:if test="#{aonConfiguration.bean.commercial.showInvoicing}">
 							<aon:commandButton id="invoice"
 								value="#{commercialBundle.commercial_offer_to_invoice}"
@@ -27,17 +49,6 @@
 								actionListener="#{offer.onInvoiceShow}"
 								reRender="showInvoiceWindow">
 								<f:setPropertyActionListener target="#{offer.showInvoiceWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</c:if>
-						<c:if test="#{!aonConfiguration.bean.commercial.showInvoicing}">
-							<aon:commandButton id="sales"
-								value="#{commercialBundle.commercial_offer_to_sales}"
-								immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-								styleClass="aon-finding-toolbar-item aon-icon-settle" 
-								actionListener="#{offer.onSalesShow}"
-								reRender="showSalesWindow">
-								<f:setPropertyActionListener target="#{offer.showSalesWindow}"
 									value="#{true}" />
 							</aon:commandButton>
 						</c:if>
@@ -326,7 +337,7 @@
 							<ui:param name="showNote" value="false" />
 							<ui:param name="showDataScroller" value="false" />
 							<ui:param name="skipResetButton" value="#{!offer.pending}" />
-							<ui:param name="skipLineEdition" value="#{!offer.pending}" />
+							<ui:param name="skipLineEdition" value="#{(!offer.pending and !offer.approved) or !offerDetail.pending}" />
 							<ui:param name="rowSelectorReRender" value="menuExt" />
 							<ui:param name="resetButtonReRender" value="menuExt" />
 							<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -522,6 +533,16 @@
 									</f:facet>
 								</aon:column>
 		
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+									<f:facet name="header">
+										<aon:outputLabel value="INFO" />
+									</f:facet>
+									<aon:div rendered="#{!controller.pending}" style="display:inline;cursor:pointer;">
+										<aon:outputText value="&#160;"
+											styleClass="aon-icon-predetermine" style="padding-left:20px" />
+										<rich:toolTip value="#{controller.lineStatusInfo}" />
+									</aon:div>
+								</aon:column>
 							</ui:define>
 						</ui:decorate>
 					</aon:panel>
@@ -532,7 +553,7 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
-		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalSales.xhtml" />
+		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalInvoice.xhtml" />
 	</ui:define>
 </ui:composition>
