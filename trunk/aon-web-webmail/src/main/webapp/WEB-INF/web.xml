@@ -113,10 +113,13 @@
 		<param-value>8640000</param-value>
 	</context-param>
 	
+	<!-- Se ha comentado esta parte porque sino falla la recuperacion de recursos
+	graficos del ExtendedDataTable desde la version 3.3.1. Revisar en posteriores veriones.
 	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
 	</context-param>
+	-->
 	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
