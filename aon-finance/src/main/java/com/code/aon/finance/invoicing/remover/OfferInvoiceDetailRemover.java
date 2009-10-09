@@ -44,9 +44,6 @@ public class OfferInvoiceDetailRemover implements IInvoiceDetailRemover {
 					offerBean.update(offer);
 				}
 			}
-
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			invoiceDetailBean.remove(invoiceDetail);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error removing Details", e);
 			throw new InvoicingException(e.getMessage(),e);
