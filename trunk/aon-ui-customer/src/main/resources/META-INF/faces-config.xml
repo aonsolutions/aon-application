@@ -585,6 +585,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerLookupListener}</value>
+				<value>#{customerScopeListener}</value>				
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
