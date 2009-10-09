@@ -13,6 +13,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 
@@ -43,6 +44,14 @@ public class DeliveryDetailController extends LinesController {
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public boolean isSalesSource() throws ManagerBeanException {
+		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
+		if (deliveryDetail != null) {
+			return (deliveryDetail.getSalesDetail() != null && deliveryDetail.getSalesDetail().getId() != null);
+		}
+		return false;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -83,6 +92,24 @@ public class DeliveryDetailController extends LinesController {
 
 	public double getModelAmount() throws ManagerBeanException {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
+	}
+
+	public String getLineSourceInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+
+		DeliveryDetail deliveryDetail = (DeliveryDetail)this.getModel().getRowData();
+		if (deliveryDetail.getSalesDetail() != null && deliveryDetail.getSalesDetail().getId() != null) {
+			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_delivery_source"));
+			info.append(" ");
+			info.append(AonUtil.getMessage("salesBundle", "sales_sales"));
+			info.append(" ");
+			info.append(deliveryDetail.getSalesDetail().getSales().getReferenceCode());
+			info.append(" - ");
+			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_delivery_detail_line"));
+			info.append(" ");
+			info.append(deliveryDetail.getSalesDetail().getLine());
+		}
+		return info.toString();
 	}
 
 }
