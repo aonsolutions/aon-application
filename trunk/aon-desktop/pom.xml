@@ -96,6 +96,20 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
 			<version>4.1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jfree</groupId>
+					<artifactId>jcommon</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jfree</groupId>
+					<artifactId>jfreechart</artifactId>
+				</exclusion>
+			</exclusions>			
 	    </dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
