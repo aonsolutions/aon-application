@@ -24,10 +24,11 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 public class DeliveryManager {
 
-	public Delivery salesDelivery(Sales sales, String series, int number, Date issueDate, Warehouse warehouse) throws ManagerBeanException {
+	public Delivery salesDelivery(Sales sales, String series, int number, Date issueDate, Warehouse warehouse, DeliveryDetailType type) 
+		throws ManagerBeanException {
 		updateSalesStatus(sales);
 		Delivery delivery = createDelivery(sales, series, number, issueDate);
-		createDeliveryDetails(delivery, sales, warehouse);
+		createDeliveryDetails(delivery, sales, warehouse, type);
 		return delivery;
 	}
 
@@ -65,7 +66,7 @@ public class DeliveryManager {
     	return SeriesNumberUtil.obtainNumber(seriesId, "Delivery");
 	}
 
-	private void createDeliveryDetails(Delivery delivery, Sales sales, Warehouse warehouse) throws ManagerBeanException {
+	private void createDeliveryDetails(Delivery delivery, Sales sales, Warehouse warehouse, DeliveryDetailType type) throws ManagerBeanException {
 		int line = 0;
 
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -86,11 +87,12 @@ public class DeliveryManager {
 			deliveryDetail.setQuantity(CommonUtil.round(salesDetail.getQuantity() - salesDetail.getDelivered()));
 			deliveryDetail.setPrice(salesDetail.getPrice());
 			deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
-			deliveryDetail.setType(DeliveryDetailType.MANUAL);
+			deliveryDetail.setType(type);
 			deliveryDetail.setSource(DeliveryDetailSource.SALES);
 			deliveryDetail.setSalesDetail(salesDetail);
 			deliveryDetailBean.insert(deliveryDetail);
 
+			salesDetail.setDelivered(salesDetail.getQuantity());
 			salesDetail.setStatus(SalesDetailStatus.SETTLED);
 			salesDetailBean.update(salesDetail);
 		}
