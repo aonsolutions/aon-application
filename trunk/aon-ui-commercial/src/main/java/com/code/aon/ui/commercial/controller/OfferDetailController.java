@@ -1,20 +1,28 @@
 package com.code.aon.ui.commercial.controller;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
+import com.code.aon.commercial.enumeration.OfferDetailStatus;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.product.Item;
 import com.code.aon.config.Tariff;
+import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.ql.Criteria;
+import com.code.aon.sales.SalesDetail;
+import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 
 public class OfferDetailController extends LinesController {
 
@@ -43,6 +51,16 @@ public class OfferDetailController extends LinesController {
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public boolean isPending() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			OfferDetail offerDetail = (OfferDetail)this.getModel().getRowData();
+			if (offerDetail.getStatus() != null) {
+				return offerDetail.getStatus().equals(OfferDetailStatus.PENDING);
+			}
+		}
+		return false;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -83,6 +101,29 @@ public class OfferDetailController extends LinesController {
 
 	public double getModelAmount() throws ManagerBeanException {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
+	}
+
+	public String getLineStatusInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+
+		OfferDetail offerDetail = (OfferDetail)this.getModel().getRowData();
+		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
+		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			SalesDetail salesDetail = (SalesDetail)iterator.next();
+			info.append(AonUtil.getMessage("commercialBundle", "commercial_offer_transfered_to"));
+			info.append(" ");
+			info.append(AonUtil.getMessage("commercialBundle", "commercial_offer_to_sales"));
+			info.append(" ");
+			info.append(salesDetail.getSales().getReferenceCode());
+			info.append(" - ");
+			info.append(AonUtil.getMessage("commercialBundle", "commercial_offer_detail_line"));
+			info.append(" ");
+			info.append(salesDetail.getLine());
+		}
+		return info.toString();
 	}
 
 }
