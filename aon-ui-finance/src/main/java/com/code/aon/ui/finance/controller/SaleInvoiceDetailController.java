@@ -9,6 +9,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -43,6 +44,17 @@ public class SaleInvoiceDetailController extends LinesController {
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
 	}
+
+	public boolean isEditable() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
+			InvoiceSource source = invoiceDetail.getSource();
+			if (source.equals(InvoiceSource.DELIVERY) || source.equals(InvoiceSource.INCOME) || source.equals(InvoiceSource.OFFER)) {
+				return false;
+			}
+		}
+		return true;
+	}	
 
 	public void onItemChanged(LookupChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
