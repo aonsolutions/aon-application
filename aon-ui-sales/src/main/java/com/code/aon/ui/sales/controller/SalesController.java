@@ -22,6 +22,10 @@ import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
+import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -36,12 +40,20 @@ import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.Warehouse;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.code.aon.warehouse.enumeration.DeliveryDetailType;
 
 /**
  * Controller used in the sales maintenance.
  */
 public class SalesController extends BasicController {
+
+	private final String DELIVERY_CONTROLLER = "delivery";
+	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
 	private List<SelectItem> addresses;
 	private Boolean defaultPayMethod;
@@ -52,6 +64,11 @@ public class SalesController extends BasicController {
 	private int deliveryNumber;
 	private Date deliveryDate;
 	private Warehouse deliveryWarehouse;
+	private boolean showInvoiceWindow;
+	private String invoiceSeries;
+	private int invoiceNumber;
+	private Date invoiceDate;
+	private Warehouse invoiceWarehouse;
 	
     public List<SelectItem> getAddresses() {
 		return addresses;
@@ -126,6 +143,46 @@ public class SalesController extends BasicController {
 		this.deliveryWarehouse = deliveryWarehouse;
 	}
 
+	public boolean isShowInvoiceWindow() {
+		return showInvoiceWindow;
+	}
+
+	public void setShowInvoiceWindow(boolean value) {
+		this.showInvoiceWindow = value;
+	}
+	
+	public String getInvoiceSeries() {
+		return invoiceSeries;
+	}
+
+	public void setInvoiceSeries(String invoiceSeries) {
+		this.invoiceSeries = invoiceSeries;
+	}
+
+	public int getInvoiceNumber() {
+		return invoiceNumber;
+	}
+
+	public void setInvoiceNumber(int invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
+	}
+
+	public Date getInvoiceDate() {
+		return invoiceDate;
+	}
+
+	public void setInvoiceDate(Date invoiceDate) {
+		this.invoiceDate = invoiceDate;
+	}
+
+	public Warehouse getInvoiceWarehouse() {
+		return invoiceWarehouse;
+	}
+
+	public void setInvoiceWarehouse(Warehouse invoiceWarehouse) {
+		this.invoiceWarehouse = invoiceWarehouse;
+	}
+
 	public boolean isPending(){
 		Sales sales = (Sales)this.getTo();
 		if (sales.getStatus() != null) {
@@ -167,6 +224,7 @@ public class SalesController extends BasicController {
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer);
 			((Sales)this.getTo()).setCustomer(customer);
+			((Sales)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
 		} else {
@@ -271,9 +329,53 @@ public class SalesController extends BasicController {
 	}
 
 	public void onDelivery(ActionEvent event) throws ManagerBeanException {
+		setShowDeliveryWindow(false);
+
 		Sales to = (Sales)this.getTo();
 		DeliveryManager deliveryManager = new DeliveryManager();
-		deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse());
+		Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse(), DeliveryDetailType.MANUAL);
+
+		IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER);
+		deliveryController.clearCriteria();
+		deliveryController.getCriteria().addEqualExpression(deliveryController.getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
+		deliveryController.onSearch(null);
+		deliveryController.getModel().setRowIndex(0);
+		deliveryController.onSelect(null);
+	}
+
+	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		Sales to = (Sales)this.getTo();
+		setInvoiceSeries(to.getSeries());
+		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
+		setInvoiceDate(new Date());
+	}
+
+	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		setInvoiceNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
+	}
+
+	private int obtainMaxInvoiceNumber(String seriesId) {
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	}
+
+	public void onInvoice(ActionEvent event) throws ManagerBeanException {
+		setShowInvoiceWindow(false);
+
+		Sales to = (Sales)this.getTo();
+		int deliveryNumber = obtainMaxDeliveryNumber(getInvoiceSeries());
+		DeliveryManager deliveryManager = new DeliveryManager();
+		Delivery delivery = deliveryManager.salesDelivery(to, getInvoiceSeries(), deliveryNumber, getInvoiceDate(), getInvoiceWarehouse(), DeliveryDetailType.AUTOMATIC);
+		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
+		Invoice invoice = invoicingManager.invoice(delivery, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+
+		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+		invoiceController.clearCriteria();
+		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		invoiceController.onSearch(null);
+		invoiceController.getModel().setRowIndex(0);
+		invoiceController.onSelect(null);
 	}
 
 }
