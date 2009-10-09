@@ -25,9 +25,6 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.invoicing.InvoicingException;
-import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
-import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
@@ -79,8 +76,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 						+ " no se puede borrar. Tiene vencimientos con movimientos.");
 			}
 		} catch (ManagerBeanException e) {
-			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
-		} catch (InvoicingException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
 	}
@@ -136,15 +131,13 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void removeInvoiceDetails(Invoice invoice) throws InvoicingException, ManagerBeanException {
+	private void removeInvoiceDetails(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
-			InvoiceDetail detail = (InvoiceDetail) iter.next();
-			IInvoiceDetailRemover remover = InvoiceRemoverFactory.getInvoiceDetailRemover(detail.getSource());
-			remover.removeDetail(detail);
+			invoiceDetailBean.remove((InvoiceDetail) iter.next());
 		}
 	}
 
