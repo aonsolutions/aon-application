@@ -21,7 +21,7 @@
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
 					<ui:param name="skipResetButton" value="#{saleInvoice.readOnly}" />
-					<ui:param name="skipLineEdition" value="#{saleInvoice.readOnly}" />
+					<ui:param name="skipLineEdition" value="#{saleInvoice.readOnly or !saleInvoiceDetail.editable}" />
 					<ui:param name="rowSelectorReRender" value="menuExt" />
 					<ui:param name="resetButtonReRender" value="menuExt" />
 					<ui:param name="newCancelButtonReRender" value="menuExt" />
