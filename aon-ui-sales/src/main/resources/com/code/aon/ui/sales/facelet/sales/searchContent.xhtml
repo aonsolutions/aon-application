@@ -54,13 +54,18 @@
 		<f:selectItems value="#{commonCollections.securityLevels}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="Sales_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Sales_status"
+	<aon:outputLabel for="Sales_documentType"
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="Sales_documentType"
 		converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{salesCollections.salesStatuses}" />
+		<f:selectItems value="#{salesCollections.documentTypes}" />
 	</aon:selectOneMenu>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{salesSearch.salesStatuses}">
+		<f:selectItems value="#{salesCollections.salesStatuses}"/>
+	</aon:selectManyCheckbox>							
 
 </ui:composition>
