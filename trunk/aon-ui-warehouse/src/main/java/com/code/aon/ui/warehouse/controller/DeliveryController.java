@@ -22,6 +22,7 @@ import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -37,6 +38,8 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -47,6 +50,8 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
  * Controller for Delivery.
  */
 public class DeliveryController extends BasicController {
+
+	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
 	private List<SelectItem> addresses;
 	private Warehouse warehouse;
@@ -205,6 +210,7 @@ public class DeliveryController extends BasicController {
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer);
 			((Delivery)this.getTo()).setCustomer(customer);
+			((Delivery)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
 		} else {
@@ -304,9 +310,18 @@ public class DeliveryController extends BasicController {
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
+		setShowInvoiceWindow(false);
+
 		Delivery to = (Delivery)this.getTo();
 		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
-		invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+
+		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+		invoiceController.clearCriteria();
+		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		invoiceController.onSearch(null);
+		invoiceController.getModel().setRowIndex(0);
+		invoiceController.onSelect(null);
 	}
 
 }
