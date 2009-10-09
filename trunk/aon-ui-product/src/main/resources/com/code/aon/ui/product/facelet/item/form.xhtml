@@ -68,8 +68,8 @@
 					
 					<aon:outputLabel for="Item_internet" value="#{productBundle.product_internet}" />
 					<aon:selectOneRadio id="Item_internet" value="#{item.to.internet}">
-						<f:selectItem  itemValue="#{false}" itemLabel="NO"/>
-						<f:selectItem itemValue="#{true}" itemLabel="SI" />
+						<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}"/>
+						<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
