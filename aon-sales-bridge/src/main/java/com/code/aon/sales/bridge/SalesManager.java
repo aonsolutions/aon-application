@@ -88,23 +88,24 @@ public class SalesManager {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
-		criteria.addNotNullExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_ID));
 		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
 		Iterator<?> iterator = offerDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			OfferDetail offerDetail = (OfferDetail)iterator.next();
-			SalesDetail salesDetail = new SalesDetail();
-			salesDetail.setSales(sales);
-			salesDetail.setLine(++line);
-			salesDetail.setItem(offerDetail.getItem());
-			salesDetail.setDescription(offerDetail.getDescription());
-			salesDetail.setQuantity(offerDetail.getQuantity());
-			salesDetail.setPrice(offerDetail.getPrice());
-			salesDetail.setDiscountExpression(offerDetail.getDiscountExpression());
-			salesDetail.setStatus(SalesDetailStatus.PENDING);
-			salesDetail.setSource(SalesDetailSource.OFFER);
-			salesDetail.setOfferDetail(offerDetail);
-			salesDetailBean.insert(salesDetail);
+			if (offerDetail.getItem() != null && offerDetail.getItem().getId() != null) {
+				SalesDetail salesDetail = new SalesDetail();
+				salesDetail.setSales(sales);
+				salesDetail.setLine(++line);
+				salesDetail.setItem(offerDetail.getItem());
+				salesDetail.setDescription(offerDetail.getDescription());
+				salesDetail.setQuantity(offerDetail.getQuantity());
+				salesDetail.setPrice(offerDetail.getPrice());
+				salesDetail.setDiscountExpression(offerDetail.getDiscountExpression());
+				salesDetail.setStatus(SalesDetailStatus.PENDING);
+				salesDetail.setSource(SalesDetailSource.OFFER);
+				salesDetail.setOfferDetail(offerDetail);
+				salesDetailBean.insert(salesDetail);
+			}
 
 			offerDetail.setStatus(OfferDetailStatus.ON_SALE);
 			offerDetailBean.update(offerDetail);
