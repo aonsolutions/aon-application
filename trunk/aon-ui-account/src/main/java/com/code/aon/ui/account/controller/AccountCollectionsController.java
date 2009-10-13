@@ -204,7 +204,7 @@ public class AccountCollectionsController {
 	private List<SelectItem> getSalaryCompensationAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "461*");
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "641*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
 		return getAccounts(criteria,pojo);
