@@ -3,6 +3,7 @@ package com.code.aon.account.bridge.util;
 import java.util.Iterator;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.LeasingAccount;
@@ -79,39 +80,57 @@ public class AccountBridgeUtil {
 		}
 	}
 	
+	public IAccount obtainIRegistryAccount(IRegistry iRegistry) throws ManagerBeanException {
+		if (iRegistry instanceof Customer) {
+			return obtainCustomerIAccount(iRegistry.getRegistry());
+		} else if (iRegistry instanceof Supplier) {
+			return obtainSupplierIAccount(iRegistry.getRegistry());
+		} else if (iRegistry instanceof Creditor) {
+			return obtainCreditorIAccount(iRegistry.getRegistry());
+		}
+		throw new ManagerBeanException("No se puede obtener la cuenta de un " + iRegistry); 
+	}
+
 	public Account getCustomerAccount(Registry registry) throws ManagerBeanException {
+		IAccount customerAccount = getCustomerIAccount(registry);
+		return customerAccount==null?null:customerAccount.getAccount();
+	}
+	public CustomerAccount getCustomerIAccount(Registry registry) throws ManagerBeanException {
 		IManagerBean customerAccountBean = BeanManager.getManagerBean(CustomerAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(customerAccountBean.getFieldName(IAccountBridgeAlias.CUSTOMER_ACCOUNT_CUSTOMER_ID), registry.getId());
 		Iterator<ITransferObject> iter = customerAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			CustomerAccount customerAccount = (CustomerAccount)iter.next();
-			return customerAccount.getAccount();
+			return customerAccount;
 		}
 		return null;
 	}
-	
 	public Account obtainCustomerAccount(Registry registry) throws ManagerBeanException {
+		IAccount customerAccount = obtainCustomerIAccount(registry);
+		return customerAccount==null?null:customerAccount.getAccount();
+	}
+	public CustomerAccount obtainCustomerIAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			Customer customer = (Customer) customerBean.get(registry.getId());
 			if (customer != null) {
-				Account account = getCustomerAccount(registry);
-				if (account == null) {
+				CustomerAccount customerAccount = getCustomerIAccount(registry);
+				if (customerAccount == null) {
 					IManagerBean customerAccountBean = BeanManager.getManagerBean(CustomerAccount.class);
 					IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-					account = new Account();
+					Account account = new Account();
 					account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.CUSTOMER_ACCOUNT_PREFIX));
 					account.setDescription(registry.getFullName());
 					account.setEntryEnabled(true);
 					account.setAlias(registry.getAlias());
 					account = (Account) accountBean.insert(account);
-					CustomerAccount customerAccount = new CustomerAccount();
+					customerAccount = new CustomerAccount();
 					customerAccount.setAccount(account);
 					customerAccount.setCustomer(customer);
 					customerAccountBean.insert(customerAccount);
 				}
-				return account;
+				return customerAccount;
 			}
 			return null;
 		} catch (ExpressionException e) {
@@ -119,50 +138,46 @@ public class AccountBridgeUtil {
 		}
 	}
 	
-	public Account obtainIRegistryAccount(IRegistry iRegistry) throws ManagerBeanException {
-		if (iRegistry instanceof Customer) {
-			return obtainCustomerAccount(iRegistry.getRegistry());
-		} else if (iRegistry instanceof Supplier) {
-			return obtainSupplierAccount(iRegistry.getRegistry());
-		} else if (iRegistry instanceof Creditor) {
-			return obtainCreditorAccount(iRegistry.getRegistry());
-		}
-		throw new ManagerBeanException("No se puede obtener la cuenta de un " + iRegistry); 
-	}
-
 	public Account getSupplierAccount(Registry registry) throws ManagerBeanException {
+		IAccount supplierAccount = getSupplierIAccount(registry);
+		return supplierAccount==null?null:supplierAccount.getAccount();
+	}
+	public SupplierAccount getSupplierIAccount(Registry registry) throws ManagerBeanException {
 		IManagerBean supplierAccountBean = BeanManager.getManagerBean(SupplierAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(supplierAccountBean.getFieldName(IAccountBridgeAlias.SUPPLIER_ACCOUNT_SUPPLIER_ID), registry.getId());
 		Iterator<ITransferObject> iter = supplierAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			SupplierAccount supplierAccount = (SupplierAccount)iter.next();
-			return supplierAccount.getAccount();
+			return supplierAccount;
 		}
 		return null;
 	}
-
 	public Account obtainSupplierAccount(Registry registry) throws ManagerBeanException {
+		IAccount supplierAccount = obtainSupplierIAccount(registry);
+		return supplierAccount==null?null:supplierAccount.getAccount();
+	}
+	public SupplierAccount obtainSupplierIAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 			Supplier supplier = (Supplier) supplierBean.get(registry.getId());
 			if (supplier != null) {
-				Account account = getSupplierAccount(registry);
-				if (account == null) {
+				SupplierAccount supplierAccount = getSupplierIAccount(registry);
+				if (supplierAccount == null) {
 					IManagerBean supplierAccountBean = BeanManager.getManagerBean(SupplierAccount.class);
 					IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-					account = new Account();
+					Account account = new Account();
 					account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.SUPPLIER_ACCOUNT_PREFIX));
 					account.setDescription(registry.getFullName());
 					account.setEntryEnabled(true);
 					account.setAlias(registry.getAlias());
 					account = (Account) accountBean.insert(account);
-					SupplierAccount supplierAccount = new SupplierAccount();
+					supplierAccount = new SupplierAccount();
 					supplierAccount.setAccount(account);
 					supplierAccount.setSupplier((Supplier) supplierBean.get(registry.getId()));
 					supplierAccountBean.insert(supplierAccount);
 				}
-				return account;
+				return supplierAccount;
 			}
 			return null;
 		} catch (ExpressionException e) {
@@ -171,38 +186,45 @@ public class AccountBridgeUtil {
 	}
 	
 	public Account getCreditorAccount(Registry registry) throws ManagerBeanException {
+		IAccount creditorAccount = getCreditorIAccount(registry);
+		return creditorAccount==null?null:creditorAccount.getAccount();
+	}
+	public CreditorAccount getCreditorIAccount(Registry registry) throws ManagerBeanException {
 		IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(creditorAccountBean.getFieldName(IAccountBridgeAlias.CREDITOR_ACCOUNT_CREDITOR_ID), registry.getId());
 		Iterator<ITransferObject> iter = creditorAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			CreditorAccount creditorAccount = (CreditorAccount)iter.next();
-			return creditorAccount.getAccount();
+			return creditorAccount;
 		}
 		return null;
 	}
-
 	public Account obtainCreditorAccount(Registry registry) throws ManagerBeanException {
+		IAccount creditorAccount = obtainCreditorIAccount(registry);
+		return creditorAccount==null?null:creditorAccount.getAccount();
+	}
+	public CreditorAccount obtainCreditorIAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean creditorBean = BeanManager.getManagerBean(Creditor.class);
 			Creditor creditor = (Creditor) creditorBean.get(registry.getId());
 			if (creditor != null) {
-				Account account = getCreditorAccount(registry);
-				if (account == null) {
+				CreditorAccount creditorAccount = getCreditorIAccount(registry);
+				if (creditorAccount == null) {
 					IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
 					IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-					account = new Account();
+					Account account = new Account();
 					account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.CREDITOR_ACCOUNT_PREFIX));
 					account.setDescription(registry.getFullName());
 					account.setEntryEnabled(true);
 					account.setAlias(registry.getAlias());
 					account = (Account) accountBean.insert(account);
-					CreditorAccount creditorAccount = new CreditorAccount();
+					creditorAccount = new CreditorAccount();
 					creditorAccount.setAccount(account);
 					creditorAccount.setCreditor((Creditor) creditorBean.get(registry.getId()));
 					creditorAccountBean.insert(creditorAccount);
 				}
-				return account;
+				return creditorAccount;
 			}
 			return null;
 		} catch (ExpressionException e) {

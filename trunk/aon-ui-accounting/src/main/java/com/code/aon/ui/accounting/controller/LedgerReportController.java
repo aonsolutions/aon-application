@@ -24,6 +24,7 @@ public class LedgerReportController extends BasicController {
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
+	private String order;
 	private Integer previousAccountEntryDetail;
 	private String previousAccount;
 	private boolean currentValue = true;
@@ -60,6 +61,13 @@ public class LedgerReportController extends BasicController {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+	public void setOrder(String order) {
+		this.order = order;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -120,8 +128,16 @@ public class LedgerReportController extends BasicController {
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
-				getCriteria().addOrder(
-						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID));
+			getCriteria().addOrder(
+					getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID));
+			if ("1".equals(getOrder()) ) {
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE));
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			} else if ("2".equals(getOrder()) ) {
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			} else {
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
+			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());

@@ -42,7 +42,6 @@
 						actionListener="#{accountEntry.accept}"
 						rendered="#{accountEntry.manual and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
 						focus="accountId-NEW">
 						<aon:actionListener method="#{accountEntryDetail.onReset}" />
 					</aon:commandButton>
