@@ -11,6 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.VatReportOrder;
 import com.code.aon.finance.enumeration.VatReportType;
 import com.code.aon.finance.enumeration.VatType;
 
@@ -90,7 +91,7 @@ public class VatCollection {
 
 	}
 
-	public List<Vat> getVatDetailList(VatCollectionParameters params) throws ManagerBeanException {
+	public List<Vat> getVatDetailList(VatCollectionParameters params, VatReportOrder order) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -142,7 +143,19 @@ public class VatCollection {
 			stmt.append(" GROUP BY i.type,i.transaction,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
 			stmt.append("  ,it.percentage,it.surcharge,");
 			stmt.append(operation);
-			stmt.append(" ORDER BY vatType,i.transaction,i.tax_date,i.reference_code");
+			if (order == null) {
+				stmt.append(" ORDER BY vatType,i.transaction,i.tax_date,i.reference_code");
+			} else if (order == VatReportOrder.INVOICE_DATE) {
+				stmt.append(" ORDER BY i.issue_date,i.reference_code");
+			} else if (order == VatReportOrder.TAX_DATE) {
+				stmt.append(" ORDER BY i.tax_date,i.reference_code");
+			} else if (order == VatReportOrder.INVOICE_REFERENCE) {
+				stmt.append(" ORDER BY i.reference_code");
+			} else if (order == VatReportOrder.INVOICE_REGISTRY_DOCUMENT) {
+				stmt.append(" ORDER BY i.rdocument,i.reference_code");
+			} else if (order == VatReportOrder.INVOICE_REGISTRY_NAME) {
+				stmt.append(" ORDER BY i.rname,i.reference_code");
+			}
 			
 			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
