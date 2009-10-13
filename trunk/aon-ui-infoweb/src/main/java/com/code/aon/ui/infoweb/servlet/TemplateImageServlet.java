@@ -5,17 +5,23 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.ui.infoweb.velocity.VelocityConstants;
+import org.apache.commons.io.IOUtils;
+
+import com.code.aon.ui.infoweb.util.PathUtil;
 
 public class TemplateImageServlet extends HttpServlet {
+
+	private static final long serialVersionUID = 481356189045635775L;
+	
+	private static final Logger LOGGER = Logger.getLogger(TemplateImageServlet.class.getName());
 	
 	/**
 	 * Retrieves the required RegistryAttachment from the database
@@ -26,58 +32,35 @@ public class TemplateImageServlet extends HttpServlet {
 	 * @throws IOException the IO exception
 	 * @throws ServletException the servlet exception
 	 */
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException  {
 		String template = req.getParameter("tpl");
 		boolean big = req.getParameter("big") != null;
 		String subfix = "";
 		if (big) subfix = "_grande";
 		if (template != null) {
-			InputStream is = null;
 			BufferedInputStream bis = null;
-	        OutputStream os = null;
 			BufferedOutputStream bos = null;
 			try {
-				String path = VelocityConstants.TEMPLATE_PATH;
-				String file = path + "/" + template + "/preview"+subfix+".jpg";
-				File f = new File(file);
+				File f = new File( PathUtil.getTemplatePath(template), "preview"+subfix+".jpg" );
 	        	res.setContentType( "image/jpeg" );
 	        	res.setHeader("Expires", "0");
 	        	res.setHeader("Pragma", "no-cache");
 	        	res.setHeader("Cache-Control", "no-store");
 	            res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
-				if(!f.exists()) f = new File(path + "/preview"+subfix+".jpg");
-				is = new FileInputStream(f);
-        		bis = new BufferedInputStream(is);
-                os = res.getOutputStream();
-        		bos = new BufferedOutputStream(os);
-        		byte[] input = new byte[1024];
-        		boolean eof = false;
-        		while (!eof) {
-        			int length = bis.read(input);
-        			if (length == -1) {
-        				eof = true;
-        			}
-        			else {
-        				bos.write(input, 0, length);
-        			}
-        		}
+				if(!f.exists()) {
+					f = new File( PathUtil.getTemplatesPath(), "preview"+subfix+".jpg" );
+				}
+				bis = new BufferedInputStream(new FileInputStream(f));
+        		bos = new BufferedOutputStream(res.getOutputStream());
+        		IOUtils.copyLarge(bis, bos);
         		bos.flush();
-        		bis.close();
 	            res.flushBuffer();
-	        } 
-			catch (Throwable th) {
-	            th.printStackTrace();
+	        } catch (Throwable th) {
+	        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
 	            throw new ServletException(th.getMessage(), th);
-	        }finally{
-	        	try {bis.close();} catch (Exception e) {}
-	        	try {bos.close();} catch (Exception e) {}
-	        	try {is.close();} catch (Exception e) {}
-	        	try {os.close();} catch (Exception e) {}
-	    		is = null;
-	    		bis = null;
-	            os = null;
-	    		bos = null;
+	        } finally {
+	        	IOUtils.closeQuietly(bis);
+	        	IOUtils.closeQuietly(bos);
 	        }
 		}
 	}

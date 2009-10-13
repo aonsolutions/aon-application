@@ -1,6 +1,7 @@
 package com.code.aon.ui.infoweb.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +31,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.infoweb.WebInfo;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageDetail;
@@ -46,9 +47,11 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyImagesController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.FTPUtil;
 import com.code.aon.ui.infoweb.util.ImageUtil;
+import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.util.VelocityUtil;
 import com.code.aon.ui.infoweb.velocity.ImageHandler;
 import com.code.aon.ui.infoweb.velocity.MenuOptionHandler;
@@ -61,23 +64,42 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private VelocityUtil vu;
 	
+	private boolean generated;
+	
 	private boolean published;
 	
 	private String webPage;
 	
 	private int homepage;
 	
+	private String domain;
+	
+	private Properties properties;
+	
+	public GeneratorController() {
+		this.properties = new Properties();
+		File file = PathUtil.getWebInfoProperties();
+		if ( file.exists() && file.canRead() ) {
+			try {
+				this.properties.load( new FileInputStream(file) );
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e );
+			}
+		}
+	}
+	
+	public Properties getProperties() {
+		return properties;
+	}
+
 	private String getTemplate() {
-		String template = "default";
+		String template = DEFAULT_TEMPLATE;
 		//Obtenemos el template seleccionado
 		try {
 			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), TEMPLATE_NAME_PARAM);
-			List<ITransferObject> list = apBean.getList(criteria);
-			if (list.size() > 0) {
-				ApplicationParameter ap = (ApplicationParameter)list.get(0);
-				template = ap.getValue();
+			ApplicationParameter ap = (ApplicationParameter) apBean.get(TEMPLATE_NAME_PARAM);
+			if ( ap != null ) {
+				template = ap.getValue();				
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e );
@@ -94,12 +116,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 		int homepage = 0;
 		try {
 			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
-			List<ITransferObject> list = apBean.getList(criteria);
-			if (list.size() > 0) {
-				ApplicationParameter ap = (ApplicationParameter)list.get(0);
-				homepage = Integer.parseInt(ap.getValue());
+			ApplicationParameter ap = (ApplicationParameter) apBean.get(HOMEPAGE_NAME_PARAM);
+			if ( ap != null ) {
+				homepage = Integer.parseInt(ap.getValue());				
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -116,10 +135,23 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return null;
 	}
 	
-	public void onGenerate(ActionEvent event) throws ManagerBeanException {
-		String domain = null;
+	private String getDomain() {
+		if ( domain == null ) {
+			UserUtils utils = UserUtils.getInstance();
+			domain = PathUtil.getDomainSuffix(utils.getPrincipal().getDomain());
+		}
+		return domain;
+	}
+	
+	public void onInit(ActionEvent event) {
+		this.generated = false;
 		this.published = false;
 		this.webPage = null;
+	}	
+	
+	public void onGenerate(ActionEvent event) throws ManagerBeanException {
+		this.generated = false;
+		this.published = false;
 		try {
 			HibernateUtil.setCloseSession(false);
 			vu = new VelocityUtil();
@@ -129,16 +161,22 @@ public class GeneratorController extends BasicController implements VelocityCons
 			LOGGER.fine( "Using template: " + template );
 			vu.setTemplate(template);
 			//Indicamos el directorio del template
-			File templateDirectory = new File(TEMPLATE_PATH);
+			File templateDirectory = PathUtil.getTemplatePath(template);
+			if (! PathUtil.isReadableDirectory(templateDirectory) ) {
+				return;
+			}
+			File previewDirectory = PathUtil.getPreviewPath(getDomain());
+			if (! PathUtil.isReadableDirectory(previewDirectory) ) {
+				return;
+			}
+			FileUtils.cleanDirectory(previewDirectory);
 			vu.setTemplateDirectory(templateDirectory);
-			File temporalDirectory = new File( TEMPORAL_PATH, System.currentTimeMillis() + "" );
-			vu.setTemporalDirectory(temporalDirectory);
-			File currentTemplateDirectory = new File( templateDirectory, template );
+			vu.setOutputDirectory(previewDirectory);
 			vu.initialize();
 			
-			File imagesTemporalDirectory = new File( temporalDirectory, IMAGES_PATH );
+			File imagesTemporalDirectory = new File( previewDirectory, IMAGES_PATH );
 			imagesTemporalDirectory.mkdirs();
-			File cssTemporalDirectory = new File( temporalDirectory, CSS_PATH );
+			File cssTemporalDirectory = new File( previewDirectory, CSS_PATH );
 			cssTemporalDirectory.mkdirs();
 			
 			GregorianCalendar gc = new GregorianCalendar();
@@ -152,7 +190,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				addWebInfoAttributes( company );
 				addCompanyImages( company, imagesTemporalDirectory );
 
-				domain = addContactData( company );
+				addContactData( company );
 				addAddresses( company );
 			}
 
@@ -175,17 +213,17 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.generate(MAIL_PHP);
 
 			generatePages();
-			generateCss(temporalDirectory, cssTemporalDirectory);
+			generateCss(previewDirectory, cssTemporalDirectory);
 			
-			copyDirectoryToDirectory(new File(currentTemplateDirectory, "js"), temporalDirectory );
-			File currentTemplateCssDirectory = new File(currentTemplateDirectory, CSS_PATH);
+			copyDirectoryToDirectory(new File(templateDirectory, "js"), previewDirectory );
+			File currentTemplateCssDirectory = new File(templateDirectory, CSS_PATH);
 			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, IMAGES_PATH), cssTemporalDirectory );
 			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, CSSIMG_PATH), cssTemporalDirectory );
-			copyDirectoryToDirectory(new File(currentTemplateDirectory, IMAGES_PATH), temporalDirectory );
+			copyDirectoryToDirectory(new File(templateDirectory, IMAGES_PATH), previewDirectory );
 
 			AonUtil.addInfoMessage("OK: La web ha sido generada." );
 			
-			publish( domain, temporalDirectory );
+			this.generated = true;
 
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th );
@@ -193,15 +231,34 @@ public class GeneratorController extends BasicController implements VelocityCons
 		} finally {
 			HibernateUtil.setCloseSession(true);
 			HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName());
-		}
-		
+		}		
 	}
+	
+	public void onPublish(ActionEvent event) throws ManagerBeanException {
+		this.published = false;
+		this.webPage = null;
+		try {
+			File previewDirectory = PathUtil.getPreviewPath(getDomain());
+			String destination = "/" + getDomain() + "/WEBSITES/www." + getDomain();
+			FTPUtil.uploadFTP(previewDirectory, destination, properties);
+			this.published = true;
+			this.webPage = "http://www." + getDomain() + "/";
+			AonUtil.addInfoMessage("OK: La web ha sido publicada." );
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th );
+			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
+		}		
+	}	
 
 	private void copyImageToCss(File temporalDirectory, File cssTemporalDirectory, String value) {
 		try {
 			File srcFile = new File( new File(temporalDirectory, IMAGES_PATH), value );
 			File destFile = new File( new File(cssTemporalDirectory, IMAGES_PATH), value );
-			FileUtils.copyFile(srcFile, destFile);
+			if ( srcFile.exists() ) {
+				FileUtils.copyFile(srcFile, destFile);	
+			} else {
+				LOGGER.warning( "File doesn't exists: " + srcFile );
+			}
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
@@ -410,6 +467,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return filename;
 	}
 
+	public boolean isGenerated() {
+		return generated;
+	}
+
 	public boolean isPublished() {
 		return published;
 	}
@@ -532,20 +593,19 @@ public class GeneratorController extends BasicController implements VelocityCons
 		vu.put(ALL_IMAGES_KEY, all_images);	
 	}
 	
-	private String addContactData( Company company ) {
+	private void addContactData( Company company ) {
 		/*
 		 * 		Sacar datos de contacto {
 		 * 			$email - Email para el formulario de envio, si no existe no hay opcion de menu. 
 		 * 		}
 		 */
 		LOGGER.info( "Adding Contact attributes to the context" );
-		String domain = null;
 		Iterator<RegistryMedia> mediaList = company.getMedias().iterator();
 		while (mediaList.hasNext()) {
 			RegistryMedia m = (RegistryMedia)mediaList.next();
 			switch (m.getMediaType()) {
 				case WEB:
-					domain = getDomain(m.getValue());
+					String domain = getDomain(m.getValue());
 					LOGGER.info( "Domain: " + domain + " from " + m);
 					break;
 				case EMAIL:
@@ -559,7 +619,6 @@ public class GeneratorController extends BasicController implements VelocityCons
 					break;
 			}
 		}		
-		return domain;
 	}
 	
 	private void addAddresses( Company company ) throws ManagerBeanException {
@@ -674,20 +733,6 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 		}
 		vu.put(MENU_KEY, menu);		
-	}
-
-	private void publish( String domain, File temporalDirectory ) {
-		//Subimos por FTP
-		try {
-			if (domain != null) {
-				webPage = "http://www." + domain + "/";					
-				FTPUtil.uploadFTP(temporalDirectory, "/" + domain + "/WEBSITES/www." + domain);
-				this.published = true;
-			}
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th );
-			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
-		}		
 	}
 	
 	private boolean isGenerateDefaultPage() {
