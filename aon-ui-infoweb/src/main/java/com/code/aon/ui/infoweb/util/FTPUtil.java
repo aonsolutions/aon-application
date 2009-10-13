@@ -3,6 +3,7 @@ package com.code.aon.ui.infoweb.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,25 +11,34 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import com.code.aon.ui.infoweb.controller.IInfoWebConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class FTPUtil {
+public class FTPUtil implements IInfoWebConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(FTPUtil.class.getName());
-	
+		
 	private static final String PATH_SEPARATOR = "/";
 	
-	private static final String SERVER = "192.168.3.47";
-	private static final String USER = "ftpcms";
-	private static final String PASSWORD = "cms2001";
+	private static final String SERVER_DEFAULT = "192.168.3.47";
+	private static final String USER_DEFAULT = "ftpcms";
+	private static final String PASSWORD_DEFAULT = "cms2001";
 	
-	public static void uploadFTP(File source, String destination) throws IOException {
+	private static FTPClient getFTPClient( String destination, Properties properties ) throws IOException {
 		FTPClient ftp = new FTPClient();
-		LOGGER.fine("Connecting to: " + SERVER );
-		ftp.connect(SERVER);
-		ftp.login(USER, PASSWORD);
+		String server = properties.getProperty(FTP_SERVER, SERVER_DEFAULT);
+		LOGGER.fine("Connecting to: " + server );
+		ftp.connect(server);
+		String user = properties.getProperty(FTP_USER, USER_DEFAULT);
+		String password = properties.getProperty(FTP_PASSWORD, PASSWORD_DEFAULT);
+		ftp.login(user, password);
 		ftp.enterLocalPassiveMode();
 		ftp.changeWorkingDirectory(destination);
+		return ftp;
+	}
+	
+	public static void uploadFTP(File source, String destination, Properties properties) throws IOException {
+		FTPClient ftp = getFTPClient( destination, properties );
 		LOGGER.fine("Connected.");
 		LOGGER.fine("Reply String: " + ftp.getReplyString());
 		LOGGER.fine("System Name: " + ftp.getSystemName());

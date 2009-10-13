@@ -5,15 +5,15 @@ public interface VelocityConstants {
 	String
 
 	//APLICATION CONSTANTS
-	APLICATION_NAME				= "webinfo",
 	TEMPLATE_NAME_PARAM			= "WEBINFO_TEMPLATE_NAME",
 	HOMEPAGE_NAME_PARAM			= "WEBINFO_HOMEPAGE_ID",
-	SESSION_CONFIG 				= "servlet_session_cms_config",
-	SESSION_CURRENT_LANGUAGE	= "servlet_session_cms_current_language",
 	DOMAINS_PATH				= "/home/DOMAINS",
 	WEBSITE_PATH				= "WEBSITES",
 	RESOURCE_PATH				= "DOMAIN-RESOURCES",
+	PREVIEW_PREFIX				= "preview.",
+	WWW_PREFIX					= "www.",
 	IMAGE_PAGE_PREFFIX 			= "aonInfoWeb_",
+	DEFAULT_TEMPLATE			= "Default",
 	
 	CSS_PATH					= "css",
 	CSS_STYLE_DEFAULTS			= "default.properties",

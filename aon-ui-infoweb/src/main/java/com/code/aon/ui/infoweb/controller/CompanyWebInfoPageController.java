@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
@@ -26,7 +27,6 @@ import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -88,37 +88,49 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		return position;
 	}
 
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
+	public void onActivate(ActionEvent event) {
 		activate(true);
 	}
 
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
+	public void onDeactivate(ActionEvent event) {
 		activate(false);
 	}
 	
-	private void activate(boolean active) throws ManagerBeanException {
-		WebInfoPage wip = (WebInfoPage)this.model.getRowData();
-		wip.setActive(active);
-		getManagerBean().update(wip);
+	private void activate(boolean active) {
+		WebInfoPage wip = null;
+		try {
+			wip = (WebInfoPage) getSelectedTO();
+			wip.setActive(active);
+			getManagerBean().update(wip);
+		} catch (ManagerBeanException e) {
+			LOGGER.severe(">>>> activate " + e.getMessage());
+			addMessage( "Error cambiando el estado activo de la pagina " + wip.getName() );
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void move( WebInfoPage wip, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = wip.getPosition();
-		int newPosition = oldPosition + movement;
+	private void move( WebInfoPage wip, int movement ) {
+		try {		
+			int oldPosition = wip.getPosition();
+			int newPosition = oldPosition + movement;
+			
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), newPosition);
+			List<ITransferObject> list = getManagerBean().getList(criteria);
+			if (!list.isEmpty()) {
+				WebInfoPage otherPage = (WebInfoPage) list.get(0);
+				otherPage.setPosition(oldPosition);
+				getManagerBean().update(otherPage);
+			}
+			wip.setPosition(newPosition);
+			getManagerBean().update(wip);
 		
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), newPosition);
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (!list.isEmpty()) {
-			WebInfoPage otherPage = (WebInfoPage) list.get(0);
-			otherPage.setPosition(oldPosition);
-			getManagerBean().update(otherPage);
-		}
-		wip.setPosition(newPosition);
-		getManagerBean().update(wip);
-		
-		initializeModel();
+			initializeModel();
+		} catch (ManagerBeanException e) {
+			LOGGER.severe(">>>> move " + e.getMessage());
+			addMessage( "Error cambiando la posición de la pagina " + wip.getName() );
+			throw new AbortProcessingException(e.getMessage(), e);
+		}			
 	}
 	
 	public void reorderObjects() throws ManagerBeanException {
@@ -135,17 +147,16 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		initializeModel();
 	}	
 	
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    public void onMoveUp(ActionEvent event) {
     	move((WebInfoPage) this.model.getRowData(), -1);
     }
 
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    public void onMoveDown(ActionEvent event) {
     	move((WebInfoPage) this.model.getRowData(), 1);    	
     }
 
-
 	public void onSelectDetail(ActionEvent event) {
-		WebInfoPage wip = (WebInfoPage)this.model.getRowData();
+		WebInfoPage wip = (WebInfoPage) getSelectedTO();
 		current = wip;
 		setSelectedData(wip);
 		if (wip.getType().equals(WebInfoPageType.GENERIC)) {
@@ -211,9 +222,8 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
     public void onAcceptDetail(ActionEvent event) {
 		try {
 			IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
-			detail.setWebInfoPage(current);
-			if (detail.getId() != null) wipdBean.update(detail);
-			else wipdBean.insert(detail);
+			detail.setWebInfoPage( current );
+			wipdBean.insertOrUpdate( detail );
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -231,7 +241,6 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		resetResource();
     }
 
-	@SuppressWarnings("unused")
 	public void onSelectResource(ActionEvent event) {
 		WebInfoPageResource wipr = (WebInfoPageResource)this.resources.getRowData();
 		resource = wipr; 

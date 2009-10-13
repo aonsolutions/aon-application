@@ -28,26 +28,22 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
 	private File templateDirectory;
 
-	private File temporalDirectory;
+	private File outputDirectory;
 	
 	private String template;
 
 	private VelocityContext context = new VelocityContext();
 	
-	public void setTemplateDirectory(File template_path) {
-		this.templateDirectory = new File( template_path, template );
-		File f = new File(templateDirectory, INDEX_TEMPLATE);
-		if (!f.exists()) {
-			addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
-		}
-	}
-
-	public void setTemporalDirectory(File temporalDirectory) {
-		this.temporalDirectory = temporalDirectory;
+	public void setTemplateDirectory(File templateDirectory) {
+		this.templateDirectory = templateDirectory;
 	}
 	
-	public File getTemporalDirectory() {
-		return temporalDirectory;
+	public void setOutputDirectory(File temporalDirectory) {
+		this.outputDirectory = temporalDirectory;
+	}
+	
+	public File getOutputDirectory() {
+		return outputDirectory;
 	}
 
 	public VelocityContext getContext() {
@@ -92,32 +88,25 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	}
 
     public boolean generate(File template, File page) {
-		boolean error = false;
+		boolean error = true;
 		LOGGER.fine( "Template: " + template + " -> " + page );
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
-			if (!template.exists()) {
-				error = true;
-			} else {
-				reader = new BufferedReader(new FileReader(template));
-			}
-			if (!error) {
+			if ( template.exists() ) {
 				try {
+					reader = new BufferedReader(new FileReader(template));					
 					writer = new BufferedWriter(new FileWriter(page));
                     this.evaluate(context, writer, "AON-INFOWEB", reader);
 					writer.flush();
-				} catch(Throwable th) {
-				    error = true;
+					error = false;
+				} catch (Throwable th) {
+				    LOGGER.log(Level.SEVERE, th.getMessage(), th);
 					addMessage("Error al evaluar el contexto en el fichero '" + template + "' <BR/>" + th.getMessage(), ERROR);
 				}
 			} else {
-				addMessage("No se pudo generar el fichero '" + page + "'", ERROR);
+				addMessage("No se han encontrado la plantilla '" + template + "'", ERROR);
 			}
-		}  catch(Throwable th) {
-		    error = true;
-			addMessage("Error al generar el fichero '" + page + "' </BR> " + th.getMessage() + "", ERROR);
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		} finally {
 			IOUtils.closeQuietly(writer);
 			IOUtils.closeQuietly(reader);
@@ -127,13 +116,13 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
     public boolean generate(String page) {
         File template = new File(this.templateDirectory, INDEX_TEMPLATE);
-    	File file = new File(this.temporalDirectory, page);
+    	File file = new File(this.outputDirectory, page);
     	return generate(template, file);
 	}
     
     public boolean generate(String template, String page) {
         File templateFile = new File(this.templateDirectory, template);
-    	File file = new File(this.temporalDirectory, page);
+    	File file = new File(this.outputDirectory, page);
     	return generate(templateFile, file);
 	}
     
@@ -141,7 +130,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 		File templateCss = new File( this.templateDirectory, CSS_PATH );
         File template = new File(templateCss, STYLE_TEMPLATE);
 
-        File temporalCss = new File( this.temporalDirectory, CSS_PATH );
+        File temporalCss = new File( this.outputDirectory, CSS_PATH );
         File file = new File(temporalCss, "style.css");
 
         return generate(template, file);
