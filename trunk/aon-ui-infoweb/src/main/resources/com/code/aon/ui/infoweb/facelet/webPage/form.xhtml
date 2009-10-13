@@ -73,15 +73,15 @@
 								<aon:outputText value="#{infowebBundle.infoweb_page_active}" />
 							</f:facet>
 							<aon:div onmouseover="disableRowSelector();"
-								onmouseout="enableRowSelector();" >																	
+								onmouseout="enableRowSelector();">																	
 								<aon:commandLink title="#{infowebBundle.infoweb_page_activate}" 
-									actionListener="#{webPage.onActivate}" 
+									actionListener="#{webPage.onActivate}" ajaxSingle="true"
 									rendered="#{!to.active}">
 									<aon:graphicImage id="WebInfoPage_active" alt="#{infowebBundle.infoweb_page_activate}"
 										url="#{aonResource.resolveLocal['/images/inactive.png']}" />
 								</aon:commandLink>
 								<aon:commandLink title="#{infowebBundle.infoweb_page_deactivate}" 
-									actionListener="#{webPage.onDeactivate}"
+									actionListener="#{webPage.onDeactivate}" ajaxSingle="true"
 									rendered="#{to.active}">
 									<aon:graphicImage id="MenuOption_deactive" alt="#{infowebBundle.infoweb_page_deactivate}"
 										url="#{aonResource.resolveLocal['/images/active.png']}" />
@@ -94,17 +94,17 @@
 								<aon:outputText value="#{infowebBundle.infoweb_page_position}" />
 							</f:facet>
 							<aon:div onmouseover="disableRowSelector();"
-								onmouseout="enableRowSelector();" >																	
+								onmouseout="enableRowSelector();">																	
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="#{aonResource.resolveLocal['/images/spacer16.gif']}" style="margin-left: 0px;"/>
 								<aon:commandLink title="#{infowebBundle.infoweb_page_up}" 
-									actionListener="#{webPage.onMoveUp}"
+									actionListener="#{webPage.onMoveUp}" ajaxSingle="true"
 									rendered="#{to.position != 0}">
 									<aon:graphicImage id="webPage_up" alt="#{infowebBundle.infoweb_page_up}"
 										url="#{aonResource.resolveLocal['/images/up.gif']}" />
 								</aon:commandLink>
 								<aon:commandLink title="#{infowebBundle.infoweb_page_down}" 
-									actionListener="#{webPage.onMoveDown}"
+									actionListener="#{webPage.onMoveDown}" ajaxSingle="true"
 									rendered="#{to.position &lt; (webPage.model.rowCount - 1)}">
 									<aon:graphicImage id="webPage_down" alt="#{infowebBundle.infoweb_page_down}"
 										url="#{aonResource.resolveLocal['/images/down.gif']}" style="margin-left: 5px;"/>
@@ -115,9 +115,9 @@
 					</ui:define>
 					
 					<ui:define name="endFormListContent">
-						<aon:commandButton title="#{infowebBundle.infoweb_page_detail}"
+						<aon:commandButton title="#{infowebBundle.infoweb_page_detail}" 
 							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();" oncomplete="enableRowSelector();"
-							actionListener="#{webPage.onSelectDetail}" rendered="#{to.detailed}"
+							actionListener="#{webPage.onSelectDetail}" rendered="#{to.detailed}" ajaxSingle="true"
 							value="" styleClass="aon-editDataTable-button aon-icon-file-entrance"
 							reRender="showGenericModalPanel, showLocationModalPanel, showResourceModalPanel"/>
 					</ui:define>

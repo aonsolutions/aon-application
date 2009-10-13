@@ -22,6 +22,7 @@
 					<aon:form>
 						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 							reRender="showGenericModalPanel" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener target="#{webPage.showGenericModalPanel}" value="#{false}" />
 							<rich:componentControl for="genericModalPanel" operation="hide" event="onclick" />
 						</aon:commandButton>
