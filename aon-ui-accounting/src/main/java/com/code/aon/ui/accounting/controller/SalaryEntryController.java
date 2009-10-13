@@ -342,7 +342,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		header.setSecurityLevel(entry.getSecurityLevel());
 		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "640*");
 		header.setGrossSalary((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
-		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "461*");
+		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "641*");
 		header.setCompensation((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
 		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "629*");
 		header.setAllowance((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
