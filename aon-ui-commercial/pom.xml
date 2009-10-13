@@ -46,12 +46,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ebackoffice</artifactId>
-			<version>4.1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
 			<version>4.3.0</version>
 			<scope>compile</scope>
