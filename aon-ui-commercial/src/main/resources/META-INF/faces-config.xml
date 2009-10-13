@@ -139,7 +139,6 @@
 				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
 				<value>#{targetSegmentListener}</value>
-				<value>#{targetEctargetListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
