@@ -53,19 +53,32 @@
 
 	</subDataset>
 
+	<subDataset name="AVERAGE_MARKS_SDS" >
+
+
+		<field name="mark" class="com.code.aon.academy.Mark"/>
+		<field name="code" class="java.lang.String"/>
+		<field name="description" class="java.lang.String"/>
+
+	</subDataset>
+
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
 	<parameter name="nestedReports" isForPrompting="false" class="java.util.Map"/>
 	<parameter name="encode" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="qualifications" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="withAverageMark" isForPrompting="false" class="java.lang.Boolean"/>
+	<parameter name="withFinalMark" isForPrompting="false" class="java.lang.Boolean"/>
 
 	<field name="courseAlumn" class="com.code.aon.academy.CourseAlumn"/>
 	<field name="marks" class="java.util.ArrayList"/>
 	<field name="absences" class="java.util.ArrayList"/>
 	<field name="observations" class="java.util.ArrayList"/>
+	<field name="averageMarks" class="java.util.ArrayList"/>
 	<field name="courseSchedule" class="java.lang.String"/>
 	<field name="evaluation" class="java.lang.Integer"/>
+	<field name="finalMark" class="java.lang.Double"/>
 
 
 		<group  name="courseAlumnData" isStartNewPage="true" isReprintHeaderOnEachPage="true" >
@@ -209,7 +222,7 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="160"  isSplitAllowed="true" >
+			<band height="185"  isSplitAllowed="true" >
 				<elementGroup><!--  Start: 1 !-->
 				<crosstab >
 					<reportElement
@@ -305,7 +318,7 @@
 					</columnGroup>
 
 					<measure name="mark" class="java.lang.Double">
-						<measureExpression><![CDATA[new Double($F{mark}.getMark())]]></measureExpression>
+						<measureExpression><![CDATA[$F{mark}.getMark()]]></measureExpression>
 					</measure>
 					<measure name="code" class="java.lang.String">
 						<measureExpression><![CDATA[$F{code}]]></measureExpression>
@@ -323,11 +336,11 @@
 						width="60"
 						height="15"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?($V{code}!=null?$V{code}:$V{mark}.toString()):$V{mark}.toString())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?($V{code}!=null?$V{code}:($V{mark}!=null?$V{mark}.toString():"")):($V{mark}!=null?$V{mark}.toString():""))]]></textFieldExpression>
 				</textField>
 						</cellContents>
 					</crosstabCell>
@@ -364,112 +377,7 @@
 				<crosstab >
 					<reportElement
 						x="0"
-						y="95"
-						width="535"
-						height="50"
-						key="crosstab-3"
-						positionType="Float"/>
-					<crosstabDataset>
-						<dataset >
-							<datasetRun subDataset="OBSERVATIONS_SDS">
-								<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($F{observations})]]></dataSourceExpression>
-							</datasetRun>
-						</dataset>
-					</crosstabDataset>
-					<crosstabHeaderCell>						<cellContents mode="Transparent">
-					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-						</cellContents>
-					</crosstabHeaderCell>					<rowGroup name="evaluation" width="95">
-						<bucket>
-							<bucketExpression class="java.lang.Integer"><![CDATA[$F{evaluation}]]></bucketExpression>
-						</bucket>
-						<crosstabRowHeader>
-						<cellContents mode="Transparent">
-					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Transparent"
-						x="0"
-						y="12"
-						width="95"
-						height="38"
-						key="textField-18"
-						stretchType="RelativeToTallestObject"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Top">
-						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$V{evaluation} + "º " + $R{mark_evaluation}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Transparent"
-						x="0"
-						y="0"
-						width="95"
-						height="12"
-						key="textField-18"
-						stretchType="RelativeToTallestObject"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Top">
-						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{evaluation_observation_comments}]]></textFieldExpression>
-				</textField>
-						</cellContents>
-						</crosstabRowHeader>
-					</rowGroup>
-					<columnGroup name="alumn" height="0" headerPosition="Center">
-						<bucket>
-							<bucketExpression class="java.lang.Integer"><![CDATA[$F{alumn}.getId()]]></bucketExpression>
-						</bucket>
-					</columnGroup>
-
-					<measure name="comments_First" class="java.lang.String" incrementerFactoryClass="com.code.aon.ui.academy.print.utils.CommentsIncrementorFactory">
-						<measureExpression><![CDATA[$F{comments}]]></measureExpression>
-					</measure>
-					<crosstabCell width="440" height="50">
-						<cellContents mode="Transparent">
-					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="440"
-						height="50"
-						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Top">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$V{comments_First}]]></textFieldExpression>
-				</textField>
-						</cellContents>
-					</crosstabCell>
-					<crosstabCell width="0" height="50" columnTotalGroup="alumn">
-						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
-						</cellContents>
-					</crosstabCell>
-					<crosstabCell width="440" height="0" rowTotalGroup="evaluation">
-						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
-						</cellContents>
-					</crosstabCell>
-					<crosstabCell width="0" height="0" rowTotalGroup="evaluation" columnTotalGroup="alumn">
-						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
-						</cellContents>
-					</crosstabCell>
-					<whenNoDataCell>						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
-						</cellContents>
-					</whenNoDataCell>					</crosstab>
-				<crosstab >
-					<reportElement
-						x="0"
-						y="63"
+						y="89"
 						width="535"
 						height="25"
 						key="crosstab-2"
@@ -589,6 +497,255 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{qualifications}]]></textFieldExpression>
 				</textField>
+				<crosstab >
+					<reportElement
+						x="0"
+						y="119"
+						width="535"
+						height="50"
+						key="crosstab-3"
+						positionType="Float"/>
+					<crosstabDataset>
+						<dataset >
+							<datasetRun subDataset="OBSERVATIONS_SDS">
+								<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($F{observations})]]></dataSourceExpression>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabHeaderCell>					<rowGroup name="evaluation" width="95">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{evaluation}]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="12"
+						width="95"
+						height="38"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{evaluation} + "º " + $R{mark_evaluation}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="95"
+						height="12"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{evaluation_observation_comments}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<columnGroup name="alumn" height="0" headerPosition="Center">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{alumn}.getId()]]></bucketExpression>
+						</bucket>
+					</columnGroup>
+
+					<measure name="comments_First" class="java.lang.String" incrementerFactoryClass="com.code.aon.ui.academy.print.utils.CommentsIncrementorFactory">
+						<measureExpression><![CDATA[$F{comments}]]></measureExpression>
+					</measure>
+					<crosstabCell width="440" height="50">
+						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="440"
+						height="50"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{comments_First}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="50" columnTotalGroup="alumn">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="440" height="0" rowTotalGroup="evaluation">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="evaluation" columnTotalGroup="alumn">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<whenNoDataCell>						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</whenNoDataCell>					</crosstab>
+				<crosstab >
+					<reportElement
+						x="0"
+						y="53"
+						width="535"
+						height="15"
+						key="crosstab-4"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{withAverageMark}]]></printWhenExpression>
+						</reportElement>
+					<crosstabDataset>
+						<dataset >
+							<datasetRun subDataset="AVERAGE_MARKS_SDS">
+								<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($F{averageMarks})]]></dataSourceExpression>
+							</datasetRun>
+						</dataset>
+					</crosstabDataset>
+					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabHeaderCell>					<rowGroup name="subjectId" width="0">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{mark}.getSubject().getId()]]></bucketExpression>
+						</bucket>
+					</rowGroup>
+					<rowGroup name="subject" width="200">
+						<bucket>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{mark}.getSubject().getAcademicSkill().getDescription()]]></bucketExpression>
+						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="200"
+						height="15"
+						key="textField-19"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{subject}]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<columnGroup name="evaluation" height="0" headerPosition="Center">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[new Integer($F{mark}.getEvaluation())]]></bucketExpression>
+						</bucket>
+					</columnGroup>
+
+					<measure name="mark" class="java.lang.Double">
+						<measureExpression><![CDATA[$F{mark}.getMark()]]></measureExpression>
+					</measure>
+					<measure name="code" class="java.lang.String">
+						<measureExpression><![CDATA[$F{code}]]></measureExpression>
+					</measure>
+					<measure name="description" class="java.lang.String">
+						<measureExpression><![CDATA[$F{description}]]></measureExpression>
+					</measure>
+					<crosstabCell width="60" height="15">
+						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="60"
+						height="15"
+						key="textField-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{mark}!=null?$V{mark}.toString():"")]]></textFieldExpression>
+				</textField>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="15" columnTotalGroup="evaluation">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="60" height="0" rowTotalGroup="subjectId">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="subjectId" columnTotalGroup="evaluation">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="60" height="0" rowTotalGroup="subject">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="subject" columnTotalGroup="evaluation">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<whenNoDataCell>						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</whenNoDataCell>					</crosstab>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="70"
+						width="200"
+						height="15"
+						key="textField-19"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{withFinalMark}]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="5" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{mark_final}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="200"
+						y="70"
+						width="60"
+						height="15"
+						key="textField-20"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{withFinalMark}]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{finalMark}]]></textFieldExpression>
+				</textField>
 			</band>
 		</detail>
 		<columnFooter>
@@ -596,14 +753,14 @@
 			</band>
 		</columnFooter>
 		<pageFooter>
-			<band height="72"  isSplitAllowed="true" >
+			<band height="68"  isSplitAllowed="true" >
 				<rectangle>
 					<reportElement
 						mode="Transparent"
 						x="283"
 						y="1"
 						width="254"
-						height="70"
+						height="60"
 						key="rectangle-98"
 						positionType="Float"/>
 					<graphicElement stretchType="NoStretch"/>
@@ -627,7 +784,7 @@
 						x="17"
 						y="1"
 						width="252"
-						height="70"
+						height="60"
 						key="rectangle-100"
 						positionType="Float"/>
 					<graphicElement stretchType="NoStretch"/>

@@ -29,8 +29,6 @@ import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
-import com.code.aon.record.Contract;
-import com.code.aon.record.dao.IRecordAlias;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.employee.util.Constants;
 import com.code.aon.ui.util.AonUtil;
@@ -249,4 +247,5 @@ public class AcademyCollectionsController {
         }
         return qualitySkills;
     }
+
 }

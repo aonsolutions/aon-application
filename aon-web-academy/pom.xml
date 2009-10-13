@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.academy</artifactId>
 	<packaging>war</packaging>
-	<version>2.5.0</version>
+	<version>2.9.1</version>
 	<description>APLICACION WEB DE ACADEMIAS</description>
 	<name>APLICACION WEB DE ACADEMIAS</name>
 	<properties>
-		<dbVersion>1.8.1</dbVersion>
+		<dbVersion>4.3.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-academy</finalName>
@@ -27,11 +27,6 @@
 				<configuration>
 		           <webappDirectory>/target/aon-web-academy</webappDirectory>    
 					<webResources>
-						<resource>
-							<!-- this is relative to the pom.xml directory -->
-							<directory>../aon-web-account/src/main/webapp/_account</directory>
-							<targetPath>_account</targetPath>
-						</resource>
 						<resource>
 							<!-- this is relative to the pom.xml directory -->
 							<directory>../aon-web-finance/src/main/webapp/_finance</directory>
@@ -49,8 +44,38 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<!-- ESTA DEPENDENCIA SE METE AQUI POR NO VERSIONAR TODOS LOS PROYECTOS UI PARA INCLUIRLES EL UI.FORM 2.6.0.-->
+		<!-- ESTAS DEPENDENCIAS SE METEN AQUI POR NO VERSIONAR TODOS LOS PROYECTOS UI PARA INCLUIRLAS -->
 		<!-- ************************************  ELIMINAR EN FUTURAS VERSIONES  ********************************* -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.account.bridge</artifactId>
+			<version>2.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.company</artifactId>
+			<version>2.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.config</artifactId>
+			<version>2.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.finance</artifactId>
+			<version>2.10.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.registry</artifactId>
+			<version>2.3.0</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
@@ -67,13 +92,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.academy</artifactId>
-			<version>2.1.4</version>
+			<version>2.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>2.3.5</version>
+			<version>2.4.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -85,13 +110,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.employee</artifactId>
-			<version>2.3.3</version>
+			<version>2.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>2.11.0</version>
+			<version>2.15.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -109,6 +134,26 @@
 				<exclusion>
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.purchase</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bctsp-jdk14</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -214,6 +259,12 @@
 			<groupId>org.apache.myfaces.tomahawk</groupId>
 			<artifactId>tomahawk-sandbox</artifactId>
 			<version>1.1.7</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>1.3.1</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
