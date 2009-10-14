@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+<style>
+.body3 {
+	width:285px;
+    height:160px;
+    overflow:auto;
+}
+</style>
+	<aon:div ajaxRendered="true" layout="none" styleClass="aon-popupWindow">
+		<aon:form rendered="#{facesContext.maximumSeverity != null}">
+			<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box">
+				<rich:modalPanel minWidth="325" minHeight="220" top="190px" left="350"
+					id="messagesModalPanel" showWhenRendered="true">
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="#{bundle.aon_error_title}" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close" immediate="true">
+							<rich:componentControl for="messagesModalPanel" operation="hide" event="onclick"/>
+						</aon:commandButton>
+					</f:facet>
+		            <rich:panel bodyClass="body3">
+						<aon:div id="aon-errors" styleClass="aon-popupWindow-content">
+							<aon:messages />
+						</aon:div>
+					</rich:panel>
+				</rich:modalPanel>
+			</aon:panelGroup>
+		</aon:form>
+	</aon:div>
+
+</ui:composition>
