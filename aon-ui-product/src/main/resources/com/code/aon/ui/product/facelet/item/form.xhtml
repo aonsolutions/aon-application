@@ -123,42 +123,37 @@
 
 					<aon:outputLabel for="Item_product_sales_account" value="#{productBundle.product_sales_account}" />
 					<aon:div>
-						<ui:include
-							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-							<ui:param name="wizard" value="#{accountWizard}" />
-							<ui:param name="id" value="Item_product_sales_account" />
-							<ui:param name="required" value="#{false}" />
-							<ui:param name="size" value="9" />
-							<ui:param name="maxlength" value="9" />
-							<ui:param name="renderDescription" value="#{true}" />
-							<ui:param name="renderedAttr" value="#{true}" />
-							<ui:param name="disabled" value="#{false}" />
-							<ui:param name="reRenderAttr" value="none" />
-							<ui:param name="entity" value="#{item.to.product.salesAccount}" />
-							<ui:param name="ELExpression" value="item.to.product.salesAccount" />
-						</ui:include>
+						<aon:lookupInputText id="Item_product_sales_account_id" value="#{item.to.product.salesAccount.id}"
+							lookup="#{accountLookup}" reRender="Item_product_sales_account_description"
+							size="12" maxlength="12" />
+						<aon:lookupButton
+							windowTitle="#{accountBundle.account_selection}" actionType="search"
+							property="#{item.to.product.salesAccount}" selectReRender="Item_product_sales_account_id,Item_product_sales_account_description"
+							lookup="#{accountLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText id="Item_product_sales_account_description" 
+							value="#{(item.to.product.salesAccount.description!=null)?(item.to.product.salesAccount.description):('')}"
+							disabled="true" size="60" />
 					</aon:div>
 
 					<aon:outputLabel for="Item_product_purchase_account" value="#{productBundle.product_purchase_account}" />
 					<aon:div>
-						<ui:include
-							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-							<ui:param name="wizard" value="#{accountWizard}" />
-							<ui:param name="id" value="Item_product_purchase_account" />
-							<ui:param name="required" value="#{false}" />
-							<ui:param name="size" value="9" />
-							<ui:param name="maxlength" value="9" />
-							<ui:param name="renderDescription" value="#{true}" />
-							<ui:param name="renderedAttr" value="#{true}" />
-							<ui:param name="disabled" value="#{false}" />
-							<ui:param name="reRenderAttr" value="none" />
-							<ui:param name="entity" value="#{item.to.product.purchaseAccount}" />
-							<ui:param name="ELExpression" value="item.to.product.purchaseAccount" />
-						</ui:include>
+						<aon:lookupInputText id="Item_product_purchase_account_id" value="#{item.to.product.purchaseAccount.id}"
+							lookup="#{accountLookup}" reRender="Item_product_purchase_account_description"
+							size="12" maxlength="12" />
+						<aon:lookupButton
+							windowTitle="#{accountBundle.account_selection}" actionType="search"
+							property="#{item.to.product.purchaseAccount}" selectReRender="Item_product_purchase_account_id,Item_product_purchase_account_description"
+							lookup="#{accountLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText id="Item_product_purchase_account_description" 
+							value="#{(item.to.product.purchaseAccount.description!=null)?(item.to.product.purchaseAccount.description):('')}"
+							disabled="true" size="60" />
 					</aon:div>
 
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 	</ui:define>
 </ui:composition>

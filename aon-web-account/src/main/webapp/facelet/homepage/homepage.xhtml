@@ -105,15 +105,17 @@
 							</aon:div>
 
 							<aon:div>
+<!-- 
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
-										value="#{accountingBundle.accounting_leasing_fee_entry_module}" />
+										value="#{accountingBundle.accounting__fee_entry_module}" />
 									<aon:commandLink immediate="true"
 										actionListener="#{leasingFeeEntry.onReset}"
 										action="account_leasing_fee_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
 									</aon:commandLink>
 								</aon:div>
+ -->
 							</aon:div>
 						</h:panelGrid>
 					</aon:panelCollapsible>
@@ -330,7 +332,7 @@
 									<aon:outputText
 										value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}" />
 									<aon:commandLink immediate="true"
-										actionListener="#{budgetedProfitAndLossComparison.onSearch}"
+										actionListener="#{budgetedProfitAndLossComparison.onEditSearch}"
 										action="compared_budgeted_profit_and_loss_search">
 										<aon:outputText value="[#{bundle.aon_listing}]" />
 									</aon:commandLink>

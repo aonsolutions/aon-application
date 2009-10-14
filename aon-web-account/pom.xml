@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>3.1.0</version>
+	<version>3.1.3</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
@@ -19,6 +19,12 @@
 		<dbVersion>3.5.0</dbVersion>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.accounting</artifactId>
+			<version>3.15.0</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
@@ -34,25 +40,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>3.10.0</version>
+			<version>3.11.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>3.7.0</version>
+			<version>3.7.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>3.15.0</version>
+			<version>3.18.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.10.1</version>
+			<version>3.11.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -64,13 +70,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>3.9.0</version>
+			<version>3.11.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>3.18.0</version>
+			<version>3.20.1</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -85,14 +91,6 @@
 			<version>3.2.1</version>
 			<scope>runtime</scope>
 		</dependency>
-<!-- 
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.product</artifactId>
-			<version>3.3.4</version>
-			<scope>runtime</scope>
-		</dependency>
- -->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
@@ -118,7 +116,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>3.7.0</version>
+			<version>3.8.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

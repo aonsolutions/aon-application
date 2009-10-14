@@ -10,11 +10,8 @@
 
 	<aon:div id="#{id}Container" rendered="#{renderedAttr}">
 		<a4j:region>
-			<aon:outputLabel for="#{id}" style="display:none" 
-				value="#{accountBundle.account_account}" />
-				
 			<aon:inputText id="#{id}" value="#{entity}" disabled="#{disabled}"
-				required="#{required}" size="10" maxlength="9">
+				required="#{required}" size="#{size}">
 				<a4j:support event="onkeyup"
 					onsubmit="if(event.keyCode != 113) return false;"
 					eventsQueue="#{id}KeyUp" ignoreDupResponses="true"
@@ -24,7 +21,7 @@
 				</a4j:support>
 
 				<a4j:support eventsQueue="#{id}OnChange"
-					onsubmit="validateOnChange(this)" ajaxSingle="true" 
+					onsubmit="validateOnChange(this)"
 					actionListener="#{wizard.onLookup}" ignoreDupResponses="true"
 					requestDelay="100" event="onchange"
 					reRender="#{id}Name,#{reRenderAttr}">
@@ -39,30 +36,28 @@
 				</a4j:support>
 			</aon:inputText>
 		</a4j:region>
-		<a4j:region>
-			<rich:suggestionbox for="#{id}"
-				suggestionAction="#{wizard.autocompleteId}" var="result"
-				onsubmit="if (!activateSuggestionBox(this)) return false;"
-				immediate="true" ajaxSingle="true"
-				eventsQueue="#{id}Sug" ignoreDupResponses="true"
-				requestDelay="100" width="500" height="200"
-				nothingLabel="#{bundle.aon_search_no_results}">
-				<aon:column>
-					<aon:outputText value="#{result.id}" />
-				</aon:column>
-				<aon:column>
-					<aon:outputText value="#{result.description}" />
-				</aon:column>
-				<a4j:support event="onselect" reRender="#{id}Container" oncomplete="searchFieldForFocus('#{id}')">
-					<f:setPropertyActionListener target="#{entity}" value="#{result}" />
-				</a4j:support>
-			</rich:suggestionbox>
-		</a4j:region>
+		<rich:suggestionbox for="#{id}"
+			suggestionAction="#{wizard.autocompleteId}" var="result"
+			onsubmit="if (!activateSuggestionBox(this)) return false;"
+			immediate="true" eventsQueue="#{id}Sug" ignoreDupResponses="true"
+			requestDelay="100" width="500" height="200"
+			nothingLabel="#{bundle.aon_search_no_results}">
+			<aon:column>
+				<aon:outputText value="#{result.id}" />
+			</aon:column>
+			<aon:column>
+				<aon:outputText value="#{result.description}" />
+			</aon:column>
+			<a4j:support event="onselect" reRender="#{id}Container">
+				<f:setPropertyActionListener target="#{entity}" value="#{result}" />
+			</a4j:support>
+		</rich:suggestionbox>
 		<a4j:commandButton styleClass="aon-lookupButton" value=""
 			disabled="#{disabled}" actionListener="#{wizard.onShow}"
 			immediate="true" oncomplete="searchFieldForFocus('#{id}searchName')"
 			reRender="#{id}Container" />
-		<aon:div id="#{id}Name" style="display:inline" rendered="#{renderDescription}">
+		<aon:div id="#{id}Name" style="display:inline"
+			rendered="#{renderDescription}">
 			<aon:outputText rendered="#{entity.description != null}"
 				value="#{entity.description}">
 				<aon:abbreviateConverter maxWidth="35" />
@@ -105,7 +100,7 @@
 
 						<aon:panelGrid columns="2" style="width:100%;">
 							<aon:outputText value="#{bundle.aon_description}" />
-							<aon:inputText id="#{id}searchName" value="#{wizard.description}" size="40">
+							<aon:inputText value="#{wizard.description}" size="40">
 								<a4j:support event="onchange" ajaxSingle="true"
 									eventsQueue="#{id}nm" ignoreDupResponses="true"
 									requestDelay="100" actionListener="#{wizard.inputChanged}" />
@@ -150,11 +145,10 @@
 						<aon:column>
 							<aon:commandButton id="#{id}RowSelector"
 								styleClass="aon-editDataTable-button aon-icon-rowSelector"
-								immediate="true"
+								actionListener="#{wizard.onSelect}" immediate="true"
 								ajaxSingle="true" eventsQueue="#{id}SelectQueue"
 								requestDelay="100" ignoreDupResponses="true"
 								onkeyup="tableKeyUp(event.keyCode)"
-								oncomplete="searchFieldForFocus('#{id}')"
 								reRender="#{id}Container,#{reRenderAttr}">
 								<a4j:actionparam name="actionParam" value="#{ELExpression}"
 									assignTo="#{wizard.valueExpression}">
@@ -167,7 +161,6 @@
 									value="#{valueChangeListener}"
 									assignTo="#{wizard.valueChangeListener}">
 								</a4j:actionparam>
-								<aon:actionListener method="#{wizard.onSelect}" />
 							</aon:commandButton>
 						</aon:column>
 
