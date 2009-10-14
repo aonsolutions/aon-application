@@ -24,23 +24,9 @@
 			
 				<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
-					<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/formContent.xhtml">
 						<ui:param name="controller" value="#{seller}" />
 					</ui:include>
-
-					<aon:outputLabel for="Seller_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Seller_description" maxlength="64"
-						value="#{seller.to.description}" size="64">
-					</aon:inputText>						
-
-					<aon:outputLabel for="Seller_status"
-						value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Seller_status" required="true"
-						value="#{seller.to.status}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{salesCollections.sellerStatuses}" />
-					</aon:selectOneMenu>
 
 				</aon:panelGrid>
 
