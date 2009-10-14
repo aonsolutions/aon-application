@@ -28,19 +28,7 @@ public class TargetController extends BasicController {
 	
 	private String selectedTab;
 	
-	private boolean showProfile;
-	
-	private boolean showSearchOnlyCustomers;
-	
-	private boolean showCommercialTracking;
-	
-	private boolean showProduct;
-	
-	private boolean showSeller;
-	
 	public TargetController() {
-		this.showProduct = true;
-		this.showSeller = true;
 		setBundleName(ICommercialConstants.BUNDLE_NAME);
 	}
 
@@ -67,46 +55,6 @@ public class TargetController extends BasicController {
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
-	}
-
-	public boolean isShowCommercialTracking() {
-		return showCommercialTracking;
-	}
-
-	public void setShowCommercialTracking(boolean showCommercialTracking) {
-		this.showCommercialTracking = showCommercialTracking;
-	}
-
-	public boolean isShowProfile() {
-		return showProfile;
-	}
-
-	public void setShowProfile(boolean showProfile) {
-		this.showProfile = showProfile;
-	}
-
-	public boolean isShowSearchOnlyCustomers() {
-		return showSearchOnlyCustomers;
-	}
-
-	public void setShowSearchOnlyCustomers(boolean showSearchOnlyCustomers) {
-		this.showSearchOnlyCustomers = showSearchOnlyCustomers;
-	}
-
-	public boolean isShowProduct() {
-		return showProduct;
-	}
-
-	public void setShowProduct(boolean showProduct) {
-		this.showProduct = showProduct;
-	}
-
-	public boolean isShowSeller() {
-		return showSeller;
-	}
-
-	public void setShowSeller(boolean showSeller) {
-		this.showSeller = showSeller;
 	}
 
 	public ResourceBundle getBundle() {

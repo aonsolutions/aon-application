@@ -5,15 +5,25 @@
 	<xs:element name="config">	
 		<xs:complexType>
 		    <xs:sequence>
-		      <xs:element ref="commercial" />
+		      <xs:element ref="offer" />
+		      <xs:element ref="target" />
 		    </xs:sequence>		
-			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="commercial">
+	<xs:element name="offer">
+		<xs:complexType>
+			<xs:attribute name="showInvoicing" type="xs:boolean" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="target">
 		<xs:complexType>
 			<xs:attribute name="showEcommerceTab" type="xs:boolean" use="required"/>
-			<xs:attribute name="showInvoicing" type="xs:boolean" use="required"/>
+			<xs:attribute name="showProfile" type="xs:boolean" use="required"/>
+			<xs:attribute name="showSearchOnlyCustomers" type="xs:boolean" use="required"/>
+			<xs:attribute name="showCommercialTracking" type="xs:boolean" use="required"/>
+			<xs:attribute name="showProduct" type="xs:boolean" use="required"/>
+			<xs:attribute name="showSeller" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

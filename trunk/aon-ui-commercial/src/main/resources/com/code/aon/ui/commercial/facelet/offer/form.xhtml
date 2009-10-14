@@ -30,7 +30,7 @@
 							immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
 							styleClass="aon-finding-toolbar-item aon-icon-unsettle"
 							actionListener="#{offer.onRefuse}" />
-						<c:if test="#{!aonConfiguration.bean.commercial.showInvoicing}">
+						<c:if test="#{!aonConfiguration.bean.offer.showInvoicing}">
 							<aon:commandButton id="sales"
 								value="#{commercialBundle.commercial_offer_to_sales}"
 								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending}"
@@ -41,7 +41,7 @@
 									value="#{true}" />
 							</aon:commandButton>
 						</c:if>
-						<c:if test="#{aonConfiguration.bean.commercial.showInvoicing}">
+						<c:if test="#{aonConfiguration.bean.offer.showInvoicing}">
 							<aon:commandButton id="invoice"
 								value="#{commercialBundle.commercial_offer_to_invoice}"
 								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offerDetail.model.rowCount > 0}"
