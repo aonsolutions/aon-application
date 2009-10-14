@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+	
+	<aon:outputLabel for="Seller_description"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="Seller_description" maxlength="64"
+		value="#{controller.to.description}" size="64">
+	</aon:inputText>						
+	
+	<aon:outputLabel for="Seller_status"
+		value="#{bundle.aon_status}" />
+	<aon:selectOneMenu id="Seller_status" required="true"
+		value="#{controller.to.status}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{salesCollections.sellerStatuses}" />
+	</aon:selectOneMenu>
+
+</ui:composition>
