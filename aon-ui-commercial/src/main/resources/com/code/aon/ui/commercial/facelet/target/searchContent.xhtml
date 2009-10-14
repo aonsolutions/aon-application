@@ -14,7 +14,7 @@
 				<ui:include src="/com/code/aon/ui/commercial/facelet/target/searchBasicContent.xhtml">
 					<ui:param name="controller" value="#{target}"/>
 				</ui:include>
-				<c:if test="#{target.showSearchOnlyCustomers}">
+				<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
 					<aon:outputLabel for="MarketingTarget_customer"
 						value="#{customerBundle.customer_customer}" />
 					<aon:selectOneMenu id="MarketingTarget_customer" 
@@ -115,7 +115,7 @@
 			</aon:panelGrid>		
 		</aon:panelCollapsible>
 						
-		<c:if test="#{target.showProduct}">						
+		<c:if test="#{aonConfiguration.bean.target.showProduct}">						
 			<aon:panelCollapsible expanded="false" label="#{productBundle.product_module}" >					
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
 					<aon:outputLabel for="Target_items_item_product_code"
@@ -149,7 +149,7 @@
 			</aon:panelCollapsible>
 		</c:if>
 						
-		<c:if test="#{target.showSeller}">						
+		<c:if test="#{aonConfiguration.bean.target.showSeller}">						
 			<aon:panelCollapsible expanded="false" label="#{salesBundle.sales_seller}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
 					<aon:outputLabel for="Target_sellers_seller_id"
@@ -180,7 +180,7 @@
 			</aon:panelCollapsible>
 		</c:if>
 
-		<c:if test="#{target.showCommercialTracking}">
+		<c:if test="#{aonConfiguration.bean.target.showCommercialTracking}">
 			<aon:panelCollapsible expanded="false" label="#{commercialBundle.commercial_target_tracking_module}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 					<aon:outputText value="#{bundle.aon_date}" />
@@ -240,7 +240,7 @@
 			</aon:panelCollapsible>
 		</c:if>
 
-		<c:if test="#{target.showProfile}">	
+		<c:if test="#{aonConfiguration.bean.target.showProfile}">	
 			<aon:panelCollapsible expanded="false" label="#{marketingBundle.marketing_target_profile}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
 					<aon:outputText value="#{bundle.aon_date}" />

@@ -27,10 +27,10 @@
 			</ui:decorate>
 
 		</aon:form>
-		<c:if test="#{target.showSeller}">
+		<c:if test="#{aonConfiguration.bean.target.showSeller}">
 			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		</c:if>
-		<c:if test="#{target.showProfile}">
+		<c:if test="#{aonConfiguration.bean.target.showProfile}">
 			<aon:lookupButtonPopup lookup="#{questionLookup}" />
 		</c:if>	
 	</ui:define>
