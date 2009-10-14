@@ -9,13 +9,15 @@
 			showSendEmail="true" 
 		/>
 	</registry:config>
+	
+	<webmail:config version="1.0" xmlns:webmail="http://www.esferalia.com/webmail" />
 		
 	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
 			showPanelTabSet="true" 
-			showDigitalCertificate="false"
+			showDigitalCertificate="true"
 		/>
 	</company:config>
 
@@ -36,8 +38,8 @@
 	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
 		<product:product
 			showStock="false"
-			showAccount="true"
-			showAttachment="false"
+			showAccount="false"
+			showAttachment="true"
 		/>
 	</product:config>
 
@@ -47,4 +49,19 @@
 			showPhoneActionMediaType="true"
 		/>
 	</marketing:config>
+	
+	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
+		<commercial:offer
+			showInvoicing="true"
+		/>
+		<commercial:target
+			showEcommerceTab="false"
+			showProfile="true"
+			showSearchOnlyCustomers="true"
+			showCommercialTracking="true"
+			showProduct="true"
+			showSeller="true"
+		/>
+	</commercial:config>
+		
 </config>
