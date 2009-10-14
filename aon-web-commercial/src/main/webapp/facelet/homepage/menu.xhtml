@@ -33,9 +33,6 @@
 						value="#{commercialBundle.commercial_target_module}" 
 						iconClass="aon-target-iconClass"
 						action="target_search" actionListener="#{target.onEditSearch}" >
-						<f:setPropertyActionListener value="#{true}" target="#{target.showProfile}" />
-						<f:setPropertyActionListener value="#{true}" target="#{target.showSearchOnlyCustomers}" />
-						<f:setPropertyActionListener value="#{true}" target="#{target.showCommercialTracking}" />
 					</aon:menuItem>
 					<aon:menuItem id="item" 
 						action="item_search" actionListener="#{item.onEditSearch}"
@@ -51,13 +48,12 @@
 						action="commercialTracking_form" actionListener="#{commercialTracking.onReset}" />
 					<aon:menuItem id="offer_form"
 						value="#{commercialBundle.commercial_offer_module}" 
-						action="offer_form" actionListener="#{offer.onReset}" />
+						action="offer_search" actionListener="#{offer.onEditSearch}" />
 				</aon:dropDownMenu>
 				<aon:dropDownMenu value="#{marketingBundle.marketing_marketing}">
 					<aon:menuItem id="campaign"
 						value="#{marketingBundle.marketing_campaign_module}"
 						action="campaign_list" actionListener="#{campaign.onSearch}" >
-						<f:setPropertyActionListener value="#{true}" target="#{target.showSearchOnlyCustomers}" />
 					</aon:menuItem>
 					<aon:menuItem id="survey" 
 						value="#{marketingBundle.marketing_survey_module}" 
@@ -73,7 +69,7 @@
 					<aon:menuItem id="company"
 						value="#{companyBundle.company_data_module}"
 						action="company" actionListener="#{company.onLoad}" />
-					<aon:menuItem id="mailAccountCahnge"
+					<aon:menuItem id="mailAccountChange"
 						value="#{webmailBundle.webmail_mailAccount}"
 						action="mailAccount_list" actionListener="#{mailAccount.onSearch}" />						
 				</aon:dropDownMenu>
