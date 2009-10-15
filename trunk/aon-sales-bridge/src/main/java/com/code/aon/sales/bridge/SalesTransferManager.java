@@ -89,9 +89,6 @@ public class SalesTransferManager {
 		setDetailModel(null);
 	}
 
-	public void onSelectDetail(ActionEvent event) {
-	}
-
 	private List<ITransferObject> obtainSalesDetailList(Sales sales) {
 		List<ITransferObject> detailList = new LinkedList<ITransferObject>();
 		try {
@@ -111,6 +108,11 @@ public class SalesTransferManager {
 		} catch (ManagerBeanException e) {
 		}
 		return detailList;
+	}
+
+	public void onTransferedChanged(ValueChangeEvent event) {
+		double value = (event.getNewValue()!=null) ? ((Double)event.getNewValue()).doubleValue() : 0;
+		selectDetailRow(value > 0);
 	}
 
 	/**
