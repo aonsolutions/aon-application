@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,7 +10,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.xml.sax.SAXException;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
@@ -40,19 +43,25 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.SalesManager;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.commercial.util.EmailUtilController;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.SecurityInfo;
 
 /**
  * Controller used in the offer maintenance.
  */
-public class OfferController extends BasicController {
+public class OfferController extends BasicController implements ICommercialConstants {
 
 	private final String SALES_CONTROLLER = "sales";
 	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
@@ -416,4 +425,30 @@ public class OfferController extends BasicController {
     	return null;
 	}
 
+	public void onSendOfferByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		sendOfferByEmail( null );
+	}
+
+	public void sendOfferByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		Offer offer = (Offer) getTo();
+		EmailUtilController emailController = new EmailUtilController();
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+		messageController.initNewMessage();
+		Target target = offer.getTarget();
+		if ( target != null ) {
+			String[] emails = emailController.getEmails(target.getRegistry());
+			if (! ArrayUtils.isEmpty(emails) ) {
+				messageController.setRecipientsTo( emails[0] );
+				if ( emails.length > 1 ) { 
+					String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
+					messageController.setRecipientsCc( recipientsCc );
+				}
+			}			
+		}
+		messageController.setSubject( emailController.getEmailSubject(offer) );
+		messageController.setContent( emailController.getEmailBody(offer) );
+		messageController.addAttachment( emailController.getOfferFile(offer) );
+		messageController.setShowNewMessageWindow(true);
+		messageController.setSecurityInfo( securyInfo );
+	}	
 }
