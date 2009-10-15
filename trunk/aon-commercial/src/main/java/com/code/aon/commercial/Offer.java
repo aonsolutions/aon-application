@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -22,6 +23,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.commercial.dao.ICommercialAlias;
@@ -32,6 +35,7 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
@@ -131,8 +135,17 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	/** The bank account. */
 	private BankAccount bankAccount;
 	
+	/** The comments. */
+	private String comments;
+	
+    /** If the Offer is signed. */
+    private boolean signed;    
+	
 	/** The detail of this offer. */
 	private Set<OfferDetail> lines = new HashSet<OfferDetail>();
+	
+	/** The detail of this offer. */
+	private Set<OfferAttachment> attachments = new HashSet<OfferAttachment>();	
 
     /**
      * Gets the id.
@@ -607,6 +620,55 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	/**
+	 * Gets the comments.
+	 * 
+	 * @return the comments
+	 */
+	@Lob
+	@Column(name="comments")	
+	@Type(type="stringClob")
+	public String getComments() {
+		return comments;
+	}
+
+	/**
+	 * Sets the comments.
+	 * 
+	 * @param comments the new comments
+	 */
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+	
+	/**
+	 * Checks if is signed.
+	 * 
+	 * @return true, if is signed
+	 */
+	@Column(nullable = false)
+	public boolean isSigned() {
+		return signed;
+	}
+
+	/**
+	 * Sets the signed.
+	 * 
+	 * @param signed the new signed
+	 */
+	public void setSigned(boolean signed) {
+		this.signed = signed;
+	}	
+
+	@OneToMany(mappedBy = "offer", cascade={CascadeType.REMOVE})
+	public Set<OfferAttachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(Set<OfferAttachment> attachments) {
+		this.attachments = attachments;
+	}
+	
+	/**
 	 * Gets the detail list. Used in the reports
 	 * 
 	 * @return the detail list
@@ -627,24 +689,71 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Offer o = (Offer) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.address, o.address)				
+				.append(this.bank, o.bank)
+				.append(this.bankAccount, o.bankAccount)				
+				.append(this.comments, o.comments)
+				.append(this.daysBetweenPayments, o.daysBetweenPayments)				
+				.append(this.daysToFirstPayment, o.daysToFirstPayment)
+				.append(this.discountExpression, o.discountExpression)				
+				.append(this.issueDate, o.issueDate)				
+				.append(this.number, o.number)
+				.append(this.numberOfPayments, o.numberOfPayments)				
+				.append(this.paymentDays, o.paymentDays)
+				.append(this.payMethod, o.payMethod)				
+				.append(this.scope, o.scope)
+				.append(this.securityLevel, o.securityLevel)				
+				.append(this.seller, o.seller)				
+				.append(this.series, o.series)
+				.append(this.signed, o.signed)				
+				.append(this.status, o.status)
+				.append(this.target, o.target)				
+				.append(this.tariff, o.tariff)
+				.append(this.type, o.type)				
+				.append(this.workPlace, o.workPlace)
+				.isEquals();
 		}
-		if (obj instanceof Offer) {
-			Offer o = (Offer) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(address)
+			.append(bank)
+			.append(bankAccount)
+			.append(comments)	
+			.append(daysBetweenPayments)
+			.append(daysToFirstPayment)
+			.append(discountExpression)
+			.append(id)			
+			.append(issueDate)
+			.append(number)
+			.append(numberOfPayments)
+			.append(paymentDays)
+			.append(payMethod)
+			.append(scope)
+			.append(securityLevel)
+			.append(seller)
+			.append(series)
+			.append(signed)
+			.append(status)
+			.append(target)
+			.append(tariff)
+			.append(type)
+			.append(workPlace)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }
