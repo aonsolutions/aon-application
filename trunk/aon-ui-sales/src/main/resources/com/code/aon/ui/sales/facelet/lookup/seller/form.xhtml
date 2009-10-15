@@ -5,12 +5,16 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/sales/facelet/seller/formContent.xhtml">
-		<ui:param name="controller" value="#{lookup}"/>
-	</ui:include>
-	
-	<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-		<ui:param name="controllerLookupListener" value="#{sellerLookupListener}"/>
-	</ui:include>
+	<aon:panelGrid columns="2" dir="true">
+
+		<ui:include src="/com/code/aon/ui/sales/facelet/seller/formContent.xhtml">
+			<ui:param name="controller" value="#{lookup}"/>
+		</ui:include>
+		
+		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+			<ui:param name="controllerLookupListener" value="#{sellerLookupListener}"/>
+		</ui:include>
+		
+	</aon:panelGrid>
 
 </ui:composition>
