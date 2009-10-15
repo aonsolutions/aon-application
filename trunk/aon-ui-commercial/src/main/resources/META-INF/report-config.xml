@@ -8,7 +8,7 @@
 
 	<!--  **********************************************************
 						TARGET
-		  ********************************************************** -->
+		  **********************************************************-->
 		  
 	<report id="targetList" description="Targets List">
 		<template path="/com/code/aon/ui/commercial/report/target.jasper"/>
@@ -22,7 +22,7 @@
 
 	<!--  **********************************************************
 						OFFER 
-		  ********************************************************** -->
+		  **********************************************************-->
 		  
 	<report id="offer" description="Offers's Report">
 		<template path="/com/code/aon/ui/commercial/report/offer.jasper"/>
@@ -30,12 +30,15 @@
 
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="TotalPrice" value="#{offer.getTotalPrice}" />
 			<param id="PriceStrategy" value="#{offerDetail.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -46,7 +49,7 @@
 	</report>
 	
 	<report id="offerDetail" description="OfferDetail' Subreport">
-		<template path="/com/code/aon/ui/commercial/report/offerDetail.jasper"/>
+		<template path="/com/code/aon/ui/commercial/report/offerDetail.jasper" />	
 	</report>
 	
 	<report id="offerVatBreakDown" description="VatBreakDown's Subreport">
