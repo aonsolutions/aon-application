@@ -31,7 +31,7 @@
 						<aon:rowSelector selectionListener="#{alarm.onSelect}"/>
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
+								<aon:outputText value="#{groupwareBundle.aon_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.alarmDate}">
 								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
@@ -41,11 +41,9 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_description}" />
+								<aon:outputText value="#{groupwareBundle.alarm_description}" />
 							</f:facet>
-							<aon:outputText value="#{to.description}" >
-								<aon:abbreviateConverter maxWidth="64" />
-							</aon:outputText>
+							<aon:outputText value="#{to.descriptionHead}" />
 						</aon:column>
 
 						<aon:column>

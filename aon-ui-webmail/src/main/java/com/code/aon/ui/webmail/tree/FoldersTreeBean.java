@@ -1,36 +1,34 @@
 package com.code.aon.ui.webmail.tree;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.FacesException;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.richfaces.component.UITree;
 import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.controller.FolderController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonFolder;
-import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.ui.webmail.exception.WebmailException;
+import com.code.aon.ui.webmail.listener.ITreeListener;
 
-public class FoldersTreeBean implements WebMailConstants {
+public class FoldersTreeBean {
 
-	private static final Logger LOGGER = Logger.getLogger(FoldersTreeBean.class.getName());
+	private String account = null;
 	
-	private TreeNode rootNode;
+	private TreeNode rootNode = null;
 
 	private AonFolder current;
 
-	private FolderController folderController;
+	private List<ITreeListener> listeners = new ArrayList<ITreeListener>();
 
 	private void addNodes(TreeNode node) {
 		AonFolder folder = (AonFolder) node.getData();
@@ -48,20 +46,12 @@ public class FoldersTreeBean implements WebMailConstants {
 		}
 	}
 
-	public void initTree( AonServer server ) {
-		loadTree( server );
-		setCurrent( (AonFolder) rootNode.getChild(1).getData() );
-		getFolderController().nodeSelected( getCurrent() );
-	}
-	
 	public void loadTree() {
 		WebMailController webMailController = (WebMailController) AonUtil
-				.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
-		loadTree( webMailController.getServer() );
-	}
-	
-	public void loadTree( AonServer server ) {
-		AonFolder folder = new AonFolder(server.getRoot(), server);
+				.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+		account = webMailController.getServer().getAccount().getEmail();
+		AonFolder folder = new AonFolder(webMailController.getServer()
+				.getRoot());
 		rootNode = new TreeNodeImpl();
 		rootNode.setData(folder);
 		addNodes(rootNode);
@@ -71,21 +61,21 @@ public class FoldersTreeBean implements WebMailConstants {
 		if (rootNode == null) {
 			try{
 				loadTree();
-			} catch (Exception e) {
-				LOGGER.log(Level.SEVERE, "Error loading folder tree", e);
+			}catch (Exception e) {
 			}
 		}
 		return rootNode;
 	}
 
-	public AonFolder recoverTreeNode(String folderName){
+	public AonFolder recoverTreeNode(AonFolder aonFolder){
 		AonFolder top = (AonFolder)rootNode.getData();
 		ArrayList<AonFolder> lst;
 		try {
 			lst = top.getFolderList();
 			for (int i = 0; i < lst.size(); i++) {
 				AonFolder current = lst.get(i);
-				if ( StringUtils.equals(folderName,current.getName()) ) {
+				String name = current.getName();
+				if (aonFolder.getName().equals(name)){
 					return current;
 				}
 			}
@@ -98,54 +88,54 @@ public class FoldersTreeBean implements WebMailConstants {
 	public void processSelection(NodeSelectedEvent event) {
 		UITree tree = (UITree) event.getComponent();
 		current = (AonFolder) tree.getRowData();
-		getFolderController().nodeSelected(current);
+		nodeSelected(current);
 	}
 
 	public AonFolder getCurrent() {
 		return current;
 	}
-	
-	public void setCurrent(AonFolder current) {
-		this.current = current;
+
+	private void nodeSelected(AonFolder node) {
+		for (ITreeListener l : listeners) {
+			l.nodeSelected(node);
+		}
+	}
+
+	/**
+	 * @return the listeners
+	 */
+	public List<ITreeListener> getListeners() {
+		return listeners;
+	}
+
+	/**
+	 * @param listeners
+	 *            the listeners to set
+	 */
+	public void setListeners(List<ITreeListener> listeners) {
+		this.listeners = listeners;
 	}
 
 	public void moveMessagesToFolder(NodeSelectedEvent event) {
 		UITree tree = (UITree) event.getComponent();
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
-   		getFolderController().moveSelectedMessages(destinyFolder);
-   		getFolderController().resetCurrentPage();
+   		FolderController folders = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
+   		folders.moveSelectedMessages(destinyFolder);
+   		folders.resetCurrentPage();
 	}
 
 	public void moveMessageToFolder(NodeSelectedEvent event) {
 		UITree tree = (UITree) event.getComponent();
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
-   		MessageController message = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+   		MessageController message = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
    		message.moveSelectedMessageAndMove(destinyFolder);
+	}
+
+	public String getAccount() {
+		return account;
 	}
 	
 	public boolean isTreeLoaded(){
 		return rootNode==null?false:true;
 	}
-
-	public FolderController getFolderController() {
-		if ( folderController == null ) {
-	    	setFolderController( (FolderController)AonUtil.getRegisteredBean(BEAN_FOLDER) );
-		}
-		return folderController;
-	}
-
-	public void setFolderController(FolderController folderController) {
-		this.folderController = folderController;
-	}
-	
-	public Boolean adviseNodeSelected(UITree tree) {
-		boolean selected = false;
-		if ( tree.isRowAvailable() ) {
-			AonFolder folder = (AonFolder) tree.getRowData();
-			selected = ObjectUtils.equals(folder, getCurrent());
-		}
-		return selected;
-	}
-	
-
 }

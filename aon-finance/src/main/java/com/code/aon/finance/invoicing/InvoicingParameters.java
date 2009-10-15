@@ -4,9 +4,6 @@ import java.util.Date;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Series;
-import com.code.aon.customer.Customer;
 
 public class InvoicingParameters {
 	
@@ -14,19 +11,18 @@ public class InvoicingParameters {
 	
 	private int year;
 	
-	private Series series;
+	private String series;
 	
 	private int number;
 	
 	private Date invoiceDate;
 	
-	private Customer customer;
+	private Integer customerId;
 	
 	private SecurityLevel securityLevel;
 	
-	private WorkPlace workPlace;
+	private Integer workPlaceId;
 	
-	private boolean invoiceRecordable;
 	
 	public Month getMonth() {
 		return month;
@@ -44,11 +40,11 @@ public class InvoicingParameters {
 		this.year = year;
 	}
 
-	public Series getSeries() {
+	public String getSeries() {
 		return series;
 	}
 
-	public void setSeries(Series series) {
+	public void setSeries(String series) {
 		this.series = series;
 	}
 
@@ -68,12 +64,12 @@ public class InvoicingParameters {
 		this.invoiceDate = invoiceDate;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	public Integer getCustomerId() {
+		return customerId;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -84,19 +80,11 @@ public class InvoicingParameters {
 		this.securityLevel = securityLevel;
 	}
 
-	public WorkPlace getWorkPlace() {
-		return workPlace;
+	public Integer getWorkPlaceId() {
+		return workPlaceId;
 	}
 
-	public void setWorkPlace(WorkPlace workPlace) {
-		this.workPlace = workPlace;
-	}
-
-	public boolean isInvoiceRecordable() {
-		return invoiceRecordable;
-	}
-
-	public void setInvoiceRecordable(boolean invoiceRecordable) {
-		this.invoiceRecordable = invoiceRecordable;
+	public void setWorkPlaceId(Integer workPlaceId) {
+		this.workPlaceId = workPlaceId;
 	}
 }

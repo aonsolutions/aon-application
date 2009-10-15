@@ -29,7 +29,7 @@
 			
 			<rich:panel styleClass="aon-content-home">
 				<aon:editDataTable id="WebInfoPage_datatable" value="#{webPage.model}"
-					var="to" rows="8" 
+					var="to" rows="10" 
 					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn aon-width-auto, aon-editDataTable-textColumn, 
 						aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
@@ -42,7 +42,7 @@
 						<a4j:support actionListener="#{webPage.onSelect}" event="onclick"  reRender="pagesForm"/>
 						<aon:outputText value="&#160;"/>
 						<f:facet name="footer">
-							<aon:div rendered="#{webPage.model.rowCount &lt; 8}">
+							<aon:div rendered="#{webPage.model.rowCount &lt; 11}">
 								<aon:commandButton id="reset"
 									styleClass="aon-icon-reset aon-icon-commandButton"
 									value="" rendered="#{!webPage.new}" actionListener="#{webPage.onReset}"
@@ -69,8 +69,6 @@
 								<aon:div>				
 									<aon:inputText value="#{webPage.to.name}"
 										rendered="#{webPage.new}" required="#{true}" size="20" />
-									<aon:outputText value="#{appBundle.infoweb_max_number_pages}" rendered="#{!webPage.new and webPage.model.rowCount &lt; 8}"/>
-									<aon:outputText value="#{appBundle.infoweb_max_pages_exceeded}" rendered="#{!webPage.new and webPage.model.rowCount &gt; 7}"/>
 								</aon:div>
 							</aon:div>
 						</f:facet>
@@ -96,7 +94,7 @@
 							</aon:selectOneMenu>
 						</f:facet>
 					</aon:column>
-
+		
 					<aon:column style="width:40px;text-align:center">
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.infoweb_page_active}" />
@@ -114,7 +112,7 @@
 								url="/images/active.png" />
 						</aon:commandLink>
 					</aon:column>
-
+		
 					<aon:column style="width:60px;text-align:left">
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.infoweb_page_position}" />
@@ -134,7 +132,7 @@
 								url="/images/down.gif" style="margin-left: 5px;"/>
 						</aon:commandLink>
 					</aon:column>
-
+			
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="&#160;"/>
@@ -177,9 +175,9 @@
 						</f:facet>
 					</aon:column>
 				</aon:editDataTable>
-
-				<aon:dataScroller2 for="WebInfoPage_datatable" showNote="true" />
-
+				
+				<aon:dataScroller dataTable="WebInfoPage_datatable" for="WebInfoPage_datatable"
+					model="#{webPage.model}" rowCount="10" showNote="true"  />
 			</rich:panel>
 		</aon:div>
 		</aon:form>

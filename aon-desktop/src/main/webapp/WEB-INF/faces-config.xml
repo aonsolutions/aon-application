@@ -23,7 +23,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.5.1</value>
+			<value>/aonResource/3.5.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -114,8 +114,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>smsManager</managed-bean-name>
+		<managed-bean-name>sms</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.desktop.applications.SMSManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>smsContact</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>

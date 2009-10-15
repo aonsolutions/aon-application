@@ -10,7 +10,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.task</artifactId>
 	<packaging>war</packaging>
-	<version>3.3.1</version>
+	<version>3.3.0</version>
 	<description>AON TASK</description>
 	<name>AON TASK</name>
 	<properties>
@@ -90,35 +90,5 @@
 			<version>2.5.1-final-20040804</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>jfree</groupId>
-			<artifactId>jfreechart</artifactId>
-			<version>1.0.1</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>gnujaxp</groupId>
-					<artifactId>gnujaxp</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-digester</groupId>
-					<artifactId>commons-digester</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-beanutils</groupId>
-					<artifactId>commons-beanutils</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-collections</groupId>
-					<artifactId>commons-collections</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 	</dependencies>
 </project>

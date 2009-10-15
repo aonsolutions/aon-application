@@ -38,7 +38,7 @@
 								</f:facet>
 								<aon:outputText value="&#160;"/>
 								<f:facet name="footer">
-									<aon:div rendered="#{companyImages.model.rowCount &lt; 16}">
+									<aon:div rendered="#{companyImages.model.rowCount &lt; 21}">
 										<aon:commandButton id="reset" reRender="imagesPanel"
 											styleClass="aon-editDataTable-button aon-icon-reset"
 											value="" rendered="#{!companyImages.new}"
@@ -55,15 +55,12 @@
 								</f:facet>
 								<aon:outputText value="#{to.description}"/>
 								<f:facet name="footer">
-									<aon:div>				
-										<aon:outputText value="#{appBundle.infoweb_max_number_images}" rendered="#{companyImages.model.rowCount &lt; 20}"/>
-										<aon:outputText value="#{appBundle.infoweb_max_images_exceeded}" rendered="#{companyImages.model.rowCount &gt; 19}"/>
-									</aon:div>
+									<aon:outputText value="&#160;"/>
 								</f:facet>
 							</aon:column>
 					
 						</aon:editDataTable>
-
+					
 						<aon:dataScroller2 for="companyImages" showNote="true" />
 					</aon:div>	
 					

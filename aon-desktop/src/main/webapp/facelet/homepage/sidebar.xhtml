@@ -42,9 +42,9 @@
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<aon:commandLink 
-					actionListener="#{contact.onSearch}" action="contact_list">
+					actionListener="#{contact.onSearch}" action="contact">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-contactos.png']}" />
-					<aon:div><aon:outputText value="#{webmailBundle.webmail_contacts}" /></aon:div>
+					<aon:div><aon:outputText value="#{groupwareBundle.aon_contacts}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
@@ -56,11 +56,11 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{smsManager.sidebarEnabled}">
+			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{sms.sidebarEnabled}">
 				<aon:commandLink 
 					actionListener="#{sms.reset}" action="sms">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-sms.png']}" />
-					<aon:div><aon:outputText value="#{smsBundle.sms_module}" /></aon:div>
+					<aon:div><aon:outputText value="#{appBundle.aon_desktop_sms}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 

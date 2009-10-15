@@ -10,13 +10,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.config</artifactId>
-	<version>3.6.0</version>
+	<version>3.3.0</version>
 	<description>AON UI CONFIG</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.4.1</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -28,13 +28,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.1.0</version>
+			<version>3.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>3.3.2</version>
+			<version>3.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -504,7 +504,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>targetLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.event.TargetLookupListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	

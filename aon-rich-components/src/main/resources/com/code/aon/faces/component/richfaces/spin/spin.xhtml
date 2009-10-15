@@ -11,13 +11,13 @@
 	<aon:div styleClass="aon-spin-control" rendered="#{controller.selectedIndex != -1}">
 		<aon:div styleClass="aon-spin-control-element"> 
 			<aon:commandButton id="#{spinId}-first" disabled="#{controller.inFirst}" immediate="true"
-				action="#{action}" actionListener="#{controller.onSelectFirst}" ajaxSingle="true"
+				action="#{action}" actionListener="#{controller.onSelectFirst}"
 				styleClass="aon-dataScroller-button #{controller.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
 			</aon:commandButton>
 		</aon:div>
 		<aon:div styleClass="aon-spin-control-element"> 
 			<aon:commandButton id="#{spinId}-previous" disabled="#{controller.inFirst}" immediate="true"
-				action="#{action}" actionListener="#{controller.onSelectPrevious}" ajaxSingle="true"
+				action="#{action}" actionListener="#{controller.onSelectPrevious}"
 				styleClass="aon-dataScroller-button #{controller.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
 			</aon:commandButton>
 		</aon:div>
@@ -29,13 +29,13 @@
 		</aon:div>
 		<aon:div styleClass="aon-spin-control-element"> 				
 			<aon:commandButton id="#{spinId}-next" disabled="#{controller.inLast}" immediate="true"
-				action="#{action}" actionListener="#{controller.onSelectNext}" ajaxSingle="true"
+				action="#{action}" actionListener="#{controller.onSelectNext}"
 				styleClass="aon-dataScroller-button #{controller.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
 			</aon:commandButton>
 		</aon:div>
 		<aon:div styleClass="aon-spin-control-element"> 
 			<aon:commandButton id="#{spinId}-last" disabled="#{controller.inLast}" immediate="true"
-				action="#{action}" actionListener="#{controller.onSelectLast}" ajaxSingle="true"
+				action="#{action}" actionListener="#{controller.onSelectLast}"
 				styleClass="aon-dataScroller-button #{controller.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
 			</aon:commandButton>
 		</aon:div>

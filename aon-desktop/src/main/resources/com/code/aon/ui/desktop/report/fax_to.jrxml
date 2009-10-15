@@ -41,7 +41,6 @@
 	<field name="fax_number" class="java.lang.String"/>
 	<field name="fax_phone_number" class="java.lang.String"/>
 	<field name="fax_page_number" class="java.lang.String"/>
-	<field name="fax_date" class="java.util.Date"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -218,8 +217,8 @@
 						height="92"
 						key="staticText-4"/>
 					<box></box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="48" isBold="true" isPdfEmbedded ="false"/>
+					<textElement>
+						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="80" isBold="true"/>
 					</textElement>
 				<text><![CDATA[FAX]]></text>
 				</staticText>
@@ -523,7 +522,7 @@
 					<textElement>
 						<font fontName="Arial" size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{fax_date}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -555,14 +554,14 @@
 					<reportElement
 						x="318"
 						y="161"
-						width="177"
+						width="160"
 						height="11"
 						key="textField"/>
 					<box></box>
 					<textElement>
 						<font fontName="Arial" size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_page_number} + " (incluida esta)"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_page_number}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

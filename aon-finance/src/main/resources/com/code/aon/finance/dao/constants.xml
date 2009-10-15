@@ -16,8 +16,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
-		<alias names="sourceId,description,discountExpression,id,invoice_id,item_id,line,price,quantity,source,item_product_type,item_product_code,taxableBase,taxes,,workPlace_id" />
-		<hibernate names="sourceId,description,discountExpression,id,invoice.id,item.id,line,price,quantity,source,item.product.type,item.product.code,taxableBase,taxes,workPlace.id" />
+		<alias names="deliveryDetail,description,discountExpression,id,invoice_id,item_id,line,price,quantity,source,item_product_type,item_product_code,taxableBase,taxes,,workPlace_id" />
+		<hibernate names="deliveryDetail,description,discountExpression,id,invoice.id,item.id,line,price,quantity,source,item.product.type,item.product.code,taxableBase,taxes,workPlace.id" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoicingGroup" sqlName="invoicing_group">

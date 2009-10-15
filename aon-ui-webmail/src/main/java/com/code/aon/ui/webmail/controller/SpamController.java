@@ -20,6 +20,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.groupware.Contact;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
@@ -27,17 +28,15 @@ import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.webmail.Contact;
+import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.bean.AonListEmail;
+import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonFolder;
-import com.code.aon.webmail.bean.AonListEmail;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
-public class SpamController extends BasicLdap implements WebMailConstants {
+public class SpamController extends BasicLdap implements AonConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(SpamController.class.getName());
 	
@@ -221,7 +220,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 	private void addContactsToWhiteList(){
 	    List contacts = null;
 		try {
-			IManagerBean bean = FormUtil.getController(BEAN_CONTACT).getManagerBean();
+			IManagerBean bean = AonUtil.getController(BEAN_CONTACT).getManagerBean();
 			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
 			e.printStackTrace();
@@ -331,8 +330,8 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			return false;
 		}
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
-    	AonFolder folder = messageController.getMessage().getParent();
-    	if (folder.isSpamFolder()) {
+    	String aonFolderName = messageController.getMessage().getParent().getName();
+    	if (AonFolder.SPAM_FOLDER_NAME.equalsIgnoreCase(aonFolderName)) {
     		return true;
     	}
 		return false;
@@ -343,8 +342,9 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			return false;
 		}
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
-    	AonFolder folder = messageController.getMessage().getParent();
-   		if (!folder.isSpamFolder() && !folder.isSentFolder()) {    		
+    	String aonFolderName = messageController.getMessage().getParent().getName();
+    	if (!AonFolder.SPAM_FOLDER_NAME.equalsIgnoreCase(aonFolderName) &&
+    			!AonFolder.SENT_FOLDER_NAME.equalsIgnoreCase(aonFolderName)) {
     		return true;
     	}
 		return false;

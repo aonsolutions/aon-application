@@ -15,12 +15,9 @@
 	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">
 		<a4j:loadStyle src="#{styleSheet}"/>
 	</c:forEach>
-	
-	<!-- Necesario si se pone el LoadScriptStrategy a ALL -->
-	<a4j:loadScript src="#{aonResource.resolve['/com/code/aon/faces/component/richfaces/rowSelector/rowSelector.js']}"/>
-
 	<a4j:loadScript src="#{aonResource.resolveLocal['/js/richFaces.js']}"/>
 	<a4j:loadScript src="#{aonResource.resolveLocal['/js/Window.js']}"/>
+	<a4j:loadScript src="/fckfaces/FCKeditor/fckeditor.js"/>
 	<a4j:loadScript src="#{aonResource.resolveLocal['/js/colorpicker.js']}"/>
 	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />
 	<ui:insert name="head" />

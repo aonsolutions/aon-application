@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 
 public class TemplateImageServlet extends HttpServlet {
-	
+
 	/**
 	 * Retrieves the required RegistryAttachment from the database
 	 * 
@@ -29,9 +29,6 @@ public class TemplateImageServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException  {
 		String template = req.getParameter("tpl");
-		boolean big = req.getParameter("big") != null;
-		String subfix = "";
-		if (big) subfix = "_grande";
 		if (template != null) {
 			InputStream is = null;
 			BufferedInputStream bis = null;
@@ -39,14 +36,14 @@ public class TemplateImageServlet extends HttpServlet {
 			BufferedOutputStream bos = null;
 			try {
 				String path = VelocityConstants.TEMPLATE_PATH;
-				String file = path + "/" + template + "/preview"+subfix+".jpg";
+				String file = path + "/" + template + "/preview.jpg";
 				File f = new File(file);
 	        	res.setContentType( "image/jpeg" );
 	        	res.setHeader("Expires", "0");
 	        	res.setHeader("Pragma", "no-cache");
 	        	res.setHeader("Cache-Control", "no-store");
 	            res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
-				if(!f.exists()) f = new File(path + "/preview"+subfix+".jpg");
+				if(!f.exists()) f = new File(path + "/preview.jpg");
 				is = new FileInputStream(f);
         		bis = new BufferedInputStream(is);
                 os = res.getOutputStream();

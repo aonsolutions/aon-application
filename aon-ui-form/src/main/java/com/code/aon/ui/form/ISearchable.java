@@ -30,10 +30,20 @@ public interface ISearchable extends ICriteriaProvider, IDataModelDataProvider {
      * @param event
      * @throws ManagerBeanException
      */
-    void addIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException;
+    void addDirectExpression(ValueChangeEvent event) throws ManagerBeanException;
+
+    /**
+     * Add a new expression to the criteria to condition the following searches.
+     * The id component is managed as the property path, replacing <code>_</code>
+     * with <code>.</code>. 
+     * 
+     * @param event
+     * @throws ManagerBeanException
+     */
+    void addDirectIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException;
     
 	/**
-	 * Add a new == expression to the criteria to condition the following searches.
+	 * Add a new expression to the criteria to condition the following searches.
 	 * The id component is managed as an alias to resolve the real property
 	 * path.
 	 * 
@@ -43,24 +53,14 @@ public interface ISearchable extends ICriteriaProvider, IDataModelDataProvider {
 	void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException;
 
 	/**
-	 * Add a new >= expression to the criteria to condition the following searches.
+	 * Add a new expression to the criteria to condition the following searches.
 	 * The id component is managed as an alias to resolve the real property
 	 * path.
 	 * 
 	 * @param event
 	 * @throws ManagerBeanException
 	 */
-	void addGreaterThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException;
-
-	/**
-	 * Add a new <= expression to the criteria to condition the following searches.
-	 * The id component is managed as an alias to resolve the real property
-	 * path.
-	 * 
-	 * @param event
-	 * @throws ManagerBeanException
-	 */
-	void addLessThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException;
+	void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException;
 	
     /**
      * Return the name of the field that corresponds to the parameter alias.

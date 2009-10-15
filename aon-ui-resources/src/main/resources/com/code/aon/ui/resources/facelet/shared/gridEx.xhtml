@@ -8,10 +8,11 @@
 		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
 		columnClasses="none, #{columnClasses}, none">
 
-		<aon:rowSelector id="#{dataTableId}-select" 
-			toggleOnClick="#{controller.to == null and !skipLineEdition}"
-			actionListener="#{controller.onSelect}" reRender="#{rowSelectorReRender}"
-			focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
+		<c:if test="#{!skipLineEdition}">
+			<aon:rowSelector id="#{dataTableId}-select" toggleOnClick="#{controller.to == null}"
+				actionListener="#{controller.onSelect}" reRender="#{rowSelectorReRender}"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
+		</c:if>
 
 		<c:if test="#{!skipResetButton}">
 			<aon:column id="#{dataTableId}-selectColumn" 

@@ -20,7 +20,7 @@
 			
 				<aon:dataTable id="noticeDataList" value="#{notice.model}"
 					var="to" rows="20" rendered="#{notice.model.rowCount > 0}"
-					columnsWidth="150,150,150,auto,auto,150">
+					columnsWidth="150,150,150,auto,auto,170">
 
 					<aon:rowSelector action="notice_form" actionListener="#{notice.onSelect}" />
 
@@ -28,44 +28,41 @@
 						<f:facet name="header">
 							<aon:outputText value="#{groupwareBundle.notice_recipient}" />
 						</f:facet>
-						<aon:outputText rendered="#{to.recipient != null}" value="#{to.recipient.name}" />
-						<aon:outputText rendered="#{to.recipient == null}" value="#{groupwareBundle.groupware_all}" />
+						<aon:outputText
+							value="#{to.recipient.name}" />
 					</aon:column>
 
 					<aon:column styleClass="aon-nowrap">
 						<f:facet name="header">
 							<aon:outputText value="#{groupwareBundle.notice_work_group}" />
 						</f:facet>
-						<aon:outputText rendered="#{to.workGroup != null}" value="#{to.workGroup.description}" />
-						<aon:outputText rendered="#{to.workGroup == null}" value="#{groupwareBundle.groupware_all}" />
+						<aon:outputText value="#{to.workGroup.description}" />
 					</aon:column>
 					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{groupwareBundle.notice_source}" />
 						</f:facet>
-						<aon:outputText value="#{to.source}" />
+						<aon:outputText value="&#160; #{to.source}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{groupwareBundle.notice_company}" />
 						</f:facet>
-						<aon:outputText value="#{to.company}" />
+						<aon:outputText value="&#160; #{to.company}" />
 					</aon:column>
 					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{groupwareBundle.notice_subject}" />
 						</f:facet>
-						<aon:outputText value="#{to.subject}">
-							<aon:abbreviateConverter maxWidth="50" />
-						</aon:outputText>
+						<aon:outputText value="&#160; #{to.subjectHead}" />
 					</aon:column>						
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
+							<aon:outputText value="#{groupwareBundle.aon_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.date}">
 							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
@@ -74,7 +71,7 @@
 					</aon:column>				
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="noticeDataList" showNote="true" />
+				<aon:dataScroller for="noticeDataList" rowCount="#{notice.model.rowCount}" showNote="true" />
 
 			</aon:div>
 

@@ -92,6 +92,10 @@
 			<to-view-id>/facelet/profile/user/form.xhtml</to-view-id>
 		</navigation-case>
 	    <navigation-case>
+	        <from-outcome>sms</from-outcome>
+	        <to-view-id>/facelet/messaging/sms/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
 	        <from-outcome>fax</from-outcome>
 	        <to-view-id>/facelet/messaging/fax/form.xhtml</to-view-id>
 	    </navigation-case>

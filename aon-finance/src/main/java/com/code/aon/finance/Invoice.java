@@ -242,26 +242,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     }
 
     /**
-     * Gets the tax date.
-     * 
-     * @return the tax date
-     */
-    @Transient
-    public Date getTaxDate() {
-        return issueDate;
-        // Retorna fecha de factura , hasta que la columna esté en la BD.        
-    }
-
-    /**
-     * Sets the tax date.
-     * 
-     * @param taxDate the tax date
-     */
-    public void setTaxDate(Date taxDate) {
-        // Nada, hasta que la columna esté en la BD.
-    }
-
-    /**
      * Gets the number.
      * 
      * @return the number
@@ -564,17 +544,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		return new DiscountExpression("0.0");
 	}
 	
-	@Transient
-	public boolean isRecordable() {
-		return getStatus() == InvoiceStatus.PENDING;
-	}
-	
-	@Transient
-	public boolean isRecorded() {
-		return getStatus() == InvoiceStatus.SCORED;
-	}
-
-	@Override
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
     		return super.equals(obj);
@@ -592,8 +562,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return 0;
+	}
 
 }

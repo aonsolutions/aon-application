@@ -1,8 +1,7 @@
 .aon-tree-column{
 	width:200px;
-	padding:5px 5px 5px 5px;	
+	padding:5px 0 5px 5px;	
 	vertical-align:top !important;
-	
 	}
 .aon-messages-column{
 	width:auto;
@@ -26,87 +25,15 @@
  .aon-icon-big-sendingMail{
 	background:transparent url(../images/aon-sending-mail.gif) scroll left center no-repeat;	
  }
-.aon-dataScroller-text, .aon-dataScroller-buttons{
-	padding:0 1em 3px 1em;
-	}
-.aon-dataScroller{
-}
-.aon-dataScroller table{
-	line-height:18px;
-	height:18px;
-}
-/* botones menu top */
-.aon-top-menu{
-	padding:4px 1em;
-	}
-.aon-top-menu .aon-top-menu-item, .aon-top-menu .aon-top-menu-item:hover{
-	display:inline;
-	border:transparent 1px solid;
-}
-.aon-top-menu .aon-top-menu-item:hover{
-	border:transparent 1px solid;
-}
-.aon-tree-node-active{
-	background-color:#fffadc;
-	border:#d3c061 1px solid;
-	font-weight:bold;
-	}
-.aon-tree-node-active:hover{
-	text-decoration:none;
-	color:#000000;
-	}
-.aon-table-button{
-	border-left:#d7d7d7 1px solid;
-	border-top:#d7d7d7 1px solid;
-	border-right:#808080 1px solid;
-	border-bottom:#808080 1px solid;
-	text-transform:uppercase;
-	font-weight:bold;
-	font-size:0.9em;
-}
-.aon-width-130{
-	width:130px;
-}
-/* para evitar el parpadeo del hover */
-.aon-top-menu-item{
-	border:0 !important;
-}
-/* sin fondo blanco porque no tienen desplegales */
-.aon-top-menu-item:hover{
-	background-color:transparent;
-	border:0 !important;
-	}
-/* ampliamos el texto */
-.aon-text-bigger{
-	font-size:1.2em;
+ 
+  /***********  FILE UPLOAD  ************/
+ 
+ .rich-fileupload-list-decor, .rich-fileupload-toolbar-decor{
+ 	border:0;
+ 	background-color:transparent;
  }
- .aon-text-smaller{
-	font-size:0.8em;
- }
- .aon-search-commandButton-left{
- 	background-position:left center;
- }
- .aon-search-commandButton-right{
- 	background-position:right center;
- 	height:24px;
- }
- .new-mail-button{
-    font-weight:bold;
-	cursor:hand;
-	background:transparent url(images/aon-content/aon-fileupload-button.png) scroll left center no-repeat;	
-	padding:4px 1em !important;
-	margin:0;
-	border:transparent 1px solid;
-	width:100px;
-}
-	
-.aon-icon-dropDown{
-	background:transparent url(../images/aon-icon-dropwDown.png) scroll left center no-repeat;
-}
+.rich-fileupload-list-overflow{
+	}
+.rich-fileupload-button{
 
-.aon-message-server-error {
-	padding:5px 1em 5px 0px;
-	font-size:1.1em;
-	font-weight:bold;
-	background-position:left center !important;	
-}
+  }

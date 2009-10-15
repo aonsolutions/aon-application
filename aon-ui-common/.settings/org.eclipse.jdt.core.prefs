@@ -1,9 +1,9 @@
-#Mon Dec 29 15:31:13 CET 2008
+#Mon Nov 20 09:37:19 CET 2006
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.doc.comment.support=enabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadoc=error
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTags=enabled
-org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsDeprecatedRef=enabled
+org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsDeprecatedRef=disabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsNotVisibleRef=enabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsVisibility=protected
 org.eclipse.jdt.core.compiler.problem.missingJavadocComments=error

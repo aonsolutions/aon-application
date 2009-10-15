@@ -2,14 +2,18 @@ package com.code.aon.finance.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.aon.finance.Bank;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.FinanceSales;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
+import com.code.aon.finance.RegistryBank;
+import com.code.aon.finance.RegistryPayMethod;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.InvoicingGroup;
@@ -19,6 +23,31 @@ import com.code.aon.finance.InvoicingGroupDetail;
 * Interface for holding entity properties constants.
 */ 
 public interface IFinanceAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Bank entity.
+	*/ 
+	DAOConstantsEntry BANK_ENTRY = DAOConstants.getDAOConstant(Bank.class);
+
+	/** 
+	* Alias value: Bank_code
+	* Hibernate value: Bank.code
+	*/
+	String  BANK_CODE = BANK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Bank_id
+	* Hibernate value: Bank.id
+	*/
+	String  BANK_ID = BANK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Bank_name
+	* Hibernate value: Bank.name
+	*/
+	String  BANK_NAME = BANK_ENTRY.getAliasNames()[2];
 
 
 
@@ -345,6 +374,31 @@ public interface IFinanceAlias {
 
 
 	/** 
+	* DAOConstantsEntry for FinanceSales entity.
+	*/ 
+	DAOConstantsEntry FINANCE_SALES_ENTRY = DAOConstants.getDAOConstant(FinanceSales.class);
+
+	/** 
+	* Alias value: FinanceSales_finance_id
+	* Hibernate value: FinanceSales.finance.id
+	*/
+	String  FINANCE_SALES_FINANCE_ID = FINANCE_SALES_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FinanceSales_id
+	* Hibernate value: FinanceSales.id
+	*/
+	String  FINANCE_SALES_ID = FINANCE_SALES_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FinanceSales_sales_id
+	* Hibernate value: FinanceSales.sales.id
+	*/
+	String  FINANCE_SALES_SALES_ID = FINANCE_SALES_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
 	* DAOConstantsEntry for Invoice entity.
 	*/ 
 	DAOConstantsEntry INVOICE_ENTRY = DAOConstants.getDAOConstant(Invoice.class);
@@ -514,10 +568,10 @@ public interface IFinanceAlias {
 	DAOConstantsEntry INVOICE_DETAIL_ENTRY = DAOConstants.getDAOConstant(InvoiceDetail.class);
 
 	/** 
-	* Alias value: InvoiceDetail_sourceId
-	* Hibernate value: InvoiceDetail.sourceId
+	* Alias value: InvoiceDetail_deliveryDetail
+	* Hibernate value: InvoiceDetail.deliveryDetail
 	*/
-	String  INVOICE_DETAIL_SOURCE_ID = INVOICE_DETAIL_ENTRY.getAliasNames()[0];
+	String  INVOICE_DETAIL_DELIVERY_DETAIL = INVOICE_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: InvoiceDetail_description
@@ -639,6 +693,92 @@ public interface IFinanceAlias {
 	* Hibernate value: InvoiceTax.taxType
 	*/
 	String  INVOICE_TAX_TAX_TYPE = INVOICE_TAX_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for RegistryBank entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_BANK_ENTRY = DAOConstants.getDAOConstant(RegistryBank.class);
+
+	/** 
+	* Alias value: RegistryBank_bankAccount
+	* Hibernate value: RegistryBank.bankAccount
+	*/
+	String  REGISTRY_BANK_BANK_ACCOUNT = REGISTRY_BANK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryBank_bank_id
+	* Hibernate value: RegistryBank.bank.id
+	*/
+	String  REGISTRY_BANK_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryBank_id
+	* Hibernate value: RegistryBank.id
+	*/
+	String  REGISTRY_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RegistryBank_registry_id
+	* Hibernate value: RegistryBank.registry.id
+	*/
+	String  REGISTRY_BANK_REGISTRY_ID = REGISTRY_BANK_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RegistryBank_sufix
+	* Hibernate value: RegistryBank.sufix
+	*/
+	String  REGISTRY_BANK_SUFIX = REGISTRY_BANK_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for RegistryPayMethod entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_PAY_METHOD_ENTRY = DAOConstants.getDAOConstant(RegistryPayMethod.class);
+
+	/** 
+	* Alias value: RegistryPayMethod_daysBetweenPayments
+	* Hibernate value: RegistryPayMethod.daysBetweenPayments
+	*/
+	String  REGISTRY_PAY_METHOD_DAYS_BETWEEN_PAYMENTS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryPayMethod_daysToFirstPayment
+	* Hibernate value: RegistryPayMethod.daysToFirstPayment
+	*/
+	String  REGISTRY_PAY_METHOD_DAYS_TO_FIRST_PAYMENT = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryPayMethod_id
+	* Hibernate value: RegistryPayMethod.id
+	*/
+	String  REGISTRY_PAY_METHOD_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RegistryPayMethod_numberOfPayments
+	* Hibernate value: RegistryPayMethod.numberOfPayments
+	*/
+	String  REGISTRY_PAY_METHOD_NUMBER_OF_PAYMENTS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RegistryPayMethod_paymentDays
+	* Hibernate value: RegistryPayMethod.paymentDays
+	*/
+	String  REGISTRY_PAY_METHOD_PAYMENT_DAYS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: RegistryPayMethod_payment_id
+	* Hibernate value: RegistryPayMethod.payment.id
+	*/
+	String  REGISTRY_PAY_METHOD_PAYMENT_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: RegistryPayMethod_registry_id
+	* Hibernate value: RegistryPayMethod.registry.id
+	*/
+	String  REGISTRY_PAY_METHOD_REGISTRY_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[6];
 
 
 

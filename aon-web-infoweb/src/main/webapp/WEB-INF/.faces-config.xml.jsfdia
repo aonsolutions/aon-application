@@ -42,19 +42,10 @@
  <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::1" SHAPE="32,705,0,0">
   <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::1" NAME="item">
    <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
-    ID="home::#homepage.xhtml" NAME="output" PATH="/homepage.xhtml"
-    TARGET="rules:#homepage.xhtml" TITLE="home"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#home.jsf"
-  PATH="/home.jsf" SHAPE="240,721,0,0"/>
- <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::2" SHAPE="32,1041,0,0">
-  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::2" NAME="item">
-   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
     ID="logout::#home.jsf" NAME="output" PATH="/home.jsf"
     TARGET="rules:#home.jsf" TITLE="logout"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#homepage.xhtml"
-  PATH="/homepage.xhtml" SHAPE="240,945,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#home.jsf"
+  PATH="/home.jsf" SHAPE="240,721,0,0"/>
 </PROCESS>

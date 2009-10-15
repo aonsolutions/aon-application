@@ -7,7 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<rich:modalPanel id="waitProccess" height="190" width="370"
+	<rich:modalPanel id="waitProccess" height="150" width="270"
 		zindex="2000">
 
 		<f:facet name="header">
@@ -19,10 +19,9 @@
 		<aon:div styleClass="aon-popupWindow-content">
 			<aon:div styleClass="aon-popupWindow-content-internal">
 
-	       		<aon:div styleClass="aon-timer" >
-	       			<aon:div styleClass="aon-timer-internal">
-	       				<aon:outputText value="#{bundle.aon_in_progress}" />
-	       			</aon:div> 
+	       		<aon:graphicImage value="#{aonResource.resolve['/images/aon-content/aon-timer.gif']}" />
+	       		<aon:div styleClass="aon-timer-title" >
+	       			<aon:outputText value="#{bundle.aon_in_progress}" /> 
 	       		</aon:div>
 
 			</aon:div>

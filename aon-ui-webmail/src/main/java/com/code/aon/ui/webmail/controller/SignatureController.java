@@ -21,20 +21,19 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
-import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SignatureController extends GridController {
 
-	private static final String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
+	private static final String SIGNATURE_DUPLICATED = "aon_webmail_signature_duplicated";
 
 	private static final Logger LOGGER = Logger.getLogger(SignatureController.class.getName());
 
@@ -43,12 +42,19 @@ public class SignatureController extends GridController {
 	private BasicManagerBean ldapManagerBean;
 	
 	private List<SelectItem> signatures;
+
+	public LdapDAO getDAO( AuthPrincipal principal ) {
+		LdapDAO dao = new LdapDAO(Signature.class);
+		DistinguishedName baseDN = AonDN.getUserSignaturesDN(principal.getDomain(), principal.getShortName());
+		LOGGER.info( "Signature DAO DN:" + baseDN );
+		dao.setBaseDN( baseDN.toString() );
+		return dao;
+	}
 	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
-			AuthPrincipal auth = Utils.getAuthPrincipal();
-			this.dao = WebmailUtil.getSignatureDAO(auth.getDomain(), auth.getShortName());
+			this.dao = getDAO(Utils.getAuthPrincipal());
 			this.ldapManagerBean = new BasicManagerBean(dao);
 		}
 		return this.ldapManagerBean;
@@ -56,7 +62,7 @@ public class SignatureController extends GridController {
 	
 	private void addMessageExpression( String messageId ) {
 		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);
+		ResourceBundle bundle = ResourceBundle.getBundle(AonConstants.RESOURCE_BUNDLE, locale);
 		addMessage( bundle.getString(messageId) );
 	}
 	
@@ -118,7 +124,7 @@ public class SignatureController extends GridController {
 	private List<MailAccount> getReferences( String id ) {
 		List<MailAccount> list = null;
 		try {
-			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+			IManagerBean mailAccountBean = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_SIGNATURE_ID), id);
 			list = (List) mailAccountBean.getList(criteria);
@@ -130,7 +136,7 @@ public class SignatureController extends GridController {
 
 	private void updateReferences( String id, Signature signature ) {
 		try {
-			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+			IManagerBean mailAccountBean = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			for( MailAccount mailAccount : getReferences(id) ) {
 				mailAccount.setSignature( signature );
 				mailAccountBean.update( mailAccount );

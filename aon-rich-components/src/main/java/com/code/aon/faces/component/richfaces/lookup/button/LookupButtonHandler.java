@@ -15,6 +15,7 @@ import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.el.LegacyMethodBinding;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
@@ -136,10 +137,15 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		if (! FaceletUtil.hasValue(ctx, tag, HTML.TITLE_ATTR) ) {
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, getTitle(type) );			
 		}
+		TagAttribute windowTitle = getAttribute(WINDOW_TITLE);
+		if ( windowTitle != null ) {
+			String value = windowTitle.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, WINDOW_TITLE, value );
+		}
 		TagAttribute vcl = getAttribute(LOOKUP_CHANGE_LISTENER);
 		if ( vcl != null ) {
 			MethodExpression me = vcl.getMethodExpression(ctx, null, FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG);
-			button.setLookupChangeListener( me );
+			button.setLookupChangeListener( new LegacyMethodBinding(me) );
 		}
 		setActionListener(ctx, button);
 		String id = getModalPanelId(ctx, lookup) + "ReRender";

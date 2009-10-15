@@ -2,23 +2,26 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="columnClasses"
+			value="aon-nowrap aon-editDataTable-textColumn,
+			aon-nowrap aon-editDataTable-textColumn,
+			aon-width-150 aon-nowrap aon-editDataTable-textColumn" />
 
 		<ui:define name="columns">
-			<aon:column width="300" styleClass="aon-nowrap aon-editDataTable-textColumn">
+			<aon:column width="300">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryBank_code" value="#{configBundle.config_bank}" />
+					<aon:outputText value="#{configBundle.config_bank}" />
 				</f:facet>
 				<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
 
 				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-					<aon:lookupInputText id="RegistryBank_code" property="#{controller.to.bank}"
-						reRender="RegistryBank_name" lookup="#{bankLookup}"
+					<aon:lookupInputText id="Bank_code"
+						reRender="Bank_name" lookup="#{bankLookup}"
 						value="#{controller.to.bank.code}" size="5">
 						<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
 					</aon:lookupInputText>
@@ -28,24 +31,24 @@
 						lookup="#{bankLookup}" minHeight="460" minWidth="650"
 						property="#{controller.to.bank}">
 					</aon:lookupButton>
-					<aon:inputText id="RegistryBank_name"
+					<aon:inputText id="Bank_name"
 						value="#{controller.to.bank.name}"
 						size="50" disabled="true" />							
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-						<aon:lookupInputText id="RegistryBank_code-New" property="#{controller.to.bank}"
-							reRender="RegistryBank_name-New" lookup="#{bankLookup}"
+						<aon:lookupInputText id="Bank_code-New"
+							reRender="Bank_name-New" lookup="#{bankLookup}"
 							value="#{controller.to.bank.code}" size="5">
 							<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
 						</aon:lookupInputText>
 						<aon:lookupButton 
 							windowTitle="#{configBundle.config_bank_selection}"
-							selectReRender="RegistryBank_code-New,RegistryBank_name-New" actionType="search"
+							selectReRender="Bank_code-New,Bank_name-New" actionType="search"
 							lookup="#{bankLookup}" minHeight="460" minWidth="650"
 							property="#{controller.to.bank}">
 						</aon:lookupButton>
-						<aon:inputText id="RegistryBank_name-New"
+						<aon:inputText id="Bank_name-New"
 							value="#{controller.to.bank.name}"
 							size="50" disabled="true" />							
 					</aon:div>
@@ -54,22 +57,19 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryBank_bankAccount" value="#{configBundle.config_bank_account}" />
+					<aon:outputText value="#{configBundle.config_bank_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}" rendered="#{formList}" />
 				<aon:div rendered="#{formEdit}">
-					<aon:inputText label="#{configBundle.config_bank_code}"
-						value="#{controller.to.bankAccount.office}" required="true"
+					<aon:inputText value="#{controller.to.bankAccount.office}" required="true"
 						size="4" maxlength="4">
 						<f:validateLength minimum="4" maximum="4" />
 					</aon:inputText>
-					<aon:inputText label="#{configBundle.config_bank_control}"
-						value="#{controller.to.bankAccount.control}" required="true"
+					<aon:inputText value="#{controller.to.bankAccount.control}" required="true"
 						size="2" maxlength="2">
 						<f:validateLength minimum="2" maximum="2" />
 					</aon:inputText>
-					<aon:inputText id="RegistryBank_bankAccount"
-						value="#{controller.to.bankAccount.account}" required="true"
+					<aon:inputText value="#{controller.to.bankAccount.account}" required="true"
 						size="10" maxlength="10">
 						<f:validateLength minimum="10" maximum="10" />
 					</aon:inputText>
@@ -77,41 +77,34 @@
 
 				<f:facet name="footer">
 					<aon:div rendered="#{formNew}">
-						<aon:inputText label="#{configBundle.config_bank_code}"
-							value="#{controller.to.bankAccount.office}" required="true"
+						<aon:inputText value="#{controller.to.bankAccount.office}" required="true"
 							size="4" maxlength="4">
 							<f:validateLength minimum="4" maximum="4" />
 						</aon:inputText>
-						<aon:inputText label="#{configBundle.config_bank_control}"
-							value="#{controller.to.bankAccount.control}" required="true"
+						<aon:inputText value="#{controller.to.bankAccount.control}" required="true"
 							size="2" maxlength="2">
 							<f:validateLength minimum="2" maximum="2" />
 						</aon:inputText>
-						<aon:inputText id="RegistryBank_bankAccount-New"
-							value="#{controller.to.bankAccount.account}" required="true"
+						<aon:inputText value="#{controller.to.bankAccount.account}" required="true"
 							size="10" maxlength="10">
 							<f:validateLength minimum="10" maximum="10" />
 						</aon:inputText>
 					</aon:div>
 				</f:facet>
 			</aon:column>
-			
-			<c:if test="#{showSuffix}">
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputLabel for="RegistryBank_suffix" value="#{configBundle.config_bank_sufix}" />
-					</f:facet>
-					<aon:outputText value="#{to.sufix}" rendered="#{formList}" />
-					<aon:inputText id="RegistryBank_suffix"
-						value="#{to.sufix}" rendered="#{formEdit}"
-						size="5" maxlength="3" />
-					<f:facet name="footer">
-						<aon:inputText id="RegistryBank_suffix-New"
-							value="#{controller.to.sufix}" rendered="#{formNew}"
-							size="5" maxlength="3" />
-					</f:facet>
-				</aon:column>
-			</c:if>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.config_bank_sufix}" />
+				</f:facet>
+				<aon:outputText value="#{to.sufix}" rendered="#{formList}" />
+				<aon:inputText value="#{to.sufix}" rendered="#{formEdit}"
+					size="5" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText value="#{controller.to.sufix}"
+						rendered="#{formNew}" size="5" maxlength="3" />
+				</f:facet>
+			</aon:column>
 
 		</ui:define>
 	</ui:decorate>

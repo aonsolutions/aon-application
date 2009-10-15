@@ -38,9 +38,8 @@ public class CorporateIdentityDocumentServlet extends RegistryAttachmentServlet 
 			List list = getManagerBean().getList(criteria);
 			if (list.size() > 0) {
 				RegistryAttachment ra = (RegistryAttachment) list.get(0);
-				res.setHeader("Content-Disposition", "attachment; filename="+ra.getDescription()+";");
-				String mt = ra.getMimeType()==null?"application/octet-stream":ra.getMimeType().getName();
-				res.setContentType(mt);
+				res.setHeader("Content-Disposition", "attachment; filename="+ra.getDescription()+"."+ra.getMimeType().getExtension()+";");
+				res.setContentType(ra.getMimeType().getName());
 				res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 				res.getOutputStream().write(ra.getData());
 				res.flushBuffer();

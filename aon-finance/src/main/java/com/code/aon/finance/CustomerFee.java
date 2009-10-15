@@ -14,17 +14,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
-import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.finance.enumeration.BillingPeriod;
 
@@ -36,7 +33,7 @@ import com.code.aon.finance.enumeration.BillingPeriod;
  */
 @Entity
 @Table(name="customer_fee")
-public class CustomerFee implements ITransferObject, ICalculable {
+public class CustomerFee implements ITransferObject {
 
 	/**
 	 * 
@@ -375,32 +372,4 @@ public class CustomerFee implements ITransferObject, ICalculable {
 		calendar.set(billingDateYear, getBillingDateMonth().getValue(), 1);
 		setBillingDate(calendar.getTime());
 	}
-
-	@Override
-	@Transient
-	public double getTaxes() throws ManagerBeanException {
-		return 0;
-	}
-
-	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
-		}
-		if (obj instanceof CustomerFee) {
-			CustomerFee o = (CustomerFee) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
 }

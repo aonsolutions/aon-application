@@ -13,7 +13,7 @@
 
 				<ui:include
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{configBundle.config_bank_module}" />
+					<ui:param name="toolbarTitle" value="#{financeBundle.finance_banks}" />
 					<ui:param name="controller" value="#{bank}" />
 				</ui:include>
 
@@ -27,30 +27,30 @@
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="Bank_name" value="#{bundle.aon_name}" />
+									<aon:outputText value="#{bundle.aon_name}" />
 								</f:facet>
-								<aon:outputText value="#{to.name}" rendered="#{formList}" />
-								<aon:inputText id="Bank_name"
-									rendered="#{formEdit}" size="40" maxlength="64"
+								<aon:outputText value="#{to.name}" rendered="#{to.id!=bank.to.id}" />
+								<aon:inputText rendered="#{to.id==bank.to.id}" 
+									size="40" maxlength="64"
 									value="#{bank.to.name}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText id="Bank_name-New"
-										rendered="#{formNew}" size="40" maxlength="64"
+									<aon:inputText rendered="#{bank.new}" 
+										size="40" maxlength="64"
 										value="#{bank.to.name}" required="true" />
 								</f:facet>
 							</aon:column>
 							
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="Bank_code" value="#{bundle.aon_id}" />
+									<aon:outputText value="#{bundle.aon_id}" />
 								</f:facet>
-								<aon:outputText value="#{to.code}" rendered="#{formList}" />
-								<aon:inputText id="Bank_code"
-									rendered="#{formEdit}" maxlength="4" size="6"
+								<aon:outputText value="#{to.code}" rendered="#{to.id!=bank.to.id}" />
+								<aon:inputText rendered="#{to.id==bank.to.id}"
+									maxlength="4" size="6"
 									value="#{bank.to.code}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText id="Bank_code-New"
-										rendered="#{formNew}" value="#{bank.to.code}"
+									<aon:inputText rendered="#{bank.new}" 
+										value="#{bank.to.code}"
 										required="true" maxlength="4" size="6"/>
 								</f:facet>
 							</aon:column>

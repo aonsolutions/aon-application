@@ -19,8 +19,9 @@ import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.LinesController;
 
-public class CampaignActionTargetController extends BasicController {
+public class CampaignActionTargetController extends LinesController {
 
 	private List<Integer> getCurrentTargets() throws ManagerBeanException {
 		Set<Integer> targets = new HashSet<Integer>();

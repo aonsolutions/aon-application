@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -15,14 +14,15 @@ import org.richfaces.model.UploadItem;
 import com.code.aon.common.IAttachment;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.common.io.IAonFileListener;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.GridController;
 
-public class CorporateIdentityAttachController extends BasicController implements IAonFileListener {
+public class CorporateIdentityAttachController extends GridController implements IAonFileListener {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
 
 	private long maximumSize = -1;
+	
 
 	public CorporateIdentityAttachController() {
 		this.maximumSize = -1;
@@ -59,11 +59,6 @@ public class CorporateIdentityAttachController extends BasicController implement
 		this.aonFile = aonFile;
 	}
 
-	public boolean isUploaded() {
-		if (this.aonFile != null && this.aonFile.getData().length > 0) return true;
-		else return false;
-	}
-	
 	public void fileUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
@@ -75,7 +70,6 @@ public class CorporateIdentityAttachController extends BasicController implement
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			getAttachment().setDescription(FilenameUtils.getName(item.getFileName()));
 			f.addAonFileListener(this);
 			setAonFile(f);
 		} catch (IOException e) {
@@ -83,11 +77,6 @@ public class CorporateIdentityAttachController extends BasicController implement
 		}
 	}
 
-	public String getFilename() {
-		if (getAonFile() != null) return getAonFile().getFileName();
-		else return "Undefined.";
-	}
-	
 	public void fileDeleted(AonFile aonFile) {
 		setAonFile(null);
 	}
@@ -99,5 +88,5 @@ public class CorporateIdentityAttachController extends BasicController implement
 			attach.setMimeType( null );
 		}
 	}
-	
+
 }

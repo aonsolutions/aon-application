@@ -1,7 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import java.util.logging.Logger;
-
 import com.code.aon.marketing.Question;
 import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ui.form.BasicController;

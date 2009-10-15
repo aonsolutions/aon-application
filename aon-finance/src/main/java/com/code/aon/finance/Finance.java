@@ -17,9 +17,6 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.Bank;
-import com.code.aon.config.BankAccount;
-import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.registry.Registry;
@@ -165,7 +162,7 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 * @return the bank account
 	 */
 	@Column(name="bank_account", length=30)
-	@Type(type="com.code.aon.config.hibernate.BankAccountType")
+	@Type(type="com.code.aon.finance.hibernate.BankAccountType")
 	public BankAccount getBankAccount() {
 		return bankAccount;
 	}
@@ -360,8 +357,7 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }
