@@ -18,111 +18,16 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="4" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-auto">
-					<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
-					<aon:inputText id="Item_product_code" value="#{item.to.product.code}"
-						required="true" size="15" maxLength="15" onblur="toUpperCase(this);" />
-
-					<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Item_status" value="#{item.to.status}">
-						<f:selectItems value="#{productCollections.productStatuses}" />
-					</aon:selectOneMenu>
-				</aon:panelGrid>
-
-				<aon:panelGrid styleClass="aon-margin-top"
-					columns="2" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
-					<aon:outputLabel for="Item_product_name" value="#{bundle.aon_description}" />
-					<aon:inputText id="Item_product_name" value="#{item.to.product.name}"
-						required="true" size="100" maxLength="64" />
-
-					<aon:outputLabel for="Item_product_detail" value="#{productBundle.product_detail}" />
-					<aon:inputTextarea id="Item_product_detail" cols="100" rows="3" 
-						value="#{item.to.description}"/>
-				</aon:panelGrid>
-
-				<aon:panelGrid columns="4" styleClass="aon-margin-top" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-auto">
-					<aon:outputLabel for="Item_product_category" value="#{productBundle.product_category}" />
-					<aon:selectOneMenu id="Item_product_category" value="#{item.to.product.category}">
-						<f:selectItems value="#{productCollections.categories}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Item_product_brand" value="#{productBundle.product_brand}" />
-					<aon:selectOneMenu id="Item_product_brand" value="#{item.to.product.brand}">
-						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{productCollections.brands}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Item_product_type" value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Item_product_type" value="#{item.to.product.type}">
-						<f:selectItems value="#{productCollections.productTypes}" />
-					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="Item_internet" value="#{productBundle.product_internet}" />
-					<aon:selectOneRadio id="Item_internet" value="#{item.to.internet}">
-						<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}"/>
-						<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
-					</aon:selectOneRadio>
-					
-					<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
-					<aon:inputText id="Item_purchase_price" value="#{item.to.purchasePrice}"
-						size="10">
-						<f:validateDoubleRange />
-					</aon:inputText>
-
-					<aon:outputLabel for="Item_product_vat" value="#{bundle.aon_vat}" />
-					<aon:div>
-						<aon:selectOneMenu id="Item_product_vat" value="#{item.to.product.vat}"
-							ajaxSingle="true" reRender="Item_product_vat_percentage,Item_sales_price">
-							<f:selectItems value="#{configCollections.vatTaxes}" />
-						</aon:selectOneMenu>
-						<aon:outputText id="Item_product_vat_percentage" value="#{item.to.product.vat.percentage}" />
-						<aon:outputLabel value="%" />
-					</aon:div>
-
-					<aon:outputLabel for="Item_price" value="#{bundle.aon_taxable_base}" />
-					<aon:inputText id="Item_price" value="#{item.to.price}"
-						reRender="Item_sales_price" required="true" size="10">
-						<f:validateDoubleRange />
-					</aon:inputText>
-
-					<aon:outputLabel for="Item_product_retention" value="#{bundle.aon_retention}" />
-					<aon:div>
-						<aon:selectOneMenu id="Item_product_retention" value="#{item.to.product.retention}"
-							ajaxSingle="true" reRender="Item_product_retention_percentage,Item_sales_price">
-							<f:selectItem itemLabel="-" itemValue="" />
-							<f:selectItems value="#{configCollections.retentionTaxes}" />
-						</aon:selectOneMenu>
-						<aon:panelGroup id="Item_product_retention_percentage">
-							<aon:outputText value="#{item.to.product.retention.percentage}" />
-							<aon:outputLabel value="%" rendered="#{item.to.product.retention!=null}" />
-						</aon:panelGroup>
-					</aon:div>
-
-					<aon:outputLabel for="Item_sales_price" value="#{bundle.aon_sales_price}" />
-					<aon:inputText id="Item_sales_price" value="#{item.salesPrice}"
-						reRender="Item_price"
-						valueChangeListener="#{item.onSalesPriceChanged}"
-						size="10">
-						<f:validateDoubleRange/>
-					</aon:inputText>
+			
+				<ui:include src="/com/code/aon/ui/product/facelet/item/formContent.xhtml">
+					<ui:param name="controller" value="#{item}"/>
+				</ui:include>
 				
-					<aon:outputLabel value="#{productBundle.product_inventoriable}" />
-					<aon:selectBooleanCheckbox id="Item_product_inventoriable" value="#{item.to.product.inventoriable}" />
-				</aon:panelGrid>
-				
-				<aon:panelGrid styleClass="aon-margin-top"
-					columns="2" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
-					<c:if test="#{aonConfiguration.bean.product.showAccount}">
+				<c:if test="#{aonConfiguration.bean.product.showAccount}">
+					<aon:panelGrid styleClass="aon-margin-top"
+						columns="2" style="width: 100%;"
+						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+
 						<aon:outputLabel for="Item_product_sales_account" value="#{productBundle.product_sales_account}" />
 						<aon:div>
 							<ui:include
@@ -158,19 +63,22 @@
 								<ui:param name="ELExpression" value="item.to.product.purchaseAccount" />
 							</ui:include>
 						</aon:div>
-					</c:if>
-				</aon:panelGrid>
-				
-				<aon:panelTabSet id="itemAttachTab" >
-					<c:if test="#{aonConfiguration.bean.product.showAttachment}">
-						<aon:panelTab label="#{productBundle.product_attachment}">
-							<ui:include src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
-								<ui:param name="controller" value="#{itemAttach}" />
-								<ui:param name="skipCategoryColumn" value="true" />
-							</ui:include>
-						</aon:panelTab>	
-					</c:if>
-				</aon:panelTabSet>
+					</aon:panelGrid>
+				</c:if>
+
+				<c:if test="#{!item.new and aonConfiguration.bean.product.showAttachment}">		
+					<aon:div styleClass="aon-form-group">
+						<aon:div styleClass="aon-form-group-title">
+							<aon:div styleClass="aon-form-group-title-internal">
+								<aon:outputLabel for="itemAttachData" value="#{productBundle.product_attachment}" />
+							</aon:div>
+						</aon:div>
+						<ui:include src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
+							<ui:param name="controller" value="#{itemAttach}" />
+							<ui:param name="skipCategoryColumn" value="true" />
+						</ui:include>
+					</aon:div>
+				</c:if>
 			</aon:div>
 		</aon:form>
 	</ui:define>
