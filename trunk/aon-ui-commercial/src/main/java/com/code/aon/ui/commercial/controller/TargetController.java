@@ -14,6 +14,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.commercial.ICommercialMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -29,7 +30,7 @@ public class TargetController extends BasicController {
 	private String selectedTab;
 	
 	public TargetController() {
-		setBundleName(ICommercialConstants.BUNDLE_NAME);
+		setBundleName(ICommercialMessages.BUNDLE_KEY);
 	}
 
 	public List<SelectItem> getSegments() {
