@@ -31,7 +31,7 @@ public abstract class ValueHolder implements ITransferObject {
 	@Column(nullable = false)
     private Integer id;
 
-	@Column(name = "value_text", length = 64)
+	@Column(name = "value_text", length = 1024)
     private String text;
 
 	@Temporal(TemporalType.TIMESTAMP)

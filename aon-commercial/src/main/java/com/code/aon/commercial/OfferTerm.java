@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -39,8 +41,8 @@ public class OfferTerm implements ITransferObject {
     /** The description. */
     private String description;
 
-    /** If the OfferTerm is signed. */
-    private boolean general;    
+    /** If the OfferTerm is particular. */
+    private boolean particular;    
     
 	/**
 	 * Gets the id.
@@ -70,6 +72,8 @@ public class OfferTerm implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn( name="offer", nullable=false , updatable=false)
+    @ForeignKey(name = "FK_OFFER_TERM_OFFER")
+    @Index(name = "IDX_OFFER_TERM_OFFER")	
 	public Offer getOffer() {
 		return offer;
 	}
@@ -123,22 +127,22 @@ public class OfferTerm implements ITransferObject {
     }
 
 	/**
-	 * Checks if is general.
+	 * Checks if is particular.
 	 * 
-	 * @return true, if is general
+	 * @return true, if is particular
 	 */
 	@Column(nullable = false)
-	public boolean isGeneral() {
-		return general;
+	public boolean isParticular() {
+		return particular;
 	}
 
 	/**
-	 * Sets the general.
+	 * Sets the particular.
 	 * 
-	 * @param signed the new general
+	 * @param signed the new particular
 	 */
-	public void setGeneral(boolean general) {
-		this.general = general;
+	public void setParticular(boolean particular) {
+		this.particular = particular;
 	}	
     
 	@Override
@@ -150,7 +154,7 @@ public class OfferTerm implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.description, o.description)				
-				.append(this.general, o.general)
+				.append(this.particular, o.particular)
 				.append(this.name, o.name)				
 				.append(this.offer, o.offer)				
 				.isEquals();
@@ -162,7 +166,7 @@ public class OfferTerm implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(description)	
-			.append(general)			
+			.append(particular)			
 			.append(id)			
 			.append(name)
 			.append(offer)
@@ -173,7 +177,7 @@ public class OfferTerm implements ITransferObject {
 	public String toString() {
 		return new ToStringBuilder(this).
 			append("description", StringUtils.abbreviate(description, 64)).
-			append("general", general).
+			append("particular", particular).
 			append("id", id).
 			append("name", name).
 			append("offer", offer.getId()).
