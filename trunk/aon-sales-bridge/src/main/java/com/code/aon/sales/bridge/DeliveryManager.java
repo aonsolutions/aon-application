@@ -9,6 +9,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
@@ -18,6 +19,7 @@ import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryDetailSource;
 import com.code.aon.warehouse.enumeration.DeliveryDetailType;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
@@ -96,6 +98,46 @@ public class DeliveryManager {
 			salesDetail.setStatus(SalesDetailStatus.SETTLED);
 			salesDetailBean.update(salesDetail);
 		}
+	}
+
+	public DeliveryDetail transferDeliveryDetail(Delivery delivery, SalesDetail salesDetail, Warehouse warehouse) throws ManagerBeanException {
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		DeliveryDetail deliveryDetail = new DeliveryDetail();
+		deliveryDetail.setDelivery(delivery);
+		deliveryDetail.setLine(calculateNextLine(delivery));
+		deliveryDetail.setItem(salesDetail.getItem());
+		deliveryDetail.setDescription(salesDetail.getDescription());
+		deliveryDetail.setWarehouse(warehouse);
+		deliveryDetail.setQuantity(salesDetail.getTransfered());
+		deliveryDetail.setPrice(salesDetail.getPrice());
+		deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
+		deliveryDetail.setType(DeliveryDetailType.MANUAL);
+		deliveryDetail.setSource(DeliveryDetailSource.SALES);
+		deliveryDetail.setSalesDetail(salesDetail);
+		deliveryDetail = (DeliveryDetail)deliveryDetailBean.insert(deliveryDetail);
+
+		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+		salesDetail.setDelivered(salesDetail.getDelivered() + salesDetail.getTransfered());
+		salesDetail.setStatus((salesDetail.getQuantity() > salesDetail.getDelivered()) ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
+		salesDetailBean.update(salesDetail);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), salesDetail.getSales().getId());
+		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED));
+		if (salesDetailBean.getCount(criteria) == 0) {
+			updateSalesStatus(salesDetail.getSales());
+		}
+
+		return deliveryDetail;
+	}
+
+	private	Integer calculateNextLine(Delivery delivery) throws ManagerBeanException {
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		Projection projection = Projection.max(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
+		Object value = deliveryDetailBean.getUniqueResult(projection, criteria);
+		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
 }
