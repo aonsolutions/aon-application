@@ -32,6 +32,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.product</artifactId>
+			<version>4.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.sales</artifactId>
 			<version>4.2.0</version>
 		</dependency>
@@ -39,6 +44,12 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>
 			<version>4.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_09</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
