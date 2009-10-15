@@ -2,11 +2,11 @@ package com.code.aon.ui.product.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.product.Item;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.product.util.ItemControllerUtil;
 
-public class ItemController extends BasicController {
+public class ItemLookup extends RichLookupBean {
 
 	public double getSalesPrice() {
 		return ItemControllerUtil.getSalesPrice( (Item) getTo() );

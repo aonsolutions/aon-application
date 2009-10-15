@@ -13,10 +13,10 @@ import com.code.aon.product.Product;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.product.controller.ItemController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ItemControllerListener extends ControllerAdapter {
@@ -25,7 +25,7 @@ public class ItemControllerListener extends ControllerAdapter {
 
     @Override
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-        ItemController controller = (ItemController)event.getController();
+        IController controller = event.getController();
         try {
             controller.getCriteria().addEqualExpression(controller.getFieldName(IProductAlias.ITEM_PRODUCT_COMPOSITION), new Boolean(false));
         } catch (ManagerBeanException e) {
