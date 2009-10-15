@@ -24,19 +24,19 @@ public class OfferDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent event) throws ManagerBeanException {
 		OfferDetail detail = (OfferDetail)event.getTo();
-		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		IManagerBean detailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
-		criteria.addGreaterThanOrEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
-		List<ITransferObject> list = offerDetailBean.getList(criteria);
+		criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
+		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
+		criteria.addOrder(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
+		List<ITransferObject> list = detailBean.getList(criteria);
 		int index = detail.getLine();
 		for (ITransferObject to : list) {
 			OfferDetail offerDetail = (OfferDetail)to;
 			if (index == offerDetail.getLine()) {
 				offerDetail.setLine(index + 1);
-				offerDetailBean.update(offerDetail);
+				detailBean.update(offerDetail);
 				++index;
 			}
 		}
@@ -48,17 +48,17 @@ public class OfferDetailBeanListener extends ManagerBeanListenerAdapter {
 			updating = true;
 
 			OfferDetail detail = (OfferDetail)event.getTo();
-			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+			IManagerBean detailBean = BeanManager.getManagerBean(OfferDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
-			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
-			if (offerDetailBean.getCount(criteria) > 0) {
+			criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
+			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+			criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
+			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
-				criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
-				List<ITransferObject> list = offerDetailBean.getList(criteria);
+				criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
+				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+				criteria.addOrder(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
+				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
 				for (ITransferObject to : list) {
 					OfferDetail offerDetail = (OfferDetail)to;
@@ -66,7 +66,7 @@ public class OfferDetailBeanListener extends ManagerBeanListenerAdapter {
 						++index;
 					}
 					offerDetail.setLine(index);
-					offerDetailBean.update(offerDetail);
+					detailBean.update(offerDetail);
 					++index;
 				}
 			}
@@ -78,19 +78,19 @@ public class OfferDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanRemoved(ManagerBeanEvent event) throws ManagerBeanException {
 		OfferDetail detail = (OfferDetail)event.getTo();
-		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		IManagerBean detailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
-		criteria.addGreaterThanOrEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
-		List<ITransferObject> list = offerDetailBean.getList(criteria);
+		criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
+		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
+		criteria.addOrder(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
+		List<ITransferObject> list = detailBean.getList(criteria);
 		int index = detail.getLine() + 1;
 		for (ITransferObject to : list) {
 			OfferDetail offerDetail = (OfferDetail)to;
 			if (index == offerDetail.getLine()) {
 				offerDetail.setLine(index - 1);
-				offerDetailBean.update(offerDetail);
+				detailBean.update(offerDetail);
 				++ index;
 			}
 		}
