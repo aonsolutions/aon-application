@@ -250,6 +250,18 @@
  
 				</aon:panelGrid>
 
+				<aon:panelGrid columns="2" style="width: 100%;"
+					styleClass="aon-margin-top"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel for="Offer_comments"
+						value="#{bundle.aon_comment}" />
+					<aon:inputTextarea id="Offer_comments" 
+						disabled="#{!offer.pending}" cols="150" rows="2"
+						value="#{offer.to.comments}" />
+
+				</aon:panelGrid>
+				
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
 					<aon:panel rendered="#{offer.defaultPayMethod != null and !offer.defaultPayMethod}">
 						<f:facet name="header">
