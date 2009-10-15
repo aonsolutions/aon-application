@@ -30,7 +30,7 @@
 							immediate="#{true}" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
 							styleClass="aon-finding-toolbar-item aon-icon-unsettle"
 							actionListener="#{offer.onRefuse}" />
-						<c:if test="#{!aonConfiguration.bean.offer.showInvoicing}">
+						<c:if test="#{aonConfiguration.bean.offer.showSalesOrder}">
 							<aon:commandButton id="sales"
 								value="#{commercialBundle.commercial_offer_to_sales}"
 								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending}"
@@ -352,7 +352,7 @@
 							<ui:param name="showNote" value="false" />
 							<ui:param name="showDataScroller" value="false" />
 							<ui:param name="skipResetButton" value="#{!offer.pending}" />
-							<ui:param name="skipLineEdition" value="#{(!offer.pending and !offer.approved) or !offerDetail.pending}" />
+							<ui:param name="skipLineEdition" value="#{!offer.pending}" />
 							<ui:param name="rowSelectorReRender" value="menuExt" />
 							<ui:param name="resetButtonReRender" value="menuExt" />
 							<ui:param name="newCancelButtonReRender" value="menuExt" />
