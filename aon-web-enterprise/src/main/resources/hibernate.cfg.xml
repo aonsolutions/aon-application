@@ -65,7 +65,9 @@
 		<mapping class="com.code.aon.commercial.CommercialSegment"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
 		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferAttachment"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
@@ -167,11 +169,6 @@
 		<mapping class="com.code.aon.warehouse.InventoryDetail"/>
 		<mapping class="com.code.aon.warehouse.Stock"/>
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
-
-		<!-- AON-EBACKOFFICE Mapping files -->		
-		<mapping class="com.code.aon.ebackoffice.Eccatalogue"/>
-		<mapping class="com.code.aon.ebackoffice.Ecconfig"/>
-		<mapping class="com.code.aon.ebackoffice.Ectarget"/>
 
 	</session-factory>
 
