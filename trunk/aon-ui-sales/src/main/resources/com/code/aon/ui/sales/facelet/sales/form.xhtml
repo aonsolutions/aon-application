@@ -506,7 +506,8 @@
 									<aon:div rendered="#{!controller.pending}" 
 										style="display:inline;cursor:pointer;">
 										<aon:outputText value="&#160;"
-											styleClass="aon-icon-predetermine" style="padding-left:20px" />
+											styleClass="#{controller.settled ? 'aon-icon-predetermine' : 'aon-icon-predetermine2'}" 
+											style="padding-left:20px" />
 										<rich:toolTip value="#{controller.lineStatusInfo}" />
 									</aon:div>
 								</aon:column>
