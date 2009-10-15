@@ -19,6 +19,15 @@
 					<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
+						<aon:commandButton id="salesTransfer"
+							value="#{warehouseBundle.warehouse_delivery_sales}"
+							immediate="#{true}" rendered="#{delivery.pending}"
+							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+							actionListener="#{delivery.onSalesTransferShow}"
+							reRender="showSalesTransferWindow">
+							<f:setPropertyActionListener target="#{delivery.showSalesTransferWindow}"
+								value="#{true}" />
+						</aon:commandButton>
 						<aon:commandButton id="invoice"
 							value="#{warehouseBundle.warehouse_delivery_to_invoice}"
 							immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
@@ -495,6 +504,7 @@
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalTransfer.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalInvoice.xhtml" />
 	</ui:define>
 </ui:composition>
