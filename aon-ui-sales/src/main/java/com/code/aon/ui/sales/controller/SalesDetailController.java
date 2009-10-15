@@ -1,5 +1,6 @@
 package com.code.aon.ui.sales.controller;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -58,6 +59,16 @@ public class SalesDetailController extends LinesController {
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 			if (salesDetail.getStatus() != null) {
 				return salesDetail.getStatus().equals(SalesDetailStatus.PENDING);
+			}
+		}
+		return false;
+	}
+
+	public boolean isSettled() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+			if (salesDetail.getStatus() != null) {
+				return salesDetail.getStatus().equals(SalesDetailStatus.SETTLED);
 			}
 		}
 		return false;
@@ -131,14 +142,16 @@ public class SalesDetailController extends LinesController {
 
 	public String getLineStatusInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage("bundle", "aon_decimal3_truncate_pattern"));
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_SALES_DETAIL_ID), salesDetail.getId());
 		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
+			info.append("<p>");
 			info.append(AonUtil.getMessage("salesBundle", "sales_transfered_to"));
 			info.append(" ");
 			info.append(AonUtil.getMessage("salesBundle", "sales_to_delivery"));
@@ -148,6 +161,14 @@ public class SalesDetailController extends LinesController {
 			info.append(AonUtil.getMessage("salesBundle", "sales_detail_line"));
 			info.append(" ");
 			info.append(deliveryDetail.getLine());
+			if (salesDetail.getQuantity() > deliveryDetail.getQuantity()) {
+				info.append(" (");
+				info.append(formatter.format(deliveryDetail.getQuantity()));
+				info.append(" ");
+				info.append(AonUtil.getMessage("salesBundle", "sales_detail_units"));
+				info.append(")");
+			}
+			info.append("</p>");
 		}
 		return info.toString();
 	}
