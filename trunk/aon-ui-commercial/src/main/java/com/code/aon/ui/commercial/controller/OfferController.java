@@ -68,6 +68,15 @@ public class OfferController extends BasicController {
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
+	private String selectedTab;
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
 
 	public List<SelectItem> getAddresses() {
 		return addresses;
