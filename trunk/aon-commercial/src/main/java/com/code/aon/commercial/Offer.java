@@ -144,9 +144,12 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	/** The detail of this offer. */
 	private Set<OfferDetail> lines = new HashSet<OfferDetail>();
 	
-	/** The detail of this offer. */
+	/** The attachemnts of this offer. */
 	private Set<OfferAttachment> attachments = new HashSet<OfferAttachment>();	
 
+	/** The terms of this offer. */
+	private Set<OfferTerm> terms = new HashSet<OfferTerm>();	
+	
     /**
      * Gets the id.
      * 
@@ -659,15 +662,44 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		this.signed = signed;
 	}	
 
+	/**
+	 * Gets the attachments.
+	 * 
+	 * @return the attachments
+	 */
 	@OneToMany(mappedBy = "offer", cascade={CascadeType.REMOVE})
 	public Set<OfferAttachment> getAttachments() {
 		return attachments;
 	}
 
+	/**
+	 * Sets the attachments.
+	 * 
+	 * @param attachments the new attachments
+	 */
 	public void setAttachments(Set<OfferAttachment> attachments) {
 		this.attachments = attachments;
 	}
-	
+
+	/**
+	 * Gets the terms.
+	 * 
+	 * @return the terms
+	 */
+	@OneToMany(mappedBy = "offer", cascade={CascadeType.REMOVE})
+	public Set<OfferTerm> getTerms() {
+		return terms;
+	}
+
+	/**
+	 * Sets the terms.
+	 * 
+	 * @param terms the new terms
+	 */
+	public void setTerms(Set<OfferTerm> terms) {
+		this.terms = terms;
+	}
+
 	/**
 	 * Gets the detail list. Used in the reports
 	 * 
