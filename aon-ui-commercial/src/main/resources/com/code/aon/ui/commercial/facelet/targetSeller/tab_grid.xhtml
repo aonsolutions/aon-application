@@ -24,11 +24,17 @@
 						value="#{targetSeller.to.seller.id}" size="5">
 					</aon:lookupInputText>
 					<aon:lookupButton
-						windowTitle="#{appBundle.aon_lookup_item}"
+						windowTitle="#{salesBundle.sales_seller_selection}"
 						selectReRender="TargetSeller_seller_id,TargetSeller_seller_detail"
 						lookup="#{sellerLookup}" minHeight="440"
 						property="#{targetSeller.to.seller}">
 					</aon:lookupButton>
+					<aon:lookupButton 
+						windowTitle="#{salesBundle.sales_seller_new}"
+						selectReRender="TargetSeller_seller_id,TargetSeller_seller_detail"
+						lookup="#{sellerLookup}" minHeight="520" minWidth="650"
+						property="#{targetSeller.to.seller}" actionType="new">
+					</aon:lookupButton>																			
 					<aon:inputText id="TargetSeller_seller_detail"
 						value="#{(to.seller.registry.name!=null)?(to.seller.registry.fullName):('')}"
 						size="60" disabled="true" />
@@ -41,11 +47,17 @@
 							value="#{targetSeller.to.seller.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton
-							windowTitle="#{appBundle.aon_lookup_item}"
+							windowTitle="#{salesBundle.sales_seller_selection}"
 							selectReRender="TargetSeller_seller_id-New,TargetSeller_seller_detail-New"
 							lookup="#{sellerLookup}" minHeight="440"
 							property="#{targetSeller.to.seller}">
 						</aon:lookupButton>
+						<aon:lookupButton 
+							windowTitle="#{salesBundle.sales_seller_new}"
+							selectReRender="TargetSeller_seller_id-New,TargetSeller_seller_detail-New"
+							lookup="#{sellerLookup}" minHeight="520" minWidth="650"
+							property="#{targetSeller.to.seller}" actionType="new">
+						</aon:lookupButton>																									
 						<aon:inputText id="TargetSeller_seller_detail-New"
 							value="#{(controller.to.seller.registry.name!=null)?(controller.to.seller.registry.fullName):('')}"
 							size="60" disabled="true" />
