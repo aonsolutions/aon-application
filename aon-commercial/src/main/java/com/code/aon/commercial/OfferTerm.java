@@ -112,6 +112,7 @@ public class OfferTerm implements ITransferObject {
      * @return the description
      */
 	@Lob
+	@Column( nullable = false )
 	@Type(type="stringClob")	
     public String getDescription() {
         return description;
