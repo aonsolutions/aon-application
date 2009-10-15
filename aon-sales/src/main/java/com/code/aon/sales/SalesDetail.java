@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
@@ -66,6 +67,9 @@ public class SalesDetail implements ITransferObject, ICalculable {
 
     /** The delivered. */
     private double delivered;
+
+    /** The transfered. */
+    private double transfered;
 
     /**
 	 * Gets the id.
@@ -311,6 +315,16 @@ public class SalesDetail implements ITransferObject, ICalculable {
 	 */
 	public void setDelivered(double delivered) {
 		this.delivered = delivered;
+	}
+
+	@Transient
+	public double getTransfered() {
+		transfered = transfered > (quantity - delivered) ? (quantity - delivered) : transfered;
+		return transfered;
+	}
+
+	public void setTransfered(double transfered) {
+		this.transfered = transfered;
 	}
 
 	@Override
