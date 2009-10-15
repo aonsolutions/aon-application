@@ -52,7 +52,8 @@
 	
 	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:offer
-			showInvoicing="true"
+			showInvoicing="false"
+			showSalesOrder="false"
 		/>
 		<commercial:target
 			showEcommerceTab="false"
