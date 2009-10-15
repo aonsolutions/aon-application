@@ -24,7 +24,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
 			<version>4.1.0</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
