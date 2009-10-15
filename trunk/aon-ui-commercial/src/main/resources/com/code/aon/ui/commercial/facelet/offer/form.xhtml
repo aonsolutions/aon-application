@@ -409,6 +409,14 @@
 												selectReRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
 												actionType="search">
 											</aon:lookupButton>
+											<aon:lookupButton
+												windowTitle="#{productBundle.product_item_new}"
+												minHeight="360" minWidth="770"
+												property="#{offerDetail.to.item}" lookup="#{itemLookup}"
+												lookupChangeListener="#{offerDetail.onItemChanged}" 
+												selectReRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
+												actionType="new">
+											</aon:lookupButton>
 											<aon:inputTextarea id="OfferDetail_item_product_name"
 												value="#{offerDetail.to.description}"
 												cols="64" rows="#{!offerDetail.longDescription?1:5}"
@@ -443,6 +451,14 @@
 													selectReRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
 													actionType="search">
 												</aon:lookupButton>
+												<aon:lookupButton
+													windowTitle="#{productBundle.product_item_new}"
+													minHeight="360" minWidth="770"
+													property="#{offerDetail.to.item}" lookup="#{itemLookup}"
+													lookupChangeListener="#{offerDetail.onItemChanged}" 
+													selectReRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
+													actionType="new">
+												</aon:lookupButton>												
 												<aon:inputTextarea id="OfferDetail_item_product_name-New"
 													value="#{offerDetail.to.description}"
 													cols="64" rows="#{!offerDetail.longDescription?1:5}"
