@@ -7,7 +7,9 @@ import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialSegment;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
+import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetSegment;
@@ -28,12 +30,14 @@ public class CommercialAliasWriter {
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
 		String[] classes = new String[] { 
-				Offer.class.getName(),
-				OfferDetail.class.getName(),
-				Target.class.getName(),
 				CommercialActivity.class.getName(),
 				CommercialSegment.class.getName(),
 				CommercialTracking.class.getName(),
+				Offer.class.getName(),
+				OfferAttachment.class.getName(),
+				OfferDetail.class.getName(),
+				OfferTerm.class.getName(),
+				Target.class.getName(),
 				TargetItem.class.getName(),
 				TargetSegment.class.getName(),
 				TargetSeller.class.getName() };
