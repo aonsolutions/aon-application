@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="financeList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_finance_return_module}" />
+				<ui:param name="controller" value="#{financeReturn}" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="return" value="#{financeBundle.finance_to_return}"
+						styleClass="aon-finding-toolbar-item-no-icon"
+						actionListener="#{financeReturn.onReturn}" action="financeReturn_search"
+						accesskey="#{bundle.aon_key_search}" >
+						<aon:actionListener method="#{financeReturn.onEditSearch}" />
+					</aon:commandButton>						
+				</ui:define>				
+				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<aon:outputLabel for="Finance_payment"
+						value="#{financeBundle.finance_payment} / #{financeBundle.finance_charge}" />
+					<aon:selectOneRadio id="Finance_payment" value="#{financeReturn.to.payment}" disabled="true">
+						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel for="Customer_full_name"
+						rendered="#{!financeReturn.to.payment}"
+						value="#{customerBundle.customer_customer}" />
+					<aon:inputText id="Customer_full_name" 
+						rendered="#{!financeReturn.to.payment}" disabled="true"
+						value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="50" />
+							
+					<aon:outputLabel for="Supplier_full_name"
+						rendered="#{financeReturn.to.payment}"
+						value="#{supplierBundle.supplier_supplier}" />
+					<aon:inputText id="Supplier_full_name" 
+						rendered="#{financeReturn.to.payment}" disabled="true"
+						value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="50" />
+
+					<aon:outputLabel for="Finance_invoice_series"
+						value="#{bundle.aon_series}/#{bundle.aon_number}" />
+					<aon:div>
+						<aon:inputText id="Finance_invoice_series"
+							value="#{financeReturn.to.invoice.series}"
+							disabled="true" size="4" maxlength="5" />
+						<aon:div layout="inline" styleClass="aon-padding-left">							
+							<aon:inputText id="Finance_invoice_number"
+								value="#{financeReturn.to.invoice.number}" 
+								size="7" disabled="true"/>
+						</aon:div>
+					</aon:div>					
+
+					<aon:outputLabel for="Finance_date"
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:selectInputDate id="Finance_date"
+						disabled="true" 
+						value="#{financeReturn.to.dueDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Finance_amount"
+						value="#{bundle.aon_amount}"/>
+					<aon:inputText id="Finance_amount" size="10" 
+						disabled="true" value="#{financeReturn.to.amount}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Finance_return_date"
+						value="#{financeBundle.finance_return_date}" />
+					<aon:selectInputDate id="Finance_return_date" 
+						value="#{financeReturn.returnDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Finance_expenses"
+						value="#{financeBundle.finance_expenses}"/>
+					<aon:inputText id="Finance_expenses" size="10" 
+						value="#{financeReturn.to.expenses}">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

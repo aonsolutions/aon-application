@@ -1,0 +1,14 @@
+<div id="contentInt">		
+	<h1>Contacto</h1>
+	<div class="box1" style="margin-top:1em;">
+		<div>
+			<div align="center">
+				<p>&nbsp;</p>
+				<p><strong><span class="Estilo1">Ha habido un error durante el env&iacute;o</span>.</strong></p>
+			</div>
+		</div>
+	<div>
+		<div align="center">Int&eacute;ntelo m&aacute;s tarde o bien contacte con el administrador en <a href="mailto:$!email">$!email </a></div>
+	</div>
+	<p>&nbsp;</p>
+</div>

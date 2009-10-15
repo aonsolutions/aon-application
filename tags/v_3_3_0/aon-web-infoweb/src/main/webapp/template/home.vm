@@ -1,0 +1,36 @@
+<table cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td>
+		<p>$!company.getName()</p>
+		<p>$!address.getAddress() $!address.getAddress2() $!address.getAddress3()</p>
+		<p>$!address.getZip() $!address.getCity() ($!address.getGeozone().getName())</p>
+		<p>Tel: $!phone</p>
+		<div class="title">
+			Sobre nosotros
+		</div>
+		<p>
+			$!slogan
+		</p>
+		<p>
+			$!description
+		</p>
+		<div class="title">
+			Horario
+		</div>
+		<p>
+			$!schedule
+		</p>
+	</td>
+	<td style="text-align:right;">
+	<div id="album">
+		<ul class="gallery">
+			#set ($num = 1)
+			#foreach ($image in $images)
+				<li><a href="#nogo">$num<img class="landscape" src="$image" alt="$image"/></a></li>
+				#set ($num = $num + 1)
+			#end
+		</ul>
+	</div>
+	</td>
+</tr>
+</table>
