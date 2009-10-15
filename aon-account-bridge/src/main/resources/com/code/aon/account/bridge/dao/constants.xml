@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<dao>
-	<bean class="com.code.aon.account.bridge.AccountEntryFinanceTracking" sqlName="account_entry_finance_tracking">
-		<alias names="accountEntry_id,financeTracking_id,financeTracking_finance_id,id" />
-		<hibernate names="accountEntry.id,financeTracking.id,financeTracking.finance.id,id" />
-	</bean>
-</dao>

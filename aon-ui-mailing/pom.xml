@@ -9,34 +9,34 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.customer</artifactId>
+	<artifactId>aon.ui.mailing</artifactId>
 	<version>3.0.7</version>
-	<description>AON CUSTOMER</description>
-	<name>AON-CUSTOMER</name>
+	<description>AON UI MAILING</description>
+	<name>AON UI MAILING</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common</artifactId>
-			<version>3.3.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.config</artifactId>
-			<version>3.4.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.product</artifactId>
-			<version>3.2.5</version>
+			<artifactId>aon.ui.form</artifactId>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>3.3.1</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_13</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
