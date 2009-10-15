@@ -52,9 +52,17 @@ public class DeliveryControllerListener extends ControllerAdapter {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
-			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
-			if (iter.hasNext()) {
-				return ((DeliveryDetail)iter.next()).getWarehouse();
+			Iterator iterator = deliveryDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return ((DeliveryDetail)iterator.next()).getWarehouse();
+			} else {
+				IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+				criteria = new Criteria();
+				criteria.addOrder(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_NAME));
+				Iterator<?> iter = warehouseBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					return (Warehouse)iter.next();
+				}
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
