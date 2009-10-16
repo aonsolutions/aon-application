@@ -116,17 +116,12 @@ public class TargetController extends BasicController {
 		setFax(((Target)this.getTo()).getRegistry().getFax());
 		}			
 	}
-	
-	
+
 	public void obtainEmail() throws ManagerBeanException {	
 		if (((Target)this.getTo()).getRegistry().getEmail()!=null)
 		{
 		setEmail(((Target)this.getTo()).getRegistry().getEmail());
 		}
 	}
-	
-	
-	
-	
-	
+
 }
