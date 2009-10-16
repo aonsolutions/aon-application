@@ -13,10 +13,10 @@
 	<artifactId>aon-web-commercial</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMERCIAL</name>
-	<version>1.7.0-SNAPSHOT</version>
+	<version>1.7.0</version>
 	<description>AON WEB COMMERCIAL</description>
 	<properties>
-		<dbVersion>4.3.0</dbVersion>
+		<dbVersion>4.4.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-commercial</finalName>
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>4.5.0-SNAPSHOT</version>
+			<version>4.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -87,7 +87,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.1.6</version>			
+			<version>4.2.0</version>			
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -99,12 +99,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>4.3.0-SNAPSHOT</version>
+			<version>4.3.0</version>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.marketing</artifactId>
-			<version>3.3.0-SNAPSHOT</version>
+			<version>3.3.0</version>
 		</dependency>
 	</dependencies>
 </project>
