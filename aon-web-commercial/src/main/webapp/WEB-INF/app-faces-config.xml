@@ -33,6 +33,10 @@
 			<value>target</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Target_registry_surname,Target_registry_name</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
