@@ -40,6 +40,9 @@
 			<param id="email" value="#{company.obtainEmail}" />
 			<param id="web" value="#{company.obtainWeb}" />
 			<param id="address" value="#{company.obtainAddress}" />
+			<param id="targetPhone" value="#{target.getPhone}" />
+			<param id="targetEmail" value="#{target.getEmail}" />
+			<param id="targetFax" value="#{target.getFax}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 		</params>
