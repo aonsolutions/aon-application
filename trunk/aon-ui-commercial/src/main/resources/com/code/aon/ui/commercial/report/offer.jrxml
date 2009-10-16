@@ -77,7 +77,7 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="80" splitType="Stretch">
+		<band height="73" splitType="Stretch">
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true">
 				<reportElement key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="71" height="54" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
@@ -151,7 +151,7 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-81" x="85" y="33" width="246" height="15">
+				<reportElement key="textField-81" x="85" y="27" width="246" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -166,7 +166,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-82" x="85" y="18" width="246" height="15">
+				<reportElement key="textField-82" x="85" y="15" width="246" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -181,7 +181,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-83" x="85" y="3" width="246" height="15">
+				<reportElement key="textField-83" x="85" y="3" width="246" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -196,7 +196,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-89" x="85" y="48" width="246" height="15">
+				<reportElement key="textField-89" x="85" y="39" width="246" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -211,7 +211,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-130" x="85" y="63" width="121" height="15">
+				<reportElement key="textField-130" x="210" y="51" width="121" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -226,7 +226,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{web}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-131" x="206" y="63" width="125" height="15" forecolor="#000000">
+				<reportElement key="textField-131" x="85" y="51" width="125" height="12" forecolor="#000000">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -238,7 +238,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{email}.getValue()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["e: "+$P{email}.getValue()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -343,7 +343,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_supplier1}+" "+$P{company}.getName()+" "+$R{offer_text_supplier2}+" "+$P{company}.getAlias()+$R{offer_text_supplier3}+" "+$P{company}.getDocument()+" "+$R{offer_text_supplier4}+""+ ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())+" "+$R{offer_text_supplier5}+" "+($P{address}.getAddress()==null?"":$P{address}.getAddress()) + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2())+ ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())+" "+($P{address}.getZip()==null?"":$P{address}.getZip() + " ")+" de "+($P{address}.getCity()==null?"":$P{address}.getCity())+"("+$P{address}.getGeozone()+")."]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_supplier1}+" "+$P{company}.getName()+" "+$R{offer_text_supplier2}+" "+$P{company}.getAlias()+$R{offer_text_supplier3}+" "+$P{company}.getDocument()+" "+$R{offer_text_supplier4}+""+ ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())+" "+$R{offer_text_supplier5}+" "+($P{address}.getAddress()==null?"":$P{address}.getAddress()) + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2())+ ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())+" "+($P{address}.getZip()==null?"":$P{address}.getZip() + " ")+" de "+($P{address}.getCity()==null?"":$P{address}.getCity())+"("+$P{address}.getGeozone().getName()+")."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-99" x="1" y="184" width="536" height="35"/>
@@ -611,7 +611,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_acceptance}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-132" x="0" y="109" width="535" height="15"/>
+				<reportElement key="textField-132" x="0" y="109" width="131" height="15"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -621,10 +621,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_financial1}+" "+new Double($P{TotalPrice}.doubleValue())+" "+$R{offer_text_financial2}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_financial1}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-133" x="0" y="124" width="535" height="15"/>
+				<reportElement key="textField-133" x="1" y="124" width="537" height="15"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -637,7 +637,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_financial3}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-134" x="0" y="139" width="536" height="15"/>
+				<reportElement key="textField-134" x="1" y="139" width="536" height="15"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -667,14 +667,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-139" x="258" y="154" width="63" height="14"/>
+				<reportElement key="textField-139" x="258" y="155" width="63" height="14"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_bank_account}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-140" x="323" y="154" width="139" height="14"/>
+				<reportElement key="textField-140" x="323" y="155" width="112" height="14"/>
 				<box>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
@@ -815,6 +815,32 @@
 					<font fontName="Arial Narrow" size="8" isUnderline="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["2.-"+" "+$R{offer_text_general_conditions2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-132" x="171" y="109" width="367" height="15"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_financial2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-132" x="131" y="109" width="41" height="15"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{TotalPrice}.doubleValue())]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
