@@ -117,7 +117,7 @@
 						<aon:commandButton id="toPending" value="&#160;"
 							actionListener="#{offer.onPending}" 
 							title="#{commercialBundle.commercial_offer_to_pending}"
-							immediate="true" rendered="#{offer.refused or offer.approved}"
+							immediate="true" rendered="#{offer.refused or (offer.approved and !offer.linesSold)}"
 							styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
 						<aon:commandButton id="approve" value="&#160;"
 							actionListener="#{offer.onApprove}" 
@@ -129,14 +129,14 @@
 							title="#{commercialBundle.commercial_offer_to_refuse}"
 							immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
 							styleClass="aon-icon-commandButton aon-icon-unsettle" />							
-						<aon:commandButton id="lock" value="&#160;"
-							actionListener="#{offer.onBloqued}"
+						<aon:commandButton id="block" value="&#160;"
+							actionListener="#{offer.onBlock}"
 							title="#{commercialBundle.commercial_offer_to_bloqued}"
 							immediate="true" rendered="#{!(offer.blocked or offer.invoiced)}"
 							styleClass="aon-icon-commandButton aon-icon-lock">
 						</aon:commandButton>										
-						<aon:commandButton id="unlock" value="&#160;"
-							actionListener="#{offer.onUnbloqued}"
+						<aon:commandButton id="unblock" value="&#160;"
+							actionListener="#{offer.onUnblock}"
 							title="#{commercialBundle.commercial_offer_to_unbloqued}"
 							immediate="true" rendered="#{offer.blocked}"
 							styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
