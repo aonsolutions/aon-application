@@ -208,11 +208,19 @@ public class OfferController extends BasicController implements ICommercialConst
 		return (offerDetailBean.getCount(criteria) > 0);
 	}
 
+	public boolean isLinesSold() throws ManagerBeanException {
+		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
+		return (offerDetailBean.getCount(criteria) > 0);
+	}
+
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
 		Offer offer = getOffer();
-		if ( offer != null) {
+		if (offer != null) {
 			offer.setNumber(number);
 			offer.setSecurityLevel(securityLevel);
 		}
@@ -314,7 +322,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	}
 
 	public double getTaxableBase(){
-		return getPriceStrategy().getTaxableBase( getOffer() );
+		return getPriceStrategy().getTaxableBase(getOffer());
 	}
 
 	public double getTotalPrice(){
@@ -341,12 +349,12 @@ public class OfferController extends BasicController implements ICommercialConst
 		accept(event);
 	}
 	
-	public void onUnbloqued(ActionEvent event) {
-		getOffer().setStatus(OfferStatus.PENDING);
+	public void onUnblock(ActionEvent event) throws ManagerBeanException {
+		getOffer().setStatus(isLinesSold() ? OfferStatus.APPROVED : OfferStatus.PENDING);
 		accept(event);
 	}
 
-	public void onBloqued(ActionEvent event) {
+	public void onBlock(ActionEvent event) {
 		getOffer().setStatus(OfferStatus.BLOCKED);
 		accept(event);
 	}
@@ -458,9 +466,9 @@ public class OfferController extends BasicController implements ICommercialConst
 				}
 			}			
 		}
-		messageController.setSubject( emailController.getEmailSubject(offer) );
-		messageController.setContent( emailController.getEmailBody(offer) );
-		messageController.addAttachment( emailController.getOfferFile(offer) );
+		messageController.setSubject(emailController.getEmailSubject(offer));
+		messageController.setContent(emailController.getEmailBody(offer));
+		messageController.addAttachment(emailController.getOfferFile(offer));
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
 	}	
