@@ -36,7 +36,6 @@ import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
@@ -177,35 +176,34 @@ public class OfferController extends BasicController implements ICommercialConst
 		this.invoiceDate = invoiceDate;
 	}
 
+	private Offer getOffer() {
+		return (Offer) this.getTo();
+	}
+	
 	public boolean isPending() {
-		Offer offer = (Offer)this.getTo();
-		if (offer.getStatus() != null) {
-			return offer.getStatus().equals(OfferStatus.PENDING);
-		}
-		return false;
+		return OfferStatus.PENDING == getOffer().getStatus();
 	}
 
 	public boolean isApproved() {
-		Offer offer = (Offer)this.getTo();
-		if (offer.getStatus() != null) {
-			return offer.getStatus().equals(OfferStatus.APPROVED);
-		}
-		return false;
+		return OfferStatus.APPROVED == getOffer().getStatus();		
 	}
 
+	public boolean isRefused() {
+		return OfferStatus.REFUSED == getOffer().getStatus();		
+	}
+	
 	public boolean isInvoiced() {
-		Offer offer = (Offer)this.getTo();
-		if (offer.getStatus() != null) {
-			return offer.getStatus().equals(OfferStatus.INVOICED);
-		}
-		return false;
+		return OfferStatus.INVOICED == getOffer().getStatus();
 	}
 
+	public boolean isBlocked() {
+		return OfferStatus.BLOCKED == getOffer().getStatus();
+	}
+	
 	public boolean isLinesPending() throws ManagerBeanException {
-		Offer offer = (Offer)this.getTo();
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
 		return (offerDetailBean.getCount(criteria) > 0);
 	}
@@ -213,9 +211,10 @@ public class OfferController extends BasicController implements ICommercialConst
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
-		if (this.getTo() != null) {
-			((Offer)this.getTo()).setNumber(number);
-			((Offer)this.getTo()).setSecurityLevel(securityLevel);
+		Offer offer = getOffer();
+		if ( offer != null) {
+			offer.setNumber(number);
+			offer.setSecurityLevel(securityLevel);
 		}
 	}
 
@@ -241,7 +240,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Target target = (Target)event.getNewValue();
-			((Offer)this.getTo()).setTarget(target);
+			getOffer().setTarget(target);
 			loadAddresses(target.getId());
 			loadDefaultPayMethod(target.getId(), false);
 		} else {
@@ -279,7 +278,8 @@ public class OfferController extends BasicController implements ICommercialConst
 	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
-			if (((Offer)this.getTo()).getPayMethod() != null && ((Offer)this.getTo()).getPayMethod().getId() != null) {
+			Offer offer = getOffer();
+			if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
 				setDefaultPayMethod(false);
 			} else {
 				if (forceDefault) {
@@ -296,7 +296,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	}
 
 	public void resetOfferPayMethod() {
-		Offer to = (Offer)this.getTo();
+		Offer to = getOffer();
 		to.setPayMethod(new PayMethod());
 		to.setNumberOfPayments(1);
 		to.setDaysToFirstPayment(0);
@@ -309,16 +309,16 @@ public class OfferController extends BasicController implements ICommercialConst
 	public void sellerData(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Seller seller = (Seller)event.getNewValue();
-			((Offer)this.getTo()).setSeller(seller);
+			getOffer().setSeller(seller);
 		}
 	}
 
 	public double getTaxableBase(){
-		return getPriceStrategy().getTaxableBase((ICalculableContainer)getTo());
+		return getPriceStrategy().getTaxableBase( getOffer() );
 	}
 
 	public double getTotalPrice(){
-		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), ((Offer)getTo()).getTarget());
+		return getPriceStrategy().getTotalPrice(getOffer(), getOffer().getTarget());
 	}
 
 	public double getOfferTotalPrice() throws ManagerBeanException {
@@ -327,19 +327,32 @@ public class OfferController extends BasicController implements ICommercialConst
 	}
 
 	public void onApprove(ActionEvent event) {
-		Offer to = (Offer)this.getTo();
-		to.setStatus(OfferStatus.APPROVED);
+		getOffer().setStatus(OfferStatus.APPROVED);
 		accept(event);
 	}
 
 	public void onRefuse(ActionEvent event) {
-		Offer to = (Offer)this.getTo();
-		to.setStatus(OfferStatus.REFUSED);
+		getOffer().setStatus(OfferStatus.REFUSED);
 		accept(event);
 	}
 
+	public void onPending(ActionEvent event) {
+		getOffer().setStatus(OfferStatus.PENDING);
+		accept(event);
+	}
+	
+	public void onUnbloqued(ActionEvent event) {
+		getOffer().setStatus(OfferStatus.PENDING);
+		accept(event);
+	}
+
+	public void onBloqued(ActionEvent event) {
+		getOffer().setStatus(OfferStatus.BLOCKED);
+		accept(event);
+	}
+	
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
-		Offer to = (Offer)this.getTo();
+		Offer to = getOffer();
 		setSalesSeries(to.getSeries());
 		setSalesNumber(obtainMaxSalesNumber(to.getSeries()));
 		setSalesDate(new Date());
@@ -356,7 +369,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	public void onSales(ActionEvent event) throws ManagerBeanException {
 		setShowSalesWindow(false);
 
-		Offer to = (Offer)this.getTo();
+		Offer to = getOffer();
 		SalesManager salesManager = new SalesManager();
 		Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
 
@@ -369,7 +382,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
-		Offer to = (Offer)this.getTo();
+		Offer to = getOffer();
 		setInvoiceSeries(to.getSeries());
 		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
 		setInvoiceDate(new Date());
@@ -388,7 +401,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		setShowInvoiceWindow(false);
 
-		Offer to = (Offer)this.getTo();
+		Offer to = getOffer();
 		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
@@ -401,7 +414,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	}
 
 	public String getInvoiceCode() throws ManagerBeanException {
-		Offer offer = (Offer)this.getTo();
+		Offer offer = getOffer();
 		if (offer != null && offer.getId() != null) {
 			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 			Criteria criteria = new Criteria();
@@ -430,7 +443,7 @@ public class OfferController extends BasicController implements ICommercialConst
 	}
 
 	public void sendOfferByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		Offer offer = (Offer) getTo();
+		Offer offer = getOffer();
 		EmailUtilController emailController = new EmailUtilController();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
