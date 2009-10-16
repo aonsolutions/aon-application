@@ -154,10 +154,11 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{target.bundle.commercial_target_new}"
-								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"
-								lookup="#{targetLookup}" actionType="new" minWidth="650" minHeight="490"
-								lookupChangeListener="#{offer.targetData}" 
-								property="#{offer.to.target.registry}">
+								disabled="#{!offer.pending}" minWidth="650" minHeight="490"
+								property="#{offer.to.target.registry}" lookupProperty="registry" lookup="#{targetLookup}"
+								lookupChangeListener="#{offer.targetData}"
+								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"		 
+								actionType="new">
 							</aon:lookupButton>							
 							<aon:inputText id="Target_full_name" 
 								value="#{(offer.to.target.registry.fullName!=null)?(offer.to.target.registry.fullName):('')}"
