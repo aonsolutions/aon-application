@@ -5,6 +5,8 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="skipResetButton" value="#{!offer.pending}" />
+		<ui:param name="skipLineEdition" value="#{!offer.pending}" />	
 		<ui:define name="columns">
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
