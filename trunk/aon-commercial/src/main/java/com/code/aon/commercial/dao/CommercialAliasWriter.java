@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialSegment;
+import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
@@ -40,7 +41,8 @@ public class CommercialAliasWriter {
 				Target.class.getName(),
 				TargetItem.class.getName(),
 				TargetSegment.class.getName(),
-				TargetSeller.class.getName() };
+				TargetSeller.class.getName(),
+				CommercialTerm.class.getName(),};
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.commercial.dao");
 		writer.write(classes, file);

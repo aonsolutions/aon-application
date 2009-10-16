@@ -13,6 +13,7 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetSegment;
 import com.code.aon.commercial.TargetSeller;
+import com.code.aon.commercial.CommercialTerm;
 
 /** 
 * Interface for holding entity properties constants.
@@ -375,34 +376,22 @@ public interface ICommercialAlias {
 	DAOConstantsEntry OFFER_TERM_ENTRY = DAOConstants.getDAOConstant(OfferTerm.class);
 
 	/** 
-	* Alias value: OfferTerm_description
-	* Hibernate value: OfferTerm.description
-	*/
-	String  OFFER_TERM_DESCRIPTION = OFFER_TERM_ENTRY.getAliasNames()[0];
-
-	/** 
 	* Alias value: OfferTerm_id
 	* Hibernate value: OfferTerm.id
 	*/
-	String  OFFER_TERM_ID = OFFER_TERM_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: OfferTerm_name
-	* Hibernate value: OfferTerm.name
-	*/
-	String  OFFER_TERM_NAME = OFFER_TERM_ENTRY.getAliasNames()[2];
+	String  OFFER_TERM_ID = OFFER_TERM_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: OfferTerm_offer_id
 	* Hibernate value: OfferTerm.offer.id
 	*/
-	String  OFFER_TERM_OFFER_ID = OFFER_TERM_ENTRY.getAliasNames()[3];
+	String  OFFER_TERM_OFFER_ID = OFFER_TERM_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: OfferTerm_particular
-	* Hibernate value: OfferTerm.particular
+	* Alias value: OfferTerm_term_id
+	* Hibernate value: OfferTerm.term.id
 	*/
-	String  OFFER_TERM_PARTICULAR = OFFER_TERM_ENTRY.getAliasNames()[4];
+	String  OFFER_TERM_TERM_ID = OFFER_TERM_ENTRY.getAliasNames()[2];
 
 
 
@@ -557,6 +546,37 @@ public interface ICommercialAlias {
 	* Hibernate value: TargetSeller.target.id
 	*/
 	String  TARGET_SELLER_TARGET_ID = TARGET_SELLER_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommercialTerm entity.
+	*/ 
+	DAOConstantsEntry COMMERCIAL_TERM_ENTRY = DAOConstants.getDAOConstant(CommercialTerm.class);
+
+	/** 
+	* Alias value: CommercialTerm_description
+	* Hibernate value: CommercialTerm.description
+	*/
+	String  COMMERCIAL_TERM_DESCRIPTION = COMMERCIAL_TERM_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommercialTerm_id
+	* Hibernate value: CommercialTerm.id
+	*/
+	String  COMMERCIAL_TERM_ID = COMMERCIAL_TERM_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CommercialTerm_name
+	* Hibernate value: CommercialTerm.name
+	*/
+	String  COMMERCIAL_TERM_NAME = COMMERCIAL_TERM_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CommercialTerm_particular
+	* Hibernate value: CommercialTerm.particular
+	*/
+	String  COMMERCIAL_TERM_PARTICULAR = COMMERCIAL_TERM_ENTRY.getAliasNames()[3];
 
 
 }

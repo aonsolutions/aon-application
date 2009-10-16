@@ -5,20 +5,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Transfer Object that represents a OfferTerm.
@@ -32,17 +29,11 @@ public class OfferTerm implements ITransferObject {
 	/** The id. */
 	private Integer id;
 
-    /** The name. */
-    private String name;
-	
 	/** The offer. */
 	private Offer offer;
 	
-    /** The description. */
-    private String description;
-
-    /** If the OfferTerm is particular. */
-    private boolean particular;    
+	/** The offer. */
+	private CommercialTerm term;
     
 	/**
 	 * Gets the id.
@@ -85,67 +76,30 @@ public class OfferTerm implements ITransferObject {
 	 */
 	public void setOffer(Offer offer) {
 		this.offer = offer;
-	}
-	
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
-    @Column(length=32, nullable = false)
-	public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the name.
-     * 
-     * @param name the name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }	
-
-    /**
-     * Gets the description.
-     * 
-     * @return the description
-     */
-	@Lob
-	@Column( nullable = false )
-	@Type(type="stringClob")	
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     * 
-     * @param description the description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-	/**
-	 * Checks if is particular.
-	 * 
-	 * @return true, if is particular
-	 */
-	@Column(nullable = false)
-	public boolean isParticular() {
-		return particular;
-	}
-
-	/**
-	 * Sets the particular.
-	 * 
-	 * @param signed the new particular
-	 */
-	public void setParticular(boolean particular) {
-		this.particular = particular;
 	}	
-    
+	
+	/**
+	 * Gets the term.
+	 * 
+	 * @return the term
+	 */
+	@ManyToOne
+	@JoinColumn( name="term", nullable=false , updatable=false)
+    @ForeignKey(name = "FK_OFFER_TERM_TERM")
+    @Index(name = "IDX_OFFER_TERM_TERM")		
+	public CommercialTerm getTerm() {
+		return term;
+	}
+
+	/**
+	 * Sets the term.
+	 * 
+	 * @param term the new term
+	 */
+	public void setTerm(CommercialTerm term) {
+		this.term = term;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -154,10 +108,8 @@ public class OfferTerm implements ITransferObject {
 		final OfferTerm o = (OfferTerm) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.description, o.description)				
-				.append(this.particular, o.particular)
-				.append(this.name, o.name)				
-				.append(this.offer, o.offer)				
+				.append(this.offer, o.offer)			
+				.append(this.term, o.term)				
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -166,22 +118,14 @@ public class OfferTerm implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(description)	
-			.append(particular)			
 			.append(id)			
-			.append(name)
 			.append(offer)
+			.append(term)			
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).
-			append("description", StringUtils.abbreviate(description, 64)).
-			append("particular", particular).
-			append("id", id).
-			append("name", name).
-			append("offer", offer.getId()).
-			toString();
+		return new PojoToStringBuilder(this).toString();
 	}	
 }
