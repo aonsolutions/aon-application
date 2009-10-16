@@ -508,7 +508,13 @@ color:#000;
 .aon-icon-rubber{
 	background:transparent url(images/aon-icon/aon-icon-rubber.png) scroll left center no-repeat;	
 }
- 
+.aon-icon-lock{
+	background:transparent url(images/aon-icon/aon-icon-lock.png) scroll left center no-repeat;	
+}
+.aon-icon-unlock{
+	background:transparent url(images/aon-icon/aon-icon-unlock.png) scroll left center no-repeat;	
+}
+
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
