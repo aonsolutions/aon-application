@@ -308,5 +308,11 @@ public interface IEbackofficeAlias {
 	*/
 	String  ECCATALOGUE_TYPE = ECCATALOGUE_ENTRY.getAliasNames()[7];
 
+	/** 
+	* Alias value: Eccatalogue_visible
+	* Hibernate value: Eccatalogue.visible
+	*/
+	String  ECCATALOGUE_VISIBLE = ECCATALOGUE_ENTRY.getAliasNames()[8];
+
 
 }
