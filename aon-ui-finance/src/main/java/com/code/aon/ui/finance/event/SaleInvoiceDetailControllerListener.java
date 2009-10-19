@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ui.finance.controller.SaleInvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -29,7 +28,6 @@ public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
-		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 		obtainTaxableBase(event, invoiceDetail);
 	}
 
