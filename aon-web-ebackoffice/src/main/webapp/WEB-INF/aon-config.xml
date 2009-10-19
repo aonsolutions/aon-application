@@ -7,14 +7,14 @@
 		<product:product
 		 showStock="true"
 		 showAccount="false"
-		 showAttachment="true" />
+		 showAttachment="true"
+		 showEcommerceDataTab="true" />
 	</product:config>
-
 
 	<commercial:config version="1.0"
 		xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:commercial 
-		showInvoicing="true"
+		showInvoicing="false"
 		showEcommerceTab="true" />
 	</commercial:config>
 

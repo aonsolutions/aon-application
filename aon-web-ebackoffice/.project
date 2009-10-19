@@ -7,15 +7,14 @@
 		<project>aon-ui-ebackoffice</project>
 		<project>aon-product</project>
 		<project>aon-ui-product</project>
-		<project>aon-ui-commercial</project>
 		<project>aon-commercial</project>
 		<project>aon-ui-customer</project>
 		<project>aon-ui-registry</project>
 		<project>aon-ui-webmail</project>
 		<project>aon-ui-company</project>
+		<project>aon-ui-commercial</project>
 	</projects>
 	<buildSpec>
-		
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>

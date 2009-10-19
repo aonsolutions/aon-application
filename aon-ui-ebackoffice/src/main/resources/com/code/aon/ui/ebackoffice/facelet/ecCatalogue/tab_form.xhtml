@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="ecCatalogue_Form" >
+
+		<!-- <aon:commandButton value="nuevo" id="newEC"
+			actionListener="#{eccatalogue.onReset}" reRender="ecCatalogue_Form" />
+-->
+		<h:panelGrid columns="2">
+			<aon:commandButton value="save" id="saveEC"
+				actionListener="#{eccatalogue.onAccept}" reRender="ecCatalogue_Form" />
+			<div align="right"><aon:outputLink value="#" id="legal-note3"
+				styleClass="aon-finding-toolbar-item aon-icon-favorite">
+				<aon:outputText
+					value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_icons}" />
+				<rich:componentControl for="IconsProcess" attachTo="legal-note3"
+					operation="show" event="onclick" />
+			</aon:outputLink>
+			</div>
+		</h:panelGrid>
+		
+		<rich:spacer height="10">
+		</rich:spacer>
+
+		<aon:panelGrid columns="2">
+			<aon:outputText
+				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_visible}" />
+
+			<aon:selectBooleanCheckbox value="#{eccatalogue.to.visible}" />
+
+
+
+			<aon:outputLabel for="Eccatalogue_type"
+				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_type}" />
+
+			<aon:selectOneMenu id="Eccatalogue_type"
+				value="#{eccatalogue.to.type}">
+				<f:selectItems value="#{eccatalogue.catalogueTypes}" />
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="Eccatalogue_catalogueImg"
+				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_img}" />
+
+
+
+			<h:panelGrid id="image" columns="3">
+
+				<a4j:mediaOutput element="img" cacheable="false"
+					value="#{eccatalogue.image.key}" style="width:60px"
+					createContent="#{eccatalogue.paintImagee}" />
+
+				<rich:fileUpload id="Eccatalogue_catalogueImg"
+					stopControlLabel="#{bundle.aon_fileUpload_stop}"
+					stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+					uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+					fileUploadListener="#{eccatalogue.uploadImage}" listHeight="0px"
+					listWidth="0px" immediateUpload="true" autoclear="true">
+					<a4j:support event="onuploadcomplete" reRender="image" />
+
+				</rich:fileUpload>
+				<aon:commandButton value="borrar" id="deleteImag"
+					actionListener="#{eccatalogue.deleteImage}" reRender="image" />
+			</h:panelGrid>
+
+
+
+			<aon:outputLabel for="Eccatalogue_catalogueIcon"
+				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ico}" />
+
+			<h:panelGrid id="icon" columns="3">
+
+				<a4j:mediaOutput element="img" cacheable="false"
+					style="background-color:#787878; align:center;"
+					value="#{eccatalogue.icon.key}"
+					createContent="#{eccatalogue.paintIconn}" />
+
+
+				<aon:fileUpload id="Eccatalogue_catalogueIcon"
+					addControlLabel="Cambiar"
+					stopControlLabel="#{bundle.aon_fileUpload_stop}"
+					stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+					uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+					fileUploadListener="#{eccatalogue.uploadIcon}" listHeight="0px"
+					listWidth="0px" immediateUpload="true" autoclear="true">
+					<a4j:support event="onuploadcomplete" reRender="icon" />
+				</aon:fileUpload>
+
+				<aon:commandButton value="borrar" id="deleteIco"
+					actionListener="#{eccatalogue.deleteIcon}" reRender="icon" />
+
+			</h:panelGrid>
+		</aon:panelGrid>
+
+		<rich:modalPanel id="IconsProcess" height="490" width="570"
+			zindex="2000" style="top: 0px; left:0px;">
+			<rich:effect event="onshow" type="Highlight" params="duration:0.8" />
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="Iconos" />
+				</aon:div>
+			</f:facet>
+			<aon:div styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+
+
+					<h:outputText
+						value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_down}" />
+					<rich:spacer height="10">
+					</rich:spacer>
+					<br />
+					<br />
+
+					<h:panelGrid columns="10" border="1" cellspacing="10px"
+						style="background-color:#787878;">
+
+						<h:graphicImage value="/css/icons/bocadillo.png" />
+						<h:graphicImage value="/css/icons/clip.png" />
+						<h:graphicImage value="/css/icons/info.png" />
+						<h:graphicImage value="/css/icons/novedad.png" />
+						<h:graphicImage value="/css/icons/oferta.png" />
+						<h:graphicImage value="/css/icons/star.png" />
+						<h:graphicImage value="/css/icons/tick.png" />
+					</h:panelGrid>
+
+					<rich:spacer height="20"></rich:spacer>
+					<aon:div styleClass="aon-text-center">
+						<aon:outputLink id="legalNote3-hidelink" value="#">
+							<aon:outputText value="[#{bundle.aon_close}]"
+								style="color:black;" />
+						</aon:outputLink>
+						<rich:componentControl for="IconsProcess"
+							attachTo="legalNote3-hidelink" operation="hide" event="onclick" />
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</rich:modalPanel>
+
+	</aon:div>
+</ui:composition>

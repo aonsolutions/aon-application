@@ -16,7 +16,7 @@
 		<finalName>aon-ebackoffice</finalName>
 	</build>
 	<properties>
-		<dbVersion>4.3.0</dbVersion>
+		<dbVersion>4.4.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -28,13 +28,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.2.1</version>
+			<version>4.3.1</version>
 			<scope>compile</scope>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.1.5</version>
+			<version>4.2.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -46,13 +46,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.9.0</version>
+			<version>3.10.0</version>
 			<scope>compile</scope>
 		</dependency>
 			<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>4.1.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 				
