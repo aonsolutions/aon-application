@@ -7,7 +7,7 @@
 	</bean>
 -->
 	<bean class="com.code.aon.ebackoffice.Eccatalogue" sqlName="ec_catalogue">
-		<alias names="id,catalogue,catalogue_id,catalogue_endDate,catalogue_startDate,catalogueImg,catalogueIcon,type" />
-		<hibernate names="id,catalogue,catalogue.id,catalogue.endDate,catalogue.startDate,catalogueImg,catalogueIcon,type" />
+		<alias names="id,catalogue,catalogue_id,catalogue_endDate,catalogue_startDate,catalogueImg,catalogueIcon,type,visible" />
+		<hibernate names="id,catalogue,catalogue.id,catalogue.endDate,catalogue.startDate,catalogueImg,catalogueIcon,type,visible" />
 	</bean>
 </dao>

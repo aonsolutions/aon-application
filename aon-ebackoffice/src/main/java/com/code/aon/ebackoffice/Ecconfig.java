@@ -70,6 +70,7 @@ public class Ecconfig implements ITransferObject {
 	private double shippingCosts;
 	private double freeShipping;
 	private String telephone;
+	private String email;
 	
 	
 	@Id
@@ -364,6 +365,14 @@ public class Ecconfig implements ITransferObject {
 	}
 	public void setFreeShipping(double freeShipping) {
 		this.freeShipping = freeShipping;
+	}
+	
+	@Column(length=40)
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	

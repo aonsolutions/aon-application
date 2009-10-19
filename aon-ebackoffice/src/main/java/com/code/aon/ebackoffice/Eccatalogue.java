@@ -34,6 +34,7 @@ public class Eccatalogue implements ITransferObject {
 	private byte[] catalogueImg;
 	private byte[] catalogueIcon;
 	private CatalogueType type;
+	private boolean visible;
 	
 	
 	@Id
@@ -87,6 +88,13 @@ public class Eccatalogue implements ITransferObject {
 		return this.catalogue.getName().substring(0, 1);
 	}
 	
+	
+	public boolean isVisible() {
+		return visible;
+	}
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
 }
 	
 	
