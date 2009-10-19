@@ -31,9 +31,9 @@
 				<aon:panel height="60"
 					header="#{ebackofficeBundle.aon_ebackoffice_ecconfig_funtion_params}">
 
-					<rich:tabPanel switchType="ajax">
+					<aon:panelTabSet switchType="ajax" selectedTab="#{target.selectedTab}">
 
-						<rich:tab id="tab1"
+						<aon:panelTab id="tab1"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_funtion}">
 							<aon:panelGrid id="options" columns="2" style="width: 50%;">
 
@@ -106,6 +106,7 @@
 
 								<aon:selectOneMenu value="#{ecconfig.to.tariff}"
 									disabled="#{ecconfig.showPrice}" style="width:130px">
+									<f:selectItem itemLabel=" " itemValue="#{null}" />
 									<f:selectItems value="#{ecconfig.tariffs}" />
 								</aon:selectOneMenu>
 
@@ -125,17 +126,21 @@
 									size="15" />
 
 								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_email}"
+									style="width:130px" />
+								<aon:inputText value="#{ecconfig.to.email}" maxlength="40"
+									size="30" />
+
+								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_headercolor}" />
 								<rich:colorPicker value="#{ecconfig.to.headerColor}">
 
 								</rich:colorPicker>
 							</aon:panelGrid>
 
+						</aon:panelTab>
 
-
-						</rich:tab>
-
-						<rich:tab id="tab2"
+						<aon:panelTab id="tab2"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_design}">
 							<aon:panelGrid id="Images" columns="2" style="width: 50%;">
 								<aon:outputText
@@ -229,7 +234,7 @@
 												<a4j:support event="onuploadcomplete" reRender="leftBanner" />
 											</aon:fileUpload>
 											<aon:commandButton value="borrar"
-												styleClass=" aon-icon-remove" id="deleteImag2"
+												styleClass="aon-addImageButton"
 												actionListener="#{ecconfig.deleteLeftBanner}"
 												reRender="Images" />
 										</h:panelGrid>
@@ -289,12 +294,12 @@
 								<aon:div id="welcomeBanner">
 									<a4j:region>
 										<c:if test="#{ecconfig.welcomeBanner!=null}">
-										<a4j:mediaOutput id="bannerW_preview" element="img"
-											cacheable="false" style="width:100px"
-											value="#{ecconfig.welcomeBanner.key}"
-											createContent="#{ecconfig.paintWelcomeBanner}" />
-										</c:if>	
-											<c:if test="#{ecconfig.welcomeBanner==null}">
+											<a4j:mediaOutput id="bannerW_preview" element="img"
+												cacheable="false" style="width:100px"
+												value="#{ecconfig.welcomeBanner.key}"
+												createContent="#{ecconfig.paintWelcomeBanner}" />
+										</c:if>
+										<c:if test="#{ecconfig.welcomeBanner==null}">
 
 											<h:graphicImage id="nophoto4"
 												style="width:100px; height: 100px;"
@@ -326,10 +331,10 @@
 
 							</aon:panelGrid>
 
-						</rich:tab>
+						</aon:panelTab>
 
 
-						<rich:tab id="tab3" style="height:300px"
+						<aon:panelTab id="tab3" style="height:300px"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod}">
 
 							<aon:panel height="60" style="width: 50%;"
@@ -407,56 +412,83 @@
 
 							</aon:panel>
 
-						</rich:tab>
+						</aon:panelTab>
 
 
-						<rich:tab id="tab4"
+						<aon:panelTab id="tab4"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_note1}">
+							<h:panelGrid columns="2">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_title}  "
+									style="width:130px" />
+								<aon:inputText value="#{ecconfig.to.noteTitle1}" maxlength="64"
+									size="30" />
+								<aon:outputLabel 
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_richText}" />
+								<aon:selectBooleanCheckbox id="richText"
+									value="#{ecconfig.richTextEnabled}">
+									<a4j:support ajaxSingle="true" event="onclick"
+										reRender="editor" />
+								</aon:selectBooleanCheckbox>
+							</h:panelGrid>
+							<rich:editor id="editor" height="280" width="640"
+								viewMode="#{ecconfig.richTextEnabled?'source':'visual'}"
+								language="#{facesContext.application.defaultLocale.language}"
+								value="#{ecconfig.to.legalNote1}">
+							</rich:editor>
 
-							<aon:outputText
-								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_title}  "
-								style="width:130px" />
-							<aon:inputText value="#{ecconfig.to.noteTitle1}" maxlength="64"
-								size="30" />
-							<br />
-							<br />
-							<h:inputTextarea value="#{ecconfig.to.legalNote1}" cols="150"
-								rows="30" size="700" maxlength="150" />
+						</aon:panelTab>
 
-						</rich:tab>
-
-						<rich:tab id="tab5"
+						<aon:panelTab id="tab5"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_note2}">
 
-
+							<h:panelGrid columns="2">
 							<aon:outputText
 								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_title}  "
 								style="width:130px" />
 							<aon:inputText value="#{ecconfig.to.noteTitle2}" maxlength="64"
 								size="30" />
-							<br />
-							<br />
-							<h:inputTextarea value="#{ecconfig.to.legalNote2}" cols="150"
-								rows="30" size="300" maxlength="150" />
+							<aon:outputLabel 
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_richText}" />
+								<aon:selectBooleanCheckbox id="richText2"
+									value="#{ecconfig.richTextEnabled}">
+									<a4j:support ajaxSingle="true" event="onclick"
+										reRender="editor2" />
+								</aon:selectBooleanCheckbox>
+							</h:panelGrid>
+							<rich:editor id="editor2" height="280" width="640"
+								viewMode="#{ecconfig.richTextEnabled?'source':'visual'}"
+								language="#{facesContext.application.defaultLocale.language}"
+								value="#{ecconfig.to.legalNote2}">
 
-						</rich:tab>
+							</rich:editor>
+						</aon:panelTab>
 
-						<rich:tab id="tab6"
+						<aon:panelTab id="tab6"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_note3}">
 
-							<aon:outputText
-								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_title}  "
-								style="width:130px" />
-							<aon:inputText value="#{ecconfig.to.noteTitle3}" maxlength="64"
-								size="30" />
-							<br />
-							<br />
-							<h:inputTextarea value="#{ecconfig.to.legalNote3}" cols="150"
-								rows="30" size="300" maxlength="150" />
+							<h:panelGrid columns="2">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_title}  "
+									style="width:130px" />
+								<aon:inputText value="#{ecconfig.to.noteTitle3}" maxlength="64"
+									size="30" />
+								<aon:outputLabel 
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_richText}" />
+								<aon:selectBooleanCheckbox id="richText3"
+									value="#{ecconfig.richTextEnabled}">
+									<a4j:support ajaxSingle="true" event="onclick"
+										reRender="editor3" />
+								</aon:selectBooleanCheckbox>
+							</h:panelGrid>
+							<rich:editor id="editor3" height="280" width="640"
+								viewMode="#{ecconfig.richTextEnabled?'source':'visual'}"
+								language="#{facesContext.application.defaultLocale.language}"
+								value="#{ecconfig.to.legalNote3}">
+							</rich:editor>
+						</aon:panelTab>
 
-						</rich:tab>
-
-					</rich:tabPanel>
+				</aon:panelTabSet>
 
 				</aon:panel>
 

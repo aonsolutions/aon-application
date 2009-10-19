@@ -258,10 +258,30 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{catalogueSearch}</value>
+				<value>#{catalogueControllerListener}</value>
 				<value>#{catalogueItemChildListener}</value>
 				<value>#{catalogueCategoryChildListener}</value>
-			</list-entries>
+				</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{catalogueOptionalListeners}</value>
+		</managed-property>
+	</managed-bean>
+	
+	
+	<managed-bean>
+		<managed-bean-name>catalogueOptionalListeners</managed-bean-name>
+		<managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+		
+	<managed-bean>
+		<managed-bean-name>catalogueControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.CatalogueControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>

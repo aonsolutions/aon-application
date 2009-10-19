@@ -4,13 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import com.code.aon.ebackoffice.enumeration.TargetType;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.LinesController;
 
 
-public class EctargetController extends BasicController {
+public class EctargetController extends LinesController {
 
 	
 	private List<SelectItem> targetTypes;
@@ -26,17 +25,8 @@ public class EctargetController extends BasicController {
 				
 			}
 		}
-		
+
 		return targetTypes;
 	}
-	
-	
-	@Override
-	public void onRemove(ActionEvent event) {
-		// TODO Auto-generated method stub
-		
-		System.out.println("2fdds");
-		super.onRemove(event);
-	}
-	
+
 }

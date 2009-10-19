@@ -15,6 +15,7 @@
 			<xs:attribute name="showStock" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAttachment" type="xs:boolean" use="required"/>
+			<xs:attribute name="showEcommerceDataTab" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

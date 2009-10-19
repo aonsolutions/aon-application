@@ -52,6 +52,25 @@ public class EcconfigController extends BasicController {
 	private AonFile welcomeBanner;
 	private boolean login;
 	private boolean showPrice;
+	public boolean richTextEnabled;
+	private String selectedTab;
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}
 	
 
 	public boolean isShowPrice() {

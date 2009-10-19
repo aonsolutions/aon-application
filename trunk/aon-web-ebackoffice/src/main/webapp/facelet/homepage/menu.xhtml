@@ -49,6 +49,9 @@
 				<aon:menuItem id="paymethod" value="formas de pago"
 					action="payMethod" immediate="true" />
 				<aon:menuSeparator />
+				<aon:menuItem id="series" value="series"
+					action="series" immediate="true" />
+				<aon:menuSeparator />
 
 				<rich:menuGroup value="#{appBundle.menu_eparameters}">
 					<aon:menuItem id="EC-CONFIG"
@@ -61,7 +64,10 @@
 					<aon:menuSeparator />
 					<aon:menuItem id="EC-CATALOGUE"
 						value="#{appBundle.menu_ecatalogues}" action="eccatalogue_grid"
-						immediate="true" />
+						immediate="true"  >
+						<aon:actionListener method="#{eccatalogue.onEditSearch}" />
+						<aon:actionListener method="#{eccatalogue.onSearch}" />
+						</aon:menuItem>
 				</rich:menuGroup>
 			</aon:dropDownMenu>
 			
