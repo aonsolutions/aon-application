@@ -108,6 +108,7 @@ public class SalesDetailBeanListener extends ManagerBeanListenerAdapter {
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offerDetail.getOffer().getId());
+		criteria.addNotNullExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_ID));
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
 		if (offerDetailBean.getCount(criteria) == 0) {
 			IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
