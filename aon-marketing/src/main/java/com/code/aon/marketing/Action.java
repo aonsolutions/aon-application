@@ -13,14 +13,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 
 
@@ -45,7 +40,6 @@ public class Action implements ITransferObject {
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="campaign", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_MK_ACTION_MK_CAMPAIGN")
-	@Index(name = "IDX_MK_ACTION_MK_CAMPAIGN")
 	private Campaign campaign;
 	
 	@Column( name = "media_type", nullable = false)
@@ -61,8 +55,7 @@ public class Action implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="survey" )	
-	@ForeignKey(name = "FK_MK_ACTION_SURVEY")
-	@Index(name = "IDX_MK_ACTION_SURVEY")
+	@ForeignKey(name = "FK_MK_ACTION_MK_CAMPAIGN")
 	private Survey survey;
 	
     /**
@@ -187,41 +180,6 @@ public class Action implements ITransferObject {
 	 */
 	public void setSurvey(Survey survey) {
 		this.survey = survey;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final Action o = (Action) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.campaign, o.campaign)
-				.append(this.endDate, o.endDate)				
-				.append(this.mediaType, o.mediaType)
-				.append(this.startDate, o.startDate)				
-				.append(this.survey, o.survey)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(campaign)
-			.append(endDate)
-			.append(id)	
-			.append(mediaType)			
-			.append(startDate)
-			.append(survey)
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
 	}
 	
 }

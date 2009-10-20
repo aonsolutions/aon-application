@@ -13,20 +13,21 @@ import org.hibernate.annotations.ForeignKey;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.marketing.enumeration.ActionTargetStatus;
 
 
 /**
- * Transfer Object that represents the Action Target.
+ * Transfer Object that represents log of the Action Target.
  * 
  * @author Consulting & Development. Aimar Tellitu - 24-sep-2008
  * @since 1.0
  * @version 1.0
  */
 @Entity
-@Table(name = "mk_action_target")
-public class ActionTarget implements ITransferObject {
+@Table(name = "mk_action_target_log")
+public class ActionTargetLog implements ITransferObject {
 
-	private static final long serialVersionUID = 707375832150721627L;
+	private static final long serialVersionUID = -3056239433496035117L;
 
 	@Id
 	@GeneratedValue
@@ -35,18 +36,26 @@ public class ActionTarget implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="action", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_MK_ACTION_TARGET_MK_ACTION")
+	@ForeignKey(name = "FK_MK_ACTION_TARGET_LOG_MK_ACTION")
 	private Action action;
+	
+	@Column(nullable = false)
+	private ActionTargetStatus status;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="target", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_MK_ACTION_TARGET_TARGET")
+	@ForeignKey(name = "FK_MK_ACTION_TARGET_LOG_TARGET")
 	private Target target;
 
+	@ManyToOne (fetch=FetchType.EAGER)
+    @JoinColumn( name="survey_response" )	
+	@ForeignKey(name = "FK_MK_ACTION_LOG_SURVEY_RESPONSE")
+	private SurveyResponse surveyResponse;
+	
     /**
      * The empty constructor.
      */
-    public ActionTarget() {
+    public ActionTargetLog() {
     }
 
     /**
@@ -54,7 +63,7 @@ public class ActionTarget implements ITransferObject {
      * 
      * @param id the id
      */
-    public ActionTarget(Integer id) {
+    public ActionTargetLog(Integer id) {
         this.id = id;
     }
 
@@ -110,6 +119,42 @@ public class ActionTarget implements ITransferObject {
 	 */
 	public void setAction(Action action) {
 		this.action = action;
+	}
+
+	/**
+	 * Gets the status.
+	 * 
+	 * @return the status
+	 */
+	public ActionTargetStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * Sets the status.
+	 * 
+	 * @param status the new status
+	 */
+	public void setStatus(ActionTargetStatus status) {
+		this.status = status;
+	}
+
+	/**
+	 * Gets the survey response.
+	 * 
+	 * @return the survey response
+	 */
+	public SurveyResponse getSurveyResponse() {
+		return surveyResponse;
+	}
+
+	/**
+	 * Sets the survey response.
+	 * 
+	 * @param surveyResponse the new survey response
+	 */
+	public void setSurveyResponse(SurveyResponse surveyResponse) {
+		this.surveyResponse = surveyResponse;
 	}
 	
 }

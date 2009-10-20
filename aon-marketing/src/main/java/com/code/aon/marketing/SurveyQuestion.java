@@ -9,14 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 
 /**
@@ -42,12 +37,11 @@ public class SurveyQuestion implements ITransferObject {
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="survey", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_SURVERY_QUESTION_SURVEY")
-	@Index(name = "IDX_SURVERY_QUESTION_SURVEY")
 	private Survey survey;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="question", nullable = false )	
-	@Index(name = "IDX_SURVERY_QUESTION_QUESTION")
+	@ForeignKey(name = "FK_SURVERY_QUESTION_QUESTION")
 	private Question question;
 	
     /**
@@ -136,36 +130,5 @@ public class SurveyQuestion implements ITransferObject {
 	public void setQuestion(Question question) {
 		this.question = question;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final SurveyQuestion o = (SurveyQuestion) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.position, o.position)
-				.append(this.question, o.question)				
-				.append(this.survey, o.survey)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(id)		
-			.append(position)
-			.append(question)
-			.append(survey)							
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}	
-	
+    
 }

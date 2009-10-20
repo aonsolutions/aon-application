@@ -14,9 +14,15 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum ActionTargetStatus implements IResourceable {
 
+	/** SENT. */
+	SENT,
+    
 	/** PENDING. */
 	PENDING,
     
+    /** FINISHED. */
+	FINISHED,
+	
     /** ABSENT. */
 	ABSENT,
 	
@@ -27,13 +33,7 @@ public enum ActionTargetStatus implements IResourceable {
 	TRY_AGAIN,
 	
     /** CANCEL. */
-	CANCEL,
-
-    /** FINISHED. */
-	FINISHED,	
-	
-	/** SENT. */
-	SENT;
+	CANCEL;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.marketing.i18n.messages";
