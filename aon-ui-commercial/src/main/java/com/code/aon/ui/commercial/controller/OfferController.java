@@ -55,6 +55,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.SecurityInfo;
 
 /**
@@ -470,6 +471,9 @@ public class OfferController extends BasicController implements ICommercialConst
 		messageController.setSubject(emailController.getEmailSubject(offer));
 		messageController.setContent(emailController.getEmailBody(offer));
 		messageController.addAttachment(emailController.getOfferFile(offer));
+		for( AonFile aonFile : emailController.getOfferAttachemnts(offer) ) {
+			messageController.addAttachment(aonFile);
+		}
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
 	}	
