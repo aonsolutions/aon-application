@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.ebackoffice.EcOfferPayment;
+import com.code.aon.ebackoffice.EcPaymethod;
 import com.code.aon.ebackoffice.Eccatalogue;
 import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.ebackoffice.Ectarget;
@@ -21,10 +23,12 @@ public class EbackofficeAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-ebackoffice/src/main/java/com/code/aon/ebackoffice/dao/IEbackofficeAlias.java");
-		String[] classes = new String[] { 
-				Ectarget.class.getName(),
-				Ecconfig.class.getName(),
-				Eccatalogue.class.getName()};
+		String[] classes = new String[] { 				
+				Eccatalogue.class.getName(),
+				Ecconfig.class.getName(),				
+				EcOfferPayment.class.getName(),
+				EcPaymethod.class.getName(),
+				Ectarget.class.getName()};
 		AliasWriter writer = new AliasWriter("com.code.aon.ebackoffice.dao");
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		writer.write(classes, file);
