@@ -20,16 +20,19 @@
 		<!-- EBACKOFFICE -->		
 		<mapping class="com.code.aon.ebackoffice.Ectarget"/>		  
 		<mapping class="com.code.aon.ebackoffice.Ecconfig"/>
-		<mapping class="com.code.aon.ebackoffice.Eccatalogue"/>			
+		<mapping class="com.code.aon.ebackoffice.Eccatalogue"/>	
+		<mapping class="com.code.aon.ebackoffice.EcOfferPayment"/>			
+		<mapping class="com.code.aon.ebackoffice.EcPaymethod"/>			
 		
 		
 		<!-- CONFIG -->		
 		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Scope"/>
 		
 		<!-- COMMERCIAL -->		
-		
 		
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
@@ -38,6 +41,10 @@
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferAttachment"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		
 		<!-- COMPANY -->		
 		<mapping class="com.code.aon.company.WorkPlace"/>
