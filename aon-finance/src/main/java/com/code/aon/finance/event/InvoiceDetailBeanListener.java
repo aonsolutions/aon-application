@@ -2,8 +2,6 @@ package com.code.aon.finance.event;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,9 +23,6 @@ import com.code.aon.ql.Criteria;
  */
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
-	/** The LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(InvoiceDetailBeanListener.class.getName());
-
 	/**
 	 * Bean inserted. Inserts the related InvoiceTax when an InvoiceDetail is added.
 	 * 
@@ -89,7 +84,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	 * 
 	 * @return the invoice tax
 	 */
-	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) {
+	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) throws ManagerBeanException {
 		Date date = invoiceDetail.getInvoice().getIssueDate();
 		if (date.before(tax.getStartDate())) {
 			tax = obtainTax(tax.getId(),date);
@@ -119,26 +114,22 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	 * @return the tax
 	 */
 	@SuppressWarnings("unchecked")
-	private Tax obtainTax(Integer id, Date date) {
-		try {
-			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
-        	Criteria criteria = new Criteria();
-        	criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID),id);
-        	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE),date);
-        	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE),date);
-        	Iterator iter = taxDetailBean.getList(criteria).iterator();
-        	while (iter.hasNext()) {
-        		TaxDetail taxDetail = (TaxDetail)iter.next();
-        		Tax tax = new Tax();
-        		tax.setId(taxDetail.getTax().getId());
-        		tax.setPercentage(taxDetail.getValue());
-        		tax.setSurcharge(taxDetail.getSurcharge());
-        		tax.setType(taxDetail.getTax().getType());
-        		return tax;
-        	}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error getting tax for category with id= " + id, e);
-		}
+	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
+		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID),id);
+    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE),date);
+    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE),date);
+    	Iterator iter = taxDetailBean.getList(criteria).iterator();
+    	if (iter.hasNext()) {
+    		TaxDetail taxDetail = (TaxDetail)iter.next();
+    		Tax tax = new Tax();
+    		tax.setId(taxDetail.getTax().getId());
+    		tax.setPercentage(taxDetail.getValue());
+    		tax.setSurcharge(taxDetail.getSurcharge());
+    		tax.setType(taxDetail.getTax().getType());
+    		return tax;
+    	}
 		return null;
 	}
 
