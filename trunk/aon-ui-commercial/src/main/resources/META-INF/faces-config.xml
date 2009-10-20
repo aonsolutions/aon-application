@@ -112,6 +112,31 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ COMMERCIAL TERM ************** -->
+	<managed-bean>
+		<managed-bean-name>commercialTerm</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommercialTerm</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commercialTerm</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CommercialTerm_name</value>
+		</managed-property>		
+	</managed-bean>
 	
 	<!-- ************ TARGET ************** -->
 	<managed-bean>
@@ -728,7 +753,7 @@
 	<!-- ****** OFFER TERM GENERAL ****** -->
 	<managed-bean>
 		<managed-bean-name>offerTermGeneral</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.commercial.controller.OfferTermController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -751,14 +776,9 @@
 			<value>OfferTerm_name</value>
 		</managed-property>		
 		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>OfferTerm_particular</key>
-					<value>#{false}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>								
+			<property-name>general</property-name>
+			<value>#{true}</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -768,12 +788,27 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{offerTermControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>offerTermControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.OfferTermControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ****** OFFER TERM PARTICULAR ****** -->
 	<managed-bean>
 		<managed-bean-name>offerTermParticular</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.commercial.controller.OfferTermController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -792,18 +827,13 @@
 			<value>offer</value>
 		</managed-property>
 		<managed-property>
+			<property-name>general</property-name>
+			<value>#{false}</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>OfferTerm_name</value>
 		</managed-property>		
-		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>OfferTerm_particular</key>
-					<value>#{true}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>								
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -817,17 +847,32 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{offerTermParticularControllerListener}</value>
+				<value>#{offerTermControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************ COMMERCIAL TERM LOOKUP ************** -->
 	<managed-bean>
-		<managed-bean-name>offerTermParticularControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.event.OfferTermParticularControllerListener
-		</managed-bean-class>
+		<managed-bean-name>commercialTermLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commercialTermLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.commercial.CommercialTerm</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/commercial/facelet/lookup/commercialTerm/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/commercial/facelet/lookup/commercialTerm/form.xhtml</value>
+		</managed-property>
 	</managed-bean>
 	
    	<!-- ************* NAVIGATION RULES ***************** -->
@@ -851,6 +896,10 @@
 		<navigation-case>
 			<from-outcome>commercialActivity</from-outcome>
 			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialActivity/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercialTerm</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTerm/grid.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>offer_list</from-outcome>
