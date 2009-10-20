@@ -34,8 +34,8 @@ public class CommercialTerm implements ITransferObject {
     /** The description. */
     private String description;
 
-    /** If the OfferTerm is particular. */
-    private boolean particular;    
+    /** If the OfferTerm is general. */
+    private boolean general;    
     
 	/**
 	 * Gets the id.
@@ -98,24 +98,25 @@ public class CommercialTerm implements ITransferObject {
         this.description = description;
     }
 
+    
 	/**
-	 * Checks if is particular.
+	 * Checks if is general.
 	 * 
-	 * @return true, if is particular
+	 * @return true, if is general
 	 */
-	@Column(nullable = false)
-	public boolean isParticular() {
-		return particular;
+    @Column(nullable = false, name = "term_general")
+	public boolean isGeneral() {
+		return general;
 	}
 
 	/**
-	 * Sets the particular.
+	 * Sets the general.
 	 * 
-	 * @param signed the new particular
+	 * @param general the new general
 	 */
-	public void setParticular(boolean particular) {
-		this.particular = particular;
-	}	
+	public void setGeneral(boolean general) {
+		this.general = general;
+	}
     
 	@Override
 	public boolean equals(Object obj) {
@@ -126,7 +127,7 @@ public class CommercialTerm implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.description, o.description)				
-				.append(this.particular, o.particular)
+				.append(this.general, o.general)
 				.append(this.name, o.name)				
 				.isEquals();
 		}
@@ -137,7 +138,7 @@ public class CommercialTerm implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(description)	
-			.append(particular)			
+			.append(general)			
 			.append(id)			
 			.append(name)
 			.toHashCode();
@@ -147,7 +148,7 @@ public class CommercialTerm implements ITransferObject {
 	public String toString() {
 		return new ToStringBuilder(this).
 			append("description", StringUtils.abbreviate(description, 64)).
-			append("particular", particular).
+			append("general", general).
 			append("id", id).
 			append("name", name).
 			toString();

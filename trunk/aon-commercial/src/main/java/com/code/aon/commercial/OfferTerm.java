@@ -5,17 +5,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Transfer Object that represents a OfferTerm.
@@ -32,8 +35,14 @@ public class OfferTerm implements ITransferObject {
 	/** The offer. */
 	private Offer offer;
 	
-	/** The offer. */
-	private CommercialTerm term;
+    /** The name. */
+    private String name;
+	
+    /** The description. */
+    private String description;
+
+    /** If the OfferTerm is general. */
+    private boolean general;    
     
 	/**
 	 * Gets the id.
@@ -78,26 +87,64 @@ public class OfferTerm implements ITransferObject {
 		this.offer = offer;
 	}	
 	
+    /**
+     * Gets the name.
+     * 
+     * @return the name
+     */
+    @Column(length=32, nullable = false)
+	public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name.
+     * 
+     * @param name the name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }	
+
+    /**
+     * Gets the description.
+     * 
+     * @return the description
+     */
+	@Lob
+	@Column( nullable = false )
+	@Type(type="stringClob")	
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description.
+     * 
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
 	/**
-	 * Gets the term.
+	 * Checks if is general.
 	 * 
-	 * @return the term
+	 * @return true, if is general
 	 */
-	@ManyToOne
-	@JoinColumn( name="term", nullable=false , updatable=false)
-    @ForeignKey(name = "FK_OFFER_TERM_TERM")
-    @Index(name = "IDX_OFFER_TERM_TERM")		
-	public CommercialTerm getTerm() {
-		return term;
+    @Column(nullable = false, name = "term_general")
+	public boolean isGeneral() {
+		return general;
 	}
 
 	/**
-	 * Sets the term.
+	 * Sets the general.
 	 * 
-	 * @param term the new term
+	 * @param general the new general
 	 */
-	public void setTerm(CommercialTerm term) {
-		this.term = term;
+	public void setGeneral(boolean general) {
+		this.general = general;
 	}
 
 	@Override
@@ -108,8 +155,10 @@ public class OfferTerm implements ITransferObject {
 		final OfferTerm o = (OfferTerm) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.offer, o.offer)			
-				.append(this.term, o.term)				
+				.append(this.description, o.description)				
+				.append(this.general, o.general)
+				.append(this.name, o.name)				
+				.append(this.offer, o.offer)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -118,14 +167,23 @@ public class OfferTerm implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(description)	
+			.append(general)			
 			.append(id)			
+			.append(name)
 			.append(offer)
-			.append(term)			
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}	
+		return new ToStringBuilder(this).
+			append("description", StringUtils.abbreviate(description, 64)).
+			append("general", general).
+			append("id", id).
+			append("name", name).
+			append("offer", offer).
+			toString();
+	}
+
 }
