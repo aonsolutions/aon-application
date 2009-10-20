@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -15,6 +17,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferAttachment;
+import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -156,6 +160,29 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 		String fileName = "offer_" + offer.getSeries() + "-" + offer.getNumber() + ".pdf";
 		aonFile.setFileName( fileName );
 		return aonFile;
+	}
+
+	public List<AonFile> getOfferAttachemnts( Offer offer ) throws ManagerBeanException, IOException {
+		IManagerBean offerAttach = BeanManager.getManagerBean(OfferAttachment.class);
+		Criteria criteria = new Criteria();
+		String offerIdAlias = offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID);
+		criteria.addEqualExpression(offerIdAlias, offer.getId());
+		List<ITransferObject> list = offerAttach.getList(criteria);
+		if (! list.isEmpty() ) {
+			List<AonFile> files = new LinkedList<AonFile>();
+			for( ITransferObject to : list ) {
+				OfferAttachment attach = (OfferAttachment) to;
+				AonFile aonFile = new AonFile();
+				String ext = "." + ( (attach.getMimeType() != null) ? attach.getMimeType().getExtension() : "tmp");
+				File file = File.createTempFile( attach.getDescription(), ext );
+				FileUtils.writeByteArrayToFile(file, attach.getData());
+				aonFile.setFile(file);
+				aonFile.setFileName( attach.getDescription() );
+				files.add( aonFile );
+			}
+			return files;
+		}
+		return Collections.emptyList();
 	}
 	
 }
