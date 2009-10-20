@@ -396,6 +396,13 @@
 							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetail.xhtml" />
 						</aon:panelTab>
 
+						<aon:panelTab id="offerAttachment" label="#{commercialBundle.commercial_offer_attachment}">
+							<ui:include src="/com/code/aon/faces/attachment/grid.xhtml">
+								<ui:param name="controller" value="#{offerAttachment}" />
+								<ui:param name="rows" value="10" />
+							</ui:include>
+						</aon:panelTab>
+					
 						<aon:panelTab id="offerTermGeneral" label="#{commercialBundle.commercial_offer_term_general}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formTerm.xhtml" >
 								<ui:param name="controller" value="#{offerTermGeneral}" />
