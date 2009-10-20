@@ -232,7 +232,7 @@
 				<f:facet name="header">
 					<aon:outputLabel value="INFO" />
 				</f:facet>
-				<aon:div rendered="#{!controller.pending}" style="display:inline;cursor:pointer;">
+				<aon:div rendered="#{!controller.pending and to.item != null and to.item.id != null}" style="display:inline;cursor:pointer;">
 					<aon:outputText value="&#160;"
 						styleClass="aon-icon-predetermine" style="padding-left:20px" />
 					<rich:toolTip value="#{controller.lineStatusInfo}" />
