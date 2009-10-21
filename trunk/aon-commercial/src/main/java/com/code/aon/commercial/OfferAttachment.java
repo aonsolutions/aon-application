@@ -17,12 +17,12 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 
 @Entity
 @Table(name="offer_attach")
-public class OfferAttachment implements ITransferObject {
+public class OfferAttachment implements IAttachment {
 
 	private static final long serialVersionUID = -6572435143671792940L;
 
