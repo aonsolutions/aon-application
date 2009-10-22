@@ -51,4 +51,5 @@ public interface WebMailConstants {
 	
 	String CONTACT_DUPLICATED = "webmail_contact_duplicated";
 	String CONTACT_USED = "webmail_contact_used";
+	String NOT_MAIL_ACCOUNT = "aon_not_mail_account";
 }
