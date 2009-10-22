@@ -40,14 +40,13 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 
 public class EmailUtilController implements ICommercialMessages, ICommercialConstants {
-
-	private static final String OFFER_REPORT = "offer";
 
 	private EmailSender sender;
 	
@@ -136,7 +135,7 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 				Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
-				String text = AonUtil.getMessage(BUNDLE_KEY, NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(WebMailConstants.BUNDLE_NAME, WebMailConstants.NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, user.getShortName() );
 				throw new AbortProcessingException( message );
 			}
@@ -146,7 +145,7 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 	
 	public AonFile getOfferFile( Offer offer ) throws IOException, ReportException, ManagerBeanException {
 		SignerController signer = (SignerController) AonUtil.getRegisteredBean(OFFER_SIGNER_CONTROLLER_NAME);
-		File file = File.createTempFile( OFFER_REPORT, ".pdf" );
+		File file = File.createTempFile( signer.getReportKey(), ".pdf" );
 		byte[] data = null;
 		if ( offer.isSigned() ) {
 			data = signer.getSignedAttachment(offer.getId()).getData();
