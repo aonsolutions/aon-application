@@ -514,6 +514,18 @@ color:#000;
 .aon-icon-unlock{
 	background:transparent url(images/aon-icon/aon-icon-unlock.png) scroll left center no-repeat;	
 }
+.aon-icon-sign{
+	background:transparent url(images/aon-icon/aon-icon-sign.png) scroll left center no-repeat;
+ }
+.aon-icon-cancel-sign{
+	background:transparent url(images/aon-icon/aon-icon-cancelSign.png) scroll left center no-repeat;
+ }
+ .aon-icon-signed{
+	background:transparent url(images/aon-icon/aon-icon-signed.png) scroll left center no-repeat;
+ }
+ .aon-icon-unsigned{
+	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
+ }
 
  /*folder icons*/
 .aon-icon-folder{
