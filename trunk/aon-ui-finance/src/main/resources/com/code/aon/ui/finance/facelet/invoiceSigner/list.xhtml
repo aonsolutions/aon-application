@@ -23,7 +23,7 @@
 					<aon:commandButton id="sign"
 						value="#{financeBundle.finance_sign_selected}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{invoiceSigner.onShowSignWindow}"
+						actionListener="#{saleInvoiceSigner.onShowSignWindow}"
 						disabled="#{invoiceSigner.selectionEmpty}"
 						reRender="showSignWindow">
 					</aon:commandButton>
@@ -105,14 +105,14 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_signature}" />
+								<aon:outputText value="#{signBundle.sign_signature}" />
 							</f:facet>
-							<aon:graphicImage rendered="#{to.signed}"
-								styleClass="aon-vertical-align-top aon-margin-left" title="#{financeBundle.finance_signed}"
-								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/signed.png']}"/>
-							<aon:graphicImage rendered="#{!to.signed}"
-								styleClass="aon-vertical-align-top aon-margin-left" alt="#{financeBundle.finance_sign_pending}"
-								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/not-signed.png']}"/>
+							<aon:outputText value="&#160;" rendered="#{to.signed}"
+								title="#{signBundle.sign_signed}"
+								styleClass="aon-icon aon-icon-signed" />
+							<aon:outputText value="&#160;" rendered="#{!to.signed}"
+								title="#{signBundle.sign_sign_pending}"
+								styleClass="aon-icon aon-icon-unsigned" />
 						</aon:column>
 
 					</aon:dataTable>
@@ -120,7 +120,8 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
+		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
+			<ui:param name="controller" value="#{saleInvoiceSigner}" />
 			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
 			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
 		</ui:include>
