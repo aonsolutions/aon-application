@@ -939,6 +939,21 @@
 			<value>SALES</value>
 		</managed-property>		
 	</managed-bean>
+	
+	<!-- ************ SALE INVOICE SIGNER ************** -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceSigner</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>signatureController</property-name>
+			<value>#{saleInvoice}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>reportKey</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+	</managed-bean>	
 
 	<!-- ************* INVOICE RECORDER ***************** -->
 	<managed-bean>

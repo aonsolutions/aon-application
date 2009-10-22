@@ -18,14 +18,12 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:confirmButton value="&#160;" id="sendEmail"
-						confirmTitle="#{financeBundle.finance_send_email}"
-						confirmMessage="#{financeBundle.finance_sign_email_confirm}"
-						confirmActionListener="#{invoiceSigner.onShowSignWindow}"
-						reRender="showSignWindow"
-						cancelActionListener="#{invoicePrint.onSendInvoicesByEmail}"
+					<aon:commandButton value="&#160;" id="sendEmail"
+						actionListener="#{invoicePrint.onSendInvoicesByEmail}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
-					</aon:confirmButton>											
+					</aon:commandButton>											
 					<h:commandLink value="&#160;" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
@@ -119,17 +117,17 @@
 						</aon:outputText>
 					</aon:column>
 
-					<c:if test="#{company.EInvoice}">
+					<c:if test="#{company.EInvoice}">					
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_signature}" />
+								<aon:outputText value="#{signBundle.sign_signature}" />
 							</f:facet>
-							<aon:graphicImage rendered="#{to.signed}"
-								styleClass="aon-vertical-align-top aon-margin-left" title="#{financeBundle.finance_signed}"
-								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/signed.png']}"/>
-							<aon:graphicImage rendered="#{!to.signed}"
-								styleClass="aon-vertical-align-top aon-margin-left" alt="#{financeBundle.finance_sign_pending}"
-								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/not-signed.png']}"/>
+							<aon:outputText value="&#160;" rendered="#{to.signed}"
+								title="#{signBundle.sign_signed}"
+								styleClass="aon-icon aon-icon-signed" />
+							<aon:outputText value="&#160;" rendered="#{!to.signed}"
+								title="#{signBundle.sign_sign_pending}"
+								styleClass="aon-icon aon-icon-unsigned" />
 						</aon:column>
 					</c:if>
 
@@ -141,9 +139,6 @@
 		</aon:form>
 
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
-			<aon:methodParam name="signActionListener" value="#{invoicePrint.onSendInvoicesBySignedEmail}" type="actionListener" />
-		</ui:include>
 	</ui:define>
 
 </ui:composition>

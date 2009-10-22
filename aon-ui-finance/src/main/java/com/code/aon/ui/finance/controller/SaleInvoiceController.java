@@ -1,15 +1,10 @@
 package com.code.aon.ui.finance.controller;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
@@ -17,31 +12,19 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import net.esle.sinadura.core.firma.SignStoreFactory;
-import net.esle.sinadura.core.firma.SignStoreIFace;
-import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
-
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.dom4j.tree.DefaultElement;
-import org.hibernate.EntityMode;
-import org.hibernate.Session;
 import org.xml.sax.SAXException;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.Company;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -51,6 +34,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
+import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -62,25 +46,22 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.EmailUtilController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
 
-public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
+public class SaleInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
 	
 	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceController.class.getName());
 	
@@ -93,8 +74,6 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	private CustomerValidationManager cvm;
 
 	private List<SelectItem> addresses;
-	
-	private boolean signEmail;
 	
 	private boolean showInvoiceAddressWindow;
 
@@ -425,43 +404,6 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		}
 	}
 	
-	public void onSignEmail( ActionEvent event ) throws ManagerBeanException {
-		this.signEmail = true;
-		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
-		invoiceSigner.onShowSignWindow(event);
-	}
-	
-	public void onSign( ActionEvent event ) {
-		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
-		if (! invoiceSigner.resolveCertificado() ) {
-			return;
-		}
-		try {
-			if ( this.signEmail ) {
-				sendInvoiceByEmail( invoiceSigner.getSecurityInfo() );
-			} else {
-				invoiceSigner.signInvoice( getInvoice() );
-			}
-		} catch (Throwable e) {
-			LOGGER.severe(">>>> onSignInvoice " + e.getMessage());
-			addMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		} finally {
-			this.signEmail = false;
-			invoiceSigner.setShowSignWindow(false);
-		}
-	}
-
-	public void onCancelSignInvoice( ActionEvent event ) throws ManagerBeanException {
-		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
-		invoiceSigner.cancelSignInvoice( getInvoice() );
-	}
-
-	public String onReport() throws ReportException, ManagerBeanException, IOException {
-		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
-		return invoiceSigner.onReport( getInvoice() );
-	}
-	
 	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		sendInvoiceByEmail( null );
 	}
@@ -486,84 +428,42 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
 	}
-	
-	private Company getCompany() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		return companyController.obtainCompany();		
-	}
-	
-	public boolean isDigitalCertificate() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
-		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
-		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
-		criteria.addEqualExpression( registry, getCompany().getId() );
-		int count = bean.getCount(criteria);
-		return count > 0;
-	}
-	
-	public RegistryAttachment getDigitalCertificate() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
-		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
-		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
-		criteria.addEqualExpression( registry, getCompany().getId() );		
-		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
-			return (RegistryAttachment) list.get(0);
+
+	@Override
+	public IManagerBean getAttachmentBean() {
+		try {
+			return BeanManager.getManagerBean(InvoiceAttachment.class);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
 	}
-	
-	public SecurityInfo getDigitalCertificate( RegistryAttachment ra, String password ) throws ManagerBeanException, IOException, SinaduraCoreException {
-		ByteArrayInputStream in = new ByteArrayInputStream( ra.getData() );
-		SignStoreIFace signStore = SignStoreFactory.buildSingStorePKSC12( in, password );
-		SecurityInfo si = new SecurityInfo( signStore.getKeySore(), password );
-		return si;
-	}		
-	
-	public String getInvoiceSignature() throws ManagerBeanException {
-		RegistryAttachment ra = getDigitalCertificate();
-		return new String( Base64.encodeBase64(ra.getData()) );
+
+	@Override
+	public String getAttchmentMimeTypeAlias() {
+		return IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE;
 	}
-	
-    private XMLWriter createWriter( Writer out ) {
-        OutputFormat format = OutputFormat.createPrettyPrint();   
-        format.setEncoding( "UTF-8" );
-        XMLWriter writer = new XMLWriter( new BufferedWriter(out), format );
-        writer.setMaximumAllowedCharacter(0x7F);
-        return writer;
-    }
-	
-	public void writeInvoiceXml( Writer out, Serializable id ) throws IOException, SAXException {
-		String factoryName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-		Session session = HibernateUtil.getSession(factoryName);
-		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Object object = dom4jSession.get(Invoice.class.getName(), id);
-		
-		XMLWriter writer = createWriter(out);
-        Element root = new DefaultElement( "root" );
-        writer.startDocument();
-        writer.writeOpen( root );
-        writer.write( object );
-        writer.writeClose( root );
-        writer.endDocument();
-        writer.close();        
-        
-        dom4jSession.close();
-        HibernateUtil.closeSession( factoryName );
+
+	@Override
+	public String getAttchmentParentAlias() {
+		return IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID;
 	}
-	
-	public String getEInvoice() throws IOException, SAXException {
-		StringWriter sw = new StringWriter();
-		writeInvoiceXml(sw, getInvoice().getId());
-		return sw.toString();
+
+	@Override
+	public boolean isSigned(ITransferObject to) {
+		return ((Invoice) to).isSigned();
 	}
-	
-	public InputStream getImage(){
-		return SaleInvoiceController.class.getResourceAsStream("/com/code/aon/ui/finance/report/barras.gif");
+
+	@Override
+	public IAttachment newAttachment(ITransferObject parent) {
+		InvoiceAttachment attachment = new InvoiceAttachment();
+		attachment.setInvoice( (Invoice) parent );
+		return attachment;
+	}
+
+	@Override
+	public void setSigned(ITransferObject to, boolean value) {
+		((Invoice) to).setSigned(value);
 	}
 	
 }

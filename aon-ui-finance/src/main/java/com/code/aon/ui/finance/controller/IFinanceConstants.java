@@ -28,4 +28,6 @@ public interface IFinanceConstants {
 	
 	String INVOICE_SIGNER_CONTROLLER_NAME = "invoiceSigner";
 	
+	String SALE_INVOICE_SIGNER_CONTROLLER_NAME = "saleInvoiceSigner";
+	
 }
