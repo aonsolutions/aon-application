@@ -129,6 +129,7 @@ public class FoldersTreeBean implements WebMailConstants {
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
    		MessageController message = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
    		message.moveSelectedMessageAndMove(destinyFolder);
+   		getFolderController().updateModel();
 	}
 	
 	public boolean isTreeLoaded(){

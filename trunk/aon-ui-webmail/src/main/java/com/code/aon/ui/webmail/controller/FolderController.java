@@ -71,9 +71,13 @@ public class FolderController implements WebMailConstants {
 	
 	public void resetCurrentPage() {
 		setCurrentPage( 1 );
-		this.model.setWrappedData(folder.getMessageList());		
+		updateModel();		
 	}
 
+	public void updateModel() {
+		this.model.setWrappedData(folder.getMessageList());		
+	}
+	
 	/**
 	 * @return the folder
 	 */
