@@ -15,8 +15,8 @@
 		<ui:param name="rows" value="0" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="skipResetButton" value="#{!offer.pending}" />
-		<ui:param name="skipLineEdition" value="#{!offer.pending}" />
+		<ui:param name="skipResetButton" value="#{offer.readOnly}" />
+		<ui:param name="skipLineEdition" value="#{offer.readOnly}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
 		<ui:param name="newCancelButtonReRender" value="menuExt" />

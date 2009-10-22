@@ -796,6 +796,15 @@
 			<value>OfferAttachment_description</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>OfferAttachment_mimeType</key>
+					<value>! 29</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>offer</value>
 		</managed-property>
@@ -954,6 +963,21 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ OFFER SIGNER ************** -->
+	<managed-bean>
+		<managed-bean-name>offerSigner</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>signatureController</property-name>
+			<value>#{offer}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>reportKey</property-name>
+			<value>offer</value>
+		</managed-property>
+	</managed-bean>
+
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>

@@ -6,8 +6,8 @@
 
 	<c:if test="#{offer.selectedTab == controller.beanName}">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-			<ui:param name="skipResetButton" value="#{!offer.pending}" />
-			<ui:param name="skipLineEdition" value="#{!offer.pending}" />	
+			<ui:param name="skipResetButton" value="#{offer.readOnly}" />
+			<ui:param name="skipLineEdition" value="#{offer.readOnly}" />	
 			<ui:define name="columns">
 	
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-300">

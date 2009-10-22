@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -18,8 +19,9 @@
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{offer}" />
-					<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn" />
+					<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-text-center" />
 					<ui:define name="columns">
 						<aon:column>
 							<f:facet name="header">
@@ -69,6 +71,20 @@
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
+						
+						<c:if test="#{company.EInvoice}">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{signBundle.sign_signature}" />
+								</f:facet>
+								<aon:outputText value="&#160;" rendered="#{to.signed}"
+									title="#{signBundle.sign_signed}"
+									styleClass="aon-icon aon-icon-signed" />
+								<aon:outputText value="&#160;" rendered="#{!to.signed}"
+									title="#{signBundle.sign_sign_pending}"
+									styleClass="aon-icon aon-icon-unsigned" />
+							</aon:column>
+						</c:if>						
 					</ui:define>
 				</ui:decorate>
 

@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showSignWindow">
+		<c:if test="#{controller.showSignWindow}">
+			<rich:modalPanel id="invoiceSignerModalPanel" 
+				rendered="#{controller.showSignWindow}" showWhenRendered="true"
+				minWidth="400" height="180" minHeight="180" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{signBundle.sign_sign_selected}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showSignWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{controller.showSignWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="passwordForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="sign_selected"
+										value="#{signBundle.sign_sign}"
+										reRender="showSignWindow,#{signButtonreRender}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										actionListener="#{signActionListener}"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />											
+									<aon:commandButton id="sign-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showSignWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{controller.showSignWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+										<aon:outputLabel for="keystore"
+											value="#{signBundle.sign_keystore}" />
+										<c:if test="#{empty controller.certificates}">											
+											<aon:selectOneMenu id="keystore"
+												value="#{controller.keystore}">
+												<f:selectItems value="#{controller.digitalCertificates}" />
+											</aon:selectOneMenu>
+										
+											<aon:outputLabel for="password"
+												value="#{bundle.aon_login_passwd}" />
+											<aon:inputSecret id="password" 
+												value="#{controller.password}" />
+										</c:if>
+
+										<c:if test="#{!(empty controller.certificates)}">
+											<aon:outputText id="keystore"
+												value="#{controller.keystore.description}" />
+											
+											<aon:outputLabel for="certificates"
+												value="#{signBundle.sign_digital_certificate}" />
+											<aon:selectOneMenu id="certificates"
+												value="#{controller.alias}">
+												<f:selectItems value="#{controller.certificates}" />
+											</aon:selectOneMenu>
+										</c:if>
+										<c:if test="#{controller.showCertificatePassword}">
+											<aon:outputLabel for="certificatePassword"
+												value="#{signBundle.sign_digital_certificate_password}" />
+											<aon:inputSecret id="certificatePassword" 
+												value="#{controller.certificatePassword}" />
+										</c:if>										
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

@@ -234,46 +234,38 @@ public class InvoiceSignerController extends BasicController{
 			HibernateUtil.setBeginTransaction( false );
 			HibernateUtil.setCloseSession( false );
 
-			RegistryAttachment signature = obtainCompanySignature();
-			if (signature != null) {
-				Iterator<Integer> iter = getCheckedInvoices().iterator();
-				while(iter.hasNext()){
-					Integer id = iter.next();
-					try {
-						Invoice invoice = (Invoice) getManagerBean().get(id);
-						if (! invoice.isSigned() ) {
-							byte[] pdfData = getInvoicePDF(invoice);
-							
-							HibernateUtil.beginTransaction(sessionName);
-							
-							signInvoice(invoice, pdfData);
-	
-							HibernateUtil.getSession(sessionName).flush();					
-							HibernateUtil.commitTransaction(sessionName);
-						}
-					} catch (Exception e) {
-						try {
-							HibernateUtil.rollbackTransaction(sessionName);
-						} catch (DAOException daoe) {
-							String msg =  "Unable to rollback transaction!";
-							LOGGER.log(Level.SEVERE, msg, e);
-						}
-						String msg =  "Error recording invoice:  " + id;
-						LOGGER.log(Level.SEVERE, msg, e);
-						AonUtil.addErrorMessage(msg);
-						throw new AbortProcessingException(msg);
-					} finally {
-						HibernateUtil.closeSession(sessionName);
+			Iterator<Integer> iter = getCheckedInvoices().iterator();
+			while(iter.hasNext()){
+				Integer id = iter.next();
+				try {
+					Invoice invoice = (Invoice) getManagerBean().get(id);
+					if (! invoice.isSigned() ) {
+						byte[] pdfData = getInvoicePDF(invoice);
+						
+						HibernateUtil.beginTransaction(sessionName);
+						
+						signInvoice(invoice, pdfData);
+
+						HibernateUtil.getSession(sessionName).flush();					
+						HibernateUtil.commitTransaction(sessionName);
 					}
+				} catch (Exception e) {
+					try {
+						HibernateUtil.rollbackTransaction(sessionName);
+					} catch (DAOException daoe) {
+						String msg =  "Unable to rollback transaction!";
+						LOGGER.log(Level.SEVERE, msg, e);
+					}
+					String msg =  "Error recording invoice:  " + id;
+					LOGGER.log(Level.SEVERE, msg, e);
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				} finally {
+					HibernateUtil.closeSession(sessionName);
 				}
-				clearCheckedInvoices();
-				this.onSearch(null);
 			}
-		} catch (ManagerBeanException e) {
-			String msg =  "Error obtaining company signature";
-			LOGGER.log(Level.SEVERE, msg, e);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+			clearCheckedInvoices();
+			this.onSearch(null);
 		} finally {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
@@ -399,21 +391,6 @@ public class InvoiceSignerController extends BasicController{
 			ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
 			return report.onExecute();
 		}
-	}
-	
-	private RegistryAttachment obtainCompanySignature() throws ManagerBeanException {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		Company company = companyController.obtainCompany();
-
-		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
-		Iterator<ITransferObject> iterator = rattachBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (RegistryAttachment)iterator.next();
-		}
-		return null;
 	}
 
 	public void onShowSignWindow( ActionEvent event ) throws ManagerBeanException {
