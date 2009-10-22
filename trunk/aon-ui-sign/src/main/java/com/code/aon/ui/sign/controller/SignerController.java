@@ -277,21 +277,29 @@ public class SignerController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}			
 	}
+	
+	private void cancelSign( ITransferObject to ) throws ManagerBeanException {
+		this.cancelSign(to, false);
+	}
 
-	public void cancelSign( ITransferObject to ) throws ManagerBeanException { 
+	public void cancelSign( ITransferObject to, boolean batch ) throws ManagerBeanException { 
 		Serializable id = signatureController.getManagerBean().getId(to);
 		IAttachment attachment = getSignedAttachment( id );
 		if ( attachment != null ) {
 			attachmentBean.remove( attachment );
 		}
-		updateSigned(to, false);
+		updateSigned(to, false, batch);
 	}
 
 	public void sign( ITransferObject to ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException { 
 		sign(to, getReport(to) );
 	}
 
-	private void sign( ITransferObject to, byte[] pdfData ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException { 
+	private void sign( ITransferObject to, byte[] pdfData ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException {
+		this.sign(to, pdfData, false);
+	}
+	
+	public void sign( ITransferObject to, byte[] pdfData, boolean batch ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException { 
 		byte[] signedFileData = getSignedFileData( pdfData, signStore, certificado, true );
 		
 		IAttachment attachment = signatureController.newAttachment(to);
@@ -299,16 +307,20 @@ public class SignerController {
 		attachment.setMimeType( MimeType.MIME_SIGNED_PDF );
 		attachmentBean.insert( attachment );
 
-		updateSigned(to, true);
+		updateSigned(to, true, batch);
 	}
 	
-	private void updateSigned( ITransferObject to, boolean value ) throws ManagerBeanException {
+	private void updateSigned( ITransferObject to, boolean value, boolean batch ) throws ManagerBeanException {
 		signatureController.setSigned(to, value);
 		try {
-			signatureController.getManagerBean().restoreNullSubPOJOs(to);
+			if (! batch ) {
+				signatureController.getManagerBean().restoreNullSubPOJOs(to);	
+			}
 			signatureController.getManagerBean().update(to);
 		} finally {
-			signatureController.getManagerBean().initializePOJO(to);
+			if (! batch ) {
+				signatureController.getManagerBean().initializePOJO(to);
+			}
 		}		
 	}
 	

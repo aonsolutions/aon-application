@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.2.0</version>
+			<version>4.2.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.15.0</version>
+			<version>4.16.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
