@@ -17,8 +17,8 @@
 					<ui:param name="toolbarTitle"
 						value="#{commercialBundle.commercial_offer_module}" />
 					<ui:param name="controller" value="#{offer}" />
-					<ui:param name="skipSaveButton" value="#{!offer.pending}" />
-					<ui:param name="skipRemoveButton" value="#{!offer.pending}" />
+					<ui:param name="skipSaveButton" value="#{offer.readOnly}" />
+					<ui:param name="skipRemoveButton" value="#{offer.readOnly}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.offer.showSalesOrder}">
 							<aon:commandButton id="sales"
@@ -63,13 +63,24 @@
 							<f:param name="outputFormat" value="DOCX" />
 						</h:commandLink>											
 						<h:commandLink id="offerPDF" value="#{commercialBundle.commercial_offer}"
-							target="_blank" action="#{report.onExecute}"
+							target="_blank" action="#{offerSigner.onReport}"
 							rendered="#{!offer.new}" disabled="#{offerDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
+						<aon:commandButton id="sign"
+							value="#{signBundle.sign_sign}"
+							actionListener="#{offerSigner.onShowSignWindow}"
+							rendered="#{company.EInvoice and !offer.new and !offer.to.signed and (offerSigner.certificateCount >0)}"
+							styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+							reRender="showSignWindow" />
+						<aon:commandButton id="cancel_sign"
+							value="#{signBundle.sign_cancel_sign}"
+							actionListener="#{offerSigner.onCancelSign}"
+							rendered="#{company.EInvoice and !offer.new and offer.to.signed and (offerSigner.certificateCount >0)}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border" />						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -98,13 +109,23 @@
 							value="#{offer.to.number}" disabled="#{!offer.new}"
 							required="true" size="7" />
 
-						<aon:selectOneMenu id="Offer_securityLevel" styleClass="aon-margin-left" 
-							value="#{offer.to.securityLevel}" disabled="#{!offer.pending}">
+						<aon:selectOneMenu id="Offer_securityLevel" styleClass="aon-margin-left aon-margin-right" 
+							value="#{offer.to.securityLevel}" disabled="#{offer.readOnly}">
 							<f:selectItems value="#{commonCollections.securityLevels}" />
 						</aon:selectOneMenu>
 
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{offer.to.status}" />
+						<c:if test="#{company.EInvoice}">
+							<aon:outputText value="&#160;"
+								rendered="#{!offer.new and offer.to.signed}"
+								title="#{signBundle.sign_signed}"
+								styleClass="aon-icon aon-icon-signed" />
+							<aon:outputText value="&#160;"
+								rendered="#{!offer.new and !offer.to.signed}"
+								title="#{signBundle.sign_sign_pending}"
+								styleClass="aon-icon aon-icon-unsigned" />
+						</c:if>
+
+						<aon:outputText value="#{offer.to.status}" />
 						<aon:outputText styleClass="aon-italic aon-margin-left"
 							value="(#{financeBundle.finance_invoice}:"
 							rendered="#{offer.invoiced}" />
@@ -147,7 +168,7 @@
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="Offer_issueDate"
 						value="#{offer.to.issueDate}" 
-						required="true" disabled="#{!offer.pending}"
+						required="true" disabled="#{offer.readOnly}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
@@ -157,14 +178,14 @@
 						<a4j:region>
 							<aon:lookupInputText id="Target_id" 
 								value="#{offer.to.target.registry.id}"
-								disabled="#{!offer.pending}" size="5" 
+								disabled="#{offer.readOnly}" size="5" 
 								lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}" 
 								reRender="Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{commercialBundle.commercial_target_selection}"
-								disabled="#{!offer.pending}" minHeight="470" minWidth="650"
+								disabled="#{offer.readOnly}" minHeight="470" minWidth="650"
 								property="#{offer.to.target.registry}" lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}"
 								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"
@@ -172,7 +193,7 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{target.bundle.commercial_target_new}"
-								disabled="#{!offer.pending}" minWidth="650" minHeight="490"
+								disabled="#{offer.readOnly}" minWidth="650" minHeight="490"
 								property="#{offer.to.target.registry}" lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}"
 								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"		 
@@ -195,7 +216,7 @@
 					<aon:div id="OfferAddress">
 						<aon:selectOneMenu id="Offer_address" 
 							value="#{offer.to.address}"	rendered="#{offer.addressCount > 0}"
-							disabled="#{!offer.pending}">
+							disabled="#{offer.readOnly}">
 							<f:selectItems value="#{offer.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
@@ -207,7 +228,7 @@
 						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Offer_scope" 
 						value="#{offer.to.scope}"
-						disabled="#{!offer.pending}">
+						disabled="#{offer.readOnly}">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
@@ -217,14 +238,14 @@
 						<a4j:region>
 							<aon:lookupInputText id="Seller_id" 
 								value="#{offer.to.seller.registry.id}"
-								disabled="#{!offer.pending}" size="5"
+								disabled="#{offer.readOnly}" size="5"
 								lookupProperty="registry" lookup="#{sellerLookup}" 
 								lookupChangeListener="#{offer.sellerData}" 
 								reRender="Seller_full_name"
 								ajaxSingle="true" />
 							<aon:lookupButton
 								windowTitle="#{salesBundle.sales_seller_selection}"
-								disabled="#{!offer.pending}" minHeight="460" minWidth="650"
+								disabled="#{offer.readOnly}" minHeight="460" minWidth="650"
 								property="#{offer.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
 								lookupChangeListener="#{offer.sellerData}"
 								selectReRender="Seller_id,Seller_full_name"
@@ -232,7 +253,7 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{salesBundle.sales_seller_new}"
-								disabled="#{!offer.pending}" minHeight="520" minWidth="650"
+								disabled="#{offer.readOnly}" minHeight="520" minWidth="650"
 								property="#{offer.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
 								lookupChangeListener="#{offer.targetData}"
 								selectReRender="Seller_id,Seller_full_name"
@@ -248,7 +269,7 @@
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Offer_workPlace" 
 						value="#{offer.to.workPlace}"
-						disabled="#{!offer.pending}">
+						disabled="#{offer.readOnly}">
 						<f:selectItems value="#{companyCollections.workPlaces}" />
 					</aon:selectOneMenu>
 
@@ -256,7 +277,7 @@
 						value="#{productBundle.product_tariff}" />
 					<aon:selectOneMenu id="Offer_tariff" 
 						value="#{offer.to.tariff}"
-						disabled="#{!offer.pending}">
+						disabled="#{offer.readOnly}">
 						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{configCollections.tariffs}" />
 					</aon:selectOneMenu>
@@ -265,7 +286,7 @@
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="Offer_type" 
 						value="#{offer.to.type}"
-						disabled="#{!offer.pending}">
+						disabled="#{offer.readOnly}">
 						<f:selectItems value="#{commercialCollections.offerTypes}" />
 					</aon:selectOneMenu>
 
@@ -273,7 +294,7 @@
 						value="#{configBundle.config_pay_method}" />
 					<aon:selectOneRadio id="Offer_defaultPayMethod" 
 						value="#{offer.defaultPayMethod}"
-						disabled="#{!offer.pending}"
+						disabled="#{offer.readOnly}"
 						reRender="payMethodDiv">
 						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_customer_pay_method}" itemValue="#{true}" />
 						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_define_another_one}" itemValue="#{false}" />
@@ -295,7 +316,7 @@
 					<aon:outputLabel for="Offer_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="Offer_comments" 
-						disabled="#{!offer.pending}" cols="150" rows="2"
+						disabled="#{offer.readOnly}" cols="150" rows="2"
 						value="#{offer.to.comments}" />
 
 				</aon:panelGrid>
@@ -325,39 +346,39 @@
 
 							<aon:selectOneMenu id="Offer_payMethod" 
 								value="#{offer.to.payMethod}"
-								disabled="#{!offer.pending}">
+								disabled="#{offer.readOnly}">
 								<f:selectItems value="#{configCollections.payMethods}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="Offer_numberOfPayments"
 								value="#{offer.to.numberOfPayments}"
-								disabled="#{!offer.pending}" size="5" >
+								disabled="#{offer.readOnly}" size="5" >
 								<f:validateLongRange minimum="1" />
 							</aon:inputText>	
 							<aon:inputText id="Offer_daysToFirstPayment"
 								value="#{offer.to.daysToFirstPayment}"
-								disabled="#{!offer.pending}" size="5">
+								disabled="#{offer.readOnly}" size="5">
 								<f:validateLongRange minimum="0" />
 							</aon:inputText>	
 							<aon:inputText id="Offer_daysBetweenPayments"
 								value="#{offer.to.daysBetweenPayments}"
-								disabled="#{!offer.pending}" size="5">
+								disabled="#{offer.readOnly}" size="5">
 								<f:validateLongRange minimum="0" />
 							</aon:inputText>	
 							<aon:inputText id="Offer_paymentDays"
 								value="#{offer.to.paymentDays}" 
-								disabled="#{!offer.pending}" size="5" />
+								disabled="#{offer.readOnly}" size="5" />
 							<aon:div styleClass="aon-lookup">
 								<a4j:region>
 									<aon:lookupInputText id="Offer_bank_code"
 										value="#{offer.to.bank.code}"
-										disabled="#{!offer.pending}" size="5"
+										disabled="#{offer.readOnly}" size="5"
 										property="#{offer.to.bank}" lookup="#{bankLookup}"
 										reRender="Offer_bank_name">
 										<aon:joinProperty alias="Bank_code" value="#{offer.to.bank.code}" />
 									</aon:lookupInputText>
 									<aon:lookupButton 
 										windowTitle="#{configBundle.config_bank_selection}"
-										disabled="#{!offer.pending}" minHeight="460" minWidth="650"
+										disabled="#{offer.readOnly}" minHeight="460" minWidth="650"
 										property="#{offer.to.bank}" lookup="#{bankLookup}"
 										selectReRender="Offer_bank_code,Offer_bank_name"
 										actionType="search">
@@ -370,17 +391,17 @@
 							<aon:div>
 								<aon:inputText id="Offer_bank_office"
 									value="#{offer.to.bankAccount.office}"
-									disabled="#{!offer.pending}" size="4" maxlength="4">
+									disabled="#{offer.readOnly}" size="4" maxlength="4">
 									<f:validateLength minimum="4" maximum="4" />
 								</aon:inputText>
 								<aon:inputText id="Offer_bank_control"
 									value="#{offer.to.bankAccount.control}"
-									disabled="#{!offer.pending}" size="2" maxlength="2">
+									disabled="#{offer.readOnly}" size="2" maxlength="2">
 									<f:validateLength minimum="2" maximum="2" />
 								</aon:inputText>
 								<aon:inputText id="Offer_bank_account"
 									value="#{offer.to.bankAccount.account}"
-									disabled="#{!offer.pending}" size="10" maxlength="10">
+									disabled="#{offer.readOnly}" size="10" maxlength="10">
 									<f:validateLength minimum="10" maximum="10" />
 								</aon:inputText>
 							</aon:div>
@@ -399,6 +420,8 @@
 						<aon:panelTab id="offerAttachment" label="#{commercialBundle.commercial_offer_attachment}">
 							<ui:include src="/com/code/aon/faces/attachment/grid.xhtml">
 								<ui:param name="controller" value="#{offerAttachment}" />
+								<ui:param name="skipResetButton" value="#{offer.readOnly}" />
+								<ui:param name="skipLineEdition" value="#{offer.readOnly}" />									
 								<ui:param name="rows" value="10" />
 							</ui:include>
 						</aon:panelTab>
@@ -428,5 +451,11 @@
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalSales.xhtml" />
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
+			<ui:param name="controller" value="#{offerSigner}" />
+			<ui:param name="signButtonreRender" value="offerForm,showNewMessageWindow" />
+			<aon:methodParam name="signActionListener" value="#{offerSigner.onSign}" type="actionListener" />
+		</ui:include>
 	</ui:define>
 </ui:composition>
