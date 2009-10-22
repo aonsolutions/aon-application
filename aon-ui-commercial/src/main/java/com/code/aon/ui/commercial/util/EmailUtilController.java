@@ -1,6 +1,5 @@
 package com.code.aon.ui.commercial.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,10 +22,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -37,7 +38,7 @@ import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.report.controller.ReportManager;
+import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
@@ -143,17 +144,15 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 		return this.sender;
 	}
 	
-	public byte[] getOfferPDF( Offer offer ) throws IOException, ReportException, ManagerBeanException {
-		ReportManager report = new ReportManager();
-		report.setCollectionProvider( new SingleCollectionProvider(offer) );
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		report.execute( out, OFFER_REPORT);
-		return out.toByteArray();
-	}		
-	
 	public AonFile getOfferFile( Offer offer ) throws IOException, ReportException, ManagerBeanException {
+		SignerController signer = (SignerController) AonUtil.getRegisteredBean(OFFER_SIGNER_CONTROLLER_NAME);
 		File file = File.createTempFile( OFFER_REPORT, ".pdf" );
-		byte[] data = getOfferPDF(offer);
+		byte[] data = null;
+		if ( offer.isSigned() ) {
+			data = signer.getSignedAttachment(offer.getId()).getData();
+		} else {
+			data = signer.getReport(offer);
+		}
 		FileUtils.writeByteArrayToFile(file, data);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
@@ -167,6 +166,9 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 		Criteria criteria = new Criteria();
 		String offerIdAlias = offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID);
 		criteria.addEqualExpression(offerIdAlias, offer.getId());
+		String typeAlias = offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE);
+		Expression exp = ExpressionUtilities.getNotEqualExpression(typeAlias, MimeType.MIME_SIGNED_PDF);
+		criteria.addExpression( exp );
 		List<ITransferObject> list = offerAttach.getList(criteria);
 		if (! list.isEmpty() ) {
 			List<AonFile> files = new LinkedList<AonFile>();

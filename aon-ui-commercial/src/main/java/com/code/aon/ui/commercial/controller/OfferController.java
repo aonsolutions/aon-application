@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -15,13 +17,16 @@ import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Bank;
@@ -52,6 +57,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -61,8 +67,10 @@ import com.code.aon.webmail.SecurityInfo;
 /**
  * Controller used in the offer maintenance.
  */
-public class OfferController extends BasicController implements ICommercialConstants {
+public class OfferController extends BasicController implements ISignatureController, ICommercialConstants {
 
+	private static final Logger LOGGER = Logger.getLogger(OfferController.class.getName());
+	
 	private final String SALES_CONTROLLER = "sales";
 	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
@@ -184,6 +192,10 @@ public class OfferController extends BasicController implements ICommercialConst
 	public boolean isPending() {
 		return OfferStatus.PENDING == getOffer().getStatus();
 	}
+	
+	public boolean isReadOnly() {
+		return !isPending() || getOffer().isSigned(); 
+	}	
 
 	public boolean isApproved() {
 		return OfferStatus.APPROVED == getOffer().getStatus();		
@@ -476,5 +488,43 @@ public class OfferController extends BasicController implements ICommercialConst
 		}
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
+	}
+
+	@Override
+	public IManagerBean getAttachmentBean() {
+		try {
+			return BeanManager.getManagerBean(OfferAttachment.class);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public String getAttchmentMimeTypeAlias() {
+		return ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE;
+	}
+
+	@Override
+	public String getAttchmentParentAlias() {
+		return ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID;
+	}
+
+	@Override
+	public boolean isSigned(ITransferObject to) {
+		return ((Offer) to).isSigned();
+	}
+
+	@Override
+	public IAttachment newAttachment(ITransferObject parent) {
+		OfferAttachment attachment = new OfferAttachment();
+		attachment.setOffer( (Offer) parent );
+		return attachment;
+	}
+
+	@Override
+	public void setSigned(ITransferObject to, boolean value) {
+		((Offer) to).setSigned(value);
 	}	
+	
 }
