@@ -70,17 +70,31 @@
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
-						<aon:commandButton id="sign"
-							value="#{signBundle.sign_sign}"
-							actionListener="#{offerSigner.onShowSignWindow}"
-							rendered="#{company.EInvoice and !offer.new and !offer.to.signed and (offerSigner.certificateCount >0)}"
-							styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
-							reRender="showSignWindow" />
-						<aon:commandButton id="cancel_sign"
-							value="#{signBundle.sign_cancel_sign}"
-							actionListener="#{offerSigner.onCancelSign}"
-							rendered="#{company.EInvoice and !offer.new and offer.to.signed and (offerSigner.certificateCount >0)}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border" />						
+						<c:if test="#{company.EInvoice}">
+							<c:if test="#{!offerSigner.sessionCertificateStored}">						
+								<aon:commandButton id="sign"
+									value="#{signBundle.sign_sign}"
+									actionListener="#{offerSigner.onShowSignWindow}"
+									rendered="#{!offer.new and !offer.to.signed and (offerSigner.certificateCount >0)}"
+									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+									reRender="showSignWindow" />
+							</c:if>
+							<c:if test="#{offerSigner.sessionCertificateStored}">						
+								<aon:commandButton id="sign"
+									value="#{signBundle.sign_sign}"
+									actionListener="#{offerSigner.onSign}"
+									rendered="#{!offer.new and !offer.to.signed and (offerSigner.certificateCount >0)}"
+									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+									reRender="offerForm,showNewMessageWindow"
+									onclick="Richfaces.showModalPanel('waitProccess')" 
+						     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />									
+							</c:if>
+							<aon:commandButton id="cancel_sign"
+								value="#{signBundle.sign_cancel_sign}"
+								actionListener="#{offerSigner.onCancelSign}"
+								rendered="#{company.EInvoice and !offer.new and offer.to.signed and (offerSigner.certificateCount >0)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border" />
+						</c:if>					
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
