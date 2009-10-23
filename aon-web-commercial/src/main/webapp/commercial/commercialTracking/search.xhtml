@@ -10,16 +10,37 @@
 
 		<aon:form id="commercialTrackingSearch">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.aon_commercial_tracking}" />
-				<ui:param name="controller" value="#{commercialTracking}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_commercial_tracking}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="commercialTracking_form" actionListener="#{commercialTracking.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="commercialTracking_list" actionListener="#{commercialTracking.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{commercialTracking.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="commercialTracking_list" />				
-				
 					<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
 					<aon:div>
 						<aon:outputLabel for="CommercialTracking_date-From" styleClass="aon-form-date-label"
@@ -48,7 +69,7 @@
 						<aon:lookupButton id="CommercialTracking_seller_lookup"
 							windowTitle="#{appBundle.aon_lookup_seller}"
 							selectReRender="CommercialTracking_seller_id,CommercialTracking_seller_name"
-							lookup="#{sellerLookup}" minHeight="440"
+							lookup="#{sellerLookup}"
 							property="#{commercialTracking.seller}">
 						</aon:lookupButton>
 						<aon:inputText id="CommercialTracking_seller_name"
@@ -65,9 +86,9 @@
 							value="#{commercialTracking.target.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="CommercialTracking_target_lookup"
-							windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
+							windowTitle="#{appBundle.aon_lookup_target}"
 							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
-							lookup="#{targetLookup}" minHeight="460" minWidth="650"
+							lookup="#{targetLookup}"
 							property="#{commercialTracking.target}">
 						</aon:lookupButton>
 						<aon:inputText id="CommercialTracking_target_name"
@@ -79,8 +100,9 @@
 						value="#{appBundle.aon_commercial_tracking_activity}" />
 					<aon:selectOneMenu id="CommercialTracking_next_activity_id" 
 						value="#{commercialTracking.activity}">
+						<f:converter converterId="toConverter" />
 						<f:selectItem value="#{null}" itemLabel="    " />
-						<f:selectItems value="#{commercialCollections.activities}" />
+						<f:selectItems value="#{commercialTracking.activities}" />
 					</aon:selectOneMenu>
 				
 					<aon:outputText value="#{bundle.aon_status}"/>
@@ -97,6 +119,13 @@
 					<aon:inputText id="CommercialTracking_comments" size="75"
 						valueChangeListener="#{commercialTracking.addExpression}" />
 
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-text-right">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="commercialTracking_list" actionListener="#{commercialTracking.onSearch}"
+						styleClass="aon-commandButton"
+						accesskey="#{bundle.aon_key_search}" />
+					</aon:div>					
 				</ui:define>
 			
 			</ui:decorate>

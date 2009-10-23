@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -14,21 +15,84 @@
 
 		<aon:form id="targetList">
 		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.aon_targets}" />
-				<ui:param name="controller" value="#{target}" />
-				
-				<ui:define name="additionalToolbarContent">
-					<a4j:htmlCommandLink target="_blank"
-						action="#{report.onExecute}" value="#{bundle.aon_report}"
-						styleClass="aon-finding-toolbar-item aon-icon-printer">
-						<f:param name="reportKey" value="targetList"/>
-					</a4j:htmlCommandLink> 						
-				</ui:define>				
-			</ui:decorate>		
-			
-			<ui:include src="/commercial/target/listContent.xhtml" />
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_targets}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="target_search" actionListener="#{target.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />				
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="target_form" actionListener="#{target.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-new"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="targetData" value="#{target.model}"
+					var="to" rows="20" rendered="#{target.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.name}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_surname}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.surname}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.alias}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_target_advertising}" />
+						</f:facet>
+						<aon:outputText value="#{to.advertising}"/>
+					</aon:column>
+ 
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="targetData" showNote="true" />
+
+			</aon:div>
 		</aon:form>
 
 	</ui:define>

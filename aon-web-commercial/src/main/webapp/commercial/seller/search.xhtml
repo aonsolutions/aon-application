@@ -9,16 +9,37 @@
 
 		<aon:form id="sellerSearch">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.aon_sellers}" />
-				<ui:param name="controller" value="#{seller}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_sellers}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="seller_form" actionListener="#{seller.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="seller_list" actionListener="#{seller.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{seller.onSearch}" type="actionListener"/>
-					<aon:methodParam name="searchAction" value="seller_list" />
-					
 					<aon:outputLabel for="Seller_id"
 						value="#{registryBundle.aon_id}" />
 					<aon:inputText id="Seller_id" size="60"
@@ -48,6 +69,14 @@
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Seller_description" size="60"
 						valueChangeListener="#{seller.addExpression}" />
+					
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-text-right">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="seller_list" actionListener="#{seller.onSearch}"
+							styleClass="aon-commandButton"
+							accesskey="#{bundle.aon_key_search}" />
+					</aon:div>
 				</ui:define>
 			
 			</ui:decorate>

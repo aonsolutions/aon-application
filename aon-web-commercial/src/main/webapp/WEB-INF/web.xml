@@ -207,10 +207,6 @@
 			<url-pattern>/commercial/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>marketing</web-resource-name>
-			<url-pattern>/marketing/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>

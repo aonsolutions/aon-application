@@ -15,10 +15,33 @@
 
 		<aon:form id="commercialTrackingList">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.aon_commercial_tracking}" />
-				<ui:param name="controller" value="#{commercialTracking}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_commercial_tracking}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="commercialTracking_search" actionListener="#{commercialTracking.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />				
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="commercialTracking_form" actionListener="#{commercialTracking.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-new"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

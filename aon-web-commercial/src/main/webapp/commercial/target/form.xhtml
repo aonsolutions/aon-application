@@ -73,13 +73,21 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
-					<ui:include src="/commercial/target/formContent.xhtml">
-						<ui:param name="targetController" value="#{target}"/>
+					<ui:include src="/commercial/registry/formContent.xhtml">
+						<ui:param name="controller" value="#{target}"/>
 					</ui:include>
+
+					<aon:outputLabel for="Target_advertising"
+						value="#{appBundle.aon_target_advertising}" />
+					<aon:selectOneMenu id="Target_advertising"
+						required="true" value="#{target.to.advertising}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{commecialCollections.advertisings}" />
+					</aon:selectOneMenu>						
 
 				</aon:panelGrid>
 
-				<aon:panelTabSet rendered="#{!target.new}" selectedTab="#{target.selectedTab}" valueChangeListener="#{target.tabChanged}">
+				<aon:panelTabSet rendered="#{!target.new}" valueChangeListener="#{target.tabChanged}">
 					<aon:panelTab name="targetAddress" label="#{registryBundle.aon_address}">
 						<ui:include src="/commercial/registry/address/grid.xhtml" >
 							<ui:param name="controller" value="#{targetAddress}"/>
@@ -106,10 +114,6 @@
 						<ui:include src="/commercial/target/seller/grid.xhtml" />
                     </aon:panelTab>
 
-					<aon:panelTab name="targetProfile" label="#{marketingBundle.aon_target_profile}">
-						<ui:include src="/commercial/target/profile/grid.xhtml" />
-                    </aon:panelTab>
-
 					<aon:panelTab name="targetTracking" label="#{appBundle.aon_target_tracking}">
 						<ui:include src="/commercial/target/tracking/list.xhtml" />
                     </aon:panelTab>
@@ -120,7 +124,6 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />		
-		<aon:lookupButtonPopup lookup="#{questionLookup}" />
 	</ui:define>
 </ui:composition>
 
