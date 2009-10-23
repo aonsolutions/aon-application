@@ -20,12 +20,24 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="sign"
-						value="#{financeBundle.finance_sign_selected}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{saleInvoiceSigner.onShowSignWindow}"
-						disabled="#{invoiceSigner.selectionEmpty}"
-						reRender="showSignWindow" />
+					<c:if test="#{!saleInvoiceSigner.sessionCertificateStored}">			
+						<aon:commandButton id="sign"
+							value="#{financeBundle.finance_sign_selected}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{saleInvoiceSigner.onShowSignWindow}"
+							disabled="#{invoiceSigner.selectionEmpty}"
+							reRender="showSignWindow" />
+					</c:if>
+					<c:if test="#{saleInvoiceSigner.sessionCertificateStored}">			
+						<aon:commandButton id="sign"
+							value="#{financeBundle.finance_sign_selected}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{invoiceSigner.onSignSelected}"
+							disabled="#{invoiceSigner.selectionEmpty}"
+							reRender="invoiceSignerDataDiv,aonToolbar"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					</c:if>
 					<aon:commandButton id="cancel_sign"
 						value="#{financeBundle.finance_cancel_sign_selected}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"

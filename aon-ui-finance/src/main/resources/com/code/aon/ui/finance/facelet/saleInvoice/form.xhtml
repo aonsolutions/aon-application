@@ -53,18 +53,30 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="saleInvoice" />
 						</h:commandLink>
-						<aon:commandButton id="sign"
-							value="#{signBundle.sign_sign}"
-							actionListener="#{saleInvoiceSigner.onShowSignWindow}"
-							rendered="#{company.EInvoice and !saleInvoice.new and !saleInvoice.to.signed}"
-							styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
-							reRender="showSignWindow" />
-						<aon:commandButton id="cancel_sign"
-							value="#{signBundle.sign_cancel_sign}"
-							actionListener="#{saleInvoiceSigner.onCancelSign}"
-							rendered="#{company.EInvoice and !saleInvoice.new and saleInvoice.to.signed}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border"
-							reRender="saleInvoiceForm" />
+						<c:if test="#{company.EInvoice}">
+							<c:if test="#{!saleInvoiceSigner.sessionCertificateStored}">
+								<aon:commandButton id="sign"
+									value="#{signBundle.sign_sign}"
+									actionListener="#{saleInvoiceSigner.onShowSignWindow}"
+									rendered="#{!saleInvoice.new and !saleInvoice.to.signed}"
+									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+									reRender="showSignWindow" />
+							</c:if>
+							<c:if test="#{saleInvoiceSigner.sessionCertificateStored}">
+								<aon:commandButton id="sign"
+									value="#{signBundle.sign_sign}"
+									actionListener="#{saleInvoiceSigner.onSign}"
+									rendered="#{!saleInvoice.new and !saleInvoice.to.signed}"
+									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+									reRender="saleInvoiceForm,showNewMessageWindow" />
+							</c:if>
+							<aon:commandButton id="cancel_sign"
+								value="#{signBundle.sign_cancel_sign}"
+								actionListener="#{saleInvoiceSigner.onCancelSign}"
+								rendered="#{!saleInvoice.new and saleInvoice.to.signed}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border"
+								reRender="saleInvoiceForm" />
+						</c:if>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
