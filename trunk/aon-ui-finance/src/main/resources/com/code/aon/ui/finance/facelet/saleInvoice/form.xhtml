@@ -68,7 +68,9 @@
 									actionListener="#{saleInvoiceSigner.onSign}"
 									rendered="#{!saleInvoice.new and !saleInvoice.to.signed}"
 									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
-									reRender="saleInvoiceForm,showNewMessageWindow" />
+									reRender="saleInvoiceForm,showNewMessageWindow"
+									onclick="Richfaces.showModalPanel('waitProccess')" 
+						     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />									
 							</c:if>
 							<aon:commandButton id="cancel_sign"
 								value="#{signBundle.sign_cancel_sign}"
