@@ -25,14 +25,14 @@
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{saleInvoiceSigner.onShowSignWindow}"
 						disabled="#{invoiceSigner.selectionEmpty}"
-						reRender="showSignWindow">
-					</aon:commandButton>
+						reRender="showSignWindow" />
 					<aon:commandButton id="cancel_sign"
 						value="#{financeBundle.finance_cancel_sign_selected}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						actionListener="#{invoiceSigner.onCancelSignSelected}"
-						disabled="#{invoiceSigner.selectionEmpty}" >
-					</aon:commandButton>
+						disabled="#{invoiceSigner.selectionEmpty}" 
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>				
 				
 			</ui:decorate>
