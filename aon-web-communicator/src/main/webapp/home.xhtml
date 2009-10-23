@@ -6,20 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.main.xhtml">
 
-	<ui:define name="mainContent">	
-		<c:if test="#{!aonConfiguration.properties.init}">
-			<aon:set var="#{target.bundleName}" value="appBundle" />				
-			<aon:set var="#{target.showProduct}" value="#{false}" />
-			<aon:set var="#{target.showSeller}" value="#{false}"  />
-			
-			<aon:set var="#{campaign.bundleName}" value="appBundle" />
-			<aon:set var="#{campaign.showSurvey}" value="#{false}" />
-			<aon:set var="#{campaign.showPhoneActionMediaType}" value="#{false}" />
-			
-			<aon:set var="#{communicationCenter.showTarget}" value="#{false}" />			
-						
-			<aon:set var="#{aonConfiguration.properties.init}" value="#{true}"  />
-		</c:if>	
+	<ui:define name="mainContent">
 		<a4j:include id="aonContent" viewId="/homepage.xhtml" ajaxRendered="false"/>	
 	</ui:define>
   

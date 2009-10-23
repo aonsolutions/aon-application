@@ -7,19 +7,6 @@
 		<project>aon-rich-components</project>
 		<project>aon-ui-commercial</project>
 		<project>aon-ui-marketing</project>
-		<project>aon-ui-common</project>
-		<project>aon-ui-form</project>
-		<project>aon-ui-messaging</project>
-		<project>aon-marketing</project>
-		<project>aon-commercial</project>
-		<project>aon-ui-webmail</project>
-		<project>aon-security-bridge</project>
-		<project>aon-ui-registry</project>
-		<project>aon-ui-report</project>
-		<project>aon-ui-config</project>
-		<project>aon-ui-company</project>
-		<project>aon-ui-geozone</project>
-		<project>aon-ui-mailing</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

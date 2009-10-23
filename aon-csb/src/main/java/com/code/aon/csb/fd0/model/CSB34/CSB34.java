@@ -1,5 +1,7 @@
 package com.code.aon.csb.fd0.model.CSB34;
 
+
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -8,13 +10,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.code.aon.csb.fd0.core.Account;
 import com.code.aon.csb.fd0.core.DiskRegisterLoader;
 import com.code.aon.csb.fd0.model.AbstractFileFiller;
 import com.code.aon.csb.fd0.model.Fd0Exception;
 import com.code.aon.csb.fd0.model.FileFiller;
 import com.code.aon.csb.fd0.model.CSB34.checks.CheckDetail;
 import com.code.aon.csb.fd0.model.CSB34.checks.CheckMaster;
+import com.code.aon.csb.fd0.model.CSB34.data.Account;
 import com.code.aon.csb.fd0.model.CSB34.data.Check;
 import com.code.aon.csb.fd0.model.CSB34.data.Detail;
 import com.code.aon.csb.fd0.model.CSB34.data.Master;
@@ -56,7 +58,6 @@ public class CSB34 extends AbstractFileFiller{
 	 * @param master the main data object
 	 * @param filePath the file path
 	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
 	 */
 	public CSB34(Master master, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		super(filePath);

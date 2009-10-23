@@ -17,7 +17,7 @@ public class CheckReceiver extends Check {
 	/**
 	 * Parses data
 	 * 
-	 * @param receiver
+	 * @param withHolder
 	 *            the object to parse
 	 * @param exceptions
 	 *            errors founds

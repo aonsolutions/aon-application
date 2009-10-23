@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-import com.code.aon.csb.fd0.core.Account;
-
 public class Individual {
 
 	private String referenceCode;

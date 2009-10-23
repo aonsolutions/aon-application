@@ -2,12 +2,11 @@ package com.code.aon.ui.account.bridge.event;
 
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
+import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -21,13 +20,6 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class ProductAccountListener extends ControllerAdapter {
 
 	@Override
-	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		Item item = (Item)event.getController().getTo();
-		item.getProduct().setSalesAccount(new Account());
-		item.getProduct().setPurchaseAccount(new Account());
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
@@ -39,30 +31,23 @@ public class ProductAccountListener extends ControllerAdapter {
 			while (iterator.hasNext()) {
 				ProductAccount productAccount = (ProductAccount)iterator.next();
 				if (ProductAccountType.SALES.equals(productAccount.getType())) {
-					item.getProduct().setSalesAccount(productAccount.getAccount());
+					item.getProduct().setSalesAccount(productAccount.getAccount().getId());
 				} else if (ProductAccountType.PURCHASE.equals(productAccount.getType())) {
-					item.getProduct().setPurchaseAccount(productAccount.getAccount());
+					item.getProduct().setPurchaseAccount(productAccount.getAccount().getId());
 				}
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
-		}
-
-		if (item.getProduct().getSalesAccount() == null) {
-			item.getProduct().setSalesAccount(new Account());
-		}
-		if (item.getProduct().getPurchaseAccount() == null) {
-			item.getProduct().setPurchaseAccount(new Account());
 		}
 	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
+		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
 			validateAccount(item.getProduct().getSalesAccount());
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
+		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
 			validateAccount(item.getProduct().getPurchaseAccount());
 		}
 	}
@@ -70,21 +55,25 @@ public class ProductAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
-			insertProductAccount(item.getProduct(), item.getProduct().getSalesAccount(), ProductAccountType.SALES);
+		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
+			Account salesAccount = new Account();
+			salesAccount.setId(item.getProduct().getSalesAccount());
+			insertProductAccount(item.getProduct(), salesAccount, ProductAccountType.SALES);
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
-			insertProductAccount(item.getProduct(), item.getProduct().getPurchaseAccount(), ProductAccountType.PURCHASE);
+		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
+			Account purchaseAccount = new Account();
+			purchaseAccount.setId(item.getProduct().getPurchaseAccount());
+			insertProductAccount(item.getProduct(), purchaseAccount, ProductAccountType.PURCHASE);
 		}
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
+		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
 			validateAccount(item.getProduct().getSalesAccount());
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
+		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
 			validateAccount(item.getProduct().getPurchaseAccount());
 		}
 	}
@@ -92,13 +81,17 @@ public class ProductAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
-			updateProductAccount(item.getProduct(), item.getProduct().getSalesAccount(), ProductAccountType.SALES);
+		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
+			Account salesAccount = new Account();
+			salesAccount.setId(item.getProduct().getSalesAccount());
+			updateProductAccount(item.getProduct(), salesAccount, ProductAccountType.SALES);
 		} else {
 			removeProductAccount(item.getProduct(), ProductAccountType.SALES);
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
-			updateProductAccount(item.getProduct(), item.getProduct().getPurchaseAccount(), ProductAccountType.PURCHASE);
+		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
+			Account purchaseAccount = new Account();
+			purchaseAccount.setId(item.getProduct().getPurchaseAccount());
+			updateProductAccount(item.getProduct(), purchaseAccount, ProductAccountType.PURCHASE);
 		} else {
 			removeProductAccount(item.getProduct(), ProductAccountType.PURCHASE);
 		}
@@ -111,12 +104,23 @@ public class ProductAccountListener extends ControllerAdapter {
 		removeProductAccount(item.getProduct(), ProductAccountType.PURCHASE);
 	}
 
-	private void validateAccount(Account account) throws ControllerListenerException {
-		if (account == null) {
-			throw new ControllerListenerException("La Cuenta Contable no es válida.");
-		}
-		if (!account.isEntryEnabled()) {
-			throw new ControllerListenerException("La Cuenta Contable " + account.getId() + " no permite apuntes.");
+	@SuppressWarnings("unchecked")
+	private void validateAccount(String accountId) throws ControllerListenerException {
+		try {
+			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), accountId);
+			Iterator iterator = accountBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				Account account = (Account)iterator.next();
+				if (!account.isEntryEnabled()) {
+					throw new ControllerListenerException("La Cuenta Contable " + accountId + " no permite apuntes.");
+				}
+			} else {
+				throw new ControllerListenerException("La Cuenta Contable " + accountId + " no existe.");
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 

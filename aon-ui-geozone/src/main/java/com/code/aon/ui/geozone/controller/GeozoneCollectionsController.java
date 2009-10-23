@@ -28,23 +28,6 @@ public class GeozoneCollectionsController {
 	/** The geoTrees list. */
 	private List<SelectItem> geoTrees;
 
-	/**
-	 * Gets the geo zone.
-	 * 
-	 * @return the geo zone
-	 */
-	public GeoZone getGeoZone() {
-		return null;
-	}
-	
-	/**
-	 * Sets the geo zone.
-	 * 
-	 * @param geoZone the new geo zone
-	 */
-	public void setGeoZone( GeoZone geoZone ) {
-	}
-	
     /**
      * Gets the geoZones.
      * 
@@ -61,13 +44,14 @@ public class GeozoneCollectionsController {
             Iterator<ITransferObject> iter = geozoneBean.getList(criteria).iterator();
             while (iter.hasNext()){
                 GeoZone geozone = (GeoZone) iter.next();
-                SelectItem item = new SelectItem(geozone, geozone.getName());
+                SelectItem item = new SelectItem(geozone.getId(), geozone.getName());
                 geoZones.add( item );
             }
         }
         return geoZones;
     }
 
+	@SuppressWarnings("unchecked")
 	public List<SelectItem> getGeoTrees() throws ManagerBeanException {
 		if (geoTrees == null) {
 			geoTrees = new LinkedList<SelectItem>();
@@ -78,9 +62,7 @@ public class GeozoneCollectionsController {
 			Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				GeoTree geoTree = (GeoTree)iter.next();
-				String name = geoTree.getChild().getName();
-				SelectItem[] selectItems = obtainGeoTreeChilds(geoTree.getChild().getId());
-				SelectItemGroup itemGroup = new SelectItemGroup(name, name,false, selectItems);
+				SelectItemGroup itemGroup = new SelectItemGroup(geoTree.getChild().getName(),geoTree.getChild().getName(),true,obtainGeoTreeChilds(geoTree.getChild().getId()));
 				geoTrees.add(itemGroup);
 			}
 		}
@@ -97,7 +79,7 @@ public class GeozoneCollectionsController {
 		Iterator iter = geoTreeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			GeoTree geoTree = (GeoTree)iter.next();
-			SelectItem item = new SelectItem(geoTree.getChild(),geoTree.getChild().getName());
+			SelectItem item = new SelectItem(geoTree.getChild().getId(),geoTree.getChild().getName());
 			items.add(item);
 		}
 		return items.toArray(new SelectItem[items.size()]);

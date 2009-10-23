@@ -1,7 +1,5 @@
 package com.code.aon.csb.fd0.model.BE.data;
 
-import com.code.aon.csb.fd0.core.Account;
-
 public class Transfer {
 
 	/**

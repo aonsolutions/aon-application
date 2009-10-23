@@ -4,10 +4,10 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-marketing/aon-ui-marketing">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-commercial/aon-ui-commercial">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-mailing/aon-ui-mailing">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-marketing/aon-ui-marketing">
             <dependency-type>uses</dependency-type>
         </dependent-module>                        
         <property name="java-output-path" value="build/classes"/>

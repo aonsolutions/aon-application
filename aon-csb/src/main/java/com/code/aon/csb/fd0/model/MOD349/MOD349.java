@@ -44,7 +44,6 @@ public class MOD349 extends AbstractFileFiller{
 	 * @param lot the lot data object
 	 * @param filePath the file path
 	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
 	 */
 	protected MOD349(Lot lot, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		super(filePath);

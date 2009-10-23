@@ -1,7 +1,5 @@
 package com.code.aon.csb.fd0.model.CSB34.data;
 
-import com.code.aon.csb.fd0.core.Account;
-
 /**
  * 
  * Detail lines data object

@@ -15,10 +15,15 @@
 						value="#{appBundle.commercial_target_module}" 
 						iconClass="aon-target-iconClass"
 						action="target_search" actionListener="#{target.onEditSearch}" >
+						<f:setPropertyActionListener value="appBundle" target="#{target.bundleName}" />
+						<f:setPropertyActionListener value="#{false}" target="#{target.showProduct}" />
+						<f:setPropertyActionListener value="#{false}" target="#{target.showSeller}" />
 					</aon:menuItem>
 					<aon:menuItem id="campaign"
 						value="#{marketingBundle.marketing_campaign_module}"
 						action="campaign_list" actionListener="#{campaign.onSearch}" >
+						<f:setPropertyActionListener value="#{false}" target="#{campaign.showSurvey}" />
+						<f:setPropertyActionListener value="#{false}" target="#{campaign.showPhoneActionMediaType}" />
 					</aon:menuItem>
 				</aon:dropDownMenu>
 				<aon:dropDownMenu value="#{bundle.aon_configuration}">
@@ -37,6 +42,10 @@
 					value="#{commercialBundle.commercial_communication_center_module}"
 					styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
 					action="communicationCenter" actionListener="#{communicationCenter.onInit}" >
+					<f:setPropertyActionListener value="appBundle" target="#{campaign.bundleName}" />
+					<f:setPropertyActionListener value="#{false}" target="#{campaign.showSurvey}" />
+					<f:setPropertyActionListener value="#{false}" target="#{campaign.showPhoneActionMediaType}" />
+					<f:setPropertyActionListener value="#{false}" target="#{communicationCenter.showTarget}" />
 				</aon:commandLink>
 			</aon:menuBar>
 				

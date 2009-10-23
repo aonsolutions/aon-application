@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.code.aon.csb.fd0.core.Account;
 import com.code.aon.csb.fd0.core.DiskRegisterLoader;
 import com.code.aon.csb.fd0.model.AbstractFileFiller;
 import com.code.aon.csb.fd0.model.Fd0Exception;
@@ -17,6 +16,7 @@ import com.code.aon.csb.fd0.model.FileFiller;
 import com.code.aon.csb.fd0.model.BE.checks.CheckLot;
 import com.code.aon.csb.fd0.model.BE.checks.CheckRelationship;
 import com.code.aon.csb.fd0.model.BE.checks.CheckTransfer;
+import com.code.aon.csb.fd0.model.BE.data.Account;
 import com.code.aon.csb.fd0.model.BE.data.Lot;
 import com.code.aon.csb.fd0.model.BE.data.Relationship;
 import com.code.aon.csb.fd0.model.BE.data.Transfer;
@@ -43,7 +43,6 @@ public class BE extends AbstractFileFiller{
 	 * @param lot the lot data object
 	 * @param filePath the file path
 	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
 	 */
 	public BE(Lot lot, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		super(filePath);
