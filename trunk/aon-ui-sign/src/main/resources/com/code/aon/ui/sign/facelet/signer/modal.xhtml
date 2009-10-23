@@ -12,7 +12,7 @@
 		<c:if test="#{controller.showSignWindow}">
 			<rich:modalPanel id="invoiceSignerModalPanel" 
 				rendered="#{controller.showSignWindow}" showWhenRendered="true"
-				minWidth="400" height="180" minHeight="180" zindex="90">
+				minWidth="380" height="180" minHeight="180" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{signBundle.sign_sign_selected}" />
@@ -87,6 +87,13 @@
 												value="#{controller.certificatePassword}" />
 										</c:if>										
 									</aon:panelGrid>
+									<h:panelGrid cellpadding="2" cellspacing="0" columns="2"
+										styleClass="aon-panelGrid-formatting aon-margin-top">
+										<aon:selectBooleanCheckbox id="storeCertificate"
+											value="#{controller.storeCertificate}" />				
+										<aon:outputLabel for="storeCertificate"
+											value="#{signBundle.sign_certificate_store}" />
+									</h:panelGrid>								
 								</aon:div>
 							</aon:div>
 						</aon:div>
