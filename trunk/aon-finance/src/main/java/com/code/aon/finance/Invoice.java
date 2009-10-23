@@ -71,6 +71,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	public Invoice() {
 		this.issueDate = new Date();
+		this.defaultTaxInfo = true;
 	}
 
     /** The id. */
@@ -149,6 +150,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	private int issueYear;
 	private int issueMonth;
 	private int issueDay;
+	private boolean defaultTaxInfo;
 	/**
      * Gets the id.
      * 
@@ -670,6 +672,15 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	@Transient
 	public boolean isRecorded() {
 		return getStatus() == InvoiceStatus.SCORED;
+	}
+
+	@Transient
+	public boolean isDefaultTaxInfo() {
+		return defaultTaxInfo;
+	}
+
+	public void setDefaultTaxInfo(boolean defaultTaxInfo) {
+		this.defaultTaxInfo = defaultTaxInfo;
 	}
 
 	@Override
