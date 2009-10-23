@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="commercialSegmentList">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid columns="3" dir="true"
+						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+						<aon:div styleClass="aon-finding-title-internal">
+							<aon:outputText value="#{menuBundle.aon_commercial_segments}" />
+						</aon:div>
+
+						<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText value="#{bundle.aon_editing}" />
+						</aon:div>
+
+						<aon:div styleClass="aon-finding-toolbar-item-group">
+							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+								actionListener="#{commercialSegment.onReset}"
+								rendered="#{!commercialSegment.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-reset"
+								accesskey="#{bundle.aon_key_new}" />
+							<aon:commandButton id="save" value="#{bundle.aon_save}"
+								actionListener="#{commercialSegment.onAccept}"
+								rendered="#{commercialSegment.to!=null or commercialSegment.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								accesskey="#{bundle.aon_key_new}" />
+							<aon:confirmButton id="cancelNew" value="#{bundle.aon_cancel}"
+								rendered="#{commercialSegment.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"
+								immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
+								confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmActionListener="#{commercialSegment.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}" />
+							<aon:commandButton id="cancelEdit" value="#{bundle.aon_cancel}"
+								rendered="#{commercialSegment.to!=null and (!commercialSegment.new)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"
+								immediate="true" actionListener="#{commercialSegment.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}" />
+							<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+								rendered="#{commercialSegment.to!=null and !commercialSegment.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-delete"
+								immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
+								confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmActionListener="#{commercialSegment.onRemove}"
+								accesskey="#{bundle.aon_key_remove}" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+				<!-- end toolbar navigation -->
+
+				<!--  aon-region-body -->
+				<aon:div styleClass="aon-scroll-area">
+
+					<aon:editDataTable id="commercialSegmentData" var="to" rows="20"
+						rendered="#{(commercialSegment.model.rowCount > 0) or (commercialSegment.new)}"
+						value="#{commercialSegment.model}"
+						columnClasses="aon-editDataTable-iconColumn,aon-width-60,aon-editDataTable-textColumn aon-width-auto, aon-editDataTable-buttonsColumn">
+
+						<aon:rowSelector toggleOnClick="#{commercialSegment.to == null}"
+							actionListener="#{commercialSegment.onSelect}" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{commercialSegment.onReset}" value=""
+										rendered="#{!commercialSegment.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+							<f:facet name="footer">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"
+								rendered="#{to!=commercialSegment.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==commercialSegment.to}" size="32"
+								value="#{commercialSegment.to.name}" maxlength="32" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{commercialSegment.new}" size="32"
+									value="#{commercialSegment.to.name}" maxlength="32" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=commercialSegment.to}">&#160;</f:verbatim>
+								<aon:commandButton title="[#{bundle.aon_accept}]"
+									actionListener="#{commercialSegment.onAccept}"
+									rendered="#{to==commercialSegment.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==commercialSegment.to}"
+									actionListener="#{commercialSegment.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]" id="removeInline"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==commercialSegment.to}"
+									confirmTitle="#{bundle.aon_confirm_title}"
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{commercialSegment.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!commercialSegment.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]"
+										actionListener="#{commercialSegment.onAccept}"
+										rendered="#{commercialSegment.new}"
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]" id="cancelNewInline"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{commercialSegment.new}"
+										confirmTitle="#{bundle.aon_confirm_title}"
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{commercialSegment.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+					</aon:editDataTable>
+
+					<aon:dataScroller2 for="commercialSegmentData" showNote="true" />
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
