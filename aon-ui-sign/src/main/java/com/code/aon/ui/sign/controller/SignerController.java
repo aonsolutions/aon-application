@@ -81,6 +81,10 @@ public class SignerController {
 	
 	private IManagerBean attachmentBean;
 	
+	private boolean storeCertificate;
+	
+	private boolean sessionCertificateStored;
+	
 	public SignerController() {
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		this.company = companyController.obtainCompany();
@@ -173,6 +177,22 @@ public class SignerController {
 
 	public void setShowSignWindow(boolean value) {
 		this.showSignWindow = value;
+	}
+	
+	public boolean isStoreCertificate() {
+		return storeCertificate;
+	}
+
+	public void setStoreCertificate(boolean storeCertificate) {
+		this.storeCertificate = storeCertificate;
+	}
+	
+	public boolean isSessionCertificateStored() {
+		return sessionCertificateStored;
+	}
+
+	public void setSessionCertificateStored(boolean sessionCertificateStored) {
+		this.sessionCertificateStored = sessionCertificateStored;
 	}
 
 	public void onShowSignWindow( ActionEvent event ) throws ManagerBeanException {
@@ -325,6 +345,9 @@ public class SignerController {
 	}
 	
 	public boolean resolveCertificado() {
+		if ( sessionCertificateStored ) {
+			return true;
+		}
 		boolean resolved = false;
 		try {
 			if ( this.signStore == null ) {
@@ -356,6 +379,9 @@ public class SignerController {
 		} catch ( SinaduraCoreException e ) {		
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
+		}
+		if ( resolved && storeCertificate ) {
+			sessionCertificateStored = true;
 		}
 		return resolved;
 	}	
