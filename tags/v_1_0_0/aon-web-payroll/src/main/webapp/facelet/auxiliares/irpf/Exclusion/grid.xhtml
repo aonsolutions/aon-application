@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="exclusionGrid">
+	
+			<aon:div ajaxRendered="true" layout="none">
+				
+	            <ui:include src="/facelet/templates/gridPrintToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_irpf__exclusion}" />
+					<ui:param name="controller" value="#{exclusion}"/>
+					<ui:param name="reportKey" value="irpfExclusionList"/>
+					<aon:valueParam name="skipSearchButton" default="false"/>
+					<aon:valueParam name="skipBackButton" default="false" />
+					<aon:methodParam name="backAction" value="auxiliares" />
+		      	</ui:include>	
+	
+				<!-- region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+					
+					<aon:editDataTable id="exclusionData" var="to" rows="20"
+						rendered="#{(exclusion.model.rowCount > 0) or (exclusion.new)}" value="#{exclusion.model}"
+						columnClasses="aon-editDataTable-iconColumn, 
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn,  
+						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, 
+						aon-editDataTable-numberColumn, 
+						aon-editDataTable-buttonsColumn">
+								
+						<aon:rowSelector toggleOnClick="#{exclusion.to == null}"
+							actionListener="#{exclusion.onSelect}" />
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{exclusion.onReset}" value=""
+										rendered="#{!exclusion.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__exclusion_desde}" />
+							</f:facet>
+							<aon:outputText value="#{to.id.fecini}" rendered="#{to!=exclusion.to}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:selectInputDate required="true"
+								rendered="#{to==exclusion.to}"
+								value="#{exclusion.to.id.fecini}"
+								renderAsPopup="true" >
+							</aon:selectInputDate>								
+							<f:facet name="footer">
+								<aon:selectInputDate required="true"
+									rendered="#{exclusion.new}"
+									value="#{exclusion.to.id.fecini}"
+									renderAsPopup="true" >
+								</aon:selectInputDate>
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__exclusion_hasta}" />
+							</f:facet>
+							<aon:outputText value="#{to.fecfin}" rendered="#{to!=exclusion.to}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:selectInputDate required="true"
+								rendered="#{to==exclusion.to}"
+								value="#{exclusion.to.fecfin}"
+								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+							</aon:selectInputDate>								
+							<f:facet name="footer">
+								<aon:selectInputDate required="true"
+									rendered="#{exclusion.new}"
+									value="#{exclusion.to.fecfin}"
+									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+								</aon:selectInputDate>
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__exclusion_situacion}" />
+							</f:facet>
+							<aon:outputText value="#{to.id.situacion}" rendered="#{to!=exclusion.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==exclusion.to}" size="1"
+								value="#{exclusion.to.id.situacion}" maxlength="1" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text " required="true"
+									rendered="#{exclusion.new}" size="1"
+									value="#{exclusion.to.id.situacion}" maxlength="1" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__exclusion_nhijos}" />
+							</f:facet>
+							<aon:outputText value="#{to.id.hijos}" rendered="#{to!=exclusion.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==exclusion.to}" size="25"
+								value="#{exclusion.to.id.hijos}" maxlength="25" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{exclusion.new}" size="25"
+									value="#{exclusion.to.id.hijos}" maxlength="25" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__exclusion_importe}" />
+							</f:facet>
+							<aon:outputText value="#{to.importe}" rendered="#{to!=exclusion.to}" >
+								<f:convertNumber type="number" pattern="###,###.###" />
+							</aon:outputText>
+							<aon:inputText styleClass="aon-form-input-text"
+								rendered="#{to==exclusion.to}" size="11"
+								value="#{exclusion.to.importe}" maxlength="11" />
+								
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text"
+									rendered="#{exclusion.new}" size="11"
+									value="#{exclusion.to.importe}" maxlength="11" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=exclusion.to}">&#160;</f:verbatim>
+								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
+									rendered="#{to==exclusion.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{exclusion.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==exclusion.to}"
+									actionListener="#{exclusion.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==exclusion.to}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{exclusion.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />								
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!exclusion.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]" 
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{exclusion.new}"
+										actionListener="#{exclusion.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{exclusion.new}"
+										confirmTitle="#{bundle.aon_confirm_title}" 
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{exclusion.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						
+					</aon:editDataTable>
+					<aon:dataScroller2 for="exclusionData" showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

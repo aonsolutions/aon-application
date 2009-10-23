@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+
+		<aon:form id="commercialMenu">
+		
+			<aon:menuBar> 
+				<aon:dropDownMenu value="#{bundle.aon_masters}">
+					<aon:menuItem id="target"
+						value="#{appBundle.commercial_target_module}" 
+						iconClass="aon-target-iconClass"
+						action="target_search" actionListener="#{target.onEditSearch}" >
+						<f:setPropertyActionListener value="appBundle" target="#{target.bundleName}" />
+						<f:setPropertyActionListener value="#{false}" target="#{target.showProduct}" />
+						<f:setPropertyActionListener value="#{false}" target="#{target.showSeller}" />
+					</aon:menuItem>
+					<aon:menuItem id="campaign"
+						value="#{marketingBundle.marketing_campaign_module}"
+						action="campaign_list" actionListener="#{campaign.onSearch}" >
+						<f:setPropertyActionListener value="#{false}" target="#{campaign.showSurvey}" />
+						<f:setPropertyActionListener value="#{false}" target="#{campaign.showPhoneActionMediaType}" />
+					</aon:menuItem>
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{bundle.aon_configuration}">
+					<aon:menuItem id="commercialSegment"
+						value="#{commercialBundle.commercial_segment_module}" 
+						iconClass="aon-commercial-segment-iconClass"
+						action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
+					<aon:menuItem id="company"
+						value="#{companyBundle.company_data_module}"
+						action="company" actionListener="#{company.onLoad}" />
+					<aon:menuItem id="mailAccountCahnge"
+						value="#{webmailBundle.webmail_mailAccount}"
+						action="mailAccount_list" actionListener="#{mailAccount.onSearch}" />						
+				</aon:dropDownMenu>
+				<aon:commandLink id="communicationCenter"
+					value="#{commercialBundle.commercial_communication_center_module}"
+					styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
+					action="communicationCenter" actionListener="#{communicationCenter.onInit}" >
+					<f:setPropertyActionListener value="appBundle" target="#{campaign.bundleName}" />
+					<f:setPropertyActionListener value="#{false}" target="#{campaign.showSurvey}" />
+					<f:setPropertyActionListener value="#{false}" target="#{campaign.showPhoneActionMediaType}" />
+					<f:setPropertyActionListener value="#{false}" target="#{communicationCenter.showTarget}" />
+				</aon:commandLink>
+			</aon:menuBar>
+				
+		 </aon:form>
+	</c:if>
+
+</ui:composition>

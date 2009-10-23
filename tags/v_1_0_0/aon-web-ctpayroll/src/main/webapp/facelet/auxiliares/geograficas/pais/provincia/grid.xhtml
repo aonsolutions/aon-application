@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="provinciaDataDiv">
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{provincia}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-iconColumn, aon-editDataTable-textColumn" />
+			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
+			<ui:param name="skipResetButton" value="#{comunidad.new or (comunidad.to == null)}" />			
+			<ui:define name="columns">
+
+	     	    <aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_cdg} #{appBundle.aon_payroll_auxiliares_geograficas__provincia}" />
+					</f:facet>
+					<aon:outputText value="#{to.cdg}" />
+					
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{provincia.new}" size="5"
+							value="#{provincia.to.cdg}" maxlength="2" />
+					</f:facet>
+				</aon:column>
+		
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_description} #{appBundle.aon_payroll_auxiliares_geograficas__provincia}" />
+					</f:facet>
+					<aon:outputText value="#{to.descripcion}" rendered="#{to!=provincia.to}" />
+					
+					<aon:inputText styleClass="aon-form-input-text " required="true"
+						rendered="#{to==provincia.to}" size="30"
+						value="#{provincia.to.descripcion}" maxlength="30" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{provincia.new}" size="30"
+							value="#{provincia.to.descripcion}" maxlength="30" />
+					</f:facet>
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

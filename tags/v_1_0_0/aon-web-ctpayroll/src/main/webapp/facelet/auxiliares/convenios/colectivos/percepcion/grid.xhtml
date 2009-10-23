@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="percnivDataDiv">
+		<ui:decorate template="/facelet/templates/grid.xhtml" >
+			<ui:param name="controller" value="#{percniv}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+			<ui:param name="showDataScroller" value="#{(!nivel.new) and (nivel.to != null)}" />			
+			<ui:param name="skipResetButton" value="#{nivel.new or (nivel.to == null)}" />
+			<ui:param name="skipEditButton" value="#{nivel.new or (nivel.to == null)}" />	
+					
+			<ui:define name="columns">
+				<ui:param name="editAction" value="percniv_form" />
+				<ui:param name="resetAction" value="percniv_form" />
+				<ui:param name="resetActionListener" value="#{percniv.onReset}" />
+				<ui:param name="skipSaveButton" value="#{true}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				
+					
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__comp}" />
+					</f:facet>
+					<aon:outputText value="#{to.id.codcom}"  />
+					
+					<f:facet name="footer">
+						
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_description} #{appBundle.aon_payroll_auxiliares_convenios__comp}" />
+						</f:facet>
+						<aon:outputText value="#{to.descom}"  />
+						
+						<f:facet name="footer">
+							
+						</f:facet>
+					</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__importe}" />
+					</f:facet>
+					<aon:outputText value="#{to.importe}"  >
+						<f:convertNumber minFractionDigits="2" />
+					</aon:outputText>
+					
+					<f:facet name="footer">
+						
+					</f:facet>
+				</aon:column>
+			
+			</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

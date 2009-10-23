@@ -1,0 +1,213 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+		<aon:editDataTable id="lcomunicaData"
+			value="#{lcomunica.model}" var="to" rows="0"
+			rendered="#{!percepcion.new}"
+			columnClasses="aon-editDataTable-iconColumn
+				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
+				, aon-editDataTable-numberColumn, 
+				, aon-editDataTable-buttonsColumn">
+
+			<aon:rowSelector toggleOnClick="#{lcomunica.to == null}"
+				actionListener="#{lcomunica.onSelect}" />
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{lcomunica.onReset}" value=""
+							rendered="#{!lcomunica.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+
+				</f:facet>
+			</aon:column>
+
+			
+
+
+
+			
+		
+						
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_simulacion_anion}" />
+				</f:facet>
+				<aon:outputText value="#{to.anionac}"
+					rendered="#{to!=lcomunica.to}">
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text " 
+					rendered="#{to==lcomunica.to}" size="5"
+					value="#{lcomunica.to.anionac}" maxlength="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" 
+						rendered="#{lcomunica.new}" size="5"
+						value="#{lcomunica.to.anionac}" maxlength="4" />
+				</f:facet>
+			</aon:column>
+
+
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_simulacion_minus}" />
+				</f:facet>
+				<aon:outputText value="#{to.xminus}" rendered="#{to!=lcomunica.to}">
+				</aon:outputText>
+
+
+				<aon:selectOneMenu layout="pageDirection"
+					rendered="#{to==lcomunica.to}" value="#{lcomunica.to.xminus}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{costes.listaminus}" />
+				</aon:selectOneMenu>
+
+
+				<f:facet name="footer">
+
+					<aon:selectOneMenu layout="pageDirection"
+						rendered="#{lcomunica.new}" value="#{lcomunica.to.xminus}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{costes.listaminus}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_simulacion_desac}" />
+				</f:facet>
+				<aon:outputText value="#{to.desAsc}"
+					rendered="#{to!=lcomunica.to}">
+				</aon:outputText>
+
+					
+					
+				<aon:selectOneMenu layout="pageDirection"
+					rendered="#{to==lcomunica.to}" value="#{lcomunica.to.desAsc}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{lcomunica.listadesc}" />
+				</aon:selectOneMenu>
+					
+					
+				<f:facet name="footer">
+			
+						
+						<aon:selectOneMenu layout="pageDirection"
+					rendered="#{lcomunica.new}" value="#{lcomunica.to.desAsc}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{lcomunica.listadesc}" />
+				</aon:selectOneMenu>
+					
+				</f:facet>
+			</aon:column>
+			
+				<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_simulacion_entero}" />
+				</f:facet>
+				<aon:selectBooleanCheckbox value="#{to.descenEnt}"
+					rendered="#{to!=lcomunica.to}" />
+				
+				<aon:selectBooleanCheckbox styleClass="aon-form-input-text " 
+					rendered="#{to==lcomunica.to}" size="5"
+					value="#{lcomunica.to.descenEnt}" maxlength="10" />
+					
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox styleClass="aon-form-input-text" 
+						rendered="#{lcomunica.new}" size="5"
+						value="#{lcomunica.to.descenEnt}" maxlength="10" />
+				
+				</f:facet>
+			</aon:column>
+			
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_simulacion_convi}" />
+				</f:facet>
+				<aon:outputText value="#{to.conviv}"
+					rendered="#{to!=lcomunica.to}">
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text " 
+					rendered="#{to==lcomunica.to}" size="5"
+					value="#{lcomunica.to.conviv}" maxlength="10" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" 
+						rendered="#{lcomunica.new}" size="5"
+						value="#{lcomunica.to.conviv}" maxlength="10" />
+				</f:facet>
+			</aon:column>
+			
+			
+
+          
+
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=lcomunica.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]"
+						rendered="#{to==lcomunica.to}"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						actionListener="#{lcomunica.onAccept}"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==lcomunica.to}"
+						actionListener="#{lcomunica.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="remove-Porcentaje"
+						title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==lcomunica.to}"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{lcomunica.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!lcomunica.new}">&#160;</f:verbatim>
+						<aon:commandButton title="[#{bundle.aon_accept}]"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							rendered="#{lcomunica.new}"
+							actionListener="#{lcomunica.onAccept}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancel-Porcentaje"
+							title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{lcomunica.new}"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{lcomunica.onCancel}"
+							immediate="true" accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+		</aon:editDataTable>
+	</aon:div>
+
+</ui:composition>

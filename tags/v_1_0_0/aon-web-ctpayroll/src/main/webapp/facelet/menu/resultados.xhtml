@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="resultadosMenu">
+		
+			<aon:div styleClass="aon-scroll-area-menu">		
+		
+				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-portlets-column,aon-portlets-column">
+	
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{menuBundle.resultados_recibos_salarios}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nomina}" action="nomina_form" >
+									<aon:actionListener method="#{nomina.onSearch}" />
+									<aon:actionListener method="#{nomina.onEditSearch}" />
+									<aon:actionListener method="#{nomina.onSelectFirst}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nominaex}" action="nominaex_form" >
+									<aon:actionListener method="#{nominaex.onSearch}" />
+									<aon:actionListener method="#{nominaex.onEditSearch}" />
+									<aon:actionListener method="#{nominaex.onSelectFirst}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__finiquitos}" action="finiquito_form" >
+									<aon:actionListener method="#{finiquito.onSearch}" />
+									<aon:actionListener method="#{finiquito.onEditSearch}" />
+									<aon:actionListener method="#{finiquito.onSelectFirst}" />
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panel>
+
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{menuBundle.resultados_irpf}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_irpf__m110calc}" action="impresos11x_form" >
+									<aon:actionListener method="#{impresos11x.onSearch}" />
+									<aon:actionListener method="#{impresos11x.onEditSearch}" />
+									<aon:actionListener method="#{impresos11x.onSelectFirst}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_irpf__m190calc}" action="impresos190_form" >
+									<aon:actionListener method="#{impresos190.onSearch}" />
+									<aon:actionListener method="#{impresos190.onEditSearch}" />
+									<aon:actionListener method="#{impresos190.onSelectFirst}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_irpf__result_irpf}" action="calculo_form" >
+									<aon:actionListener method="#{calculo.onSearch}" />
+									<aon:actionListener method="#{calculo.onEditSearch}" />
+									<aon:actionListener method="#{calculo.onSelectFirst}" />
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panel>
+
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{menuBundle.resultados_seguros_sociales}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_seguros_sociales__tc2calc}" action="tc2_form" >
+									<aon:actionListener method="#{tc2.onSearch}" />
+									<aon:actionListener method="#{tc2.onEditSearch}" />
+									<aon:actionListener method="#{tc2.onSelectFirst}" />
+									
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.resultados_seguros_sociales__tc1calc}" action="tc1_form" >
+									<aon:actionListener method="#{tc1.onSearch}" />
+									<aon:actionListener method="#{tc1.onEditSearch}" />
+									<aon:actionListener method="#{tc1.onSelectFirst}" />
+									
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panel>
+
+				</aon:panelGrid>
+
+			</aon:div>
+		
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

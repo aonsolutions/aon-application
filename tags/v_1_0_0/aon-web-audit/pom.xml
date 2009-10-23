@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>aon.web.parent</artifactId>
+		<groupId>com.code.aon</groupId>
+		<version>1.0.5</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon-web-audit</artifactId>
+	<packaging>war</packaging>
+	<name>AON WEB AUDIT</name>
+	<version>1.0.0</version>
+	<description>AON WEB AUDIT</description>
+	<build>
+		<finalName>aon-audit</finalName>
+	</build>
+	<dependencies>			
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>3.3.0</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.8.0</version>
+			<scope>provided</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
+			<version>4.2.0</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.resources</artifactId>
+			<version>3.9.0</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.audit</artifactId>
+			<version>1.0.3</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+	</dependencies>
+</project>

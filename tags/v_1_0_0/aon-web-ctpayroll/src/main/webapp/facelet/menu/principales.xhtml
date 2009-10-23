@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="principalesMenu">
+		
+			<aon:div styleClass="aon-scroll-area-menu">		
+		
+				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-portlets-column,aon-portlets-column">
+	
+					<aon:panelGroup>
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{menuBundle.principales_clientes}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div>
+									<aon:commandLink value="#{menuBundle.principales_clientes__cliente}" action="cliente_search">
+										<aon:actionListener method="#{cliente.onEditSearch}" />
+										<aon:actionListener method="#{cliente.onSearch}" />
+										<!--
+										<aon:actionListener method="#{cliente.onSelectFirst}" />
+										-->
+									</aon:commandLink>
+								</aon:div>
+								<aon:div>
+									<aon:commandLink value="#{menuBundle.principales_clientes__integral_clientes}" action="integral_search" >
+									 	<aon:actionListener method="#{cliente.onEditSearch}" />
+										<aon:actionListener method="#{cliente.onSearch}" />	
+									</aon:commandLink>
+								</aon:div>
+								<aon:div>
+									<aon:commandLink value="#{menuBundle.principales_clientes__empresa}" action="empresa_search" >
+										<aon:actionListener method="#{empresa.onEditSearch}" />
+										<aon:actionListener method="#{empresa.onSearch}" />
+										<!--
+										<aon:actionListener method="#{empresa.onSelectFirst}" />
+										-->
+									</aon:commandLink>
+								</aon:div>
+								<aon:div>
+									<aon:commandLink value="#{menuBundle.principales_clientes__actividad}" action="actividad_search" >
+										<aon:actionListener method="#{empreact.onEditSearch}" />
+										<aon:actionListener method="#{empreact.onSearch}" />
+										<!--
+										<aon:actionListener method="#{empreact.onSelectFirst}" />
+										-->
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+						
+				
+						<aon:div styleClass="aon-padding-top">
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText value="#{menuBundle.principales_autonomos}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div>
+										<aon:commandLink value="#{menuBundle.principales_autonomos__autonomos}" action="autonomo_search" >
+										<aon:actionListener method="#{autonomo.onEditSearch}" />
+										<aon:actionListener method="#{autonomo.onSearch}" />
+										<!--  
+										<aon:actionListener method="#{autonomo.onSelectFirst}" />
+										-->
+									</aon:commandLink>
+									</aon:div>
+								</aon:div>
+							</aon:panel>
+						</aon:div>
+		
+						<aon:div styleClass="aon-padding-top">		
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText value="#{menuBundle.principales_registro_documentos}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div>
+										<aon:commandLink value="#{menuBundle.principales_registro_documentos__regiempr}" disabled="true" />
+									</aon:div>
+									<aon:div>
+										<aon:commandLink value="#{menuBundle.principales_registro_documentos__regitrab}" disabled="true" />
+									</aon:div>
+								</aon:div>
+							</aon:panel>
+						</aon:div>
+					</aon:panelGroup>
+	
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{menuBundle.principales_personas}" />
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.principales_personas__personas}" action="persona_search" >
+									<aon:actionListener method="#{persona.onEditSearch}" />
+									<aon:actionListener method="#{persona.onSearch}" />
+									<!--  
+									<aon:actionListener method="#{persona.onSelectFirst}" />
+									-->
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.principales_personas__integral_per}" action="integralTrab_search" >
+									<aon:actionListener method="#{persona.onEditSearch}" />
+									<aon:actionListener method="#{persona.onSearch}" />
+									<!--  
+									<aon:actionListener method="#{persona.onSelectFirst}" />
+									-->
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.principales_personas__percep}" action="percep_search" >
+									<aon:actionListener method="#{percepbasic.onEditSearch}" />
+									<aon:actionListener method="#{percepbasic.onSearch}" />
+									<!--  
+									<aon:actionListener method="#{percepbasic.onSelectFirst}" />
+									-->
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.principales_personas__otrperc}" action="otrperc_search" >
+									<aon:actionListener method="#{otraspercep.onEditSearch}" />
+									<aon:actionListener method="#{otraspercep.onSearch}" />
+									<!--  
+									<aon:actionListener method="#{otraspercep.onSelectFirst}" />
+									-->
+								</aon:commandLink>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink value="#{menuBundle.principales_personas__embargo}" action="embargoBasic_search" >
+									<aon:actionListener method="#{embargoBasic.onEditSearch}" />
+									<aon:actionListener method="#{embargoBasic.onSearch}" />
+									<!--  
+									<aon:actionListener method="#{embargoBasic.onSelectFirst}" />
+									-->
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panel>
+	
+					
+				</aon:panelGrid>		
+
+			</aon:div>
+			
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
