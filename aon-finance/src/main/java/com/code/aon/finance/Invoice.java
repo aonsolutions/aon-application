@@ -543,7 +543,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 * @return the lines
 	 */
 	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy()
+	@OrderBy("line")
 	public Set<InvoiceDetail> getLines() {
 		return this.lines;
 	}
