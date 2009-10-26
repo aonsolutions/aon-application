@@ -42,9 +42,12 @@
 	</supplier:config>
 
 	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
-		<finance:finance
+		<finance:creditor
 			showFinanceData="true" 
 			showAccount="true"
+		/>
+		<finance:invoice
+			showDeliveryData="true" 
 		/>
 	</finance:config>
 
