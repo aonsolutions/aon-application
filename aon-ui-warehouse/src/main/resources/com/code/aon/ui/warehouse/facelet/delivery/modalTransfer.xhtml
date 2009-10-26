@@ -41,7 +41,7 @@
 									<aon:commandButton id="salesTransfer-accept"
 										value="#{warehouseBundle.warehouse_delivery_to_import}"
 										rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
-										reRender="showSalesTransferWindow,deliveryDetails"
+										reRender="showSalesTransferWindow,deliveryDetails,menuExt"
 										actionListener="#{delivery.onSalesTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<f:setPropertyActionListener
@@ -143,7 +143,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+													<h:outputText value="#{productBundle.product_item}" />
 												</f:facet>
 												<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}">
 													<aon:abbreviateConverter maxWidth="50" />
