@@ -19,11 +19,22 @@
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:define name="beforeSpinToolbarContent">
+						<c:if test="#{aonConfiguration.bean.invoice.showDeliveryData}">
+							<aon:commandButton id="deliveryTransfer"
+								value="#{financeBundle.finance_invoice_deliveries}"
+								immediate="#{true}" rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
+								styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+								actionListener="#{saleInvoice.onDeliveryTransferShow}"
+								reRender="showDeliveryTransferWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showDeliveryTransferWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
 						<aon:commandButton id="finances"
 							value="#{financeBundle.finance_generate}"
 							actionListener="#{saleInvoice.generateFinances}"
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceFinance.allPending}"
-							styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+							styleClass="aon-finding-toolbar-item aon-icon-tree" />
 						<aon:commandButton id="record"
 							value="#{financeBundle.finance_record}"
 							actionListener="#{saleInvoice.onRecordInvoice}"
@@ -161,6 +172,14 @@
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
 								actionType="search">
 							</aon:lookupButton>
+							<aon:lookupButton 
+								windowTitle="#{customerBundle.customer_new}"
+								disabled="#{saleInvoice.readOnly}" minWidth="650" minHeight="600"
+								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
+								lookupChangeListener="#{saleInvoice.customerData}"
+								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
+								actionType="new">
+							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.readOnly}"
 								value="#{saleInvoice.to.registryName}" size="60" />
 						</a4j:region>
@@ -224,12 +243,9 @@
 
 				</aon:panelGrid>
 
-				<ui:include
-					src="/com/code/aon/ui/finance/facelet/saleInvoice/form_detail.xhtml" />
+				<ui:include	src="/com/code/aon/ui/finance/facelet/saleInvoice/form_detail.xhtml" />
 
-				<ui:include
-					src="/com/code/aon/ui/finance/facelet/saleInvoice/form_finances.xhtml" />
-					
+				<ui:include	src="/com/code/aon/ui/finance/facelet/saleInvoice/form_finances.xhtml" />
 			</aon:div>
 
 		</aon:form>
@@ -244,5 +260,6 @@
 			<aon:methodParam name="signActionListener" value="#{saleInvoiceSigner.onSign}" type="actionListener" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalTransfer.xhtml" />
 	</ui:define>
 </ui:composition>
