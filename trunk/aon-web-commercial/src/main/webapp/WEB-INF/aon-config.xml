@@ -40,6 +40,7 @@
 			showStock="false"
 			showAccount="false"
 			showAttachment="true"
+			showEcommerceDataTab="false"
 		/>
 	</product:config>
 
