@@ -975,6 +975,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		invoice.setWithholding(getHeader().isWithholding());
 		invoice.setTaxFree(getHeader().isTaxFree());
 		invoice.setSurcharge(getHeader().isSurcharge());
+		invoice.setDefaultTaxInfo(false);
 		return invoice;
 	}
 
