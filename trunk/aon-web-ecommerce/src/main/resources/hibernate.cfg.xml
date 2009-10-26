@@ -7,6 +7,8 @@
 
 	<session-factory>
 		
+		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+		
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 		
 		<!-- AON-COMMERCIAL Mapping files -->	
@@ -19,10 +21,6 @@
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
-		<!--  
-		-->
-		<!--  
-		-->
 		
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
