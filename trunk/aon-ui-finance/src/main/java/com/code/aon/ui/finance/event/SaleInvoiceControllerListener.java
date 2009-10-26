@@ -1,9 +1,6 @@
 package com.code.aon.ui.finance.event;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -37,33 +34,9 @@ public class SaleInvoiceControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		try {
-			Invoice invoice = (Invoice)event.getController().getTo();
-			invoice.setType(InvoiceType.SALES);
-			invoice.setStatus(InvoiceStatus.PENDING);
-			fillTaxInfo(invoice);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage());
-		}
-	}
-
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		try {
-			Invoice invoice = (Invoice)event.getController().getTo();
-			fillTaxInfo(invoice);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage());
-		}
-	}
-
-	private void fillTaxInfo(Invoice invoice) throws ManagerBeanException {
-		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-		Customer customer = (Customer) customerBean.get(invoice.getRegistry().getId());
-
-		invoice.setSurcharge((customer != null) ? customer.isSurcharge() : false);
-		invoice.setTaxFree((customer != null) ? customer.isTaxFree() : false);
-		invoice.setWithholding((customer != null) ? customer.isWithholding() : false);
+		Invoice invoice = (Invoice)event.getController().getTo();
+		invoice.setType(InvoiceType.SALES);
+		invoice.setStatus(InvoiceStatus.PENDING);
 	}
 
 }
