@@ -41,10 +41,18 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.invoicing.InvoicingException;
+import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
+import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
+import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
+import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingDAO;
+import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingEngine;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
@@ -59,6 +67,11 @@ import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.bridge.DeliveryTransferManager;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.code.aon.webmail.SecurityInfo;
 
 public class SaleInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
@@ -77,8 +90,12 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	
 	private boolean showInvoiceAddressWindow;
 
+	private DeliveryTransferManager deliveryTransferManager;
+
+	private boolean showDeliveryTransferWindow;
+
 	public Invoice getInvoice() {
-		return (Invoice) getTo();
+		return (Invoice)getTo();
 	}
 	
 	public IPriceStrategy getPriceStrategy() {
@@ -143,7 +160,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	}
 
 	public String getAddress() {
-		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
+		RegistryAddress rAddress = getInvoice().getRegistryAddress();
 		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
 		BasicController addressController = (BasicController)FormUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
@@ -154,7 +171,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	}
 
 	public String getCity() {
-		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
+		RegistryAddress rAddress = getInvoice().getRegistryAddress();
 		String city = (rAddress!=null)?rAddress.getCity():"";
 		BasicController addressController = (BasicController)FormUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
@@ -167,9 +184,9 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
-		if (this.getTo() != null) {
-			((Invoice)this.getTo()).setNumber(number);
-			((Invoice)this.getTo()).setSecurityLevel(securityLevel);
+		if (getInvoice() != null) {
+			getInvoice().setNumber(number);
+			getInvoice().setSecurityLevel(securityLevel);
 		}
 	}
 
@@ -198,19 +215,21 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer) event.getNewValue();
 			isBlocked(customer); // Saca el mensaje de bloqueo.
-			Invoice invoice = (Invoice) getTo();
-			invoice.setRegistryName(customer.getRegistry().getFullName());
-			invoice.setRegistryDocument(customer.getRegistry().getDocument());
-			invoice.setRegistry(customer.getRegistry());
+			getInvoice().setRegistryName(customer.getRegistry().getFullName());
+			getInvoice().setRegistryDocument(customer.getRegistry().getDocument());
+			getInvoice().setRegistry(customer.getRegistry());
 			loadAddresses(customer.getId());
 		} else {
 			setAddresses(null);	
 		}
 	}
 
+	public double getTaxableBase(){
+		return getPriceStrategy().getTaxableBase((ICalculableContainer)getTo());
+	}
+
 	public double getToInvoiceTotalPrice() {
-		Invoice invoice = (Invoice)this.getTo();
-		return getPriceStrategy().getTotalPrice(invoice,invoice);
+		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), (ITaxInfo)getTo());
 	}
 	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
@@ -256,18 +275,18 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
-			if (!FinanceStatus.PAID.equals(finance.getFinanceStatus()) && !FinanceStatus.SETTLED.equals(finance.getFinanceStatus())) {
+			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
 				return FinanceStatus.PENDING;
 			}
 		}
-		return FinanceStatus.PAID;
+		return (financeBean.getCount(criteria) == 0) ? FinanceStatus.PENDING : FinanceStatus.PAID;
 	}
 
 	public Customer getCustomer() throws ManagerBeanException{
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
-		if ((Invoice)this.getTo() != null) {
-			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), ((Invoice)this.getTo()).getRegistry().getId());
+		if (getInvoice() != null) {
+			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), getInvoice().getRegistry().getId());
 			Iterator<?> iter = customerBean.getList(criteria).iterator();
 			if (iter.hasNext()) {
 				return (Customer)iter.next();
@@ -278,28 +297,26 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 
 	public boolean isRemovable() {
 		SaleInvoiceDetailController saleInvoiceDetailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
-		Invoice invoice = (Invoice)this.getTo();
-		if (saleInvoiceDetailController.getTo() == null && InvoiceStatus.PENDING.equals(invoice.getStatus())) {
+		if (saleInvoiceDetailController.getTo() == null && InvoiceStatus.PENDING == getInvoice().getStatus()) {
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isAccountSource() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getTo();
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
 		Iterator<ITransferObject> iterator = invoiceDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			return invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT);
+			return InvoiceSource.ACCOUNT == invoiceDetail.getSource();
 		}
 		return false;
 	}
 
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
-		Invoice invoice = (Invoice)this.getTo();
+		Invoice invoice = getInvoice();
 		try {
 			IController feeFinanceController = FormUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
 			List<?> financeList = feeFinanceController.getManagerBean().getList(feeFinanceController.getCriteria());
@@ -340,37 +357,24 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			throw new AbortProcessingException(message);
 		}
 
-		Invoice invoice = (Invoice)this.getTo();
-		getAccountWriter().recordAndUpdateInvoice(invoice);
+		getAccountWriter().recordAndUpdateInvoice(getInvoice());
 	}
 	
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException{
-		Invoice invoice = (Invoice)this.getTo();
-		getAccountWriter().unrecordAndUpdateInvoice(invoice);
+		getAccountWriter().unrecordAndUpdateInvoice(getInvoice());
 	}
 
 	public boolean isRecorded() {
-		Invoice invoice = (Invoice)this.getTo();
-		if (invoice.getStatus() != null) {
-			return invoice.getStatus().equals(InvoiceStatus.SCORED);
-		}
-		return false;
+		return InvoiceStatus.SCORED == getInvoice().getStatus();
 	}
 
 	public boolean isReadOnly() {
-		Invoice invoice = (Invoice)this.getTo();
-		if ( invoice.isSigned() ) {
-			return true;
-		}
-		if ( invoice.getStatus() != null ) {
-			return invoice.getStatus().equals(InvoiceStatus.SCORED);
-		}
-		return false;
+		return (isRecorded() || getInvoice().isSigned());
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Integer getAccountEntryId() throws ManagerBeanException {
-    	Invoice invoice = (Invoice)this.getTo();
+    	Invoice invoice = getInvoice();
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 			Criteria criteria = new Criteria();
@@ -395,7 +399,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	public void setShowInvoiceAddressWindow(boolean value) {
 		this.showInvoiceAddressWindow = value;
 	}
-	
+
 	public void onInvoiceAddressShow( ActionEvent event ) {
 		BasicController addressController = (BasicController)FormUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
 		ITransferObject to = addressController.getTo();
@@ -403,7 +407,104 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			addressController.onReset(event);
 		}
 	}
+
+	public DeliveryTransferManager getDeliveryTransferManager() {
+		if (deliveryTransferManager == null) {
+			deliveryTransferManager = new DeliveryTransferManager(); 
+		}
+		return deliveryTransferManager;
+	}
+
+	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
+		this.deliveryTransferManager = deliveryTransferManager;
+	}
+
+	public boolean isShowDeliveryTransferWindow() {
+		return showDeliveryTransferWindow;
+	}
+
+	public void setShowDeliveryTransferWindow(boolean value) {
+		this.showDeliveryTransferWindow = value;
+	}
 	
+	public void onDeliveryTransferShow(ActionEvent event) throws ManagerBeanException {
+		List<ITransferObject> invoicedDeliveryList = new LinkedList<ITransferObject>();
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
+		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
+			DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
+			if (!invoicedDeliveryList.contains(deliveryDetail.getDelivery())) {
+				invoicedDeliveryList.add(deliveryDetail.getDelivery());
+				getDeliveryTransferManager().setDeliveryRowChecked(deliveryDetail.getDelivery(), true);
+			}
+		}
+
+		getDeliveryTransferManager().setInvoicedDeliveryList(invoicedDeliveryList);
+
+		List<ITransferObject> deliveryList = new LinkedList<ITransferObject>();
+		deliveryList.addAll(invoicedDeliveryList);
+		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+		criteria = new Criteria();
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getInvoice().getRegistry().getId());
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+		deliveryList.addAll(deliveryBean.getList(criteria));
+
+		getDeliveryTransferManager().setDeliveryList(deliveryList);
+	}
+
+	public void onDeliveryTransfer(ActionEvent event) throws ManagerBeanException {
+		Iterator<ITransferObject> iterator = getDeliveryTransferManager().getInvoicedDeliveryList().iterator();
+		while (iterator.hasNext()) {
+			Delivery delivery = (Delivery)iterator.next();
+			if (!getDeliveryTransferManager().getCheckedDelivery().contains(delivery)) {
+				removeInvoicedDelivery(delivery);
+			}
+			getDeliveryTransferManager().getCheckedDelivery().remove(delivery);
+		}
+
+		InvoicingEngineFactory.register(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY, new DeliveryInvoicingEngine());
+		try {
+			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY);
+			engine.setInvoicingDAO(new DeliveryInvoicingDAO());
+			engine.setInvoicingFeedBack(new ProgressionInvoicingFeedBack());
+			((DeliveryInvoicingEngine)engine).invoiceDeliveryList(getInvoice(), getDeliveryTransferManager().getCheckedDelivery());
+		} catch (InvoicingException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		}
+
+		IController detailController = FormUtil.getController(IFinanceConstants.SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+		detailController.onSearch(null);
+	}
+
+	private void removeInvoicedDelivery(Delivery delivery) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
+			criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
+			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
+				invoiceDetailBean.remove(invoiceDetail);
+			}
+		}
+	}
+
 	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		sendInvoiceByEmail( null );
 	}
@@ -465,5 +566,5 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	public void setSigned(ITransferObject to, boolean value) {
 		((Invoice) to).setSigned(value);
 	}
-	
+
 }
