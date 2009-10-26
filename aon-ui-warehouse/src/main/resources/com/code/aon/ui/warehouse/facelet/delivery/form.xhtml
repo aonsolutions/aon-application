@@ -21,7 +21,7 @@
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton id="salesTransfer"
 							value="#{warehouseBundle.warehouse_delivery_sales}"
-							immediate="#{true}" rendered="#{delivery.pending}"
+							immediate="#{true}" rendered="#{!delivery.new and delivery.pending}"
 							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 							actionListener="#{delivery.onSalesTransferShow}"
 							reRender="showSalesTransferWindow">
@@ -493,6 +493,11 @@
 										<aon:outputText value="&#160;"
 											styleClass="aon-icon-transfer" style="padding-left:20px" />
 										<rich:toolTip value="#{controller.lineSourceInfo}" />
+									</aon:div>
+									<aon:div rendered="#{delivery.invoiced}" style="display:inline;cursor:pointer;">
+										<aon:outputText value="&#160;"
+											styleClass="aon-icon-predetermine" style="padding-left:20px" />
+										<rich:toolTip value="#{controller.lineStatusInfo}" />
 									</aon:div>
 								</aon:column>
 							</ui:define>
