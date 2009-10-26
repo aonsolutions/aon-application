@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="favoriteSearch">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true" 				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+								
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{groupwareBundle.aon_favorite}" />
+					</aon:div>						
+		
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
+					</aon:div>				
+		
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="favorite_form" actionListener="#{favorite.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="favorite_list" actionListener="#{favorite.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{favorite.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="favorite_list" />		
+
+					<aon:outputLabel for="Favorite_description"
+						value="#{groupwareBundle.favorite_description}" />
+					<aon:inputText id="Favorite_description"
+						maxlength="128" size="100"
+						valueChangeListener="#{favorite.addExpression}" />
+
+					<aon:outputLabel for="Favorite_url"
+						value="#{groupwareBundle.favorite_url}" />
+					<aon:inputText id="Favorite_url"
+						maxlength="128" size="100"
+						valueChangeListener="#{favorite.addExpression}" />
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

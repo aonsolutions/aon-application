@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="userSearch">
+		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true" 				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+								
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_users}" />
+					</aon:div>						
+		
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
+					</aon:div>				
+		
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="user_form" actionListener="#{user.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							rendered="#{domain.userManagement}"
+							accesskey="#{bundle.aon_key_new}" />														
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="user" actionListener="#{user.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{user.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="user_list" />		
+
+					<aon:outputLabel for="User_name"
+						value="#{configBundle.user_name}" />
+					<aon:inputText id="User_name" size="80"
+						valueChangeListener="#{user.addExpression}" />
+
+					<aon:outputLabel for="User_login"
+						value="#{configBundle.user_login}" />
+					<aon:inputText id="User_login" size="20"
+						valueChangeListener="#{user.addExpression}" />
+				</ui:define>
+				
+			</ui:decorate>							
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

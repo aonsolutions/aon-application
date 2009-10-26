@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<digester-rules>
+
+	<pattern value="*/jboss-web" >
+		<object-create-rule classname="com.code.aon.jaas.vendor.jboss.deployment.JBossDescriptor" />
+		<call-method-rule pattern="security-domain" methodname="setSecurityDomain" paramcount="0" />
+		<call-method-rule pattern="context-root" methodname="setContext" paramcount="0" />
+	</pattern >
+
+</digester-rules>

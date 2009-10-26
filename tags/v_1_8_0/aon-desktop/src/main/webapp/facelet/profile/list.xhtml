@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+		
+		<aon:form id="profileForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_profiles}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{appBundle.aon_application}" />		
+						<aon:outputText value=" : " />		
+						<aon:outputText value="#{domain.da.id}" />		
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div id="profilesToolbar" styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="resetProfile" value="#{bundle.aon_reset}"
+							action="profile_form" rendered="#{domain.currentTab != 'users'}"
+							actionListener="#{domain.onResetProfile}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="resetUser" value="#{bundle.aon_reset}"
+							action="user_profile_form" rendered="#{(domain.currentTab == 'users') and domain.userManagement}"
+							actionListener="#{domain.onResetUser}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+							action="application_list" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelTabSet id="applicationTabSet" value="#{domain.currentTab}">
+					<aon:panelTab name="profiles" label="#{appBundle.aon_profiles}" reRender="profilesToolbar">
+						<aon:dataTable id="profileDataList" 
+							value="#{domain.profiles}" var="to" rows="30"
+							styleClass="aon-dataTable">
+
+							<aon:rowSelector action="profile_form" actionListener="#{domain.onSelectProfile}" />	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{securityBundle.aon_security_profiles}"/>
+								</f:facet>
+								<aon:outputText value="#{to.id}"/>
+							</aon:column>
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.aon_desktop_profile_type}"/>
+								</f:facet>
+								<aon:outputText
+									value="#{appBundle.aon_desktop_profile_domain}"
+									rendered="#{!domain.currentSystemProfile}">
+								</aon:outputText>
+								<aon:outputText
+									value="#{appBundle.aon_desktop_profile_system}"
+									rendered="#{domain.currentSystemProfile}" />
+							</aon:column>
+
+						</aon:dataTable>
+                    </aon:panelTab>
+
+					<aon:panelTab name="users" label="#{appBundle.aon_users}" reRender="profilesToolbar">
+						<aon:dataTable id="usersDataList" 
+							value="#{domain.users}" var="to" rows="30"
+							styleClass="aon-dataTable">
+
+							<aon:rowSelector action="user_profile_form" actionListener="#{domain.onSelectUser}" />	
+							
+		 					<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{configBundle.user_login}" />
+								</f:facet>
+								<aon:outputText value="#{to.id}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{configBundle.user_name}" />
+								</f:facet>
+								<aon:outputText value="#{domain.currentUserName}"/>
+							</aon:column>
+		
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{securityBundle.aon_security_profiles}"/>
+								</f:facet>
+								<aon:outputText value="#{domain.currentUserProfiles}"/>
+							</aon:column>
+
+						</aon:dataTable>
+                    </aon:panelTab>
+				</aon:panelTabSet>
+
+			</aon:div>
+
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

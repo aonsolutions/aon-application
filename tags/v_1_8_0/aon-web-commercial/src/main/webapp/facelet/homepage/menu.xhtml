@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+
+		<aon:form id="commercialMenu">
+		
+			<aon:menuBar> 
+				<aon:dropDownMenu value="#{bundle.aon_auxiliaries}">
+					<aon:menuItem id="commercialSegment"
+						value="#{commercialBundle.commercial_segment_module}" 
+						iconClass="aon-commercial-segment-iconClass"
+						action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
+					<aon:menuItem id="commercialActivity" 
+						value="#{commercialBundle.commercial_activity_module}"
+						iconClass="aon-commercial-activity-iconClass"
+						action="commercialActivity" actionListener="#{commercialActivity.onSearch}" />
+					<aon:menuItem id="commercialTerm" 
+						value="#{commercialBundle.commercial_term_module}"
+						action="commercialTerm" actionListener="#{commercialTerm.onSearch}" />
+					<aon:menuGroup value="#{commercialBundle.commercial_product_auxiliars_module_group}">
+						<aon:menuItem id="productCategory" 
+							action="productCategory" 
+							value="#{productBundle.product_category_module}" />
+						<aon:menuItem id="tax" 
+							action="tax" 
+							value="#{configBundle.config_tax_module}" />
+					</aon:menuGroup>					
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{bundle.aon_masters}">
+					<aon:menuItem id="target"
+						value="#{commercialBundle.commercial_target_module}" 
+						iconClass="aon-target-iconClass"
+						action="target_search" actionListener="#{target.onEditSearch}" >
+					</aon:menuItem>
+					<aon:menuItem id="item" 
+						action="item_search" actionListener="#{item.onEditSearch}"
+						value="#{productBundle.product_module}" />						
+					<aon:menuItem id="seller" 
+						action="seller_search" actionListener="#{seller.onEditSearch}"
+						value="#{salesBundle.sales_seller_module}" />
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{commercialBundle.commercial_module_group}">
+					<aon:menuItem id="commercialTracking"
+						value="#{commercialBundle.commercial_tracking_module}" 
+						iconClass="aon-commercial-tracking-iconClass"
+						action="commercialTracking_form" actionListener="#{commercialTracking.onReset}" />
+					<aon:menuItem id="offer_form"
+						value="#{commercialBundle.commercial_offer_module}" 
+						action="offer_search" actionListener="#{offer.onEditSearch}" />
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{marketingBundle.marketing_marketing}">
+					<aon:menuItem id="campaign"
+						value="#{marketingBundle.marketing_campaign_module}"
+						action="campaign_list" actionListener="#{campaign.onSearch}" >
+					</aon:menuItem>
+					<aon:menuItem id="survey" 
+						value="#{marketingBundle.marketing_survey_module}" 
+						action="survey_list" actionListener="#{survey.onSearch}" />
+					<aon:menuItem id="surveyResponse"
+						value="#{marketingBundle.marketing_survey_response_module}" 
+						action="surveyResponse_list" actionListener="#{surveyResponse.onSearch}" />
+					<aon:menuItem id="question"
+						value="#{marketingBundle.marketing_question_module}"
+						action="question_list" actionListener="#{question.onSearch}" />
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{bundle.aon_configuration}">
+					<aon:menuItem id="company"
+						value="#{companyBundle.company_data_module}"
+						action="company" actionListener="#{company.onLoad}" />
+					<aon:menuItem id="mailAccountChange"
+						value="#{webmailBundle.webmail_mailAccount}"
+						action="mailAccount_list" actionListener="#{mailAccount.onSearch}" />						
+				</aon:dropDownMenu>
+				<aon:commandLink id="communicationCenter"
+					value="#{commercialBundle.commercial_communication_center_module}"
+					styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
+					action="communicationCenter" actionListener="#{communicationCenter.onInit}" />
+			</aon:menuBar>
+				
+		 </aon:form>
+	</c:if>
+
+</ui:composition>
