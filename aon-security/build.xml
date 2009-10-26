@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.7.0" />
+	<property name="version" value="1.9.0" />
 	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
@@ -17,7 +17,7 @@
 
     <property name="tomcat.home" value="/SERVER/apache-tomcat-5.5.17"/>
     <property name="tomcat.6.home" value="/SERVER/apache-tomcat-6.0.13"/>
-	<property name="jboss.home" value="/SERVER/jboss-4.2.1.GA" />
+	<property name="jboss.home" value="/SERVER/jboss-4.2.3.GA" />
 
 	<property name="jboss.server.home" value="${jboss.home}/server/default" />
     <property name="jboss.tomcat.home" value="${jboss.server.home}/deploy/jboss-web.deployer"/>
@@ -27,20 +27,24 @@
     <property name="local.classpath" value=""/>
 
 	<!-- Jakarta Commons -->
-	<property name="commons.digester.home" value="/JAVA/commons-digester-1.7" />
-	<property name="commons.beanutils.home" value="/JAVA/commons-beanutils-1.7.0" />
-	<property name="commons.logging.home" value="/JAVA/commons-logging-1.1" />
-	<property name="commons.lang.home" value="/JAVA/commons-lang-2.2" />
+	<property name="commons.digester.home" value="${user.home}/.m2/repository/commons-digester/commons-digester/1.8.1" />
+	<property name="commons.digester.jar" value="commons-digester-1.8.1.jar" />
+	<property name="commons.beanutils.home" value="${user.home}/.m2/repository/commons-beanutils/commons-beanutils/1.8.0" />
+	<property name="commons.beanutils.jar" value="commons-beanutils-1.8.0.jar" />
+	<property name="commons.logging.home" value="${user.home}/.m2/repository/commons-logging/commons-logging/1.1" />
+	<property name="commons.logging.jar" value="commons-logging-1.1.jar" />
+	<property name="commons.lang.home" value="${user.home}/.m2/repository/commons-lang/commons-lang/2.4" />
+	<property name="commons.lang.jar" value="commons-lang-2.4.jar" />
 
 	<!-- AON -->
-	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/0.9.0" />
+	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/1.0.0" />
 
 	<!-- The classpath required to build classes. -->
     <path id="javac.classpath">
 		<pathelement path="${classpath}"/>
 		<pathelement path="${local.classpath}"/>
-        <pathelement path="${commons.logging.home}/commons-logging-1.1.jar"/>
-        <pathelement path="${commons.digester.home}/commons-digester-1.7.jar"/>
+        <pathelement path="${commons.logging.home}/${commons.logging.jar}"/>
+        <pathelement path="${commons.digester.home}/${commons.digester.jar}"/>
     </path>
 
     <!-- JBoss Default jars in Lib directory -->
@@ -76,8 +80,8 @@
     <!-- The classpath required to build classes. -->
     <path id="jboss.ldap.javac.classpath">
 		<path refid="jboss.javac.classpath"/>
-        <pathelement path="${aon.ldap.home}/aon.ldap-0.9.0.jar"/>		
-    	<pathelement path="${commons.lang.home}/commons-lang-2.2.jar"/>
+        <pathelement path="${aon.ldap.home}/aon.ldap-1.0.0.jar"/>		
+    	<pathelement path="${commons.lang.home}/${commons.lang.jar}"/>
     </path>
 
     <!-- Tomcat 5.5.x Container -->
@@ -412,10 +416,10 @@
 				<attribute name="Implementation-Vendor" value="${vendor}"/>
 			</manifest>
 			<fileset dir="${commons.beanutils.home}">
-				<include name="commons-beanutils.jar"/>
+				<include name="${commons.beanutils.jar}"/>
 			</fileset>
     		<fileset dir="${commons.digester.home}">
-				<include name="commons-digester-1.7.jar"/>
+				<include name="${commons.digester.jar}"/>
 			</fileset>
 
 			<fileset dir="${mgr.dist.dir}">
@@ -453,16 +457,16 @@
 				<attribute name="Implementation-Vendor" value="${vendor}"/>
 			</manifest>
     		<fileset dir="${commons.beanutils.home}">
-				<include name="commons-beanutils.jar"/>
+				<include name="${commons.beanutils.jar}"/>
 			</fileset>
        		<fileset dir="${commons.digester.home}">
-   				<include name="commons-digester-1.7.jar"/>
+   				<include name="${commons.digester.jar}"/>
    			</fileset>
     		<fileset dir="${commons.lang.home}">
-				<include name="commons-lang-2.2.jar"/>
+				<include name="${commons.lang.jar}"/>
 			</fileset>
     		<fileset dir="${aon.ldap.home}">
-				<include name="aon.ldap-0.9.0.jar"/>
+				<include name="aon.ldap-1.0.0.jar"/>
 			</fileset>
 			<fileset dir="${mgr.dist.dir}">
 				<include name="${mgr}-${version}.jar"/>

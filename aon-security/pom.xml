@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ldap</artifactId>
-			<version>0.9.0</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
-			<version>1.7</version>
+			<version>1.8.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
