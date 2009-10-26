@@ -147,15 +147,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Es necesaria esta version para firmar los PDF -->
-	  	<dependency>
-	  		<groupId>bouncycastle</groupId>
-	  		<artifactId>bcprov-jdk14</artifactId>
-	  		<version>138</version>
-	  		<type>jar</type>
-	  		<scope>compile</scope>
-	  	</dependency>		
-
 		<!--  Necesario para imprimir barcodes con jasper -->
 		<dependency>
 			<groupId>iReport</groupId>
