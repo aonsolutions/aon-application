@@ -32,9 +32,9 @@ import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoStyle;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.infoweb.enumeration.WebInfoFontType;
+import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -49,8 +49,6 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	public boolean showPreviewModalPanel = false;
 
 	public String template;
-	
-	public int homepage = 0;
 	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
@@ -81,26 +79,6 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			}
 		}
 		return templates;
-	}
-
-	public List<SelectItem> getPages() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> pages = new LinkedList<SelectItem>();
-		IManagerBean pageBean = BeanManager.getManagerBean(WebInfoPage.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(pageBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
-		criteria.addOrder(pageBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION));
-		List<ITransferObject> list = (List<ITransferObject>)pageBean.getList(criteria);
-		int default_id = 0;
-		SelectItem item = new SelectItem(default_id, "Por defecto");
-		pages.add(item);
-		for (int i = 0; i < list.size(); i++) {
-			WebInfoPage page = (WebInfoPage)list.get(i);
-			int id = page.getId();
-			String name = page.getName();
-			item = new SelectItem(id, name);
-			pages.add(item);
-		}
-		return pages;
 	}
 
 	public void chargeValues() {
@@ -201,23 +179,6 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		chargeValues();
     }
 
-	public void onChangeHomepage(ActionEvent event) {
-    	//Guardar la homepage en constantes
-		try {
-			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = new ApplicationParameter();
-			ap.setName(HOMEPAGE_NAME_PARAM);
-			ap.setValue(""+getHomepage());
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
-			List<ITransferObject> list = apBean.getList(criteria);
-			if (list.size() > 0) apBean.update(ap);
-			else apBean.insert(ap);
-		} catch (ManagerBeanException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
-		}
-    }
-
 	public String getTemplate() {
 		if (template == null) {
 			try {
@@ -236,24 +197,6 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		}
 		this.model.setRowIndex(0);
 		return template;
-	}
-
-	public int getHomepage() {
-		if (homepage < 0) {
-			try {
-				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
-				List<ITransferObject> list = apBean.getList(criteria);
-				if (list.size() > 0) {
-					ApplicationParameter ap = (ApplicationParameter)list.get(0);
-					homepage = Integer.parseInt(ap.getValue());
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.log( Level.SEVERE, e.getMessage(), e );
-			}
-		}
-		return homepage;
 	}
 
 	public String getToVariableName() {
@@ -349,10 +292,6 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 
 	public void setTemplate(String template) {
 		this.template = template;
-	}
-
-	public void setHomepage(int homepage) {
-		this.homepage = homepage;
 	}
 
 	public boolean isTemplateSelected() {

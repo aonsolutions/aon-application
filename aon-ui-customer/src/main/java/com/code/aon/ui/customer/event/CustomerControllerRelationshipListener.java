@@ -7,10 +7,10 @@ import com.code.aon.customer.Customer;
 import com.code.aon.registry.RegistryRelationship;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class CustomerControllerRelationshipListener extends ControllerAdapter {
 	
@@ -28,7 +28,7 @@ public class CustomerControllerRelationshipListener extends ControllerAdapter {
 
 	private void applyCustomerCriteria(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = (Customer)event.getController().getTo();
-		BasicController rRelationshipController = (BasicController)FormUtil.getController(REGISTRY_RELATIONSHIP_CONTROLLER_NAME);
+		BasicController rRelationshipController = (BasicController)AonUtil.getController(REGISTRY_RELATIONSHIP_CONTROLLER_NAME);
 		try {
 			IManagerBean rRelationshipBean = BeanManager.getManagerBean(RegistryRelationship.class);
 			rRelationshipController.clearCriteria();

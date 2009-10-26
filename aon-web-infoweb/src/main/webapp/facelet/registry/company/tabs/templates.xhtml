@@ -30,18 +30,11 @@
 			<rich:panel styleClass="aon-content-home">
 				<aon:div style="text-align:center;">
 					<aon:div style="text-align:right;width:50%;float:left;padding:5px"> 
-						<aon:panelGrid columns="2" dir="true">
-							<aon:outputText value="#{appBundle.infoweb_sytle_template} "/>
-							<aon:selectOneMenu value="#{webPageStyle.template}" style="width:200px">
-								<f:selectItems value="#{webPageStyle.templates}" />
-								<a4j:support actionListener="#{webPageStyle.onChangeTemplate}" event="onchange" reRender="variables, preview"/> 
-							</aon:selectOneMenu>
-							<aon:outputText value="#{appBundle.infoweb_homepage} "/>
-							<aon:selectOneMenu value="#{webPageStyle.homepage}" style="width:200px">
-								<f:selectItems value="#{webPageStyle.pages}" />
-								<a4j:support actionListener="#{webPageStyle.onChangeHomepage}" event="onchange"/> 
-							</aon:selectOneMenu>
-						</aon:panelGrid>
+						<aon:outputText value="#{appBundle.infoweb_sytle_template} "/>
+						<aon:selectOneMenu value="#{webPageStyle.template}" style="width:200px">
+							<f:selectItems value="#{webPageStyle.templates}" />
+							<a4j:support actionListener="#{webPageStyle.onChangeTemplate}" event="onchange" reRender="variables, preview"/> 
+						</aon:selectOneMenu>
 					</aon:div>
 					<aon:div id="preview" style="text-align:left;float:left;padding:5px">
 						<aon:commandLink actionListener="#{webPageStyle.onShowPreview}" reRender="showPreviewModalPanel">

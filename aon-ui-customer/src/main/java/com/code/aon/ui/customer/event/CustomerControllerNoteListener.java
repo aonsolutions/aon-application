@@ -10,10 +10,10 @@ import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.ui.customer.controller.CustomerNoteController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class CustomerControllerNoteListener extends ControllerAdapter {
 	
@@ -31,7 +31,7 @@ public class CustomerControllerNoteListener extends ControllerAdapter {
 
 	private void applyCustomerCriteria(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = (Customer)event.getController().getTo();
-		CustomerNoteController rNoteController = (CustomerNoteController)FormUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
+		CustomerNoteController rNoteController = (CustomerNoteController)AonUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
 		try {
 			IManagerBean rNoteBean = BeanManager.getManagerBean(RegistryNote.class);
 			rNoteController.setFromDate(null);

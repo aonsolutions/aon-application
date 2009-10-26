@@ -21,7 +21,7 @@
 		<rich:modalPanel id="locationModalPanel"
 				rendered="#{webPage.showLocationModalPanel}" showWhenRendered="true"
 				headerClass="aon-popupWindow-title"
-				minHeight="240" height="240" minWidth="800" width="800" top="50" left="100" zindex="1000">
+				minHeight="200" height="200" minWidth="650" width="650" top="50" left="100" zindex="1000">
 			<f:facet name="header">
 	           	<h:outputText value="#{appBundle.infoweb_page_location}"/>
 			</f:facet>
@@ -44,13 +44,10 @@
 						
 								<aon:outputLabel for="Generic_extra" value="#{appBundle.infoweb_page_extra_coords}" />
 								<aon:inputText id="Generic_extra" 
-									size="70" maxlength="255" value="#{webPage.detail.extra}" />
+									size="60" maxlength="255" value="#{webPage.detail.extra}" />
 
 								<aon:outputLabel value="&#160;" />
-								<aon:div>
-									<aon:outputText value="#{appBundle.infoweb_page_extra_coords_exp}. "/>
-									<aon:outputText value=" #{appBundle.infoweb_page_extra_coords_exp2}"/>
-								</aon:div>
+								<aon:outputText value="#{appBundle.infoweb_page_extra_coords_exp}"/>
 							</aon:panelGrid>
 						</aon:div>
 					</rich:panel>

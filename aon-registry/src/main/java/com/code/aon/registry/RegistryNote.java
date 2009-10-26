@@ -7,11 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.enumeration.NoteType;
@@ -47,6 +53,8 @@ public class RegistryNote implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="registry", nullable=false)
+	@ForeignKey(name = "FK_RNOTE_REGISTRY")
+	@Index(name = "IDX_RNOTE_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -65,6 +73,7 @@ public class RegistryNote implements ITransferObject {
 	}
 
 	@Column(name="note_date")
+	@Temporal(TemporalType.DATE)
 	public Date getNoteDate() {
 		return noteDate;
 	}
@@ -73,7 +82,8 @@ public class RegistryNote implements ITransferObject {
 		this.noteDate = noteDate;
 	}
 
-	@Column(length=65535, nullable=false)
+	@Lob
+	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
 	public String getComments() {
 		return comments;
 	}
