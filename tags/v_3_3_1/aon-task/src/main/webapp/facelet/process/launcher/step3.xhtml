@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/process/launcher/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{campaignBundle.process_wizard_step3}"/>
+	</ui:define>
+	
+	<ui:define name="step_content">
+		<aon:panelGrid columns="4" dir="true" style="width: 90%;">
+			<aon:outputLabel for="wzd_process"
+				value="#{campaignBundle.process_process}" />
+			<aon:outputText value="#{processWizard.process.description}" />
+
+			<aon:outputLabel for="Campaign_description"
+				value="#{campaignBundle.aon_description}" />
+			<aon:outputText value="#{processWizard.description}" />
+
+			<aon:outputLabel for="Campaign_startDate"
+				value="#{campaignBundle.aon_initial_date}" />
+			<aon:outputText value="#{processWizard.startDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+
+			<aon:outputLabel for="Campaign_endDate"
+				value="#{campaignBundle.aon_final_date}" />
+			<aon:outputText value="#{processWizard.endDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+			<aon:outputLabel for="Campaign_workGroup"
+				value="#{campaignBundle.campaign_supervisor}" />
+			<aon:outputText value="#{processWizard.workGroup.description}" />
+
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+		</aon:panelGrid>
+		<aon:div id="dossiersTable" style="margin-top: 5px;width: 90%;">
+			<aon:dataTable id="dossierDataList"
+				value="#{processWizard.dossiersModel}" var="to">
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:graphicImage
+						url="/css/images/icons/aon_task_add_new_project.gif"
+						alt="#{campaignBundle.process_wizard_new_dossier_added}"
+						rendered="#{to.dossier.id==null}">
+					</aon:graphicImage>
+					<aon:graphicImage
+						url="/css/images/icons/aon_task_add_existing_project.gif"
+						alt="#{campaignBundle.process_wizard_dossier_added}"
+						rendered="#{to.dossier.id!=null}">
+					</aon:graphicImage>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{projectBundle.dossier_dossier}" />
+					</f:facet>
+					<aon:outputText value="#{to.dossier.number}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{projectBundle.aon_customer}" />
+					</f:facet>
+					<aon:outputText value="#{to.dossier.customer.registry.fullName}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{projectBundle.aon_type}" />
+					</f:facet>
+					<aon:outputText value="#{to.dossier.dossierType.description}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+				</aon:column>
+
+			</aon:dataTable>
+			<aon:dataScroller for="dossierDataList"
+				rowCount="#{processWizard.dossiersModel.rowCount}" showNote="true" />
+		</aon:div>
+	</ui:define> 
+</ui:composition>
