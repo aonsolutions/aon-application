@@ -829,7 +829,7 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************ FEE CHECKING PRINTER ************* -->
+	<!-- ************ FEE INVOICING ************* -->
 	<managed-bean>
 		<managed-bean-name>feeInvoicing</managed-bean-name>
 		<managed-bean-class>
@@ -1209,6 +1209,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoiceDetail</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>InvoiceDetail_line</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>saleInvoice</value>
