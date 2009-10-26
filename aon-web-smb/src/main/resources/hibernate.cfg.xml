@@ -62,6 +62,7 @@
 		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialSegment"/>
+		<mapping class="com.code.aon.commercial.CommercialTerm"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
 		<mapping class="com.code.aon.commercial.Offer"/>
 		<mapping class="com.code.aon.commercial.OfferAttachment"/>
