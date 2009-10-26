@@ -100,7 +100,7 @@
 	</context-param>
 	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
+		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
 	</context-param>
 	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
 	<context-param>
