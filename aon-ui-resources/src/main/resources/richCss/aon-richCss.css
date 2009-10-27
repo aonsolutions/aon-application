@@ -117,7 +117,7 @@ color:#000;
 	width:100px;
 }	
 .aon-width-150{
-	width:100px;
+	width:150px;
 }	
 /**********************/
 /******* HOME ********/
@@ -336,7 +336,10 @@ color:#000;
  .aon-icon-zip{
 	background:transparent url(images/aon-icon/aon-icon-zip.png) scroll left center no-repeat;
   }
-  
+  .aon-icon-sincronize{
+	background:transparent url(images/aon-icon/aon-icon-sincronize.png) scroll left center no-repeat;
+  }
+
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
@@ -719,7 +722,7 @@ color:#000;
   #aon-content .aon-table-row-selected span
   {
 	color:#000 !important;
-	background-color:transparent !important;
+	/*background-color:transparent !important;*/
 }
 
 /********* GRUPOS ***********/
@@ -871,6 +874,7 @@ color:#000;
 	vertical-align:top;
 	background-color:transparent !important;
 	border:0 !important;
+	
 	}
 .aon-panelGrid-formatting-odd{
 	border:0 !important;
@@ -885,52 +889,53 @@ color:#000;
 	background-color:transparent !important;
 	}
 
-
 /*************************/
-/******  DATATABLE  ******/
+/******  TABLE HOVER  ******/
 /*************************/
-.aon-dataTable{
-	border:#808080 1px solid;
-	border-collapse:collase;
-	width:100%;	
-	font-family:arial,verdana, "sans serif";	
-	}
-.aon-dataTable td{
-	padding-top:1px;
-	padding-bottom:1px;
-	border-left:0;
-	border-right:0;
-	border-top:0;
-	border-bottom:#ccc 1px solid;
-	}
-.aon-dataTable-header{
-	border:#808080 1px solid;
-	font-weight:bold;
- 	font-size:0.9em;
- 	text-transform:uppercase;
- 	background-color:#d7d7d6;
- 	background:#dadada url(images/aon-content/aon-dataTable-header.png) scroll left top repeat-x;
-	}
-.aon-dataTable-footer{	
-	background-color:#d7d7d6;
-	}
-.aon-dataTable-row-odd{
-	background-color:#fff;
-	border-bottom:#ccc 1px solid;
-	}
-.aon-dataTable-row-even{
-	border-bottom:#ccc 1px solid;
-	}
 .aon-table-row-hover{
 	background-color:#e2f1f5;	
-	cursor:pointer;
-	
+	cursor:pointer;	
 	}	
 .aon-table-row-hover td{
 		}
 .aon-table-row-selected{
 	font-weight:bold;
-	}	
+	}
+/*************************/
+/******  DATATABLE  ******/
+/*************************/
+.aon-dataTable{
+	width:100%;		
+	font-family:arial,verdana, "sans serif";
+	border:#ccc 1px solid;
+	border-collapse:collapse;
+	}
+.aon-dataTable td{
+	padding-top:1px;
+	padding-bottom:1px;
+	padding-left:0.5em;
+	padding-right:0.5em;	
+	}
+.aon-dataTable-header{
+	padding: 5px 1em;
+	font-weight:bold;
+ 	font-size:0.9em;
+ 	text-transform:uppercase;
+  	background:#dadada url(images/aon-content/aon-dataTable-header.png) scroll left top repeat-x;
+  	border-bottom:#ccc 1px solid;
+	}
+.aon-dataTable-footer{	
+	padding: 2px 0.5em;
+	background-color:#d7d7d6;
+	vertical-align: top;
+	}
+.aon-dataTable-row-odd{
+	background-color:#fff;
+	}
+.aon-dataTable-row-even{
+	background-color:#f8f9f9;
+	}
+	
 /*************************/
 /******  EDITTABLE  ******/
 /*************************/
@@ -1045,6 +1050,14 @@ color:#000;
   left:8px;
   top:8px;
   background:#304055 url(images/aon-header/aon-outputConnectionStatus-stop.gif) scroll left top no-repeat;
+}
+.aon-outputConnectionStatus-failed{
+  width:21px;
+  height:13px;
+  position:absolute;
+  left:8px;
+  top:8px;
+  background:#304055 url(images/aon-header/aon-outputConnectionStatus-failed.png) scroll left top no-repeat;
 }
 /**********************/
 /****  HEADER SECTION ******/
@@ -1161,22 +1174,21 @@ color:#000;
 /**********************************************/
 /***************   DATASCROLLER ****************/
 /**********************************************/ 
-#aon-content .aon-dataScroller{
+.aon-dataScroller{
 	background-color:#e1e3e4;
-	border:#808080 1px solid;
 	font-weight:bold;
 	padding:3px 1em;
 	margin:1em 0;
 	text-align:left;
-	overflow:auto;
-	height:100%;
+	border:#666 1px solid;
 	}
 
-.aon-dataScroller table{width:auto !important;}
+.aon-dataScroller table{}
 .aon-dataScroller table, .aon-dataScroller table td{	
-	border:0 !important;
+	border:0;
 	background-color:transparent !important;
-	padding:0 !important;
+	padding:0;
+	vertical-align:middle;
 	}
 .aon-dataScroller-text{	
 	text-align:left;
@@ -1189,10 +1201,10 @@ color:#000;
 
 .aon-dataScroller-buttons{
 	padding-left:1em;
+	text-align:left;
 	}
 .aon-dataScroller-buttons td{
-	width:auto;
-	padding:2px;
+	padding:2px 0;
 	}
 .aon-dataScroller-button{
 	border:0;
@@ -1202,25 +1214,39 @@ color:#000;
 	}
 .aon-dataScroller-button-first{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-first.png) center center no-repeat;
+	
 	}
 .aon-dataScroller-button-last{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-last.png) center center no-repeat;
+	
 	}
 .aon-dataScroller-button-previous{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-previous.png) center center no-repeat;
+
 	}
 .aon-dataScroller-button-next{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-next.png) center center no-repeat;
+
 	}
 .aon-dataScroller-button-fastForward{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastForward.png) center center no-repeat;
+
 	}
 .aon-dataScroller-button-fastRewind{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastRewind.png) center center no-repeat;
+
 	}
-#aon-content .aon-dataScroller div, #aon-content .aon-dataScroller table, #aon-content .aon-dataScroller td{
-	background-color:transparent !important;
+.aon-dataScroller-selected{
+		font-weight:bold;
+		font-size:1.4em;
+		color:#000;
+	}	
+.aon-dataScroller-inactive{
+	color:#037bcf;																																							
+	font-weight:normal;
+	text-decoration:underline;
 	}
+
 /**********************************************/
 /************   SELECT INPUT DATE *************/
 /**********************************************/ 
@@ -1231,7 +1257,7 @@ color:#000;
 	margin-right:5px;
 	cursor:pointer;
 	}
-.aon-selectInputDate-inputClass{
+.aon-selectInputDate-inputClass{																																																																																												
 	background-color:#f2f2f2;
 	border:#808080 1px solid;	
 	color:#808080;

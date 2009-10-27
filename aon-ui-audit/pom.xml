@@ -9,29 +9,29 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.ui.geozone</artifactId>
+	<artifactId>aon.ui.audit</artifactId>
 	<version>1.0.4</version>
-	<description>AON UI GEOZONE</description>
-	<name>AON UI GEOZONE</name>
+	<description>AON UI AUDIT</description>
+	<name>AON UI AUDIT</name>
 	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId> 
+			<artifactId>aon.security</artifactId>
+			<version>1.8.0</version>
+			<scope>provided</scope>
+		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>2.3.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency>				
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.menu</artifactId>
-			<version>2.1.0</version>
+			<groupId>com.code.aon</groupId> 
+			<artifactId>aon.audit</artifactId>
+			<version>0.9.0</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.geozone</artifactId>
-			<version>2.1.2</version>
-			<scope>compile</scope>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_02</version>
+			<version>1.2_13</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
