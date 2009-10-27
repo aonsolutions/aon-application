@@ -23,8 +23,8 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
-public class PurchaseInvoiceFinanceController extends LinesController implements IFinanceConstants {
-	
+public class InvoiceFinanceController extends LinesController {
+
 	public boolean isModelToEditable() throws ManagerBeanException{
 		if (this.getModel().getRowCount() > 0) {  
 			Finance finance = (Finance)this.getModel().getRowData(); 
