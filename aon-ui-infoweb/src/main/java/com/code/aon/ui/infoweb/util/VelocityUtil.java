@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -58,7 +59,8 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
         this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, templateDirectory.getAbsolutePath());
         this.setProperty(Velocity.INPUT_ENCODING, VELOCITY_FILE_ENCODING);
         this.setProperty(Velocity.OUTPUT_ENCODING, VELOCITY_FILE_ENCODING);
-        this.setProperty(Velocity.RUNTIME_LOG, templateDirectory + "/" + VELOCITY_LOG_FILE);        
+        this.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
+        this.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, LOGGER.getName());
         this.setProperty(Velocity.RUNTIME_LOG_REFERENCE_LOG_INVALID, Boolean.TRUE.toString());
         try {
         	this.init();
