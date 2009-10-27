@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{!purchaseInvoice.new}">
+	<c:if test="#{!invoiceController.new}">
 		<aon:div styleClass="aon-padding-top">
 			<aon:panel>
 				<f:facet name="header">
@@ -17,12 +17,12 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 					<ui:param name="dataTableId" value="invoiceDetails" />
-					<ui:param name="controller" value="#{purchaseInvoiceDetail}" />
+					<ui:param name="controller" value="#{detailController}" />
 					<ui:param name="rows" value="0" />
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
-					<ui:param name="skipResetButton" value="#{purchaseInvoice.readOnly}" />
-					<ui:param name="skipLineEdition" value="#{purchaseInvoice.readOnly or !purchaseInvoiceDetail.editable}" />
+					<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
+					<ui:param name="skipLineEdition" value="#{invoiceController.readOnly or !detailController.editable}" />
 					<ui:param name="rowSelectorReRender" value="menuExt" />
 					<ui:param name="resetButtonReRender" value="menuExt" />
 					<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -62,85 +62,85 @@
 							<aon:div id="invoiceDetailItemEdit" styleClass="aon-lookup" rendered="#{formEdit}">
 								<a4j:region>
 									<aon:lookupInputText id="InvoiceDetail_item_product_code"
-										value="#{purchaseInvoiceDetail.to.item.product.code}"
+										value="#{detailController.to.item.product.code}"
 										lookup="#{itemLookup}"
-										lookupChangeListener="#{purchaseInvoiceDetail.onItemChanged}"
+										lookupChangeListener="#{detailController.onItemChanged}"
 										reRender="invoiceDetailItemEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 										ajaxSingle="false" required="true" size="10"
 										onblur="toUpperCase(this);" focus="InvoiceDetail_item_product_name">
-										<aon:joinProperty alias="Item_product_code"	value="#{purchaseInvoiceDetail.to.item.product.code}" />
+										<aon:joinProperty alias="Item_product_code"	value="#{detailController.to.item.product.code}" />
 									</aon:lookupInputText>
 									<aon:lookupButton 
 										windowTitle="#{productBundle.product_item_selection}"
 										minHeight="460" minWidth="650"
-										property="#{purchaseInvoiceDetail.to.item}" lookup="#{itemLookup}"
-										lookupChangeListener="#{purchaseInvoiceDetail.onItemChanged}"
+										property="#{detailController.to.item}" lookup="#{itemLookup}"
+										lookupChangeListener="#{detailController.onItemChanged}"
 										selectReRender="invoiceDetailItemEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 										actionType="search">
 									</aon:lookupButton>
 									<aon:lookupButton
 										windowTitle="#{productBundle.product_item_new}"
 										minHeight="360" minWidth="780"
-										property="#{purchaseInvoiceDetail.to.item}" lookup="#{itemLookup}"
-										lookupChangeListener="#{purchaseInvoiceDetail.onItemChanged}" 
+										property="#{detailController.to.item}" lookup="#{itemLookup}"
+										lookupChangeListener="#{detailController.onItemChanged}" 
 										selectReRender="invoiceDetailItemEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 										actionType="new">
 									</aon:lookupButton>
 									<aon:inputTextarea id="InvoiceDetail_item_product_name"
-										value="#{purchaseInvoiceDetail.to.description}"
-										cols="64" rows="#{!purchaseInvoiceDetail.longDescription?1:5}"
-										style="#{!purchaseInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+										value="#{detailController.to.description}"
+										cols="64" rows="#{!detailController.longDescription?1:5}"
+										style="#{!detailController.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 										<f:validateLength maximum="1024" />
 									</aon:inputTextarea>
 								</a4j:region>
 								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
-									actionListener="#{purchaseInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name"
-									rendered="#{purchaseInvoiceDetail.longDescription and purchaseInvoiceDetail.to.item.product.code != null}" />
+									actionListener="#{detailController.onShortDescription}" reRender="InvoiceDetail_item_product_name"
+									rendered="#{detailController.longDescription and detailController.to.item.product.code != null}" />
 								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
-									actionListener="#{purchaseInvoiceDetail.onLongDescription}" reRender="InvoiceDetail_item_product_name"
-									rendered="#{!purchaseInvoiceDetail.longDescription and purchaseInvoiceDetail.to.item.product.code != null}" />
+									actionListener="#{detailController.onLongDescription}" reRender="InvoiceDetail_item_product_name"
+									rendered="#{!detailController.longDescription and detailController.to.item.product.code != null}" />
 							</aon:div>
 							<f:facet name="footer">
 								<aon:div id="invoiceDetailItemNew" styleClass="aon-lookup" rendered="#{formNew}">
 									<a4j:region>
 										<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
-											value="#{purchaseInvoiceDetail.to.item.product.code}"
+											value="#{detailController.to.item.product.code}"
 											lookup="#{itemLookup}"
-											lookupChangeListener="#{purchaseInvoiceDetail.onItemChanged}"
+											lookupChangeListener="#{detailController.onItemChanged}"
 											reRender="invoiceDetailItemNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 											ajaxSingle="false" required="true" size="10"
 											onblur="toUpperCase(this);" focus="InvoiceDetail_item_product_name-New">
-											<aon:joinProperty alias="Item_product_code" value="#{purchaseInvoiceDetail.to.item.product.code}" />
+											<aon:joinProperty alias="Item_product_code" value="#{detailController.to.item.product.code}" />
 										</aon:lookupInputText>
 										<aon:lookupButton 
 											windowTitle="#{productBundle.product_item_selection}"
 											minHeight="460" minWidth="650"
-											property="#{purchaseInvoiceDetail.to.item}"	lookup="#{itemLookup}" 
-											lookupChangeListener="#{purchaseInvoiceDetail.onItemChanged}"
+											property="#{detailController.to.item}"	lookup="#{itemLookup}" 
+											lookupChangeListener="#{detailController.onItemChanged}"
 											selectReRender="invoiceDetailItemNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 											actionType="search">
 										</aon:lookupButton>
 										<aon:lookupButton
 											windowTitle="#{productBundle.product_item_new}"
 											minHeight="360" minWidth="780"
-											property="#{purchaseInvoiceDetail.to.item}" lookup="#{itemLookup}"
-											lookupChangeListener="#{purchaseInvoiceDetail.onItemChanged}" 
+											property="#{detailController.to.item}" lookup="#{itemLookup}"
+											lookupChangeListener="#{detailController.onItemChanged}" 
 											selectReRender="invoiceDetailItemEditNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 											actionType="new">
 										</aon:lookupButton>
 										<aon:inputTextarea id="InvoiceDetail_item_product_name-New"
-											value="#{purchaseInvoiceDetail.to.description}"
-											cols="64" rows="#{!purchaseInvoiceDetail.longDescription?1:5}"
-											style="#{!purchaseInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											value="#{detailController.to.description}"
+											cols="64" rows="#{!detailController.longDescription?1:5}"
+											style="#{!detailController.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 											<f:validateLength maximum="1024" />
 										</aon:inputTextarea>
 									</a4j:region>
 									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
-										actionListener="#{purchaseInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name-New"
-										rendered="#{purchaseInvoiceDetail.longDescription and purchaseInvoiceDetail.to.item.product.code != null}" />
+										actionListener="#{detailController.onShortDescription}" reRender="InvoiceDetail_item_product_name-New"
+										rendered="#{detailController.longDescription and detailController.to.item.product.code != null}" />
 									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
-										actionListener="#{purchaseInvoiceDetail.onLongDescription}" reRender="InvoiceDetail_item_product_name-New"
-										rendered="#{!purchaseInvoiceDetail.longDescription and purchaseInvoiceDetail.to.item.product.code != null}" />
+										actionListener="#{detailController.onLongDescription}" reRender="InvoiceDetail_item_product_name-New"
+										rendered="#{!detailController.longDescription and detailController.to.item.product.code != null}" />
 								</aon:div>
 							</f:facet>
 						</aon:column>
@@ -157,13 +157,13 @@
 								value="#{controller.to.quantity}" rendered="#{formEdit}"
 								valueChangeListener="#{controller.onQuantityChanged}"
 								reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
-								required="true" size="7" focus="InvoiceDetail_price" />
+								required="true" size="6" focus="InvoiceDetail_price" />
 							<f:facet name="footer">
 								<aon:inputText id="InvoiceDetail_quantity-New"
 									value="#{controller.to.quantity}" rendered="#{formNew}"
 									valueChangeListener="#{controller.onQuantityChanged}"
 									reRender="InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
-									required="true" size="7" focus="InvoiceDetail_price-New" />
+									required="true" size="6" focus="InvoiceDetail_price-New" />
 							</f:facet>
 						</aon:column>
 	
@@ -178,12 +178,12 @@
 							<aon:inputText id="InvoiceDetail_price"
 								value="#{controller.to.price}" rendered="#{formEdit}"
 								reRender="InvoiceDetail_amount" 
-								required="true" size="7" />
+								required="true" size="6" />
 							<f:facet name="footer">
 								<aon:inputText id="InvoiceDetail_price-New"
 									value="#{controller.to.price}" rendered="#{formNew}"
 									reRender="InvoiceDetail_amount-New"
-									required="true" size="7" />
+									required="true" size="6" />
 							</f:facet>
 						</aon:column>
 	
@@ -198,12 +198,12 @@
 							<aon:inputText id="InvoiceDetail_discount"
 								value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
 								reRender="InvoiceDetail_amount" 
-								required="true" size="7" />
+								required="true" size="6" />
 							<f:facet name="footer">
 								<aon:inputText id="InvoiceDetail_discount-New"
 									value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew}"
 									reRender="InvoiceDetail_amount-New"
-									required="true" size="7" />
+									required="true" size="6" />
 							</f:facet>
 						</aon:column>
 	
@@ -226,7 +226,7 @@
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
 									<aon:outputText id="Invoice_taxableBase" 
-										value="#{purchaseInvoice.taxableBase}" rendered="#{!formNew}">
+										value="#{invoiceController.taxableBase}" rendered="#{!formNew}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
 								</aon:div>

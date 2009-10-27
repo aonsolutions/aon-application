@@ -14,11 +14,12 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/searchContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/searchContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 	</ui:define>

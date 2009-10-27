@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<c:if
-		test="#{purchaseInvoiceDetail.model.rowCount > 0 or purchaseInvoiceFinance.model.rowCount>0}">
+		test="#{detailController.model.rowCount > 0 or financeController.model.rowCount>0}">
 		<aon:div styleClass="aon-padding-top">
 			<aon:panel>
 				<f:facet name="header">
@@ -17,13 +17,13 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 					<ui:param name="dataTableId" value="invoiceFinances" />
-					<ui:param name="controller" value="#{purchaseInvoiceFinance}" />
+					<ui:param name="controller" value="#{financeController}" />
 					<ui:param name="rows" value="0" />
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
-					<ui:param name="skipResetButton" value="#{purchaseInvoice.readOnly}" />
-					<ui:param name="skipRemoveButton" value="#{purchaseInvoice.readOnly}" />
-					<ui:param name="skipLineEdition" value="#{!purchaseInvoiceFinance.modelToEditable}" />
+					<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
+					<ui:param name="skipRemoveButton" value="#{invoiceController.readOnly}" />
+					<ui:param name="skipLineEdition" value="#{!financeController.modelToEditable}" />
 					<ui:param name="saveButtonReRender" value="Invoice_total" />
 
 					<ui:define name="columns">
@@ -38,12 +38,12 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 							<aon:selectInputDate id="Finance_DueDate" rendered="#{formEdit}"
-								value="#{purchaseInvoiceFinance.to.dueDate}" inputSize="8"
+								value="#{financeController.to.dueDate}" inputSize="8"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}" />
 							<f:facet name="footer">
 								<aon:selectInputDate id="Finance_DueDate-New"
-									rendered="#{formNew}" value="#{purchaseInvoiceFinance.to.dueDate}"
+									rendered="#{formNew}" value="#{financeController.to.dueDate}"
 									inputSize="8" timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}" />
 							</f:facet>
@@ -57,17 +57,17 @@
 							<aon:outputText value="#{to.payMethod.name}"
 								rendered="#{formList}" />
 							<aon:selectOneMenu id="Finance_PayMethod"
-								value="#{purchaseInvoiceFinance.to.payMethod}"
+								value="#{financeController.to.payMethod}"
 								rendered="#{formEdit}"
-								valueChangeListener="#{purchaseInvoiceFinance.onPayMethodChanged}"
+								valueChangeListener="#{financeController.onPayMethodChanged}"
 								reRender="RegistryBank_lookup">
 								<f:selectItems value="#{configCollections.payMethods}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
 								<aon:selectOneMenu id="Finance_PayMethod-New"
-									value="#{purchaseInvoiceFinance.to.payMethod}"
+									value="#{financeController.to.payMethod}"
 									rendered="#{formNew}"
-									valueChangeListener="#{purchaseInvoiceFinance.onPayMethodChanged}"
+									valueChangeListener="#{financeController.onPayMethodChanged}"
 									reRender="RegistryBank_lookup-New">
 									<f:selectItems value="#{configCollections.payMethods}" />
 								</aon:selectOneMenu>
@@ -89,34 +89,34 @@
 								<aon:lookupInputText id="RegistryBank_code"
 									property="#{to.bank}" reRender="RegistryBank_lookup"
 									lookup="#{bankLookup}"
-									value="#{purchaseInvoiceFinance.to.bank.code}" size="3"
-									lookupChangeListener="#{purchaseInvoiceFinance.onBankChanged}"
+									value="#{financeController.to.bank.code}" size="3"
+									lookupChangeListener="#{financeController.onBankChanged}"
 									maxlength="4">
 									<aon:joinProperty alias="Bank_code"
-										value="#{purchaseInvoiceFinance.to.bank.code}" />
+										value="#{financeController.to.bank.code}" />
 								</aon:lookupInputText>
 								<aon:lookupButton
 									windowTitle="#{configBundle.config_bank_selection}"
 									selectReRender="RegistryBank_lookup" actionType="search"
-									lookupChangeListener="#{purchaseInvoiceFinance.onBankChanged}"
+									lookupChangeListener="#{financeController.onBankChanged}"
 									lookup="#{bankLookup}" minHeight="460" minWidth="650"
-									property="#{purchaseInvoiceFinance.to.bank}">
+									property="#{financeController.to.bank}">
 								</aon:lookupButton>
 								<aon:inputText id="RegistryBank_name"
-									value="#{purchaseInvoiceFinance.to.bank.name}" size="30"
+									value="#{financeController.to.bank.name}" size="30"
 									disabled="true" />
 								<aon:inputText
-									value="#{purchaseInvoiceFinance.to.bankAccount.office}" size="3"
+									value="#{financeController.to.bankAccount.office}" size="3"
 									maxlength="4">
 									<f:validateLength minimum="4" maximum="4" />
 								</aon:inputText>
 								<aon:inputText
-									value="#{purchaseInvoiceFinance.to.bankAccount.control}" size="1"
+									value="#{financeController.to.bankAccount.control}" size="1"
 									maxlength="2">
 									<f:validateLength minimum="2" maximum="2" />
 								</aon:inputText>
 								<aon:inputText
-									value="#{purchaseInvoiceFinance.to.bankAccount.account}" size="8"
+									value="#{financeController.to.bankAccount.account}" size="8"
 									maxlength="10">
 									<f:validateLength minimum="10" maximum="10" />
 								</aon:inputText>
@@ -124,9 +124,9 @@
 									<aon:selectOneMenu id="Finance_RegistryBank"
 										style="margin-left: 50px;" reRender="RegistryBank_lookup"
 										immediate="true" value="#{registryCollections.registryBank}"
-										valueChangeListener="#{purchaseInvoiceFinance.onRBankChanged}">
+										valueChangeListener="#{financeController.onRBankChanged}">
 										<f:selectItem value="#{nullItem.value}" />
-										<f:selectItems value="#{purchaseInvoiceFinance.banks}" />
+										<f:selectItems value="#{financeController.banks}" />
 									</aon:selectOneMenu>
 								</aon:div>
 							</aon:div>
@@ -134,47 +134,47 @@
 								<aon:div id="RegistryBank_lookup-New" styleClass="aon-lookup"
 									rendered="#{formNew}">
 									<aon:lookupInputText id="RegistryBank_code-New"
-										property="#{purchaseInvoiceFinance.to.bank}"
+										property="#{financeController.to.bank}"
 										reRender="RegistryBank_lookup-New" lookup="#{bankLookup}"
-										lookupChangeListener="#{purchaseInvoiceFinance.onBankChanged}"
-										value="#{purchaseInvoiceFinance.to.bank.code}" size="3"
+										lookupChangeListener="#{financeController.onBankChanged}"
+										value="#{financeController.to.bank.code}" size="3"
 										maxlength="4">
 										<aon:joinProperty alias="Bank_code"
-											value="#{purchaseInvoiceFinance.to.bank.code}" />
+											value="#{financeController.to.bank.code}" />
 									</aon:lookupInputText>
 									<aon:lookupButton
 										windowTitle="#{configBundle.config_bank_selection}"
 										selectReRender="RegistryBank_lookup-New"
-										lookupChangeListener="#{purchaseInvoiceFinance.onBankChanged}"
+										lookupChangeListener="#{financeController.onBankChanged}"
 										actionType="search" lookup="#{bankLookup}" minHeight="460"
-										minWidth="650" property="#{purchaseInvoiceFinance.to.bank}">
+										minWidth="650" property="#{financeController.to.bank}">
 									</aon:lookupButton>
 									<aon:inputText id="RegistryBank_name-New"
-										value="#{purchaseInvoiceFinance.to.bank.name}" size="30"
+										value="#{financeController.to.bank.name}" size="30"
 										disabled="true" />
 									<aon:inputText
-										value="#{purchaseInvoiceFinance.to.bankAccount.office}" size="3"
+										value="#{financeController.to.bankAccount.office}" size="3"
 										maxlength="4">
 										<f:validateLength minimum="4" maximum="4" />
 									</aon:inputText>
 									<aon:inputText
-										value="#{purchaseInvoiceFinance.to.bankAccount.control}" size="1"
+										value="#{financeController.to.bankAccount.control}" size="1"
 										maxlength="2">
 										<f:validateLength minimum="2" maximum="2" />
 									</aon:inputText>
 									<aon:inputText
-										value="#{purchaseInvoiceFinance.to.bankAccount.account}" size="8"
+										value="#{financeController.to.bankAccount.account}" size="8"
 										maxlength="10">
 										<f:validateLength minimum="10" maximum="10" />
 									</aon:inputText>
 									<aon:div style="font-size:0.9em;" styleClass="aon-italic">
 										<aon:selectOneMenu id="Finance_RegistryBank-New"
 											style="margin-left: 50px;"
-											valueChangeListener="#{purchaseInvoiceFinance.onRBankChanged}"
+											valueChangeListener="#{financeController.onRBankChanged}"
 											value="#{registryCollections.registryBank}" immediate="true"
 											reRender="RegistryBank_lookup-New">
 											<f:selectItem value="#{nullItem.value}" />
-											<f:selectItems value="#{purchaseInvoiceFinance.banks}" />
+											<f:selectItems value="#{financeController.banks}" />
 										</aon:selectOneMenu>
 									</aon:div>
 								</aon:div>
@@ -187,7 +187,7 @@
 							</f:facet>
 							<aon:outputText value="#{to.financeStatus}" />
 							<f:facet name="footer">
-								<aon:outputText value="#{purchaseInvoiceFinance.to.financeStatus}" rendered="#{formNew}"/>
+								<aon:outputText value="#{financeController.to.financeStatus}" rendered="#{formNew}"/>
 							</f:facet>
 						</aon:column>
 
@@ -196,14 +196,14 @@
 								<aon:outputLabel for="Finance_amount"
 									value="#{bundle.aon_amount}" />
 							</f:facet>
-							<aon:outputText value="#{to.amount}" rendered="#{formList or purchaseInvoice.recorded}">
+							<aon:outputText value="#{to.amount}" rendered="#{formList or invoiceController.recorded}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<aon:inputText id="Finance_amount" rendered="#{formEdit and !purchaseInvoice.recorded}"
-								size="10" value="#{purchaseInvoiceFinance.to.amount}" />
+							<aon:inputText id="Finance_amount" rendered="#{formEdit and !invoiceController.recorded}"
+								size="10" value="#{financeController.to.amount}" />
 							<f:facet name="footer">
 								<aon:inputText id="Finance_amount-New" rendered="#{formNew}"
-									size="10" value="#{purchaseInvoiceFinance.to.amount}" />
+									size="10" value="#{financeController.to.amount}" />
 							</f:facet>
 						</aon:column>
 

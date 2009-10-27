@@ -104,7 +104,7 @@
 						aon-panelGrid-even aon-width-200">
 
 					<aon:outputLabel for="Invoice_series-New"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
 						<aon:inputText id="Invoice_referenceCode" 
 							value="#{purchaseInvoice.to.referenceCode}"
@@ -235,9 +235,16 @@
 
 				</aon:panelGrid>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/purchaseInvoice/form_detail.xhtml" />
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_detail.xhtml">
+					<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+					<ui:param name="detailController" value="#{purchaseInvoiceDetail}" />
+				</ui:include>
 
-				<ui:include	src="/com/code/aon/ui/finance/facelet/purchaseInvoice/form_finances.xhtml" />
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_finances.xhtml">
+					<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+					<ui:param name="detailController" value="#{purchaseInvoiceDetail}" />
+					<ui:param name="financeController" value="#{purchaseInvoiceFinance}" />
+				</ui:include>
 			</aon:div>
 
 		</aon:form>
@@ -245,13 +252,15 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoiceAddress/modalPanel.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+			<ui:param name="invoiceAddress" value="#{purchaseInvoiceAddress}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="controller" value="#{purchaseInvoiceSigner}" />
 			<ui:param name="signButtonreRender" value="purchaseInvoiceForm,showNewMessageWindow" />
 			<aon:methodParam name="signActionListener" value="#{purchaseInvoiceSigner.onSign}" type="actionListener" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/modalTransfer.xhtml" />
 	</ui:define>
 </ui:composition>
