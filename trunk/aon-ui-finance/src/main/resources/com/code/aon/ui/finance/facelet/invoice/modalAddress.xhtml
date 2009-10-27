@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showInvoiceAddressWindow">
-		<c:if test="#{saleInvoice.showInvoiceAddressWindow}">
+		<c:if test="#{invoiceController.showInvoiceAddressWindow}">
 			<rich:modalPanel id="invoiceAddressModalPanel" minHeight="220"
-				minWidth="460" rendered="#{saleInvoice.showInvoiceAddressWindow}"
+				minWidth="460" rendered="#{invoiceController.showInvoiceAddressWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -24,7 +24,7 @@
 							styleClass="aon-popupWindow-close"
 							reRender="showInvoiceAddressWindow" immediate="true">
 							<f:setPropertyActionListener
-								target="#{saleInvoice.showInvoiceAddressWindow}"
+								target="#{invoiceController.showInvoiceAddressWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -38,23 +38,23 @@
 									<aon:commandButton id="invoiceAddress-save"
 										value="#{bundle.aon_save}"
 										reRender="showInvoiceAddressWindow,InvoiceAddress"
-										actionListener="#{saleInvoiceAddress.accept}"
+										actionListener="#{invoiceAddress.accept}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										accesskey="#{bundle.aon_key_save}">
 										<f:setPropertyActionListener
-											target="#{saleInvoice.showInvoiceAddressWindow}"
+											target="#{invoiceController.showInvoiceAddressWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="invoiceAddress-remove"
 										value="#{bundle.aon_remove}"
 										reRender="showInvoiceAddressWindow,InvoiceAddress"
-										rendered="#{saleInvoiceAddress.to.id != null}"
+										rendered="#{invoiceAddress.to.id != null}"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										actionListener="#{saleInvoiceAddress.onRemove}"
+										actionListener="#{invoiceAddress.onRemove}"
 										accesskey="#{bundle.aon_key_remove}">
 										<f:setPropertyActionListener
-											target="#{saleInvoice.showInvoiceAddressWindow}"
+											target="#{invoiceController.showInvoiceAddressWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
@@ -64,30 +64,30 @@
 										<aon:outputLabel for="InvoiceAddress_address"
 											value="#{registryBundle.registry_address}" />
 										<aon:inputText id="InvoiceAddress_address"
-											value="#{saleInvoiceAddress.to.address}" size="45"
+											value="#{invoiceAddress.to.address}" size="45"
 											maxlength="45" required="true" />
 
 										<aon:outputLabel for="InvoiceAddress_address2" />
 										<aon:inputText id="InvoiceAddress_address2"
-											value="#{saleInvoiceAddress.to.address2}" size="45"
+											value="#{invoiceAddress.to.address2}" size="45"
 											maxlength="45" />
 
 										<aon:outputLabel for="InvoiceAddress_zip"
 											value="#{registryBundle.registry_zip}" />
 										<aon:inputText id="InvoiceAddress_zip"
-											value="#{saleInvoiceAddress.to.zip}" size="16"
+											value="#{invoiceAddress.to.zip}" size="16"
 											maxlength="16" />
 
 										<aon:outputLabel for="InvoiceAddress_city"
 											value="#{registryBundle.registry_city}" />
 										<aon:inputText id="InvoiceAddress_city"
-											value="#{saleInvoiceAddress.to.city}" size="45"
+											value="#{invoiceAddress.to.city}" size="45"
 											maxlength="45" required="true" />
 
 										<aon:outputLabel for="InvoiceAddress_geozone_id"
 											value="#{registryBundle.registry_geozone}" />
 										<aon:selectOneMenu id="InvoiceAddress_geozone_id"
-											value="#{saleInvoiceAddress.to.geozone}" required="true">
+											value="#{invoiceAddress.to.geozone}" required="true">
 											<f:selectItem itemLabel="-" value="#{null}" />
 											<f:selectItems value="#{geozoneCollections.geoTrees}" />
 										</aon:selectOneMenu>
