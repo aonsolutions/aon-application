@@ -8,16 +8,16 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ui.finance.controller.PurchaseInvoiceDetailController;
+import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class PurchaseInvoiceDetailControllerListener extends ControllerAdapter {
+public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		PurchaseInvoiceDetailController controller = (PurchaseInvoiceDetailController)event.getController();
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 
 		controller.setLongDescription(false);
@@ -42,13 +42,13 @@ public class PurchaseInvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		PurchaseInvoiceDetailController controller = (PurchaseInvoiceDetailController)event.getController();
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		controller.initializeModel();
 	}
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		PurchaseInvoiceDetailController controller = (PurchaseInvoiceDetailController)event.getController();
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 
 		controller.setLongDescription((invoiceDetail.getDescription().length() > 64) ? true : false);
@@ -64,7 +64,7 @@ public class PurchaseInvoiceDetailControllerListener extends ControllerAdapter {
 	}
 
 	private void obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
-		PurchaseInvoiceDetailController controller = (PurchaseInvoiceDetailController)event.getController();
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
 	}
 
