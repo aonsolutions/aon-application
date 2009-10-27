@@ -1259,7 +1259,7 @@
 	<managed-bean>
 		<managed-bean-name>saleInvoiceDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.SaleInvoiceDetailControllerListener
+			com.code.aon.ui.finance.event.InvoiceDetailControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -1288,7 +1288,7 @@
 	<managed-bean>
 		<managed-bean-name>saleInvoiceFinance</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.SaleInvoiceFinanceController
+			com.code.aon.ui.finance.controller.InvoiceFinanceController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1328,7 +1328,7 @@
 	<managed-bean>
 		<managed-bean-name>saleInvoiceFinanceControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.SaleInvoiceFinanceControllerListener
+			com.code.aon.ui.finance.event.InvoiceFinanceControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -1580,7 +1580,7 @@
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.PurchaseInvoiceDetailControllerListener
+			com.code.aon.ui.finance.event.InvoiceDetailControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -1599,7 +1599,7 @@
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceFinance</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.PurchaseInvoiceFinanceController
+			com.code.aon.ui.finance.controller.InvoiceFinanceController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1639,7 +1639,7 @@
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceFinanceControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.PurchaseInvoiceFinanceControllerListener
+			com.code.aon.ui.finance.event.InvoiceFinanceControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
