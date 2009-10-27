@@ -1,62 +1,13 @@
 package com.code.aon.ui.finance.controller;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.commercial.OfferDetail;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
-import com.code.aon.product.strategy.ICalculable;
-import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.warehouse.DeliveryDetail;
 
-public class PurchaseInvoiceDetailController extends LinesController {
-
-	private boolean longDescription;
-
-	private IPriceStrategy priceStrategy;
-
-	public boolean isLongDescription() {
-		return longDescription;
-	}
-
-	public void setLongDescription(boolean longDescription) {
-		this.longDescription = longDescription;
-	}
-
-	public IPriceStrategy getPriceStrategy() {
-		if (priceStrategy == null) {
-			priceStrategy = new InvoicePriceStrategy();
-		}
-		return priceStrategy;
-	}
-
-	public void onLongDescription(ActionEvent event) {
-		setLongDescription(true);
-	}
-
-	public void onShortDescription(ActionEvent event) {
-		setLongDescription(false);
-	}
-
-	public boolean isEditable() throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
-			InvoiceSource source = invoiceDetail.getSource();
-			if (source == InvoiceSource.DELIVERY || source == InvoiceSource.INCOME || source == InvoiceSource.OFFER) {
-				return false;
-			}
-		}
-		return true;
-	}	
+public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 
 	public void onItemChanged(LookupChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
@@ -102,14 +53,10 @@ public class PurchaseInvoiceDetailController extends LinesController {
 		}
 	}
 
-	public double getTaxableBase() {
-		return getPriceStrategy().getBasePrice((ICalculable)getTo());
-	}
-
 	public String getLineSourceInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
 
-		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
+		/*InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
 		if (!isEditable() && invoiceDetail.getSourceId() != null) {
 			String message = "";
 			String refCode = "";
@@ -137,7 +84,7 @@ public class PurchaseInvoiceDetailController extends LinesController {
 			info.append(AonUtil.getMessage("financeBundle", "finance_invoice_detail_line"));
 			info.append(" ");
 			info.append(line);
-		}
+		}*/
 		return info.toString();
 	}
 
