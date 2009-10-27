@@ -6,7 +6,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class SaleInvoiceAddressControllerListener extends ControllerAdapter {
+public class InvoiceAddressControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
