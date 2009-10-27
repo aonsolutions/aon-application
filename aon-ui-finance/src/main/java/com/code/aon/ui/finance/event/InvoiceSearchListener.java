@@ -114,7 +114,15 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	public PayMethod getEmptyPayMethod() {
 		return EMPTY_PAYMETHOD;
 	}
-	
+
+	public boolean isSales() {
+		if (getDefaultType() != null) {
+			InvoiceType type = InvoiceType.valueOf(getDefaultType());
+			return InvoiceType.SALES == type;
+		}
+		return false;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
