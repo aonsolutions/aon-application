@@ -213,7 +213,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException{
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Customer customer = (Customer) event.getNewValue();
+			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer); // Saca el mensaje de bloqueo.
 			getInvoice().setRegistryName(customer.getRegistry().getFullName());
 			getInvoice().setRegistryDocument(customer.getRegistry().getDocument());
@@ -318,8 +318,8 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = getInvoice();
 		try {
-			IController feeFinanceController = FormUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
-			List<?> financeList = feeFinanceController.getManagerBean().getList(feeFinanceController.getCriteria());
+			IController invoiceFinanceController = FormUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
+			List<?> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
 			if (existFinanceTrackings(financeList)) {
 				AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.VALIDATE_FINANCES_GENERATION_ERROR_KEY);
 				throw new AbortProcessingException();
@@ -327,10 +327,10 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			Iterator<?> iter = financeList.iterator();
 			while(iter.hasNext()) {
 				Finance finance = (Finance)iter.next();
-				feeFinanceController.getManagerBean().remove(finance);
+				invoiceFinanceController.getManagerBean().remove(finance);
 			}
 			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
-			feeFinanceController.onSearch(null);
+			invoiceFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			String msg = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.GENERATE_FINANCES_ERROR_KEY);
 			throw new ManagerBeanException(msg,e);
