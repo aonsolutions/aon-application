@@ -1025,15 +1025,6 @@
 			<value>Invoice_issueDate,Invoice_series,Invoice_number</value>
 		</managed-property>		
 		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Invoice_type</key>
-					<value>#{financeCollections.invoiceTypes[1].value}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>				
-		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1054,6 +1045,10 @@
 			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>SALES</value>
+		</managed-property>		
 	</managed-bean>
 
 	<managed-bean>
@@ -1189,7 +1184,7 @@
 	<managed-bean>
 		<managed-bean-name>saleInvoiceAddressControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.SaleInvoiceAddressControllerListener
+			com.code.aon.ui.finance.event.InvoiceAddressControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -1362,15 +1357,6 @@
 			<value>Invoice_issueDate,Invoice_series,Invoice_number</value>
 		</managed-property>		
 		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Invoice_type</key>
-					<value>#{financeCollections.invoiceTypes[0].value}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>				
-		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1390,6 +1376,10 @@
 			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>PURCHASE</value>
+		</managed-property>		
 	</managed-bean>
 
 	<managed-bean>
@@ -1515,7 +1505,7 @@
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceAddressControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.PurchaseInvoiceAddressControllerListener
+			com.code.aon.ui.finance.event.InvoiceAddressControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
