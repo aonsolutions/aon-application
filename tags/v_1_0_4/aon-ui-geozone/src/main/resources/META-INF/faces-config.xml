@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!-- ************ COLLECTION **************** -->
+	<managed-bean>
+		<managed-bean-name>geozoneCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.geozone.controller.GeozoneCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* GEOTREE ***************** -->
+	<managed-bean>
+		<managed-bean-name>geotreeParent</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.geozone.controller.GeoTreeParentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.geozone.GeoTree</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{geotreeParentControllerListener}</value>
+				<value>#{geotreeParentChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>geotreeParentControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.geozone.event.GeotreeParentControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>geotreeParentChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>geotreeChild</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>GeoTree_parent_id</key>
+                    <value>child.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>geotreeChild</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.geozone.GeoTree</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>geotreeParent</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>child.id</key>
+					<value>parent.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{geotreeChildControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>geotreeChildControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.geozone.event.GeotreeChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+  <!-- =================== Navigation Rules ================= -->
+
+  <!-- **************** MENU  *************** -->	
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>geozone</from-outcome>
+      <to-view-id>/facelet/geozone/list.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+	
+  <!-- =================== GeoZone ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>geozone_form</from-outcome>
+      <to-view-id>/facelet/geozone/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>geozone_list</from-outcome>
+      <to-view-id>/facelet/geozone/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>geozone_search</from-outcome>
+      <to-view-id>/facelet/geozone/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+</faces-config>
