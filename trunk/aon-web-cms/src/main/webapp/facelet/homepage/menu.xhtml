@@ -33,7 +33,7 @@
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="structure"
 				value="#{menuBundle.cms_structure}"
-				rendered="#{cms.roleDesigner or cms.roleEditor}">
+				rendered="#{domainUtils.structureMenu and (cms.roleDesigner or cms.roleEditor)}">
 				<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
 					rendered="#{cms.roleDesigner or cms.roleEditor}"
 					action="menu_list"
