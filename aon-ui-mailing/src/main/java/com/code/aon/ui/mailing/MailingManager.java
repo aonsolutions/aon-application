@@ -26,7 +26,7 @@ public class MailingManager {
 	private static final String SEPARATOR = ",";
 	private static final String FILENAME = "mailing.txt";
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","unused"})
 	public static void generateMailing(Collection collection) throws ManagerBeanException {
 		String filename = getFicheroDestino();
 		PrintWriter pw;

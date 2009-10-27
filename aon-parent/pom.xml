@@ -18,22 +18,22 @@
 	</scm>
 
 	<organization>
-		<name>Consulting &amp; Development</name>
-		<url>http://www.code.es</url>
+		<name>esferalia Networks S.A.</name>
+		<url>http://www.esferalia.com</url>
 	</organization>
 
 	<developers>
 		<developer>
-			<id>jurkiri</id>
+			<id>ecastellano</id>
 		</developer>
 		<developer>
 			<id>girazu</id>
 		</developer>
 		<developer>
-			<id>ecastellano</id>
+			<id>atellitu</id>
 		</developer>
 		<developer>
-			<id>atellitu</id>
+			<id>jurkiri</id>
 		</developer>
 		<developer>
 			<id>jdiez</id>
@@ -47,11 +47,17 @@
 		<developer>
 			<id>esalas</id>
 		</developer>
+		<developer>
+			<id>rtrepiana</id>
+		</developer>
+		<developer>
+			<id>duriarte</id>
+		</developer>
 	</developers>
 
 	<issueManagement>
 		<system>Bugzilla</system>
-		<url>http://bugzilla.code.es/</url>
+		<url>http://bugzilla.esferalia.com/</url>
 	</issueManagement>
 
 	<build>
@@ -61,8 +67,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>
