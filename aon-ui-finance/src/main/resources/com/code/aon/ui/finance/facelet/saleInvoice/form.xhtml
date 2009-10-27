@@ -53,12 +53,12 @@
 				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						<aon:commandButton value="&#160;" id="email"
 							actionListener="#{saleInvoice.onSendInvoiceByEmail}"
-							rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 							reRender="showNewMessageWindow">
 						</aon:commandButton>						
 						<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}"
-							target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+							target="_new" rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
