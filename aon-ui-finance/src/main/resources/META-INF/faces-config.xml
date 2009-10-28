@@ -1644,6 +1644,21 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ PURCHASE INVOICE SIGNER ************** -->
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceSigner</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>signatureController</property-name>
+			<value>#{purchaseInvoice}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>reportKey</property-name>
+			<value>purchaseInvoice</value>
+		</managed-property>
+	</managed-bean>	
+
 	<!-- **************** VAT REPORT  *************** -->
 	<managed-bean>
 		<managed-bean-name>vatReport</managed-bean-name>
