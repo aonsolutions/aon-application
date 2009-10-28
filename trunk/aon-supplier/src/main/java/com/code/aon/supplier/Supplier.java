@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
@@ -22,6 +23,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.enumeration.SupplierStatus;
 
@@ -31,7 +33,7 @@ import com.code.aon.supplier.enumeration.SupplierStatus;
 @Entity
 @Table(name="supplier")
 @PrimaryKeyJoinColumn(name="registry")
-public class Supplier implements ITransferObject, IScopable, IRegistry {
+public class Supplier implements ITransferObject, ITaxInfo, IScopable, IRegistry {
 	
 	private static final long serialVersionUID = -5482729597797009950L;
 
@@ -146,6 +148,16 @@ public class Supplier implements ITransferObject, IScopable, IRegistry {
 
 	public void setScope(Scope scope) {
 		this.scope = scope;
+	}
+
+	@Transient
+	public boolean isSurcharge() {
+		return false;
+	}
+
+	@Transient
+	public boolean isTaxFree() {
+		return false;
 	}
 
 	@Override
