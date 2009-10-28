@@ -59,7 +59,7 @@
 						</aon:commandButton>						
 						<h:commandLink id="purchaseInvoice" value="#{financeBundle.finance_invoice}"
 							target="_new" rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
-							action="#{report.onExecute}"
+							action="#{purchaseInvoice.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="purchaseInvoice" />

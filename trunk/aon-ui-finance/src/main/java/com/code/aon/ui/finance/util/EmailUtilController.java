@@ -38,7 +38,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.sign.controller.SignerController;
+import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.AonFile;
@@ -162,21 +162,20 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 		}
 		return this.sender;
 	}
-	
+
 	public AonFile getInvoiceFile( Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
-		SignerController signer = (SignerController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
-		File file = File.createTempFile( signer.getReportKey(), ".pdf" );
-		byte[] data = null;
-		if ( invoice.isSigned() ) {
-			data = signer.getSignedAttachment(invoice.getId()).getData();
-		} else {
-			data = signer.getReport(invoice);
-		}
+		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+		byte[] data = controller.getInvoiceData(invoice);
+		return getInvoiceFile(data, invoice);
+	}
+	
+	public AonFile getInvoiceFile( byte[] data, Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
+		String fileName = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber();
+		File file = File.createTempFile( fileName, ".pdf" );
 		FileUtils.writeByteArrayToFile(file, data);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
-		String fileName = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
-		aonFile.setFileName( fileName );
+		aonFile.setFileName( fileName + ".pdf" );
 		return aonFile;
 	}
 

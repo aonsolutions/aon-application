@@ -32,6 +32,8 @@ public interface IFinanceConstants {
 	
 	String PURCHASE_INVOICE_FINANCE_CONTROLLER_NAME = "purchaseInvoiceFinance";
 	
+	String PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME = "purchaseInvoiceSigner";
+	
 	String INVOICE_SIGNER_CONTROLLER_NAME = "invoiceSigner";
 	
 	String SALE_INVOICE_SIGNER_CONTROLLER_NAME = "saleInvoiceSigner";
