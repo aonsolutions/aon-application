@@ -26,20 +26,6 @@
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 		
-		<!-- AON-COMMERCIAL Mapping files -->	
-		<mapping class="com.code.aon.commercial.CommercialActivity"/>
-		<mapping class="com.code.aon.commercial.CommercialSegment"/>
-		<mapping class="com.code.aon.commercial.CommercialTerm"/>
-		<mapping class="com.code.aon.commercial.CommercialTracking"/>
-		<mapping class="com.code.aon.commercial.Offer"/>
-		<mapping class="com.code.aon.commercial.OfferAttachment"/>
-		<mapping class="com.code.aon.commercial.OfferDetail"/>
-		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.Target"/>
-		<mapping class="com.code.aon.commercial.TargetItem"/>
-		<mapping class="com.code.aon.commercial.TargetSegment"/>
-		<mapping class="com.code.aon.commercial.TargetSeller"/>
-		
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
@@ -82,6 +68,15 @@
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 						
+		<!-- AON-PROJECT Mapping files -->  
+		<mapping class="com.code.aon.project.Activity"/>
+		<mapping class="com.code.aon.project.ActivityType"/>
+		<mapping class="com.code.aon.project.DailyTracking"/>
+		<mapping class="com.code.aon.project.Dossier"/>
+		<mapping class="com.code.aon.project.DossierType"/>
+		<mapping class="com.code.aon.project.JobType"/>
+		<mapping class="com.code.aon.project.Task"/>		
+
 	</session-factory>
 
 </hibernate-configuration>
