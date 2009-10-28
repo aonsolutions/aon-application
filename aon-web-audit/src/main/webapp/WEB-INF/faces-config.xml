@@ -11,12 +11,8 @@
 			<default-locale>es</default-locale>
 		</locale-config>
 		<resource-bundle>
-			<base-name>com.code.aon.ui.audit.i18n.messages</base-name>
+			<base-name>com.code.aon.ui.audit.i18n.application</base-name>
 			<var>appBundle</var>
-		</resource-bundle>		
-		<resource-bundle>
-			<base-name>com.code.aon.ui.audit.i18n.menu</base-name>
-			<var>menuBundle</var>
 		</resource-bundle>		
 	</application>
 
@@ -33,7 +29,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.4.0</value>
+			<value>/aonResource/3.6.1</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -54,5 +50,25 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+
+	<!-- *************************************** -->
+	<!-- ************ NAVIGATION *************** -->
+	<!-- *************************************** -->
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/home.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/home.jsf</to-view-id> 
+			<redirect/>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
