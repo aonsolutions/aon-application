@@ -205,9 +205,9 @@
 					styleClass="aon-margin-top"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel for="Invoice_file" rendered="#{!purchaseInvoice.new}"
+					<aon:outputLabel for="Invoice_file" rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}"
 						value="#{financeBundle.finance_invoice_file}" />
-					<aon:div id="Invoice_fileDiv" rendered="#{!purchaseInvoice.new}">
+					<aon:div id="Invoice_fileDiv" rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}">
 						<a4j:region>
 							<h:panelGrid columns="#{purchaseInvoiceAttachment.uploaded?3:1}">
 								<h:commandLink id="download" value="&#160;" target="_blank"

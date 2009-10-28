@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.servlet.http.HttpServletResponse;
 
 import org.xml.sax.SAXException;
 
@@ -182,6 +180,15 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		}
 		return null;
 	}
+	
+	@Override
+	public byte[] getReportData(ITransferObject to) {
+		IAttachment attachment = getInvoiceFile( (Invoice) to );
+		if ( attachment != null ) {
+			return attachment.getData();
+		}
+		return null;
+	}	
 
 	public SignerController getSignerController() {
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
@@ -210,18 +217,14 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 	public String onReport() {
 		try {
 			Invoice invoice = getInvoice();
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			HttpServletResponse response = (HttpServletResponse) ctx.getExternalContext().getResponse();
 			if ( invoice.isSigned() ) {
 				SignerController signer = getSignerController();
 				IAttachment attach = signer.getSignedAttachment(invoice.getId());
-				AttachmentUtil.writeAttachment(attach, response);
-				ctx.responseComplete();
+				AttachmentUtil.downloadAttachment(attach);
 			} else {
 				IAttachment attach = getInvoiceFile(invoice);
 				if ( attach != null ) {
-					AttachmentUtil.writeAttachment(attach, response);
-					ctx.responseComplete();
+					AttachmentUtil.downloadAttachment(attach);
 				} else {
 					ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
 					return report.onExecute();

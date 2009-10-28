@@ -311,10 +311,6 @@ public class SignerController {
 		updateSigned(to, false, batch);
 	}
 
-	public void sign( ITransferObject to ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException { 
-		sign(to, getReport(to) );
-	}
-
 	private void sign( ITransferObject to, byte[] pdfData ) throws ManagerBeanException, SinaduraCoreException, ReportException, IOException {
 		this.sign(to, pdfData, false);
 	}
@@ -391,7 +387,8 @@ public class SignerController {
 			return;
 		}
 		try {
-			sign( signatureController.getTo() );
+			ITransferObject to = signatureController.getTo();
+			sign( to, signatureController.getReportData(to) );
 		} catch (Throwable e) {
 			LOGGER.severe(">>>> onSign " + e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
