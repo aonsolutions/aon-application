@@ -377,6 +377,16 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		((Invoice) to).setSigned(value);
 	}
 	
+	@Override
+	public byte[] getReportData(ITransferObject to) {
+		try {
+			return getSignerController().getReport(to);
+		} catch (ReportException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
 	public EmailUtilController getEmailController() {
 		return emailController;
 	}
@@ -391,7 +401,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		if ( invoice.isSigned() ) {
 			data = signer.getSignedAttachment(invoice.getId()).getData();
 		} else {
-			data = signer.getReport(invoice);
+			data = getReportData(invoice);
 		}
 		return data;		
 	}

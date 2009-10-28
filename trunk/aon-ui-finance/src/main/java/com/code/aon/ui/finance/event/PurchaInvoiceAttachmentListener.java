@@ -1,8 +1,6 @@
 package com.code.aon.ui.finance.event;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.servlet.http.HttpServletResponse;
 
 import org.richfaces.event.UploadEvent;
 
@@ -138,10 +136,7 @@ public class PurchaInvoiceAttachmentListener extends ControllerAdapter implement
 	}
 
     public void downloadAttachment( ActionEvent event ) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        AttachmentUtil.writeAttachment( getAonFile().getFileName(), getAonFile().getMimeType(), getAonFile().getData(), response );
-        context.responseComplete();    	
+        AttachmentUtil.downloadAttachment( getAonFile().getFileName(), getAonFile().getMimeType(), getAonFile().getData() );    	
     }
     
     public void removeAttachment( ActionEvent event ) {
