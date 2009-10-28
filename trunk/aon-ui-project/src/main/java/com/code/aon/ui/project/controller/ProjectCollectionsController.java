@@ -39,21 +39,6 @@ public class ProjectCollectionsController {
 		return dossierTypeList;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getDossierTypePojos() throws ManagerBeanException {
-		List<SelectItem> dossierTypeList = new LinkedList<SelectItem>();
-		IManagerBean dossierTypeBean = BeanManager.getManagerBean(DossierType.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(dossierTypeBean.getFieldName(IProjectAlias.DOSSIER_TYPE_DESCRIPTION));
-		Iterator iter = dossierTypeBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			DossierType type = (DossierType)iter.next();
-			SelectItem item = new SelectItem(type, type.getDescription());
-			dossierTypeList.add(item);
-		}
-		return dossierTypeList;
-	}
-
 	public List<SelectItem> getDossierStatus() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> dossierStatusList = new LinkedList<SelectItem>();

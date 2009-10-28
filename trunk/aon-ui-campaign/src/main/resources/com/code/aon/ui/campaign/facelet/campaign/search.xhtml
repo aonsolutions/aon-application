@@ -16,6 +16,7 @@
 				<ui:param name="toolbarTitle"
 					value="#{campaignBundle.aon_process_monitor}" />
 				<ui:param name="controller" value="#{campaign}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:decorate>
 
 			<ui:decorate
@@ -46,14 +47,23 @@
 						<f:selectItems value="#{projectCollections.activityTypes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Campaign_status"
-						value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Campaign_status"
-						valueChangeListener="#{campaign.addExpression}"
-						converter="aon.EnumConverter">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{campaignCollections.campaignStatus}" />
-					</aon:selectOneMenu>
+
+					<aon:outputText value="#{bundle.aon_status}"/>
+					<aon:div>
+						<aon:selectBooleanCheckbox id="st0" value="#{campaign.statusPending}" />
+						<aon:outputLabel for="st0"
+							value="#{projectBundle.task_status_pending}" />
+						<aon:selectBooleanCheckbox id="st1" value="#{campaign.statusInProgress}" />
+						<aon:outputLabel for="st1"
+							value="#{projectBundle.task_status_in_progress}" />
+						<aon:selectBooleanCheckbox id="st2" value="#{campaign.statusFinished}" />
+						<aon:outputLabel for="st2"
+							value="#{projectBundle.task_status_finished}" />
+						<h:selectBooleanCheckbox id="st3" value="#{campaign.statusDeleted}" />
+						<aon:outputLabel for="st3"
+							value="#{projectBundle.task_status_deleted}" />
+					</aon:div>
+
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

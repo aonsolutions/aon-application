@@ -53,5 +53,10 @@
 	background:transparent url(images/icons/aon-process-transition-selection.gif) scroll left center no-repeat;
 	padding-left: 18px;	
 }
-
- 
+.aon-inplace-select {
+ width: 200px; 
+ border:none; 
+ cursor:pointer; 
+ text-decoration:none; 
+ background-color: default;
+}

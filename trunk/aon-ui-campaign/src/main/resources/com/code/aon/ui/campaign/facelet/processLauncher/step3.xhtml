@@ -12,7 +12,12 @@
 	</ui:define>
 	
 	<ui:define name="step_content">
-		<aon:panelGrid columns="4" dir="true" style="width: 90%;">
+		<aon:panelGrid columns="4" dir="true" style="width: 90%;"
+			columnClasses="aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-250
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-auto">
+						
 			<aon:outputLabel for="wzd_process"
 				value="#{campaignBundle.process_process}" />
 			<aon:outputText value="#{processWizard.process.description}" />
