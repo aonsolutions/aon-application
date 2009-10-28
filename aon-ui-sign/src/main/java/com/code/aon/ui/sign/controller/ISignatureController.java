@@ -15,8 +15,8 @@ public interface ISignatureController extends IController {
 	
 	IManagerBean getAttachmentBean();
 
-	String getAttchmentMimeTypeAlias();
+	String getAttachmentMimeTypeAlias();
 	
-	String getAttchmentParentAlias();
+	String getAttachmentParentAlias();
 	
 }

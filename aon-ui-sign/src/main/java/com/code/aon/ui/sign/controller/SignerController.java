@@ -263,9 +263,9 @@ public class SignerController {
 
 	public IAttachment getSignedAttachment( Serializable parentId ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		String type = attachmentBean.getFieldName( signatureController.getAttchmentMimeTypeAlias() );
+		String type = attachmentBean.getFieldName( signatureController.getAttachmentMimeTypeAlias() );
 		criteria.addEqualExpression( type, MimeType.MIME_SIGNED_PDF );
-		String parentAlias = attachmentBean.getFieldName( signatureController.getAttchmentParentAlias() );
+		String parentAlias = attachmentBean.getFieldName( signatureController.getAttachmentParentAlias() );
 		criteria.addEqualExpression( parentAlias, parentId );		
 		List<ITransferObject> list = attachmentBean.getList(criteria);
 		if (! list.isEmpty() ) {

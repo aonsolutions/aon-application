@@ -1,13 +1,22 @@
 package com.code.aon.ui.finance.controller;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
 import org.xml.sax.SAXException;
 
+import com.code.aon.common.IAttachment;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.ql.Criteria;
 import com.code.aon.report.ReportException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -147,6 +156,26 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 			}
 		}
 	}*/
+	
+	public IAttachment getInvoiceFile() {
+		Invoice invoice = getInvoice();
+		IManagerBean bean = getAttachmentBean();
+		try {
+			Criteria criteria = new Criteria();
+			String invoiceAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID);
+			criteria.addEqualExpression(invoiceAlias, invoice.getId());
+			String typeAlias;
+			typeAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE);
+			criteria.addEqualExpression(typeAlias, MimeType.MIME_PDF);
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				return (IAttachment) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error getting invoice pdf file " + invoice, e );
+		}
+		return null;
+	}
 
 	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		sendInvoiceByEmail( null, false );
