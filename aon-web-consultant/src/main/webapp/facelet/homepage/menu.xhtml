@@ -16,6 +16,14 @@
 					<aon:menuSeparator />
 					<aon:menuItem action="relationship_form"
 						value="#{registryBundle.relationship_module}" />
+					<aon:menuItem id="dossier_type"
+						value="#{appBundle.aon_dossier_type}" action="dossierType_list" />
+					<aon:menuItem id="activity_type"
+						value="#{appBundle.aon_activity_type}"
+						action="activity_type_standalone" />
+					<aon:menuItem id="job_type" value="#{appBundle.aon_job_type}"
+						action="job_type" />
+					<aon:menuSeparator />
 				</aon:dropDownMenu>
 			</c:if>
 		</aon:menuBar>
