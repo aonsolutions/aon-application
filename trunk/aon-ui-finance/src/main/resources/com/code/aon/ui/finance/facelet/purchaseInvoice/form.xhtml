@@ -64,34 +64,12 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="purchaseInvoice" />
 						</h:commandLink>
-<!-- 
-						<c:if test="#{company.EInvoice}">
-							<c:if test="#{!purchaseInvoiceSigner.sessionCertificateStored}">
-								<aon:commandButton id="sign"
-									value="#{signBundle.sign_sign}"
-									actionListener="#{purchaseInvoiceSigner.onShowSignWindow}"
-									rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}"
-									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
-									reRender="showSignWindow" />
-							</c:if>
-							<c:if test="#{purchaseInvoiceSigner.sessionCertificateStored}">
-								<aon:commandButton id="sign"
-									value="#{signBundle.sign_sign}"
-									actionListener="#{purchaseInvoiceSigner.onSign}"
-									rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}"
-									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
-									reRender="purchaseInvoiceForm,showNewMessageWindow"
-									onclick="Richfaces.showModalPanel('waitProccess')" 
-						     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />									
-							</c:if>
-							<aon:commandButton id="cancel_sign"
-								value="#{signBundle.sign_cancel_sign}"
-								actionListener="#{purchaseInvoiceSigner.onCancelSign}"
-								rendered="#{!purchaseInvoice.new and purchaseInvoice.to.signed}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border"
-								reRender="purchaseInvoiceForm" />
-						</c:if>
- -->
+						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
+							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
+							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or purchaseInvoice.to.signed}" />
+							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoice.to.signed)}" />
+							<ui:param name="signButtonReRender" value="purchaseInvoiceForm,showNewMessageWindow" />
+						</ui:include>							
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
