@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
@@ -15,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -26,7 +24,6 @@ import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -57,8 +54,6 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.code.aon.webmail.SecurityInfo;
 
 public class SaleInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
-	
-	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceController.class.getName());
 	
 	private CustomerValidationManager cvm;
 	private DeliveryTransferManager deliveryTransferManager;
@@ -235,65 +230,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	}
 
 	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		sendInvoiceByEmail( null );
-	}
-
-	public void sendInvoiceByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		Invoice invoice = getInvoice();
-		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
-		messageController.initNewMessage();
-		String[] emails = emailController.getEmails(invoice);
-		if (! ArrayUtils.isEmpty(emails) ) {
-			messageController.setRecipientsTo( emails[0] );
-			if ( emails.length > 1 ) { 
-				String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
-				messageController.setRecipientsCc( recipientsCc );
-			}
-		}
-		messageController.setSubject( emailController.getEmailSubject(invoice) );
-		messageController.setContent( emailController.getEmailBody(invoice) );
-		messageController.addAttachment( emailController.getInvoiceFile(invoice) );
-		messageController.addAttachment( emailController.getInvoiceXml(invoice) );
-		messageController.setShowNewMessageWindow(true);
-		messageController.setSecurityInfo( securyInfo );
-	}
-
-	@Override
-	public IManagerBean getAttachmentBean() {
-		try {
-			return BeanManager.getManagerBean(InvoiceAttachment.class);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	@Override
-	public String getAttchmentMimeTypeAlias() {
-		return IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE;
-	}
-
-	@Override
-	public String getAttchmentParentAlias() {
-		return IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID;
-	}
-
-	@Override
-	public boolean isSigned(ITransferObject to) {
-		return ((Invoice) to).isSigned();
-	}
-
-	@Override
-	public IAttachment newAttachment(ITransferObject parent) {
-		InvoiceAttachment attachment = new InvoiceAttachment();
-		attachment.setInvoice( (Invoice) parent );
-		return attachment;
-	}
-
-	@Override
-	public void setSigned(ITransferObject to, boolean value) {
-		((Invoice) to).setSigned(value);
+		sendInvoiceByEmail( null, true );
 	}
 
 }

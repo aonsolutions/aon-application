@@ -1,19 +1,25 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.xml.sax.SAXException;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -21,6 +27,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
+import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -34,14 +41,22 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.finance.util.EmailUtilController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.SecurityInfo;
 
-public class InvoiceController extends BasicController {
+public class InvoiceController extends BasicController implements ISignatureController {
 
+	private static final Logger LOGGER = Logger.getLogger(InvoiceController.class.getName());
+	
 	private String invoiceAddressControllerName;
 	private String invoiceDetailControllerName;
 	private String invoiceFinanceControllerName;
@@ -50,6 +65,11 @@ public class InvoiceController extends BasicController {
 	private AccountEntryInvoiceWriter accountWriter;
 	private List<SelectItem> addresses;
 	private boolean showInvoiceAddressWindow;
+	private EmailUtilController emailController;
+	
+	public InvoiceController() {
+		this.emailController = new EmailUtilController();
+	}
 
 	public String getInvoiceAddressControllerName() {
 		return invoiceAddressControllerName;
@@ -319,4 +339,67 @@ public class InvoiceController extends BasicController {
 		}
 	}
 
+	@Override
+	public IManagerBean getAttachmentBean() {
+		try {
+			return BeanManager.getManagerBean(InvoiceAttachment.class);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public String getAttchmentMimeTypeAlias() {
+		return IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE;
+	}
+
+	@Override
+	public String getAttchmentParentAlias() {
+		return IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID;
+	}
+
+	@Override
+	public boolean isSigned(ITransferObject to) {
+		return ((Invoice) to).isSigned();
+	}
+
+	@Override
+	public IAttachment newAttachment(ITransferObject parent) {
+		InvoiceAttachment attachment = new InvoiceAttachment();
+		attachment.setInvoice( (Invoice) parent );
+		return attachment;
+	}
+
+	@Override
+	public void setSigned(ITransferObject to, boolean value) {
+		((Invoice) to).setSigned(value);
+	}
+	
+	public EmailUtilController getEmailController() {
+		return emailController;
+	}
+
+	public void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		Invoice invoice = getInvoice();
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+		messageController.initNewMessage();
+		String[] emails = emailController.getEmails(invoice);
+		if (! ArrayUtils.isEmpty(emails) ) {
+			messageController.setRecipientsTo( emails[0] );
+			if ( emails.length > 1 ) { 
+				String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
+				messageController.setRecipientsCc( recipientsCc );
+			}
+		}
+		messageController.setSubject( emailController.getEmailSubject(invoice) );
+		messageController.setContent( emailController.getEmailBody(invoice) );
+		messageController.addAttachment( emailController.getInvoiceFile(invoice) );
+		if ( facturae ) {
+			messageController.addAttachment( emailController.getInvoiceXml(invoice) );	
+		}
+		messageController.setShowNewMessageWindow(true);
+		messageController.setSecurityInfo( securyInfo );
+	}
+	
 }

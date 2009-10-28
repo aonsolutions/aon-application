@@ -74,7 +74,8 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	}	
 
 	public void sendInvoicesByEmail( SecurityInfo si ) throws UnsupportedEncodingException, MessagingException, ManagerBeanException {
-		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
+		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+		EmailUtilController emailController = controller.getEmailController();
 		EmailSender sender = emailController.getEmailSender();
 		sender.connect();
 		Criteria criteria = getCriteria();
