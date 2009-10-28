@@ -16,41 +16,12 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 			Item item = (Item)event.getNewValue();
 			invoiceDetail.setItem(item);
 			invoiceDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
-
-			/*Date date = invoiceDetail.getInvoice().getIssueDate();
-			Tariff tariff;
-			try {
-				SaleInvoiceController master = (SaleInvoiceController) getMasterController();
-				Customer customer = master.getCustomer();
-				tariff = customer.getTariff();
-			} catch (ManagerBeanException e) {
-				tariff = null;
-			}
-			price = getPriceStrategy().getUnitPrice(invoiceDetail, date, tariff);*/
+			price = item.getPurchasePrice();
 		}
 		invoiceDetail.setPrice(price);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
-		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
-		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
-			double price = 0;
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-				invoiceDetail.setQuantity((Double)event.getNewValue());
-	
-				/*Date date = invoiceDetail.getInvoice().getIssueDate();
-				Tariff tariff;
-				try {
-					SaleInvoiceController master = (SaleInvoiceController) getMasterController();
-					Customer customer = master.getCustomer();
-					tariff = customer.getTariff();
-				} catch (ManagerBeanException e) {
-					tariff = null;
-				}
-				price = getPriceStrategy().getUnitPrice(invoiceDetail, date, tariff);*/
-			}
-			invoiceDetail.setPrice(price);
-		}
 	}
 
 	public String getLineSourceInfo() throws ManagerBeanException {
