@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.purchase</artifactId>
-			<version>4.0.2</version>
+			<version>4.0.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
