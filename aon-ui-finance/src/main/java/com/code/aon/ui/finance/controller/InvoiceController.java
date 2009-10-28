@@ -48,6 +48,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
+import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -379,6 +380,21 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	public EmailUtilController getEmailController() {
 		return emailController;
 	}
+	
+	public SignerController getSignerController() {
+		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_SIGNER_CONTROLLER_NAME);
+	}
+	
+	public byte[] getInvoiceData( Invoice invoice ) throws ReportException, ManagerBeanException {
+		SignerController signer = getSignerController();
+		byte[] data = null;
+		if ( invoice.isSigned() ) {
+			data = signer.getSignedAttachment(invoice.getId()).getData();
+		} else {
+			data = signer.getReport(invoice);
+		}
+		return data;		
+	}
 
 	public void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		Invoice invoice = getInvoice();
@@ -394,7 +410,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 		messageController.setSubject( emailController.getEmailSubject(invoice) );
 		messageController.setContent( emailController.getEmailBody(invoice) );
-		messageController.addAttachment( emailController.getInvoiceFile(invoice) );
+		byte[] data = getInvoiceData(invoice);
+		messageController.addAttachment( emailController.getInvoiceFile(data, invoice) );
 		if ( facturae ) {
 			messageController.addAttachment( emailController.getInvoiceXml(invoice) );	
 		}

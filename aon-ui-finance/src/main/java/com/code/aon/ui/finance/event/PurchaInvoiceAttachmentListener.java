@@ -101,7 +101,7 @@ public class PurchaInvoiceAttachmentListener extends ControllerAdapter implement
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		PurchaseInvoiceController controller = (PurchaseInvoiceController) event.getController();
-		IAttachment attachment = controller.getInvoiceFile();
+		IAttachment attachment = controller.getInvoiceFile( controller.getInvoice() );
 		AonFile aonFile = null;
 		if ( attachment == null ) {
 			attachment = controller.newAttachment(controller.getTo());

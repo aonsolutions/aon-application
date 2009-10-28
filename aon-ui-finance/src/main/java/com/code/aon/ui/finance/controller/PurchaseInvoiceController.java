@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletResponse;
 
 import org.xml.sax.SAXException;
 
@@ -14,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
@@ -21,6 +25,9 @@ import com.code.aon.report.ReportException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.report.controller.ReportManager;
+import com.code.aon.ui.sign.controller.SignerController;
+import com.code.aon.ui.util.AonUtil;
 
 public class PurchaseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
@@ -157,8 +164,7 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		}
 	}*/
 	
-	public IAttachment getInvoiceFile() {
-		Invoice invoice = getInvoice();
+	public IAttachment getInvoiceFile( Invoice invoice ) {
 		IManagerBean bean = getAttachmentBean();
 		try {
 			Criteria criteria = new Criteria();
@@ -177,8 +183,55 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		return null;
 	}
 
+	public SignerController getSignerController() {
+		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
+	}
+	
+	public byte[] getInvoiceData( Invoice invoice ) throws ReportException, ManagerBeanException {
+		SignerController signer = getSignerController();
+		byte[] data = null;
+		if ( invoice.isSigned() ) {
+			data = signer.getSignedAttachment(invoice.getId()).getData();
+		} else {
+			IAttachment attachment = getInvoiceFile(invoice);
+			if ( attachment != null ) {
+				data = attachment.getData();
+			} else {
+				data = signer.getReport(invoice);
+			}
+		}
+		return data;		
+	}
+	
 	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		sendInvoiceByEmail( null, false );
 	}
 
+	public String onReport() {
+		try {
+			Invoice invoice = getInvoice();
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) ctx.getExternalContext().getResponse();
+			if ( invoice.isSigned() ) {
+				SignerController signer = getSignerController();
+				IAttachment attach = signer.getSignedAttachment(invoice.getId());
+				AttachmentUtil.writeAttachment(attach, response);
+				ctx.responseComplete();
+			} else {
+				IAttachment attach = getInvoiceFile(invoice);
+				if ( attach != null ) {
+					AttachmentUtil.writeAttachment(attach, response);
+					ctx.responseComplete();
+				} else {
+					ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
+					return report.onExecute();
+				}
+			}
+		} catch (Throwable e) {
+			LOGGER.severe(">>>> onReport " + e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}			
+		return null;
+	}	
 }
