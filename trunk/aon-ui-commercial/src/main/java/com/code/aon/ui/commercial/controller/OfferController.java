@@ -58,6 +58,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
+import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -501,12 +502,12 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	@Override
-	public String getAttchmentMimeTypeAlias() {
+	public String getAttachmentMimeTypeAlias() {
 		return ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE;
 	}
 
 	@Override
-	public String getAttchmentParentAlias() {
+	public String getAttachmentParentAlias() {
 		return ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID;
 	}
 
@@ -527,4 +528,17 @@ public class OfferController extends BasicController implements ISignatureContro
 		((Offer) to).setSigned(value);
 	}	
 	
+	@Override
+	public byte[] getReportData(ITransferObject to) {
+		try {
+			return getSignerController().getReport(to);
+		} catch (ReportException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	public SignerController getSignerController() {
+		return (SignerController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_SIGNER_CONTROLLER_NAME);
+	}	
 }
