@@ -4,11 +4,18 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:div styleClass="aon-toolbar">
-		<aon:commandButton id="resetInListDossier" value="#{bundle.aon_reset}"
-			actionListener="#{dossier.onReset}" reRender="customerTab"
-			styleClass="aon-icon-commandButton aon-icon-reset"
-			accesskey="#{bundle.aon_key_new}" />
+	<aon:div styleClass="aon-finding-title-toolbar">
+		<aon:panelGrid columns="1" dir="true"
+			columnClasses="aon-finding-toolbar">
+
+			<aon:div styleClass="aon-finding-toolbar-item-group">
+
+				<aon:commandButton id="resetInListDossier" value="#{bundle.aon_reset}"
+					actionListener="#{dossier.onReset}" reRender="customerTab"
+					styleClass="aon-icon-commandButton aon-icon-reset"
+					accesskey="#{bundle.aon_key_new}" />
+			</aon:div>
+		</aon:panelGrid>
 	</aon:div>
 
 	<aon:dataTable id="dossierDataList" value="#{dossier.model}" var="to"

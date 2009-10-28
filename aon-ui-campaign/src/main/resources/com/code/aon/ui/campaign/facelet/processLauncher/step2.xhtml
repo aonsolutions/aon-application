@@ -12,41 +12,151 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		<aon:panelGrid columns="4" dir="true" style="width: 90%;">
-			<aon:outputLabel for="wzd_process"
-				value="#{campaignBundle.process_process}" />
+		<aon:panelGrid columns="4" dir="true" style="width: 90%;"
+			columnClasses="aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-250
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-auto">
+						
+			<aon:outputText value="#{campaignBundle.process_process}" />
 			<aon:outputText value="#{processWizard.process.description}" />
 
-			<aon:outputLabel for="Campaign_description"
-				value="#{bundle.aon_description}" />
+			<aon:outputText value="#{bundle.aon_description}" />
 			<aon:outputText value="#{processWizard.description}" />
 
-			<aon:outputLabel for="Campaign_startDate"
-				value="#{campaignBundle.aon_initial_date}" />
+			<aon:outputText value="#{campaignBundle.aon_initial_date}" />
 			<aon:outputText value="#{processWizard.startDate}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 
-
-			<aon:outputLabel for="Campaign_endDate"
-				value="#{campaignBundle.aon_final_date}" />
+			<aon:outputText value="#{campaignBundle.aon_final_date}" />
 			<aon:outputText value="#{processWizard.endDate}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 
-			<aon:outputLabel for="Campaign_workGroup"
-				value="#{campaignBundle.campaign_supervisor}" />
+			<aon:outputText value="#{campaignBundle.campaign_supervisor}" />
 			<aon:outputText value="#{processWizard.workGroup.description}" />
 
 			<aon:outputText value="&#160;" />
 			<aon:outputText value="&#160;" />
 		</aon:panelGrid>
 
+		<aon:panelTabSet id="dossierTab">
+			<aon:panelTab id="existingDossier" label="#{campaignBundle.process_wizard_add_dossier}" immediate="true">
+
+				<aon:div id="existingContainer">
+					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
+	
+						<aon:outputLabel for="customerIdEx"
+							value="#{customerBundle.customer_customer}" />
+						<aon:div id="customerIdContainerEx" styleClass="aon-lookup">
+							<aon:lookupInputText id="customerIdEx" lookup="#{customerLookup}"
+								reRender="Customer_full_nameEx,process_dossier"
+								lookupChangeListener="#{processWizard.customerChanged}" 
+								value="#{processWizard.customer.id}" size="5" />
+							<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+								property="#{processWizard.customer}"
+								selectReRender="customerIdEx,Customer_full_nameEx,process_dossier" 
+								actionType="search"
+								lookupChangeListener="#{processWizard.customerChanged}"
+								lookup="#{customerLookup}" minHeight="460" minWidth="650">
+							</aon:lookupButton>
+							<aon:inputText id="Customer_full_nameEx"
+								value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
+								size="50" disabled="true" />
+						</aon:div>
+	
+						<aon:outputLabel for="process_dossier"
+							value="#{projectBundle.dossier_dossier}" />
+						<aon:selectOneMenu id="process_dossier"
+							value="#{processWizard.dossier}"
+							reRender="customerIdExContainer,process_dossier"
+							valueChangeListener="#{processWizard.dossierChanged}">
+							<f:selectItem value="#{nullSelectItem.value}" />
+							<f:selectItems value="#{processWizard.availableDossiers}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="Dossier_dossierType_id_ex" value="#{projectBundle.dossier_dossier_type}" />
+						<aon:selectOneMenu id="Dossier_dossierType_id_ex" 
+							value="#{processWizard.dossierType}">
+							<f:selectItem value="#{nullSelectItem.value}" />
+							<f:selectItems value="#{projectCollections.dossierTypes}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="Dossier_activityType_id_ex" value="#{projectBundle.aon_activity_type}" />
+						<aon:selectOneMenu id="Dossier_activityType_id_ex" 
+							value="#{processWizard.activityType}">
+							<f:selectItem value="#{nullSelectItem.value}" />
+							<f:selectItems value="#{projectCollections.activityTypes}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="Dossier_number_ex" value="#{projectBundle.dossier_dossier}" />
+						<aon:inputText id="Dossier_number_ex" size="18" value="#{processWizard.dossierNumber}"
+							maxlength="15"/>
+
+						<aon:outputText value="&#160;" />
+						<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
+							actionListener="#{processWizard.addExistingDossier}"
+							focus="customerIdEx"
+							styleClass="aon-commandButton aon-icon-new"
+							reRender="existingContainer, dossiersTable" />
+					</aon:panelGrid>
+				</aon:div>
+		 	</aon:panelTab>
+
+			<aon:panelTab id="newDossier" label="#{campaignBundle.process_wizard_add_new_dossier}" immediate="true">
+				<aon:div id="newContainer">
+					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
+	
+						<aon:outputLabel for="customerIdNew"
+							value="#{customerBundle.customer_customer}" />
+						<aon:div id="customerIdContainerNew" styleClass="aon-lookup">
+							<aon:lookupInputText id="customerIdNew" lookup="#{customerLookup}"
+								reRender="Customer_full_nameNew"
+								lookupChangeListener="#{processWizard.customerChanged}" 
+								value="#{processWizard.customer.id}" size="5" />
+							<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+								property="#{processWizard.customer}"
+								selectReRender="customerIdNew,Customer_full_nameNew" 
+								actionType="search"
+								lookupChangeListener="#{processWizard.customerChanged}"
+								lookup="#{customerLookup}" minHeight="460" minWidth="650">
+							</aon:lookupButton>
+							<aon:inputText id="Customer_full_nameNew"
+								value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
+								size="50" disabled="true" />
+						</aon:div>
+	
+						<aon:outputLabel for="Dossier_dossierType_id"
+							value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="Dossier_dossierType_id" 
+							value="#{processWizard.dossierType}">
+							<f:selectItem value="#{nullSelectItem.value}" />
+							<f:selectItems value="#{projectCollections.dossierTypes}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="Dossier_number"
+							value="#{projectBundle.dossier_dossier}" />
+						<aon:inputText id="Dossier_number" size="18" value="#{processWizard.dossierNumber}"
+							maxlength="15"/>
+	
+						<aon:outputText value="&#160;" />
+						<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
+							actionListener="#{processWizard.addNewDossier}"
+							focus="customerIdNew"
+							styleClass="aon-commandButton aon-icon-new"
+							reRender="newContainer, dossiersTable" />
+					</aon:panelGrid>
+				</aon:div>
+			
+		 	</aon:panelTab>
+		</aon:panelTabSet>
+
+<!-- 
 		<aon:panelGrid id="creationTable" columns="2" dir="true"
 			columnClasses="none, none" style="margin-top: 5px;width: 90%;">
-
 			<aon:div>
 				<aon:selectBooleanCheckbox id="radio1"
 					value="#{processWizard.existingDossier}">
@@ -68,8 +178,7 @@
 			</aon:div>
 
 			<aon:div id="existingContainer">
-				<aon:panelGrid columns="2" dir="true"
-					style="margin: 5px;width: 95%;">
+				<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
 
 					<aon:outputLabel for="customerIdEx"
 						value="#{customerBundle.customer_customer}" />
@@ -113,8 +222,7 @@
 			</aon:div>
 
 			<aon:div id="newContainer">
-				<aon:panelGrid columns="2" dir="true"
-					style="margin: 5px;width: 95%;">
+				<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
 
 					<aon:outputLabel for="customerIdNew"
 						value="#{customerBundle.customer_customer}" />
@@ -140,18 +248,16 @@
 					<aon:outputLabel for="Dossier_dossierType_id"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="Dossier_dossierType_id" 
-						disabled="#{processWizard.existingDossier}"
-						value="#{processWizard.dossier.dossierType}">
+						value="#{processWizard.dossier.dossierType}"
+						disabled="#{processWizard.existingDossier}">
 						<f:selectItem value="#{nullSelectItem.value}" />
-						<f:selectItems value="#{projectCollections.dossierTypePojos}" />
+						<f:selectItems value="#{projectCollections.dossierTypes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Dossier_number"
 						value="#{projectBundle.dossier_dossier}" />
-					<aon:inputText id="Dossier_number" size="18"
-						disabled="#{processWizard.existingDossier}" maxlength="15"
-						value="#{processWizard.dossier.number}" />
-
+					<aon:inputText id="Dossier_number" size="18" value="#{processWizard.dossier.number}"
+						disabled="#{processWizard.existingDossier}" maxlength="15"/>
 
 					<aon:outputText value="&#160;" />
 					<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
@@ -162,7 +268,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:panelGrid>
-
+ -->
 		<aon:div id="dossiersTable" style="margin-top: 5px;width: 90%;">
 			<aon:dataTable id="dossierDataList"
 				value="#{processWizard.dossiersModel}" var="to">

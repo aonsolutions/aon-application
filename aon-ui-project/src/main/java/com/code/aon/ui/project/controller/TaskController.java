@@ -141,9 +141,16 @@ public class TaskController extends BasicController implements ITaskController {
 	private ProcessTransitionType processTransitionType;
 	private DataModel transitionModel;
 	private ProcessDetailTransition transitionSelected;
-
 	private boolean transitionCorrect = true;
-
+	private CampaignTaskManager campaignTaskManager;
+	
+	private CampaignTaskManager getCampaignTaskManager() {
+		if (campaignTaskManager == null) {
+			campaignTaskManager = new CampaignTaskManager();
+		}
+		return campaignTaskManager;
+	}
+	
 	public ProcessTransitionType getProcessTransitionType() {
 		return processTransitionType;
 	}
@@ -506,8 +513,7 @@ public class TaskController extends BasicController implements ITaskController {
 		Task task = (Task) this.getTo();
 		if (task.isSourceProcess()) {
 			try {
-				ActivityProcess activityProcess = CampaignTaskManager
-						.getCurrentActivityProcess(task);
+				ActivityProcess activityProcess = getCampaignTaskManager().getCurrentActivityProcess(task);
 				if (activityProcess != null) {
 					return activityProcess.getCampaign();
 				}
@@ -558,7 +564,7 @@ public class TaskController extends BasicController implements ITaskController {
 
 	private Task getPreviousTask(Task task) throws ManagerBeanException {
 		if (task.isSourceProcess()) {
-			return CampaignTaskManager.getPreviousTask(task);
+			return getCampaignTaskManager().getPreviousTask(task);
 		}
 		return null;
 	}
@@ -591,7 +597,7 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	private void finishTaskAlarm(Task task) throws ManagerBeanException {
-		CampaignTaskManager.finishTaskAlarm(task);
+		getCampaignTaskManager().finishTaskAlarm(task);
 	}
 
 	public void onAssumeTask(ActionEvent event) {
@@ -706,13 +712,13 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	private void createNextTask(Task task) throws ManagerBeanException {
-		ActivityProcess activityProcess = CampaignTaskManager.getCurrentActivityProcess(task);
+		ActivityProcess activityProcess = getCampaignTaskManager().getCurrentActivityProcess(task);
 		if (activityProcess != null) {
 			CampaignDossier campaignDossier = new CampaignDossier();
 			campaignDossier.setCampaign(activityProcess.getCampaign());
 			campaignDossier.setDossier(task.getDossier());
-			CampaignTaskManager.addCampaignTask(campaignDossier, activityProcess.getProcessDetail()
-					.getPosition() + 1, getTransitionSelected());
+			getCampaignTaskManager().addCampaignTask(campaignDossier, activityProcess.getProcessDetail()
+					.getPosition() + 1, getTransitionSelected(),task);
 		}
 	}
 
@@ -740,12 +746,17 @@ public class TaskController extends BasicController implements ITaskController {
 		// Se calculan los dias de diferencia.
 		int days = (int) (dueDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
 		// Se suma el periodo indicado.
-		Date newStartDate = DateUtils.add(startDate, task.getRepeatPeriod().getField(), task
-				.getRepeatPeriod().getValue());
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		c.add(task.getRepeatPeriod().getField(), task.getRepeatPeriod().getValue());
+		Date newStartDate = c.getTime();
 		// Se asigna la nueva fecha.
 		newTask.setStartDate(newStartDate);
 		// Se calcula y asigna la nueva fecha de vencimiento.
-		newTask.setDueDate(DateUtils.add(newStartDate, Calendar.DAY_OF_MONTH, days));
+		c = Calendar.getInstance();
+		c.setTime(newStartDate);
+		c.add(Calendar.DAY_OF_MONTH, days);
+		newTask.setDueDate(c.getTime());
 		ensureTask(newTask);
 		IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
 		return (Task) taskBean.insert(newTask);
@@ -986,18 +997,14 @@ public class TaskController extends BasicController implements ITaskController {
 	private void addOrder() throws ManagerBeanException {
 		OrderByList list = new OrderByList();
 		if (getOrderColumn() == null) {
-			list
-					.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS),
-							false));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),
-					false));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS),
-					false));
-			list.addOrder(new Order(ExpressionUtilities
-					.getIdentifierExpression(TASK_DUE_DATE_ALIAS), false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS),false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
+//			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS),false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS), true));
 		} else {
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()),
-					isOrderAscending()));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()),isOrderAscending()));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS),true));
 		}
 		getCriteria().setOrderByList(list);
 
@@ -1161,22 +1168,44 @@ public class TaskController extends BasicController implements ITaskController {
 				task.getUser().getId());
 	}
 
-	public void onFinishSelected(ActionEvent event) {
+//	public void onFinishSelected(ActionEvent event) {
+//		try {
+//			boolean message = false;
+//			Iterator<Task> iter = checks.iterator();
+//			while (iter.hasNext()) {
+//				Task task = iter.next();
+//				finishTask(task);
+//				if (!message && !isMyTask(task)) {
+//					addMessage("Existen Tareas que no se han podido finalizar por estar asumidas por otros Usuarios.");
+//					message = true;
+//				}
+//			}
+//			resetChecks();
+//			onRefresh(event);
+//		} catch (ManagerBeanException e) {
+//			String msg = "Error finishing task. " + e.getMessage();
+//			LOGGER.log(Level.SEVERE, msg, e);
+//			addMessage(msg);
+//			throw new AbortProcessingException(msg);
+//		}
+//	}
+
+
+	public void onFinishTaskFromList(ActionEvent event) {
 		try {
-			boolean message = false;
-			Iterator<Task> iter = checks.iterator();
-			while (iter.hasNext()) {
-				Task task = iter.next();
+			onSelect(event);
+			Task task = (Task) this.getTo();
+			setTransitionModel(null);
+			setTransitionCorrect(true);
+			setTransitionSelected(null);
+			setFinishPanelVisible(false);
+			if (task.isSourceProcess() && getCampaignTaskManager().hasTransitions(task)) {
+				setFinishPanelVisible(true);
+			} else {
 				finishTask(task);
-				if (!message && !isMyTask(task)) {
-					addMessage("Existen Tareas que no se han podido finalizar por estar asumidas por otros Usuarios.");
-					message = true;
-				}
 			}
-			resetChecks();
-			onRefresh(event);
 		} catch (ManagerBeanException e) {
-			String msg = "Error finishing task. " + e.getMessage();
+			String msg = e.getMessage();
 			LOGGER.log(Level.SEVERE, msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
@@ -1190,7 +1219,7 @@ public class TaskController extends BasicController implements ITaskController {
 			setTransitionSelected(null);
 			setFinishPanelVisible(false);
 			Task task = (Task) this.getTo();
-			if (task.isSourceProcess() && CampaignTaskManager.hasTransitions(task)) {
+			if (task.isSourceProcess() && getCampaignTaskManager().hasTransitions(task)) {
 				setFinishPanelVisible(true);
 				return null;
 			}
@@ -1521,7 +1550,7 @@ public class TaskController extends BasicController implements ITaskController {
 	private void initializeTransitionModel() throws ManagerBeanException {
 		Task task = (Task) getTo();
 		if (task != null) {
-			transitionModel = new ListDataModel(CampaignTaskManager.getTransitions(task));
+			transitionModel = new ListDataModel(getCampaignTaskManager().getTransitions(task));
 		}
 	}
 

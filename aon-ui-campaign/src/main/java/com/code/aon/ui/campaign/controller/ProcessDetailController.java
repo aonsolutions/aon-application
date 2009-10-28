@@ -1,18 +1,11 @@
 package com.code.aon.ui.campaign.controller;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.campaign.ProcessDetail;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.WorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 
 public class ProcessDetailController extends LinesController {
