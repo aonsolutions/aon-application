@@ -1,35 +1,19 @@
 package com.code.aon.ui.finance.controller;
 
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.Invoice;
-import com.code.aon.finance.InvoiceAttachment;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.report.ReportException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.util.EmailUtilController;
-import com.code.aon.ui.sign.controller.ISignatureController;
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.SecurityInfo;
 
-public class PurchaseInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
+public class PurchaseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
 	private static final Logger LOGGER = Logger.getLogger(PurchaseInvoiceController.class.getName());
 	
@@ -165,65 +149,7 @@ public class PurchaseInvoiceController extends InvoiceController implements ISig
 	}*/
 
 	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		sendInvoiceByEmail( null );
-	}
-
-	public void sendInvoiceByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		Invoice invoice = getInvoice();
-		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
-		messageController.initNewMessage();
-		String[] emails = emailController.getEmails(invoice);
-		if (! ArrayUtils.isEmpty(emails) ) {
-			messageController.setRecipientsTo( emails[0] );
-			if ( emails.length > 1 ) { 
-				String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
-				messageController.setRecipientsCc( recipientsCc );
-			}
-		}
-		messageController.setSubject( emailController.getEmailSubject(invoice) );
-		messageController.setContent( emailController.getEmailBody(invoice) );
-		messageController.addAttachment( emailController.getInvoiceFile(invoice) );
-		messageController.addAttachment( emailController.getInvoiceXml(invoice) );
-		messageController.setShowNewMessageWindow(true);
-		messageController.setSecurityInfo( securyInfo );
-	}
-
-	@Override
-	public IManagerBean getAttachmentBean() {
-		try {
-			return BeanManager.getManagerBean(InvoiceAttachment.class);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	@Override
-	public String getAttchmentMimeTypeAlias() {
-		return IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE;
-	}
-
-	@Override
-	public String getAttchmentParentAlias() {
-		return IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID;
-	}
-
-	@Override
-	public boolean isSigned(ITransferObject to) {
-		return ((Invoice) to).isSigned();
-	}
-
-	@Override
-	public IAttachment newAttachment(ITransferObject parent) {
-		InvoiceAttachment attachment = new InvoiceAttachment();
-		attachment.setInvoice( (Invoice) parent );
-		return attachment;
-	}
-
-	@Override
-	public void setSigned(ITransferObject to, boolean value) {
-		((Invoice) to).setSigned(value);
+		sendInvoiceByEmail( null, false );
 	}
 
 }

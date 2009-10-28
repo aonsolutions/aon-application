@@ -1709,13 +1709,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- ************ EMAIL UTIL CONTROLLER ************** -->
-	<managed-bean>
-		<managed-bean-name>emailUtil</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.util.EmailUtilController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-
   <!-- =================== CREDITOR ================= -->
 	<navigation-rule>
 		<navigation-case>
