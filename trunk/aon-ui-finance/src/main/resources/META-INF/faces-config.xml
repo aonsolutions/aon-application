@@ -1366,6 +1366,7 @@
 				<value>#{purchaseInvoiceAddressListener}</value>
 				<value>#{purchaseInvoiceDetailListener}</value>
 				<value>#{purchaseInvoiceFinanceListener}</value>
+				<value>#{purchaseInvoiceAttachment}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1381,6 +1382,14 @@
 			<value>PURCHASE</value>
 		</managed-property>		
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceAttachment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.PurchaInvoiceAttachmentListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceScopeListener</managed-bean-name>

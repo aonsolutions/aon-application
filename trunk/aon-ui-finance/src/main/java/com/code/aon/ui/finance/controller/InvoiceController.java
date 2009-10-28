@@ -350,12 +350,12 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	@Override
-	public String getAttchmentMimeTypeAlias() {
+	public String getAttachmentMimeTypeAlias() {
 		return IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE;
 	}
 
 	@Override
-	public String getAttchmentParentAlias() {
+	public String getAttachmentParentAlias() {
 		return IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID;
 	}
 
