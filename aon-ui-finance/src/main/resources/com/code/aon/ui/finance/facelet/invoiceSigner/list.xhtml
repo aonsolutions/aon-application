@@ -20,31 +20,14 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<c:if test="#{!saleInvoiceSigner.sessionCertificateStored}">			
-						<aon:commandButton id="sign"
-							value="#{financeBundle.finance_sign_selected}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{saleInvoiceSigner.onShowSignWindow}"
-							disabled="#{invoiceSigner.selectionEmpty}"
-							reRender="showSignWindow" />
-					</c:if>
-					<c:if test="#{saleInvoiceSigner.sessionCertificateStored}">			
-						<aon:commandButton id="sign"
-							value="#{financeBundle.finance_sign_selected}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{invoiceSigner.onSignSelected}"
-							disabled="#{invoiceSigner.selectionEmpty}"
-							reRender="invoiceSignerDataDiv,aonToolbar"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					</c:if>
-					<aon:commandButton id="cancel_sign"
-						value="#{financeBundle.finance_cancel_sign_selected}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						actionListener="#{invoiceSigner.onCancelSignSelected}"
-						disabled="#{invoiceSigner.selectionEmpty}" 
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
+						<ui:param name="signController" value="#{saleInvoiceSigner}" />
+						<ui:param name="skipSignButton" value="#{invoiceSigner.selectionEmpty}" />
+						<ui:param name="signActionListener" default="#{invoiceSigner.onSignSelected}" type="actionListener" />
+						<ui:param name="skipCancelSignButton" value="#{invoiceSigner.selectionEmpty}" />
+						<ui:param name="cancelSignActionListener" default="#{invoiceSigner.onCancelSignSelected}" type="actionListener" />
+						<ui:param name="signButtonReRender" value="invoiceSignerDataDiv,aonToolbar" />
+					</ui:include>
 				</ui:define>				
 				
 			</ui:decorate>
