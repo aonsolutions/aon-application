@@ -165,6 +165,7 @@ public class AccountEntryDetail implements ITransferObject {
 	 * 
 	 * @return the debit
 	 */
+	@Column(nullable=true)
 	public double getDebit() {
 		return debit;
 	}
@@ -175,6 +176,14 @@ public class AccountEntryDetail implements ITransferObject {
 	 * @param debit the debit
 	 */
 	public void setDebit(double debit) {
+		if (debit != 0) {
+			if (debit < 0) {
+				setCredit(round(0-debit, 2));
+				debit = 0;
+			} else {
+				setCredit(0);
+			}
+		}
 		this.debit = debit;
 	}
 
@@ -183,6 +192,7 @@ public class AccountEntryDetail implements ITransferObject {
 	 * 
 	 * @return the credit
 	 */
+	@Column(nullable=true)
 	public double getCredit() {
 		return credit;
 	}
@@ -193,6 +203,19 @@ public class AccountEntryDetail implements ITransferObject {
 	 * @param credit the credit
 	 */
 	public void setCredit(double credit) {
+		if (credit != 0) {
+			if (credit < 0) {
+				setDebit(round(0-credit, 2));
+				credit = 0;
+			} else {
+				setDebit(0);
+			}
+		}
 		this.credit = credit;
 	}
+
+	public static double round(double value, int precision) {
+		return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
+	}
+
 }

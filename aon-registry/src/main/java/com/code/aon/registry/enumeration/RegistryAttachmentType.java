@@ -18,8 +18,14 @@ public enum RegistryAttachmentType implements IResourceable {
 	ADDITIONAL_IMAGE,
 	
 	/** The BANNER. */
-	BANNER;
+	BANNER,
 	
+	/** Corporate Identity DOCUMENTS **/
+	CORPORATE_IDENTITY,
+
+	/** The DIGITAL CERTIFICATE. */
+	DIGITAL_CERTIFICATE;
+
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.registry.i18n.messages";

@@ -133,8 +133,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if(params.getCustomerId() != null){
 			groupCriteria.addEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID), params.getCustomerId());
 		}
-		groupCriteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_SURNAME));
-		groupCriteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_NAME));
+		criteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_SURNAME));
+		criteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_NAME));
 		Iterator iter = invoicingGroupBean.getList(groupCriteria).iterator();
 		while(iter.hasNext()){
 			InvoicingGroup group = (InvoicingGroup)iter.next();

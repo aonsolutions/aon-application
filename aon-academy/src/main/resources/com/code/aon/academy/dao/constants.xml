@@ -4,8 +4,12 @@
 		<alias names="course_id,customer_id,customer_registry_name,customer_registry_surname,id,course_code,course_academicYear_id,course_startDate,course_endDate,course_status,status" />
 		<hibernate names="course.id,customer.id,customer.registry.name,customer.registry.surname,id,course.code,course.academicYear.id,course.startDate,course.endDate,course.status,status" />
 	</bean>
+	<bean class="com.code.aon.academy.CourseInstructor" sqlName="course_instructor">
+		<alias names="id,course_id,course_code,course_status,employee_id,type" />
+		<hibernate names="id,course.id,course.code,course.status,employee.id,type" />
+	</bean>
 	<bean class="com.code.aon.academy.Mark" sqlName="mark">
-		<alias names="alumn_course_academicYear_id,alumn_course_courseLevel_id,alumn_course_courseSubject_id,alumn_course_id,alumn_customer_registry_name,alumn_customer_registry_surname,alumn_id,evaluation,id,mark,subject_academicSkill_id,subject_id" />
-		<hibernate names="alumn.course.academicYear.id,alumn.course.courseLevel.id,alumn.course.courseSubject.id,alumn.course.id,alumn.customer.registry.name,alumn.customer.registry.surname,alumn.id,evaluation,id,mark,subject.academicSkill.id,subject.id" />
+		<alias names="alumn_course_code,alumn_course_academicYear_id,alumn_course_courseLevel_id,alumn_course_courseSubject_id,alumn_course_id,alumn_customer_registry_name,alumn_customer_registry_surname,alumn_id,evaluation,id,mark,subject_academicSkill_id,subject_id" />
+		<hibernate names="alumn.course.code,alumn.course.academicYear.id,alumn.course.courseLevel.id,alumn.course.courseSubject.id,alumn.course.id,alumn.customer.registry.name,alumn.customer.registry.surname,alumn.id,evaluation,id,mark,subject.academicSkill.id,subject.id" />
 	</bean>
 </dao>

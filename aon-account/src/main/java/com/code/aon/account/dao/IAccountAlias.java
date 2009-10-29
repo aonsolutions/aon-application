@@ -312,10 +312,16 @@ public interface IAccountAlias {
 	String  LOAN_REVIEW = LOAN_ENTRY.getAliasNames()[7];
 
 	/** 
+	* Alias value: Loan_securityLevel
+	* Hibernate value: Loan.securityLevel
+	*/
+	String  LOAN_SECURITY_LEVEL = LOAN_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: Loan_term
 	* Hibernate value: Loan.term
 	*/
-	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[8];
+	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[9];
 
 
 

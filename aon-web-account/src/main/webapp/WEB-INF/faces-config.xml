@@ -218,7 +218,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>security</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>bundleBaseName</property-name>

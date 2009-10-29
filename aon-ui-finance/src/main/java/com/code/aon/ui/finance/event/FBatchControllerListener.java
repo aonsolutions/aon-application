@@ -40,8 +40,6 @@ public class FBatchControllerListener extends ControllerAdapter {
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.loadAvailableFinances(fBatch.isPayment());
-		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.setCsbOutput(null);
 	}
 
     @Override
@@ -71,8 +69,6 @@ public class FBatchControllerListener extends ControllerAdapter {
         FBatchController fBatchController = (FBatchController)event.getController();
         FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
         fBatchController.loadAvailableFinances(fBatch.isPayment());
-		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.setCsbOutput(null);
     }
 
     @Override
@@ -80,7 +76,6 @@ public class FBatchControllerListener extends ControllerAdapter {
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.loadAvailableFinances(fBatch.isPayment());
-		fBatchController.setRecordDate(fBatch.getIssueDate());
 		fBatchController.setCsbOutput(null);
 
         FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);

@@ -33,7 +33,6 @@
 	<field name="registry" class="com.code.aon.registry.Registry"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="status" class="com.code.aon.finance.enumeration.InvoiceStatus"/>
-	<field name="referenceCode" class="java.lang.String"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -104,7 +103,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_invoice_number}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_series_number}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -185,7 +184,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{referenceCode}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{series}!=null?$F{series} + "/" + $F{number}.toString():$F{number}.toString())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

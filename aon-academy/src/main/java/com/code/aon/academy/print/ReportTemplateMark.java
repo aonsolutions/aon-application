@@ -6,11 +6,14 @@ import java.util.List;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.AcademicSkill;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.company.resources.Employee;
 import com.code.aon.customer.Customer;
 
 public class ReportTemplateMark implements ITransferObject {
 
 	private Course course;
+	
+	private Employee instructor;
 	
 	private List<TemplateMarkDetail> details = new ArrayList<TemplateMarkDetail>();
 
@@ -27,6 +30,14 @@ public class ReportTemplateMark implements ITransferObject {
 	 */
 	public void setCourse(Course course) {
 		this.course = course;
+	}
+
+	public Employee getInstructor() {
+		return instructor;
+	}
+
+	public void setInstructor(Employee instructor) {
+		this.instructor = instructor;
 	}
 
 	/**

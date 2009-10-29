@@ -47,7 +47,7 @@ public class Observation implements ITransferObject {
 	 * 
 	 * @return the description
 	 */
-	@Column(length=80, nullable=false)
+	@Column(length=256, nullable=false)
 	public String getDescription() {
 		return description;
 	}

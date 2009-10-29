@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.academy</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.4</version>
+	<version>2.3.0</version>
 	<description>APLICACION WEB DE ACADEMIAS</description>
 	<name>APLICACION WEB DE ACADEMIAS</name>
 	<properties>
-		<dbVersion>1.7.3</dbVersion>
+		<dbVersion>1.7.2</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-academy</finalName>
@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>2.5.0</version>
+			<version>2.4.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>

@@ -13,6 +13,8 @@ public class ReportMark implements ITransferObject {
 	
 	private List<ReportMarkTo> marks;
 
+	private List<ReportMarkTo> averageMarks;
+
 	private List<Absence> absences;
 
 	private List<EvaluationObservation> observations;
@@ -20,6 +22,8 @@ public class ReportMark implements ITransferObject {
 	private String courseSchedule;
 	
 	private Integer evaluation;
+	
+	private Double finalMark;
 	
 	public CourseAlumn getCourseAlumn() {
 		return courseAlumn;
@@ -41,6 +45,20 @@ public class ReportMark implements ITransferObject {
 	 */
 	public void setMarks(List<ReportMarkTo> marks) {
 		this.marks = marks;
+	}
+
+	/**
+	 * @return the average marks
+	 */
+	public List<ReportMarkTo> getAverageMarks() {
+		return averageMarks;
+	}
+
+	/**
+	 * @param averageMarks the average marks to set
+	 */
+	public void setAverageMarks(List<ReportMarkTo> averageMarks) {
+		this.averageMarks = averageMarks;
 	}
 
 	/**
@@ -91,5 +109,13 @@ public class ReportMark implements ITransferObject {
 
 	public void setEvaluation(Integer evaluation) {
 		this.evaluation = evaluation;
+	}
+
+	public Double getFinalMark() {
+		return finalMark;
+	}
+
+	public void setFinalMark(Double finalMark) {
+		this.finalMark = finalMark;
 	}
 }

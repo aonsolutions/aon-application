@@ -132,7 +132,6 @@ public class Account implements ITransferObject {
 	 * 
 	 * @return The level of this account.
 	 */
-	@Formula("LENGTH(id)")
 	public int getLevel() {
 		return level;
 	}

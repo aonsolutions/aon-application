@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root key="AON_ACCOUNT" descriptionKey="aon_application_menu_title" ref="firstContent">
 	<option contextRelative="false" external="false" key="account_entry" descriptionKey="account_entry_desc" ref="accountEntry" role="GestionApuntes"/>
-	<menu ref="content" key="aon_account_entries" descriptionKey="aon_account_entries_desc" role="MenuApuntes">
+	<menu ref="content" key="aon_account_entries" descriptionKey="aon_account_entries_desc">
 		<option key="account_invoice_entry" descriptionKey="account_invoice_entry_desc" ref="accountInvoiceEntry" role="ApuntesFacturas">
 			<actionListener action="#{accountInvoice.onReset}" />
 		</option>
@@ -21,7 +21,7 @@
 			<actionListener action="#{accountLeasingFee.onReset}" />
 		</option>
 	</menu>
-	<menu ref="content" key="aon_masters" descriptionKey="aon_masters_desc" role="MenuMaestros">
+	<menu ref="content" key="aon_masters" descriptionKey="aon_masters_desc">
 		<option key="account" descriptionKey="account_desc" ref="account" role="PlanGeneralContable"/>
 		<option key="autConcept" descriptionKey="autConcept_desc" ref="autConcept" role="ConceptosAutomaticos"/>
 		<option ref="customer" key="customer" descriptionKey="customer_desc" role="Clientes">
@@ -34,7 +34,7 @@
 			<actionListener action="#{accBasicCreditor.onEditSearch}" />
 		</option>
 	</menu>
-	<menu ref="content" key="aon_reports" descriptionKey="aon_reports_desc" role="MenuListados">
+	<menu ref="content" key="aon_reports" descriptionKey="aon_reports_desc">
 		<option key="account_profit_and_loss" descriptionKey="account_profit_and_loss_desc" ref="accountEntryProfitAndLoss" role="ExplotacionPyG">
 			<actionListener action="#{accountEntryReport.onProfitAndLoss}" />
 		</option>
@@ -45,7 +45,7 @@
 			<actionListener action="#{accountEntryReport.onDayBook}" />
 		</option>	
 	</menu>
-	<menu ref="content" key="aon_utilities" descriptionKey="aon_utilities_desc" role="MenuUtilidades">
+	<menu ref="content" key="aon_utilities" descriptionKey="aon_utilities_desc">
 		<option key="account_loan_entry" descriptionKey="account_loan_entry_desc" ref="accountLoanEntry" role="CreacionPrestamos">
 			<actionListener action="#{accountLoan.onReset}" />
 		</option>
@@ -58,7 +58,7 @@
 		</option>	
 		<option key="account_regenerate_summary" descriptionKey="account_regenerate_summary_desc" ref="regenerateAccountSummary" role="RegenerarAcumulados"/>
 	</menu>
-	<menu ref="content" key="aon_configuration" descriptionKey="aon_configuration_desc" role="MenuConfiguracion">
+	<menu ref="content" key="aon_configuration" descriptionKey="aon_configuration_desc">
 		<option key="aon_company" descriptionKey="aon_company_desc" ref="company" role="DatosEmpresa">
 			<actionListener action="#{company.onLoad}" />
 		</option>

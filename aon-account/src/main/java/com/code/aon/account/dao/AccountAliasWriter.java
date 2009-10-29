@@ -25,7 +25,6 @@ public class AccountAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-account/src/main/java/com/code/aon/account/dao/IAccountAlias.java");
-//		File file = new File("c:/IAccountAlias.java");
 		String[] classes = new String[8]; 
 		classes[0] = Account.class.getName();
 		classes[1] = Period.class.getName();
@@ -35,8 +34,6 @@ public class AccountAliasWriter {
 		classes[5] = AccountSummary.class.getName();
 		classes[6] = Loan.class.getName();
 		classes[7] = Leasing.class.getName();
-		/*System.setProperty(HibernateUtil.HIBERNATE_CONFIGURATION_FILE_PROPERTY, 
-				"com.code.aon.account.dao.hibernate.cfg.xml");*/
 		AliasWriter writer = new AliasWriter("com.code.aon.account.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

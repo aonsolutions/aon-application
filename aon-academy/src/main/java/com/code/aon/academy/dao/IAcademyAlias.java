@@ -254,6 +254,12 @@ public interface IAcademyAlias {
 	*/
 	String  COURSE_ACADEMIC_SKILL_ID = COURSE_ACADEMIC_SKILL_ENTRY.getAliasNames()[2];
 
+	/** 
+	* Alias value: CourseAcademicSkill_weight
+	* Hibernate value: CourseAcademicSkill.weight
+	*/
+	String  COURSE_ACADEMIC_SKILL_WEIGHT = COURSE_ACADEMIC_SKILL_ENTRY.getAliasNames()[3];
+
 
 
 	/** 
@@ -372,28 +378,40 @@ public interface IAcademyAlias {
 	DAOConstantsEntry COURSE_INSTRUCTOR_ENTRY = DAOConstants.getDAOConstant(CourseInstructor.class);
 
 	/** 
+	* Alias value: CourseInstructor_id
+	* Hibernate value: CourseInstructor.id
+	*/
+	String  COURSE_INSTRUCTOR_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: CourseInstructor_course_id
 	* Hibernate value: CourseInstructor.course.id
 	*/
-	String  COURSE_INSTRUCTOR_COURSE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[0];
+	String  COURSE_INSTRUCTOR_COURSE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CourseInstructor_course_code
+	* Hibernate value: CourseInstructor.course.code
+	*/
+	String  COURSE_INSTRUCTOR_COURSE_CODE = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CourseInstructor_course_status
+	* Hibernate value: CourseInstructor.course.status
+	*/
+	String  COURSE_INSTRUCTOR_COURSE_STATUS = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: CourseInstructor_employee_id
 	* Hibernate value: CourseInstructor.employee.id
 	*/
-	String  COURSE_INSTRUCTOR_EMPLOYEE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: CourseInstructor_id
-	* Hibernate value: CourseInstructor.id
-	*/
-	String  COURSE_INSTRUCTOR_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[2];
+	String  COURSE_INSTRUCTOR_EMPLOYEE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CourseInstructor_type
 	* Hibernate value: CourseInstructor.type
 	*/
-	String  COURSE_INSTRUCTOR_TYPE = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[3];
+	String  COURSE_INSTRUCTOR_TYPE = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[5];
 
 
 
@@ -534,76 +552,82 @@ public interface IAcademyAlias {
 	DAOConstantsEntry MARK_ENTRY = DAOConstants.getDAOConstant(Mark.class);
 
 	/** 
+	* Alias value: Mark_alumn_course_code
+	* Hibernate value: Mark.alumn.course.code
+	*/
+	String  MARK_ALUMN_COURSE_CODE = MARK_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Mark_alumn_course_academicYear_id
 	* Hibernate value: Mark.alumn.course.academicYear.id
 	*/
-	String  MARK_ALUMN_COURSE_ACADEMIC_YEAR_ID = MARK_ENTRY.getAliasNames()[0];
+	String  MARK_ALUMN_COURSE_ACADEMIC_YEAR_ID = MARK_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Mark_alumn_course_courseLevel_id
 	* Hibernate value: Mark.alumn.course.courseLevel.id
 	*/
-	String  MARK_ALUMN_COURSE_COURSE_LEVEL_ID = MARK_ENTRY.getAliasNames()[1];
+	String  MARK_ALUMN_COURSE_COURSE_LEVEL_ID = MARK_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Mark_alumn_course_courseSubject_id
 	* Hibernate value: Mark.alumn.course.courseSubject.id
 	*/
-	String  MARK_ALUMN_COURSE_COURSE_SUBJECT_ID = MARK_ENTRY.getAliasNames()[2];
+	String  MARK_ALUMN_COURSE_COURSE_SUBJECT_ID = MARK_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Mark_alumn_course_id
 	* Hibernate value: Mark.alumn.course.id
 	*/
-	String  MARK_ALUMN_COURSE_ID = MARK_ENTRY.getAliasNames()[3];
+	String  MARK_ALUMN_COURSE_ID = MARK_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Mark_alumn_customer_registry_name
 	* Hibernate value: Mark.alumn.customer.registry.name
 	*/
-	String  MARK_ALUMN_CUSTOMER_REGISTRY_NAME = MARK_ENTRY.getAliasNames()[4];
+	String  MARK_ALUMN_CUSTOMER_REGISTRY_NAME = MARK_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Mark_alumn_customer_registry_surname
 	* Hibernate value: Mark.alumn.customer.registry.surname
 	*/
-	String  MARK_ALUMN_CUSTOMER_REGISTRY_SURNAME = MARK_ENTRY.getAliasNames()[5];
+	String  MARK_ALUMN_CUSTOMER_REGISTRY_SURNAME = MARK_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Mark_alumn_id
 	* Hibernate value: Mark.alumn.id
 	*/
-	String  MARK_ALUMN_ID = MARK_ENTRY.getAliasNames()[6];
+	String  MARK_ALUMN_ID = MARK_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Mark_evaluation
 	* Hibernate value: Mark.evaluation
 	*/
-	String  MARK_EVALUATION = MARK_ENTRY.getAliasNames()[7];
+	String  MARK_EVALUATION = MARK_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Mark_id
 	* Hibernate value: Mark.id
 	*/
-	String  MARK_ID = MARK_ENTRY.getAliasNames()[8];
+	String  MARK_ID = MARK_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Mark_mark
 	* Hibernate value: Mark.mark
 	*/
-	String  MARK_MARK = MARK_ENTRY.getAliasNames()[9];
+	String  MARK_MARK = MARK_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Mark_subject_academicSkill_id
 	* Hibernate value: Mark.subject.academicSkill.id
 	*/
-	String  MARK_SUBJECT_ACADEMIC_SKILL_ID = MARK_ENTRY.getAliasNames()[10];
+	String  MARK_SUBJECT_ACADEMIC_SKILL_ID = MARK_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Mark_subject_id
 	* Hibernate value: Mark.subject.id
 	*/
-	String  MARK_SUBJECT_ID = MARK_ENTRY.getAliasNames()[11];
+	String  MARK_SUBJECT_ID = MARK_ENTRY.getAliasNames()[12];
 
 
 

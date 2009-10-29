@@ -5,9 +5,8 @@
 			ref="company">
 			<actionListener action="#{company.onLoad}" />
 		</option> 
-		<option key="aon_employee" descriptionKey="aon_employee_desc"
-			ref="employee">
-			<actionListener action="#{employee.onReset}" />
+		<option key="aon_employee" descriptionKey="aon_employee_desc" ref="employee">
+			<actionListener action="#{employee.onSearch}" />
 		</option>
 		<option key="aon_product_category" descriptionKey="aon_product_category_desc" 
 			ref="productCategory"/>

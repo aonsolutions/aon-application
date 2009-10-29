@@ -20,7 +20,7 @@
 				<actionListener action="#{invoicePrint.onEditSearch}"/>
 			</option>
 			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording" role="ContabilizacionFacturas">
-				<actionListener action="#{invoiceRecording.onEditSearch}"/>				
+				<actionListener action="#{invoiceRecording.onInitialize}"/>				
 			</option>
 			<option key="aon_invoice_removing" descriptionKey="aon_invoice_removing" ref="invoiceRemoving" role="BorradoFacturas">
 				<actionListener action="#{invoiceRemover.onEditSearch}"/>				

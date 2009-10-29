@@ -31,7 +31,6 @@
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		
 		<mapping class="com.code.aon.geozone.GeoZone"/>
-		<mapping class="com.code.aon.geozone.Country"/>
 		
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>

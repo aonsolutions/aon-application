@@ -2,20 +2,16 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
-import com.code.aon.account.bridge.AccountEntryInvoice;
-import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
@@ -35,6 +31,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.FinanceGenerator;
 import com.code.aon.finance.invoicing.InvoicePriceStrategy;
 import com.code.aon.product.enumeration.TaxType;
@@ -42,8 +39,6 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.ui.form.BasicController;
@@ -60,8 +55,6 @@ public class PurchaseDirectInvoicingController extends BasicController {
 	
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	
-	private List<SelectItem> addresses;
-
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
@@ -161,7 +154,6 @@ public class PurchaseDirectInvoicingController extends BasicController {
 	@SuppressWarnings("unused")
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
-		removeInvoiceDetailAccount(invoice);
 		getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.PENDING);
@@ -170,18 +162,6 @@ public class PurchaseDirectInvoicingController extends BasicController {
 		}
 		invoiceBean.update(invoice);
 	}
-	
-	@SuppressWarnings("unchecked")
-	private void removeInvoiceDetailAccount(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iterator = invoiceAccountBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)iterator.next();
-			invoiceAccountBean.remove(invoiceDetailAccount);
-		}
-	}
 
 	@SuppressWarnings("unchecked")
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException, ExpressionException {
@@ -189,11 +169,11 @@ public class PurchaseDirectInvoicingController extends BasicController {
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
-		entry.setType(AccountEntryType.PURCHASE_INVOICE);
+		entry.setType((invoice.getType().equals(InvoiceType.SALES)?AccountEntryType.SALES_INVOICE:AccountEntryType.PURCHASE_INVOICE));
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
-		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainSupplierAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
+		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainSupplierAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), getBasesPerAccount(invoice));
 		getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
@@ -230,42 +210,39 @@ public class PurchaseDirectInvoicingController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
+	private Map getBasesPerAccount(Invoice invoice) throws ManagerBeanException {
 		Map basesPerAccount = new HashMap();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
+		Iterator<InvoiceDetail> iterator = invoice.getLines().iterator();
 		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
+			InvoiceDetail invoiceDetail = iterator.next();
 			Account account = null;
 			if (invoiceDetail.getItem() != null) {
 				Integer productId = invoiceDetail.getItem().getProduct().getId();
+				ProductAccountType accountType = (invoice.getType().equals(InvoiceType.SALES))?ProductAccountType.SALES:ProductAccountType.PURCHASE; 
 				IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
-				criteria = new Criteria();
+				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
-				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
+				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), accountType);
 				Iterator iter = productAccountBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					account = ((ProductAccount)iter.next()).getAccount();
 				}
 			}
-			account = (account==null)?account = obtainDefaultAccount():account;
+			account = (account==null)?account = obtainDefaultAccount(invoice):account;
 
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
 			basesPerAccount.put(account, new Double(base));
-
-			insertInvoiceDetailAccount(invoiceDetail, account);
 		}
 		return basesPerAccount;
 	}
 
 	@SuppressWarnings("unchecked")
-	private Account obtainDefaultAccount() throws ManagerBeanException {
+	private Account obtainDefaultAccount(Invoice invoice) throws ManagerBeanException {
+		String paramName = (invoice.getType().equals(InvoiceType.SALES)?DefaultAccounts.SALES_ACCOUNT:DefaultAccounts.PURCHASE_ACCOUNT);
 		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamsBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), DefaultAccounts.PURCHASE_ACCOUNT);
+		criteria.addEqualExpression(appParamsBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), paramName);
 		Iterator iter = appParamsBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			ApplicationParameter param = (ApplicationParameter)iter.next();
@@ -279,15 +256,7 @@ public class PurchaseDirectInvoicingController extends BasicController {
 		}
 		return null;
 	}
-
-	private void insertInvoiceDetailAccount(InvoiceDetail invoiceDetail, Account account) throws ManagerBeanException {
-		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-		InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
-		invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
-		invoiceDetailAccount.setAccount(account);
-		invoiceAccountBean.insert(invoiceDetailAccount);
-	}
-
+	
 	@SuppressWarnings("unchecked") 
 	public Company obtainCompany() throws ManagerBeanException {
 		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
@@ -296,41 +265,6 @@ public class PurchaseDirectInvoicingController extends BasicController {
 			return (Company)iter.next();
 		}
 		return null;
-	}
-
-    public List<SelectItem> getAddresses() {
-		return addresses;
-	}
-	
-	public void setAddresses(List<SelectItem> addresses) {
-		this.addresses = addresses;
-	}
-	
-	public int getAddressCount() {
-		if(addresses != null){
-			return addresses.size();
-		}
-		return 0;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void loadAddresses(Integer id) throws ManagerBeanException {
-		List<SelectItem> addresses = new LinkedList<SelectItem>();
-		if (id != null) {
-			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-			Iterator iter = rAddressBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryAddress address = (RegistryAddress)iter.next();
-				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
-				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
-				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
-				SelectItem item = new SelectItem(address.getId(), addressLabel);
-				addresses.add(item);
-			}
-		}
-		this.addresses = addresses;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -342,11 +276,8 @@ public class PurchaseDirectInvoicingController extends BasicController {
 			Iterator iter = supplierBean.getList(criteria).iterator();
 			if (iter.hasNext()) {
 				Supplier supplier = (Supplier) iter.next();
-				((Invoice)this.getTo()).setRegistryName(supplier.getRegistry().getName() + " " + supplier.getRegistry().getSurname());
-				((Invoice)this.getTo()).setRegistryDocument(supplier.getRegistry().getDocument());
 				((Invoice) this.getTo()).setRegistry(supplier.getRegistry());
 			}
-			loadAddresses(new Integer(event.getNewValue().toString()));
 		}
 	}
 
@@ -375,21 +306,5 @@ public class PurchaseDirectInvoicingController extends BasicController {
 			c.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), value);
 			setCriteria(c);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public Integer getAccountEntryId() throws ManagerBeanException {
-    	Invoice invoice = (Invoice)this.getTo();
-		if (invoice != null && invoice.getId() != null) {
-			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
-			Iterator iterator = accountEntryInvoiceBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iterator.next();
-				return accountEntryInvoice.getAccountEntry().getId();
-			}
-		}
-    	return null;
 	}
 }

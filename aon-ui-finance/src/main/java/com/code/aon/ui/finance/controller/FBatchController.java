@@ -281,7 +281,6 @@ public class FBatchController extends BasicController implements ICollectionProv
             try {
                 fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
                 getManagerBean().update(fBatch);
-                setCsbOutput(null);
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
@@ -327,7 +326,6 @@ public class FBatchController extends BasicController implements ICollectionProv
             try {
                 fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
                 getManagerBean().update(fBatch);
-                setCsbOutput(null);
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
@@ -652,26 +650,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total details", e);
 		}
 		return new Integer(0);
-	}
-
-	@SuppressWarnings("unchecked")
-	public Integer getAccountEntryId() {
-    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
-		try {
-			if (fbatch != null && fbatch.getId() != null) {
-				IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountEntryFbatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fbatch.getId());
-				Iterator iterator = accountEntryFbatchBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
-					return accountEntryFbatch.getAccountEntry().getId();
-				}
-			}
-		}catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining account entry id", e);
-		}
-    	return null;
 	}
 
 	@SuppressWarnings("unused")

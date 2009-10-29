@@ -58,7 +58,7 @@ public class CompositionInvoiceDetailListener extends ControllerAdapter {
 					CompositionDetail compositionDetail = (CompositionDetail)iter.next();
                     ((InvoiceDetail)event.getController().getTo()).setItem(compositionDetail.getItem());
                     ((InvoiceDetail)event.getController().getTo()).setDescription(compositionDetail.getDescription() + "( " + composition.getItem().getProduct().getName() + " )");
-					((InvoiceDetail)event.getController().getTo()).setDeliveryDetail(null);
+					((InvoiceDetail)event.getController().getTo()).setSourceId(null);
 					((InvoiceDetail)event.getController().getTo()).setDiscountExpression(new DiscountExpression("0.0"));
 					((InvoiceDetail)event.getController().getTo()).setQuantity(invoiceDetail.getQuantity() * compositionDetail.getQuantity());
 					if(composition.isPriceInDetails()){
@@ -105,7 +105,7 @@ public class CompositionInvoiceDetailListener extends ControllerAdapter {
 	private InvoiceDetail duplicateInvoiceDetail(InvoiceDetail detail) {
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setId(detail.getId());
-		invoiceDetail.setDeliveryDetail(detail.getDeliveryDetail());
+		invoiceDetail.setSourceId(detail.getSourceId());
 		invoiceDetail.setDiscountExpression(detail.getDiscountExpression());
         invoiceDetail.setInvoice(detail.getInvoice());
 		invoiceDetail.setItem(detail.getItem());

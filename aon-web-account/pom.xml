@@ -11,14 +11,14 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.2</version>
+	<version>2.3.0</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
 		<finalName>aon-account</finalName>
 	</build>
 	<properties>
-		<dbVersion>1.7.2</dbVersion>
+		<dbVersion>1.7.1</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>2.3.1</version>
+			<version>2.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -60,13 +60,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>2.1.2</version>
+			<version>2.1.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>2.5.0</version>
+			<version>2.4.1</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>

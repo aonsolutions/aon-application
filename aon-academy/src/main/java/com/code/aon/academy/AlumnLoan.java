@@ -90,9 +90,9 @@ public class AlumnLoan implements ITransferObject {
 	}
 
 	/**
-	 * Sets the description.
+	 * Sets the material.
 	 * 
-	 * @param description the description
+	 * @param material the material
 	 */
 	public void setMaterial(String material) {
 		this.material = material;

@@ -23,7 +23,6 @@ import com.code.aon.ql.Criteria;
  * @author Consulting & Development. Iñaki Ayerbe - 03/10/2007
  *
  */
-@SuppressWarnings("unchecked")
 public class CompanyUtil {
 
 	/**
@@ -75,14 +74,13 @@ public class CompanyUtil {
 	}
 
 	/**
-	 * Find working activities bound to the selected working place identifier. 
+	 * Find working activities bound to the selected working place identifier.
 	 * 
 	 * @param workPlaceId
-	 * @param active
 	 * @throws ManagerBeanException
 	 */
-	public static final List<SelectItem> findActivities(Integer workPlaceId, int active) 
-				throws ManagerBeanException {
+	public static final List<SelectItem> findActivities(Integer workPlaceId) 
+			throws ManagerBeanException {
 		List<SelectItem> activities = new ArrayList<SelectItem>();
 		activities.add( new SelectItem( -1, "" ) );
 		Criteria criteria = new Criteria(); 
@@ -93,10 +91,8 @@ public class CompanyUtil {
 			Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				WorkActivity activity = (WorkActivity) iter.next();
-				if ( isVisible( active, activity.isActive() ) ) {
-					SelectItem item = new SelectItem( activity.getId(), activity.getDescription() );
-					activities.add(item);
-				}
+				SelectItem item = new SelectItem( activity.getId(), activity.getDescription() );
+				activities.add(item);
 			}
 		}
 		return activities;
@@ -106,19 +102,16 @@ public class CompanyUtil {
 	 * Find working activities bound to the selected working place.
 	 * 
 	 * @param workPlace
-	 * @param active
 	 * @return
 	 */
-	public static final List<SelectItem> getSelectItemActivities(WorkPlace workPlace, int active) {
+	public static final List<SelectItem> getSelectItemActivities(WorkPlace workPlace) {
 		List<SelectItem> activities = new ArrayList<SelectItem>();
 		activities.add( new SelectItem( -1, "" ) );
 		Iterator<WorkActivity> iter = workPlace.getActivities().iterator();
 		while (iter.hasNext()) {
 			WorkActivity activity = iter.next();
-			if ( isVisible( active, activity.isActive() ) ) {
-				SelectItem item = new SelectItem( activity.getId(), activity.getDescription() );
-				activities.add(item);
-			}
+			SelectItem item = new SelectItem( activity.getId(), activity.getDescription() );
+			activities.add(item);
 		}
 		return activities;
 	}
@@ -128,10 +121,9 @@ public class CompanyUtil {
 	 * If no working place is selected, all employees inside the company are retrieved. 
 	 * 
 	 * @param workPlace
-	 * @param active
 	 * @return
 	 */
-	public static final List<SelectItem> getSelectItemEmployees(WorkPlace workPlace, int active) {
+	public static final List<SelectItem> getSelectItemEmployees(WorkPlace workPlace) {
 		List<SelectItem> employees = new ArrayList<SelectItem>();
 		employees.add( new SelectItem( -1, "" ) );
 		if ( workPlace.getId() > -1 ) {
@@ -140,15 +132,13 @@ public class CompanyUtil {
 				Employee employee = (Employee) empIter.next();
 				String name = 
 					employee.getRegistry().getName() + " " + employee.getRegistry().getSurname();
-				if ( isVisible( active, employee.isActive() ) ) {
-					SelectItem item = new SelectItem( employee.getId(), name );
-					employees.add(item);
-				}
+				SelectItem item = new SelectItem( employee.getId(), name );
+				employees.add(item);
 			}
 			Iterator<WorkActivity> actIter = workPlace.getActivities().iterator();
 			while (actIter.hasNext()) {
 				WorkActivity workActivity = actIter.next();
-				List<SelectItem> l = getSelectItemEmployees( workActivity, active );
+				List<SelectItem> l = getSelectItemEmployees( workActivity );
 				l.remove(0);
 				employees.addAll( l );
 			}
@@ -160,10 +150,8 @@ public class CompanyUtil {
 					Employee employee = (Employee) iter.next();
 					String name = 
 						employee.getRegistry().getName() + " " + employee.getRegistry().getSurname();
-					if ( isVisible( active, employee.isActive() ) ) {
-						SelectItem item = new SelectItem( employee.getId(), name );
-						employees.add(item);
-					}
+					SelectItem item = new SelectItem( employee.getId(), name );
+					employees.add(item);
 				}
 			} catch (ManagerBeanException e) {
 			}
@@ -175,10 +163,9 @@ public class CompanyUtil {
 	 * Find employees bound to the selected working activity.
 	 * 
 	 * @param workActivity
-	 * @param active
 	 * @return
 	 */
-	public static final List<SelectItem> getSelectItemEmployees(WorkActivity workActivity, int active) {
+	public static final List<SelectItem> getSelectItemEmployees(WorkActivity workActivity) {
 		List<SelectItem> employees = new ArrayList<SelectItem>();
 		employees.add( new SelectItem( -1, "" ) );
 		Iterator iter = workActivity.getEmployees().iterator();
@@ -186,26 +173,10 @@ public class CompanyUtil {
 			Employee employee = (Employee) iter.next();
 			String name = 
 				employee.getRegistry().getName() + " " + employee.getRegistry().getSurname();
-			if ( isVisible( active, employee.isActive() ) ) {
-				SelectItem item = new SelectItem( employee.getId(), name );
-				employees.add(item);
-			}
+			SelectItem item = new SelectItem( employee.getId(), name );
+			employees.add(item);
 		}
 		return employees;
 	}
 
-	/**
-	 * Return true if the object(employee, resource, workingPlace, workingActivity) can be shown, 
-	 * false otherwise. Depending on:
-	 * active == 1, shows active working activities.
-	 * active == 0, shows active and inactive working activities. 
-	 * active == -1 shows inactive working activities.
-	 * 
-	 * @param active
-	 * @param isActive
-	 * @return
-	 */
-	private static final boolean isVisible(int active, boolean isActive) {
-		return ( active == 0 || ( (isActive && active == 1) || (!isActive && active == -1) ) );
-	}
 }

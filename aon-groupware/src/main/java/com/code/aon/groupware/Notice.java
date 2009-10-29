@@ -84,7 +84,7 @@ public class Notice implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="work_group", nullable=false)
+	@JoinColumn(name="work_group")
 	public WorkGroup getWorkGroup() {
 		return workGroup;
 	}
