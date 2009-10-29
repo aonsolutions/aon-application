@@ -111,17 +111,17 @@ public class MethodParamHandler extends TagHandler {
 		String nameStr = this.name.getValue(ctx);
 		VariableMapper mapper = ctx.getVariableMapper();
 		resolveTypes(ctx);
-		ValueExpression valueVE = null;
 		TagAttribute defaultTag = getAttribute(ParamHandler.DEFAULT);
 		if ( defaultTag != null ) {
         	if ( mapper.resolveVariable(nameStr) == null ) {
-        		valueVE = getValueExmpression(ctx, nameStr, defaultTag);      		
+        		ValueExpression valueVE = getValueExmpression(ctx, nameStr, defaultTag);
+        		mapper.setVariable(nameStr, valueVE);
         	}			
 		} else {
 			TagAttribute valueTag = getAttribute(ParamHandler.VALUE);
-			valueVE = getValueExmpression(ctx, nameStr, valueTag);
+			ValueExpression valueVE = getValueExmpression(ctx, nameStr, valueTag);
+			mapper.setVariable(nameStr, valueVE);
 		}
-		mapper.setVariable(nameStr, valueVE);
 	}
 
 }
