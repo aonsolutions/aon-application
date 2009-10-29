@@ -13,6 +13,8 @@ public interface ISignatureController extends IController {
 
 	IAttachment newAttachment( ITransferObject parent );
 	
+	String getDescription( ITransferObject parent );
+	
 	IManagerBean getAttachmentBean();
 
 	String getAttachmentMimeTypeAlias();
