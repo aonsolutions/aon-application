@@ -78,15 +78,6 @@
 								value="#{preInvoicing.invoicingParams.year}" />
 						</h:panelGrid>
 
-						<t:outputLabel for="CustomerFee_securityLevel"
-							styleClass="aon-form-selectOneMenu-label"
-							value="#{customerBundle.security_level}" />
-						<h:selectOneMenu id="CustomerFee_securityLevel"
-							styleClass="aon-form-selectOneMenu-field"
-							value="#{preInvoicing.invoicingParams.securityLevel}">
-							<f:selectItems value="#{financeCollections.securityLevels}" />
-						</h:selectOneMenu>
-
  						<h:outputLabel for="CustomerFee_WorkPlace"
  							value="#{customerBundle.aon_customer_fee_workplace_abrv}"
 							styleClass="aon-form-input-text-label" />

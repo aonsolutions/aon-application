@@ -340,7 +340,7 @@ public class AccountUtil {
 	
 	private static String zerofill(String prefix) {
 		String string = "1";
-		for(int i=0;i< 12 - (prefix.length() + 1); i++){
+		for(int i=0;i< 9 - (prefix.length() + 1); i++){
 			string = "0" + string;
 		}
 		return prefix + string;
@@ -348,7 +348,7 @@ public class AccountUtil {
 	
 	private static String fillprefix(String prefix) {
 		String string = "";
-		for(int i=0; i< 12 - (prefix.length());i++){
+		for(int i=0; i< 9 - (prefix.length());i++){
 			string = string + "?";
 		}
 		return prefix + string;

@@ -19,7 +19,7 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
 							accesskey="#{bundle.aon_key_save}" />
 						<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							forceId="#{true}" immediate="#{customerFee.new?(true):(false)}"
+							forceId="#{true}" immediate="#{true}"
 							actionListener="#{customerFee.onCancel}" action="economic_data"
 							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
@@ -143,15 +143,6 @@
 							value="#{customerFee.to.period}"
 							styleClass="aon-form-selectOneMenu-field">
 							<f:selectItems value="#{salesCollections.billingPeriods}" />
-						</h:selectOneMenu>	
-
-						<t:outputLabel for="CustomerFee_securityLevel"
-							styleClass="aon-form-input-text-label"
-							value="#{customerBundle.security_level}" />
-						<h:selectOneMenu id="CustomerFee_securityLevel" 
-							value="#{customerFee.to.securityLevel}"
-							styleClass="aon-form-selectOneMenu-field">
-							<f:selectItems value="#{financeCollections.securityLevels}" />
 						</h:selectOneMenu>	
 
 						<t:outputLabel for="CustomerFee_workPlace_id"

@@ -49,13 +49,19 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
+		CommercialTracking ct = (CommercialTracking) controller.getTo();
+		controller.setNext( ct.getNext() );
 	}
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
-		fillNextAction(controller);
+		try {		
+			fillNextAction(controller);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
 	}
 
 	@Override
@@ -80,6 +86,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		if ( controller.getLastSeller() != null ) {
 			ct.setSeller( controller.getLastSeller() );
 		}
+		controller.setNext( new CommercialTracking() );
 	}
 	
 	private void updateLastValue( CommercialTrackingController controller ) {
@@ -88,12 +95,14 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		controller.setLastSeller( ct.getSeller() );
 	}
 
-	private void fillNextAction( CommercialTrackingController controller ) {
+	private void fillNextAction( CommercialTrackingController controller ) throws ManagerBeanException {
 		if ( controller.isNextAction() ) {
 			CommercialTracking ct = (CommercialTracking) controller.getTo();
-			CommercialTracking next = ct.getNext();
+			CommercialTracking next = controller.getNext();
+			ct.setNext( next );
 			next.setSeller( ct.getSeller() );
 			next.setTarget( ct.getTarget() );
+			controller.getManagerBean().insert(next);
 		}
 	}
 	

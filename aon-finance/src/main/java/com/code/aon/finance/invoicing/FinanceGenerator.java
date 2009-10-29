@@ -122,10 +122,8 @@ public class FinanceGenerator {
 					return calendar.getTime();
 				}
 			}
-			if (paymentDaysArray[0] != 0) {
-				calendar.add(Calendar.MONTH, 1);
-				calendar.set(Calendar.DAY_OF_MONTH, paymentDaysArray[0]);
-			}
+			calendar.add(Calendar.MONTH, 1);
+			calendar.set(Calendar.DAY_OF_MONTH, paymentDaysArray[0]);
 		}
 		return calendar.getTime();
 	}

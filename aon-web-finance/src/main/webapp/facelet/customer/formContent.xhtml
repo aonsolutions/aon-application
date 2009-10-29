@@ -19,11 +19,10 @@
 
 	<t:div id="aon-scroll-area" forceId="#{true}">
 		<t:div styleClass="aon-scroll-area-internal">
-			<h:panelGrid columns="2">
 				<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
 					styleClass="aon-form-table"
 					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-	
+
 					<h:outputLabel for="Customer_id"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_code}" />
@@ -39,7 +38,7 @@
 						onblur="toUpperCase(this);"
 						value="#{customerAlias.to.registry.document}" size="16"
 						maxlength="16"/>
-	
+
 					<t:outputLabel for="Customer_name"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_name}" />
@@ -48,7 +47,7 @@
 						size="64" required="#{true}">
 						<f:validateLength minimum="1" maximum="64" />
 					</t:inputText>
-	
+
 					<t:outputLabel for="Customer_surname"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_surname}" />
@@ -57,7 +56,7 @@
 						size="64">
 						<f:validateLength minimum="1" maximum="64" />
 					</t:inputText>
-	
+
 					<t:outputLabel for="Customer_alias"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_alias}" />
@@ -66,12 +65,7 @@
 						size="64">
 						<f:validateLength minimum="1" maximum="64" />
 					</t:inputText>
-				</h:panelGrid>
-			
-				<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-					styleClass="aon-form-table"
-					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-	
+
 					<h:outputLabel for="Customer_scope_id"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_scope}" />
@@ -80,7 +74,7 @@
 						value="#{customerAlias.to.scope.id}">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</h:selectOneMenu>
-	
+
 					<h:outputLabel for="Customer_status"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_status}" />
@@ -89,64 +83,69 @@
 						value="#{customerAlias.to.status}">
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</h:selectOneMenu>
-	
+
 					<t:outputLabel for="Customer_surcharge"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_surcharge}" />
 					<h:selectBooleanCheckbox id="Customer_surcharge"
 						styleClass="aon-form-selectBooleanCheckbox-field"
 						value="#{customerAlias.to.surcharge}" />
-	
-					<t:outputLabel for="Customer_taxFree" 
+
+					<t:outputLabel 
+						for="Customer_taxFree" 
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_taxfree}" />
-					<h:selectBooleanCheckbox id="Customer_taxFree" 
+					<h:selectBooleanCheckbox 
 						styleClass="aon-form-selectBooleanCheckbox-field"
+						id="Customer_taxFree" 
 						value="#{customerAlias.to.taxFree}" />		
-	
-					<t:outputLabel for="Customer_withholding" 
+
+					<t:outputLabel 
+						for="Customer_withholding" 
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_withholding}" />
-					<h:selectBooleanCheckbox id="Customer_withholding" 
+					<h:selectBooleanCheckbox 
 						styleClass="aon-form-selectBooleanCheckbox-field"
+						id="Customer_withholding" 
 						value="#{customerAlias.to.withholding}" />		
+
 				</h:panelGrid>
-			</h:panelGrid>
-
-			<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-				styleClass="aon-form-table"
-				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 				
-				<h:outputLabel for="Observation"
-					styleClass="aon-form-input-text-label"
-					value="#{customerBundle.aon_customer_observation}" />
-				<t:inputTextarea id="Observation"
-					forceId="#{true}" 
-					styleClass="aon-form-input-text"
-					cols="108" rows="5"
-					value="#{customerObservation.observation.comments}" />
-			</h:panelGrid>
+				<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+					styleClass="aon-form-table"
+					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+					
+					<h:outputLabel for="Observation"
+						styleClass="aon-form-input-text-label"
+						value="#{customerBundle.aon_customer_observation}" />
+					<t:inputTextarea id="Observation"
+						forceId="#{true}" 
+						styleClass="aon-form-input-text"
+						cols="95" rows="5"
+						value="#{customerObservation.observation.comments}" />
+					
+				</h:panelGrid>
 
-			<t:panelTabbedPane styleClass="aon-tabpanel" style="width:100%;"
-				activeTabStyleClass="aon-tabpanel-active" id="personalTab"
-				inactiveTabStyleClass="aon-tabpanel-inactive"
-				serverSideTabSwitch="true" rendered="#{!customer.new}">
+				<t:panelTabbedPane styleClass="aon-tabpanel" style="width:100%;"
+					activeTabStyleClass="aon-tabpanel-active" id="personalTab"
+					inactiveTabStyleClass="aon-tabpanel-inactive"
+					serverSideTabSwitch="true" rendered="#{!customer.new}">
 
-				<t:panelTab id="medias" label="#{customerBundle.customer_rmedia}">
-					<ui:include src="/facelet/shared/tabs/medias.xhtml">
-						<ui:param name="controllerAlias" value="#{customerMedia}" />
-						<ui:param name="dataTable" value="customerMediaDataList" />
-					</ui:include>
-				</t:panelTab>
+					<t:panelTab id="medias" label="#{customerBundle.customer_rmedia}">
+						<ui:include src="/facelet/shared/tabs/medias.xhtml">
+							<ui:param name="controllerAlias" value="#{customerMedia}" />
+							<ui:param name="dataTable" value="customerMediaDataList" />
+						</ui:include>
+					</t:panelTab>
 
-				<t:panelTab id="address" label="#{customerBundle.customer_raddress}">
-					<ui:include src="/facelet/shared/tabs/addresses.xhtml">
-						<ui:param name="controllerAlias" value="#{customerAddress}" />
-						<ui:param name="dataTable" value="customerAddressDataList" />
-					</ui:include>
-				</t:panelTab>
+					<t:panelTab id="address" label="#{customerBundle.customer_raddress}">
+						<ui:include src="/facelet/shared/tabs/addresses.xhtml">
+							<ui:param name="controllerAlias" value="#{customerAddress}" />
+							<ui:param name="dataTable" value="customerAddressDataList" />
+						</ui:include>
+					</t:panelTab>
 
-			</t:panelTabbedPane>
+				</t:panelTabbedPane>
 
 		</t:div>
 	</t:div>

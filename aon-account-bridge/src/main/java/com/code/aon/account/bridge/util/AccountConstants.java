@@ -5,19 +5,19 @@ import java.util.List;
 
 public class AccountConstants {
 
-	public static final String BANK_ACCOUNT_PREFIX = "57200";
+	public static final String BANK_ACCOUNT_PREFIX = "5720";
 	
-	public static final String CUSTOMER_ACCOUNT_PREFIX = "43000";
+	public static final String CUSTOMER_ACCOUNT_PREFIX = "4300";
 
-	public static final String SUPPLIER_ACCOUNT_PREFIX = "40000";
+	public static final String SUPPLIER_ACCOUNT_PREFIX = "4000";
 
-	public static final String CREDITOR_ACCOUNT_PREFIX = "41000";
+	public static final String CREDITOR_ACCOUNT_PREFIX = "4100";
 
 	public static final String FIXED_ASSETS_PREFIX = "21";
 	
-	public static final String LOAN_ACCOUNT_PREFIX = "52000";
+	public static final String LOAN_ACCOUNT_PREFIX = "5200";
 
-	public static final String LEASING_ACCOUNT_PREFIX = "52300";
+	public static final String LEASING_ACCOUNT_PREFIX = "5230";
 
 	private static List<String> systemAccounts;
 	

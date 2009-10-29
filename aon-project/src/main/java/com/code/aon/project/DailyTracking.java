@@ -52,7 +52,7 @@ public class DailyTracking implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user", nullable=false)
+	@JoinColumn(name="user_id", nullable=false)
 	public User getUser() {
 		return user;
 	}
