@@ -1,17 +1,11 @@
 package com.code.aon.ui.finance.controller;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -23,7 +17,6 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -35,23 +28,17 @@ import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingEngine;
 import com.code.aon.ql.Criteria;
-import com.code.aon.report.ReportException;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.util.EmailUtilController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
-import com.code.aon.webmail.SecurityInfo;
 
 public class SaleInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
 	
@@ -227,10 +214,6 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 				invoiceDetailBean.remove(invoiceDetail);
 			}
 		}
-	}
-
-	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		sendInvoiceByEmail( null, true );
 	}
 
 }

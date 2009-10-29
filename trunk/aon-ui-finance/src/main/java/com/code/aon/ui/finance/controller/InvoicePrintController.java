@@ -17,7 +17,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.util.EmailUtilController;
-import com.code.aon.ui.sign.controller.SignerController;
+import com.code.aon.ui.sign.controller.CertificateController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.SecurityInfo;
@@ -40,7 +40,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
-	private SecurityInfo getSecurityInfo(SignerController signer) {
+	private SecurityInfo getSecurityInfo(CertificateController signer) {
 		KeyStore keyStore = signer.getSignStore().getKeySore();
 		String alias = signer.getCertificado().getAlias();
 		SecurityInfo si = new SecurityInfo( keyStore, alias, signer.getPassword());
@@ -48,7 +48,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	}
 	
 	public void onSendInvoicesBySignedEmail( ActionEvent event ) {
-		SignerController signer = (SignerController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
+		CertificateController signer = (CertificateController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 		if (! signer.resolveCertificado() ) {
 			return;
 		}

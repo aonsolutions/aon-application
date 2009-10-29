@@ -1,29 +1,20 @@
 package com.code.aon.ui.finance.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.report.ReportException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -162,12 +153,13 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		}
 	}*/
 	
-	public IAttachment getInvoiceFile( Invoice invoice ) {
+	@Override
+	public IAttachment generateReportAttachment( ITransferObject to ) {
 		IManagerBean bean = getAttachmentBean();
 		try {
 			Criteria criteria = new Criteria();
 			String invoiceAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID);
-			criteria.addEqualExpression(invoiceAlias, invoice.getId());
+			criteria.addEqualExpression(invoiceAlias, ((Invoice)to).getId());
 			String typeAlias;
 			typeAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE);
 			criteria.addEqualExpression(typeAlias, MimeType.MIME_PDF);
@@ -176,65 +168,23 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 				return (IAttachment) list.get(0);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error getting invoice pdf file " + invoice, e );
+			LOGGER.log(Level.SEVERE, "Error getting invoice pdf file " + to, e );
 		}
 		return null;
 	}
 	
 	@Override
-	public byte[] getReportData(ITransferObject to) {
-		IAttachment attachment = getInvoiceFile( (Invoice) to );
-		if ( attachment != null ) {
-			return attachment.getData();
+	public IAttachment getUnsignedAttachment(ITransferObject to) {
+		IAttachment attachment = generateReportAttachment(to);
+		if ( attachment == null ) {
+			attachment = super.generateReportAttachment(to);
 		}
-		return null;
-	}	
+		return attachment;
+	}		
 
+	@Override
 	public SignerController getSignerController() {
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
-	
-	public byte[] getInvoiceData( Invoice invoice ) throws ReportException, ManagerBeanException {
-		SignerController signer = getSignerController();
-		byte[] data = null;
-		if ( invoice.isSigned() ) {
-			data = signer.getSignedAttachment(invoice.getId()).getData();
-		} else {
-			IAttachment attachment = getInvoiceFile(invoice);
-			if ( attachment != null ) {
-				data = attachment.getData();
-			} else {
-				data = signer.getReport(invoice);
-			}
-		}
-		return data;		
-	}
-	
-	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		sendInvoiceByEmail( null, false );
-	}
 
-	public String onReport() {
-		try {
-			Invoice invoice = getInvoice();
-			if ( invoice.isSigned() ) {
-				SignerController signer = getSignerController();
-				IAttachment attach = signer.getSignedAttachment(invoice.getId());
-				AttachmentUtil.downloadAttachment(attach);
-			} else {
-				IAttachment attach = getInvoiceFile(invoice);
-				if ( attach != null ) {
-					AttachmentUtil.downloadAttachment(attach);
-				} else {
-					ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
-					return report.onExecute();
-				}
-			}
-		} catch (Throwable e) {
-			LOGGER.severe(">>>> onReport " + e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}			
-		return null;
-	}	
 }

@@ -59,14 +59,14 @@
 						</aon:commandButton>						
 						<h:commandLink id="purchaseInvoice" value="#{financeBundle.finance_invoice}"
 							target="_new" rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
-							action="#{purchaseInvoice.onReport}"
+							action="#{purchaseInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="purchaseInvoice" />
 						</h:commandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or purchaseInvoice.to.signed}" />
+							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or purchaseInvoice.to.signed or (certificate.certificateCount==0)}" />
 							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or (!purchaseInvoice.to.signed)}" />
 							<ui:param name="signButtonReRender" value="purchaseInvoiceForm,showNewMessageWindow" />
 						</ui:include>							
@@ -266,7 +266,6 @@
 			<ui:param name="invoiceAddress" value="#{purchaseInvoiceAddress}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
-			<ui:param name="controller" value="#{purchaseInvoiceSigner}" />
 			<ui:param name="signButtonreRender" value="purchaseInvoiceForm,showNewMessageWindow" />
 			<aon:methodParam name="signActionListener" value="#{purchaseInvoiceSigner.onSign}" type="actionListener" />
 		</ui:include>

@@ -21,11 +21,11 @@
 				
 				<ui:define name="additionalToolbarContent">
 					<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
+						<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
+						<aon:methodParam name="cancelSignActionListener" value="#{invoiceSigner.onCancelSignSelected}" type="actionListener" />					
 						<ui:param name="signController" value="#{saleInvoiceSigner}" />
 						<ui:param name="skipSignButton" value="#{invoiceSigner.selectionEmpty}" />
-						<ui:param name="signActionListener" default="#{invoiceSigner.onSignSelected}" type="actionListener" />
 						<ui:param name="skipCancelSignButton" value="#{invoiceSigner.selectionEmpty}" />
-						<ui:param name="cancelSignActionListener" default="#{invoiceSigner.onCancelSignSelected}" type="actionListener" />
 						<ui:param name="signButtonReRender" value="invoiceSignerDataDiv,aonToolbar" />
 					</ui:include>
 				</ui:define>				
@@ -116,7 +116,6 @@
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
-			<ui:param name="controller" value="#{saleInvoiceSigner}" />
 			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
 			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
 		</ui:include>

@@ -529,15 +529,15 @@ public class OfferController extends BasicController implements ISignatureContro
 	}	
 	
 	@Override
-	public byte[] getReportData(ITransferObject to) {
-		try {
-			return getSignerController().getReport(to);
-		} catch (ReportException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return null;
+	public IAttachment generateReportAttachment(ITransferObject to) {
+		return getSignerController().getReport(to);
 	}
-	
+
+	@Override
+	public IAttachment getUnsignedAttachment(ITransferObject to) {
+		return generateReportAttachment(to);
+	}
+
 	@Override
 	public String getDescription(ITransferObject parent) {
 		Offer offer = (Offer) parent;
