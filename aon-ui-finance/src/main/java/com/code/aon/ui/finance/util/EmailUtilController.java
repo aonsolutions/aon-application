@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -165,14 +166,14 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 
 	public AonFile getInvoiceFile( Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
 		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-		byte[] data = controller.getInvoiceData(invoice);
-		return getInvoiceFile(data, invoice);
+		IAttachment attach = controller.getInvoiceData(invoice);
+		return getInvoiceFile(attach, invoice);
 	}
 	
-	public AonFile getInvoiceFile( byte[] data, Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
-		String fileName = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber();
+	public AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
+		String fileName = attach.getDescription();
 		File file = File.createTempFile( fileName, ".pdf" );
-		FileUtils.writeByteArrayToFile(file, data);
+		FileUtils.writeByteArrayToFile(file, attach.getData());
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
 		aonFile.setFileName( fileName + ".pdf" );

@@ -378,15 +378,15 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 	
 	@Override
-	public byte[] getReportData(ITransferObject to) {
-		try {
-			return getSignerController().getReport(to);
-		} catch (ReportException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return null;
+	public IAttachment generateReportAttachment(ITransferObject to) {
+		return getSignerController().getReport(to);
 	}
-
+	
+	@Override
+	public IAttachment getUnsignedAttachment(ITransferObject to) {
+		return generateReportAttachment(to);
+	}	
+	
 	@Override
 	public String getDescription(ITransferObject parent) {
 		Invoice invoice = (Invoice) parent;
@@ -401,18 +401,22 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
-	public byte[] getInvoiceData( Invoice invoice ) throws ReportException, ManagerBeanException {
+	public IAttachment getInvoiceData( Invoice invoice ) throws ReportException, ManagerBeanException {
 		SignerController signer = getSignerController();
-		byte[] data = null;
+		IAttachment attach = null;
 		if ( invoice.isSigned() ) {
-			data = signer.getSignedAttachment(invoice.getId()).getData();
+			attach = signer.getSignedAttachment(invoice.getId());
 		} else {
-			data = getReportData(invoice);
+			attach = getUnsignedAttachment(invoice);
 		}
-		return data;		
+		return attach;		
+	}
+	
+	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		sendInvoiceByEmail( null, true );
 	}
 
-	public void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, ReportException, IOException, SAXException {
+	private void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		Invoice invoice = getInvoice();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
@@ -426,8 +430,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 		messageController.setSubject( emailController.getEmailSubject(invoice) );
 		messageController.setContent( emailController.getEmailBody(invoice) );
-		byte[] data = getInvoiceData(invoice);
-		messageController.addAttachment( emailController.getInvoiceFile(data, invoice) );
+		IAttachment attach = getInvoiceData(invoice);
+		messageController.addAttachment( emailController.getInvoiceFile(attach, invoice) );
 		if ( facturae ) {
 			messageController.addAttachment( emailController.getInvoiceXml(invoice) );	
 		}
