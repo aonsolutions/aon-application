@@ -3,6 +3,7 @@ package com.code.aon.faces.controller;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.FilenameUtils;
 import org.richfaces.event.UploadEvent;
 
 import com.code.aon.common.IAttachment;
@@ -79,6 +80,8 @@ public class AttachmentController extends LinesController implements IAttachment
 	 */
 	public void fileUploaded(UploadEvent event) {
 		AttachmentUtil.fileUploaded(event, this);
+		String description = FilenameUtils.getName(getAonFile().getFileName());
+		getAttachment().setDescription(description);
 	}
 	
     public void downloadAttachment( ActionEvent event ) throws NumberFormatException, ManagerBeanException {

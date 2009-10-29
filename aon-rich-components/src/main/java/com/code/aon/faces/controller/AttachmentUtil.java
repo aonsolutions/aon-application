@@ -139,7 +139,9 @@ public class AttachmentUtil implements ICommonConstants {
 			if ( type != null ) {
 				response.setContentType( type.getName() );	
 			}
-			response.setHeader("Content-disposition", "attachment;filename=\"" + fileName + "\"");
+			if ( (type != MimeType.MIME_PDF) && (type != MimeType.MIME_SIGNED_PDF) && ! StringUtils.isEmpty(fileName) ) {
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");	
+			}
 			response.setHeader("Content-Length", String.valueOf(data.length));
 			ServletOutputStream sos = response.getOutputStream();
 			sos.write( data );
