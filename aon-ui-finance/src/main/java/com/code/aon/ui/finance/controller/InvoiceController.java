@@ -390,7 +390,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	@Override
 	public String getDescription(ITransferObject parent) {
 		Invoice invoice = (Invoice) parent;
-		return "invoice_" + invoice.getSeries() + "-" + invoice.getNumber();
+		return "invoice_" + invoice.getReferenceCode().replace("/", "-");
 	}
 	
 	public EmailUtilController getEmailController() {
