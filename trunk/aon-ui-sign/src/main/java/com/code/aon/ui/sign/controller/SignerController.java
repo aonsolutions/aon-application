@@ -320,6 +320,7 @@ public class SignerController {
 		
 		IAttachment attachment = signatureController.newAttachment(to);
 		attachment.setData( signedFileData );
+		attachment.setDescription( signatureController.getDescription(to) );
 		attachment.setMimeType( MimeType.MIME_SIGNED_PDF );
 		attachmentBean.insert( attachment );
 

@@ -538,6 +538,12 @@ public class OfferController extends BasicController implements ISignatureContro
 		return null;
 	}
 	
+	@Override
+	public String getDescription(ITransferObject parent) {
+		Offer offer = (Offer) parent;
+		return "offer_" + offer.getSeries() + "-" + offer.getNumber();
+	}
+
 	public SignerController getSignerController() {
 		return (SignerController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_SIGNER_CONTROLLER_NAME);
 	}	

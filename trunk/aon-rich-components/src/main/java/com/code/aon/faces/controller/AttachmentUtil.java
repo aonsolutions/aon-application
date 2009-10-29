@@ -122,7 +122,6 @@ public class AttachmentUtil implements ICommonConstants {
 			}
 			f.setFileName(item.getFileName());
 			f.setMimeType(getMimeType(f));
-			controller.getAttachment().setDescription(FilenameUtils.getName(item.getFileName()));
 			controller.setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());

@@ -387,6 +387,12 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return null;
 	}
 
+	@Override
+	public String getDescription(ITransferObject parent) {
+		Invoice invoice = (Invoice) parent;
+		return "invoice_" + invoice.getSeries() + "-" + invoice.getNumber();
+	}
+	
 	public EmailUtilController getEmailController() {
 		return emailController;
 	}

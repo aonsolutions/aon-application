@@ -68,7 +68,7 @@ public class PurchaInvoiceAttachmentListener extends ControllerAdapter implement
 	}	
 
 	public boolean isAttachmentAvailable() {
-		return attachment.getId() != null;
+		return (attachment != null) && (attachment.getId() != null);
 	}
 	
 	public IAttachment getAttachment() {
@@ -87,7 +87,6 @@ public class PurchaInvoiceAttachmentListener extends ControllerAdapter implement
 	public boolean isUploaded() {
 		return AttachmentUtil.isUploaded(this);
 	}
-	
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
@@ -117,6 +116,9 @@ public class PurchaInvoiceAttachmentListener extends ControllerAdapter implement
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		InvoiceController controller = (InvoiceController) event.getController();
+		if ( getAttachment() == null ) {
+			setAttachment( controller.newAttachment(controller.getTo()) );
+		}
 		AttachmentUtil.checkFileData(this, controller.isNew(), false);
 		AttachmentUtil.updateAttachment(this);
 		try {		
