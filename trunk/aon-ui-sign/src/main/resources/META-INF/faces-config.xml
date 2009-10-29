@@ -10,4 +10,12 @@
 		</resource-bundle>
 	</application>
 	
+	<managed-bean>
+		<managed-bean-name>certificate</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.sign.controller.CertificateController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 </faces-config>

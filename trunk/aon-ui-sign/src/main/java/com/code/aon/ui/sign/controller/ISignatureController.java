@@ -21,6 +21,8 @@ public interface ISignatureController extends IController {
 	
 	String getAttachmentParentAlias();
 	
-	byte[] getReportData( ITransferObject to );
+	IAttachment generateReportAttachment( ITransferObject to );
+	
+	IAttachment getUnsignedAttachment( ITransferObject to );
 	
 }

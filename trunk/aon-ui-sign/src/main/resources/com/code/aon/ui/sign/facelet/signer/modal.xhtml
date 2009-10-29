@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showSignWindow">
-		<c:if test="#{controller.showSignWindow}">
+		<c:if test="#{certificate.showSignWindow}">
 			<rich:modalPanel id="invoiceSignerModalPanel" 
-				rendered="#{controller.showSignWindow}" showWhenRendered="true"
+				rendered="#{certificate.showSignWindow}" showWhenRendered="true"
 				minWidth="380" height="180" minHeight="180" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -24,7 +24,7 @@
 							styleClass="aon-popupWindow-close"
 							reRender="showSignWindow" immediate="true">
 							<f:setPropertyActionListener
-								target="#{controller.showSignWindow}"
+								target="#{certificate.showSignWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -48,7 +48,7 @@
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
-											target="#{controller.showSignWindow}"
+											target="#{certificate.showSignWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
@@ -57,40 +57,40 @@
 
 										<aon:outputLabel for="keystore"
 											value="#{signBundle.sign_keystore}" />
-										<c:if test="#{empty controller.certificates}">											
+										<c:if test="#{empty certificate.certificates}">											
 											<aon:selectOneMenu id="keystore"
-												value="#{controller.keystore}">
-												<f:selectItems value="#{controller.digitalCertificates}" />
+												value="#{certificate.keystore}">
+												<f:selectItems value="#{certificate.digitalCertificates}" />
 											</aon:selectOneMenu>
 										
 											<aon:outputLabel for="password"
 												value="#{bundle.aon_login_passwd}" />
 											<aon:inputSecret id="password" 
-												value="#{controller.password}" />
+												value="#{certificate.password}" />
 										</c:if>
 
-										<c:if test="#{!(empty controller.certificates)}">
+										<c:if test="#{!(empty certificate.certificates)}">
 											<aon:outputText id="keystore"
-												value="#{controller.keystore.description}" />
+												value="#{certificate.keystore.description}" />
 											
 											<aon:outputLabel for="certificates"
 												value="#{signBundle.sign_digital_certificate}" />
 											<aon:selectOneMenu id="certificates"
-												value="#{controller.alias}">
-												<f:selectItems value="#{controller.certificates}" />
+												value="#{certificate.alias}">
+												<f:selectItems value="#{certificate.certificates}" />
 											</aon:selectOneMenu>
 										</c:if>
-										<c:if test="#{controller.showCertificatePassword}">
+										<c:if test="#{certificate.showCertificatePassword}">
 											<aon:outputLabel for="certificatePassword"
 												value="#{signBundle.sign_digital_certificate_password}" />
 											<aon:inputSecret id="certificatePassword" 
-												value="#{controller.certificatePassword}" />
+												value="#{certificate.certificatePassword}" />
 										</c:if>										
 									</aon:panelGrid>
 									<h:panelGrid cellpadding="2" cellspacing="0" columns="2"
 										styleClass="aon-panelGrid-formatting aon-margin-top">
 										<aon:selectBooleanCheckbox id="storeCertificate"
-											value="#{controller.storeCertificate}" />				
+											value="#{certificate.storeCertificate}" />				
 										<aon:outputLabel for="storeCertificate"
 											value="#{signBundle.sign_certificate_store}" />
 									</h:panelGrid>								
