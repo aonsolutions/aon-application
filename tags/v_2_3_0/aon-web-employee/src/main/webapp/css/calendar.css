@@ -1,0 +1,80 @@
+/* FACES CALENDAR TOMAHAWK */
+/* small calendar. month name*/
+.yearMonthHeader {
+	background-color: #FFFFFF;
+	text-align: center;
+	font-weight: bold;
+	font-size:0.9em;
+	text-decoration:none;
+	
+}
+
+.yearMonthHeader td a {
+	width:100%;
+	border: #3C5F84 1px solid;
+	font-size:0.8em;
+	color: #3C5F84;
+	background-color:#F0F5F8;
+	
+}
+/* small calendar. week days */
+.weekHeader {
+	background-color: #FFFFFF;
+	text-align: center;
+	border: none;
+	text-decoration:none;
+	font-weight:bold;
+	font-size:0.8em;
+	
+}
+/* small calendar. Actual day*/
+.currentDayCell {
+	background-color: #C8D7E3;
+	color: #000;
+	text-decoration:none;
+	
+}
+
+#plannerNavigator a{
+	text-decoration:none;color:#000;
+}
+
+table.background td.evenReddish,
+table.background td.unevenReddish,
+table.background td.freeReddish {
+    font-family: Verdana, Arial, Helvetica, Sans-Serif;
+    font-size: 10px;
+    text-align: center;
+    border:#FF0000 solid 1px;
+}
+
+table.background td.unevenReddish {
+    background-color: rgb(240,220,220);
+    color: rgb(230,220,220);
+    border:#0000FF solid 1px;
+    
+   
+}
+
+table.background td.evenReddish {
+    background-color: rgb(255,230,230);
+    color: rgb(240,230,230);
+    border:#00FF00 solid 1px;
+    
+}
+
+table.background td.freeReddish {
+	background-color: rgb(255,0,0);
+	color: rgb(255,0,0);
+	 
+}
+
+.hours{
+	font-size:14px !important;
+	font-weight:bold;
+	margin-right:3px;
+	}
+.minutes{
+	font-size:14px !important;
+	margin-right:3px;
+	}

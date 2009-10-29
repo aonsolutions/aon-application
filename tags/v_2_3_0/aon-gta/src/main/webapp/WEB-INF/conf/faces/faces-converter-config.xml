@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<converter>
+		<description>Conversor para los Enum</description>
+		<converter-for-class>java.lang.Enum</converter-for-class>
+		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
+	</converter>
+
+	<converter>
+		<description>Conversor for report's OutputFormat Enumeration class</description>
+		<converter-for-class>com.code.aon.ui.report.OutputFormat</converter-for-class>
+		<converter-class>com.code.aon.ui.report.converter.OutputFormatConverter</converter-class>
+	</converter>
+	
+	<converter>
+		<description>Conversor para las Fecha que son datos numericos</description>
+		<converter-id>aonNumericDateConversor</converter-id>
+		<converter-class>com.code.aon.ui.hyperview.converter.NumericDateConverter</converter-class>
+	</converter>	
+</faces-config>

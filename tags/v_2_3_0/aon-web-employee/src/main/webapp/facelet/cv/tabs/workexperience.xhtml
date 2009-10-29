@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition >
+
+	<t:div styleClass="aon-content-toolbar" >
+		<t:div styleClass="aon-content-toolbar-internal">
+			<t:div styleClass="aon-content-toolbar-item-group">
+				<t:commandButton id="workexperience_save" value="#{bundle.aon_save}"
+					forceId="#{true}" actionListener="#{WorkExperience.accept}"
+					onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+					accesskey="#{bundle.aon_key_save}"/>
+				<t:commandButton id="workexperience_reset" value="#{bundle.aon_reset}"
+					rendered="#{!WorkExperience.new}"
+					actionListener="#{WorkExperience.onReset}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" 
+					accesskey="#{bundle.aon_key_new}"/>
+				<t:commandButton id="workexperience_remove" value="#{bundle.aon_remove}"
+					rendered="#{!WorkExperience.new}" forceId="#{true}"
+					actionListener="#{WorkExperience.remove}"
+					onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+					accesskey="#{bundle.aon_key_remove}"/>
+			</t:div>
+		</t:div>
+	</t:div>
+
+	<t:div styleClass="aon-scroll-area-internal">
+		<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+			styleClass="aon-form-table" style="width:720px;"
+			columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+			<t:outputLabel for="WorkExperience_startDate"
+				styleClass="aon-form-input-text-label"
+				value="#{appBundle.aon_start_date}" />
+			<h:panelGroup>
+				<t:inputText id="WorkExperience_startDate" forceId="#{true}"
+						styleClass="aon-form-input-text" maxlength="12"
+						value="#{WorkExperience.to.startDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</t:inputText>
+				<t:commandButton styleClass="aon-form-calendar-button"
+								id="WorkExperience_startDate_button" forceId="#{true}" 
+								value=""
+								onclick="displayCalendar(this.form.WorkExperience_startDate,'dd/mm/yyyy',this);return false;"
+								immediate="true" />
+			</h:panelGroup>
+			
+			<t:outputLabel for="WorkExperience_endDate"
+				styleClass="aon-form-input-text-label"
+				value="#{appBundle.aon_end_date}" />
+			<h:panelGroup>
+				<t:inputText id="WorkExperience_endDate" forceId="#{true}"
+						styleClass="aon-form-input-text" maxlength="12"
+						value="#{WorkExperience.to.endDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</t:inputText>
+				<t:commandButton styleClass="aon-form-calendar-button"
+								id="WorkExperience_endDate_button" forceId="#{true}" 
+								value=""
+								onclick="displayCalendar(this.form.WorkExperience_endDate,'dd/mm/yyyy',this);return false;"
+								immediate="true" />
+			</h:panelGroup>
+
+			<t:outputLabel for="WorkExperience_job"
+				styleClass="aon-form-input-text-label"
+				value="#{appBundle.workexperience_job}" />
+			<t:inputText id="WorkExperience_job"
+				styleClass="aon-form-input-text" forceId="#{true}"
+				value="#{WorkExperience.to.job}" size="64">
+				<f:validateLength maximum="64" />
+			</t:inputText>
+			
+			<t:outputLabel for="WorkExperience_company"
+				styleClass="aon-form-input-text-label"
+				value="#{appBundle.workexperience_company}" />
+			<t:inputText id="WorkExperience_company"
+				styleClass="aon-form-input-text" forceId="#{true}"
+				value="#{WorkExperience.to.company}" size="64">
+				<f:validateLength maximum="64" />
+			</t:inputText>
+
+		</h:panelGrid>
+
+		<t:div styleClass="aon-form-group"
+			rendered="#{WorkExperience.model.rowCount > 0}">
+			<t:div styleClass="aon-form-group-title">
+				<t:outputLabel for="WorkExperienceDataList"
+					value="#{appBundle.workexperience_experience}" />
+			</t:div>
+
+			<t:div styleClass="aon-form-group-body">
+				<t:dataTable id="WorkExperienceDataList" var="to"
+					value="#{WorkExperience.model}" styleClass="aon-edit-table"
+					headerClass="aon-edit-table-header"
+					footerClass="aon-edit-table-footer" rowIndexVar="rowIndex"
+					rendered="#{WorkExperience.model.rowCount > 0}" rows="20"
+					rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+					rowOnMouseOver="selectRow( this )"
+					rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+					cellpadding="0" cellspacing="0"
+					columnClasses="aon-edit-table-body aon-edit-table-body-string,
+								   aon-edit-table-body aon-edit-table-body-string,
+								   aon-edit-table-body aon-edit-table-body-string,
+								   aon-edit-table-body aon-edit-table-body-string">
+					<h:column>
+						<f:facet name="header">
+							<t:outputText value="#{appBundle.aon_start_date}" />
+						</f:facet>
+						<t:outputText value="#{to.startDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+						<t:commandLink
+							styleClass="aon-table-row-selected"
+							rendered="#{to!=WorkExperience.to}"
+							actionListener="#{WorkExperience.onSelect}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<t:outputText value="#{appBundle.aon_end_date}" />
+						</f:facet>
+						<t:outputText value="#{to.endDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<t:outputText value="#{appBundle.workexperience_job}" />
+						</f:facet>
+						<t:outputText value="#{to.job}" />
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">
+							<t:outputText value="#{appBundle.workexperience_company}" />
+						</f:facet>
+						<t:outputText value="#{to.company}" />
+					</h:column>
+					
+				</t:dataTable>
+
+				<t:div styleClass="aon-datascroller"
+					rendered="#{WorkExperience.model.rowCount > 20}">
+					<h:panelGrid columns="2"
+						columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+						<t:dataScroller id="workexperience_scroll_2" for="WorkExperienceDataList"
+							pageCountVar="pageCount" pageIndexVar="pageIndex"
+							rowsCountVar="rowsCount"
+							displayedRowsCountVar="displayedRowsCountVar"
+							firstRowIndexVar="firstRowIndex"
+							lastRowIndexVar="lastRowIndex"
+							rendered="#{WorkExperience.model.rowCount > 20}">
+							<h:outputFormat value="#{appBundle.aon_scroll}">
+								<f:param value="#{displayedRowsCountVar}" />
+								<f:param value="#{rowsCount}" />
+								<f:param value="#{pageIndex}" />
+								<f:param value="#{pageCount}" />
+							</h:outputFormat>
+						</t:dataScroller>
+
+						<t:div id="workexperience_navigation2">
+							<t:dataScroller id="workexperience_scroll_3" for="WorkExperienceDataList"
+								fastStep="5" paginator="#{true}" paginatorMaxPages="5"
+								paginatorActiveColumnClass="aon-datascroller-buton-currentpage"
+								paginatorColumnClass="aon-page-navigation-page"
+								rendered="#{WorkExperience.model.rowCount > 20}">
+
+								<f:facet name="first">
+									<t:div styleClass="aon-datascroller-button-first">&#160;</t:div>
+								</f:facet>
+								<f:facet name="last">
+									<t:div styleClass="aon-datascroller-button-last">&#160;</t:div>
+								</f:facet>
+								<f:facet name="previous">
+									<t:div styleClass="aon-datascroller-button-previous">&#160;</t:div>
+								</f:facet>
+								<f:facet name="next">
+									<t:div styleClass="aon-datascroller-button-next">&#160;</t:div>
+								</f:facet>
+								<f:facet name="fastforward">
+									<t:div styleClass="aon-datascroller-button-fastforward">&#160;</t:div>
+								</f:facet>
+								<f:facet name="fastrewind">
+									<t:div styleClass="aon-datascroller-button-fastrewind">&#160;</t:div>
+								</f:facet>
+							</t:dataScroller>
+						</t:div>
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+		</t:div>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>

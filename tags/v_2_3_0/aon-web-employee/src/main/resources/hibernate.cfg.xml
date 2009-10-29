@@ -1,0 +1,84 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+		<property name="connection.datasource">java:comp/env/jdbc/AonEmployee</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<!--
+		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.DBCPConnectionProvider</property>
+		<property name="connection.service">jboss.admin:service=AonSecurity</property>
+		<property name="connection.service">Catalina:type=Security,name=AonSecurity</property>
+
+ 		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_employee?autoReconnect=true</property>		
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="connection.password">serubd2000</property>		
+		 -->
+		<property name="show_sql">true</property>
+
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
+
+		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.WebInfo"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-GEOZONE Mapping files -->	
+		<mapping class="com.code.aon.geozone.GeoTree"/>			
+		<mapping class="com.code.aon.geozone.GeoZone"/>			
+
+		<!-- AON-PLANNER Mapping files -->		
+		<mapping class="com.code.aon.planner.core.Calendar"/>
+		<mapping class="com.code.aon.planner.core.IncidenceType"/>
+
+		<!-- AON-EMPLOYEE Mapping files -->		
+		<mapping class="com.code.aon.employee.Expenditures"/>
+		<mapping class="com.code.aon.employee.ExpendituresItems"/>
+
+		<!-- AON-EMPLOYEE CVs Mapping files -->		
+		<mapping class="com.code.aon.cvitae.Curriculum"/>
+		<mapping class="com.code.aon.cvitae.Studies"/>
+		<mapping class="com.code.aon.cvitae.WorkExperience"/>
+		<mapping class="com.code.aon.cvitae.Knowledge"/>
+		<mapping class="com.code.aon.cvitae.Language"/>		
+		<mapping class="com.code.aon.cvitae.EvaluateType"/>
+		<mapping class="com.code.aon.cvitae.Evaluate"/>
+		<mapping class="com.code.aon.cvitae.EvaluateSummary"/>
+
+		<!-- AON-EMPLOYEE Record Mapping files -->		
+		<mapping class="com.code.aon.record.Work"/>
+		<mapping class="com.code.aon.record.LHCourse"/>
+		<mapping class="com.code.aon.record.Position"/>
+		<mapping class="com.code.aon.record.Contract"/>		
+
+		<!-- AON-EMPLOYEE Department Mapping files -->		
+		<mapping class="com.code.aon.department.Department"/>
+
+	</session-factory>
+
+</hibernate-configuration>

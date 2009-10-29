@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root id="aon_app" key="AON_APP" descriptionKey="aon_application_menu_title" ref="firstContent">
+	<menu id="sales" ref="content" key="aon_sales" descriptionKey="aon_sales_desc">
+		<option id="supportOrder" key="aon_sales_supportorder" descriptionKey="aon_sales_supportorder_desc"
+			ref="SupportOrder">
+			<actionListener action="#{SupportOrder.onNewSupportOrder}"/>
+		</option>
+		<option id="offer" key="aon_sales_offer" descriptionKey="aon_sales_offer_desc" 
+			ref="offer">
+			<actionListener action="#{offerDetail.onCancel}"/>
+			<actionListener action="#{offer.onReset}"/>
+		</option>
+		<option id="delivery" key="aon_sales_delivery" descriptionKey="aon_sales_delivery_desc" 
+			ref="delivery">
+			<actionListener action="#{incomeDetail.onCancel}"/>
+			<actionListener action="#{deliveryDetail.onCancel}"/>
+			<actionListener action="#{delivery.onReset}"/>
+		</option>
+		<option id="productivity" key="aon_labour_productivity" descriptionKey="aon_labour_productivity_desc" 
+			ref="productivity">
+			<actionListener action="#{labourReport.onEditSearch}"/>
+		</option>		
+		<option id="salesInvoicing" key="aon_sales_invoicing" descriptionKey="aon_sales_invoicing_desc" 
+			ref="sales_invoicing">
+			<actionListener action="#{salesInvoicingDetail.onCancel}" />
+			<actionListener action="#{salesInvoicing.onReset}" />
+		</option>
+	</menu>
+	<menu id="purchase" ref="content" key="aon_purchase" descriptionKey="aon_purchase_desc">
+		<option id="income" key="aon_purchase_purchase" descriptionKey="aon_purchase_purchase_desc" 
+			ref="purchase">
+			<actionListener action="#{incomeDetail.onCancel}"/>
+			<actionListener action="#{income.onReset}"/>
+		</option>
+		<option id="invoicing" key="aon_purchase_invoicing" descriptionKey="aon_purchase_invoicing_desc" 
+			ref="purchase_invoicing">
+			<actionListener action="#{invoicingDetail.onCancel}" />
+			<actionListener action="#{invoicing.onReset}" />
+		</option>
+	</menu>
+	<menu ref="content" key="aon_tables" descriptionKey="aon_tables_desc">
+		<menu ref="content" key="aon_vehicle_tables" descriptionKey="aon_vehicle_tables_desc">
+			<option key="aon_vehicle" descriptionKey="aon_vehicle_desc"
+				ref="TasItem">
+				<actionListener action="#{TASItem.onReset}" />
+			</option>
+			<option key="aon_make" descriptionKey="aon_make_desc"
+				ref="Make" />
+			<option key="aon_model" descriptionKey="aon_model" 
+				ref="Model">
+				<actionListener action="#{TASModel.onReset}" />
+			</option>
+		</menu>
+		<menu ref="content" key="aon_product_tables" descriptionKey="aon_product_tables_desc">
+			<option key="aon_item" descriptionKey="aon_item_desc" 
+				ref="item">
+				<actionListener action="#{item.onReset}"/>
+			</option>
+			<option key="aon_composition" descriptionKey="aon_composition_desc" 
+				ref="composition">
+				<actionListener action="#{composition.setManufactureMode}"/>
+				<actionListener action="#{composition.onReset}"/>
+			</option>
+		</menu>
+		<option key="aon_customer" descriptionKey="aon_customer_desc" 
+			ref="customer">
+			<actionListener action="#{customer.onReset}"/>
+		</option>
+		<option key="aon_supplier" descriptionKey="aon_supplier_desc"
+			ref="supplier">
+			<actionListener action="#{supplier.onReset}"/>
+		</option>
+		<option key="aon_target" descriptionKey="aon_target_desc" 
+			ref="target">
+			<actionListener action="#{target.onReset}"/>
+		</option>
+		<option key="aon_appraiser" descriptionKey="aon_appraiser_desc" 
+			ref="appraiser">
+			<actionListener action="#{appraiser.onReset}"/>
+		</option>
+	</menu>
+	<menu ref="content" key="aon_inventory"  descriptionKey="aon_inventory_desc">
+		<option ref="inventory" key="aon_inventory_remake" descriptionKey="aon_inventory_remake_desc">
+			<actionListener action="#{inventoryDetail.onReset}"/>
+			<actionListener action="#{inventory.onReset}"/>
+		</option>
+		<option ref="stock" key="aon_stock" descriptionKey="aon_stock_desc">
+			<actionListener action="#{stock.onEditSearch}"/>
+		</option>
+	</menu>
+</root>

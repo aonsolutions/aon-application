@@ -1,0 +1,62 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+<ui:composition>
+	<t:tree2 id="tree" value="#{treecalendar.treeModel}"
+		clientSideToggle="false" showLines="false" showNav="true"
+		binding="#{treecalendar.htmlTree}" var="node" varNodeToggler="t">
+
+		<f:facet name="root">
+			<t:div styleClass="aon-tree-menu-root">
+				<t:graphicImage rendered="#{t.nodeExpanded}"
+					url="#{node.iconOpen}" />
+				<t:graphicImage rendered="#{!t.nodeExpanded}"
+					url="#{node.iconClose}" />
+				<h:commandLink id="treeRootId"
+						rendered="#{!t.nodeSelected}"
+						styleClass="#{treecalendar.selected ? ' aon-tree-menu-branch-link-selected' : 'aon-tree-menu-root-link' }"
+						action="#{treecalendar.treeTextAction}"
+						actionListener="#{treecalendar.pressed}">
+					<h:outputText value="#{node.description}" style="white-space:nowrap;"/>
+				</h:commandLink>
+			</t:div>
+		</f:facet>
+
+		<f:facet name="branch">
+			<t:div styleClass="aon-tree-menu-branch">
+				<t:graphicImage rendered="#{t.nodeExpanded}"
+					url="#{node.iconOpen}" />
+				<t:graphicImage rendered="#{!t.nodeExpanded}"
+					url="#{node.iconClose}" />
+				<h:commandLink id="#{treecalendar.folderId}"
+						rendered="#{!t.nodeSelected}"
+						styleClass="#{treecalendar.selected ? ' aon-tree-menu-branch-link-selected' : 'aon-tree-menu-branch-link' }"
+						action="#{treecalendar.treeTextAction}"
+						actionListener="#{treecalendar.pressed}">
+					<h:outputText value="#{node.description}" style="white-space:nowrap;"/>
+				</h:commandLink>
+			</t:div>
+		</f:facet>
+
+		<f:facet name="leaf">
+			<h:panelGroup style="white-space:nowrap;">
+				<t:graphicImage rendered="#{t.nodeExpanded}"
+					url="#{node.iconOpen}" />
+				<t:graphicImage rendered="#{!t.nodeExpanded}"
+					url="#{node.iconClose}" />
+				<h:commandLink id="#{treecalendar.nodeId}"
+						rendered="#{!t.nodeSelected}"
+						styleClass="#{treecalendar.selected ? ' aon-tree-menu-leaf-link-selected' : 'aon-tree-menu-leaf-link' }"
+						action="#{treecalendar.nodeAction}" actionListener="#{treecalendar.pressed}">
+					<h:outputText value="#{node.description}" />
+				</h:commandLink>
+			</h:panelGroup>
+		</f:facet>
+
+	</t:tree2>
+</ui:composition>
+</body>
+</html>

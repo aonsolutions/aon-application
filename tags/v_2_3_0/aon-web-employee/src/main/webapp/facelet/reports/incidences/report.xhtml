@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<t:stylesheet path="/jscalendar/dhtmlgoodies_calendar.css" />
+		<script type="text/javascript" 
+				src="${facesContext.externalContext.requestContextPath}/jscalendar/dhtmlgoodies_calendar.js">
+			// nothing
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="incidencesReportForm">
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton id="incidencesList" forceId="#{true}" value="Informe"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-list"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-list'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-list'"
+							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/reports/preferences.faces');return false;"  />
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText value="#{appBundle.aon_report_parameters}" />
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+								columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						<t:outputLabel for="IncidencesReport_startingDate"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_start_date}" />
+						<h:panelGroup>
+							<t:inputText id="IncidencesReport_startingDate" forceId="#{true}"
+									styleClass="aon-form-input-text" maxlength="12"
+									value="#{incidencesReport.startingDate}"
+									valueChangeListener="#{incidencesReport.startingDateChanged}" 
+									onchange="this.form.submit();" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-calendar-button"
+											id="IncidencesReport_startingDate_button" forceId="#{true}" 
+											value=""
+											onclick="displayCalendar(this.form.IncidencesReport_startingDate,'dd/mm/yyyy',this);return false;"
+											immediate="true" />
+						</h:panelGroup>
+
+						<t:outputLabel for="IncidencesReport_endingDate"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_end_date}" />
+						<h:panelGroup>
+							<t:inputText id="IncidencesReport_endingDate" forceId="#{true}"
+									styleClass="aon-form-input-text" maxlength="12"
+									value="#{incidencesReport.endingDate}"
+									valueChangeListener="#{incidencesReport.endingDateChanged}" 
+									onchange="this.form.submit();" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-calendar-button"
+											id="IncidencesReport_endingDate_button" forceId="#{true}" 
+											value=""
+											onclick="displayCalendar(this.form.IncidencesReport_endingDate,'dd/mm/yyyy',this);return false;"
+											immediate="true" />
+						</h:panelGroup>
+					</h:panelGrid>
+				
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+								columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						<t:outputLabel for="IncidencesReport_workPlace"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_workplace}" />
+						<t:selectOneMenu id="IncidencesReport_workPlace" forceId="#{true}"
+										styleClass="aon-form-selectOneMenu-field"
+										value="#{incidencesReport.workPlace.id}" 
+										valueChangeListener="#{incidencesReport.workingPlaceChanged}" 
+										onchange="this.form.submit();" >
+							<f:selectItems value="#{workplace.companyWorkPlaces}" />
+						</t:selectOneMenu>	
+				
+						<t:outputLabel for="IncidencesReport_workActivity"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_workactivity}" />
+						<t:selectOneMenu id="IncidencesReport_workActivity" forceId="#{true}"
+										styleClass="aon-form-selectOneMenu-field"
+										value="#{incidencesReport.workActivity.id}"
+										valueChangeListener="#{incidencesReport.workingActivityChanged}"
+										onchange="this.form.submit();" >
+							<f:selectItems value="#{incidencesReport.workActivities}" />
+						</t:selectOneMenu>	
+	
+						<t:outputLabel for="IncidencesReport_employee"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_employee}" />
+						<t:selectOneMenu id="IncidencesReport_employee" forceId="#{true}"
+										styleClass="aon-form-selectOneMenu-field"
+										value="#{incidencesReport.employeeId}"
+										valueChangeListener="#{incidencesReport.employeeChanged}" 
+										onchange="this.form.submit();" >
+							<f:selectItems value="#{incidencesReport.employees}" />
+						</t:selectOneMenu>	
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+								columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						<h:outputLabel for="Incidence_type" styleClass="aon-form-input-text-label"
+							value="Tipo" />
+						<h:selectOneMenu id="Incidence_type" styleClass="aon-form-selectOneMenu-field"
+								value="#{incidencesReport.incidenceType}"  >
+							<f:selectItems value="#{incidences.incidenceTypes}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Incidence_type" styleClass="aon-form-input-text-label"
+							value="Computa" />
+						<h:selectOneMenu id="Incidence_compute" styleClass="aon-form-selectOneMenu-field"
+								value="#{incidencesReport.incidenceCompute}"  >
+							<f:selectItems value="#{incidencesReport.incidenceComputeTypes}" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

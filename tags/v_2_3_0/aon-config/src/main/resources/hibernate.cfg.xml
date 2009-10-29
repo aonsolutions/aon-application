@@ -1,0 +1,47 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="show_sql">true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_master?autoReconnect=true</property>		
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="connection.password">serubd2000</property>		
+
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
+		
+		
+		<!-- AON-REGISTRY Mapping files -->
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		
+		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-GEOZONE Mapping files -->
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+
+	</session-factory>
+
+</hibernate-configuration>

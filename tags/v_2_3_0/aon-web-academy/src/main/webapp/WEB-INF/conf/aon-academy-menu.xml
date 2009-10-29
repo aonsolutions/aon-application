@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root id="root" key="AON_APP" descriptionKey="aon_application_menu_title" ref="firstContent">
+	<option id="aon_customer" key="aon_customer" descriptionKey="aon_customer_desc" ref="customer" role="Alumnos">
+		<actionListener action="#{customer.onEditSearch}"/>
+	</option>
+
+	<option id="aon_course" key="aon_course" descriptionKey="aon_course_desc" ref="course" role="Grupos">
+		<actionListener action="#{course.onEditSearch}"/>
+	</option>
+
+	<menu ref="content" key="aon_academic_management" descriptionKey="aon_academic_management_desc" role="MenuGestionAcademica">
+		<option key="aon_employee" descriptionKey="aon_employee_desc" ref="employee" role="Profesores">
+			<actionListener action="#{employee.onSearch}" />
+		</option>
+		<option key="aon_mark_search" descriptionKey="aon_mark_search_desc" ref="mark" role="ConsultaNotas">
+			<actionListener action="#{mark.onNewSearch}" />
+		</option>
+		<option key="aon_loan" descriptionKey="aon_loan_desc" ref="loan" role="Prestamos">
+			<actionListener action="#{loan.onEditSearch}"/>
+		</option>
+		<menu ref="content" key="aon_academic_utilities" descriptionKey="aon_academic_utilities_desc" role="MenuUtilidadesAcademicas">
+			<option key="aon_alumn_reclassification" descriptionKey="aon_alumn_reclassification_desc" ref="alumn_reclassification" role="ReclasificacionAlumnos">
+				<actionListener action="#{alumnReclassification.onEditSearch}"/>
+			</option>
+			<option key="aon_close_groups" descriptionKey="aon_close_groups_desc" ref="close_group" role="CierreGrupos">
+				<actionListener action="#{closeGroup.onEditSearch}"/>
+			</option>
+			<option key="aon_duplicate_groups" descriptionKey="aon_duplicate_groups_desc" ref="duplicate_group" role="DuplicarGrupos">
+				<actionListener action="#{duplicateGroup.onEditSearch}"/>
+			</option>
+			<option key="aon_academic_skill_to_groups" descriptionKey="aon_academic_skill_to_groups_desc" ref="academic_skill_to_group" role="HabilidadesAGrupos">
+				<actionListener action="#{academicSkillToGroup.onEditSearch}"/>
+			</option>
+		</menu>
+	</menu>
+
+	<menu id="aon_administrative_management" ref="content" key="aon_administrative_management" descriptionKey="aon_administrative_management_desc" role="MenuGestionAdministrativa">
+		<menu ref="content" key="aon_invoices" descriptionKey="aon_invoices_desc" role="MenuFacturas">
+			<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement" role="FacturasVenta">
+				<actionListener action="#{feeInvoicing.onEditSearch}"/>
+			</option>
+			<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint" role="ImpresionFacturas">
+				<actionListener action="#{invoicePrint.onEditSearch}"/>
+			</option>
+			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording" role="ContabilizacionFacturas">
+				<actionListener action="#{invoiceRecording.onInitialize}"/>				
+			</option>
+			<option key="aon_invoice_removing" descriptionKey="aon_invoice_removing" ref="invoiceRemoving" role="BorradoFacturas">
+				<actionListener action="#{invoiceRemover.onEditSearch}"/>				
+			</option>
+		</menu>
+		<menu ref="content" key="aon_fees" descriptionKey="aon_fees_desc" role="MenuCuotas">
+			<option key="aon_pre_invoicing" descriptionKey="aon_pre_invoicing" ref="feePreInvoicing" role="Prefacturacion">
+				<actionListener action="#{preInvoicing.onInitialize}"/>
+			</option>
+			<option key="aon_invoicing" descriptionKey="aon_invoicing_desc" ref="feeInvoicing" role="FacturacionCuotas">
+				<actionListener action="#{feeInvoicing.onInitialize}"/>
+			</option>
+			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
+			<option key="aon_fee_print" descriptionKey="aon_fee_print_desc" ref="util_fee_print" role="ListadoCuotas">
+				<actionListener action="#{feePrint.onEditSearch}"/>				
+			</option>
+			<option key="aon_fee_to_group" descriptionKey="aon_fee_to_group_desc" ref="fee_to_group" role="CuotasAGrupos">
+				<actionListener action="#{feeToGroup.onEditSearch}"/>
+			</option>
+		</menu>
+		<menu ref="content" key="finance" descriptionKey="finance_desc" role="MenuTesoreria">
+			<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
+				<actionListener action="#{finance.onEditSearch}"/>
+			</option>
+			<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return" role="DevolucionVencimientos">
+				<actionListener action="#{financeReturn.onEditSearch}"/>
+			</option>
+			<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment" role="GestionCartera">
+				<actionListener action="#{financePayment.onEditSearch}"/>
+			</option>
+			<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
+			<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="MenuUtilidadesTesoreria">
+				<option id="aon_cheking" key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
+			</menu>
+		</menu>
+	</menu>
+	
+	<menu ref="content" key="aon_auxiliar" descriptionKey="aon_auxiliar_desc" role="MenuAuxiliares">
+		<menu ref="content" key="aon_customer" descriptionKey="aon_customer_desc" role="MenuAuxiliaresClientes">
+			<option key="aon_relationship" descriptionKey="aon_relationship_desc" ref="relationship" role="AuxiliaresTiposRelaciones"/>
+			<option key="aon_customer_segment" descriptionKey="aon_customer_segment_desc" ref="customerSegment" role="AuxiliaresTiposAlumno"/>
+		</menu>
+		<menu ref="content" key="aon_academic" descriptionKey="aon_academic_desc" role="MenuAuxiliaresAcademicos">
+			<option key="aon_academic_year" descriptionKey="aon_academic_year_desc" ref="academic_year" role="AuxiliaresAnyosAcademicos"/>
+			<option key="aon_course_subject" descriptionKey="aon_course_subject_desc" ref="course_subject" role="AuxiliaresMaterias"/>
+			<option key="aon_course_level" descriptionKey="aon_course_level_desc" ref="course_level" role="AuxiliaresNiveles"/>
+			<option key="aon_academic_skill" descriptionKey="aon_academic_skill_desc" ref="academic_skill" role="AuxiliaresHabilidades"/>
+			<option key="aon_qualification" descriptionKey="aon_qualification_desc" ref="qualification" role="AuxiliaresCalificaciones"/>
+			<option key="aon_observation" descriptionKey="aon_observation_desc" ref="observation" role="AuxiliaresObservaciones"/>
+			<option key="aon_quality_skill" descriptionKey="aon_quality_skill_desc" ref="quality_skill" role="AuxiliaresAptitudesCalidad"/>
+		</menu>
+		<menu ref="content" key="aon_administrative" descriptionKey="aon_administrative_desc" role="MenuAuxiliaresAdministrativos">
+			<menu ref="content" key="aon_invoicing_concepts" descriptionKey="aon_invoicing_concepts_desc" role="MenuAuxiliaresFacturacion">
+				<option key="aon_item" descriptionKey="aon_item_desc" ref="item" role="AuxiliaresProductos">
+					<actionListener action="#{item.onReset}"/>
+				</option>
+				<option key="aon_product_category" descriptionKey="aon_product_category_desc" ref="productCategory" role="AuxiliaresCategorias"/>		
+			</menu>
+			<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank" role="AuxiliaresBancos"/>
+			<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method" role="AuxiliaresFormasDePago"/>
+		</menu>
+	</menu>
+
+	<menu ref="content" key="aon_configuration" descriptionKey="aon_configuration_desc" role="MenuConfiguracion">
+		<option key="aon_company" descriptionKey="aon_company_desc" ref="company" role="DatosEmpresa">
+			<actionListener action="#{company.onLoad}" />
+		</option> 
+		<option key="aon_workplace" descriptionKey="aon_workplace_desc" ref="workplace" role="CentrosFormacion">
+			<actionListener action="#{workplace.onSearch}" />
+		</option>
+		<option ref="tax" key="aon_product_tax" descriptionKey="aon_product_tax_desc" role="ConfiguracionImpuestos"/>
+		<option ref="series" key="aon_series" descriptionKey="aon_series_desc" role="ConfiguracionSeries"/>
+		<option key="aon_geozone" descriptionKey="aon_geozone_desc" ref="geozone" role="ConfiguracionProvincias">
+			<actionListener action="#{geotreeParent.onSearch}" />
+		</option>
+	</menu>
+</root>
