@@ -38,12 +38,22 @@ public class AcademicSkillToGroupController extends BasicController {
 	
 	private Integer skillId;
 	
+	private Integer weight;
+	
 	public Integer getSkillId() {
 		return skillId;
 	}
 
 	public void setSkillId(Integer skillId) {
 		this.skillId = skillId;
+	}
+
+	public Integer getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Integer weight) {
+		this.weight = weight;
 	}
 
 	public void rowSelected(ValueChangeEvent event) {
@@ -113,7 +123,7 @@ public class AcademicSkillToGroupController extends BasicController {
 		try {
 			CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			if(skillId != null && checks.size() > 0){
+			if(getSkillId() != null && checks.size() > 0){
 				if(validateCourseAcademicSkills()) {
 					IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
 					AcademicSkill skill = obtainAcademicSkill();
@@ -124,6 +134,7 @@ public class AcademicSkillToGroupController extends BasicController {
 						CourseAcademicSkill courseAcademicSkill = new CourseAcademicSkill();
 						courseAcademicSkill.setAcademicSkill(skill);
 						courseAcademicSkill.setCourse(course);
+						courseAcademicSkill.setWeight((getWeight() != null) ? getWeight() : 0);
 						courseAcademicSkillBean.insert(courseAcademicSkill);
 					}
 				}
@@ -188,7 +199,7 @@ public class AcademicSkillToGroupController extends BasicController {
 		try {
 			IManagerBean academicSkillBean = BeanManager.getManagerBean(AcademicSkill.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(academicSkillBean.getFieldName(IAcademyAlias.ACADEMIC_SKILL_ID), skillId);
+			criteria.addEqualExpression(academicSkillBean.getFieldName(IAcademyAlias.ACADEMIC_SKILL_ID), getSkillId());
 			Iterator iter = academicSkillBean.getList(criteria, 0, 1).iterator();
 			if(iter.hasNext()){
 				return (AcademicSkill)iter.next();

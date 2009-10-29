@@ -290,6 +290,7 @@ public class DuplicateGroupController extends BasicController {
 				CourseAcademicSkill newCourseAcademicSkill = new CourseAcademicSkill();
 				newCourseAcademicSkill.setCourse(newCourse);
 				newCourseAcademicSkill.setAcademicSkill(courseAcademicSkill.getAcademicSkill());
+				newCourseAcademicSkill.setWeight(courseAcademicSkill.getWeight());
 				courseAcademicSkillBean.insert(newCourseAcademicSkill);
 			}
 		} catch (ManagerBeanException e) {

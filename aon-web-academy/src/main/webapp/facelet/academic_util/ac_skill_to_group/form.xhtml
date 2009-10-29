@@ -40,8 +40,9 @@
 
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
-					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
-						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+					<h:panelGrid columns="4" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even,
+							aon-form-table-column-odd,aon-form-table-column-even">
 
 						<h:outputLabel for="AcademicSkill_id"
 							styleClass="aon-form-input-text-label"
@@ -52,6 +53,12 @@
 							<f:selectItems value="#{academyCollections.academicSkills}" />
 						</h:selectOneMenu>	
 
+						<h:outputLabel for="AcademicSkill_weight"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.academicSkill_weight}" />
+						<t:inputText id="AcademicSkill_weight"
+							value="#{academicSkillToGroup.weight}"
+							styleClass="aon-form-input-text" size="5" />
 					</h:panelGrid>
 
 					<t:div styleClass="aon-form-group">
