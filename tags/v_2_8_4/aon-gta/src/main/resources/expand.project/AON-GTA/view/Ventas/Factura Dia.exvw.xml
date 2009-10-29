@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Factura Dia" label="Factura Dia" sqlSentence="SELECT CONCAT_WS(&quot;/&quot;, invoice.series, invoice.number), SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;&#xa;  FROM invoice_detail, invoice, item, product&#xd;&#xa; WHERE product.id = item.product&#xd;&#xa;   AND invoice_detail.item = item.id&#xd;&#xa;   AND invoice_detail.invoice = invoice.id&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa;   AND YEAR(invoice.issue_date) = ?&#xd;&#xa;   AND MONTH(invoice.issue_date) = ?&#xd;&#xa;   AND DAY(invoice.issue_date) = ?&#xd;&#xa; GROUP BY 1">
+    <parameters>
+        <parameter name="type" type="INTEGER"/>
+        <parameter name="year" type="INTEGER"/>
+        <parameter name="month" type="INTEGER"/>
+        <parameter name="day" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result
+            accessName="CONCAT_WS(&quot;/&quot;, invoice.series, invoice.number)"
+            columnId="CONCAT_WS(&quot;/&quot;, invoice.series, invoice.number)"
+            label="Factura" type="STRING"/>
+        <result
+            accessName="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            columnId="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

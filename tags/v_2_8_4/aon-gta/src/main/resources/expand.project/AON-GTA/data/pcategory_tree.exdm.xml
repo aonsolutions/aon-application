@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="pcategory_tree">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="parent" sqlType="integer" type="integer"/>
+        <column label="" name="child" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="pcategory_tree_ibfk_1" foreignPath="data/pcategory.exdm.xml">
+            <sourceColumns>
+                <column name="parent"/>
+            </sourceColumns>
+        </join>
+        <join description="pcategory_tree_ibfk_2" foreignPath="data/pcategory.exdm.xml">
+            <sourceColumns>
+                <column name="child"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

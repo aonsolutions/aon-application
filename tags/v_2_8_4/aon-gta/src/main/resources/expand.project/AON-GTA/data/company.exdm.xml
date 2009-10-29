@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="company">
+    <columns>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" length="1" name="active" sqlType="bit" type="string"/>
+        <column label="" length="1" name="surcharge" sqlType="bit" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="registry"/>
+    </primaryKey>
+    <joins>
+        <join description="fk_comp_rgty" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="ABC Ventas" label="ABC Ventas" listLinesPerPage="10">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYearFirstDay}"
+            name="inidate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="${currentYearLastDay}"
+            name="enddate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="1" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_libro.gif"
+        iconOpen="icons/icon_libro.gif" label="ABC">
+        <layout type="COLUMN"/>
+        <contents/>
+        <node iconClose="icons/icon_users_group.gif" label="Clientes">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent id="view/Ventas/Cliente.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+        </node>
+        <node iconClose="icons/icon_categoria.gif" label="Categorias">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent id="view/Ventas/Familia.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+        </node>
+        <node iconClose="icons/icon_articulo.gif" label="Productos">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent id="view/Ventas/Productos.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+        </node>
+    </node>
+</workstation>

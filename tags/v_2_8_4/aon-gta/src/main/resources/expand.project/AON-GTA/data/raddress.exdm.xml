@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="raddress">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="type" sqlType="tinyint" type="string"/>
+        <column label="" length="128" name="recipient" sqlType="varchar" type="string"/>
+        <column label="" length="4" name="street_type" sqlType="tinyint" type="string"/>
+        <column label="" length="128" name="address" sqlType="varchar" type="string"/>
+        <column label="" length="128" name="address2" sqlType="varchar" type="string"/>
+        <column label="" length="128" name="address3" sqlType="varchar" type="string"/>
+        <column label="" length="16" name="zip" sqlType="varchar" type="string"/>
+        <column label="" length="64" name="city" sqlType="varchar" type="string"/>
+        <column label="" name="geozone" sqlType="integer" type="integer"/>
+        <column label="" name="country" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="raddress_ibfk_1" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+        <join description="raddress_ibfk_2" foreignPath="data/geozone.exdm.xml">
+            <sourceColumns>
+                <column name="geozone"/>
+            </sourceColumns>
+        </join>
+        <join description="raddress_ibfk_3" foreignPath="data/country.exdm.xml">
+            <sourceColumns>
+                <column name="country"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
