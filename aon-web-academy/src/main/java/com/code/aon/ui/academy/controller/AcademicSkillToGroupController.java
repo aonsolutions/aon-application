@@ -107,6 +107,7 @@ public class AcademicSkillToGroupController extends BasicController {
 
 	@Override
 	public void onEditSearch(ActionEvent event) {
+		setWeight(0);
 		clearCheckedCourses();
 		super.onEditSearch(event);
 		try {
