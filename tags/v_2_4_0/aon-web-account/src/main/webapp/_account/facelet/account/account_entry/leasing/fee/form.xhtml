@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="accountLeasingFeeForm" styleClass="aon-form">
+
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							accesskey="#{bundle.aon_key_save}"
+							actionListener="#{accountLeasingFee.accept}" action="account_entry_form"
+							styleClass="aon-content-toolbar-item"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}"
+							actionListener="#{accountLeasingFee.onReset}" rendered="#{!accountLeasingFee.new}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="remove" value="#{bundle.aon_remove}"
+							accesskey="#{bundle.aon_key_remove}" action="account_entry_search"
+							actionListener="#{accountLeasingFee.onRemove}" rendered="#{!accountLeasingFee.new}"
+							styleClass="aon-content-toolbar-item" immediate="true"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of grid layout -->
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<h:outputLabel for="Account_invoice_referenceCode"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_series_number}" />
+						<t:inputText id="Account_invoice_referenceCode" 
+							value="#{accountLeasingFee.header.referenceCode}" size="25" maxlength="32"
+							styleClass="aon-form-input-text" forceId="#{true}" 
+							onblur="toUpperCase(this);">
+							<f:validateLength maximum="32" />
+						</t:inputText>
+						
+						<t:outputLabel for="Account_date"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_date}" />						
+						<t:inputCalendar id="Account_date"
+							value="#{accountLeasingFee.header.leasingFeeDate}" size="8" required="true" 
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+							
+ 						<t:outputLabel for="Leasing_Lookup_id" value="#{accountBundle.aon_leasing}" 
+							styleClass="aon-form-input-text-label" />
+						<t:div>
+							<t:inputText id="Leasing_Lookup_id" forceId="#{true}"
+								value="#{accountLeasingFee.header.leasing.id}"
+								styleClass="aon-form-input-text" size="5"
+								valueChangeListener="#{accountLeasingFee.onLeasingChange}"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','leasingLookup','Leasing_Lookup_id','Leasing_id|Leasing_Lookup_id,Leasing_description|Leasing_Lookup_description,Leasing_supplierName|Leasing_Lookup_supplierName,Leasing_supplierDocument|Leasing_Lookup_supplierDocument,Leasing_vat_percentage|Leasing_Lookup_vat_percentage');"/>
+							<h:commandButton id="find_Leasing_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{leasingLookup.encodedSearchPagePath}','Leasing_id|Leasing_Lookup_id,Leasing_description|Leasing_Lookup_description,Leasing_supplierName|Leasing_Lookup_supplierName,Leasing_supplierDocument|Leasing_Lookup_supplierDocument,Leasing_vat_percentage|Leasing_Lookup_vat_percentage');return false;" />	
+							<t:inputText id="Leasing_Lookup_description"
+								disabledOnClientSide="true" forceId="#{true}"
+								value="#{accountLeasingFee.header.leasing.description}"
+								styleClass="aon-form-input-text-disabled" size="40" />
+						</t:div>
+						
+						<h:outputLabel for="Leasing_Lookup_supplierName"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_supplier_name}" />
+						<t:inputText id="Leasing_Lookup_supplierName"
+							value="#{accountLeasingFee.header.leasing.supplierName}" size="60"
+							styleClass="aon-form-input-text" forceId="#{true}" />
+
+						<h:outputLabel for="Leasing_Lookup_supplierDocument"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_supplier_document}" />
+						<t:inputText id="Leasing_Lookup_supplierDocument"
+							value="#{accountLeasingFee.header.leasing.supplierDocument}" size="12"
+							styleClass="aon-form-input-text" forceId="#{true}" />
+							
+						<h:outputLabel for="Account_amortization"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_amortization}" />
+						<t:inputText id="Account_amortization"
+							onchange="calculateFee();"
+							value="#{accountLeasingFee.header.amortization}" size="7"
+							styleClass="aon-form-input-text" forceId="#{true}" />
+
+						<h:outputLabel for="Account_interest"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_interest}" />
+						<t:inputText id="Account_interest"
+							onchange="calculateFee();"
+							value="#{accountLeasingFee.header.interest}" size="7"
+							styleClass="aon-form-input-text" forceId="#{true}" />
+
+						<h:outputLabel for="Account_taxableBase"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_taxableBase}" />
+						<t:inputText id="Account_taxableBase"
+							value="#{accountLeasingFee.header.taxableBase}" 
+							disabledOnClientSide="#{true}" size="7"
+							styleClass="aon-form-input-text-disabled" forceId="#{true}" />
+
+						<h:outputLabel for="Leasing_Lookup_vat_percentage"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_vat}" />
+						<t:inputText id="Leasing_Lookup_vat_percentage"
+							disabled="true" forceId="#{true}"
+							styleClass="aon-form-input-text-disabled" size="7" />
+
+						<h:outputLabel for="Account_expenses"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_expenses}" />
+						<t:inputText id="Account_expenses"
+							onchange="calculateFee();"
+							value="#{accountLeasingFee.header.expenses}" size="7"
+							styleClass="aon-form-input-text" forceId="#{true}" />
+
+						<h:outputLabel for="Account_total"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_invoiceTotal}" />
+						<t:inputText id="Account_total"
+							disabled="#{true}" size="7"
+							styleClass="aon-form-input-text-disabled" forceId="#{true}" />
+
+						<h:outputLabel for="RegistryBank_Lookup_id"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_bank}" />
+						<t:selectOneMenu id="RegistryBank_Lookup_id"
+							styleClass="aon-form-selectOneMenu-field" required="true"
+							value="#{accountLeasingFee.header.registryBank.id}" forceId="#{true}"
+							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
+							valueChangeListener="#{accountLeasingFee.onRBankChange}">
+							<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+							<f:selectItems value="#{financeCollections.companyBanks}" />
+						</t:selectOneMenu>
+
+						<h:outputLabel for="RegistryBank_Lookup_bankAccount"
+							styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank_account}" />
+						<t:inputText id="RegistryBank_Lookup_bankAccount"
+							styleClass="aon-form-input-text-disabled" forceId="#{true}"
+							value="#{accountLeasingFee.header.registryBank.bankAccount}"
+							disabledOnClientSide="true" size="35" />
+							
+						<h:outputLabel for="AccountEntry_securityLevel"
+							value="#{accountBundle.aon_account_security_level}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="AccountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountLeasingFee.header.securityLevel}">
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+					<!-- end of grid layout -->
+					<!-- end of bag panel -->
+					
+				</t:div>
+			</t:div>
+		</h:form>
+		<script>
+			function calculateFee() {
+				amortization = document.getElementById("Account_amortization").value;
+				interest = document.getElementById("Account_interest").value;
+				expenses = document.getElementById("Account_expenses").value;
+				vat = document.getElementById("Leasing_Lookup_vat_percentage").value;
+
+				taxableBase = eval(amortization + "+" + interest);
+				document.getElementById("Account_taxableBase").value = taxableBase;
+				document.getElementById("Account_taxableBase").onchange();
+
+		    	value = Math.pow(10,2);
+		        total = Math.round(parseFloat(taxableBase*(1+(vat/100)))*value)/value;
+				total = eval(total + "+" + expenses);
+				document.getElementById("Account_total").value = total;
+			}
+			calculateFee();
+		</script>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

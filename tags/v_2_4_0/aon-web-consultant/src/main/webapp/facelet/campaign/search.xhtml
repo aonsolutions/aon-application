@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<script type="text/javascript">
+			window.onload = function()
+			{
+				document.getElementById("Campaign_description").focus();
+			}
+		</script>	
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="campaignForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="accept" value="#{bundle.aon_search}"
+						actionListener="#{campaign.onSearch}" action="campaign_list" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{campaign.onCancel}" action="campaign_list" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						actionListener="#{campaign.onReset}" action="campaign_form" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal" >
+					<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="Campaign_description" value="#{campaignBundle.aon_description}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Campaign_description" size="60"
+							valueChangeListener="#{campaign.addExpression}"
+							styleClass="aon-form-input-text" />
+
+						<h:outputLabel value="#{campaignBundle.aon_initial_date}"
+							styleClass="aon-form-input-text-label" />
+						<h:panelGrid columns="4">
+							<h:outputLabel for="Campaign_startDate-From" value="#{campaignBundle.aon_date_from}"
+								styleClass="aon-form-input-text-label" />
+							<t:inputCalendar id="Campaign_startDate-From" size="10" 
+								valueChangeListener="#{campaign.addStartDateFromExpression}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+
+							<h:outputLabel for="Campaign_startDate-To" value="#{campaignBundle.aon_date_to}"
+								styleClass="aon-form-input-text-label" />
+							<t:inputCalendar id="Campaign_startDate-To" size="10"
+								valueChangeListener="#{campaign.addStartDateToExpression}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+						</h:panelGrid>
+
+						<h:outputLabel value="#{campaignBundle.aon_final_date}"
+							styleClass="aon-form-input-text-label" />
+						<h:panelGrid columns="4">
+							<h:outputLabel for="Campaign_endDate-From" value="#{campaignBundle.aon_date_from}"
+								styleClass="aon-form-input-text-label" />
+							<t:inputCalendar id="Campaign_endDate-From" size="10" 
+								valueChangeListener="#{campaign.addEndDateFromExpression}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+
+							<h:outputLabel for="Campaign_endDate-To" value="#{campaignBundle.aon_date_to}"
+								styleClass="aon-form-input-text-label" />
+							<t:inputCalendar id="Campaign_endDate-To" size="10"
+								valueChangeListener="#{campaign.addEndDateToExpression}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+						</h:panelGrid>
+
+						<h:outputLabel for="Campaign_process_id" value="#{campaignBundle.process_process}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="Campaign_process_id" forceId="#{true}"
+							valueChangeListener="#{campaign.addEqualExpression}"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="IntegerEmptyConverter">
+							<f:selectItem itemLabel="-" itemValue="" />
+							<f:selectItems value="#{campaignCollections.processes}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Campaign_activityType_id" value="#{projectBundle.activity_activity_type}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="Campaign_activityType_id" forceId="#{true}"
+							valueChangeListener="#{campaign.addEqualExpression}"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="IntegerEmptyConverter">
+							<f:selectItem itemLabel="-" itemValue="" />
+							<f:selectItems value="#{projectCollections.activityTypes}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Campaign_status" value="#{campaignBundle.aon_status}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="Campaign_status" forceId="#{true}"
+							valueChangeListener="#{campaign.addExpression}"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="aonCampaignStatusConverter">
+							<f:selectItem itemLabel="-" itemValue="" />
+							<f:selectItems value="#{campaignCollections.campaignStatus}" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

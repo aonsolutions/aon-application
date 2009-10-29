@@ -1,0 +1,50 @@
+/******************************/
+/* HYPERVIEW SPECIFIC CLASSES */
+/******************************/
+.aon-hypercube-composite-layout{
+	padding:0 14px;
+}
+
+.aon-hypercube-background{
+	/*background:#f4f4f4 url("../images/hyperview/aon-hp-hypercube-background.jpg") left bottom repeat-x;*/
+	text-align:center;	
+	border-top:#d4d4d4 1px solid;
+	padding:10px 1em;
+}
+
+.aon-hypercube-button-previous{
+	background:transparent url("../images/hyperview/aon-hp-hypercube-previous.gif") right center no-repeat;
+	color:#000;
+	text-decoration:none;
+	padding:2px 9px 2px 5px;
+	font-family:tahoma,arial,verdana,sans-serif;
+	margin-top:5px;
+	}
+.aon-hypercube-button-previous:visited{
+	color:#000;
+	}
+.aon-hypercube-button-previous:hover{
+	background:transparent url("../images/hyperview/aon-hp-hypercube-previous-hover.gif") right center no-repeat;
+	color:#999;
+	}
+.aon-hypercube-button-previous:active{
+	color:#000;
+	}
+a.aon-hypercube-button-next{
+	background:transparent url("../images/hyperview/aon-hp-hypercube-next.gif") left center no-repeat;
+	color:#000;
+	text-decoration:none;
+	padding:2px 5px 2px 9px;
+	font-family:tahoma,arial,verdana,sans-serif;
+	margin-top:5px;
+	}
+.aon-hypercube-button-next:visited{
+	color:#000;
+	}
+a.aon-hypercube-button-next:hover{
+	background:transparent url("../images/hyperview/aon-hp-hypercube-next-hover.gif") left center no-repeat;
+	color:#999;
+	}
+.aon-hypercube-button-next:active{
+	color:#000;
+	}

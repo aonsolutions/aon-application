@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-table-hack">
+		<t:dataTable id="mailDataList" cellpadding="0" cellspacing="0"
+			var="to" value="#{mail.model}" rows="20"
+			styleClass="aon-table" headerClass="aon-table-header"
+			rowClasses="aon-table-row-odd,aon-table-row-even"
+			columnClasses="aon-table-body aon-table-body-string,
+				aon-table-body aon-table-body-number,
+				aon-table-body aon-table-body-number">
+
+			<h:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<h:outputText value="#{to.description}" />
+			</h:column>
+
+			<t:column width="70">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="Sin Leer" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.noRead}" />
+			</t:column>
+
+			<t:column width="70">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="Mensajes" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.messages}" />
+			</t:column>
+
+		</t:dataTable>
+	</t:div>
+		
+</ui:composition>
+</body>
+</html>

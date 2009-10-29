@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="inventory">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="inventory_date" sqlType="date" type="date"/>
+        <column label="" name="warehouse" sqlType="integer" type="integer"/>
+        <column label="" length="64" name="description"
+            sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>
