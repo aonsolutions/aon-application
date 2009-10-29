@@ -81,7 +81,7 @@ public class AccountEntryInvoiceWriter {
 		entryDetailBean.insert(entryDetail);
 		// Segundo Apunte(Mirar si hay q crearlo o no)
 		entryDetail = new AccountEntryDetail();
-		if(retentionTotal > 0){
+		if(retentionTotal != 0){
 			if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
 				entryDetail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT));
 				entryDetail.setDebit(retentionTotal);
@@ -95,7 +95,7 @@ public class AccountEntryInvoiceWriter {
 			entryDetailBean.insert(entryDetail);
 		}
 		// Tercer Apunte (Si I.V.A. es 0 no se crea)
-		if(taxQuota > 0){
+		if(taxQuota != 0){
 			entryDetail = new AccountEntryDetail();
 			if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
 				entryDetail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT));
