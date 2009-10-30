@@ -215,4 +215,14 @@
 		<attribute name="headerClass" value="aon-group-title" /> 
 		<attribute name="bodyClass" value="aon-group-body" /> 	
 	</component>
+
+	<component localName="fileUpload">
+    	<attribute name="addControlLabel" value="#{bundle.aon_fileUpload_add}" />
+    	<attribute name="stopControlLabel" value="#{bundle.aon_fileUpload_stop}" />
+    	<attribute name="stopEntryControlLabel" value="#{bundle.aon_fileUpload_stop}" />
+    	<attribute name="uploadControlLabel" value="#{bundle.aon_fileUpload_upload}" />
+    	<attribute name="listHeight" value="0px" />
+    	<attribute name="immediateUpload" value="true" type="1" />    	
+    	<attribute name="autoclear" value="true" type="1" />
+	</component>
 </components>
