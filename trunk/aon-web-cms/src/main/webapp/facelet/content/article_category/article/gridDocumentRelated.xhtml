@@ -55,19 +55,11 @@
 				<f:facet name="footer">
 					<aon:div id="attachFileNew">
 						<a4j:region>
-							<aon:fileUpload id="ArticleDocument_File" rendered="#{formNew}"
-								addControlLabel="#{bundle.aon_fileUpload_add}"
-								stopControlLabel="#{bundle.aon_fileUpload_stop}"
-								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-								fileUploadListener="#{controller.fileUploaded}"
-								listHeight="0px" immediateUpload="true" autoclear="true">
-								<f:facet name="label">
-									<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-								</f:facet>																										
-								<a4j:support event="onuploadcomplete"
-									reRender="attachFileNew,ArticleDocument_Alias-New,ArticleDocument_Title-New" />
-							</aon:fileUpload>
+							<ui:include src="/facelet/content/utils/fileInput.xhtml" >
+								<ui:param name="fileInputId" value="ArticleDocument_File" />
+								<ui:param name="fileInputRendered" value="#{formNew}" />
+								<ui:param name="onCompleteReRender" value="attachFileNew,ArticleDocument_Alias-New,ArticleDocument_Title-New" />
+							</ui:include>
 						</a4j:region>
 					</aon:div>
 				</f:facet>

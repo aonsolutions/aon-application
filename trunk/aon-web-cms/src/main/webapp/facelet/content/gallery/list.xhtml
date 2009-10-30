@@ -54,30 +54,23 @@
 					</aon:div>
 					<aon:div id="GalleryFileUpload" style="width:400px" styleClass="aon-padding">
 						<aon:outputText value="#{appBundle.aon_cms_gallery_image}: " styleClass="aon-float-left"/>
-						<aon:fileUpload id="attach_file"
-							fileUploadListener="#{gallery.fileUploaded}">							
-							<f:facet name="label">
-								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-							</f:facet>
-							<a4j:support event="onuploadcomplete" reRender="GalleryFileUpload,GalleryList,GalleryFolderTree" />
-							<a4j:support event="onupload" oncomplete="showFileUploadProgress();" />
-							<a4j:support event="onclear" oncomplete="hideFileUploadProgress();" />
-						</aon:fileUpload>
-						<rich:jQuery name="showFileUploadProgress" timing="onJScall"
-							selector="#attach_file .rich-fileupload-list-overflow" query="height(70);" />
-						<rich:jQuery name="hideFileUploadProgress" timing="onJScall"
-							selector="#attach_file .rich-fileupload-list-overflow" query="height(0);" />
+						<a4j:region>																					
+							<ui:include src="/facelet/content/utils/fileInput.xhtml" >
+								<ui:param name="fileInputId" value="attach_file" />
+								<ui:param name="controller" value="#{gallery}" />
+								<ui:param name="onCompleteReRender" value="GalleryFileUpload,GalleryList,GalleryFolderTree" />
+							</ui:include>
+						</a4j:region>
 					</aon:div>
 				</aon:panelGrid>
 				<aon:panelGrid id="GalleryFolderTree" columns="2" style="width:100%" columnClasses="aon-width-200 aon-vertical-align-top aon-border, aon-width-auto aon-vertical-align-top" > 
-				    <rich:tree switchType="server" stateAdvisor="#{treeStateAdvisor}">
+				    <rich:tree switchType="ajax" stateAdvisor="#{treeStateAdvisor}">
 				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
 				        	var="item" nodes="#{item.nodes}">
 							<rich:treeNode icon="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}"
 										iconLeaf="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}">
 				                <aon:commandLink action="#{item.onSelectFolder}" 
-				                	value="#{item}" immediate="#{true}"
-				                	reRender="main_form" />
+				                	value="#{item}" immediate="true" />
 							</rich:treeNode>
 				        </rich:recursiveTreeNodesAdaptor>
 				    </rich:tree>
