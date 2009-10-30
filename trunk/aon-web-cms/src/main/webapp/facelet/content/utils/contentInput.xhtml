@@ -22,7 +22,9 @@
 		<aon:inputRichText id="#{inputTextId}"
 			viewMode="#{richTextEnabled?'visual':'source'}"
 			value="#{inputTextValue}" required="#{inputTextRequired}"
-			height="250" width="640" configuration="tinyMCE" />																		
+			height="250" width="640" configuration="tinyMCE" >
+			<f:param name="document_base_url" value="#{generator_status.previewURL}"/> 
+		</aon:inputRichText>																		
 	</a4j:region>
 
 </ui:composition>
