@@ -19,6 +19,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 
@@ -30,7 +31,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
  */
 @Entity
 @Table(name="rattach")
-public class RegistryAttachment implements IAttachment {
+public class RegistryAttachment implements IAttachment, IScopable {
 
 	private static final long serialVersionUID = -6774043069274297973L;
 
