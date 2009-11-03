@@ -33,6 +33,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.event.ScopeFilterListener;
 import com.code.aon.ui.util.AonUtil;
 
 public class CertificateController {
@@ -175,13 +176,20 @@ public class CertificateController {
 		return digitalCertificates;
 	}
 	
+	private Criteria getCertificateCriteria( IManagerBean bean ) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
+		String scopeAlias = bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
+		criteria.addExpression( ScopeFilterListener.getExpression(scopeAlias) );
+		return criteria;
+	}
+	
 	public void loadDigitalCertificates() throws ManagerBeanException {
 		this.digitalCertificates = new LinkedList<SelectItem>();
 		
 		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
+		Criteria criteria = getCertificateCriteria(rattachBean);
 		Iterator<ITransferObject> iterator = rattachBean.getList(criteria).iterator();
 		while ( iterator.hasNext() ) {
 			RegistryAttachment ra = (RegistryAttachment) iterator.next();
@@ -192,9 +200,7 @@ public class CertificateController {
 
 	public int getCertificateCount() throws ManagerBeanException {
 		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
+		Criteria criteria = getCertificateCriteria(rattachBean);
 		return rattachBean.getCount(criteria);
 	}	
 	
