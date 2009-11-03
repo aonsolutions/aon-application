@@ -290,10 +290,16 @@ public interface IRegistryAlias {
 	String  REGISTRY_ATTACHMENT_REGISTRY_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: RegistryAttachment_scope_id
+	* Hibernate value: RegistryAttachment.scope.id
+	*/
+	String  REGISTRY_ATTACHMENT_SCOPE_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: RegistryAttachment_size
 	* Hibernate value: RegistryAttachment.size
 	*/
-	String  REGISTRY_ATTACHMENT_SIZE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[7];
+	String  REGISTRY_ATTACHMENT_SIZE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[8];
 
 
 

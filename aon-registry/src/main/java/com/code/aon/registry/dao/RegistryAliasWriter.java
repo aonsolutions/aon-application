@@ -30,19 +30,19 @@ public class RegistryAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-registry/src/main/java/com/code/aon/registry/dao/IRegistryAlias.java");
-		String[] classes = new String[12]; 
-		classes[0] = Category.class.getName();
-		classes[1] = RecordData.class.getName();
-		classes[2] = Registry.class.getName();
-		classes[3] = RegistryAddress.class.getName();
-		classes[4] = RegistryAttachment.class.getName();
-		classes[5] = RegistryBank.class.getName();
-		classes[6] = RegistryDirStaff.class.getName();
-		classes[7] = RegistryMedia.class.getName();
-		classes[8] = RegistryNote.class.getName();
-		classes[9] = RegistryPayMethod.class.getName();
-		classes[10] = RegistryRelationship.class.getName();
-		classes[11] = Relationship.class.getName();
+		String[] classes = new String[] { 
+			Category.class.getName(),
+			RecordData.class.getName(),
+			Registry.class.getName(),
+			RegistryAddress.class.getName(),
+			RegistryAttachment.class.getName(),
+			RegistryBank.class.getName(),
+			RegistryDirStaff.class.getName(),
+			RegistryMedia.class.getName(),
+			RegistryNote.class.getName(),
+			RegistryPayMethod.class.getName(),
+			RegistryRelationship.class.getName(),
+			Relationship.class.getName() };
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.registry.dao");
 		writer.write(classes, file);

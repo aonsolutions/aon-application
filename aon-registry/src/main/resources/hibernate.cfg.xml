@@ -33,8 +33,11 @@
 		
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 
+		<!-- AON-CONFIG Mapping files -->		
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Scope"/>			
+
 	</session-factory>
 
 </hibernate-configuration>
