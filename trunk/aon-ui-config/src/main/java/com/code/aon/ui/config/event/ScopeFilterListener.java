@@ -15,7 +15,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -35,21 +34,21 @@ public class ScopeFilterListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			Expression exp = getExpression(event.getController());
+			Expression exp = getExpression( event.getController().getFieldName(this.aliasName) );
 			event.getController().getCriteria().addExpression(exp);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error adding scopeFilter",e);
 		}
 	}
 
-	private List<ITransferObject> obtainUserScopeList(User user) throws ManagerBeanException {
+	private static List<ITransferObject> obtainUserScopeList(User user) throws ManagerBeanException {
 		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), user.getId());
 		return userScopeBean.getList(criteria);
 	}
 	
-	private String getLeftJoinAlias( String alias ) {
+	private static String getLeftJoinAlias( String alias ) {
 		String ljAlias = alias;
 		int index = StringUtils.lastIndexOf(alias, '.');
 		if ( index != -1 ) {
@@ -58,15 +57,14 @@ public class ScopeFilterListener extends ControllerAdapter {
 		return ljAlias;
 	}
 	
-	private Expression getExpression( IController controller ) throws ManagerBeanException {
+	public static Expression getExpression( String resolvedAlias ) throws ManagerBeanException {
 		User user = UserUtils.getInstance().getLoggedUser();
-		String alias = controller.getFieldName(this.aliasName);
-		String nullAlias = StringUtils.substringBeforeLast(alias, ".");
+		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
 		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
 		if (user != null) {
 			List<ITransferObject> list = obtainUserScopeList(user);
 			if (! list.isEmpty() ) {
-				String ljAlias = getLeftJoinAlias(alias);
+				String ljAlias = getLeftJoinAlias(resolvedAlias);
 				for( ITransferObject to : list ) {
 					UserScope userScope = (UserScope) to;
 					Expression scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, userScope.getScope().getId());
