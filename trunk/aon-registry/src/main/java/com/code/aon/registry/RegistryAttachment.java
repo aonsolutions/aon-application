@@ -19,6 +19,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.Scope;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 
 /**
@@ -56,6 +57,9 @@ public class RegistryAttachment implements IAttachment {
     
     /** The registry attachment type. */
     private RegistryAttachmentType registryAttachmentType;
+    
+    /** The scope. */
+	private Scope scope;    
     
     /**
      * The empty constructor.
@@ -224,6 +228,26 @@ public class RegistryAttachment implements IAttachment {
 	}
 
 	/**
+	 * Gets the scope.
+	 * 
+	 * @return the scope
+	 */
+    @ManyToOne
+    @JoinColumn(name="scope")
+	public Scope getScope() {
+		return scope;
+	}
+
+	/**
+	 * Sets the scope.
+	 * 
+	 * @param scope the scope
+	 */
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+	
+	/**
 	 * Clones the RegistryAttachment.
 	 * 
 	 * @return the object
@@ -248,7 +272,8 @@ public class RegistryAttachment implements IAttachment {
 				.append(this.description, o.description)
 				.append(this.mimeType, o.mimeType)				
 				.append(this.registry, o.registry)
-				.append(this.registryAttachmentType, o.registryAttachmentType)			
+				.append(this.registryAttachmentType, o.registryAttachmentType)
+				.append(this.scope, o.scope)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -264,6 +289,7 @@ public class RegistryAttachment implements IAttachment {
 			.append(mimeType)
 			.append(registry)
 			.append(registryAttachmentType)				
+			.append(scope)
 			.toHashCode();
 	}
 
@@ -276,6 +302,7 @@ public class RegistryAttachment implements IAttachment {
 			append("mimeType", mimeType).
 			append("registry", registry.getId()).
 			append("registryAttachmentType", registryAttachmentType).
+			append("scope", (scope != null) ? scope.getId() : "null" ).
 			toString();
 	}
 
