@@ -19,10 +19,16 @@
 			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
+			<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.config</artifactId>
+			<version>4.1.0</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
