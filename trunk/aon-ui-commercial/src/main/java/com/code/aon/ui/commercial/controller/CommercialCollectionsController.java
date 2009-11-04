@@ -12,6 +12,8 @@ import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
+import com.code.aon.commercial.enumeration.ExpenseHolderType;
+import com.code.aon.commercial.enumeration.ExpenseStatus;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
@@ -45,6 +47,11 @@ public class CommercialCollectionsController {
 	private List<SelectItem> advertisings;
 
 	private List<SelectItem> activities;
+	
+	private List<SelectItem> expenseAccountStatuses;
+	
+	private List<SelectItem> expenseHolderTypes;
+
 	
 	/**
 	 * Gets the offer statuses.
@@ -153,7 +160,43 @@ public class CommercialCollectionsController {
 		}
 		return targetSellerStatuses;
 	}
+	
+	/**
+	 * Gets the expense statuses.
+	 * 
+	 * @return the target item statuses
+	 */
+	public List<SelectItem> getExpenseAccountStatuses() {
+		if ( expenseAccountStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			expenseAccountStatuses = new LinkedList<SelectItem>();
+			for (ExpenseStatus status : ExpenseStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				expenseAccountStatuses.add(item);
+			}
+		}
+		return expenseAccountStatuses;
+	}
 
+	/**
+	 * Gets the expense holder types
+	 * 
+	 * @return the target item statuses
+	 */
+	public List<SelectItem> getExpenseHolderTypes() {
+		if ( expenseHolderTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			expenseHolderTypes = new LinkedList<SelectItem>();
+			for (ExpenseHolderType status : ExpenseHolderType.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				expenseHolderTypes.add(item);
+			}
+		}
+		return expenseHolderTypes;
+	}
+	
 	/**
 	 * Gets the advertisings.
 	 * 

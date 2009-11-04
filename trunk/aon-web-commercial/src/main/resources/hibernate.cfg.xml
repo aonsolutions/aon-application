@@ -24,7 +24,7 @@
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
-		
+				
 		<!-- AON-COMMERCIAL Mapping files -->
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialSegment"/>
@@ -38,6 +38,9 @@
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.Expense"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
 		
 		<!-- AON-MARKETING Mapping files -->
 		<mapping class="com.code.aon.marketing.Action"/>

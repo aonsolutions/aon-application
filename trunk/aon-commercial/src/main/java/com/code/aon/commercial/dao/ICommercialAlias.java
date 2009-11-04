@@ -5,6 +5,9 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialSegment;
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.Expense;
+import com.code.aon.commercial.ExpenseAccount;
+import com.code.aon.commercial.ExpenseAccountDetail;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
@@ -112,6 +115,123 @@ public interface ICommercialAlias {
 	* Hibernate value: CommercialTracking.target.id
 	*/
 	String  COMMERCIAL_TRACKING_TARGET_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for Expense entity.
+	*/ 
+	DAOConstantsEntry EXPENSE_ENTRY = DAOConstants.getDAOConstant(Expense.class);
+
+	/** 
+	* Alias value: Expense_description
+	* Hibernate value: Expense.description
+	*/
+	String  EXPENSE_DESCRIPTION = EXPENSE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Expense_id
+	* Hibernate value: Expense.id
+	*/
+	String  EXPENSE_ID = EXPENSE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Expense_unitPrice
+	* Hibernate value: Expense.unitPrice
+	*/
+	String  EXPENSE_UNIT_PRICE = EXPENSE_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ExpenseAccount entity.
+	*/ 
+	DAOConstantsEntry EXPENSE_ACCOUNT_ENTRY = DAOConstants.getDAOConstant(ExpenseAccount.class);
+
+	/** 
+	* Alias value: ExpenseAccount_comments
+	* Hibernate value: ExpenseAccount.comments
+	*/
+	String  EXPENSE_ACCOUNT_COMMENTS = EXPENSE_ACCOUNT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ExpenseAccount_description
+	* Hibernate value: ExpenseAccount.description
+	*/
+	String  EXPENSE_ACCOUNT_DESCRIPTION = EXPENSE_ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ExpenseAccount_id
+	* Hibernate value: ExpenseAccount.id
+	*/
+	String  EXPENSE_ACCOUNT_ID = EXPENSE_ACCOUNT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ExpenseAccount_issueDate
+	* Hibernate value: ExpenseAccount.issueDate
+	*/
+	String  EXPENSE_ACCOUNT_ISSUE_DATE = EXPENSE_ACCOUNT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ExpenseAccount_registry_id
+	* Hibernate value: ExpenseAccount.registry.id
+	*/
+	String  EXPENSE_ACCOUNT_REGISTRY_ID = EXPENSE_ACCOUNT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ExpenseAccount_status
+	* Hibernate value: ExpenseAccount.status
+	*/
+	String  EXPENSE_ACCOUNT_STATUS = EXPENSE_ACCOUNT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ExpenseAccount_type
+	* Hibernate value: ExpenseAccount.type
+	*/
+	String  EXPENSE_ACCOUNT_TYPE = EXPENSE_ACCOUNT_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for ExpenseAccountDetail entity.
+	*/ 
+	DAOConstantsEntry EXPENSE_ACCOUNT_DETAIL_ENTRY = DAOConstants.getDAOConstant(ExpenseAccountDetail.class);
+
+	/** 
+	* Alias value: ExpenseAccountDetail_amount
+	* Hibernate value: ExpenseAccountDetail.amount
+	*/
+	String  EXPENSE_ACCOUNT_DETAIL_AMOUNT = EXPENSE_ACCOUNT_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ExpenseAccountDetail_expenseAccount_id
+	* Hibernate value: ExpenseAccountDetail.expenseAccount.id
+	*/
+	String  EXPENSE_ACCOUNT_DETAIL_EXPENSE_ACCOUNT_ID = EXPENSE_ACCOUNT_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ExpenseAccountDetail_expense_id
+	* Hibernate value: ExpenseAccountDetail.expense.id
+	*/
+	String  EXPENSE_ACCOUNT_DETAIL_EXPENSE_ID = EXPENSE_ACCOUNT_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ExpenseAccountDetail_id
+	* Hibernate value: ExpenseAccountDetail.id
+	*/
+	String  EXPENSE_ACCOUNT_DETAIL_ID = EXPENSE_ACCOUNT_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ExpenseAccountDetail_price
+	* Hibernate value: ExpenseAccountDetail.price
+	*/
+	String  EXPENSE_ACCOUNT_DETAIL_PRICE = EXPENSE_ACCOUNT_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ExpenseAccountDetail_quantity
+	* Hibernate value: ExpenseAccountDetail.quantity
+	*/
+	String  EXPENSE_ACCOUNT_DETAIL_QUANTITY = EXPENSE_ACCOUNT_DETAIL_ENTRY.getAliasNames()[5];
 
 
 
