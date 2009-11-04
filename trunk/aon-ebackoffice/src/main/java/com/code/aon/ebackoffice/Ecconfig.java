@@ -54,7 +54,7 @@ public class Ecconfig implements ITransferObject {
 	private DiscountFormat discount;
 	private PayMethod bankTransfer;
 	private PayMethod cashOnDelivery;
-	private PayMethod visa;
+	private PayMethod creditCard;
 	private PayMethod paypal;
 	private PayMethod bankDraft;
 	private String series;
@@ -183,11 +183,11 @@ public class Ecconfig implements ITransferObject {
 	@JoinColumn(name="visa")
 	@ForeignKey(name = "FK_ECCONFIG_VISA")
 	@Index(name = "IDX_ECCONFIG_VISA")
-	public PayMethod getVisa() {
-		return visa;
+	public PayMethod getCreditCard() {
+		return creditCard;
 	}
-	public void setVisa(PayMethod visa) {
-		this.visa = visa;
+	public void setCreditCard(PayMethod creditCard) {
+		this.creditCard = creditCard;
 	}
 	
 	@OneToOne (fetch=FetchType.EAGER)
