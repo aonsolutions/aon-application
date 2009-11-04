@@ -22,6 +22,9 @@
 					<aon:menuItem id="commercialTerm" 
 						value="#{commercialBundle.commercial_term_module}"
 						action="commercialTerm" actionListener="#{commercialTerm.onSearch}" />
+					<aon:menuItem id="commercialExpense" 
+						value="#{commercialBundle.commercial_expense_module}"
+						action="commercialExpense" actionListener="#{expense.onSearch}" />
 					<aon:menuGroup value="#{commercialBundle.commercial_product_auxiliars_module_group}">
 						<aon:menuItem id="productCategory" 
 							action="productCategory" 
@@ -52,6 +55,9 @@
 					<aon:menuItem id="offer_form"
 						value="#{commercialBundle.commercial_offer_module}" 
 						action="offer_search" actionListener="#{offer.onEditSearch}" />
+					<aon:menuItem id="expense_form"
+						value="#{commercialBundle.commercial_expense_control_module}" 
+						action="expenseAccount_search" actionListener="#{expenseAccount.onEditSearch}" />
 				</aon:dropDownMenu>
 				<aon:dropDownMenu value="#{marketingBundle.marketing_marketing}">
 					<aon:menuItem id="campaign"

@@ -7,6 +7,9 @@ import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialSegment;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.Expense;
+import com.code.aon.commercial.ExpenseAccount;
+import com.code.aon.commercial.ExpenseAccountDetail;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
@@ -34,6 +37,9 @@ public class CommercialAliasWriter {
 				CommercialActivity.class.getName(),
 				CommercialSegment.class.getName(),
 				CommercialTracking.class.getName(),
+				Expense.class.getName(),
+				ExpenseAccount.class.getName(),
+				ExpenseAccountDetail.class.getName(),
 				Offer.class.getName(),
 				OfferAttachment.class.getName(),
 				OfferDetail.class.getName(),
