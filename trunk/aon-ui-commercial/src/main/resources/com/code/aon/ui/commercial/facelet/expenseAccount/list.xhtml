@@ -47,7 +47,7 @@
 					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 					<ui:param name="controller" value="#{expenseAccount}" />
 					<ui:param name="columnClasses"
-						value="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						value="aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn,aon-editDataTable-numberColumn" />
 
 					<ui:define name="columns">
@@ -56,6 +56,12 @@
 								<h:outputText value="#{bundle.aon_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.registry.fullName}" />
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
 						</aon:column>
 						<aon:column>
 							<f:facet name="header">
