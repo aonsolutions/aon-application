@@ -27,6 +27,10 @@
 		/>
 	</customer:config>
 
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia showSendEmail="true" />
+	</registry:config>
+
 	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
 		<supplier:supplier
 			showFinanceData="true" 
@@ -36,9 +40,12 @@
 	</supplier:config>
 
 	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
-		<finance:finance
+		<finance:creditor
 			showFinanceData="true" 
 			showAccount="true"
+		/>
+		<finance:invoice
+			showDeliveryData="false" 
 		/>
 	</finance:config>
 </config>

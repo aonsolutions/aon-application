@@ -201,6 +201,9 @@
 							actionListener="#{accountCheck.onInitialize}"
 							value="#{accountingBundle.accounting_check_balance_module}" />
 						<aon:menuSeparator />
+						<aon:menuItem  action="account_exporter" value="#{accountBundle.account_exporter_module}" />
+						<aon:menuItem  action="account_importer" actionListener="#{accountImporter.onInitialize}" value="#{accountBundle.account_importer_module}" />
+						<aon:menuSeparator />
 						<aon:menuItem actionListener="#{mbase.onInitialize}"
 							action="mbase_form" value="IMPORTACION DESDE MBASESOR" />
 					</aon:menuGroup>
