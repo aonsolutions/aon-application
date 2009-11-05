@@ -11,6 +11,7 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -25,6 +26,7 @@ public class LedgerReportController extends BasicController {
 	private Date toDate;
 	private Date date;
 	private String order;
+	private String account;
 	private Integer previousAccountEntryDetail;
 	private String previousAccount;
 	private boolean currentValue = true;
@@ -78,6 +80,15 @@ public class LedgerReportController extends BasicController {
 		this.securityLevel = securityLevel;
 	}
 
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+
 	public void onReset(ActionEvent event) {
 		initialize();
 		super.onReset(event);
@@ -93,6 +104,7 @@ public class LedgerReportController extends BasicController {
 		setToDate(null);
 		setDate(new Date());
 		setSecurityLevel(null);
+		setAccount(null);
 		previousAccountEntryDetail = null;
 		previousAccount = null;
 		odd = true;
@@ -128,6 +140,9 @@ public class LedgerReportController extends BasicController {
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
+			if (getAccount() != null) {
+				criteria.addExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), getAccount());
+			}
 			getCriteria().addOrder(
 					getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID));
 			if ("1".equals(getOrder()) ) {
@@ -140,6 +155,9 @@ public class LedgerReportController extends BasicController {
 			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		} catch (ExpressionException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
 		}
