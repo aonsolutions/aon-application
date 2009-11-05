@@ -146,7 +146,9 @@
 				<aon:div id="loanContainer" style="margin-top: 10px;width: 70%;">
 					<aon:panelCollapsible label="#{accountingBundle.accounting_loan_data}" 
 						rendered="#{loanFeeEntry.header.loan != null and loanFeeEntry.header.loan.id != null}">
-						<aon:panelGrid columns="2" style="width: 100%; text-align: left;">
+						<aon:panelGrid columns="2" style="width: 100%; text-align: left;"
+							columnClasses="aon-panelGrid-odd aon-width-150
+								,aon-panelGrid-even aon-width-auto">
 							<aon:outputText value="#{bundle.aon_date}" />
 							<aon:outputText value="#{loanFeeEntry.header.loan.loanDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
