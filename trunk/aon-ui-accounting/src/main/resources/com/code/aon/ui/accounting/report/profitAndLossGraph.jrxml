@@ -64,18 +64,18 @@
 	<pageHeader>
 		<band height="357" splitType="Stretch">
 			<pie3DChart>
-				<chart isShowLegend="false">
+				<chart isShowLegend="false" evaluationTime="Page">
 					<reportElement key="element-1" x="14" y="43" width="533" height="303"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
 				</chart>
-				<pieDataset>
+				<pieDataset maxCount="10">
 					<keyExpression><![CDATA[$F{id}]]></keyExpression>
-					<valueExpression><![CDATA[($F{unpaidBalance}.doubleValue()==0 ? $F{creditBalance} :$F{unpaidBalance} )]]></valueExpression>
-					<labelExpression><![CDATA[$F{id}]]></labelExpression>
+					<valueExpression><![CDATA[$F{unpaidBalance}.doubleValue()==0.0 ? $F{creditBalance} :$F{unpaidBalance}]]></valueExpression>
+					<labelExpression><![CDATA[$F{description}]]></labelExpression>
 				</pieDataset>
-				<pie3DPlot depthFactor="0.2" isCircular="false">
+				<pie3DPlot depthFactor="0.2" isCircular="false" labelFormat="{0} ({2})">
 					<plot backcolor="#FFFFFF" orientation="Horizontal" backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="0.0"/>
 					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
 				</pie3DPlot>
