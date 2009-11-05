@@ -4,19 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 
-/**
- * The Class EntityMetadataManager.
- */
 public class EntityMetadataManager {
 
+	/**
+	 * Map of registered Entity Metadatas.
+	 */
 	private static Map<Class<? extends ITransferObject>,EntityMetadata> metadastas = new HashMap<Class<? extends ITransferObject>,EntityMetadata>();
 
 	/**
 	 * Return the <code>IManagerBean</code> bound to the POJO Class.
 	 * 
-	 * @param pojoClass the pojo class
-	 * 
+	 * @param pojoClass
 	 * @return The requested <code>IManagerBean</code>.
 	 */
 	public static EntityMetadata getMetadata(Class<? extends ITransferObject> pojoClass) {

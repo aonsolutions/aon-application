@@ -6,8 +6,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.code.aon.common.ITransferObject;
-
 /**
  * Specifies that the class is an LDAP entity. This annotation is 
  * applied to the entity class.
@@ -39,11 +37,5 @@ public @interface Attribute {
      * string-valued column is used.)
      */
     int length() default -1;
-
-    /**
-     * (Optional) The ITransferObject class, needed for collections.
-     * 
-     */
-    String baseClass() default "";
     
 }
