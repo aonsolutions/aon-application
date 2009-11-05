@@ -367,7 +367,7 @@ public class Ecconfig implements ITransferObject {
 		this.freeShipping = freeShipping;
 	}
 	
-	@Column(length=40)
+	@Column(length=64)
 	public String getEmail() {
 		return email;
 	}
