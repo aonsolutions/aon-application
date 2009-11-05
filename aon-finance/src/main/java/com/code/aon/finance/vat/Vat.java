@@ -3,6 +3,8 @@ package com.code.aon.finance.vat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -118,6 +120,13 @@ public class Vat {
 
 	public void setNumber(int number) {
 		this.number = number;
+	}
+
+	public String getSeriesNumber() {
+		if ( StringUtils.isBlank(series) ) {
+			return Integer.toString(number);
+		} 
+		return series + "/" + number;
 	}
 
 	public String getReference() {
