@@ -100,7 +100,7 @@ public class VatCollection {
 			String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) ";
 			// ---------------------------------------------------------------------------
 			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT i.type,i.transaction,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
+			stmt.append(" SELECT i.type,i.transaction,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
 			stmt.append("  ,it.percentage,it.surcharge,SUM(id.taxable_base) ");
 			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
 			stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) RE,");
@@ -151,6 +151,8 @@ public class VatCollection {
 				stmt.append(" ORDER BY i.tax_date,i.reference_code");
 			} else if (order == VatReportOrder.INVOICE_REFERENCE) {
 				stmt.append(" ORDER BY i.reference_code");
+			} else if (order == VatReportOrder.INVOICE_ORDER_NUMBER) {
+				stmt.append(" ORDER BY vatType,i.series,i.number");
 			} else if (order == VatReportOrder.INVOICE_REGISTRY_DOCUMENT) {
 				stmt.append(" ORDER BY i.rdocument,i.reference_code");
 			} else if (order == VatReportOrder.INVOICE_REGISTRY_NAME) {
@@ -183,14 +185,16 @@ public class VatCollection {
 				vat.setDate(rs.getDate(3));
 				vat.setInvoiceDate(rs.getDate(4));
 				vat.setReference(rs.getString(5));
-				vat.setDocument(rs.getString(6));
-				vat.setName(rs.getString(7));
-				vat.setPercent(rs.getDouble(8));
-				vat.setSurcharge(rs.getDouble(9));
-				vat.setBase(rs.getDouble(10));
-				vat.setVatQuota(rs.getDouble(11));
-				vat.setSurchargeQuota(rs.getDouble(12));
-				VatType vatType = VatType.values()[(rs.getInt(13) - 1)];
+				vat.setSeries(rs.getString(6));
+				vat.setNumber(rs.getInt(7));
+				vat.setDocument(rs.getString(8));
+				vat.setName(rs.getString(9));
+				vat.setPercent(rs.getDouble(10));
+				vat.setSurcharge(rs.getDouble(11));
+				vat.setBase(rs.getDouble(12));
+				vat.setVatQuota(rs.getDouble(13));
+				vat.setSurchargeQuota(rs.getDouble(14));
+				VatType vatType = VatType.values()[(rs.getInt(15) - 1)];
 				vat.setVatType(vatType);
 				vats.add(vat);
 			}
