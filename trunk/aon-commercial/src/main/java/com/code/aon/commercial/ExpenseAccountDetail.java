@@ -45,7 +45,7 @@ public class ExpenseAccountDetail implements ITransferObject{
 	private Expense expense;
 	
 	/** The quantity. */
-	private Integer quantity;
+	private double quantity;
 	
 	/** The price. */
     private double price;
@@ -94,11 +94,11 @@ public class ExpenseAccountDetail implements ITransferObject{
 		this.expense = expense;
 	}
 
-	public Integer getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 	
