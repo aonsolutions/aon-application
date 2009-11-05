@@ -60,7 +60,7 @@ public class Expense implements ITransferObject {
      * 
      * @return the description
      */
-	@Column(length=40)
+	@Column(length=64)
     public String getDescription() {
         return description;
     }
