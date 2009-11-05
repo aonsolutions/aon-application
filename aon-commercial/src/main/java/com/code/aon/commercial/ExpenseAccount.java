@@ -159,7 +159,7 @@ public class ExpenseAccount implements ITransferObject,IRegistry{
      * 
      * @return the description
      */
-	@Column(length=40)
+	@Column(length=64)
     public String getDescription() {
         return description;
     }
