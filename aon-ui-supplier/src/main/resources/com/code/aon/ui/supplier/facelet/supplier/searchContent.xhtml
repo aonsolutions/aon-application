@@ -2,32 +2,49 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
-		<ui:param name="controller" value="#{controller}" />
-	</ui:include>
-	
-	<c:if test="#{aonConfiguration.bean.supplier.showSegment}">	
-		<aon:outputLabel for="Supplier_supplierSegment_id"
-			value="#{bundle.aon_segment}" />
-		<aon:selectOneMenu id="Supplier_supplierSegment_id"
-			value="#{supplierCollections.supplierSegment}"
-			valueChangeListener="#{controller.addIdEqualExpression}">
-			<f:selectItem itemLabel="-" value="#{null}"/>		
-			<f:selectItems value="#{supplierCollections.supplierSegments}" />
-		</aon:selectOneMenu>
-	</c:if>
-		
-	<aon:outputLabel for="Supplier_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Supplier_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{supplierCollections.supplierStatuses}" />
-	</aon:selectOneMenu>
+	<aon:outputText value="" />
+	<aon:div style="width:550px;">
+		<aon:panelCollapsible expanded="true" label="#{supplierBundle.supplier_supplier}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/searchBasicContent.xhtml">
+					<ui:param name="controller" value="#{supplier}"/>
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>					
+					
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
+					<ui:param name="controller" value="#{supplier}" />
+					<ui:param name="searchController" value="#{supplierSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
+					<ui:param name="controller" value="#{supplier}" />
+					<ui:param name="searchController" value="#{supplierSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+				
+		<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
+			<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_segment_module}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+					<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
+						<ui:param name="controller" value="#{supplier}" />
+						<ui:param name="searchController" value="#{supplierSearch}" />
+					</ui:include>
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</c:if>
+						
+	</aon:div>
 
 </ui:composition>
