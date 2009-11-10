@@ -17,7 +17,10 @@
 				value="#{signBundle.sign_sign}"
 				actionListener="#{certificate.onShowSignWindow}"
 				styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
-				reRender="showSignWindow" />
+				reRender="showSignWindow" >
+				<f:setPropertyActionListener
+					target="#{certificate.signerController}" value="#{signController}" />				
+			</aon:commandButton>
 		</c:if>
 		<c:if test="#{!skipSignButton and certificate.sessionCertificateStored}">
 			<aon:commandButton id="sign"

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,14 +20,17 @@ import net.esle.sinadura.core.firma.SignStoreFactory;
 import net.esle.sinadura.core.firma.SignStoreIFace;
 import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Company;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -42,7 +46,11 @@ public class CertificateController {
 
 	private static final String SIGN_IMAGE_PATH = "sign.png";
 	
-	private Company company;
+	private static final String SOFTWARE_TAB_ID = "software";
+	
+	private static final String SMART_CARD_TAB_ID = "smartCard";
+	
+	private CompanyController companyController;
 	
 	private RegistryAttachment keystore;
 	
@@ -68,9 +76,18 @@ public class CertificateController {
 	
 	private boolean sessionCertificateStored;
 	
+	private String selectedTab;
+	
+	private String pdf64Data;
+	
+	private String pdf64SignedData;	
+	
+	private IAttachment attachment;
+	
+	private SignerController signerController;
+	
 	public CertificateController() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		this.company = companyController.obtainCompany();
+		this.companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 	}
 
 	public String getPassword() {
@@ -160,6 +177,59 @@ public class CertificateController {
 	public void setSessionCertificateStored(boolean sessionCertificateStored) {
 		this.sessionCertificateStored = sessionCertificateStored;
 	}
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	public String getPdf64Data() {
+		if ( getAttachment() == null ) {
+			ISignatureController signatureController = getSignerController().getSignatureController();
+			ITransferObject to = signatureController.getTo();
+			setAttachment( signatureController.generateReportAttachment(to) );
+			if (! ArrayUtils.isEmpty(getAttachment().getData()) ) {
+				byte[] base64Data = Base64.encodeBase64(getAttachment().getData());
+				this.pdf64Data = new String( base64Data );	
+			}			
+		}
+		return pdf64Data;
+	}
+
+	public void setPdf64Data(String pdf64Data) {
+		this.pdf64Data = pdf64Data;
+	}
+
+	public String getPdf64SignedData() {
+		return pdf64SignedData;
+	}
+
+	public void setPdf64SignedData(String pdf64SignedData) {
+		this.pdf64SignedData = pdf64SignedData;
+	}
+	
+	public IAttachment getAttachment() {
+		return attachment;
+	}
+
+	public void setAttachment(IAttachment attachment) {
+		this.attachment = attachment;
+	}
+
+	public SignerController getSignerController() {
+		return signerController;
+	}
+
+	public void setSignerController(SignerController signerController) {
+		this.signerController = signerController;
+	}
+	
+	public boolean isUsingSmartCard() {
+		return StringUtils.equals(this.selectedTab, SMART_CARD_TAB_ID);
+	}
 
 	public void onShowSignWindow( ActionEvent event ) throws ManagerBeanException {
 		setShowSignWindow(true);
@@ -170,6 +240,14 @@ public class CertificateController {
 		setAlias(null);
 		setCertificates(null);
 		loadDigitalCertificates();
+		if ( getDigitalCertificates().isEmpty() ) {
+			setSelectedTab(SMART_CARD_TAB_ID);
+		} else {
+			setSelectedTab(SOFTWARE_TAB_ID);
+		}
+		setAttachment(null);
+		setPdf64Data(null);
+		setPdf64SignedData(null);
 	}
 
 	public List<SelectItem> getDigitalCertificates() {
@@ -178,7 +256,8 @@ public class CertificateController {
 	
 	private Criteria getCertificateCriteria( IManagerBean bean ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
+		Serializable id = companyController.obtainCompany().getId();
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
 		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
 		String scopeAlias = bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
 		criteria.addExpression( ScopeFilterListener.getExpression(scopeAlias) );
@@ -204,15 +283,18 @@ public class CertificateController {
 		return rattachBean.getCount(criteria);
 	}	
 	
+	public boolean isSignable() throws ManagerBeanException {
+		return companyController.isSmartCard() || (getCertificateCount() > 0);
+	}
+	
 	public byte[] getSignedFileData( byte[] in, boolean visible ) throws SinaduraCoreException, IOException {
 		DocumentIFace document = DocumentFactory.buildPDFDocument( in );
 		document.setTSURL( DEFAULT_TSA_URL );
 		InputStream imageIS = SignerController.class.getResourceAsStream(SIGN_IMAGE_PATH);
 		byte[] imageData = IOUtils.toByteArray( imageIS );
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		document.firmar( signStore, certificado, out, visible, 
-				company.getAlias(), companyController.getMainAddress().getCity(), imageData,
+				companyController.obtainCompany().getAlias(), companyController.getMainAddress().getCity(), imageData,
 				305, 745, 405, 795 );		
 		return out.toByteArray();		
 	}	
@@ -220,6 +302,15 @@ public class CertificateController {
 	public boolean resolveCertificado() {
 		if ( sessionCertificateStored ) {
 			return true;
+		}
+		if ( isUsingSmartCard() ) {
+			if (! StringUtils.isEmpty(this.pdf64SignedData) ) {
+				byte[] data = Base64.decodeBase64(this.pdf64SignedData.getBytes());
+				attachment.setData( data );
+				attachment.setMimeType( MimeType.MIME_SIGNED_PDF );
+				return true;
+			}			
+			return false;
 		}
 		boolean resolved = false;
 		try {
@@ -258,5 +349,5 @@ public class CertificateController {
 		}
 		return resolved;
 	}	
-	
+
 }
