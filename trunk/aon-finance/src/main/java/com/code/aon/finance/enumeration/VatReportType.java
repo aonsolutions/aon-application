@@ -13,8 +13,8 @@ public enum VatReportType implements IResourceable {
 
 	GENERAL,
 	SURCHARGE,
-	INTRACOMUNNITARY,
-	EXTRACOMUNNITARY;
+	INTRACOMMUNITY,
+	EXTRACOMMUNITY;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";

@@ -6,7 +6,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.finance.enumeration.InvoiceTransactionType;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.VatReportType;
 import com.code.aon.finance.enumeration.VatType;
@@ -57,11 +57,11 @@ public class Vat {
 	}
 
 	public VatReportType getReportType() {
-		if (transactionType == InvoiceTransactionType.INTRACOMUNNITARY) {
-			return VatReportType.INTRACOMUNNITARY;
+		if (transactionType == InvoiceTransactionType.INTRACOMMUNITY) {
+			return VatReportType.INTRACOMMUNITY;
 		} 
-		if (transactionType == InvoiceTransactionType.EXTRACOMUNNITARY) {
-			return VatReportType.EXTRACOMUNNITARY;
+		if (transactionType == InvoiceTransactionType.EXTRACOMMUNITY) {
+			return VatReportType.EXTRACOMMUNITY;
 		}
 		return VatReportType.GENERAL;
 	}
