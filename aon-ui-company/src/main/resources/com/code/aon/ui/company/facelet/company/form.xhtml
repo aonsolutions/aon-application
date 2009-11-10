@@ -180,16 +180,6 @@
 											<aon:selectBooleanCheckbox id="Company_withholding"
 												value="#{company.to.withholding}" />
 	
-											<aon:outputLabel for="Company_print_header"
-												value="#{companyBundle.company_print_header}" />
-											<aon:selectBooleanCheckbox id="Company_print_header"
-												value="#{company.printHeader}" />
-							
-											<aon:outputLabel for="Company_print_record_data"
-												value="#{companyBundle.company_print_record_data}" />
-											<aon:selectBooleanCheckbox id="Company_print_record_data"
-												value="#{company.printRecordData}" />
-	
 											<aon:outputLabel for="Company_EInvoice"
 												value="#{companyBundle.company_eInvoice}" />
 											<aon:selectBooleanCheckbox id="Company_EInvoice"
@@ -202,6 +192,16 @@
 											<aon:selectBooleanCheckbox id="Company_smartCard"
 												rendered="#{company.to.EInvoice}"
 												value="#{company.smartCard}" />												
+
+											<aon:outputLabel for="Company_print_header"
+												value="#{companyBundle.company_print_header}" />
+											<aon:selectBooleanCheckbox id="Company_print_header"
+												value="#{company.printHeader}" />
+							
+											<aon:outputLabel for="Company_print_record_data"
+												value="#{companyBundle.company_print_record_data}" />
+											<aon:selectBooleanCheckbox id="Company_print_record_data"
+												value="#{company.printRecordData}" />
 										</aon:panelGrid>
 									</a4j:region>
 								</aon:div>
