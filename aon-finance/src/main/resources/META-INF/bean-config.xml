@@ -57,6 +57,7 @@
 	<bean description="Evita que se borre un acreedor con facturas">
 		<pojo>com.code.aon.finance.Creditor</pojo>
 		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.CreditorBeanVetoListener</vetoListener>
 	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
