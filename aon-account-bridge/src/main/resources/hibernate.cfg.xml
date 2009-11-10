@@ -55,10 +55,8 @@
 		<mapping class="com.code.aon.config.Tariff"/>
 
 		<mapping class="com.code.aon.customer.Customer"/>
-		<mapping class="com.code.aon.customer.CustomerSegment"/>
 
 		<mapping class="com.code.aon.supplier.Supplier"/>
-		<mapping class="com.code.aon.supplier.SupplierSegment"/>
 
 		<mapping class="com.code.aon.product.Brand"/>
 		<mapping class="com.code.aon.product.Item"/>
