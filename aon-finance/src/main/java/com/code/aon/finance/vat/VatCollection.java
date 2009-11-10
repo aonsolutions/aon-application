@@ -9,7 +9,7 @@ import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.finance.enumeration.InvoiceTransactionType;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.VatReportOrder;
 import com.code.aon.finance.enumeration.VatReportType;
@@ -130,11 +130,11 @@ public class VatCollection {
 				} else if (params.getVatReportType() == VatReportType.SURCHARGE) {
 					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.NATIONAL.ordinal());
 					stmt.append(" AND it.surcharge > 0");
-				} else if (params.getVatReportType() == VatReportType.INTRACOMUNNITARY) {
-					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.INTRACOMUNNITARY.ordinal());
+				} else if (params.getVatReportType() == VatReportType.INTRACOMMUNITY) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.INTRACOMMUNITY.ordinal());
 				}
-				else if (params.getVatReportType() == VatReportType.EXTRACOMUNNITARY) {
-					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.EXTRACOMUNNITARY.ordinal());
+				else if (params.getVatReportType() == VatReportType.EXTRACOMMUNITY) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.EXTRACOMMUNITY.ordinal());
 				}				
 			}
 			if (params.getSecurityLevel() != null) {
