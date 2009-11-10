@@ -3,7 +3,6 @@ package com.code.aon.commercial.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.commercial.CommercialActivity;
-import com.code.aon.commercial.CommercialSegment;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Expense;
 import com.code.aon.commercial.ExpenseAccount;
@@ -14,7 +13,6 @@ import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
-import com.code.aon.commercial.TargetSegment;
 import com.code.aon.commercial.TargetSeller;
 import com.code.aon.commercial.CommercialTerm;
 
@@ -41,25 +39,6 @@ public interface ICommercialAlias {
 	* Hibernate value: CommercialActivity.name
 	*/
 	String  COMMERCIAL_ACTIVITY_NAME = COMMERCIAL_ACTIVITY_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for CommercialSegment entity.
-	*/ 
-	DAOConstantsEntry COMMERCIAL_SEGMENT_ENTRY = DAOConstants.getDAOConstant(CommercialSegment.class);
-
-	/** 
-	* Alias value: CommercialSegment_id
-	* Hibernate value: CommercialSegment.id
-	*/
-	String  COMMERCIAL_SEGMENT_ID = COMMERCIAL_SEGMENT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: CommercialSegment_name
-	* Hibernate value: CommercialSegment.name
-	*/
-	String  COMMERCIAL_SEGMENT_NAME = COMMERCIAL_SEGMENT_ENTRY.getAliasNames()[1];
 
 
 
@@ -575,10 +554,28 @@ public interface ICommercialAlias {
 	String  TARGET_ADVERTISING = TARGET_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Target_surcharge
+	* Hibernate value: Target.surcharge
+	*/
+	String  TARGET_SURCHARGE = TARGET_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Target_withholding
 	* Hibernate value: Target.withholding
 	*/
-	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[7];
+	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Target_transaction
+	* Hibernate value: Target.transaction
+	*/
+	String  TARGET_TRANSACTION = TARGET_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Target_status
+	* Hibernate value: Target.status
+	*/
+	String  TARGET_STATUS = TARGET_ENTRY.getAliasNames()[10];
 
 
 
@@ -610,31 +607,6 @@ public interface ICommercialAlias {
 	* Hibernate value: TargetItem.target.id
 	*/
 	String  TARGET_ITEM_TARGET_ID = TARGET_ITEM_ENTRY.getAliasNames()[3];
-
-
-
-	/** 
-	* DAOConstantsEntry for TargetSegment entity.
-	*/ 
-	DAOConstantsEntry TARGET_SEGMENT_ENTRY = DAOConstants.getDAOConstant(TargetSegment.class);
-
-	/** 
-	* Alias value: TargetSegment_id
-	* Hibernate value: TargetSegment.id
-	*/
-	String  TARGET_SEGMENT_ID = TARGET_SEGMENT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: TargetSegment_segment_id
-	* Hibernate value: TargetSegment.segment.id
-	*/
-	String  TARGET_SEGMENT_SEGMENT_ID = TARGET_SEGMENT_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: TargetSegment_target_id
-	* Hibernate value: TargetSegment.target.id
-	*/
-	String  TARGET_SEGMENT_TARGET_ID = TARGET_SEGMENT_ENTRY.getAliasNames()[2];
 
 
 
