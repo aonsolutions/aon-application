@@ -157,6 +157,10 @@ public class SignerController implements ISignConstants {
 		attachment.setData( signedFileData );
 		attachment.setDescription( description );
 		attachment.setMimeType( MimeType.MIME_SIGNED_PDF );
+		updateSigned( to, attachment, batch );
+	}
+	
+	public void updateSigned( ITransferObject to, IAttachment attachment, boolean batch ) throws ManagerBeanException { 
 		attachmentBean.insert( attachment );
 
 		updateSigned(to, true, batch);
@@ -183,7 +187,11 @@ public class SignerController implements ISignConstants {
 		}
 		try {
 			ITransferObject to = signatureController.getTo();
-			sign( to, signatureController.generateReportAttachment(to) );
+			if ( cc.isUsingSmartCard() ) {
+				updateSigned( to, cc.getAttachment(), false );
+			} else {
+				sign( to, signatureController.generateReportAttachment(to) );	
+			}
 		} catch (Throwable e) {
 			LOGGER.severe(">>>> onSign " + e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
