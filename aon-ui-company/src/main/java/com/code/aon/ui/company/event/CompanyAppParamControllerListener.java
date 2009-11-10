@@ -18,6 +18,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		try {
 			companyController.setPrintHeader(companyController.obtainPrintHeader());
 			companyController.setPrintRecordData(companyController.obtainPrintRecordData());
+			companyController.setSmartCard(companyController.obtainSmartCard());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -27,16 +28,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	public void afterBeanAdded(ControllerEvent event)throws ControllerListenerException {
 		ICompanyController companyController = (ICompanyController)event.getController();
 		try {
-			ApplicationParameter printHeaderParam = companyController.obtainApplicationParameter(CompanyController.printHeaderParam);
-			ApplicationParameter printRecorDataParam = companyController.obtainApplicationParameter(CompanyController.printRecordDataParam);
-			if(printHeaderParam != null && companyController.isPrintHeader() != new Boolean(printHeaderParam.getValue()).booleanValue()){
-				printHeaderParam.setValue(new Boolean(companyController.isPrintHeader()).toString());
-				updateParam(printHeaderParam);
-			}
-			if(printRecorDataParam != null && companyController.isPrintRecordData() != new Boolean(printRecorDataParam.getValue()).booleanValue()){
-				printRecorDataParam.setValue(new Boolean(companyController.isPrintRecordData()).toString());
-				updateParam(printRecorDataParam);
-			}
+			updateParams(companyController);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -46,23 +38,32 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event)throws ControllerListenerException {
 		ICompanyController companyController = (ICompanyController)event.getController();
 		try {
-			ApplicationParameter printHeaderParam = companyController.obtainApplicationParameter(CompanyController.printHeaderParam);
-			ApplicationParameter printRecorDataParam = companyController.obtainApplicationParameter(CompanyController.printRecordDataParam);
-			if(printHeaderParam != null && companyController.isPrintHeader() != new Boolean(printHeaderParam.getValue()).booleanValue()){
-				printHeaderParam.setValue(new Boolean(companyController.isPrintHeader()).toString());
-				updateParam(printHeaderParam);
-			}
-			if(printRecorDataParam != null && companyController.isPrintRecordData() != new Boolean(printRecorDataParam.getValue()).booleanValue()){
-				printRecorDataParam.setValue(new Boolean(companyController.isPrintRecordData()).toString());
-				updateParam(printRecorDataParam);
-			}
+			updateParams(companyController);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
 	}
 	
-	private void updateParam(ApplicationParameter param) throws ManagerBeanException {
-		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		appParamBean.update(param);
+	private void updateParams( ICompanyController companyController ) throws ManagerBeanException {
+		updateParam(companyController, CompanyController.PRINT_HEADER_PARAM, companyController.isPrintHeader());
+		updateParam(companyController, CompanyController.PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
+		updateParam(companyController, CompanyController.SMART_CARD_PARAM, companyController.isSmartCard());		
 	}
+	
+	private void updateParam(ICompanyController companyController, String paramName, boolean value) throws ManagerBeanException {
+		boolean update = true;
+		ApplicationParameter param = companyController.obtainApplicationParameter(paramName);
+		if ( param == null ) {
+			param = new ApplicationParameter();
+			param.setName(paramName);
+		} else if ( value == new Boolean(param.getValue()).booleanValue() ) {
+			update = false;
+		}
+		if ( update ) {
+			param.setValue(new Boolean(value).toString());
+			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			appParamBean.insertOrUpdate(param);			
+		}
+	}
+	
 }
