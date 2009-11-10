@@ -9,7 +9,6 @@ import java.util.Iterator;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.persistence.Column;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -37,9 +36,11 @@ import com.code.aon.ui.form.IController;
  */
 public class CompanyParentController extends BasicController implements ICompanyController {
 	
-	public static final String printHeaderParam = "APP_PRINT_HEADER_PARAM";
+	public static final String PRINT_HEADER_PARAM = "APP_PRINT_HEADER_PARAM";
 	
-	public static final String printRecordDataParam = "APP_PRINT_RECORD_DATA_PARAM";
+	public static final String PRINT_RECORD_DATA_PARAM = "APP_PRINT_RECORD_DATA_PARAM";
+	
+	public static final String SMART_CARD_PARAM = "APP_SMART_CARD_PARAM";
 
 	/** The attach. */
 	private RegistryAttachment attach;
@@ -77,6 +78,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printHeader;
 	
 	private boolean printRecordData;
+	
+	private boolean smartCard;
 
     /**
      * Gets the company label.
@@ -586,7 +589,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printRecordData = printRecordData;
 	}
 
-	
+	public boolean isSmartCard() {
+		return smartCard;
+	}
+
+	public void setSmartCard(boolean smartCard) {
+		this.smartCard = smartCard;
+	}
+
 	/**
 	 * Gets the child bean.
 	 * 
@@ -616,15 +626,20 @@ public class CompanyParentController extends BasicController implements ICompany
 	public static final String COMPANY_ADDRESS_CONTROLLER_NAME = "companyAddress";
 
 	public boolean obtainPrintHeader() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(printHeaderParam);
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_HEADER_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
 	}
 
 	public boolean obtainPrintRecordData() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(printRecordDataParam);
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_RECORD_DATA_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
 	}
 
+	public boolean obtainSmartCard() throws ManagerBeanException {
+		ApplicationParameter appParam = obtainApplicationParameter(SMART_CARD_PARAM);
+		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+	
 	@SuppressWarnings("unchecked")
 	public ApplicationParameter obtainApplicationParameter(String paramName) throws ManagerBeanException{
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
