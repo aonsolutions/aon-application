@@ -794,10 +794,16 @@ public interface IFinanceAlias {
 	String  CREDITOR_WITHHOLDING = CREDITOR_ENTRY.getAliasNames()[7];
 
 	/** 
+	* Alias value: Creditor_transaction
+	* Hibernate value: Creditor.transaction
+	*/
+	String  CREDITOR_TRANSACTION = CREDITOR_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: Creditor_scope_id
 	* Hibernate value: Creditor.scope.id
 	*/
-	String  CREDITOR_SCOPE_ID = CREDITOR_ENTRY.getAliasNames()[8];
+	String  CREDITOR_SCOPE_ID = CREDITOR_ENTRY.getAliasNames()[9];
 
 
 

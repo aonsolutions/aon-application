@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.finance.Creditor">
-		<alias names="id,registry_id,status,registry_name,registry_surname,registry_alias,registry_document,withholding,scope_id"/>
-		<hibernate names="id,registry.id,status,registry.name,registry.surname,registry.alias,registry.document,withholding,scope.id"/>
+		<alias names="id,registry_id,status,registry_name,registry_surname,registry_alias,registry_document,withholding,transaction,scope_id"/>
+		<hibernate names="id,registry.id,status,registry.name,registry.surname,registry.alias,registry.document,withholding,transaction,scope.id"/>
 	</bean>
 	
 	<bean class="com.code.aon.finance.CustomerFee" sqlName="customer_fee">
