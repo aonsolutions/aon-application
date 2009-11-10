@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryBank;
@@ -13,7 +14,9 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.RegistryRelationship;
+import com.code.aon.registry.RegistrySegment;
 import com.code.aon.registry.Relationship;
+import com.code.aon.registry.Segment;
 
 /** 
 * Interface for holding entity properties constants.
@@ -166,6 +169,43 @@ public interface IRegistryAlias {
 	* Hibernate value: Registry.type
 	*/
 	String  REGISTRY_TYPE = REGISTRY_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for RegistryAddInfo entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_ADD_INFO_ENTRY = DAOConstants.getDAOConstant(RegistryAddInfo.class);
+
+	/** 
+	* Alias value: RegistryAddInfo_attribute
+	* Hibernate value: RegistryAddInfo.attribute
+	*/
+	String  REGISTRY_ADD_INFO_ATTRIBUTE = REGISTRY_ADD_INFO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryAddInfo_id
+	* Hibernate value: RegistryAddInfo.id
+	*/
+	String  REGISTRY_ADD_INFO_ID = REGISTRY_ADD_INFO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryAddInfo_registry_id
+	* Hibernate value: RegistryAddInfo.registry.id
+	*/
+	String  REGISTRY_ADD_INFO_REGISTRY_ID = REGISTRY_ADD_INFO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RegistryAddInfo_value
+	* Hibernate value: RegistryAddInfo.value
+	*/
+	String  REGISTRY_ADD_INFO_VALUE = REGISTRY_ADD_INFO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RegistryAddInfo_valueDate
+	* Hibernate value: RegistryAddInfo.valueDate
+	*/
+	String  REGISTRY_ADD_INFO_VALUE_DATE = REGISTRY_ADD_INFO_ENTRY.getAliasNames()[4];
 
 
 
@@ -604,6 +644,31 @@ public interface IRegistryAlias {
 
 
 	/** 
+	* DAOConstantsEntry for RegistrySegment entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_SEGMENT_ENTRY = DAOConstants.getDAOConstant(RegistrySegment.class);
+
+	/** 
+	* Alias value: RegistrySegment_id
+	* Hibernate value: RegistrySegment.id
+	*/
+	String  REGISTRY_SEGMENT_ID = REGISTRY_SEGMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistrySegment_registry_id
+	* Hibernate value: RegistrySegment.registry.id
+	*/
+	String  REGISTRY_SEGMENT_REGISTRY_ID = REGISTRY_SEGMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistrySegment_segment_id
+	* Hibernate value: RegistrySegment.segment.id
+	*/
+	String  REGISTRY_SEGMENT_SEGMENT_ID = REGISTRY_SEGMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
 	* DAOConstantsEntry for Relationship entity.
 	*/ 
 	DAOConstantsEntry RELATIONSHIP_ENTRY = DAOConstants.getDAOConstant(Relationship.class);
@@ -619,6 +684,25 @@ public interface IRegistryAlias {
 	* Hibernate value: Relationship.id
 	*/
 	String  RELATIONSHIP_ID = RELATIONSHIP_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Segment entity.
+	*/ 
+	DAOConstantsEntry SEGMENT_ENTRY = DAOConstants.getDAOConstant(Segment.class);
+
+	/** 
+	* Alias value: Segment_id
+	* Hibernate value: Segment.id
+	*/
+	String  SEGMENT_ID = SEGMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Segment_name
+	* Hibernate value: Segment.name
+	*/
+	String  SEGMENT_NAME = SEGMENT_ENTRY.getAliasNames()[1];
 
 
 }
