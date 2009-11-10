@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.finance.bridge</artifactId>
-	<version>4.2.1</version>
+	<version>4.2.2</version>
 	<description>AON FINANCE BRIDGE</description>
 	<name>AON FINANCE BRIDGE</name>
 	<dependencies>
@@ -23,37 +23,37 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>4.4.0</version>
+			<version>4.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>4.1.2</version>
+			<version>4.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>4.5.1</version>
+			<version>4.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>4.3.0</version>
+			<version>4.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.sales.bridge</artifactId>
-			<version>4.3.2</version>
+			<version>4.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>
-			<version>4.3.2</version>
+			<version>4.4.0</version>
 		</dependency>
 	</dependencies>
 </project>
