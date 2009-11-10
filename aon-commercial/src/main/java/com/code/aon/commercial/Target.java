@@ -21,21 +21,21 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.commercial.enumeration.Advertising;
+import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
 /**
  * Transfer Object that represents a Target.
- * 
- * @author Consulting & Development. Joseba Urkiri - 11-nov-2005
- * @since 1.0
  */
 @Entity
 @Table(name="target")
-public class Target implements ITransferObject, ITaxInfo, IRegistry{
+@PrimaryKeyJoinColumn(name="registry")
+public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	
 	private static final long serialVersionUID = -7492435795404962788L;
 
@@ -48,8 +48,17 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry{
 	/** The advertising. */
 	private Advertising advertising;
 
-	/** The segments. */
-	private Set<TargetSegment> segments = new HashSet<TargetSegment>();
+    /** The surcharge. */
+    private boolean surcharge;
+    
+    /** The withholding. */
+    private boolean withholding;
+
+    /** The transaction type. */
+    private InvoiceTransactionType transaction;
+
+    /** The status. */
+    private TargetStatus status;
 
 	/** The items. */
 	private Set<TargetItem> items = new HashSet<TargetItem>();
@@ -140,55 +149,79 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry{
 		this.advertising = advertising;
 	}
 
-	/**
-	 * Checks if a surcharge has to be applied to the target. 
-	 * Necessary to implement <code>ITaxInfo</code>
-	 * 
-	 * @return true, if is surcharge
-	 */
-	@Transient
-	public boolean isSurcharge() {
-		return false;
-	}
+    /**
+     * Gets if a surcharge has to be applied to the customer or not.
+     * 
+     * @return true if a surcharge has to be applied.
+     */
+    @Column(nullable=true)
+    public boolean isSurcharge() {
+        return surcharge;
+    }
+
+    /**
+     * Sets if a surcharge has to be applied to the customer or not.
+     * 
+     * @param surcharge true if a surcharge has to be applied.
+     */
+    public void setSurcharge(boolean surcharge) {
+        this.surcharge = surcharge;
+    }
 
 	/**
-	 * Checks if is tax free. Necessary to implement <code>ITaxInfo</code>
-	 * 
-	 * @return true, if is tax free
-	 */
-	@Transient
-	public boolean isTaxFree() {
-		return false;
-	}
-
-	/**
-	 * Checks if a withholding is applied. Necessary to implement <code>ITaxInfo</code>
+	 * Checks if a withholding is applied.
 	 * 
 	 * @return true, if a withholding is applied
 	 */
-	@Transient
+	@Column(nullable=true)
 	public boolean isWithholding() {
-		return false;
+		return withholding;
 	}
 
 	/**
-	 * Gets the segments.
+	 * Sets the withholding.
 	 * 
-	 * @return the segments
+	 * @param withholding the withholding
 	 */
-	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
-	public Set<TargetSegment> getSegments() {
-		return segments;
+	public void setWithholding(boolean withholding) {
+		this.withholding = withholding;
 	}
 
 	/**
-	 * Sets the segments.
+	 * Gets the transaction type.
 	 * 
-	 * @param segments the new segments
+	 * @return the transaction type
 	 */
-	public void setSegments(Set<TargetSegment> segments) {
-		this.segments = segments;
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
 	}
+
+	/**
+	 * Sets the transaction type.
+	 * 
+	 * @param transaction the transaction type
+	 */
+	public void setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
+	}
+
+	/**
+	 * Gets the status.
+	 * 
+	 * @return the status
+	 */
+    public TargetStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Sets the status.
+     * 
+     * @param status the status
+     */
+    public void setStatus(TargetStatus status) {
+        this.status = status;
+    }
 
 	/**
 	 * Gets the items.
@@ -247,6 +280,11 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry{
 		this.trackings = trackings;
 	}
 	
+	@Transient
+	public boolean isTaxFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -257,6 +295,9 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry{
 			return new EqualsBuilder()
 				.append(this.advertising, o.advertising)
 				.append(this.registry, o.registry)
+				.append(this.surcharge, o.surcharge)
+				.append(this.transaction, o.transaction)
+				.append(this.withholding, o.withholding)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -268,6 +309,9 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry{
 			.append(advertising)
 			.append(id)
 			.append(registry)			
+			.append(surcharge)
+			.append(transaction)
+			.append(withholding)
 			.toHashCode();
 	}
 
