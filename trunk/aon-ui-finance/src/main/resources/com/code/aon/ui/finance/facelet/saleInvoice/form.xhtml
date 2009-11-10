@@ -66,7 +66,7 @@
 						</h:commandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{saleInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (certificate.certificateCount==0)}" />
+							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{saleInvoice.new or (!saleInvoice.to.signed)}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm,showNewMessageWindow" />
 						</ui:include>				
