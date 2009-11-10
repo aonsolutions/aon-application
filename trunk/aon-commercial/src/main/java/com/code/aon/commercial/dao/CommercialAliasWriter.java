@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.commercial.CommercialActivity;
-import com.code.aon.commercial.CommercialSegment;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Expense;
@@ -16,7 +15,6 @@ import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
-import com.code.aon.commercial.TargetSegment;
 import com.code.aon.commercial.TargetSeller;
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -35,7 +33,6 @@ public class CommercialAliasWriter {
 		File file = new File("/AON-PROJECT/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
 		String[] classes = new String[] { 
 				CommercialActivity.class.getName(),
-				CommercialSegment.class.getName(),
 				CommercialTracking.class.getName(),
 				Expense.class.getName(),
 				ExpenseAccount.class.getName(),
@@ -46,7 +43,6 @@ public class CommercialAliasWriter {
 				OfferTerm.class.getName(),
 				Target.class.getName(),
 				TargetItem.class.getName(),
-				TargetSegment.class.getName(),
 				TargetSeller.class.getName(),
 				CommercialTerm.class.getName(),};
 		HibernateUtil.getSessionFactory(null);
