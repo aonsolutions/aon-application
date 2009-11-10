@@ -15,6 +15,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
@@ -27,12 +28,15 @@ import com.code.aon.registry.Registry;
 @Entity
 @Table(name="company")
 @PrimaryKeyJoinColumn(name="registry")
-public class Company extends Registry implements ITaxInfo{
+public class Company extends Registry implements ITaxInfo {
 
 	private static final long serialVersionUID = -4187068086094343444L;
 
 	/** Indicates if the company is active or not. */
 	private boolean active;    
+
+    /** Indicates the company calendar identifier. */
+    private Integer calendar;
 
 	/** Indicates if a surcharge has to be applied to the company. */
     private boolean surcharge;
@@ -43,9 +47,6 @@ public class Company extends Registry implements ITaxInfo{
 	/** Indicates if the company works with e-Invoice. */
     private boolean eInvoice;
     
-    /** Indicates the company calendar identifier. */
-    private Integer calendar;
-
 	/**
 	 * Checks if is active.
 	 * 
@@ -63,6 +64,20 @@ public class Company extends Registry implements ITaxInfo{
 	 */
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	/**
+	 * @return the calendar
+	 */
+	public Integer getCalendar() {
+		return calendar;
+	}
+
+	/**
+	 * @param calendar the calendar to set
+	 */
+	public void setCalendar(Integer calendar) {
+		this.calendar = calendar;
 	}
 
 	/**
@@ -122,23 +137,14 @@ public class Company extends Registry implements ITaxInfo{
 		eInvoice = invoice;
 	}
 
-	/**
-	 * @return the calendar
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * @param calendar the calendar to set
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
+	@Transient
+	public boolean isTaxFree() {
+		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}
 
 	@Transient
-	public boolean isTaxFree() {
-		return false;
+	public InvoiceTransactionType getTransaction() {
+		return InvoiceTransactionType.NATIONAL;
 	}
 
 	@Override
