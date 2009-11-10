@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.geozone.GeoZone;
@@ -25,6 +26,8 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	
 	private List<GeoZone> geoZones;
 	
+	private List<String> segments;
+
 	public List<MediaType> getMediaTypes() {
 		if (mediaTypes == null) {
 			mediaTypes = new LinkedList<MediaType>();
@@ -71,12 +74,36 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		return EMPTY_GEOZONE;
 	}
 	
+	public List<String> getSegments() {
+		return segments;
+	}
+
+	public void setSegments(List<String> segments) {
+		this.segments = segments;
+	}
+	
+	public int getSegmentsSize() {
+		return this.segments.size();
+	}	
+
+	public List<Integer> getSegmentsIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for( String segment : getSegments() ) {
+			if (! StringUtils.isBlank(segment) ) {
+				ids.add( Integer.valueOf(segment) );
+			}
+		}
+		return ids;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setMediaTypes( new LinkedList<MediaType>() );
 		getMediaTypes().add( null );
 		setGeoZones( new LinkedList<GeoZone>() );
 		getGeoZones().add( EMPTY_GEOZONE );
+		setSegments( new LinkedList<String>() );
+		getSegments().add( null );
 	}
 	
 	public String getPreffix() throws ManagerBeanException {
@@ -98,6 +125,8 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		addEnumToCriteria( criteria, mediaType, getMediaTypes().toArray() );
 		String geozone = resolveAlias("addresses_geozone_id");
 		addEnumToCriteria( criteria, geozone, getGeoZonesIds().toArray() );		
+		String segment = resolveAlias("segments_segment_id");
+		addEnumToCriteria( criteria, segment, getSegmentsIds().toArray() );
 	}
 	
 	public void onAddMediaType( ActionEvent event ) {
@@ -126,4 +155,17 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		}
 	}	
 	
+	public void onAddSegment( ActionEvent event ) {
+		getSegments().add( null );
+	}
+	
+	public void onRemoveSegment( ActionEvent event ) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf( context.getExternalContext().getRequestParameterMap().get("index") );		
+		getSegments().remove( index );
+		if ( getSegments().isEmpty() ) {
+			getSegments().add( null );
+		}
+	}
+
 }
