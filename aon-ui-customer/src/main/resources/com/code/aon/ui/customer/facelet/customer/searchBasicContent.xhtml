@@ -2,34 +2,14 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>
 		
-	<c:if test="#{aonConfiguration.bean.customer.showSegment}">
-		<aon:outputLabel for="Customer_customerSegment_id"
-			value="#{bundle.aon_segment}" />
-		<aon:selectOneMenu id="Customer_customerSegment_id"
-			value="#{customerCollections.customerSegment}"
-			valueChangeListener="#{controller.addIdEqualExpression}">
-			<f:selectItem itemLabel="-" value="#{null}"/>		
-			<f:selectItems value="#{customerCollections.customerSegments}" />
-		</aon:selectOneMenu>
-	</c:if>
-		
-	<aon:outputLabel for="Customer_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Customer_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{customerCollections.customerStatuses}" />
-	</aon:selectOneMenu>
-	
 	<c:if test="#{company.EInvoice}">
 		<aon:outputLabel for="Customer_EInvoice"
 			value="#{customerBundle.customer_eInvoice}" />
@@ -41,4 +21,9 @@
 		</aon:selectOneMenu>								
 	</c:if>
 	
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{customerSearch.customerStatuses}">
+		<f:selectItems value="#{customerCollections.customerStatuses}"/>
+	</aon:selectManyCheckbox>							
+
 </ui:composition>
