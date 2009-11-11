@@ -512,7 +512,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{targetPhone}+"/"+$P{targetCellular}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getPhone().getValue()+"/"+$F{target}.getRegistry().getCellular().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-126" x="175" y="145" width="31" height="23"/>
@@ -522,7 +522,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_customer_fax}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-127" x="205" y="145" width="126" height="23"/>
+				<reportElement key="textField-127" x="206" y="145" width="126" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -533,7 +533,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{targetFax}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getFax().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-128" x="331" y="145" width="49" height="23"/>
@@ -543,7 +543,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_customer_email}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-129" x="381" y="145" width="155" height="23"/>
+				<reportElement key="textField-129" x="380" y="145" width="155" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -554,7 +554,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{targetEmail}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getEmail().getValue()]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="321">
