@@ -72,6 +72,9 @@
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.Expense"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>		
 		
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
