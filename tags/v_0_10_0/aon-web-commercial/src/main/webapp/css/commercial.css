@@ -1,0 +1,22 @@
+ .aon-commercial-segment-iconClass{
+	 background:transparent url(../images/aon-icon-comercial-segmentation.png) left center no-repeat;
+ }
+
+.aon-commercial-activity-iconClass{
+	background:transparent url(../images/aon-icon-comercial-activities.png) left center no-repeat;
+}
+
+.aon-commercial-tracking-iconClass{
+	background:transparent url(../images/aon-icon-comercial-monitoring.png) left center no-repeat;
+}
+
+.aon-seller-iconClass{
+	background:transparent url(../images/aon-icon-comercial-personal.png) left center no-repeat;
+}
+
+.aon-target-iconClass{
+	background:transparent url(../images/aon-icon-comercial-potential-customer.png) left center no-repeat;
+}
+.aon-width-170{
+	width:170px;
+}

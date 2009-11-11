@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="communicationCenterSurveyForm"> 
+		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_communication_center}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_reset}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<c:if test="#{!communicationCenter.lastQuestion}" >
+							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+								rendered="#{communicationCenter.question.type != 'INFO'}"
+								action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:commandButton id="next" value="#{marketingBundle.aon_next}"
+								action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								accesskey="#{bundle.aon_key_save}"/>
+						</c:if>
+						<c:if test="#{communicationCenter.lastQuestion}" >
+							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+								rendered="#{communicationCenter.question.type != 'INFO'}"							
+								action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept" immediate="true"
+								accesskey="#{bundle.aon_key_save}" />
+							<aon:commandButton id="finish" value="#{marketingBundle.aon_finish}"
+								action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								accesskey="#{bundle.aon_key_save}" />
+						</c:if>
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
+
+					<aon:outputLabel for="CommunicationCenter_date"
+						value="#{bundle.aon_date}" />
+					<aon:outputText id="CommunicationCenter_date" value="#{communicationCenter.date}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>							
+
+					<aon:outputLabel for="CommunicationCenter_survey_id" 
+						value="#{marketingBundle.aon_marketing_survey}" />
+					<aon:outputText id="CommunicationCenter_survey_id"
+						value="#{communicationCenter.survey.id} (#{communicationCenter.survey.description})" />
+
+					<aon:outputText value="#{appBundle.aon_commercial_tracking_target}" />
+						
+					<aon:panelGrid columns="2" dir="true" width="90%"
+						columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">						
+
+						<aon:outputLabel for="CommunicationCenter_target_id"
+							value="#{bundle.aon_id}" />
+						<aon:outputText id="CommunicationCenter_target_id"
+							value="#{communicationCenter.target.id}" />
+							
+						<ui:include src="/marketing/communicationCenter/targetSummary.xhtml" />
+					</aon:panelGrid>
+
+				</aon:panelGrid>
+				
+				<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel value="#{marketingBundle.aon_marketing_question}"
+								rendered="#{communicationCenter.question.type != 'INFO'}" />
+							<aon:outputLabel value="#{communicationCenter.question.type}"
+								rendered="#{communicationCenter.question.type == 'INFO'}" />
+						</aon:div>
+					</aon:div>
+
+					<aon:panelGrid columns="2" dir="true" width="100%"
+						columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
+						
+						<aon:outputText value="#{bundle.aon_description}" />
+						<aon:outputText value="#{communicationCenter.question.text}" />
+
+						<aon:outputText value="#{marketingBundle.aon_question_argument}"
+							rendered="#{communicationCenter.question.argument != null}" />
+						<aon:outputText value="#{communicationCenter.question.argument}"
+							rendered="#{communicationCenter.question.argument != null}" />
+						
+						<c:if test="#{communicationCenter.question.type != 'INFO'}" >
+							<aon:outputLabel for="CommunicationCenter_response_value"
+								value="#{marketingBundle.aon_marketing_response}" />
+							<c:if test="#{! (empty communicationCenter.questionValues)}" >
+								<aon:selectOneMenu id="CommunicationCenter_response_value"
+									required="true" value="#{communicationCenter.questionValueId}">
+									<f:selectItems value="#{communicationCenter.questionValues}" />
+								</aon:selectOneMenu>
+							</c:if>
+							<c:if test="#{empty communicationCenter.questionValues}" >
+								<c:if test="#{communicationCenter.question.type == 'TEXT'}" >
+									<aon:inputText id="CommunicationCenter_response_value"
+										value="#{communicationCenter.response.text}"
+										required="true" size="45" maxlength="64" />
+								</c:if>
+								<c:if test="#{communicationCenter.question.type == 'NUMBER'}" >
+									<aon:inputText id="CommunicationCenter_response_value"
+										value="#{communicationCenter.response.number}"
+										required="true" size="45" maxlength="64" />
+								</c:if>
+								<c:if test="#{communicationCenter.question.type == 'BOOLEAN'}" >								
+									<aon:selectBooleanCheckbox id="CommunicationCenter_response_value"
+										value="#{communicationCenter.response.boolean}"
+										required="true" />
+								</c:if>
+								<c:if test="#{communicationCenter.question.type == 'DATE'}" >
+									<aon:selectInputDate id="CommunicationCenter_response_value"
+										value="#{communicationCenter.response.date}"
+										required="true" timeZone="#{timeZoneController.timeZone}"
+										renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>
+								</c:if>										
+							</c:if>
+						</c:if>
+
+					</aon:panelGrid>
+
+				</aon:div>					
+								
+			</aon:div>			
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

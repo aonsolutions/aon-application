@@ -1,0 +1,155 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+
+		<aon:editDataTable id="targetProfileData" var="to"
+			value="#{targetProfile.model}" rows="20"
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+			<aon:rowSelector toggleOnClick="#{targetProfile.to == null}"
+				actionListener="#{targetProfile.onSelect}" />
+				
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{targetProfile.onReset}" value=""
+							rendered="#{!targetProfile.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{marketingBundle.aon_target_profile_lastUpdate}" />
+				</f:facet>
+				<aon:outputText value="#{to.lastUpdate}" rendered="#{to!=targetProfile.to}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>				
+				<aon:selectInputDate value="#{to.lastUpdate}" required="true"
+					timeZone="#{timeZoneController.timeZone}" rendered="#{to==targetProfile.to}"
+					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+				<f:facet name="footer">
+					<aon:selectInputDate value="#{targetProfile.to.lastUpdate}" required="true"
+						timeZone="#{timeZoneController.timeZone}" rendered="#{targetProfile.new}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{marketingBundle.aon_marketing_question}" />
+				</f:facet>
+				<aon:outputText value="#{to.question.text}"
+					rendered="#{!targetProfile.new}" />
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup" rendered="#{targetProfile.new}">
+						<aon:lookupInputText id="TargetProfile_question_id-New"
+							lookup="#{questionLookup}" required="true"
+							reRender="TargetProfile_question_detail-New,TargetProfile_response-New"
+							value="#{targetProfile.to.question.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton windowTitle="#{marketingBundle.aon_lookup_question}" 
+							selectReRender="TargetProfile_question_id-New,TargetProfile_question_detail-New,TargetProfile_response-New"
+							lookup="#{questionLookup}" minHeight="460" minWidth="650"
+							property="#{targetProfile.to.question}">
+						</aon:lookupButton>
+						<aon:inputText id="TargetProfile_question_detail-New"
+							value="#{targetProfile.to.question.text}"
+							size="80" disabled="true" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{marketingBundle.aon_marketing_response}" />
+				</f:facet>
+				<aon:div layout="none" rendered="#{to!=targetProfile.to}">
+					<ui:include src="/marketing/outputValue.xhtml" >
+						<ui:param name="valueHolder" value="#{to}" />
+					</ui:include>
+				</aon:div>
+				<aon:div layout="none" rendered="#{to==targetProfile.to}">
+					<ui:include src="/marketing/inputValue.xhtml" >
+						<ui:param name="valueHolder" value="#{targetProfile.to}" />
+					</ui:include>
+				</aon:div>			
+				<f:facet name="footer">
+					<aon:div id="TargetProfile_response-New">
+						<aon:div layout="none" rendered="#{targetProfile.new}">
+							<ui:include src="/marketing/inputValue.xhtml" >
+								<ui:param name="valueHolder" value="#{targetProfile.to}" />
+							</ui:include>
+						</aon:div>
+					</aon:div>
+				</f:facet>
+			</aon:column>			
+
+			<aon:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=targetProfile.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
+						actionListener="#{targetProfile.onAccept}" 
+						rendered="#{to==targetProfile.to}" value=""
+						reRender="targetProfileDataScroller"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton id="cancelEdit-targetProfile" title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==targetProfile.to}"
+						actionListener="#{targetProfile.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="cancelRemove-targetProfile" title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==targetProfile.to}" reRender="targetProfileDataScroller"
+						confirmTitle="#{bundle.aon_confirm_title}" 
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{targetProfile.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!targetProfile.new}">&#160;</f:verbatim>
+						<aon:commandButton title="#{bundle.aon_save}"
+							actionListener="#{targetProfile.onAccept}"
+							rendered="#{targetProfile.new}" value=""
+							reRender="targetProfileDataScroller"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancelNew-targetProfile" title="#{bundle.aon_cancel}"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{targetProfile.new}"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{targetProfile.onCancel}" immediate="true"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</aon:editDataTable>
+
+		<aon:div id="targetProfileDataScroller" layout="none">
+			<aon:dataScroller2 for="targetProfileData" showNote="false" />
+		</aon:div>
+
+	</aon:div>
+</ui:composition>

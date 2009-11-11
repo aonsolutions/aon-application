@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="surveyResponseList">
+		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{marketingBundle.aon_marketing_survey_responses}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="surveyResponse_search" actionListener="#{surveyResponse.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />				
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="surveyResponseData" value="#{surveyResponse.model}"
+					var="to" rows="20" rendered="#{surveyResponse.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="surveyResponse_form" actionListener="#{surveyResponse.onSelect}" />
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{marketingBundle.aon_marketing_survey}" />
+						</f:facet>
+						<aon:outputText value="#{to.survey.description}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_commercial_tracking_target}" />
+						</f:facet>
+						<aon:outputText value="#{to.target.registry.fullName}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.date}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>					
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_login_user}" />
+						</f:facet>
+						<aon:outputText value="#{to.user.name}"/>
+					</aon:column>
+ 
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="surveyResponseData" showNote="true" />
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
