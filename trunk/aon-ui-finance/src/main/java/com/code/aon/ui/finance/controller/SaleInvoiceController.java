@@ -33,6 +33,7 @@ import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -42,7 +43,7 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 public class SaleInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
 	
-	private CustomerValidationManager cvm;
+	private RegistryValidationManager vm;
 	private DeliveryTransferManager deliveryTransferManager;
 	private boolean showDeliveryTransferWindow;
 
@@ -52,11 +53,11 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		setInvoiceFinanceControllerName(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
 	}
 
-	private CustomerValidationManager getCustomerValidationManager() {
-		if (cvm == null) {
-			cvm = new CustomerValidationManager(); 
+	private RegistryValidationManager getRegistryValidationManager() {
+		if (vm == null) {
+			vm = new CustomerValidationManager(); 
 		}
-		return cvm;
+		return vm;
 	}
 	
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -89,7 +90,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		return null;
 	}
 
-	public void customerData(LookupChangeEvent event) throws ManagerBeanException{
+	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer); // Saca el mensaje de bloqueo.
@@ -103,7 +104,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	}
 
 	private boolean isBlocked(Customer customer) {
-		return getCustomerValidationManager().isBlocked(customer);
+		return getRegistryValidationManager().isBlocked(customer);
 	}
 
 	public Customer getCustomer() throws ManagerBeanException{
