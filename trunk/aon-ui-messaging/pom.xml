@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.messaging</artifactId>
-	<version>0.5.6</version>
+	<version>0.6.0</version>
 	<description>AON UI MESSAGING</description>
 	<name>AON UI MESSAGING</name>
 	<dependencies>
@@ -30,12 +30,6 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.messaging</artifactId>
 			<version>0.4.0</version>
-			<scope>compile</scope>
-		</dependency>			
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.config</artifactId>
-			<version>4.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
