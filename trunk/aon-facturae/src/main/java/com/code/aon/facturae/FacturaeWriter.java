@@ -19,6 +19,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.facturae.enumeration.PaymentMeans;
 import com.code.aon.facturae.enumeration.TaxTypeCode;
 import com.code.aon.finance.Finance;
@@ -26,7 +27,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
@@ -122,9 +122,9 @@ public class FacturaeWriter {
 	private ResidenceTypeCodeType getResidenceTypeCode( Registry registry ) {
 		ResidenceTypeCodeType result = ResidenceTypeCodeType.R;
 		if (! registry.getId().equals(company.getId()) ) {
-			if ( invoice.getTransaction() == InvoiceTransactionType.INTRACOMUNNITARY) {
+			if ( invoice.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY) {
 				result = ResidenceTypeCodeType.U;
-			} else if ( invoice.getTransaction() == InvoiceTransactionType.EXTRACOMUNNITARY) {
+			} else if ( invoice.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY) {
 				result = ResidenceTypeCodeType.E;
 			}
 		}
