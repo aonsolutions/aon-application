@@ -46,6 +46,7 @@ import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -64,7 +65,7 @@ public class DeliveryController extends BasicController {
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
-	private CustomerValidationManager cvm;
+	private RegistryValidationManager vm;
 	private SalesTransferManager salesTransferManager;
 	private boolean showSalesTransferWindow;
 	private boolean showInvoiceWindow;
@@ -99,18 +100,18 @@ public class DeliveryController extends BasicController {
 		}
 	}
 	
-	public IPriceStrategy getPriceStrategy(){
+	public IPriceStrategy getPriceStrategy() {
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
 	}
 
-	private CustomerValidationManager getCustomerValidationManager() {
-		if (cvm == null) {
-			cvm = new CustomerValidationManager(); 
+	private RegistryValidationManager getRegistryValidationManager() {
+		if (vm == null) {
+			vm = new CustomerValidationManager(); 
 		}
-		return cvm;
+		return vm;
 	}
 
 	public SalesTransferManager getSalesTransferManager() {
@@ -247,7 +248,7 @@ public class DeliveryController extends BasicController {
 	}
 	
 	private boolean isBlocked(Customer customer) {
-		return getCustomerValidationManager().isBlocked(customer);
+		return getRegistryValidationManager().isBlocked(customer);
 	}
 
 	@SuppressWarnings("unchecked")
