@@ -2,20 +2,49 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
-		<ui:param name="controller" value="#{controller}" />
-	</ui:include>
-		
-	<aon:outputLabel for="Creditor_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Creditor_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{financeCollections.creditorStatuses}" />
-	</aon:selectOneMenu>
-	
+	<aon:outputText value="" />
+	<aon:div style="width:550px;">
+		<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_creditor}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<ui:include src="/com/code/aon/ui/finance/facelet/creditor/searchBasicContent.xhtml">
+					<ui:param name="controller" value="#{creditor}"/>
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>					
+					
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
+					<ui:param name="controller" value="#{creditor}" />
+					<ui:param name="searchController" value="#{creditorSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
+					<ui:param name="controller" value="#{creditor}" />
+					<ui:param name="searchController" value="#{creditorSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+				
+		<c:if test="#{aonConfiguration.bean.creditor.showSegment}">
+			<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_segment_module}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+					<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
+						<ui:param name="controller" value="#{creditor}" />
+						<ui:param name="searchController" value="#{creditorSearch}" />
+					</ui:include>
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</c:if>
+						
+	</aon:div>
+
 </ui:composition>
