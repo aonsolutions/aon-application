@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 4.3.0
+# Version: 4.6.0
 # Created by: girazu
-# Creation Date: 01/10/2009 16:59
+# Creation Date: 11/11/2009 10:24
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -186,8 +186,9 @@ CREATE TABLE `customer` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente',
   `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente',
   `taxfree` tinyint(1) default NULL COMMENT 'Indica si el Cliente esta exento de Impuestos',
-  `surcharge` tinyint(1) default NULL COMMENT 'Indica si el Cliente tiene recargo de equivalencia',
+  `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente tiene recargo de equivalencia',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Cliente aplica retencion de impuestos',
+  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Cliente',
   `status` tinyint(2) default NULL COMMENT 'Estado del Cliente',
   `segment` int(4) default NULL COMMENT 'Segmento del Cliente',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
@@ -659,6 +660,7 @@ CREATE TABLE `activity` (
 CREATE TABLE `process` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Proceso',
   `description` varchar(30) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Proceso.',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado del Proceso',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Procesos';
 
@@ -698,6 +700,8 @@ CREATE TABLE `process_detail` (
   `days` int(4) default NULL COMMENT 'Numero de dias asociado a la referencia para el calculo de la fecha de vencimiento de la Tarea',
   `alert_days` int(4) default NULL COMMENT 'Numero de dias, previos a la fecha de vencimiento de la Tarea, para el calculo de la fecha de generacion de la Alarma',
   `workgroup` int(4) default NULL COMMENT 'Identificador del Grupo de Trabajo',
+  `priority` tinyint(2) default '0' COMMENT 'Prioridad de la Tarea',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la Accion',
   PRIMARY KEY  (`id`),
   KEY `process` (`process`),
   KEY `workgroup` (`workgroup`),
@@ -922,6 +926,7 @@ CREATE TABLE `asset_activity` (
   `to_time` datetime NOT NULL COMMENT 'Hora final de la Actividad',
   `who` varchar(20) collate latin1_spanish_ci default NULL COMMENT 'Quien solicita el Activo',
   `why` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Motivo de solicitud del Activo',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la Solicitud',
   PRIMARY KEY  (`id`),
   KEY `asset` (`asset`),
   CONSTRAINT `asset_activity_fk1` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`)
@@ -1151,14 +1156,16 @@ CREATE TABLE `commercial_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades Comerciales';
 
 #
-# Structure for the `commercial_segment` table : 
+# Structure for the `commercial_term` table : 
 #
 
-CREATE TABLE `commercial_segment` (
+CREATE TABLE `commercial_term` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Segmento Comercial',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Condicion Comercial',
+  `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Condicion Comercial',
+  `term_general` tinyint(1) default '0' COMMENT 'Indica si la Condición es particular o general',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos Comerciales';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones Comerciales';
 
 #
 # Structure for the `seller` table : 
@@ -1179,6 +1186,10 @@ CREATE TABLE `seller` (
 CREATE TABLE `target` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente Potencial',
   `advertising` tinyint(2) NOT NULL default '0' COMMENT 'Admision de Publicidad',
+  `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial tiene recargo de equivalencia',
+  `withholding` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial aplica retencion de impuestos',
+  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Cliente Potencial',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Cliente Potencial',
   PRIMARY KEY  (`registry`),
   CONSTRAINT `target_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales';
@@ -1214,8 +1225,8 @@ CREATE TABLE `commercial_tracking` (
 CREATE TABLE `company` (
   `registry` int(4) NOT NULL auto_increment COMMENT 'Registro de la Compañia',
   `active` tinyint(1) default '0' COMMENT 'Indica si la Compañia es activa o inactiva',
-  `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Compañia tiene de recargo de equivalencia',
   `calendar` int(4) default NULL COMMENT 'Identificador del Calendario Laboral',
+  `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Compañia tiene de recargo de equivalencia',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si la Compañia aplica retencion de impuestos',
   `e_invoice` tinyint(1) default '0' COMMENT 'Indica si la Compañia desea emitir Facturas electronicas',
   PRIMARY KEY  (`registry`),
@@ -1408,6 +1419,7 @@ CREATE TABLE `course_schedule` (
 CREATE TABLE `creditor` (
   `registry` int(4) NOT NULL auto_increment COMMENT 'Registro del Acreedor',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Acreedor aplica retencion de impuestos',
+  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Acreedor',
   `status` tinyint(2) default NULL COMMENT 'Estado del Acreedor',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY  (`registry`),
@@ -1724,6 +1736,8 @@ CREATE TABLE `offer` (
   `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
   `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `signed` tinyint(1) default '0' COMMENT 'Indica si el Presupuesto esta firmada electronicamente',
+  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Presupuesto',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `series` (`series`,`number`),
   KEY `target` (`target`),
@@ -1915,7 +1929,9 @@ CREATE TABLE `ec_catalogue` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
   `catalogue_img` mediumblob COMMENT 'Imagen para el Catalogo',
+  `catalogue_icon` blob COMMENT 'Icono del Catalogo',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Catalogo',
+  `visible` tinyint(1) default '0' COMMENT 'Indica si es visible en internet',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_ECCATALOGUE_CATALOGUE` (`catalogue`),
   CONSTRAINT `FK_ECCATALOGUE_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`)
@@ -1955,9 +1971,10 @@ CREATE TABLE `ec_config` (
   `ecommerce_status` tinyint(2) default '0' COMMENT 'Estado del comercio electronico',
   `shipping_costs` double(15,2) default NULL COMMENT 'Gastos de envio',
   `free_shipping` double(15,2) default NULL COMMENT 'Gastos de envio gratis a partir de esta cantidad',
-  `title_note1` varchar(64) collate latin1_spanish_ci default 'Titulo de la Nota Legal 1',
-  `title_note2` varchar(64) collate latin1_spanish_ci default 'Titulo de la Nota Legal 2',
-  `title_note3` varchar(64) collate latin1_spanish_ci default 'Titulo de la Nota Legal 3',
+  `title_note1` varchar(64) collate latin1_spanish_ci default 'Titulo de la nota legal 1',
+  `title_note2` varchar(64) collate latin1_spanish_ci default 'Titulo de la nota legal 2',
+  `title_note3` varchar(64) collate latin1_spanish_ci default 'Titulo de la nota legal 3',
+  `email` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Email de contacto',
   PRIMARY KEY  (`id`),
   KEY `IDX_ECCONFIG_BANK_TRANSFER` (`bank_transfer`),
   KEY `IDX_ECCONFIG_PAYPAL` (`paypal`),
@@ -1969,9 +1986,38 @@ CREATE TABLE `ec_config` (
   CONSTRAINT `FK_ECCONFIG_BANK_TRANSFER` FOREIGN KEY (`bank_transfer`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_ECCONFIG_CASH_ON_DELIVERY` FOREIGN KEY (`cash_on_delivery`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_ECCONFIG_PAYPAL` FOREIGN KEY (`paypal`) REFERENCES `pay_method` (`id`),
-  CONSTRAINT `FK_ECCONFIG_VISA` FOREIGN KEY (`visa`) REFERENCES `pay_method` (`id`),
-  CONSTRAINT `FK_ECCONFIG_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
+  CONSTRAINT `FK_ECCONFIG_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
+  CONSTRAINT `FK_ECCONFIG_VISA` FOREIGN KEY (`visa`) REFERENCES `pay_method` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Configuracion del ECommerce';
+
+#
+# Structure for the `ec_offer_pay_info` table : 
+#
+
+CREATE TABLE `ec_offer_pay_info` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
+  `payment_status` tinyint(2) default NULL COMMENT 'Estado del pago',
+  `authorization_number` int(4) default NULL COMMENT 'Numero de autorizacion',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_EC_OFFER_PAY_INFO_OFFER` (`offer`),
+  CONSTRAINT `FK_EC_OFFER_PAY_INFO_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion acerca de los Pagos en el ECommerce ';
+
+#
+# Structure for the `ec_paymethod` table : 
+#
+
+CREATE TABLE `ec_paymethod` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `pay_method` int(4) NOT NULL COMMENT 'Identificador de la Forma de Pago',
+  `user_name` varchar(32) collate latin1_spanish_ci default 'Null' COMMENT 'Nombre de Usuario',
+  `password` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Contraseña para la pasarela de pago',
+  `signature` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Identificador unico de la empresa para pasarela',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_ECPAYMETHOD_PAYMETHOD` (`pay_method`),
+  CONSTRAINT `FK_ECPAYMETHOD_PAYMETHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Formas de Pago del ECommerce';
 
 #
 # Structure for the `ec_target` table : 
@@ -2068,6 +2114,52 @@ CREATE TABLE `expenditures` (
   CONSTRAINT `expenditures_ibfk_1` FOREIGN KEY (`expenditures_item`) REFERENCES `expenditures_items` (`id`),
   CONSTRAINT `expenditures_ibfk_2` FOREIGN KEY (`resource`) REFERENCES `resource` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci ROW_FORMAT=FIXED COMMENT='Costes por Empleado';
+
+#
+# Structure for the `expense` table : 
+#
+
+CREATE TABLE `expense` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Gasto',
+  `unit_price` double(15,3) default '0.000' COMMENT 'Precio unitario',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Gastos';
+
+#
+# Structure for the `expense_account` table : 
+#
+
+CREATE TABLE `expense_account` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `registry` int(4) default NULL COMMENT 'Registry que realiza los Gastos',
+  `expense_holder_type` tinyint(2) default NULL COMMENT 'Tipo de Registry',
+  `status` tinyint(2) default NULL COMMENT 'Estado del Gasto',
+  `issue_date` date default NULL COMMENT 'Fecha del Gasto',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Gasto',
+  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios acerca del Gasto',
+  PRIMARY KEY  (`id`),
+  KEY `registry` (`registry`),
+  CONSTRAINT `FK_EXPENSE_ACCOUNT_REGISTRY_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Gastos';
+
+#
+# Structure for the `expense_account_detail` table : 
+#
+
+CREATE TABLE `expense_account_detail` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `expense_account` int(4) NOT NULL COMMENT 'Identidicador del Gasto',
+  `expense` int(4) NOT NULL COMMENT 'Gasto',
+  `quantity` double(15,3) default '0.000' COMMENT 'Cantidad del Gasto',
+  `price` double(15,3) default '0.000' COMMENT 'Precio unitario del Gasto',
+  `amount` double(15,3) default '0.000' COMMENT 'Precio total del Gasto',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_EXPENSE_ACCOUNT_DETAIL_EXPENSE_ACCOUNT` (`expense_account`),
+  KEY `IDX_EXPENSE_ACCOUNT_DETAIL_EXPENSE` (`expense`),
+  CONSTRAINT `FK_EXPENSE_ACCOUNT_DETAIL_EXPENSE` FOREIGN KEY (`expense`) REFERENCES `expense` (`id`),
+  CONSTRAINT `FK_EXPENSE_ACCOUNT_DETAIL_EXPENSE_ACCOUNT` FOREIGN KEY (`expense_account`) REFERENCES `expense_account` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Gasto';
 
 #
 # Structure for the `favorite_category` table : 
@@ -2176,6 +2268,7 @@ CREATE TABLE `supplier_segment` (
 CREATE TABLE `supplier` (
   `registry` int(4) NOT NULL auto_increment COMMENT 'Registro del Proveedor',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Proveedor aplica retencion de impuestos',
+  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Proveedor',
   `status` tinyint(2) default NULL COMMENT 'Estado del Proveedor',
   `segment` int(4) default NULL COMMENT 'Segmento del Proveedor',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
@@ -2833,6 +2926,36 @@ CREATE TABLE `observation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Observaciones';
 
 #
+# Structure for the `offer_attach` table : 
+#
+
+CREATE TABLE `offer_attach` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
+  `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_OFFER_ATTACH_OFFER` (`offer`),
+  CONSTRAINT `FK_OFFER_ATTACH_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Presupuestos';
+
+#
+# Structure for the `offer_term` table : 
+#
+
+CREATE TABLE `offer_term` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Condicion Comercial',
+  `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Condicion Comercial',
+  `term_general` tinyint(1) default '0' COMMENT 'Indica si la Condicion es particular o general',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_OFFER_TERM_OFFER` (`offer`),
+  CONSTRAINT `FK_OFFER_TERM_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones del Presupuesto';
+
+#
 # Structure for the `pcategory_tree` table : 
 #
 
@@ -2989,13 +3112,28 @@ CREATE TABLE `question` (
 CREATE TABLE `question_value` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
-  `value_text` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
+  `value_text` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
   `value_number` double(15,3) default NULL COMMENT 'Valor de tipo numerico',
   `value_date` datetime default NULL COMMENT 'Valor de tipo fecha',
   PRIMARY KEY  (`id`),
   KEY `question` (`question`),
   CONSTRAINT `FK_QUESTION_VALUE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Valores de Preguntas';
+
+#
+# Structure for the `raddinfo` table : 
+#
+
+CREATE TABLE `raddinfo` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `registry` int(4) NOT NULL COMMENT 'Identificador de la Persona o Empresa',
+  `attribute` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Atributo adicional',
+  `value` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Valor del atributo adicional',
+  `value_date` date NOT NULL COMMENT 'Fecha del valor del atributo',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_RADDINFO_REGISTRY` (`registry`),
+  CONSTRAINT `FK_RADDINFO_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional de la Persona o Empresa';
 
 #
 # Structure for the `rattach` table : 
@@ -3009,9 +3147,12 @@ CREATE TABLE `rattach` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Archivo Adjunto',
+  `scope` int(4) default NULL COMMENT 'Ambito del Archivo Adjunto',
   PRIMARY KEY  (`id`),
   KEY `registry` (`registry`),
   KEY `category` (`category`),
+  KEY `IDX_RATTACH_SCOPE` (`scope`),
+  CONSTRAINT `FK_RATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `rattach_ibfk_1` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
   CONSTRAINT `rattach_ibfk_2` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
@@ -3159,6 +3300,31 @@ CREATE TABLE `rrelationship` (
   CONSTRAINT `rrelationship_fk` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `rrelationship_fk1` FOREIGN KEY (`related_registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relaciones entre Personas y/o Empresas';
+
+#
+# Structure for the `segment` table : 
+#
+
+CREATE TABLE `segment` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Segmento',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos Comerciales';
+
+#
+# Structure for the `rsegment` table : 
+#
+
+CREATE TABLE `rsegment` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `registry` int(4) NOT NULL COMMENT 'Identificador de Persona o Empresa',
+  `segment` int(4) NOT NULL COMMENT 'Identificador del Segmento',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_REGISTRY_SEGMENT_REGISTRY` (`registry`),
+  KEY `IDX_REGISTRY_SEGMENT_SEGMENT` (`segment`),
+  CONSTRAINT `FK_REGISTRY_SEGMENT_SEGMENT` FOREIGN KEY (`segment`) REFERENCES `segment` (`id`),
+  CONSTRAINT `FK_REGISTRY_SEGMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos de Personas o Empresas';
 
 #
 # Structure for the `sales_purchase` table : 
@@ -3348,7 +3514,7 @@ CREATE TABLE `survey_question` (
 
 CREATE TABLE `survey_response_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `value_text` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
+  `value_text` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
   `value_number` double(15,3) default NULL COMMENT 'Valor de tipo numerico',
   `value_date` datetime default NULL COMMENT 'Valor de tipo fecha',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
@@ -3370,7 +3536,7 @@ CREATE TABLE `survey_workflow` (
   `surveyQuestion` int(4) NOT NULL COMMENT 'Identificador de la Pregunta del Cuestionario',
   `nextSurveyQuestion` int(4) NOT NULL COMMENT 'Identificador de la siguiente Pregunta del Cuestionario',
   `operator` tinyint(2) default NULL COMMENT 'Operador a utilizar con el Valor',
-  `value_text` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
+  `value_text` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
   `value_number` double(15,3) default NULL COMMENT 'Valor de tipo numerico',
   `value_date` datetime default NULL COMMENT 'Valor de tipo fecha',
   PRIMARY KEY  (`id`),
@@ -3407,7 +3573,7 @@ CREATE TABLE `target_profile` (
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `last_update` datetime NOT NULL COMMENT 'Fecha de la ultima modificacion del Perfil del Cliente Potencial',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
-  `value_text` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
+  `value_text` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
   `value_number` double(15,3) default NULL COMMENT 'Valor de tipo numerico',
   `value_date` datetime default NULL COMMENT 'Valor de tipo fecha',
   PRIMARY KEY  (`id`),
@@ -3416,21 +3582,6 @@ CREATE TABLE `target_profile` (
   CONSTRAINT `FK_TARGET_PROFILE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`),
   CONSTRAINT `FK_TARGET_PROFILE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Perfiles de Clientes Potenciales';
-
-#
-# Structure for the `target_segment` table : 
-#
-
-CREATE TABLE `target_segment` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
-  `segment` int(4) NOT NULL COMMENT 'Identificador del Segmento Comercial',
-  PRIMARY KEY  (`id`),
-  KEY `target` (`target`),
-  KEY `segment` (`segment`),
-  CONSTRAINT `target_segment_fk` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
-  CONSTRAINT `target_segment_fk1` FOREIGN KEY (`segment`) REFERENCES `commercial_segment` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos interesados por Cliente Potencial';
 
 #
 # Structure for the `target_seller` table : 
@@ -3707,7 +3858,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('4.3.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('4.6.0');
 
 COMMIT;
 
