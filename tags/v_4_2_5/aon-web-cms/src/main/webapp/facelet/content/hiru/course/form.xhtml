@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="form_">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.hiru_course}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{hiru_course.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="hiru_course_form"
+							rendered="#{!hiru_course.new and cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{hiru_course.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{hiru_course.to!=null or header.new}"
+							action="hiru_course_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{hiru_course.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!hiru_course.new and cms.roleEditor}" 
+							immediate="true"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{hiru_course.onRemove}" 
+							confirmAction="hiru_course_list"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="hiru_course_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{hiru_course.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="hiru_course_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{hiru_course.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width:99%;">
+	
+					<aon:panelGrid id="generalGrid" columns="2" dir="true">
+					
+						<aon:outputLabel for="Alias"
+							value="#{appBundle.cms_alias}(*)" />
+						<aon:inputText id="Alias"
+							required="true" size="32" maxlength="32"
+							value="#{hiru_course.to.alias}">
+							<f:validator validatorId="AliasValidator" />
+						</aon:inputText>
+
+						<aon:outputLabel for="InitDate"
+							value="#{appBundle.hiru_course_initDate}(*)" />
+						<aon:selectInputDate id="InitDate"
+							required="true"
+							 style="z-index:2001;margin:0;vertical-align:middle;"
+							 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+							 value="#{hiru_course.to.initDate}" renderAsPopup="true"
+							 enableManualInput="true"
+							 popupDateFormat="#{bundle.aon_date_pattern}">
+							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:selectInputDate>	
+						
+						<aon:outputLabel for="EndDate"
+							value="#{appBundle.hiru_course_endDate}(*)" />
+						<aon:selectInputDate id="EndDate"
+							 required="true"
+							 enableManualInput="true"
+							 style="z-index:2001;margin:0;vertical-align:middle;"
+							 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+							 value="#{hiru_course.to.endDate}" renderAsPopup="true"
+							 popupDateFormat="#{bundle.aon_date_pattern}">
+							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:selectInputDate>	
+
+						<aon:outputLabel for="hiruOrganizerCentre"
+							value="#{appBundle.hiru_course_hiruOrganizerCentre}(*)"/>
+						<aon:selectOneMenu id="hiruOrganizerCentre"  
+							value="#{hiru_course.to.hiruOrganizerCentre.id}">
+							<f:selectItems value="#{collections.hiruOrganizerCentreList}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="place"
+							value="#{appBundle.hiru_course_hiruPlace}(*)" />
+						<aon:inputText id="place"
+							required="true" size="100" maxlength="128"
+							value="#{hiru_course.to.hiruPlace}" />
+
+						<aon:outputLabel for="name"
+							value="#{appBundle.hiru_course_name}" />
+						<aon:inputText id="name"
+							required="true" size="100" maxlength="64"
+							value="#{hiru_course.toI18n.name}" />
+
+						<aon:outputLabel for="info"
+							value="#{appBundle.hiru_course_info}" />
+						<aon:inputTextarea id="info"
+							cols="60" rows="20" 
+							value="#{hiru_course.toI18n.info}"/>
+
+						<aon:outputLabel for="url"
+							value="#{appBundle.hiru_course_url}" />
+						<aon:inputText id="url"
+							size="100" maxlength="255"
+							value="#{hiru_course.toI18n.url}" />
+
+						<aon:outputLabel for="subject"
+							value="#{appBundle.hiru_course_subject}(*)"/>
+						<aon:selectOneMenu id="subject"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{hiru_course.to.subject}">
+							<f:selectItems value="#{collections.hiruCourseSubjects}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="generic_info"
+							value="#{appBundle.hiru_course_genericInfo}" />
+						<aon:inputText id="generic_info"
+							size="100" maxlength="255"
+							value="#{hiru_course.toI18n.genericInfo}" />
+
+						<aon:outputLabel for="objetives"
+							value="#{appBundle.hiru_course_objetives}" />
+						<aon:inputText id="objetives"
+							size="100" maxlength="255"
+							value="#{hiru_course.toI18n.objetives}" />
+
+						<aon:outputLabel for="contents"
+							value="#{appBundle.hiru_course_contents}" />
+						<aon:inputText id="contents"
+							size="100" maxlength="255"
+							value="#{hiru_course.toI18n.contents}" />
+
+						<aon:outputLabel for="length"
+							value="#{appBundle.hiru_course_length}" />
+						<aon:inputText id="length"
+							size="32" maxlength="32"
+							value="#{hiru_course.toI18n.length}" />
+
+						<aon:outputLabel for="employee_registration"
+							value="#{appBundle.hiru_course_employeeRegistration}" />
+						<aon:inputText id="employee_registration"
+							size="100" maxlength="255"
+							value="#{hiru_course.toI18n.employeeRegistration}" />
+
+						<aon:outputLabel for="not_employee_registration"
+							value="#{appBundle.hiru_course_notEmployeeRegistration}" />
+						<aon:inputText id="not_employee_registration"
+							size="100" maxlength="255"
+							value="#{hiru_course.toI18n.notEmployeeRegistration}" />
+
+						<aon:outputLabel for="giver_entity"
+							value="#{appBundle.hiru_course_giverEntity}" />
+						<aon:inputText id="giver_entity"
+							size="100" maxlength="128"
+							value="#{hiru_course.toI18n.giverEntity}" />
+
+						<aon:outputLabel for="number_participant"
+							value="#{appBundle.hiru_course_numberParticipant}" />
+						<aon:inputText id="number_participant"
+							size="100" maxlength="128"
+							value="#{hiru_course.toI18n.numberParticipant}" />
+
+					</aon:panelGrid>
+							
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

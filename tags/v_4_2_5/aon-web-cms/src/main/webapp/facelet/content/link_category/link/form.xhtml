@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="main_form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.link}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{link.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{!link.new and cms.roleEditor}"
+							action="link_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{link.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{link.to!=null or link.new}"
+							reRender="main_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{link.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!link.new and cms.roleEditor}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{link.onRemove}"
+							confirmAction="link_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="link_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{link.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
+							action="link_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{link.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{link.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="categories"
+							value="#{appBundle.link_category}"
+							action="link_category_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item-no-icon">
+							<aon:actionListener method="#{link_category.onInit}" />
+							<aon:actionListener method="#{link_category.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="Link_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="Link_alias"
+						required="true" size="32" maxlength="32"
+						value="#{link.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Link_category"
+						value="#{appBundle.link_category}"/>
+					<aon:selectOneMenu id="Link_category"  
+						required="true"
+						value="#{link.to.linkCategory.id}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.linkCategoryList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="LinkDetail_label"
+						value="#{appBundle.link_label}" />
+					<aon:inputTextarea id="LinkDetail_label"
+						required="true" rows="3" style="width:98%" 
+						value="#{link.toI18n.label}" >
+						<f:validateLength maximum="255" />
+					</aon:inputTextarea>						
+
+					<aon:outputLabel for="Link_position"
+						value="#{appBundle.link_position}"/>
+					<aon:inputText id="Link_position"
+						required="true" size="10" maxlength="8"
+						value="#{link.to.position}" />
+					
+					<aon:outputLabel for="Link_active"
+						value="#{appBundle.link_active}"/>
+					<aon:selectBooleanCheckbox id="Link_active" 
+						value="#{link.to.active}" />
+					
+					<aon:outputLabel for="Link_url" style="width:100px"
+						value="#{appBundle.link_url}" />
+					<aon:inputText id="Link_url"
+						required="true" size="80" maxlength="255"
+						value="#{link.to.url}" />
+
+					<aon:outputLabel for="Link_description" style="width:100px"
+						value="#{bundle.aon_description}" />
+					<aon:inputTextarea id="Link_description"
+						rows="3" style="width:98%" 
+						value="#{link.toI18n.description}"/>
+
+				</aon:panelGrid>
+			</aon:div>
+		
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+		<aon:form id="list">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.language}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+					</aon:div>
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+					<aon:div>
+						<aon:dataTable id="languagesDataList" columnWidths="30,50,*,30,30" 
+							value="#{language.languages}" var="to" rows="20"
+							columnClasses="aon-text-center, aon-text-center, aon-text-left, aon-text-center, aon-text-center">
+							
+							<aon:rowSelector toggleOnClick="#{false}" />							
+							
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_selected" value="#{appBundle.language_active}"/>
+								</f:facet>
+								<aon:selectBooleanCheckbox id="Language_selected" 
+										value="#{to.selected}" 
+										rendered="#{!to.defaultLanguage}"
+										valueChangeListener="#{language.selectedLanguageChanged}">
+									<a4j:support 
+										reRender="languagesDataList"
+										actionListener="#{i18n.onReloadLanguages}"
+										event="onclick" />
+								</aon:selectBooleanCheckbox>
+								<aon:graphicImage id="Language_selected_blocked" rendered="#{to.defaultLanguage}"
+									url="#{aonResource.resolveLocal['/images/cms/blocked.gif']}"
+									alt="#{appBundle.language_blocked}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_id" value="#{appBundle.language_id}" />
+								</f:facet>
+								<aon:graphicImage id="Language_flag" alt="#{to.language.locale.displayName}"
+									url="/images/flags/#{to.language.locale.language}.gif" />
+								<aon:outputText id="Language_id" value=" #{to.language.locale.language}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_description" value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:inputText id="Language_description" value="#{to.description}" size="64" partialSubmit="true" 
+										valueChangeListener="#{language.textChanged}"/>
+							</aon:column>
+
+							<aon:column styleClass="aon-width-80">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.language_position}" />
+								</f:facet>
+								<aon:commandLink id="moveUp" reRender="languagesDataList"
+									title="#{appBundle.cms_move_up}" immediate="true"
+									actionListener="#{language.onMoveUp}" 
+									styleClass="aon-margin-right"
+									rendered="#{to.position != 0}">
+									<aon:graphicImage alt="#{appBundle.cms_move_up}"
+										url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
+									<a4j:actionparam name="paramUp" value="#{to.language}" assignTo="#{language.listLanguage}" />										
+								</aon:commandLink>
+								<aon:commandLink id="moveDown" reRender="languagesDataList"
+									title="#{appBundle.cms_move_down}" immediate="true" 
+									actionListener="#{language.onMoveDown}"
+									rendered="#{to.position &lt; (language.rowCount - 1)}">
+									<aon:graphicImage alt="#{appBundle.cms_move_down}"
+										url="#{aonResource.resolveLocal['/images/cms/down.gif']}" />
+									<a4j:actionparam name="paramDown" value="#{to.language}" assignTo="#{language.listLanguage}" />										
+								</aon:commandLink>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_defaultLanguage" value="#{appBundle.language_defaultLanguage}" />
+								</f:facet>
+								<aon:selectBooleanCheckbox id="Language_defaultLanguage" 
+										value="#{to.defaultLanguage}" reRender="languagesDataList"
+										disabled="#{to.defaultLanguage}"
+										valueChangeListener="#{language.defaultLanguageChanged}"/>
+							</aon:column>
+
+						</aon:dataTable>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="list">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.company}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="company_form"
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{company.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="company_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{company.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+						<aon:commandButton id="activities_link"
+							value="#{appBundle.activity}"
+							action="activity_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item-no-icon">
+							<aon:actionListener method="#{activity.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+		
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="dataTable" value="#{company.model}" var="to"
+					rows="#{company.pageLimit}" 
+					columnClasses="aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn">
+			
+					<aon:rowSelector
+						action="company_form" actionListener="#{company.onSelect}" />							
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.company_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" styleClass="aon-editDataTable-button"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.company_telephone}" />
+						</f:facet>
+						<aon:outputText value="#{to.telephone}" styleClass="aon-editDataTable-button"/>
+					</aon:column>
+
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
+
+			</aon:div>
+		</aon:form>
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

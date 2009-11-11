@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
+	xmlns="http://www.esferalia.com/config" >
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+		
+	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="true" 
+			showCompanyOtherData="true"
+			showPanelTabSet="true" 
+			showDigitalCertificate="true"
+		/>
+	</company:config>
+
+	<customer:config version="1.0" xmlns:customer="http://www.esferalia.com/customer">
+		<customer:customer
+			showFinanceData="true" 
+			showProjectData="false"
+			showFinanceFeeData="true" 
+			showAccount="true"
+			showTariff="true" 
+			showSegment="true"
+			showNote="false"
+			showRelationship="false"
+			showRecordData="false"
+		/>
+	</customer:config>
+
+	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
+		<supplier:supplier
+			showFinanceData="true" 
+			showAccount="true"
+			showSegment="true"
+		/>
+	</supplier:config>
+
+	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
+		<finance:finance
+			showFinanceData="true" 
+			showAccount="true"
+		/>
+	</finance:config>
+
+	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:product
+			showStock="false"
+			showAccount="true"
+			showAttachment="false"
+		/>
+	</product:config>
+</config>
