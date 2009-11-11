@@ -43,7 +43,7 @@
 
 			<aon:outputLabel for="RecordData_description"
 				value="#{bundle.aon_description}" />
-			<aon:inputText id="RecordData_description"
+			<aon:inputText id="RecordData_description" maxlength="64"
 				value="#{controller.to.description}" size="40" />
 
 			<aon:outputLabel for="RecordData_recordDate"
@@ -56,36 +56,36 @@
 			<aon:outputLabel for="RecordData_notary"
 				value="#{registryBundle.registry_rd_notary}" />
 			<aon:inputText id="RecordData_notary" value="#{controller.to.notary}"
-				size="40" />
+				maxlength="64" size="40" />
 
 			<aon:outputLabel for="RecordData_number"
 				value="#{registryBundle.registry_rd_number}" />
 			<aon:inputText id="RecordData_number" value="#{controller.to.number}"
-				size="16" />
+				maxlength="16" size="16" />
 
 			<aon:outputLabel for="RecordData_volume"
 				value="#{registryBundle.registry_rd_volume}" />
 			<aon:inputText id="RecordData_volume" value="#{controller.to.volume}"
-				size="16" />
+				maxlength="16" size="16" />
 
 			<aon:outputLabel for="RecordData_section"
 				value="#{registryBundle.registry_rd_section}" />
-			<aon:inputText id="RecordData_section"
+			<aon:inputText id="RecordData_section" maxlength="16" 
 				value="#{controller.to.section}" size="16" />
 
 			<aon:outputLabel for="RecordData_page"
 				value="#{registryBundle.registry_rd_page}" />
 			<aon:inputText id="RecordData_page" value="#{controller.to.page}"
-				size="16" />
+				maxlength="16" size="16" />
 
 			<aon:outputLabel for="RecordData_sheet"
 				value="#{registryBundle.registry_rd_sheet}" />
 			<aon:inputText id="RecordData_sheet" value="#{controller.to.sheet}"
-				size="16" />
+				maxlength="16" size="16" />
 
 			<aon:outputLabel for="RecordData_registration"
 				value="#{registryBundle.registry_rd_registration}" />
-			<aon:inputText id="RecordData_registration"
+			<aon:inputText id="RecordData_registration" maxlength="64" 
 				value="#{controller.to.registration}" size="16" />
 		</aon:panelGrid>
 
