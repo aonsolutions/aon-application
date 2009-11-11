@@ -137,11 +137,6 @@
 						rendered="#{to==accountEntryDetail.to}" required="true" size="30" maxlength="32"/>
 					<f:facet name="footer">
 					<aon:div>
-<!-- 					
-						<aon:inputText id="AccountEntryDetail_concept-New"
-							value="#{accountEntryDetail.to.concept}"
-							rendered="#{accountEntryDetail.new}" required="true" size="20" />
- -->
 						<rich:comboBox suggestionValues="#{accountingCollections.conceptsDescriptions}"
 							value="#{accountEntryDetail.to.concept}"
 							maxlength="32" width="200"	
