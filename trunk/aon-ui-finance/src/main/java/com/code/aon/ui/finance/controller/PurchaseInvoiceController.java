@@ -15,14 +15,16 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
+import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class PurchaseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
 	private static final Logger LOGGER = Logger.getLogger(PurchaseInvoiceController.class.getName());
 	
-	//private CustomerValidationManager cvm;
+	private RegistryValidationManager vm;
 	//private DeliveryTransferManager deliveryTransferManager;
 	//private boolean showDeliveryTransferWindow;
 
@@ -32,17 +34,17 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		setInvoiceFinanceControllerName(PURCHASE_INVOICE_FINANCE_CONTROLLER_NAME);
 	}
 
-	/*private CustomerValidationManager getCustomerValidationManager() {
-		if (cvm == null) {
-			cvm = new CustomerValidationManager(); 
+	private RegistryValidationManager getRegistryValidationManager() {
+		if (vm == null) {
+			vm = new SupplierValidationManager(); 
 		}
-		return cvm;
-	}*/
+		return vm;
+	}
 	
-	public void supplierData(LookupChangeEvent event) throws ManagerBeanException{
+	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Supplier supplier = (Supplier)event.getNewValue();
-			//isBlocked(customer); // Saca el mensaje de bloqueo.
+			isBlocked(supplier); // Saca el mensaje de bloqueo.
 			getInvoice().setRegistryName(supplier.getRegistry().getFullName());
 			getInvoice().setRegistryDocument(supplier.getRegistry().getDocument());
 			getInvoice().setRegistry(supplier.getRegistry());
@@ -52,9 +54,9 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		}
 	}
 
-	/*private boolean isBlocked(Customer customer) {
-		return getCustomerValidationManager().isBlocked(customer);
-	}*/
+	private boolean isBlocked(Supplier supplier) {
+		return getRegistryValidationManager().isBlocked(supplier);
+	}
 
 	/*public DeliveryTransferManager getDeliveryTransferManager() {
 		if (deliveryTransferManager == null) {
