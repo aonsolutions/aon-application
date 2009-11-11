@@ -17,16 +17,19 @@
 			</aon:panelGroup>
 		</aon:div>
 	</aon:div>
+
+	<aon:div styleClass="aon-text-center" >
+		<applet id="izenpeApplet" name="izenpeApplet" 
+			code="izenpe.app.applet.AppletApplication.class"
+			archive="#{aonResource.resolve['/com/code/aon/ui/sign/idazki/izenpesigner-applet.jar']}" >
+			<param name="boxmessage" value="Mensaje de Prueba" />
+		</applet>									
+	</aon:div>
 	
 	<aon:inputTextarea id="pdf64Data" style="display: none;"
 		value="#{certificate.pdf64Data}" />
 	
 	<aon:inputTextarea id="pdf64SignedData" style="display: none;"
 		value="#{certificate.pdf64SignedData}" />
-
-	<applet id="izenpeApplet" name="izenpeApplet" 
-		code="izenpe.app.applet.AppletApplication.class"
-		archive="#{aonResource.resolve['/com/code/aon/ui/sign/idazki/izenpesigner-applet.jar']}"
-		width="1" height="1" />									
 	
 </ui:composition>
