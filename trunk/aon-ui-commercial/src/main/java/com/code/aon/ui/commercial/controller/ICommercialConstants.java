@@ -17,9 +17,6 @@ public interface ICommercialConstants {
 	/** TargetAddress Controller name. */
 	String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
 
-	/** TargetSegment Controller name. */
-	String TARGET_SEGMENT_CONTROLLER_NAME = "targetSegment";
-
 	/** TargetItem Controller name. */
 	String TARGET_ITEM_CONTROLLER_NAME = "targetItem";
 
