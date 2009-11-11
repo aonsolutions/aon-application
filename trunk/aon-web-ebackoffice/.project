@@ -13,6 +13,9 @@
 		<project>aon-ui-webmail</project>
 		<project>aon-ui-company</project>
 		<project>aon-ui-commercial</project>
+		<project>aon-common</project>
+		<project>aon-ui-sign</project>
+		<project>aon-ui-geozone</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
