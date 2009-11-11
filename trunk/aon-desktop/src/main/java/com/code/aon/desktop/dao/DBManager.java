@@ -28,7 +28,7 @@ public class DBManager {
 	
 	public static final String AON_MASTER = "aon_master";
 	
-	private static final String CREATE_SQL = "create.database.4.3.0.sql";
+	private static final String CREATE_SQL = "create.database.4.6.0.sql";
 	
 	private static final String INSERT_SQL = "default-insert.database.sql";
 	
@@ -43,7 +43,7 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	private List<String> readSqlScript( URL url, String dbName ) throws IOException {
 		InputStream in = url.openStream();
-		List<String> lines = IOUtils.readLines( in );
+		List<String> lines = IOUtils.readLines( in, "ISO-8859-1" );
 		for( int i = lines.size()-1; i >= 0; i-- ) {
 			String line = lines.get(i);
 			if ( line.startsWith("#") || StringUtils.isBlank(line) ) {
