@@ -30,7 +30,6 @@ public class AuditNavigationHandler extends NavigationHandler {
 		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
 		if ( session != null ) {		
 			AuditManager manager = AuditManager.getInstance();
-			manager.changeToAuditDB();
 			try {
 				Action action = manager.getAction( name, session.getApplication() );
 				if ( isActionExecutionAuditEnabled(httpSession) ) {
@@ -38,8 +37,6 @@ public class AuditNavigationHandler extends NavigationHandler {
 				}
 			} catch ( Throwable th ) {
 				LOGGER.log( Level.SEVERE, "Error in insert action execution", th );
-			} finally {
-				manager.restoreToPreviousDB();	
 			}
 		}
 	}	

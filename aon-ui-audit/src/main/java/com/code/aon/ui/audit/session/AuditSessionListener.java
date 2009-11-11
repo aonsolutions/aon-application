@@ -22,6 +22,10 @@ public class AuditSessionListener implements HttpSessionListener {
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
 		LOGGER.info( "Session Created: " + session.getId() );
+		AuditManager manager = AuditManager.getInstance();
+		if (! manager.isAuditConfigured() ) {
+			manager.configureAudit();
+		}
 	}
 
 	public void sessionDestroyed(HttpSessionEvent event) {
@@ -32,7 +36,6 @@ public class AuditSessionListener implements HttpSessionListener {
 
 	private void closeLoginAudit( HttpSession httpSession ) {
 		AuditManager manager = AuditManager.getInstance();
-		manager.changeToAuditDB();
 		try {
 			Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
 			if ( session != null ) {
@@ -40,8 +43,6 @@ public class AuditSessionListener implements HttpSessionListener {
 			}
 		} catch ( Throwable th ) {
 			LOGGER.log( Level.SEVERE, "Error closing login audit", th );
-		} finally {
-			manager.restoreToPreviousDB();	
 		}
 	}	
 }

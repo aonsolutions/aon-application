@@ -57,25 +57,29 @@ public class AuditSessionFilter implements Filter {
 		return application;
 	}	
 	
-	private void insertLoginAudit( HttpSession session, AuthPrincipal principal ) {
+	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
 		AuditManager manager = AuditManager.getInstance();
-		manager.changeToAuditDB();
 		try {
+			AuthPrincipal principal = getPrincipal(request);
 			String applicationName = getApplicationName(principal.getContext() );
 			Application application = manager.getApplication(applicationName);
 			Domain domain = manager.getDomain(principal.getDomain());
 			DomainApplication domainApplication = manager.getDomainApplication(application, domain);
 			User user = manager.getUser( principal.getShortName(), domain );
 			if ( domain.isEnableAudit() && (domainApplication.getAuditLevel() != AuditLevel.NONE) ) {
-				Date date = new Date( session.getCreationTime() );
-				Session audit = manager.createLoginAudit(application, user, session.getId(), date );
-				session.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, audit );				
-				session.setAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY, domainApplication );
+				Session session = new Session();
+				session.setApplication( application );
+				session.setUser( user );
+				session.setSessionId( httpSession.getId() );
+				session.setStartDate( new Date(httpSession.getCreationTime()) );
+				session.setRemoteAddress( request.getRemoteAddr() );
+				session.setRemoteHost( request.getRemoteHost() );
+				manager.insertSession( session );
+				httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );				
+				httpSession.setAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY, domainApplication );
 			}
 		} catch ( Throwable th ) {
 			LOGGER.log( Level.SEVERE, "Error login audit", th );
-		} finally {
-			manager.restoreToPreviousDB();	
 		}
 	}
 
@@ -89,7 +93,7 @@ public class AuditSessionFilter implements Filter {
 			HttpSession session = request.getSession(false);
 
 			if ( (session != null) && (session.getAttribute(AuditManager.AUDIT_SESSION_PROPERTY) == null) ) {
-				insertLoginAudit(session, getPrincipal(request) );
+				insertLoginAudit(session, request );
 			}
 		}
 		filterChain.doFilter(servletRequest, servletResponse);
