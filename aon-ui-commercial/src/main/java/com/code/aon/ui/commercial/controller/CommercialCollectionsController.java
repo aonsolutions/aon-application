@@ -19,6 +19,7 @@ import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.commercial.enumeration.TargetItemStatus;
 import com.code.aon.commercial.enumeration.TargetSellerStatus;
+import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -46,6 +47,8 @@ public class CommercialCollectionsController {
 	
 	private List<SelectItem> advertisings;
 
+	private List<SelectItem> targetStatuses;
+	
 	private List<SelectItem> activities;
 	
 	private List<SelectItem> expenseAccountStatuses;
@@ -213,6 +216,24 @@ public class CommercialCollectionsController {
 			}
 		}
 		return advertisings;
+	}
+
+	/**
+	 * Gets the target statuses.
+	 * 
+	 * @return the target statuses
+	 */
+	public List<SelectItem> getTargetStatuses() {
+		if ( targetStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			targetStatuses = new LinkedList<SelectItem>();
+			for( TargetStatus status : TargetStatus.values() ) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				targetStatuses.add(item);
+			}			
+		}
+		return targetStatuses;
 	}
 
 	public CommercialActivity getActivity() {
