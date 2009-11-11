@@ -81,7 +81,6 @@ public class SMSController implements Serializable {
 	private boolean showToolbar;
 	private boolean showDemoMessage;
 	
-	@SuppressWarnings("unchecked")
 	public SMSController() {
 		this.allowUpdateRecipients = true;
 		this.showToolbar = true;
