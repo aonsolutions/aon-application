@@ -14,7 +14,6 @@ import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.VatReportOrder;
 import com.code.aon.finance.enumeration.VatType;
@@ -35,7 +34,6 @@ public class FinanceCollectionsController {
 	private List<SelectItem> financeStatuses;
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> vatOrders;
-	private List<SelectItem> invoiceTransactionTypes;
 	private List<SelectItem> invoiceTypes;
 	private List<SelectItem> invoiceStatuses;
 
@@ -141,19 +139,6 @@ public class FinanceCollectionsController {
 			}
 		}
 		return vatOrders;
-	}
-
-	public List<SelectItem> getInvoiceTransactionTypes() {
-		if (invoiceTransactionTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			invoiceTransactionTypes = new LinkedList<SelectItem>();
-			for (InvoiceTransactionType type:InvoiceTransactionType.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				invoiceTransactionTypes.add(item);
-			}
-		}
-		return invoiceTransactionTypes;
 	}
 
 	public List<SelectItem> getInvoiceTypes() {
