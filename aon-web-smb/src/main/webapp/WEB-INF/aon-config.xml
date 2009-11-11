@@ -24,27 +24,34 @@
 			showFinanceData="true" 
 			showProjectData="false"
 			showFinanceFeeData="true" 
+			showTaxInfoData="true"
 			showAccount="true"
 			showTariff="true" 
 			showSegment="true"
 			showNote="false"
 			showRelationship="false"
 			showRecordData="false"
+			showAddInfo="true"
 		/>
 	</customer:config>
 
 	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
 		<supplier:supplier
 			showFinanceData="true" 
+			showTaxInfoData="true"
 			showAccount="true"
 			showSegment="true"
+			showAddInfo="true"
 		/>
 	</supplier:config>
 
 	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
 		<finance:creditor
 			showFinanceData="true" 
+			showTaxInfoData="true"
 			showAccount="true"
+			showSegment="true"
+			showAddInfo="true"
 		/>
 		<finance:invoice
 			showDeliveryData="false" 
@@ -66,12 +73,14 @@
 			showSalesOrder="false"
 		/>
 		<commercial:target
+			showTaxInfoData="true"
 			showEcommerceTab="false"
 			showProfile="false"
 			showSearchOnlyCustomers="false"
 			showCommercialTracking="false"
 			showProduct="true"
 			showSeller="true"
+			showAddInfo="true"
 		/>
 	</commercial:config>
 
