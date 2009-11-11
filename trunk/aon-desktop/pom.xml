@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>4.8.1</version>
+	<version>4.9.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
-		<dbVersion>4.5.0</dbVersion>
+		<dbVersion>4.6.0</dbVersion>
 	</properties> 
 	<build>
 		<finalName>aon-desktop</finalName> 
@@ -30,13 +30,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
-			<version>4.0.1</version>
+			<version>4.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>
 	      <groupId>com.code.aon</groupId>
 	      <artifactId>aon.registry</artifactId>
-	      <version>4.2.0</version>
+	      <version>4.3.0</version>
 	    </dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.1.1</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.2.1</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>4.0.1</version>
+			<version>4.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>
@@ -114,13 +114,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.messaging</artifactId>
-			<version>0.5.6</version>
+			<version>0.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>4.4.0</version>
+			<version>4.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
