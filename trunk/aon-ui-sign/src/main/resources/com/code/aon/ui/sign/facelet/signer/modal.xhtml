@@ -12,7 +12,7 @@
 		<c:if test="#{certificate.showSignWindow}">
 			<rich:modalPanel id="invoiceSignerModalPanel" 
 				rendered="#{certificate.showSignWindow}" showWhenRendered="true"
-				minWidth="380" minHeight="240" zindex="90">
+				minWidth="380" minHeight="370" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{signBundle.sign_sign_selected}" />
@@ -34,7 +34,7 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div id="signToolbar" styleClass="aon-toolbar">
 								<aon:commandButton id="sign_selected"
-									value="#{signBundle.sign_sign} SW"
+									value="#{signBundle.sign_sign}"
 									rendered="#{!certificate.usingSmartCard}"
 									reRender="showSignWindow,#{signButtonreRender}"
 									styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -42,7 +42,7 @@
 									onclick="Richfaces.showModalPanel('waitProccess')" 
 						     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 								<aon:commandButton id="sign"
-									value="#{signBundle.sign_sign} T"
+									value="#{signBundle.sign_sign}"
 									rendered="#{certificate.usingSmartCard}"
 									reRender="showSignWindow,#{signButtonreRender}"
 									styleClass="aon-finding-toolbar-item aon-icon-accept"
