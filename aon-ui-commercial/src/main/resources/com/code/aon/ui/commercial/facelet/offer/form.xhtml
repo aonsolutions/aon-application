@@ -168,7 +168,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Target_id" 
-						value="#{target.bundle.commercial_target}" />
+						value="#{commercialBundle.commercial_target}" />
 					<aon:div styleClass="aon-lookup">
 						<a4j:region>
 							<aon:lookupInputText id="Target_id" 
@@ -187,8 +187,8 @@
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
-								windowTitle="#{target.bundle.commercial_target_new}"
-								disabled="#{offer.readOnly}" minWidth="650" minHeight="490"
+								windowTitle="#{commercialBundle.commercial_target_new}"
+								disabled="#{offer.readOnly}" minWidth="650" minHeight="600"
 								property="#{offer.to.target.registry}" lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}"
 								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"		 
