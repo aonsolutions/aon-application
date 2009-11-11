@@ -28,93 +28,32 @@
 		</aon:panelCollapsible>					
 					
 		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-				<aon:outputLabel for="Target_registry_addresses_address"
-					value="#{registryBundle.registry_address}" />
-				<aon:inputText id="Target_registry_addresses_address" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-				<aon:outputLabel for="Target_registry_addresses_zip"
-					value="#{registryBundle.registry_zip}" />
-				<aon:inputText id="Target_registry_addresses_zip" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-				<aon:outputLabel for="Target_registry_addresses_city"
-					value="#{registryBundle.registry_city}" />
-				<aon:inputText id="Target_registry_addresses_city" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-				<aon:outputLabel for="Target_registry_addresses_geozone_id"
-					value="#{registryBundle.registry_geozone}" />
-				<aon:selectOneMenu id="Target_registry_addresses_geozone_id" 
-					value="#{geozoneCollections.geoZone}"
-					valueChangeListener="#{controller.addIdEqualExpression}">
-					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{geozoneCollections.geoTrees}" />
-				</aon:selectOneMenu>			
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="searchController" value="#{targetSearch}" />
+				</ui:include>
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
 		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
-				<aon:outputLabel for="Target_registry_medias_mediaType"
-					value="#{registryBundle.registry_media_type}" />
-				<aon:div id="mediaTypeDiv">
-					<a4j:repeat value="#{targetSearch.mediaTypes}" rowKeyVar="index" var="mediaType">
-						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-							<aon:selectOneMenu id="Target_registry_medias_mediaType"
-								converter="aon.EnumConverter" 
-								value="#{targetSearch.mediaTypes[index]}">
-								<f:selectItem itemLabel="-" value="#{null}"/>
-								<f:selectItems value="#{registryCollections.mediaTypes}" />
-								<a4j:support event="onchange" reRender="mediaTypeDiv"/>
-							</aon:selectOneMenu>
-							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="mediaTypeDiv"
-								actionListener="#{targetSearch.onRemoveMediaType}"
-								rendered="#{mediaType != null}">
-								<f:param name="index" value="#{index}" />
-							</aon:commandButton>
-							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
-								actionListener="#{targetSearch.onAddMediaType}"
-								rendered="#{(mediaType != null) and (index == (targetSearch.mediaTypesSize-1))}"/>					
-						</aon:div>						
-					</a4j:repeat>
-				</aon:div>			
-				<aon:outputLabel for="Target_registry_medias_value"
-					value="#{bundle.aon_value}" />
-				<aon:inputText id="Target_registry_medias_value" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-				<aon:outputLabel for="Target_registry_medias_comment"
-					value="#{bundle.aon_comment}" />
-				<aon:inputText id="Target_registry_medias_comment" size="60"
-					valueChangeListener="#{controller.addExpression}" />
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="searchController" value="#{targetSearch}" />
+				</ui:include>
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 				
-		<aon:panelCollapsible expanded="false" label="#{commercialBundle.commercial_target_segment_module}">
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" style="width:460px;">					
-				<aon:outputLabel for="Target_segments_segment_id"
-					value="#{bundle.aon_name}" />				
-				<aon:div id="segmentDiv">
-					<a4j:repeat value="#{targetSearch.segments}" rowKeyVar="index" var="segment">
-						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-							<aon:selectOneMenu id="Target_segments_segment_id"
-								value="#{targetSearch.segments[index]}">
-								<f:selectItem itemLabel="-" value="#{null}"/>
-								<f:selectItems value="#{controller.segments}" />
-								<a4j:support event="onchange" reRender="segmentDiv"/>
-							</aon:selectOneMenu>
-							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
-								actionListener="#{targetSearch.onRemoveSegment}" reRender="segmentDiv"
-								rendered="#{segment != null}">
-								<f:param name="index" value="#{index}" />
-							</aon:commandButton>
-							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
-								actionListener="#{targetSearch.onAddSegment}" reRender="segmentDiv"
-								rendered="#{(segment != null) and (index == (targetSearch.segmentsSize-1))}"/>					
-						</aon:div>						
-					</a4j:repeat>
-				</aon:div>						
-			</aon:panelGrid>		
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_segment_module}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="searchController" value="#{targetSearch}" />
+				</ui:include>
+			</aon:panelGrid>
 		</aon:panelCollapsible>
-						
+
 		<c:if test="#{aonConfiguration.bean.target.showProduct}">						
 			<aon:panelCollapsible expanded="false" label="#{productBundle.product_module}" >					
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
