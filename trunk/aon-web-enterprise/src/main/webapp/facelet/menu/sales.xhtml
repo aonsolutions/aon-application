@@ -31,11 +31,6 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="customerSegment" 
-										action="customerSegment" actionListener="#{customerSegment.onSearch}"
-										value="#{customerBundle.customer_segment_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="sales" 
 										action="sales_search" actionListener="#{sales.onEditSearch}"
 										value="#{salesBundle.sales_module}" />
@@ -104,7 +99,7 @@
 										value="#{financeBundle.finance_invoicing_group_module}"
 										action="invoicingGroup_list" />
 								</aon:div>
-								<c:if test="#{company.EInvoice}">
+								<c:if test="#{company.EInvoice and (certificate.certificateCount>0)}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink
 											value="#{financeBundle.finance_invoice_signing_module}"
