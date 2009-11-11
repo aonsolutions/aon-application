@@ -9,11 +9,9 @@
 
 	<ui:define name="content">
 		<aon:form id="creditorForm">
-
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{financeBundle.finance_creditor_module}" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_creditor_module}" />
 				<ui:param name="controller" value="#{creditor}" />
 			</ui:include>
 
@@ -21,32 +19,25 @@
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-odd aon-width-120,
 						aon-panelGrid-even aon-width-auto">
 
-					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml">
+					<ui:include 
+						src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml">
 						<ui:param name="controller" value="#{creditor}" />
 					</ui:include>
-
 				</aon:panelGrid>
 				
-				<aon:panelGrid id="accountDataTable" styleClass="aon-margin-top"
+				<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
 					columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+
 					<c:if test="#{aonConfiguration.bean.creditor.showAccount and !creditor.new}">
 						<aon:outputLabel for="Creditor_account" value="#{accountBundle.account_accounting}" />
 						<h:panelGrid columns="2" id="accountContainer">
 							<ui:include
-								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-								<ui:param name="wizard" value="#{accountWizard}" />
+								src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 								<ui:param name="id" value="Creditor_account" />
-								<ui:param name="required" value="#{false}" />
-								<ui:param name="size" value="9" />
-								<ui:param name="maxlength" value="9" />
-								<ui:param name="renderDescription" value="#{true}" />
-								<ui:param name="renderedAttr" value="#{true}" />
-								<ui:param name="disabled" value="#{false}" />
-								<ui:param name="reRenderAttr" value="none" />
 								<ui:param name="entity" value="#{creditorAccount.account}" />
 								<ui:param name="ELExpression" value="creditorAccount.account" />
 							</ui:include>
@@ -70,14 +61,12 @@
 								reRender="accountContainer"
 								actionListener="#{creditorAccount.onNewAccount}">
 							</aon:commandButton>
-
 						</h:panelGrid>
 					</c:if>
 				</aon:panelGrid>
 
 				<c:if test="#{!creditor.new}">
 					<aon:panelTabSet selectedTab="#{creditor.selectedTab}">
-	
 						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{creditorAddress}" />
@@ -114,6 +103,28 @@
 								</aon:panel>
 							</aon:panelTab>
 						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.creditor.showSegment}">
+							<aon:panelTab id="segment"
+								label="#{registryBundle.registry_segment_module}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
+										<ui:param name="controller" value="#{creditorSegment}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.creditor.showAddInfo}">
+							<aon:panelTab id="addInfo"
+								label="#{registryBundle.registry_addInfo}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
+										<ui:param name="controller" value="#{creditorAddInfo}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
@@ -126,4 +137,3 @@
 		</c:if>
 	</ui:define>
 </ui:composition>
-
