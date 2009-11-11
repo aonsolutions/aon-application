@@ -96,7 +96,7 @@
 									disabled="#{invoiceEntry.newDetail}"
 									value="#{invoiceEntry.header.transaction}">
 									<f:selectItems
-										value="#{financeCollections.invoiceTransactionTypes}" />
+										value="#{configCollections.invoiceTransactionTypes}" />
 								</aon:selectOneMenu>
 							</aon:div>
 							<aon:div style="display:inline; margin-left: 5px;"
@@ -300,7 +300,7 @@
 										selectReRender="Creditor_id,Creditor_name,Creditor_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard,retentionTable"
 										lookup="#{creditorLookup}" actionType="new"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
-										minWidth="650" minHeight="550"
+										minWidth="650" minHeight="600"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
