@@ -19,12 +19,14 @@
 	</xs:element>
 	<xs:element name="target">
 		<xs:complexType>
+			<xs:attribute name="showTaxInfoData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showEcommerceTab" type="xs:boolean" use="required"/>
 			<xs:attribute name="showProfile" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSearchOnlyCustomers" type="xs:boolean" use="required"/>
 			<xs:attribute name="showCommercialTracking" type="xs:boolean" use="required"/>
 			<xs:attribute name="showProduct" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSeller" type="xs:boolean" use="required"/>
+			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
