@@ -11,11 +11,23 @@
 		 showEcommerceDataTab="true" />
 	</product:config>
 
-	<commercial:config version="1.0"
+	<commercial:config version="1.1"
 		xmlns:commercial="http://www.esferalia.com/commercial">
-		<commercial:commercial 
-		showInvoicing="false"
-		showEcommerceTab="true" />
+		<commercial:offer
+			showInvoicing="false"
+			showSalesOrder="true"
+		/>
+		<commercial:target
+			showTaxInfoData="true"
+			showEcommerceTab="true"
+			showProfile="false"
+			showSearchOnlyCustomers="false"
+			showCommercialTracking="false"
+			showProduct="true"
+			showSeller="true"
+			showAddInfo="true"
+		/>
+		
 	</commercial:config>
 
 
