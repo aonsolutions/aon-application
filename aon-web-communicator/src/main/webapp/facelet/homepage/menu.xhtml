@@ -22,10 +22,10 @@
 					</aon:menuItem>
 				</aon:dropDownMenu>
 				<aon:dropDownMenu value="#{bundle.aon_configuration}">
-					<aon:menuItem id="commercialSegment"
-						value="#{commercialBundle.commercial_segment_module}" 
+					<aon:menuItem id="segment"
+						value="#{registryBundle.registry_segment_module}" 
 						iconClass="aon-commercial-segment-iconClass"
-						action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
+						action="segment_form" />						
 					<aon:menuItem id="company"
 						value="#{companyBundle.company_data_module}"
 						action="company" actionListener="#{company.onLoad}" />
