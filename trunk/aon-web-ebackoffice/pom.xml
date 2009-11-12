@@ -9,14 +9,14 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.ebackoffice</artifactId>
 	<packaging>war</packaging>
-	<version>4.2.0</version>
+	<version>4.2.2</version>
 	<description>AON WEB EBACKOFFICE</description>
 	<name>AON WEB EBACKOFFICE</name>
 	<build>
 		<finalName>aon-ebackoffice</finalName>
 	</build>
 	<properties>
-		<dbVersion>4.5.0</dbVersion>
+		<dbVersion>4.6.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
