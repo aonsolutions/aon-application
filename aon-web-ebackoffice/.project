@@ -16,6 +16,7 @@
 		<project>aon-common</project>
 		<project>aon-ui-sign</project>
 		<project>aon-ui-geozone</project>
+		<project>aon-registry</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
