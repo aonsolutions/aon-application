@@ -50,11 +50,9 @@
 						<c:if test="#{communicationCenter.action.mediaType  == 'EMAIL'}" >
 							<aon:commandButton id="email"
 								action="communicationCenter_email"
-								actionListener="#{webmailMessage.createNewMessage}"
+								actionListener="#{webmailMessage.onNewMessage}"
 								value="#{webmailBundle.webmail_newmail}"
 								styleClass="aon-finding-toolbar-item aon-icon-newMail">
-								<f:setPropertyActionListener target="#{webmailMessage.showToolbar}" value="#{false}" />
-								<f:setPropertyActionListener target="#{webmailMessage.showRecipients}" value="#{false}" />
 							</aon:commandButton>								
 						</c:if>
 						<c:if test="#{communicationCenter.action.mediaType  == 'SMS'}" >
@@ -141,7 +139,7 @@
 						</aon:div>
 					</c:if>
 
-					<c:if test="#{communicationCenter.showTarget}" >
+					<c:if test="#{aonConfiguration.bean.communicationCenter.showTarget}" >
 						<aon:outputLabel for="CommunicationCenter_target_id"
 							value="#{target.bundle.commercial_target}" />
 						<aon:div id="CommunicationCenter_target">
@@ -194,7 +192,7 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
-		<c:if test="#{communicationCenter.showTarget}" >
+		<c:if test="#{aonConfiguration.bean.communicationCenter.showTarget}" >
 			<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		</c:if>
 		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
