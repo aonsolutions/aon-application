@@ -11,7 +11,7 @@
 		<aon:form id="targetSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_module}" />
+				<ui:param name="toolbarTitle" value="#{target.bundle.commercial_target_module}" />
 				<ui:param name="controller" value="#{target}" />
 			</ui:include>
 
@@ -27,7 +27,7 @@
 			</ui:decorate>
 
 		</aon:form>
-		<c:if test="#{aonConfiguration.bean.target.showSeller}">
+		<c:if test="#{aonConfiguration.bean.target.showCommercialTracking}">
 			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		</c:if>
 		<c:if test="#{aonConfiguration.bean.target.showProfile}">
