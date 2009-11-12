@@ -4,16 +4,12 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNew.xhtml" >
-		<ui:define name="additionalToolbarContent">
-			<aon:commandButton id="send"
-				value="#{webmailBundle.webmail_send}"
-				styleClass="aon-icon-accept aon-finding-toolbar-item"
-				action="communicationCenter"
-				actionListener="#{emailCommunication.send}"
-				onclick="Richfaces.showModalPanel('waitProccess')" 
-    			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-		</ui:define>
-	</ui:decorate>
+	<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNew.xhtml" >
+		<ui:param name="skipRecipients" value="#{true}"/>
+		<ui:param name="skipSaveDraftButton" value="#{true}"/>
+		<ui:param name="skipSendCancelButton" value="#{true}"/>
+		<aon:methodParam name="sendActionListener" value="#{emailCommunication.send}" type="actionListener" />
+		<aon:methodParam name="sendAction" value="communicationCenter" />
+	</ui:include>
 	
 </ui:composition>
