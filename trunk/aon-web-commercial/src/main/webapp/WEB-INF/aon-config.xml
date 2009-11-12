@@ -26,12 +26,14 @@
 			showFinanceData="true" 
 			showProjectData="false"
 			showFinanceFeeData="true" 
+			showTaxInfoData="false"
 			showAccount="true"
 			showTariff="true" 
 			showSegment="true"
 			showNote="false"
 			showRelationship="false"
 			showRecordData="false"
+			showAddInfo="true"
 		/>
 	</customer:config>
 
@@ -44,11 +46,14 @@
 		/>
 	</product:config>
 
-	<marketing:config version="1.0" xmlns:marketing="http://www.esferalia.com/marketing">
+	<marketing:config version="1.1" xmlns:marketing="http://www.esferalia.com/marketing">
 		<marketing:campaign
 			showSurvey="true"
 			showPhoneActionMediaType="true"
 		/>
+		<marketing:communicationCenter
+			showTarget="true"
+		/>		
 	</marketing:config>
 	
 	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
@@ -57,12 +62,14 @@
 			showSalesOrder="false"
 		/>
 		<commercial:target
+			showTaxInfoData="false"
 			showEcommerceTab="false"
 			showProfile="true"
 			showSearchOnlyCustomers="true"
 			showCommercialTracking="true"
 			showProduct="true"
 			showSeller="true"
+			showAddInfo="true"			
 		/>
 	</commercial:config>
 		
