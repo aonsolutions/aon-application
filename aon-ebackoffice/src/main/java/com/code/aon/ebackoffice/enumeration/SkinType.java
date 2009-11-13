@@ -11,10 +11,7 @@ import com.code.aon.common.enumeration.IStringEnum;
  */
 public enum SkinType implements IResourceable, IStringEnum {
 
-	DEFAULT("0"),
-	RED("1"),
-	BLUE("2"),
-	GREEN("3");
+	DEFAULT("0");
 	
 
 
