@@ -90,7 +90,7 @@
 				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
 	
 				<aon:outputLabel for="cart_total" value="#{ecommerceBundle.aon_ecommerce_total}" />
-				<aon:outputText id="cart_total" value="#{shoppingCart.total}">
+				<aon:outputText id="cart_total" value="#{shoppingCart.cart.total}">
 					<f:convertNumber pattern="#,##0.00" />
 				 </aon:outputText>
 			</aon:panelGrid>

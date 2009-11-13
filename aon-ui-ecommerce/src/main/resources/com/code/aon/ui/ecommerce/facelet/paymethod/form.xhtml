@@ -31,10 +31,10 @@
 					<aon:outputText id="Offer_target_full_name"
 						value="#{(cartOffer.offer.target.registry.name!=null)?(cartOffer.offer.target.registry.fullName):('')}"
 						size="50" />
-					<aon:outputText id="name" value="#{shoppingCart.total}">
+					<aon:outputText id="name" value="#{shoppingCart.cart.total}">
 					-->
 					<aon:outputLabel value="Su importe asciende a " />
-					<aon:outputText id="cart_total" value="#{shoppingCart.total}">
+					<aon:outputText id="cart_total" value="#{shoppingCart.cart.total}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
 				</aon:div>

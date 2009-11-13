@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.ui.ecommerce.controller.CartItem;
 import com.code.aon.ui.ecommerce.controller.CreditCardController;
 import com.code.aon.ui.ecommerce.controller.ShoppingCartController;
+import com.code.aon.ui.ecommerce.controller.ShoppingCartMap;
 import com.code.aon.ui.ecommerce.servlet.ECommerceServlet;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -62,7 +63,7 @@ public class QbPayment extends ECommerceServlet {
 //		ShoppingCartController scc = (ShoppingCartController) AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER);
 //		String data = ccc.get4bData();
 
-		List<CartItem> scc = (List<CartItem>) getServletContext().getAttribute("map");
+		ShoppingCartMap sc = (ShoppingCartMap) getServletContext().getAttribute("map");
 		
 //		ShoppingCartController scc = (ShoppingCartController) getBean(req, resp, IECommerceConstants.SHOPPING_CART_CONTROLLER);
 		final String LINE_BREAK = "\r\n";
@@ -70,10 +71,11 @@ public class QbPayment extends ECommerceServlet {
 		
 		String data="";
 		
-//		data += EURO_CODE+(scc.getTotal()*100)+LINE_BREAK;
-//		data += scc.getQuantity()+LINE_BREAK;
+		data += EURO_CODE+(sc.getTotal()*100)+LINE_BREAK;
+//		data += sc.getQuantity()+LINE_BREAK;
+		data += 1+LINE_BREAK;
 		
-		for(CartItem ci: scc){
+		for(CartItem ci: sc.getList()){
 			data += ci.getItem().getId()+LINE_BREAK;
 			data += ci.getItem().getDescription()+LINE_BREAK;
 			data += ci.getQuantity()+LINE_BREAK;
