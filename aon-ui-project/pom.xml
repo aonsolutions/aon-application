@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.project</artifactId>
-	<version>4.1.0</version>
+	<version>4.2.0</version>
 	<description>AON UI PROJECT</description>
 	<name>AON UI PROJECT</name>
 	<dependencies>
@@ -29,55 +29,55 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.campaign</artifactId>
-			<version>4.0.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.config</artifactId>
 			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.customer</artifactId>
-			<version>4.1.2</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.groupware</artifactId>
-			<version>4.0.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.project</artifactId>
-			<version>4.0.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.registry</artifactId>
+			<artifactId>aon.config</artifactId>
 			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.customer</artifactId>
+			<version>4.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.groupware</artifactId>
+			<version>4.0.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.project</artifactId>
+			<version>4.0.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.registry</artifactId>
+			<version>4.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.1.1</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.5.1</version>
+			<version>4.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>4.0.1</version>
+			<version>4.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
