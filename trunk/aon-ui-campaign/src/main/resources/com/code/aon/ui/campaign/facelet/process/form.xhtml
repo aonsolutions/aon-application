@@ -26,13 +26,22 @@
 
 			<aon:div id="fieldContainer" styleClass="aon-scroll-area">
 
-				<aon:panelGrid columns="2" dir="true" style="width: 90%;">
+				<aon:panelGrid columns="4" dir="true" style="width: 90%;"
+					columnClasses="aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-auto
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-250">
 					<aon:outputLabel for="Process_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Process_description"
 						value="#{process.to.description}" size="70" maxlength="64">
 						<f:validateLength maximum="64" />
 					</aon:inputText>
+					
+					<aon:outputText value="#{bundle.aon_status}"/>
+					<aon:selectOneMenu value="#{process.to.status}">
+						<f:selectItems value="#{campaignCollections.processStatus}" />
+					</aon:selectOneMenu>
 				</aon:panelGrid>
 				
 				<aon:div styleClass="aon-form-group" rendered="#{!process.new}">
@@ -191,6 +200,41 @@
 											<f:selectItems value="#{configCollections.workgroups}" />
 										</aon:selectOneMenu>
 									</aon:div>
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.task_priority}" />
+								</f:facet>
+								<aon:outputText value="#{to.priority}" rendered="#{to!=processDetail.to}" />
+								<aon:selectOneMenu value="#{processDetail.to.priority}"
+										rendered="#{to==processDetail.to}">
+									<f:selectItems value="#{projectCollections.taskPriorities}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu value="#{processDetail.to.priority}"
+											rendered="#{processDetail.new}">
+										<f:selectItems value="#{projectCollections.taskPriorities}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_status}"/>
+								</f:facet>
+								<aon:outputText value="#{to.status}" rendered="#{to!=processDetail.to}" />
+								<aon:selectOneMenu value="#{processDetail.to.status}"
+									rendered="#{to==processDetail.to}">
+									<f:selectItems value="#{campaignCollections.processDetailStatus}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu value="#{processDetail.to.status}"
+										rendered="#{processDetail.new}">
+										<f:selectItems value="#{campaignCollections.processDetailStatus}" /> 
+										<f:selectItems value="#{campaignCollections.processDetailStatus}" />
+									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
 

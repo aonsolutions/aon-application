@@ -6,6 +6,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -41,12 +42,6 @@
 							onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}" />
-<!-- 
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							actionListener="#{campaign.onReset}" rendered="#{!campaign.new}"
-							action="campaign_form" accesskey="#{bundle.aon_key_new}" />
- -->
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
@@ -62,16 +57,14 @@
 							title="#{campaignBundle.campaign_exclude_dossier}"
 							styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 							value="#{campaignBundle.campaign_exclude_dossier}"
-							actionListener="#{campaignDossier.onRemoveCampaignDossier}" 
+							actionListener="#{campaignDossier.onRemoveCampaignDossier}"
 							rendered="#{campaign.inProgress}" />
-<!-- 
-						<aon:commandButton id="startCampaign"
-							value="#{campaignBundle.campaign_start}"
-							styleClass="aon-finding-toolbar-item aon-icon-process-start"
-							actionListener="#{campaign.onStartCampaign}"
-							action="campaign_form"
-							rendered="#{!campaign.new and campaign.pending}" />
--->
+						<aon:commandButton title="#{campaignBundle.campaign_add_dossier}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							rendered="#{campaign.inProgress}"
+							value="#{campaignBundle.campaign_add_dossier}"
+							actionListener="#{addCampaignDossier.showAddPanel}"
+							reRender="addPanelContainer"/>
 						<aon:commandButton id="finishCampaign"
 							value="#{campaignBundle.campaign_finish}"
 							onclick="if(confirm('#{campaignBundle.campaign_finish_confirm}')){Richfaces.showModalPanel('waitProccess');}else{ return false; }"
@@ -97,10 +90,12 @@
 						value="#{campaign.to.description}" required="#{true}" size="60"
 						disabled="#{!campaign.pending and !campaign.inProgress}" />
 
-					<aon:outputText value="#{bundle.aon_status}"
-						rendered="#{!campaign.pending}" />
-					<aon:inputText size="20" disabled="true"
-						rendered="#{!campaign.pending}" value="#{campaign.to.status}" />
+					<aon:outputLabel for="Campaign_status" value="#{bundle.aon_status}"/>
+					<aon:selectOneMenu id="Campaign_status"
+						value="#{campaign.to.status}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{campaignCollections.campaignStatus}" />
+					</aon:selectOneMenu>
 
 					<aon:outputText value="#{campaignBundle.process_process}" />
 					<aon:selectOneMenu value="#{campaign.to.process}"
@@ -143,7 +138,7 @@
 						style="width: 100%;"
 						columnClasses="aon-width-auto,aon-width-100,aon-width-100,aon-width-100,aon-width-100,aon-width-100,aon-width-100,">
 						<aon:div />
-						
+
 
 						<aon:div
 							style="border: solid 1px black;width: 100%;background-color: #DD4545;color: white;">
@@ -172,6 +167,7 @@
 					</h:panelGrid>
 				</aon:div>
 
+				<aon:div id="CampaignDossierDataListContainer" style="width: 100%;">>
 				<aon:dataTable id="CampaignDossierDataList" var="to"
 					value="#{campaignDossier.extendedModel}"
 					rendered="#{!campaign.pending}">
@@ -223,14 +219,14 @@
 						</aon:div>
 					</aon:column>
 
-					<aon:column styleClass="aon-width-200" rendered="#{campaign.inProgress}">
+					<aon:column styleClass="aon-width-200"
+						rendered="#{campaign.inProgress}">
 						<f:facet name="header">
 							<aon:outputText value="#{campaignBundle.campaign_current_action}" />
 						</f:facet>
 						<rich:inplaceSelect value="#{to.processDetail}"
-							styleClass="aon-inplace-select" 
-							showControls="true" defaultLabel="........."
-							layout="block" selectWidth="165"
+							styleClass="aon-inplace-select" showControls="true"
+							defaultLabel="........." layout="block" selectWidth="165"
 							listWidth="165" id="inplaceSelect">
 							<f:facet name="controls">
 								<aon:div>
@@ -258,8 +254,7 @@
 						<f:facet name="header">
 							<aon:outputText value="Usr - Grp" />
 						</f:facet>
-						<aon:outputText
-							value="#{to.assigned}">
+						<aon:outputText value="#{to.assigned}">
 							<aon:abbreviateConverter maxWidth="50" />
 						</aon:outputText>
 					</aon:column>
@@ -302,21 +297,19 @@
 						</aon:div>
 					</aon:column>
 
-
 				</aon:dataTable>
-				<!-- 
-						<aon:div rendered="#{campaign.inProgress}">
-							<aon:commandButton title="#{campaignBundle.campaign_add_dossier}"
-								styleClass="aon-form-button-plus"
-								value="#{campaignBundle.campaign_add_dossier}"
-								actionListener="#{addCampaignDossier.onSearchDossiers}"
-								action="campaign_add_dossier" onclick="viewDialog.show();" />
-						</aon:div>
- -->
 				<aon:dataScroller2 for="CampaignDossierDataList" showNote="false" />
+				</aon:div>
 			</aon:div>
 		</aon:form>
 		<ui:include
 			src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+
+		<aon:div id="addPanelContainer">
+			<c:if test="#{addCampaignDossier.addPanelVisible}">
+				<ui:include
+					src="/com/code/aon/ui/campaign/facelet/campaign/addDossier.xhtml" />
+			</c:if>
+		</aon:div>
 	</ui:define>
 </ui:composition>

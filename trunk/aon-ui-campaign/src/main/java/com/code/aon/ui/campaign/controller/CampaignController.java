@@ -116,7 +116,7 @@ public class CampaignController extends BasicController {
         return ((Campaign)this.getTo()).getStatus().equals(CampaignStatus.DELETED);
     }
 
-    public void onStartCampaign(ActionEvent event) {
+	public void onStartCampaign(ActionEvent event) {
         Campaign campaign = (Campaign)this.getTo();
         if (campaign.getType().equals(CampaignType.AUTOMATIC)) {
             startCampaign(campaign);
@@ -239,5 +239,4 @@ public class CampaignController extends BasicController {
 	public void setStatusDeleted(boolean statusDeleted) {
 		this.statusDeleted = statusDeleted;
 	}
-    
 }
