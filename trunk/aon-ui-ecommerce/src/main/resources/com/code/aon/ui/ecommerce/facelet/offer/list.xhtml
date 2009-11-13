@@ -4,10 +4,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
 		<aon:div styleClass="aon-scroll-area">
+			<c:if test="#{ecConfig.paypalReturn}" />
 			<aon:dataTable id="cartList" value="#{shoppingCart.model}" rows="20"
 				var="to" style="width:100%"
 				columnClasses="

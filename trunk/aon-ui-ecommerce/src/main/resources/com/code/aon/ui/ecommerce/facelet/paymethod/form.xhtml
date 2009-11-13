@@ -3,14 +3,18 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		<aon:div styleClass="menu" />
+		
+	<aon:panelGrid columns="2" style="width:100%"
+					columnClasses="aon-width-300, none">
 		<aon:form id="paymethodForm">
-			<aon:div styleClass="menu">
-			</aon:div>
+			
 
 			<aon:div styleClass="aon-scroll-area">
 
@@ -35,31 +39,87 @@
 					</aon:outputText>
 				</aon:div>
 
+<!--  
+				<aon:panelGrid columns="1" style="width:100%">
+					<aon:panel id="offer-resume" styleClass="aon-padding-right">
+						<aon:outputLabel value="Resumen de su pedido" />
+						<aon:outputLabel value="Lista de articulos" />
+						<aon:outputLabel value="Total" />
+						<aon:outputLabel value="Gastos de anvio" />
+					</aon:panel>
+				</aon:panelGrid>	
+-->
+
+<!--  
 				<aon:panelGrid columns="2" style="width:100%"
 					columnClasses="aon-width-300, none">
-					<aon:panel id="offer-detail-list" styleClass="aon-padding-right">
-
+-->						
+					<aon:panel id="paymethod-list" styleClass="aon-padding-right">
 						<aon:outputLabel for="Offer_paymethod"
 							value="#{ecommerceBundle.aon_ecommerce_paymethod}" />
 						<aon:selectOneRadio id="Offer_paymethod"
 							value="#{cartOffer.offer.payMethod}" layout="pageDirection"
 							required="true">
 							<f:selectItems value="#{ecConfig.payMethodList}" />
+							<a4j:support event="onclick" reRender="paymethod-accept"/>
 						</aon:selectOneRadio>
-
+						
+						
+					<!--  
+						<img src="https://www.paypal.com/es_XC/i/logo/PayPal_mark_37x23.gif" 
+							align="left" style="margin-right:7px;" />
+						<aon:outputText id="cart_total_pppp" 
+							style="font-size:11px; font-family: Arial, Verdana;"
+							value="Un modo mas seguro y sencillo de pagar." />
+							
+					
 						<aon:commandButton id="paymethod-accept-buttom"
 							value="#{bundle.aon_accept}" action="cartOffer_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<aon:actionListener method="#{cartOffer.onAccept}" />
 						</aon:commandButton>
+					-->	
 					</aon:panel>
 
-					<aon:panel>
-						<aon:outputLabel value=" " />
-					</aon:panel>
 
+<!--  
 				</aon:panelGrid>
+-->
 			</aon:div>
 		</aon:form>
+		
+		<aon:div>
+			<aon:panel id="paymethod-accept" styleClass="aon-padding-right">
+				<c:if test="#{shop.paymethodPaypal}">
+					<ui:include src="method/paypal.xhtml" />
+				</c:if>
+				<c:if test="#{shop.paymethodBankDraft}">
+					<ui:include src="method/bankDraft.xhtml" />
+				</c:if>
+				<c:if test="#{shop.paymethodBankTransfer}">
+					<ui:include src="method/bankTransfer.xhtml" />
+				</c:if>
+				<c:if test="#{shop.paymethodCashOnDelivery}">
+					<ui:include src="method/cashOnDelivery.xhtml" />
+				</c:if>
+				<c:if test="#{shop.paymethodVisa}">
+					<ui:include src="method/visa.xhtml" />
+				</c:if>
+			</aon:panel>
+		</aon:div>
+		
+<!--  
+		<div>	
+		<form action="https://tpv2.4b.es/simulador/teargral.exe" method="post">
+			<input type="hidden" name="order" value="COMPRA"/> 
+			<input type="hidden" name="store" value="PI00012936"/> 
+			<input type="hidden" value="es"/> 
+			<input type="submit" value="SUBMIT"/>
+		</form>
+		</div>
+-->
+
+
+</aon:panelGrid>
 	</ui:define>
 </ui:composition>

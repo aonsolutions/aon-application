@@ -1,5 +1,7 @@
 package com.code.aon.ui.ecommerce.controller;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -37,6 +39,24 @@ public class ShopItemController {
 	private List<ItemAttachment> documentList;
 	private DataModel imageModel;
 	private DataModel documentModel;
+	private Integer bigImageId;
+	private boolean zoomEnabled;
+
+	public boolean isZoomEnabled() {
+		return zoomEnabled;
+	}
+
+	public void setZoomEnabled(boolean zoomEnabled) {
+		this.zoomEnabled = zoomEnabled;
+	}
+
+	public Integer getBigImageId() {
+		return bigImageId;
+	}
+
+	public void setBigImageId(Integer bigImageId) {
+		this.bigImageId = bigImageId;
+	}
 
 	public ShopItem getItem() {
 		return item;
@@ -89,7 +109,9 @@ public class ShopItemController {
 	public void setDocumentModel(DataModel documentModel) {
 		this.documentModel = documentModel;
 	}
-
+	public void closeZoom(ActionEvent event) {
+		setZoomEnabled(false);
+	}
 	public void addToCart(ActionEvent event) {
 		((ShoppingCartController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER))
@@ -107,38 +129,26 @@ public class ShopItemController {
 	}
 
 	public void paintImage(OutputStream out, Object data) {
-		// try {
-		// IManagerBean bean = BeanManager.getManagerBean(ItemAttachment.class);
-		// String identifier =
-		// bean.getFieldName(IProductAlias.ITEM_ATTACHMENT_ID);
-		//			
-		// } catch (ManagerBeanException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
-
-//		try {
-//			Iterator<ItemAttachment> it = getImageList().iterator();
-//			while (it.hasNext()) {
-//				ItemAttachment ia = it.next();
-//				if (ia.getId().equals(data)) {
-//					out.write(ia.getData());
-//				}
-//				ia = null;
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
 		try {
 			out.write(findItem((Integer)data,getImageList()).getData());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void paintBigImage(OutputStream out, Object data) {
+		try {
+			out.write(findItem(getBigImageId(),getImageList()).getData());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void onImageSelected(ActionEvent event) {
+		setZoomEnabled(true);
+		setBigImageId(((ItemAttachment)getImageModel().getRowData()).getId());
+	}
+	
 	public void onLoadAttachment(ActionEvent event) {
 		initializeAttachment();
 		try {
@@ -183,16 +193,6 @@ public class ShopItemController {
 				"index");
 		HttpServletResponse response = (HttpServletResponse) context
 				.getExternalContext().getResponse();
-		
-//		Iterator<ItemAttachment> it = getDocumentList().iterator();
-//		ItemAttachment attachment=null;
-//		while (it.hasNext()) {
-//			ItemAttachment ia = it.next();
-//			if (ia.getId().equals(Integer.valueOf(id))) {
-//				attachment = ia;
-//			}
-//			ia = null;
-//		}
 		writeAttachment(findItem(Integer.valueOf(id),getDocumentList()), response);
 		context.responseComplete();
 		
