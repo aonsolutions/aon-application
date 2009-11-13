@@ -81,7 +81,7 @@ public class CartOfferController extends EmailParentController {
 		try {
 			offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 			ShoppingCartController sc = (ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER);
-			List<CartItem> list = sc.getList();
+			List<CartItem> list = sc.getCart().getList();
 			Iterator<CartItem> it = list.iterator();
 			while(it.hasNext()){
 				CartItem ci = it.next();
@@ -182,7 +182,7 @@ public class CartOfferController extends EmailParentController {
 		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_cart_summary")).append(SystemUtils.LINE_SEPARATOR);
 
 		ShoppingCartController sc = (ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER);
-		List<CartItem> list = sc.getList();
+		List<CartItem> list = sc.getCart().getList();
 		Iterator<CartItem> it = list.iterator();
 		while(it.hasNext()){
 			CartItem ci = it.next();
@@ -197,7 +197,7 @@ public class CartOfferController extends EmailParentController {
 			content.append( ci.getItem().getTotal() ).append(SystemUtils.LINE_SEPARATOR);
 		}
 		content.append(	AonUtil.getMessage(BUNDLE,"aon_total")).append(": ");
-		content.append( sc.getTotal() ).append(SystemUtils.LINE_SEPARATOR);
+		content.append( sc.getCart().getTotal() ).append(SystemUtils.LINE_SEPARATOR);
 		to = sc.getCartTarget().getEcTarget().getLogin();
 		
 		super.email(subject, from, to, content.toString());
@@ -207,7 +207,7 @@ public class CartOfferController extends EmailParentController {
 		ShoppingCartController scc = ((ShoppingCartController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER));
 		scc.setModel(null);
-		scc.setList(null);
+		scc.getCart().cleanList();
 		String message = "Operación realizada satisfactoriamente.";
 		message += "\n Se procede a la desconexión.";
 		AonUtil.addInfoMessage(message);

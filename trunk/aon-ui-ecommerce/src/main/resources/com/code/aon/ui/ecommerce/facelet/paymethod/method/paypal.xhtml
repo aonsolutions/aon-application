@@ -35,7 +35,7 @@
 	
 	
 			<f:param name="item_name" value="Cart" />
-			<f:param name="amount" value="#{shoppingCart.total}" />
+			<f:param name="amount" value="#{shoppingCart.cart.total}" />
 	
 			<aon:outputText style="color:#000;" value="Add To Cart" />
 		</h:outputLink> 
@@ -60,7 +60,7 @@
 	
 	
 			<f:param name="item_name" value="Cart" />
-			<f:param name="amount" value="#{shoppingCart.total}" />
+			<f:param name="amount" value="#{shoppingCart.cart.total}" />
 	
 			<img src="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" 
 				align="left" style="margin-right:7px;" />

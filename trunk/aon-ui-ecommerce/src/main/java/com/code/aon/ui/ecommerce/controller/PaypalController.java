@@ -44,7 +44,7 @@ public class PaypalController {
 	 */
 	public void initialize(ActionEvent event){
 
-		String paymentAmount = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getTotal().toString();
+		String paymentAmount = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCart().getTotal().toString();
 
 
         /*
@@ -436,7 +436,7 @@ public class PaypalController {
 			payerId = getPayerId();
 //			String finalPaymentAmount =  session.get("Payment_Amount");
 			String finalPaymentAmount;
-			finalPaymentAmount = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getTotal().toString();
+			finalPaymentAmount = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCart().getTotal().toString();
 			/*
 			'------------------------------------
 			' Calls the DoExpressCheckoutPayment API call
