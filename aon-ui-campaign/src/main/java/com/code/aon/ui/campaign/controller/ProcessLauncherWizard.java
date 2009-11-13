@@ -72,7 +72,6 @@ public class ProcessLauncherWizard implements Serializable {
 	private Dossier dossier;
 	private DossierType dossierType;
 	private ActivityType activityType;
-
 	private String dossierNumber;
 
 	private List<SelectItem> availableDossiers;

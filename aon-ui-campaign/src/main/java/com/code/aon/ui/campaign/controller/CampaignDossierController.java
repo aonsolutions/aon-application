@@ -21,6 +21,7 @@ import com.code.aon.campaign.CampaignDossier;
 import com.code.aon.campaign.Process;
 import com.code.aon.campaign.ProcessDetail;
 import com.code.aon.campaign.dao.ICampaignAlias;
+import com.code.aon.campaign.enumeration.ProcessDetailStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -165,6 +166,7 @@ public class CampaignDossierController extends LinesController {
 			Criteria c = new Criteria();
 			c.addEqualExpression(b.getFieldName(ICampaignAlias.PROCESS_DETAIL_PROCESS_ID), campaign
 					.getProcess().getId());
+			c.addEqualExpression(b.getFieldName(ICampaignAlias.PROCESS_DETAIL_STATUS), ProcessDetailStatus.ACTIVE );
 			processCount = b.getCount(c);
 			DataModel model = super.getModel();
 			List<CampaignDossierExtended> newList = new LinkedList<CampaignDossierExtended>();
@@ -183,14 +185,21 @@ public class CampaignDossierController extends LinesController {
 	private CampaignDossierExtended mergeCampaignDossier(CampaignDossierExtended cde,CampaignDossier cd) throws ManagerBeanException {
 		cde.setCampaignDossier(cd);
 		ProcessDetail processDetail = getCampaignTaskManager().getCurrentProcessDetail(cd);
+		double d = 100.0;
+		if (processDetail != null) {
+			int pos = 0;
+			for (SelectItem si : getProcessDetailList()) {
+				ProcessDetail a = (ProcessDetail) si.getValue();
+				if (a.getId().equals( processDetail.getId())) {
+					break;
+				}
+				pos++;
+			}
+			d = CommonUtil.round((pos * 100) / processCount);
+		}
 		cde.setProcessDetail(processDetail);
 		Task task = getCampaignTaskManager().getCurrentTask(cd);
 		cde.setTask(task);
-		double d = 100.0;
-		if (processDetail != null) {
-			int pos = processDetail.getPosition();
-			d = CommonUtil.round((pos * 100) / processCount);
-		} 
 		cde.setProcessDetailPercent(d);
 		cde.setColor(null);
 		cde.setPercentImage(null);
@@ -216,7 +225,7 @@ public class CampaignDossierController extends LinesController {
 	
 	
     @SuppressWarnings("unchecked")
-	public List getProcessDetailList() throws ManagerBeanException {
+	public List<SelectItem> getProcessDetailList() throws ManagerBeanException {
     	if (processDetailList == null) {
             processDetailList = new LinkedList<SelectItem>();
             IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
@@ -224,6 +233,8 @@ public class CampaignDossierController extends LinesController {
     		Process process = campaign.getProcess();
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
+            criteria.addEqualExpression(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_STATUS), ProcessDetailStatus.ACTIVE );
+            criteria.addOrder(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION));
             Iterator iter = processDetailBean.getList(criteria).iterator();
             while(iter.hasNext()){
                 ProcessDetail processDetail = (ProcessDetail)iter.next();

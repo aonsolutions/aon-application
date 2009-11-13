@@ -14,19 +14,27 @@ import com.code.aon.campaign.dao.ICampaignAlias;
 import com.code.aon.campaign.enumeration.CampaignStatus;
 import com.code.aon.campaign.enumeration.CampaignType;
 import com.code.aon.campaign.enumeration.DateReference;
-
+import com.code.aon.campaign.enumeration.ProcessDetailStatus;
+import com.code.aon.campaign.enumeration.ProcessStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 
 public class CampaignCollectionsController {
-
+	
+	private LinkedList<SelectItem> campaignStatusesList;
+	private LinkedList<SelectItem> campaignTypesList;
+	private LinkedList<SelectItem> dateReferencesList;
+	private LinkedList<SelectItem> processStatusesList;
+	private LinkedList<SelectItem> processDetailStatusesList;
+	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getProcesses() throws ManagerBeanException {
 		List<SelectItem> processList = new LinkedList<SelectItem>();
 		IManagerBean processBean = BeanManager.getManagerBean(Process.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(processBean.getFieldName(ICampaignAlias.PROCESS_STATUS), ProcessStatus.ACTIVE);
 		criteria.addOrder(processBean.getFieldName(ICampaignAlias.PROCESS_DESCRIPTION));
 		Iterator iter = processBean.getList(criteria).iterator();
 		while(iter.hasNext()){
@@ -52,57 +60,74 @@ public class CampaignCollectionsController {
 		return processList;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getProcessEntities() throws ManagerBeanException {
-		List<SelectItem> processList = new LinkedList<SelectItem>();
-		IManagerBean processBean = BeanManager.getManagerBean(Process.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(processBean.getFieldName(ICampaignAlias.PROCESS_DESCRIPTION));
-		Iterator iter = processBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			Process process = (Process)iter.next();
-			SelectItem item = new SelectItem(process, process.getDescription());
-			processList.add(item);
-		}
-		return processList;
-	}
-
 	public List<SelectItem> getDateReferences()  {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> dateReferenceList = new LinkedList<SelectItem>();
-		DateReference[] dateReferences = DateReference.values();
-		for (int i = 0; i < dateReferences.length; i++) {
-			DateReference dateReference = dateReferences[i];
-			String name = dateReference.getName(locale);
-			SelectItem item = new SelectItem(dateReference, name);
-			dateReferenceList.add(item);
+		if (dateReferencesList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			dateReferencesList = new LinkedList<SelectItem>();
+			DateReference[] dateReferences = DateReference.values();
+			for (DateReference dateReference : dateReferences) {
+				String name = dateReference.getName(locale);
+				SelectItem item = new SelectItem(dateReference, name);
+				dateReferencesList.add(item);
+			}
 		}
-		return dateReferenceList;
+		return dateReferencesList;
 	}
 
     public List<SelectItem> getCampaignTypes() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        LinkedList<SelectItem> campaignTypeList = new LinkedList<SelectItem>();
-        CampaignType[] campaignTypes = CampaignType.values();
-        for (int i = 0; i < campaignTypes.length; i++) {
-            CampaignType campaignType = campaignTypes[i];
-            String name = campaignType.getName(locale);
-            SelectItem item = new SelectItem(campaignType, name);
-            campaignTypeList.add(item);
-        }
-        return campaignTypeList;
+    	if (campaignTypesList == null) {
+            Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+            campaignTypesList = new LinkedList<SelectItem>();
+            CampaignType[] campaignTypes = CampaignType.values();
+            for (CampaignType campaignType: campaignTypes) {
+                String name = campaignType.getName(locale);
+                SelectItem item = new SelectItem(campaignType, name);
+                campaignTypesList.add(item);
+            }
+    	}
+        return campaignTypesList;
     }
     
     public List<SelectItem> getCampaignStatus() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        LinkedList<SelectItem> campaignStatusList = new LinkedList<SelectItem>();
-        CampaignStatus[] campaignStatuses = CampaignStatus.values();
-        for (int i = 0; i < campaignStatuses.length; i++) {
-            CampaignStatus campaignStatus = campaignStatuses[i];
-            String name = campaignStatus.getName(locale);
-            SelectItem item = new SelectItem(campaignStatus, name);
-            campaignStatusList.add(item);
-        }
-        return campaignStatusList;
+    	if (campaignStatusesList == null) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	    	campaignStatusesList = new LinkedList<SelectItem>();
+	        CampaignStatus[] campaignStatuses = CampaignStatus.values();
+	        for (CampaignStatus campaignStatus:campaignStatuses) {
+	            String name = campaignStatus.getName(locale);
+	            SelectItem item = new SelectItem(campaignStatus, name);
+	            campaignStatusesList.add(item);
+	        }
+	    }
+        return campaignStatusesList;
     }
+    
+    public List<SelectItem> getProcessStatus() {
+    	if (processStatusesList == null) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        processStatusesList = new LinkedList<SelectItem>();
+	        ProcessStatus[] processStatuses = ProcessStatus.values();
+	        for (ProcessStatus processStatus:processStatuses) {
+	            String name = processStatus.getName(locale);
+	            SelectItem item = new SelectItem(processStatus, name);
+	            processStatusesList.add(item);
+	        }
+	    }
+        return processStatusesList;
+    }
+    
+    public List<SelectItem> getProcessDetailStatus() {
+    	if (processDetailStatusesList == null) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        processDetailStatusesList = new LinkedList<SelectItem>();
+	        ProcessDetailStatus[] processDetailStatuses = ProcessDetailStatus.values();
+	        for (ProcessDetailStatus processDetailStatus:processDetailStatuses) {
+	            String name = processDetailStatus.getName(locale);
+	            SelectItem item = new SelectItem(processDetailStatus, name);
+	            processDetailStatusesList.add(item);
+	        }
+	    }
+        return processDetailStatusesList;
+    }    
+    
 }
