@@ -13,9 +13,12 @@ import com.code.aon.campaign.Process;
 import com.code.aon.campaign.ProcessDetail;
 import com.code.aon.campaign.ProcessDetailTransition;
 import com.code.aon.campaign.dao.ICampaignAlias;
+import com.code.aon.campaign.enumeration.CampaignStatus;
 import com.code.aon.campaign.enumeration.DateReference;
+import com.code.aon.campaign.enumeration.ProcessDetailStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
@@ -44,10 +47,10 @@ public class CampaignTaskManager {
 		} else {
 			processDetail = pdt.getNextProcessDetail();
 		}
-		ActivityType activityType = getActivityType(campaignDossier.getCampaign().getActivityType());
+		ActivityType activityType = campaignDossier.getCampaign().getActivityType();
 		if (processDetail != null) {
 			Activity activity = null;
-			if (activityType != null) {
+			if (activityType != null && activityType.getId() != null) {
 				activity = getActivity(campaignDossier.getDossier(), activityType);
 			}
 
@@ -71,7 +74,7 @@ public class CampaignTaskManager {
 			task.setDossier(campaignDossier.getDossier());
 			task.setActivity(activity);
 			task.setRepeatPeriod(TaskPeriod.NONE);
-			
+
 			if (previousTask != null) {
 				task.setComments( previousTask.getComments() );
 				task.setPriority( previousTask.getPriority() );
@@ -80,9 +83,14 @@ public class CampaignTaskManager {
 					task.setSender( previousTask.getSender() );
 				}
 			}
-			if (task.getPriority() == null) {
-				task.setPriority( Priority.NORMAL );	
+			if (processDetail.getPriority() == null) {
+				if (task.getPriority() == null) {
+					task.setPriority( Priority.NORMAL );	
+				}	
+			} else {
+				task.setPriority( processDetail.getPriority());
 			}
+			
 			task = addTask(task);
 
 			ActivityProcess activityProcess = new ActivityProcess();
@@ -103,7 +111,31 @@ public class CampaignTaskManager {
 				alarm.setPriority(Priority.NONE);
 				addAlarm(alarm);
 			}
+		} else {
+			finishCampaignIfNeeded( campaignDossier.getCampaign() );
 		}
+	}
+
+	private void finishCampaignIfNeeded(Campaign campaign) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(CampaignDossier.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_CAMPAIGN_ID), campaign.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		boolean finished = true;
+		for (ITransferObject to : list ) {
+			CampaignDossier cd = (CampaignDossier) to;
+			Task task  = getCurrentTask(cd);
+			if (task != null) {
+				finished = false;
+				break;
+			}
+		}
+		if (finished) {
+			IManagerBean b  = BeanManager.getManagerBean(Campaign.class);	
+			campaign.setStatus(CampaignStatus.FINISHED);
+			b.update(campaign);
+		}
+		
 	}
 
 	public Task finishCampaignTask(CampaignDossier campaignDossier)
@@ -221,10 +253,6 @@ public class CampaignTaskManager {
 		return null;
 	}
 
-	/*
-	 * GETTER METHODS
-	 */
-
 	@SuppressWarnings("unchecked")
 	private List getActivityProcesses(CampaignDossier campaignDossier)
 			throws ManagerBeanException {
@@ -251,17 +279,19 @@ public class CampaignTaskManager {
 		return activityProcessBean.getList(criteria);
 	}
 
-	@SuppressWarnings("unchecked")
 	private ProcessDetail getProcessDetail(Process process, int position)
 			throws ManagerBeanException {
 		IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(processDetailBean
 				.getFieldName(ICampaignAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
+		criteria.addEqualExpression(processDetailBean
+				.getFieldName(ICampaignAlias.PROCESS_DETAIL_STATUS), ProcessDetailStatus.ACTIVE);
 		criteria.addOrder(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION));
-		List processDetailList = processDetailBean.getList(criteria);
-		if (processDetailList.size() > position) {
-			return (ProcessDetail) processDetailList.get(position);
+		criteria.addGreaterThanOrEqualExpression(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION), position);
+		List<ITransferObject>  list = processDetailBean.getList(criteria);
+		if (list.size() > 0) {
+			return (ProcessDetail) list.get(0);
 		}
 		return null;
 	}
@@ -277,17 +307,17 @@ public class CampaignTaskManager {
 		return (Activity) activityBean.getList(criteria).get(0);
 	}
 
-	private ActivityType getActivityType(ActivityType activityType)
-			throws ManagerBeanException {
-		if (activityType != null) {
-			IManagerBean activityTypeBean = BeanManager.getManagerBean(ActivityType.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(activityTypeBean
-					.getFieldName(IProjectAlias.ACTIVITY_TYPE_ID), activityType.getId());
-			return (ActivityType) activityTypeBean.getList(criteria).get(0);
-		}
-		return null;
-	}
+//	private ActivityType getActivityType(ActivityType activityType)
+//			throws ManagerBeanException {
+//		if (activityType != null) {
+//			IManagerBean activityTypeBean = BeanManager.getManagerBean(ActivityType.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(activityTypeBean
+//					.getFieldName(IProjectAlias.ACTIVITY_TYPE_ID), activityType.getId());
+//			return (ActivityType) activityTypeBean.getList(criteria).get(0);
+//		}
+//		return null;
+//	}
 
 	@SuppressWarnings("unchecked")
 	private Alarm getTaskAlarm(Task task) throws ManagerBeanException {
