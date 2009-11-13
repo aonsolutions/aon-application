@@ -1,7 +1,5 @@
 package com.code.aon.ebackoffice;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,13 +17,11 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
-import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.ShowPrice;
-import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.SkinType;
 import com.code.aon.ebackoffice.enumeration.TaxType;
-import com.code.aon.ebackoffice.enumeration.WishList;
 
 
 /**

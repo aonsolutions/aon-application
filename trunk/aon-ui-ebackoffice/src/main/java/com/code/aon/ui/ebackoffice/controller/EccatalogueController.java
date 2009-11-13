@@ -42,9 +42,6 @@ public class EccatalogueController extends LinesController {
 	private List<SelectItem> catalogues;
 	private List<SelectItem> catalogueTypes;
 
-	
-
-	
 	public List<SelectItem> getCatalogueTypes() {
 		if (catalogueTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
@@ -59,9 +56,6 @@ public class EccatalogueController extends LinesController {
 		return catalogueTypes;
 	}
 	
-	
-
-
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
 		catalogues = null;
 		if (catalogues == null) {
