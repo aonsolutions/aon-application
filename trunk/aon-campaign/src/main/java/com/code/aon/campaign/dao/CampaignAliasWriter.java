@@ -11,6 +11,7 @@ import com.code.aon.campaign.ProcessDetail;
 import com.code.aon.campaign.ProcessDetailTransition;
 import com.code.aon.campaign.ProcessTransitionType;
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 public class CampaignAliasWriter {
 
@@ -25,6 +26,7 @@ public class CampaignAliasWriter {
 		classes[4] = ProcessDetail.class.getName();
 		classes[5] = ProcessDetailTransition.class.getName();
 		classes[6] = ProcessTransitionType.class.getName();
+		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.campaign.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

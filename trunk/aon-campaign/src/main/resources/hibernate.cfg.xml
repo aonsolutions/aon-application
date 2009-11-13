@@ -6,12 +6,14 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_consultant?autoReconnect=true</property>
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-esferalia-com?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
-		<property name="show_sql">false</property>		
+		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
-		<property name="connection.password">serubd2000</property>		
+		<property name="connection.password">serubd2000</property>	
+	
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.campaign.ActivityProcess"/>
@@ -31,21 +33,14 @@
 		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Task"/>
 
-		<!-- AON-COMPANY Mapping files -->
-		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
-
 		<!-- AON-CONFIG Mapping files -->		
-		<mapping class="com.code.aon.config.ApplicationParameter"/>
-		<mapping class="com.code.aon.config.Series"/>
-		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Bank"/>	
+		<mapping class="com.code.aon.config.PayMethod"/>		
+		<mapping class="com.code.aon.config.Scope"/>			
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
 		<mapping class="com.code.aon.config.User"/>
-		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
-		<mapping class="com.code.aon.config.UserWorkGroup"/>
 
 		<!-- AON GROUPWARE -->
 		<mapping class="com.code.aon.groupware.Alarm"/>
@@ -53,27 +48,15 @@
 		<mapping class="com.code.aon.groupware.Notice"/>
 		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
 		<mapping class="com.code.aon.groupware.Favorite"/>
-		<mapping class="com.code.aon.groupware.Message"/>
-		<mapping class="com.code.aon.groupware.MessageContent"/>
 
-		<!-- AON-PRODUCT Mapping files -->
-		<mapping class="com.code.aon.product.Tariff"/>
-
-		<!-- AON-SALES Mapping files -->	
-		<mapping class="com.code.aon.customer.Customer"/>
-		<mapping class="com.code.aon.customer.CustomerSegment"/>
+		<!-- AON-CUSTOMER Mapping files -->	
+		<mapping class="com.code.aon.customer.Customer"/>			
+		<mapping class="com.code.aon.customer.CustomerSegment"/>			
 		
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
-		<mapping class="com.code.aon.registry.RegistryAttachment"/>
-		<mapping class="com.code.aon.registry.Category"/>
-		<mapping class="com.code.aon.registry.Relationship"/>
-		<mapping class="com.code.aon.registry.RegistryRelationship"/>
-		<mapping class="com.code.aon.registry.RegistryNote"/>
-		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
-		<mapping class="com.code.aon.registry.RecordData"/>
 		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoZone"/>			

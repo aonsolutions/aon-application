@@ -10,6 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.campaign.enumeration.CampaignStatus;
 import com.code.aon.campaign.enumeration.CampaignType;
 import com.code.aon.common.ITransferObject;
@@ -23,21 +28,13 @@ public class Campaign implements ITransferObject {
 	private static final long serialVersionUID = 4650721068543504917L;
 
 	private Integer id;
-	
 	private String description;
-	
 	private Process process;
-	
 	private ActivityType activityType;
-	
 	private Date startDate;
-	
     private Date endDate;
-
     private WorkGroup workGroup;
-
     private CampaignType type;
-
     private CampaignStatus status;
 
 	@Id
@@ -123,4 +120,46 @@ public class Campaign implements ITransferObject {
     public void setStatus(CampaignStatus status) {
         this.status = status;
     }
+    
+	@Override	
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Campaign o = (Campaign) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.id, o.id)
+				.append(this.description, o.description)
+				.append(this.process, o.process)
+				.append(this.activityType, o.activityType)
+				.append(this.startDate, o.startDate)
+				.append(this.endDate, o.endDate)
+				.append(this.workGroup, o.workGroup)
+				.append(this.type, o.type)
+				.append(this.status, o.status)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(this.id)
+			.append(this.description)
+			.append(this.process)
+			.append(this.activityType)
+			.append(this.startDate)
+			.append(this.endDate)
+			.append(this.workGroup)
+			.append(this.type)
+			.append(this.status)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }
