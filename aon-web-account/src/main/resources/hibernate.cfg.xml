@@ -10,7 +10,6 @@
 		<property name="connection.service">jboss.admin:service=AonLdap</property>
 		<property name="connection.datasource">java:comp/env/jdbc/AonAccount</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-		<property name="show_sql">true</property>
 
 		<!-- C3P0 Stuff -->
 		<property name="c3p0.acquire_increment">1</property>
@@ -81,7 +80,6 @@
 
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
-		<mapping class="com.code.aon.customer.CustomerSegment"/>
 
 		<!-- AON-FINANCE Mapping files -->	
 		<mapping class="com.code.aon.finance.Creditor"/>
@@ -118,6 +116,7 @@
 
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
 		<mapping class="com.code.aon.registry.Registry"/>
@@ -128,11 +127,12 @@
 		<mapping class="com.code.aon.registry.RegistryNote"/>
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.Segment"/>
 		
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
-		<mapping class="com.code.aon.supplier.SupplierSegment"/>
 	</session-factory>
 
 </hibernate-configuration>
