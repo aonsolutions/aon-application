@@ -8,16 +8,21 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.config.Tariff;
 import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.ShowPrice;
+import com.code.aon.ebackoffice.enumeration.SkinType;
 import com.code.aon.ebackoffice.enumeration.TaxType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
@@ -33,6 +38,16 @@ public class ConfigController {
 	private Ecconfig activeConfig;
 	private Company company;
 	private boolean aonEbackoffice;
+//	private String PayerID;
+	
+//	public String getPayerID() {
+//		return PayerID;
+//	}
+//
+//	public void setPayerID(String payerID) {
+//		PayerID = payerID;
+//	}
+	
 	
 	public Ecconfig getActiveConfig() {
 		if (activeConfig == null) {
@@ -62,7 +77,32 @@ public class ConfigController {
 	public void setAonEbackoffice(boolean aonEbackoffice) {
 		this.aonEbackoffice = aonEbackoffice;
 	}
+	
+	public boolean isPaypalReturn(){
+		if (FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestParameterMap().get("token") != null
+				&& FacesContext.getCurrentInstance().getExternalContext()
+						.getRequestParameterMap().get("PayerID") != null) {
+			PaypalController paypal = (PaypalController)AonUtil.getRegisteredBean(IECommerceConstants.PAYPAL_CONTROLLER);
+			paypal.setToken(FacesContext.getCurrentInstance().getExternalContext()
+					.getRequestParameterMap().get("token"));
+			paypal.setPayerId(FacesContext.getCurrentInstance().getExternalContext()
+					.getRequestParameterMap().get("PayerID"));
 
+			// limpia la url de parametros
+			try {
+				FacesContext.getCurrentInstance().getExternalContext().redirect(ECommerceUtil.getUrl());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			paypal.confirmPaymentFromPayPal(null);
+			((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setContentView(ViewEnum.PAYMETHOD);
+			return true;
+		}
+		return false;
+	}
+	
 	public void setCompany(Company company) {
 		this.company = company;
 	}
@@ -89,6 +129,9 @@ public class ConfigController {
 			if (configList == null || configList.size()>=0) {
 				IManagerBean bean = BeanManager.getManagerBean(Ecconfig.class);
 				configList = bean.getList(null);
+				if (configList.size() == 0){
+					createDefaultConfig();
+				}
 			}
 			if (configList == null || configList.size()<=0) {
 				throw new ManagerBeanException();
@@ -98,6 +141,25 @@ public class ConfigController {
 			throw new AbortProcessingException(msg, e);
 		}
 		return configList;
+	}
+	
+	private void createDefaultConfig(){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Ecconfig.class);
+			Ecconfig to = new Ecconfig();
+			to.setActive(true);
+			to.setName("default");
+			to.setSkin(SkinType.DEFAULT);
+			to.setEmail("your@email.com");
+			Tariff tariff = new Tariff();
+			tariff.setId(1);
+			to.setTariff(tariff);
+			bean.insert(to);
+			configList = bean.getList(null);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Imposible acceder a la configuracion.");
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
 	public void paintHeader(OutputStream out, Object data) throws IOException {

@@ -2,6 +2,8 @@ package com.code.aon.ui.ecommerce.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -9,16 +11,21 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.hibernate.criterion.NotNullExpression;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ebackoffice.Eccatalogue;
+import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
 import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Criterion;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
@@ -45,7 +52,7 @@ public class CatalogueGadget {
 		try {
 			if (list == null) {
 				IManagerBean bean = BeanManager.getManagerBean(Eccatalogue.class);
-				list = bean.getList(null);
+				list = bean.getList(catalogueCriteriaBuilder());
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
@@ -54,6 +61,24 @@ public class CatalogueGadget {
 			throw new AbortProcessingException(msg, e);
 		}
 		return list;
+	}
+
+	// un poco feo pero hace lo que debe
+	private Criteria catalogueCriteriaBuilder() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Eccatalogue.class);
+		Date currentDate = Calendar.getInstance().getTime();
+		Criteria criteria = new Criteria();
+		Criteria startCriteria = new Criteria();
+		Criteria endCriteria = new Criteria();
+		Criteria nullCriteria = new Criteria();
+		startCriteria.addLessThanOrEqualExpression(bean.getFieldName(IEbackofficeAlias.ECCATALOGUE_CATALOGUE_START_DATE), currentDate);
+		endCriteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEbackofficeAlias.ECCATALOGUE_CATALOGUE_END_DATE), currentDate);
+		nullCriteria.addNullExpression(bean.getFieldName(IEbackofficeAlias.ECCATALOGUE_CATALOGUE_END_DATE));
+		criteria.addExpression(endCriteria.getExpression());
+		criteria.addOrExpression(nullCriteria.getExpression());
+		criteria.addExpression(startCriteria.getExpression());
+		criteria.addEqualExpression(bean.getFieldName(IEbackofficeAlias.ECCATALOGUE_VISIBLE), true);
+		return criteria;
 	}
 
 	public void setList(List<ITransferObject> list) {
@@ -151,7 +176,7 @@ public class CatalogueGadget {
 		Integer id = (Integer) data;
 		for (ITransferObject to : getList()) {
 			Eccatalogue ecCatalogue = (Eccatalogue)to;  
-			if (id.equals(ecCatalogue.getId())) {
+			if (id.equals(ecCatalogue.getId()) && ecCatalogue.getCatalogueIcon()!=null) {
 				try {
 					out.write(ecCatalogue.getCatalogueIcon());
 				} catch (IOException e) {
@@ -159,6 +184,11 @@ public class CatalogueGadget {
 				}
 			}
 		}
+	}
+	
+	public boolean isIcon() {
+		return false; 
+//		return (getActiveConfig().getHeaderImg()!=null); 
 	}
 	
 	

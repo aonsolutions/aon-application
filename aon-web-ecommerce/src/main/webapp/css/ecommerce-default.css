@@ -9,9 +9,10 @@ html,body {
 body {
 	font: 12px/ 1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 	/*color: #4b4b4b;*/
-	color: #ccc;
+	color: #999;
 	background-color: #fff;
-	min-width:800px;
+
+min-width:850px;
 }
 
 img {
@@ -188,6 +189,7 @@ a,a:hover,a:visited {
 .aon-vertical-align-top {
 	vertical-align: top;
 	width:75%;
+	border-left:none;
 
 	
 
@@ -239,6 +241,7 @@ a,a:hover,a:visited {
 
 .aon-width-100 {
 	width: 100px;
+
 }
 
 .aon-width-110 {
@@ -984,6 +987,16 @@ no-repeat;
 		border:none;
 		padding-left:20px;
 			padding-right:5px;
+				padding-top:5px;
+}
+
+.aon-icon-remove {
+	background: transparent url(images/aon-icon/aon-icon-remove.png) scroll
+		left center no-repeat;
+		border:none;
+		padding-left:20px;
+			padding-right:5px;
+				padding-top:5px;
 }
 
 .aon-icon-open-popup {
@@ -1261,29 +1274,31 @@ no-repeat;
 	/***** PARA QUE QUEDE COMO UN FIELDSET   *******/
 #aon-content .aon-group {
 
-margin:0 auto;
-margin-top:20px;
+
+margin-top:30px;
 
 }
 
 
 #aon-content .aon-group-title {
-	position: relative;
+	
 	top: -3em;
-	display: inline;
+	
 	font-weight: bold;
 padding:-10px 14px 10px 2px;
 	font-size: 0.9em;
-	background-color: #000;
+	background-color: #AED664;
 	border: 0;
 	background-image:none;
 	color:#fff;
-	padding-left:30px;
+	padding:9px;
+	text-transform:uppercase;
+	margin-bottom:30px;
 }
 
 
 .aon-group-body {
-	padding: 0 1em;
+	padding: 15px;
 }
 .aon-header-additionalInfo a, .aon-header-additionalInfo a:hover {
 
@@ -1350,9 +1365,9 @@ font-weight:bold;
 
 .aon-outputLabel {
 		padding: 0 5px 0 0em;
-	margin-left:20px;
-	font-weight:bold;
-	margin-bottom:20px;
+
+font-size:11px;
+
 	
 	
 }
@@ -1411,7 +1426,7 @@ text-transform:uppercase;
 
 	border:1px solid #CCCCCC;
 		margin-bottom:5px;
-		margin-right:20px;
+		margin-right:10px;
 		width:100px;
 	
 
@@ -1437,7 +1452,7 @@ text-transform:uppercase;
 }
 
 .aon-inputTextarea {
-	border: #808080 1px solid;
+	border: #ccc 1px solid;
 	font-family: arial, verdana, "sans serif";
 }
 
@@ -1446,6 +1461,8 @@ text-transform:uppercase;
 }
 
 .aon-inputSecret {
+	width:99px;
+border:1px solid #CCCCCC;
 	
 }
 
@@ -1472,7 +1489,7 @@ text-transform:uppercase;
 	border-collapse: collapse;
 	background:#fff;
 
-	
+
 	
 	margin: 0 auto;
 
@@ -1492,8 +1509,10 @@ color:#999;
 /*padding:0 0.1em 5px;*/
 vertical-align:top;
 white-space:nowrap;
+padding-bottom:10px;
 
-height:20px;
+
+
 
 
 /*font-weight:bold;*/}
@@ -1674,7 +1693,7 @@ width:100%;
 	font-weight: bold;
 	font-size: 0.9em;
 	text-transform: uppercase;
-	background: #fde46d
+	background: #aed664;
 		scroll left top repeat-x;
 	border-top: #fff 4px solid;
 		border-left: #fff 4px solid;
@@ -1779,7 +1798,7 @@ width:100%;
 	border: 0;
 	cursor: pointer;
 	padding-left: 15px;
-	padding-top: 0px;
+	padding-top: 5px;
 	padding-bottom: 0px;
 	padding-right: 0px;
 	background-color: transparent;
@@ -2068,7 +2087,7 @@ tr.aon-logo-name{height:150px;}
 	padding: 3px 1em;
 	margin: 1em 0;
 	text-align: left;
-	border-top: #f9e32b 2px solid;
+	border-top: #aed664 2px solid;
 }
 
 .aon-dataScroller table {
@@ -2732,7 +2751,7 @@ font-size:10px;
 	height: 30px;
 	background-color: #c2c2c2;
 	margin-bottom:2px;
-	border-bottom:2px solid #f9e32b;
+	border-bottom:2px solid #aed664;
 	
 }
 
@@ -2818,6 +2837,12 @@ td#buscador {
 
 .searchGadget tr {
 	/*background: #000;*/
+}
+.search-box {
+	border:1px solid #000;
+
+	margin:5px 0 8px;
+	
 }
 .search-box {
 	border:1px solid #000;
@@ -2912,8 +2937,8 @@ border-width:1px;
 padding:6px;
 margin-left:6px;
 margin-right:6px;
-border-top:37px solid #000;
-border-color:#000;
+border-top:37px solid #999;
+border-color:#999;
 min-height:215px;
 }
 .dr-pnl-h {
@@ -3438,6 +3463,7 @@ width:100px;
 .search-box .aon-inputText {
 	border:1px solid #fff;
 	width:170px;
+	color:#000;
 
 }
 #header-image{
@@ -3446,7 +3472,7 @@ background:#fff;
 height:130px;
 	}
 	.menu td:hover{
-background-color:#FDE46D;
+background-color:#aed664;
 border-left:3px solid #FFFFFF;
 color:#FFFFFF;
 padding-left:15px;
@@ -3503,7 +3529,7 @@ text-transform:uppercase;
 		padding:3px;
 
 		
-		margin-bottom:20px;
+		margin-bottom:8px;
 			background-image:url(images/aon-icon/MESSENGER - MSN.png) no-repeat scroll left center;
 
 	}
@@ -3527,7 +3553,10 @@ text-transform:uppercase;
 	}
 	
 td.aon-panelGrid-even .aon-outputText{
-	margin-left:56px;}
+	margin-left:56px;
+	display:block;
+	text-align:justify;
+	}
 
 	
 	
@@ -3543,7 +3572,7 @@ background:url(images/aon-icon/MESSENGERMSN.png) no-repeat scroll left center;
 	border-left:none;
 		border-bottom:none;
 		border-top:none;
-MARGIN-LEFT:60px;
+MARGIN-LEFT:50px;
 padding-left:20px;
 padding-right:5px;
 padding-top:3px;
@@ -3583,32 +3612,35 @@ padding-bottom:7px;
 padding-top:20px;
 width:25px;}
 
-/*	td.detailImageColumn
-	{
-	border:1px solid #ccc;
-	padding:20px;
-	margin:20px;}*/
+	td.detailImageColumn
+	{vertical-align:top;
+	}
 
 .detailImageColumn div
 	{
-	border:1px solid #ccc;
+	/*border:1px solid #ccc;*/
 	padding:20px;
-	margin:20px;
+
+	vertical-align:top;
 	}
 .detailImageColumn div	img{
+	vertical-align:top;
 	}
 
 	.aon-vertical-align-top .aon-scroll-area {
 	margin:20px;
-	border-bottom: 2px solid #f9e32b;
-	border-top: 1px solid #f9e32b;
+	border-bottom: 2px solid #aed664;
+	border-top: 1px solid #aed664;
 	padding-bottom:20px;
 	padding-top:20px;
+		vertical-align:top;
+		border-left:none;
+		font-size:11px;
 	}
 	.aon-panelGrid-odd .aon-outputLabel{
 		color:#000;
 		text-transform:uppercase;
-		font-weight:bold;
+
 		
 	
 		
@@ -3620,7 +3652,7 @@ width:25px;}
 	.aon-panelGrid-odd  .aon-outputLabel{
 		color:#000;
 		text-transform:uppercase;
-		font-weight:bold;
+
 		}
 		
 
@@ -3659,21 +3691,25 @@ width:25px;}
 	/*		 width:150px;*/}
 		
 			 .right-panel .search-box{
-				width:230px;}
+				width:230px;
+				}
 				  .right-panel .login-box{
 			width:230px;
 				 	border:1px solid #000;
 					margin-bottom:10px;
-					padding-bottom:10px;}
+					padding-bottom:6px;
+				}
 				  .right-panel .list-info-box{
 							border:1px solid #000;
-						padding-bottom:10px;
+				
 
-width:230px;}
+width:230px;
+padding-bottom:6px;}
 				  .right-panel .helpdesk-box{
 					  margin-top:10px;
 				border:1px solid #000;
-				padding-bottom:10px;
+				padding-bottom:6px;
+			
 
 width:230px;}
 			.aon-vertical-align-top-right{vertical-align:top;
@@ -3693,10 +3729,11 @@ margin-left:225px;
 margin-top:60px;
 padding-left:21px;
 padding-right:5px;
+padding-top:7px;
 }
 .back-button{
 	padding-bottom:10px;
-	border-bottom:1px solid #F9E32B;}
+	border-bottom:1px solid #aed664;}
 	.login-panel{width:700px;
 	margin:0 auto;
 	margin-top:20px;}
@@ -3740,4 +3777,26 @@ padding:6px;}
 .right-banner-image img{
 	
 			}
-	
+	.detailImageColumn td img{
+		vertical-align:top;}
+		.rich-table-cell{
+			background:#fff;
+			border:none;
+			
+border-right:none;
+font-family:lucida Grande,Trebuchet MS,Arial,sans-serif;
+font-size:11px;
+padding:4px;}
+.rich-table{
+			border:#fff;}
+.aon-icon-remove{
+				border-bottom:medium none;
+border-left:medium none;
+border-top:medium none;
+margin-left:130px;
+margin-top:10px;
+padding-left:20px;
+padding-right:5px;}
+.aon-panelGrid .itemDetailGallery-header  .aon-outputText{
+	text-transform:uppercase;}
+			

@@ -16,14 +16,16 @@
 	-->
 
 <!--  
--->	
 	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
+-->	
 
 	<!-- The context-root element specifies the context root of a web
 	application. It may be given here for standalone wars.
 	-->
 	<context-root>/aon-ecommerce</context-root>
 	
+	<!--  
+	-->
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonECOMMERCE</resource-env-ref-name>
 	  <jndi-name>java:/AonECOMMERCEDS</jndi-name>

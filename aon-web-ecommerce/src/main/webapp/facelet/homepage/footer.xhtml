@@ -82,10 +82,10 @@
 					<rich:componentControl for="legalNote3Process" attachTo="legal-note3"
 						operation="show" event="onclick" />
 				</aon:outputLink>
-
+		
 			</aon:div>
 		</aon:form>
-
+		
 		<rich:modalPanel id="legalNote1Process" height="490" width="570"
 			zindex="2000" style="top: 0px; left:0px;">
 			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
@@ -135,13 +135,14 @@
 			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
         	<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
-					<aon:outputText value="#{ecConfig.activeConfig.noteTitle3}" />
+					<h:outputText value="#{ecConfig.activeConfig.noteTitle3}" />
+					
 				</aon:div>
 			</f:facet>
 			<aon:div styleClass="aon-popupWindow-content">
 				<aon:div styleClass="aon-popupWindow-content-internal">
 					<aon:div id="legalNote3" styleClass="extra-info">
-						<aon:outputText value="#{ecConfig.activeConfig.legalNote3}" />
+						<aon:outputText escape="#{true}"  value="#{ecConfig.activeConfig.legalNote3}" />
 					</aon:div>
 					<aon:div styleClass="aon-text-center">
 						<aon:outputLink id="legalNote3-hidelink" value="#">

@@ -27,31 +27,30 @@
  -->
 </head>
 <body>
-	<c:choose>
-		<c:when test="#{ecConfig.activeConfig.ecommerceStatus or ecConfig.aonEbackoffice}">
-			<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin)}">
-				<aon:div id="aon-content">			
+	<a4j:support event="onload">
+		<aon:actionListener method="#{shop.paypalIpn}" />
+	</a4j:support>
+	<aon:div id="aon-content">				
+		<c:choose>
+			<c:when test="#{ecConfig.activeConfig.ecommerceStatus or ecConfig.aonEbackoffice}">
+					<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin)}">
+						<ui:insert name="mainHeader" />
+						<ui:insert name="mainContent" />
+						<ui:insert name="mainFooter" />
+					</c:if>
+					<c:if test="#{ecConfig.alwaisLogin}">
+						<ui:insert name="mainHeader" />
+						<ui:include src="/facelet/login/login.xhtml" />
+						<ui:insert name="mainFooter" />
+					</c:if>
+			</c:when>
+			<c:otherwise>
 					<ui:insert name="mainHeader" />
-					<ui:insert name="mainContent" />
+					<ui:include src="/facelet/homepage/in_construction.xhtml" />
 					<ui:insert name="mainFooter" />
-				</aon:div>
-			</c:if>
-			<c:if test="#{ecConfig.alwaisLogin}">
-				<aon:div id="aon-content">			
-					<ui:insert name="mainHeader" />
-					<ui:include src="/facelet/login/login.xhtml" />
-					<ui:insert name="mainFooter" />
-				</aon:div>
-			</c:if>
-		</c:when>
-		<c:otherwise>
-			<aon:div id="aon-content">			
-				<ui:insert name="mainHeader" />
-				<ui:include src="/facelet/homepage/in_construction.xhtml" />
-				<ui:insert name="mainFooter" />
-			</aon:div>
-		</c:otherwise>
-	</c:choose>
+			</c:otherwise>
+		</c:choose>
+	</aon:div>
 </body>
 </f:view>
 </html>
