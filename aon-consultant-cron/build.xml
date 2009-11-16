@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="build.sar">
+
+	<property name="mgr" value="aon-consulta-cron" />
+	<property name="client" value="aon.security" />
+	<property name="version" value="1.0.0" />
+	<property name="vendor" value="Consulting &amp; Development" />
+
+    <property name="src.dir" value="src/main/java" />
+	<property name="resources.dir" value="src/main/resources" />
+	<property name="build.dir" value="${java.io.tmpdir}/classes/security" />
+	<property name="mgr.dist.dir" value="dist" />
+	<property name="templates.dir" value="templates" />
+
+	<property name="jboss.home" value="/SERVER/jboss-4.2.3.GA" />
+
+	<property name="jboss.server.home" value="${jboss.home}/server/default" />
+
+    <!-- classpath and local.classpath must have a value using with a path -->
+    <property name="classpath" value=""/>
+    <property name="local.classpath" value=""/>
+
+	<property name="maven.repository" value="${user.home}/.m2/repository"/>
+	
+	<!-- Jakarta Commons -->
+	<property name="hibernate.home" value="${maven.repository}/org/hibernate/hibernate/3.2.4.sp1" />
+	<property name="hibernate.jar" value="hibernate-3.2.4.sp1.jar" />
+	<property name="hibernate.annotations.home" value="${maven.repository}/org/hibernate/hibernate-annotations/3.3.0.ga" />
+	<property name="hibernate.annotations.jar" value="hibernate-annotations-3.3.0.ga.jar" />
+	<property name="persistence.home" value="${maven.repository}/javax/persistence/persistence-api/1.0" />
+	<property name="persistence.jar" value="persistence-api-1.0.jar" />
+	<property name="dom4j.home" value="${maven.repository}/dom4j/dom4j/1.6.1" />
+	<property name="dom4j.jar" value="dom4j-1.6.1.jar" />	
+	<property name="commons.logging.home" value="${maven.repository}/commons-logging/commons-logging/1.1" />
+	<property name="commons.logging.jar" value="commons-logging-1.1.jar" />
+	<property name="commons.lang.home" value="${maven.repository}/commons-lang/commons-lang/2.4" />
+	<property name="commons.lang.jar" value="commons-lang-2.4.jar" />	
+
+	<!-- AON -->
+	<property name="aon.ldap.home" value="${maven.repository}/com/code/aon/aon.ldap/1.0.0" />
+	<property name="aon.ldap.jar" value="aon.ldap-1.0.0.jar" />
+	<property name="aon.common.home" value="${maven.repository}/com/code/aon/aon.common/3.4.0" />
+	<property name="aon.common.jar" value="aon.common-3.4.0.jar" />
+	<property name="aon.ql.home" value="${maven.repository}/com/code/aon/aon.ql/1.9.15" />
+	<property name="aon.ql.jar" value="aon.ql-1.9.15.jar" />
+	<property name="aon.config.home" value="${maven.repository}/com/code/aon/aon.config/4.2.0" />
+	<property name="aon.config.jar" value="aon.config-4.2.0.jar" />
+	<property name="aon.groupware.home" value="${maven.repository}/com/code/aon/aon.groupware/4.0.2" />
+	<property name="aon.groupware.jar" value="aon.groupware-4.0.2.jar" />
+	<property name="aon.registry.home" value="${maven.repository}/com/code/aon/aon.registry/4.3.0" />
+	<property name="aon.registry.jar" value="aon.registry-4.3.0.jar" />
+	
+    <!-- The classpath required to build classes. -->
+    <path id="jboss.javac.classpath">
+		<pathelement path="${classpath}"/>
+		<pathelement path="${local.classpath}"/>
+        <pathelement path="${jboss.server.home}/lib/scheduler-plugin.jar"/>
+        <pathelement path="${aon.ldap.home}/${aon.ldap.jar}"/>
+    	<pathelement path="${aon.common.home}/${aon.common.jar}"/>
+    	<pathelement path="${aon.ql.home}/${aon.ql.jar}"/>
+    	<pathelement path="${aon.config.home}/${aon.config.jar}"/>
+    	<pathelement path="${aon.groupware.home}/${aon.groupware.jar}"/>
+    	<pathelement path="${aon.registry.home}/${aon.registry.jar}"/>
+        <pathelement path="${commons.logging.home}/${commons.logging.jar}"/>
+    	<pathelement path="${commons.lang.home}/${commons.lang.jar}"/>
+    	<pathelement path="${hibernate.home}/${hibernate.jar}"/>
+    	<pathelement path="${hibernate.annotations.home}/${hibernate.annotations.jar}"/>
+    	<pathelement path="${persistence.home}/${persistence.jar}"/>
+    	<pathelement path="${dom4j.home}/${dom4j.jar}"/>
+    </path>
+
+    <!-- ===================================================================== -->
+    <!-- CLEAN BUILD & DIST                                                    -->
+    <!-- ===================================================================== -->
+
+	<target name="clean">
+	    <delete dir="${build.dir}" quiet="true" />
+	    <delete dir="${mgr.dist.dir}" quiet="true" />
+	</target>
+
+	<!-- ===================================================================== -->
+    <!-- PREPARE                                                               -->
+    <!-- ===================================================================== -->
+	<target name="prepare" depends="clean">
+		<mkdir dir="${build.dir}" />
+	    <mkdir dir="${mgr.dist.dir}" />
+	</target>
+
+	<!-- Copy everything. -->
+	<target name="copy" description="Copy all aditional files." depends="prepare">
+	    <copy todir="${build.dir}">
+	      <fileset dir="${resources.dir}">
+	        <patternset>
+	          <include name="**/*.xml" />
+	        </patternset>
+	      </fileset>
+	    </copy>
+	</target>
+
+	<!-- COMPILE FOR JBoss -->
+	<target name="compile-jboss" description="Compile for JBoss" depends="copy">
+	    <javac destdir="${build.dir}"
+	           optimize="${javac.optimize}"
+	           debug="true"
+			   depend="${javac.depend}"
+			   verbose="${javac.verbose}"
+			   deprecation="${javac.deprecation}"
+			   includeAntRuntime="${javac.include.ant.runtime}"
+			   includeJavaRuntime="${javac.include.java.runtime}"
+			   failonerror="${javac.fail.onerror}">
+			<src path="${src.dir}"/>
+			<classpath refid="jboss.javac.classpath"/>
+	    </javac>
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- DEPLOY ON JBOSS 4.x (LDAP)											   -->
+	<!-- ===================================================================== -->
+	<target name="build.sar" description="Builds all jar files." 
+			depends="compile-jboss">
+	    <!-- Build aon-security-mgr.jar -->
+	    <jar jarfile="${mgr.dist.dir}/${mgr}-${version}.jar">
+	      <fileset dir="${build.dir}">
+	        <include name="com/code/aon/**"/>
+	      </fileset>
+	    </jar>
+		<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Implementation-Title" value="${mgr}"/>
+				<attribute name="Implementation-Version" value="${version}"/> 
+				<attribute name="Implementation-Vendor" value="${vendor}"/>
+			</manifest>
+    		<fileset dir="${commons.lang.home}">
+				<include name="${commons.lang.jar}"/>
+			</fileset>
+    		<fileset dir="${aon.ldap.home}">
+				<include name="${aon.ldap.jar}"/>
+			</fileset>
+    		<fileset dir="${aon.common.home}">
+				<include name="${aon.common.jar}"/>
+			</fileset>
+    		<fileset dir="${aon.ql.home}">
+				<include name="${aon.ql.jar}"/>
+			</fileset>
+    		<fileset dir="${aon.config.home}">
+				<include name="${aon.config.jar}"/>
+			</fileset>
+    		<fileset dir="${aon.groupware.home}">
+				<include name="${aon.groupware.jar}"/>
+			</fileset>
+    		<fileset dir="${aon.registry.home}">
+				<include name="${aon.registry.jar}"/>
+			</fileset>
+			<fileset dir="${mgr.dist.dir}">
+				<include name="${mgr}-${version}.jar"/>
+			</fileset>
+	    </jar>
+	</target>
+
+</project>
