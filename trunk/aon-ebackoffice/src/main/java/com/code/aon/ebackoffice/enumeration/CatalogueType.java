@@ -11,8 +11,8 @@ import com.code.aon.common.enumeration.IStringEnum;
  */
 public enum CatalogueType implements IResourceable, IStringEnum {
 
-	MAIN("0"),
-	STANDARD("1");
+	STANDARD("0"),
+	MAIN("1");
 	
 	
 
