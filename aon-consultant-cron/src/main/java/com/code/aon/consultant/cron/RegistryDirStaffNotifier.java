@@ -1,12 +1,7 @@
 package com.code.aon.consultant.cron;
 
-import java.io.StringWriter;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -15,15 +10,24 @@ import java.util.logging.Logger;
 
 import javax.naming.Name;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.StopWatch;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.jboss.varia.scheduler.Schedulable;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.DefaultConfigurationFactory;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.hibernate.IConfigurationFactory;
+import com.code.aon.common.dao.hibernate.ISessionFactoryNameProvider;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.User;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -37,6 +41,9 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.registry.dao.IRegistryAlias;
 
 public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IAonObjectClasses {
 
@@ -46,7 +53,15 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 	
 	private static final String AON_ADMIN_PROFILE = "AonAdmin";
 	
+	private static final int DAYS_MARGIN = 7;
+	
 	private BasicLdap ldap;
+	
+	private Date startDate;
+	
+	private Date today;
+	
+	private Date dueDate;
 	
 	public RegistryDirStaffNotifier() {
 		Properties ldapProperties = new Properties();
@@ -131,118 +146,138 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		return users;	
 	}
 	
-	private void checkRdirStaffs( Properties properties ) throws ManagerBeanException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	private void execute( String domain, Properties properties, List<String> users ) {
+		ISessionFactoryNameProvider sfnp = HibernateUtil.getSessionFactoryNameProvider();
+		IConfigurationFactory cf = HibernateUtil.getConfigurationFactory();
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();		
+		SessionFactory sessionFactory = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT id,name,due_date  FROM rdir_staff");
-			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
-			rs = ps.executeQuery();
-			int margin = 4;// margen de dias antes de la fecha de vencimiento
-			int numAlams = 0;
+			HibernateUtil.setSessionFactoryNameProvider( new BasicNameProvider(domain) );
+			HibernateUtil.setConfigurationFactory( new BasicConfigurationFactory(properties) );
+			HibernateUtil.setBeginTransaction( false );
+			HibernateUtil.setCloseSession( false );
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				sessionFactory = HibernateUtil.getSessionFactory(sessionName);
+				HibernateUtil.beginTransaction(sessionName);
 
-			while (rs.next()) {
-				System.out.print(rs.getInt(1) + " " + rs.getString(2) + " "	+ rs.getDate(3));
-			
-				GregorianCalendar today = new GregorianCalendar();
-				GregorianCalendar regDate = new GregorianCalendar();
-				regDate.setTime(rs.getDate(3));
-				int days1 = 0;
-				int days2 = 0;
-				int maxYear = Math.max(today.get(Calendar.YEAR), regDate.get(Calendar.YEAR));
-				GregorianCalendar gctmp = (GregorianCalendar) today.clone();
-				for (int f = gctmp.get(Calendar.YEAR); f < maxYear; f++) {
-					days1 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);
-					gctmp.add(Calendar.YEAR, 1);
-				}
-				gctmp = (GregorianCalendar) regDate.clone();
-				for (int f = gctmp.get(Calendar.YEAR); f < maxYear; f++) {
-					days2 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);
-					gctmp.add(Calendar.YEAR, 1);
-				}
-				days1 += today.get(Calendar.DAY_OF_YEAR) - 1;
-				days2 += regDate.get(Calendar.DAY_OF_YEAR) - 1;
-				int days = days2 - days1;				
-				User user = new User();
-				user.setId(30);
+				checkRdirStaffs( users );
 				
-				if (days >= 0 && days < margin) {
-					System.out.println("Fin de contrato de " + rs.getString(2)+ " el día  " + rs.getDate(3));
-					IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
-					IManagerBean noticeBean = BeanManager.getManagerBean(Notice.class);
-					Alarm alarm = new Alarm();
-					Notice notice = new Notice();
-					notice.setType(NoticeType.COMMUNICATION);
-					notice.setStatus(NoticeStatus.CALL);
-					notice.setDate(today.getTime());
-					notice.setSender(user);
-					notice.setSource("Servidor");
-					notice.setPriority(Priority.NORMAL);
-					notice.setRecipient(user);
-					notice.setSubject("Fin de contrato de " + rs.getString(2)+ " el día  " + rs.getDate(3));
-					noticeBean.insert(notice);
-
-					alarm.setAlarmDate(today.getTime());
-					alarm.setUser(user);
-					alarm.setSource(AlarmSource.NOTICE);
-					notice.setStatus(NoticeStatus.CALL);
-					alarm.setStatus(AlarmStatus.PENDING);
-					alarm.setPriority(Priority.NONE);
-					alarm.setDescription("Fin de contrato de "+ rs.getString(2) + " el día  " + rs.getDate(3));
-					alarmBean.insert(alarm);
-					numAlams++;
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					LOGGER.log(Level.SEVERE, "Unable to rollback transaction!", th);
 				}
-
-				if (days < 0) {
-					System.out.println("Finalizó el contrato de "+ rs.getString(2) + " el día  " + rs.getDate(3));
-					IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
-					IManagerBean noticeBean = BeanManager.getManagerBean(Notice.class);
-					Alarm alarm = new Alarm();
-					Notice notice = new Notice();
-					notice.setType(NoticeType.COMMUNICATION);
-					notice.setStatus(NoticeStatus.CALL);
-					notice.setSender(user);
-					notice.setDate(today.getTime());
-					notice.setSource("Servidor");
-					notice.setPriority(Priority.HIGH);
-					notice.setRecipient(user);
-					notice.setSubject("Finalizó el contrato de "+ rs.getString(2) + " el día  " + rs.getDate(3));
-					noticeBean.insert(notice);
-					
-					alarm.setAlarmDate(today.getTime());
-					alarm.setUser(user);
-					alarm.setSource(AlarmSource.NOTICE);
-					alarm.setStatus(AlarmStatus.PENDING);
-					alarm.setPriority(Priority.HIGH);
-					alarm.setDescription("Finalizó el contrato de "+ rs.getString(2) + " el día  " + rs.getDate(3));
-					alarmBean.insert(alarm);
-
-					numAlams++;
-				}
-				
-			}
-
-			System.out.println("----------->" + numAlams+ " alarmas insertadas");
-
-		} catch (SQLException e) {
-			throw new ManagerBeanException(e.getMessage(), e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}			
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-				}
+			HibernateUtil.setSessionFactoryNameProvider( sfnp );
+			HibernateUtil.setConfigurationFactory( cf );
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);			
+			if ( (sessionFactory != null) && (! sessionFactory.isClosed()) ) {
+				sessionFactory.close();
 			}
 		}
+	}
+	
+	private List<User> getUsers( List<String> userNames ) throws ManagerBeanException {
+		List<User> users = new LinkedList<User>();
+		IManagerBean bean = BeanManager.getManagerBean(User.class);
+		for( String name : userNames ) {
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), name);
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				users.add( (User) list.get(0) );
+			}
+		}
+		return users;
+	}
+	
+	private void checkRdirStaffs( List<String> userNames ) throws ManagerBeanException {
+		List<User> users = getUsers(userNames);
+		if ( users.isEmpty() ) {
+			LOGGER.severe( "Users not found in DB: " + userNames );
+			return;
+		}
+		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+		IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
+		IManagerBean noticeBean = BeanManager.getManagerBean(Notice.class);
+		Criteria criteria = new Criteria();
+		String dueDateField = bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE);
+		criteria.addGreaterThanOrEqualExpression(dueDateField, this.today);
+		criteria.addLessThanOrEqualExpression(dueDateField, this.dueDate);
+		List<ITransferObject> list = bean.getList(criteria);
+		// stmt.append("SELECT id,name,due_date  FROM rdir_staff");
+		for( ITransferObject to : list ) {
+			RegistryDirStaff dirStaff = (RegistryDirStaff) to;
+			String company = dirStaff.getRegistry().getName();
+			String description = company + ": Cargo de " + dirStaff.getName() + " caduca el " + dirStaff.getDueDate();
+			for( User user : users ) {
+				Notice notice = new Notice();
+				notice.setType(NoticeType.COMMUNICATION);
+				notice.setStatus(NoticeStatus.CALL);
+				notice.setDate(this.startDate);
+				notice.setSender(user);
+				notice.setSource("Servidor");
+				notice.setPriority(Priority.NORMAL);
+				notice.setRecipient(user);
+				notice.setSubject( description );
+				noticeBean.insert(notice);
+
+				Alarm alarm = new Alarm();
+				alarm.setAlarmDate(this.startDate);
+				alarm.setUser(user);
+				alarm.setSource(AlarmSource.NOTICE);
+				notice.setStatus(NoticeStatus.CALL);
+				alarm.setStatus(AlarmStatus.PENDING);
+				alarm.setPriority(Priority.NONE);
+				alarm.setDescription( description );
+				alarmBean.insert(alarm);
+			}
+		}
+
+		criteria = new Criteria();
+		criteria.addLessThanExpression(dueDateField, this.today);
+		list = bean.getList(criteria);
+		for( ITransferObject to : list ) {
+			RegistryDirStaff dirStaff = (RegistryDirStaff) to;
+			String company = dirStaff.getRegistry().getName();
+			String description = company + ": Cargo caducado de " + dirStaff.getName() + " el " + dirStaff.getDueDate();
+			for( User user : users ) {
+				Notice notice = new Notice();
+				notice.setType(NoticeType.COMMUNICATION);
+				notice.setStatus(NoticeStatus.CALL);
+				notice.setSender(user);
+				notice.setDate(this.startDate);
+				notice.setSource("Servidor");
+				notice.setPriority(Priority.HIGH);
+				notice.setRecipient(user);
+				notice.setSubject(description);
+				noticeBean.insert(notice);
+				
+				Alarm alarm = new Alarm();
+				alarm.setAlarmDate(this.startDate);
+				alarm.setUser(user);
+				alarm.setSource(AlarmSource.NOTICE);
+				alarm.setStatus(AlarmStatus.PENDING);
+				alarm.setPriority(Priority.HIGH);
+				alarm.setDescription(description);
+				alarmBean.insert(alarm);
+			}				
+		}
+	}
+	
+	private void init( Date pTimeOfCall ) {
+		this.startDate = pTimeOfCall;
+		this.today = DateUtils.truncate(pTimeOfCall, Calendar.DATE);
+		this.dueDate = DateUtils.addDays( today, DAYS_MARGIN);
 	}
 
 	@Override
@@ -250,17 +285,25 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		StopWatch sw = new StopWatch();
 		sw.start();
 		LOGGER.info( "Starting RegistryDirStaffNotifier: " + pTimeOfCall );
+		init( pTimeOfCall );
 		try {
 			for( String domain : getDomains() ) {
+				LOGGER.info( "Processing: " + domain );
 				if ( hasApplicationRegistered(domain, AON_CONSULTANT) ) {
 					List<String> users = getUsers( domain, AON_CONSULTANT, AON_ADMIN_PROFILE );
 					if (! users.isEmpty() ) {
 						Name dataSource = getDataSource(domain, AON_CONSULTANT);
 						if ( dataSource != null ) {
 							Properties properties = getDBConnectionsProperties(dataSource);
-							// checkRdirStaffs( properties );						
-						}						
+							execute(domain, properties, users);						
+						} else {
+							LOGGER.severe( "Domain: " + domain + " have not correct dataSource: " + dataSource );							
+						}
+					} else {
+						LOGGER.fine( "Domain: " + domain + " have not users in " + AON_CONSULTANT + " with profile " + AON_ADMIN_PROFILE );
 					}
+				} else {
+					LOGGER.fine( "Domain: " + domain + " have not registered " + AON_CONSULTANT );
 				}
 			}
 		} catch (Throwable e) {
@@ -275,5 +318,34 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		rdsn.perform( new Date(), -1);
 	}
 
+	private class BasicNameProvider implements ISessionFactoryNameProvider {
+
+		private String name;
+		
+		public BasicNameProvider(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName(String pojoClass) {
+			return name;
+		}
+		
+	}
+	
+	private class BasicConfigurationFactory extends DefaultConfigurationFactory {
+		
+		private Properties properties;
+		
+		public BasicConfigurationFactory(Properties properties) {
+			this.properties = properties;
+		}
+
+		@Override
+		protected void completeConfiguration(Configuration configuration) {
+			configuration.addProperties(properties);
+		}
+		
+	}
 	
 }
