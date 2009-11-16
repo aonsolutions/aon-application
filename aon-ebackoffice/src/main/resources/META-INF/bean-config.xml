@@ -19,5 +19,12 @@
 	        <vetoListener>com.code.aon.ebackoffice.event.EcconfigBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
+	
+		<bean description="Listener para controlar que solo un catalogo de tipo MAIN">
+		<pojo>com.code.aon.ebackoffice.Eccatalogue</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.ebackoffice.event.EccatalogueBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
 
 </bean-config>
