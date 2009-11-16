@@ -57,19 +57,20 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 	
 	private BasicLdap ldap;
 	
+	private Properties ldapProperties;
+	
 	private Date startDate;
 	
 	private Date today;
 	
 	private Date dueDate;
-	
-	public RegistryDirStaffNotifier() {
-		Properties ldapProperties = new Properties();
-		ldapProperties.put("java.naming.factory.initial", "com.sun.jndi.ldap.LdapCtxFactory");
-		ldapProperties.put("java.naming.security.principal", "cn=Manager,o=aondirectory");
-		ldapProperties.put("java.naming.provider.url", "ldap://192.168.2.100:389/o=aondirectory");
-		ldapProperties.put("java.naming.security.credentials", "GeForce");
-		this.ldap = new BasicLdap( ldapProperties );
+
+	public Properties getLdapProperties() {
+		return ldapProperties;
+	}
+
+	public void setLdapProperties(Properties ldapProperties) {
+		this.ldapProperties = ldapProperties;
 	}
 
 	private List<String> getDomains() {
@@ -214,9 +215,10 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		criteria.addGreaterThanOrEqualExpression(dueDateField, this.today);
 		criteria.addLessThanOrEqualExpression(dueDateField, this.dueDate);
 		List<ITransferObject> list = bean.getList(criteria);
-		// stmt.append("SELECT id,name,due_date  FROM rdir_staff");
+		LOGGER.info( "Soon expires count: " + list.size() );
 		for( ITransferObject to : list ) {
 			RegistryDirStaff dirStaff = (RegistryDirStaff) to;
+			LOGGER.fine( "Noticing soon expires: " + dirStaff );
 			String company = dirStaff.getRegistry().getName();
 			String description = company + ": Cargo de " + dirStaff.getName() + " caduca el " + dirStaff.getDueDate();
 			for( User user : users ) {
@@ -246,8 +248,10 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		criteria = new Criteria();
 		criteria.addLessThanExpression(dueDateField, this.today);
 		list = bean.getList(criteria);
+		LOGGER.info( "Expired count: " + list.size() );
 		for( ITransferObject to : list ) {
 			RegistryDirStaff dirStaff = (RegistryDirStaff) to;
+			LOGGER.fine( "Noticing expired: " + dirStaff );
 			String company = dirStaff.getRegistry().getName();
 			String description = company + ": Cargo caducado de " + dirStaff.getName() + " el " + dirStaff.getDueDate();
 			for( User user : users ) {
@@ -278,6 +282,12 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		this.startDate = pTimeOfCall;
 		this.today = DateUtils.truncate(pTimeOfCall, Calendar.DATE);
 		this.dueDate = DateUtils.addDays( today, DAYS_MARGIN);
+		Properties properties = this.ldapProperties;
+		if ( properties == null ) {
+			properties = BasicLdap.getLdapProperties();
+			LOGGER.info( "LDAP Properties: " + properties );
+		}
+		this.ldap = new BasicLdap( properties );
 	}
 
 	@Override
@@ -288,7 +298,7 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		init( pTimeOfCall );
 		try {
 			for( String domain : getDomains() ) {
-				LOGGER.info( "Processing: " + domain );
+				LOGGER.info( "Processing domain: " + domain );
 				if ( hasApplicationRegistered(domain, AON_CONSULTANT) ) {
 					List<String> users = getUsers( domain, AON_CONSULTANT, AON_ADMIN_PROFILE );
 					if (! users.isEmpty() ) {
@@ -311,11 +321,6 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 		}
 		sw.stop();
 		LOGGER.info( "Finished RegistryDirStaffNotifier: " + sw.toString() );
-	}
-
-	public static void main(String[] args) throws ManagerBeanException {
-		RegistryDirStaffNotifier rdsn = new RegistryDirStaffNotifier();
-		rdsn.perform( new Date(), -1);
 	}
 
 	private class BasicNameProvider implements ISessionFactoryNameProvider {
@@ -346,6 +351,17 @@ public class RegistryDirStaffNotifier implements Schedulable, ILdapConstants, IA
 			configuration.addProperties(properties);
 		}
 		
+	}
+
+	public static void main(String[] args) throws ManagerBeanException {
+		Properties ldapProperties = new Properties();
+		ldapProperties.put("java.naming.factory.initial", "com.sun.jndi.ldap.LdapCtxFactory");
+		ldapProperties.put("java.naming.security.principal", "cn=Manager,o=aondirectory");
+		ldapProperties.put("java.naming.provider.url", "ldap://192.168.2.100:389/o=aondirectory");
+		ldapProperties.put("java.naming.security.credentials", "GeForce");		
+		RegistryDirStaffNotifier rdsn = new RegistryDirStaffNotifier();
+		rdsn.setLdapProperties( ldapProperties );
+		rdsn.perform( new Date(), -1);
 	}
 	
 }
