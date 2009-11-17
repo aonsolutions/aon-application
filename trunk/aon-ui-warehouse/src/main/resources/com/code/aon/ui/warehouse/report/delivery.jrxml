@@ -283,7 +283,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
@@ -304,7 +304,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{raddress}.getAddress()==null?"":$F{raddress}.getAddress() + " ") + ($F{raddress}.getAddress2()==null?"":$F{raddress}.getAddress2() + " ")]]></textFieldExpression>
 			</textField>
@@ -330,14 +330,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="0" y="112" width="79" height="23"/>
+				<reportElement key="textField-118" x="70" y="112" width="79" height="23"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_workplace}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-119" x="79" y="112" width="121" height="23"/>
+				<reportElement key="textField-119" x="149" y="112" width="121" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -351,7 +351,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{workPlace}.getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-119" x="344" y="112" width="103" height="23"/>
+				<reportElement key="textField-119" x="448" y="112" width="88" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -365,7 +365,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{warehouse}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="275" y="112" width="67" height="23"/>
+				<reportElement key="textField-118" x="395" y="112" width="53" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -441,7 +441,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{raddress}.getZip()+" "+$F{raddress}.getCity()+"  ("+$F{raddress}.getGeozone().getName()+")"]]></textFieldExpression>
 			</textField>
@@ -536,7 +536,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAccount().getEntity()+" "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getOffice()+" "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getControl()+" "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" "+$F{bankAccount}.getOffice()+" "+$F{bankAccount}.getControl()+" "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" x="71" y="297" width="124" height="23">
@@ -553,6 +553,13 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ?  " "+$F{customer}.getRegistry().getPayMethod().getNumberOfPayments()+" ":" "+ $F{numberOfPayments}+" " )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" x="2" y="112" width="68" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_origin}.toUpperCase()+ ":"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
