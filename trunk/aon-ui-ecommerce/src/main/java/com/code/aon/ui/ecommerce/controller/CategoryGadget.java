@@ -19,9 +19,6 @@ import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CategoryGadget {

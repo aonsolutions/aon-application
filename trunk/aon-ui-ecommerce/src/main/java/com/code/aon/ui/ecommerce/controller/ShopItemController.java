@@ -1,7 +1,5 @@
 package com.code.aon.ui.ecommerce.controller;
 
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;

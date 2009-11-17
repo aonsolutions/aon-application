@@ -28,9 +28,10 @@
 		<servlet-name>PaypalExpresscheckoutServlet</servlet-name>
 		<url-pattern>/aonPaypal/*</url-pattern>
 	</servlet-mapping>
+	<!-- Qb tpv Servlet -->
 	<servlet>
 		<servlet-name>QbServlet</servlet-name>
-		<servlet-class>com.code.aon.ui.ecommerce.paypal.QbPayment</servlet-class>
+		<servlet-class>com.code.aon.ui.ecommerce.servlet.QbPayment</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>QbServlet</servlet-name>

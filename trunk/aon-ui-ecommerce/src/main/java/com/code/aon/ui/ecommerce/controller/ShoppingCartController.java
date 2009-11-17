@@ -1,9 +1,7 @@
 package com.code.aon.ui.ecommerce.controller;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.WeakHashMap;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -28,9 +26,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.resources.servlet.ResourceServlet;
 import com.code.aon.ui.util.AonUtil;
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class ShoppingCartController extends EmailParentController{
 	
@@ -44,35 +40,12 @@ public class ShoppingCartController extends EmailParentController{
 	private CartTarget cartTarget;
 	private String newPasswd;
 	
-	
-//	private ShoppingCartController() {
-//		if (model == null) {
-//			model = new ListDataModel(getList());
-//		}
-//	}
-	
-//	public static ShoppingCartMap getInstance( ServletContext sc ) {
-//		ShoppingCartMap scm = (ShoppingCartMap) sc.getAttribute( SHOPPING_CART_MAP );
-//		if (scm == null) {
-//			scm = new ShoppingCartMap();
-//			sc.setAttribute( SHOPPING_CART_MAP, scm );
-//		}
-//		return scm;
-//	}
-	
 	public ShoppingCartController() {
 		ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
-//		setCart((ShoppingCartMap)sc.getAttribute("map"));
 		setCart(ShoppingCartMap.getInstance(sc));
 	}
 
 	public DataModel getModel() {
-//		if (model == null) {
-////			model = new ListDataModel(getCart().getList());
-////			model = new ListDataModel();
-//			model = new ListDataModel(getList());
-//		}
-//		return new ListDataModel(getCart().getList());
 		model = new ListDataModel(getList());
 		return model;
 	}
@@ -84,8 +57,6 @@ public class ShoppingCartController extends EmailParentController{
 	public List<CartItem> getList() {
 		if (list == null) {
 			ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
-//			setCart((ShoppingCartMap)sc.getAttribute("map"));
-//			setCart(ShoppingCartMap.getInstance(sc));
 			list = ShoppingCartMap.getInstance(sc).getList();
 			setTotal(0.0);
 		}
@@ -224,7 +195,6 @@ public class ShoppingCartController extends EmailParentController{
 	}
 
 	public void refreshTotal() {
-//		setTotal(getTotal() + total);
 		setTotal(getCart().getTotal());
 	}
 	
