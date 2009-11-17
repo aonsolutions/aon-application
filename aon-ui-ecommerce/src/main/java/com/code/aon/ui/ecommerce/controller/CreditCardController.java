@@ -56,7 +56,7 @@ public class CreditCardController {
 		String data=null;
 		
 		data += EURO_CODE+(scc.getCart().getTotal()*100)+LINE_BREAK;
-		data += scc.getQuantity()+LINE_BREAK;
+		data += scc.getCart().getQuantity()+LINE_BREAK;
 		
 		for(CartItem ci: scc.getCart().getList()){
 			data += ci.getItem().getId()+LINE_BREAK;

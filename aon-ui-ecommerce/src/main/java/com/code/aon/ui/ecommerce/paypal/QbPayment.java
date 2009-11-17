@@ -2,7 +2,6 @@ package com.code.aon.ui.ecommerce.paypal;
 
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -11,12 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.ui.ecommerce.controller.CartItem;
-import com.code.aon.ui.ecommerce.controller.CreditCardController;
-import com.code.aon.ui.ecommerce.controller.ShoppingCartController;
 import com.code.aon.ui.ecommerce.controller.ShoppingCartMap;
 import com.code.aon.ui.ecommerce.servlet.ECommerceServlet;
-import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class QbPayment extends ECommerceServlet {
 	
@@ -50,7 +45,7 @@ public class QbPayment extends ECommerceServlet {
 //		String url;
 //		url = "https://tpv2.4b.es/simulador/teargral.exe";
 //		req.getAttributeNames();
-		req.getParameterNames();
+//		req.getParameterNames();
 		
 
 		
@@ -58,7 +53,7 @@ public class QbPayment extends ECommerceServlet {
 		
 //		String data = "M978900\r\n1\r\n1\r\ndesc_1\r\n1\r\n300\r\n2\r\ndesc_2\r\n2\r\n600\r\n";
 		
-		CreditCardController ccc = (CreditCardController) getBean(req, resp, IECommerceConstants.CREDIT_CARD_CONTROLLER);
+//		CreditCardController ccc = (CreditCardController) getBean(req, resp, IECommerceConstants.CREDIT_CARD_CONTROLLER);
 		
 //		ShoppingCartController scc = (ShoppingCartController) AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER);
 //		String data = ccc.get4bData();

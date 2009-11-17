@@ -207,7 +207,7 @@ public class CartOfferController extends EmailParentController {
 		ShoppingCartController scc = ((ShoppingCartController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER));
 		scc.setModel(null);
-		scc.getCart().cleanList();
+		scc.onCartClean(null);
 		String message = "Operación realizada satisfactoriamente.";
 		message += "\n Se procede a la desconexión.";
 		AonUtil.addInfoMessage(message);
