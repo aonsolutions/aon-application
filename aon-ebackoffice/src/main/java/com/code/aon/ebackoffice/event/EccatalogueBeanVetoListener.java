@@ -1,22 +1,14 @@
 package com.code.aon.ebackoffice.event;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
-import org.apache.commons.validator.EmailValidator;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ebackoffice.Eccatalogue;
-import com.code.aon.ebackoffice.Ecconfig;
-import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.ebackoffice.enumeration.CatalogueType;
-import com.code.aon.ebackoffice.util.EmailUtils;
 
 public class EccatalogueBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
