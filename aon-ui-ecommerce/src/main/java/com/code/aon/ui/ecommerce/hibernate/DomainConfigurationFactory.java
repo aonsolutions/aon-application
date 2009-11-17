@@ -28,7 +28,7 @@ public class DomainConfigurationFactory extends DefaultConfigurationFactory impl
 	
 	private static final IConfigurationFactory SINGLETON = new DomainConfigurationFactory();
 
-    private static final String DOMAIN_RESOLVER = "domainResolver";
+    public static final String DOMAIN_RESOLVER = "domainResolver";
     	
     /**
      * Instantiates a new default configuration factory.
