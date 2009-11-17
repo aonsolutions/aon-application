@@ -64,6 +64,7 @@ public class DeliveryController extends BasicController {
 	private List<SelectItem> addresses;
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;
+	private Boolean valuableDelivery;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
 	private SalesTransferManager salesTransferManager;
@@ -163,6 +164,14 @@ public class DeliveryController extends BasicController {
 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
+	}
+	
+	public Boolean getValuableDelivery() {
+		return valuableDelivery;
+	}
+
+	public void setValuableDelivery(Boolean valuableDelivery) {
+		this.valuableDelivery = valuableDelivery;
 	}
 
 	public boolean isPending(){

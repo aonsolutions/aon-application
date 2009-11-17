@@ -64,6 +64,46 @@
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
-	</report>	  
-
+	</report>
+	
+		<!--  **********************************************************
+						      DELIVERY
+		  ********************************************************** -->
+	<report id="delivery" description="Delivery report ">
+		<template path="/com/code/aon/ui/warehouse/report/delivery.jasper" />
+		<collection provider="#{delivery}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="warehouse" value="#{delivery.getWarehouse}" />
+			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
+			<param id="valuableDelivery" value="#{delivery.getValuableDelivery}" />
+		</params>
+		
+		<nested-report report="deliveryDetail"/>
+	 	<nested-report report="deliveryVatBreakDown"/>	
+	</report>
+		
+	<report id="deliveryDetail" description="Delivery's Subreport">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryDetail.jasper" />	
+	</report>
+	
+	<report id="deliveryVatBreakDown" description="VatBreakDown's Subreport">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryVatBreakDown.jasper"/>
+	</report>
+  
 </report-config>
