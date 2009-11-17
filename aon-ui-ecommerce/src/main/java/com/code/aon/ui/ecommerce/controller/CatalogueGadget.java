@@ -11,8 +11,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.hibernate.criterion.NotNullExpression;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,8 +22,6 @@ import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Criterion;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
