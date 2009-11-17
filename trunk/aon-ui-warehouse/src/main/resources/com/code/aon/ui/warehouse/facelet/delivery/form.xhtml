@@ -37,9 +37,9 @@
 							<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<h:commandLink id="valuableDelivery" value="#{bundle.aon_report}"
+						<h:commandLink id="valuableDelivery" value="#{warehouseBundle.warehouse_delivery_detail_valuated}"
 							target="_new" rendered="#{!delivery.new}"
-							action="#{report.onExecute}" title="#{warehouseBundle.warehouse_delivery_detail_valuated}" 
+							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
@@ -48,9 +48,9 @@
 							<f:setPropertyActionListener target="#{delivery.valuableDelivery}"
 								value="#{true}" />
 						</h:commandLink>
-						<h:commandLink id="delivery" value="#{bundle.aon_report}"
+						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery_detail_no_valuated}"
 							target="_new" rendered="#{!delivery.new}"
-							action="#{report.onExecute}" title="#{warehouseBundle.warehouse_delivery_detail_no_valuated}"
+							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
