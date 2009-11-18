@@ -8,53 +8,58 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:div id="ecCatalogue_Form" >
+	<aon:div id="ecCatalogue_Form">
 
-		<!-- <aon:commandButton value="nuevo" id="newEC"
-			actionListener="#{eccatalogue.onReset}" reRender="ecCatalogue_Form" />
--->
-		<h:panelGrid columns="2">
-			<aon:commandButton value="save" id="saveEC"
-				actionListener="#{eccatalogue.onAccept}" reRender="ecCatalogue_Form" />
-			<div align="right"><aon:outputLink value="#" id="legal-note3"
-				styleClass="aon-finding-toolbar-item aon-icon-favorite">
-				<aon:outputText
-					value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_icons}" />
-				<rich:componentControl for="IconsProcess" attachTo="legal-note3"
-					operation="show" event="onclick" />
-			</aon:outputLink>
-			</div>
-		</h:panelGrid>
-		
-		<rich:spacer height="10">
-		</rich:spacer>
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:param name="toolbarID" value="eccatalogueToolbar" />
+			<ui:param name="controller" value="#{eccatalogue}" />
+			<ui:param name="toolbarDescription" value="Datos" />
+			<ui:param name="skipSearchButton" value="true" />
+			<ui:param name="skipBackButton" value="true" />
+			<ui:define name="beforeSpinToolbarContent">
 
-		<aon:panelGrid columns="2">
+			</ui:define>
+
+		</ui:include>
+
+		<div>
+		<div align="right"><aon:outputLink value="#" id="legal-note3"
+			styleClass="aon-finding-toolbar-item aon-icon-favorite">
 			<aon:outputText
-				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_visible}" />
+				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_icons}" />
+			<rich:componentControl for="IconsProcess" attachTo="legal-note3"
+				operation="show" event="onclick" />
+		</aon:outputLink></div>
 
-			<aon:selectBooleanCheckbox value="#{eccatalogue.to.visible}" />
+		<aon:outputText 
+			value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_visible}" />
 
+		<aon:selectBooleanCheckbox value="#{eccatalogue.to.visible}"
+			 /> <!--	<aon:outputLabel for="Eccatalogue_type"
+			value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_type}" />
 
-
-			<aon:outputLabel for="Eccatalogue_type"
-				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_type}" />
-
-			<aon:selectOneMenu id="Eccatalogue_type"
-				value="#{eccatalogue.to.type}">
-				<f:selectItems value="#{eccatalogue.catalogueTypes}" />
-			</aon:selectOneMenu>
-
-			<aon:outputLabel for="Eccatalogue_catalogueImg"
-				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_img}" />
-
-
-
+		 <aon:selectOneMenu id="Eccatalogue_type"
+			value="#{eccatalogue.to.type}">
+			<f:selectItems value="#{eccatalogue.catalogueTypes}" />
+		</aon:selectOneMenu> --> 
+		<aon:panel style="width:300px;height:80px"
+			
+			header="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_img}">
 			<h:panelGrid id="image" columns="3">
 
-				<a4j:mediaOutput element="img" cacheable="false"
-					value="#{eccatalogue.image.key}" style="width:60px"
-					createContent="#{eccatalogue.paintImagee}" />
+				<c:if test="#{eccatalogue.image!=null}">
+
+					<a4j:mediaOutput element="img" cacheable="false"
+						value="#{eccatalogue.image.key}" style="width:40px"
+						createContent="#{eccatalogue.paintImagee}" />
+				</c:if>
+				<c:if test="#{eccatalogue.image==null}">
+
+					<h:graphicImage id="nophoto" style="width:40px; height: 40px;"
+						value="/css/images/nophoto.gif" />
+
+				</c:if>
 
 				<rich:fileUpload id="Eccatalogue_catalogueImg"
 					stopControlLabel="#{bundle.aon_fileUpload_stop}"
@@ -69,18 +74,22 @@
 					actionListener="#{eccatalogue.deleteImage}" reRender="image" />
 			</h:panelGrid>
 
-
-
-			<aon:outputLabel for="Eccatalogue_catalogueIcon"
-				value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ico}" />
+		</aon:panel> <aon:panel style="width:300px;height:80px"
+			
+			header="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ico}">
 
 			<h:panelGrid id="icon" columns="3">
 
-				<a4j:mediaOutput element="img" cacheable="false"
-					style="background-color:#787878; align:center;"
-					value="#{eccatalogue.icon.key}"
-					createContent="#{eccatalogue.paintIconn}" />
-
+				<c:if test="#{eccatalogue.icon==null}">
+					<h:graphicImage id="nophoto2" style="width:20px; height: 20px;"
+						value="/css/images/nophoto.gif" />
+				</c:if>
+				<c:if test="#{eccatalogue.icon!=null}">
+					<a4j:mediaOutput element="img" cacheable="false"
+						style="background-color:#787878;width:25px;"
+						value="#{eccatalogue.icon.key}"
+						createContent="#{eccatalogue.paintIconn}" />
+				</c:if>
 
 				<aon:fileUpload id="Eccatalogue_catalogueIcon"
 					addControlLabel="Cambiar"
@@ -96,7 +105,8 @@
 					actionListener="#{eccatalogue.deleteIcon}" reRender="icon" />
 
 			</h:panelGrid>
-		</aon:panelGrid>
+
+		</aon:panel></div>
 
 		<rich:modalPanel id="IconsProcess" height="490" width="570"
 			zindex="2000" style="top: 0px; left:0px;">
