@@ -7,17 +7,15 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
-    
-    
-    <div align="right"  >
-	<aon:outputLink value="#" id="legal-note3"
+
+
+	<div align="right"><aon:outputLink value="#" id="legal-note3"
 		styleClass="aon-finding-toolbar-item aon-icon-favorite">
 		<aon:outputText
 			value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_icons}" />
 		<rich:componentControl for="IconsProcess" attachTo="legal-note3"
 			operation="show" event="onclick" />
-	</aon:outputLink>
-	</div>
+	</aon:outputLink></div>
 	<rich:spacer height="10">
 	</rich:spacer>
 
@@ -62,13 +60,10 @@
 					<aon:outputText
 						value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_visible}" />
 				</f:facet>
-				<div align="center">
-				
-				<aon:outputText value="&#160;" style="text-align:center;"
+				<div align="center"><aon:outputText value="&#160;"
+					style="text-align:center;"
 					styleClass="#{(to.visible)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
-					rendered="#{to!=eccatalogue.to}" />
-					
-					</div>
+					rendered="#{to!=eccatalogue.to}" /></div>
 				<aon:selectBooleanCheckbox rendered="#{to==eccatalogue.to}"
 					value="#{eccatalogue.to.visible}" />
 				<f:facet name="footer">
@@ -87,18 +82,20 @@
 
 				<aon:selectOneMenu id="Eccatalogue_type"
 					value="#{eccatalogue.to.type}" rendered="#{to==eccatalogue.to}">
+					<f:selectItem itemValue="#{null}" itemLabel=" " />
 					<f:selectItems value="#{eccatalogue.catalogueTypes}" />
 				</aon:selectOneMenu>
 
 				<f:facet name="footer">
 					<aon:selectOneMenu id="Eccatalogue_type-New"
 						value="#{eccatalogue.to.type}" rendered="#{formNew}">
+						<f:selectItem itemValue="#{null}" itemLabel=" " />
 						<f:selectItems value="#{eccatalogue.catalogueTypes}" />
 					</aon:selectOneMenu>
 
 				</f:facet>
 			</aon:column>
-			<aon:column>
+			<!-- 	<aon:column>
 				<f:facet name="header">
 					<aon:outputLabel for="Eccatalogue_catalogueImg"
 						value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_img}" />
@@ -156,7 +153,7 @@
 					</aon:div>
 
 				</f:facet>
-			</aon:column>
+			</aon:column> -->
 
 			<aon:column>
 				<f:facet name="header">
@@ -167,15 +164,18 @@
 				<aon:div id="icon">
 
 					<aon:div rendered="#{formList}">
+
+
 						<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
-							style="background-color:#787878; align:center;"
+							style="background-color:#787878; align:center;width:20px"
 							createContent="#{eccatalogue.paintIcon}" />
+
 					</aon:div>
 
-					<h:panelGrid columns="3">
+					<h:panelGrid style="width:600px" columns="3">
 
 						<a4j:mediaOutput element="img" cacheable="false"
-							style="background-color:#787878; align:center;"
+							style="background-color:#787878; align:center;width:20px"
 							rendered="#{formEdit}" value="#{eccatalogue.icon.key}"
 							createContent="#{eccatalogue.paintIconn}" />
 
@@ -203,7 +203,8 @@
 					<aon:div id="footIcon" rendered="#{formNew}">
 						<h:panelGrid columns="3">
 							<a4j:mediaOutput element="img" rendered="#{formNew}"
-								cacheable="false" value="#{eccatalogue.icon.key}"
+								style="width:40px" cacheable="false"
+								value="#{eccatalogue.icon.key}"
 								createContent="#{eccatalogue.paintIconn}" />
 							<aon:fileUpload id="Eccatalogue_catalogueIcon-New"
 								addControlLabel="#{bundle.aon_fileUpload_add}"
@@ -212,7 +213,7 @@
 								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 								fileUploadListener="#{eccatalogue.uploadIcon}" listHeight="0px"
 								listWidth="0px" immediateUpload="true" autoclear="true">
-
+								<a4j:support event="onuploadcomplete" reRender="footIcon" />
 							</aon:fileUpload>
 
 							<aon:commandButton value="borrar" styleClass=" aon-icon-remove"
