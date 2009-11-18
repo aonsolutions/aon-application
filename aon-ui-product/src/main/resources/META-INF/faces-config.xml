@@ -119,7 +119,7 @@
 	<!-- ****** PRODUCT CATEGORY ****** -->
 	<managed-bean>
 		<managed-bean-name>productCategory</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.product.controller.ProductCategoryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -158,6 +158,21 @@
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{productCategoryControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>productCategoryControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ProductCategoryControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>

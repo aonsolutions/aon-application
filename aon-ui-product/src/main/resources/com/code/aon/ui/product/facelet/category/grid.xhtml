@@ -14,13 +14,19 @@
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle"
 						value="#{productBundle.product_category_module}" />
-					<ui:param name="controller" value="#{productCategory}" />
+					<ui:param name="controller" value="#{pcategory}" />
 				</ui:include>
+
+				<!--  <aon:selectOneMenu 
+					>
+					<f:selectItem itemLabel="    NINGUNA" itemValue="{null}" />
+					<f:selectItems value="#{productCollections.categoriesByGroup}" />
+				</aon:selectOneMenu>-->
 
 				<aon:div styleClass="aon-scroll-area">
 					<ui:decorate
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-						<ui:param name="controller" value="#{productCategory}" />
+						<ui:param name="controller" value="#{pcategory}" />
 						<ui:param name="columnClasses"
 							value="aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text" />
 
@@ -31,12 +37,35 @@
 									<aon:outputText value="#{bundle.aon_description}" />
 								</f:facet>
 								<aon:outputText value="#{to.name}"
-									rendered="#{to.id!=productCategory.to.id}" />
-								<aon:inputText value="#{productCategory.to.name}"
-									rendered="#{to.id==productCategory.to.id}" required="true" />
+									rendered="#{to.id!=pcategory.to.id}" />
+								<aon:inputText value="#{pcategory.to.name}"
+									rendered="#{to.id==pcategory.to.id}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText value="#{productCategory.to.name}"
-										rendered="#{productCategory.new}" required="true" />
+									<aon:inputText value="#{pcategory.to.name}"
+										rendered="#{pcategory.new}" required="true" />
+								</f:facet>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{productBundle.product_category_group}" />
+								</f:facet>
+
+								<aon:outputText value="#{to.group.name}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu rendered="#{formEdit}"
+									value="#{pcategory.to.group}">
+									<f:selectItem itemLabel="-"  itemValue="{null}" />
+									<f:selectItems
+										value="#{productCollections.productCategoryGroups}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu value="#{pcategory.to.group}"
+										rendered="#{formNew}">
+										<f:selectItem itemLabel="-" itemValue="{null}" />
+										<f:selectItems
+											value="#{productCollections.productCategoryGroups}" />
+									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
 
