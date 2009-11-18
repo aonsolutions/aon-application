@@ -265,7 +265,7 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="342" splitType="Stretch">
+		<band height="571" splitType="Stretch">
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-112" x="2" y="3" width="69" height="23"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
@@ -446,7 +446,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{raddress}.getZip()+" "+$F{raddress}.getCity()+"  ("+$F{raddress}.getGeozone().getName()+")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="2" y="251" width="69" height="23">
+				<reportElement key="textField-118" positionType="Float" x="2" y="251" width="69" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
@@ -455,7 +455,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_text_financial1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="2" y="274" width="68" height="23">
+				<reportElement key="textField-118" positionType="Float" x="2" y="274" width="68" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
@@ -464,7 +464,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_text_financial2}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" x="71" y="274" width="124" height="23" forecolor="#000000">
+				<reportElement key="textField-119" positionType="Float" x="71" y="274" width="124" height="23" forecolor="#000000">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -480,7 +480,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getPayment().getName():$F{payMethod}.getName())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="2" y="297" width="68" height="23">
+				<reportElement key="textField-118" positionType="Float" x="2" y="297" width="68" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
@@ -489,7 +489,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_text_financial3}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" x="315" y="274" width="124" height="23">
+				<reportElement key="textField-119" positionType="Float" x="315" y="274" width="124" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -505,7 +505,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBank().getName():$F{bank}.getName())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="231" y="274" width="82" height="23">
+				<reportElement key="textField-118" positionType="Float" x="231" y="274" width="82" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
@@ -514,7 +514,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_bank}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="231" y="297" width="82" height="23">
+				<reportElement key="textField-118" positionType="Float" x="231" y="297" width="82" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
@@ -523,7 +523,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_bank_account}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" x="315" y="297" width="124" height="23">
+				<reportElement key="textField-119" positionType="Float" x="315" y="297" width="124" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -539,7 +539,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" x="71" y="297" width="124" height="23">
+				<reportElement key="textField-119" positionType="Float" x="71" y="297" width="124" height="23">
 					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -564,10 +564,42 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band splitType="Stretch"/>
+		<band height="103" splitType="Stretch">
+			<line>
+				<reportElement key="line-10" x="3" y="4" width="537" height="1"/>
+			</line>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-135" x="78" y="10" width="68" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_date}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-136" x="80" y="46" width="68" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_name}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-137" x="234" y="10" width="83" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_sign}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-138" x="3" y="10" width="68" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_arrived}+ ":"]]></textFieldExpression>
+			</textField>
+		</band>
 	</columnFooter>
 	<pageFooter>
-		<band height="44" splitType="Stretch">
+		<band height="26" splitType="Stretch">
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-15" x="521" y="0" width="13" height="14"/>
 				<box>
