@@ -39,7 +39,7 @@
 			aon-panelGrid-even aon-width-auto">
 		<aon:outputLabel for="Item_product_category" value="#{productBundle.product_category}" />
 		<aon:selectOneMenu id="Item_product_category" value="#{controller.to.product.category}">
-			<f:selectItems value="#{productCollections.categories}" />
+			<f:selectItems value="#{productCollections.categoriesByGroup}" />
 		</aon:selectOneMenu>
 
 		<aon:outputLabel for="Item_product_brand" value="#{productBundle.product_brand}" />
