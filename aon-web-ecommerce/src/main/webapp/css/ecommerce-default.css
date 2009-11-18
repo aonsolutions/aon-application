@@ -3527,7 +3527,7 @@ text-transform:uppercase;
 		background-image:none;
 		
 		padding:3px;
-
+		color:#fff;
 		
 		margin-bottom:8px;
 			background-image:url(images/aon-icon/MESSENGER - MSN.png) no-repeat scroll left center;
@@ -3553,7 +3553,7 @@ text-transform:uppercase;
 	}
 	
 td.aon-panelGrid-even .aon-outputText{
-	margin-left:56px;
+
 	display:block;
 	text-align:justify;
 	}
