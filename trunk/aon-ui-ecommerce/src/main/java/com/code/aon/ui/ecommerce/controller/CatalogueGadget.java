@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -33,7 +34,7 @@ public class CatalogueGadget {
 	private DataModel model;
 
 	public DataModel getModel() {
-		if (model == null) {
+		if (model == null || isAonEbackoffice()==true) {
 			model = new ListDataModel(getList());
 		}
 		setList(null);
@@ -185,6 +186,12 @@ public class CatalogueGadget {
 	public boolean isIcon() {
 		return false; 
 //		return (getActiveConfig().getHeaderImg()!=null); 
+	}
+	
+	public boolean isAonEbackoffice(){
+//		aonEbackoffice=Boolean.parseBoolean(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(IECommerceConstants.AON_EBACKOFFICE));
+//		return aonEbackoffice;
+		return Boolean.parseBoolean(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(IECommerceConstants.AON_EBACKOFFICE));
 	}
 	
 	
