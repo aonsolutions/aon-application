@@ -118,7 +118,7 @@ public class Lincalcu implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "importe_uni", nullable = false, precision = 13)
+	@Column(name = "importe_uni", nullable = false, scale=2, precision=13)
 	public BigDecimal getImporteUni() {
 		return this.importeUni;
 	}
@@ -132,7 +132,7 @@ public class Lincalcu implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "unidades", nullable = false, precision = 10)
+	@Column(name = "unidades", nullable = false, scale=2, precision=10)
 	public BigDecimal getUnidades() {
 		return this.unidades;
 	}
@@ -146,7 +146,7 @@ public class Lincalcu implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "importe", nullable = false, precision = 13)
+	@Column(name = "importe", nullable = false, scale=2, precision=13)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}

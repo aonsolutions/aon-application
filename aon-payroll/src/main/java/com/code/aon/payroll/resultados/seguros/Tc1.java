@@ -259,7 +259,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Contingencias Comunes")
-    @Column(name="base_concom", nullable=false, precision=11)
+    @Column(name="base_concom", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConcom() {
         return this.baseConcom;
     }
@@ -269,7 +269,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% Contingencias Comunes")
-    @Column(name="prc_concom", nullable=false, precision=5)
+    @Column(name="prc_concom", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcConcom() {
         return this.prcConcom;
     }
@@ -279,7 +279,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Contingencias Comunes")
-    @Column(name="cuota_concom", nullable=false, precision=11)
+    @Column(name="cuota_concom", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaConcom() {
         return this.cuotaConcom;
     }
@@ -289,7 +289,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Horas Extras No Estruct.")
-    @Column(name="base_hexno", nullable=false, precision=11)
+    @Column(name="base_hexno", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHexno() {
         return this.baseHexno;
     }
@@ -299,7 +299,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% Horas Extras No Estruct.")
-    @Column(name="prc_hexno", nullable=false, precision=5)
+    @Column(name="prc_hexno", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcHexno() {
         return this.prcHexno;
     }
@@ -309,7 +309,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Horas Extras No Estruct.")
-    @Column(name="cuota_hexno", nullable=false, precision=11)
+    @Column(name="cuota_hexno", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaHexno() {
         return this.cuotaHexno;
     }
@@ -319,7 +319,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Horas Extras Estruct.")
-    @Column(name="base_hexest", nullable=false, precision=11)
+    @Column(name="base_hexest", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHexest() {
         return this.baseHexest;
     }
@@ -329,7 +329,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% Horas Extras Estruct.")
-    @Column(name="prc_hexest", nullable=false, precision=5)
+    @Column(name="prc_hexest", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcHexest() {
         return this.prcHexest;
     }
@@ -339,7 +339,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Horas Extras Estruct.")
-    @Column(name="cuota_hexest", nullable=false, precision=11)
+    @Column(name="cuota_hexest", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaHexest() {
         return this.cuotaHexest;
     }
@@ -349,7 +349,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Reducciones IT")
-    @Column(name="base_redit", nullable=false, precision=11)
+    @Column(name="base_redit", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseRedit() {
         return this.baseRedit;
     }
@@ -359,7 +359,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Reducciones Contingencias Comunes")
-    @Column(name="base_redcc", nullable=false, precision=11)
+    @Column(name="base_redcc", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseRedcc() {
         return this.baseRedcc;
     }
@@ -369,7 +369,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Suma Bases Reducciones")
-    @Column(name="base_reducc", nullable=false, precision=11)
+    @Column(name="base_reducc", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseReducc() {
         return this.baseReducc;
     }
@@ -379,7 +379,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Liquido Cotizaciones Generales")
-    @Column(name="liq_cotgen", nullable=false, precision=11)
+    @Column(name="liq_cotgen", nullable=false, scale=2, precision=11)
     public BigDecimal getLiqCotgen() {
         return this.liqCotgen;
     }
@@ -389,7 +389,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Accidentes Trabajo")
-    @Column(name="base_acctra", nullable=false, precision=11)
+    @Column(name="base_acctra", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAcctra() {
         return this.baseAcctra;
     }
@@ -399,7 +399,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Suma Cuotas IT")
-    @Column(name="cuotas_it", nullable=false, precision=11)
+    @Column(name="cuotas_it", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotasIt() {
         return this.cuotasIt;
     }
@@ -409,7 +409,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Suma Cuotas IMS")
-    @Column(name="cuotas_ims", nullable=false, precision=11)
+    @Column(name="cuotas_ims", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotasIms() {
         return this.cuotasIms;
     }
@@ -419,7 +419,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Suma cuotas IT e IMS")
-    @Column(name="cuotas_acc", nullable=false, precision=11)
+    @Column(name="cuotas_acc", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotasAcc() {
         return this.cuotasAcc;
     }
@@ -429,7 +429,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Compensacion IT, Acc.Tra. Enf.Prof.")
-    @Column(name="comp_it", nullable=false, precision=11)
+    @Column(name="comp_it", nullable=false, scale=2, precision=11)
     public BigDecimal getCompIt() {
         return this.compIt;
     }
@@ -439,7 +439,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Liquido Acc. Trabajo")
-    @Column(name="liq_acc", nullable=false, precision=11)
+    @Column(name="liq_acc", nullable=false, scale=2, precision=11)
     public BigDecimal getLiqAcc() {
         return this.liqAcc;
     }
@@ -449,7 +449,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% Desempleo")
-    @Column(name="prc_desem", precision=5)
+    @Column(name="prc_desem", scale=2, precision=5)
     public BigDecimal getPrcDesem() {
         return this.prcDesem;
     }
@@ -459,7 +459,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Desempleo")
-    @Column(name="cuota_desem", precision=11)
+    @Column(name="cuota_desem", scale=2, precision=11)
     public BigDecimal getCuotaDesem() {
         return this.cuotaDesem;
     }
@@ -469,7 +469,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Bonif. Reducc. INEM")
-    @Column(name="red_inem", nullable=false, precision=11)
+    @Column(name="red_inem", nullable=false, scale=2, precision=11)
     public BigDecimal getRedInem() {
         return this.redInem;
     }
@@ -479,7 +479,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Liquido Otras Cotizaciones")
-    @Column(name="liq_otras", nullable=false, precision=11)
+    @Column(name="liq_otras", nullable=false, scale=2, precision=11)
     public BigDecimal getLiqOtras() {
         return this.liqOtras;
     }
@@ -489,7 +489,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Recargo de Mora")
-    @Column(name="base_mora", nullable=false, precision=11)
+    @Column(name="base_mora", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseMora() {
         return this.baseMora;
     }
@@ -499,7 +499,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% recargo de mora")
-    @Column(name="prc_mora", nullable=false, precision=5)
+    @Column(name="prc_mora", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcMora() {
         return this.prcMora;
     }
@@ -509,7 +509,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Recargo de mora")
-    @Column(name="cuota_mora", nullable=false, precision=11)
+    @Column(name="cuota_mora", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaMora() {
         return this.cuotaMora;
     }
@@ -519,7 +519,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Resultado TC1")
-    @Column(name="importe_tc1", nullable=false, precision=11)
+    @Column(name="importe_tc1", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteTc1() {
         return this.importeTc1;
     }
@@ -529,7 +529,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Aportacion Servicios Comunes")
-    @Column(name="base_servcom", nullable=false, precision=11)
+    @Column(name="base_servcom", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseServcom() {
         return this.baseServcom;
     }
@@ -539,7 +539,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje Aportacion Servicios Comunes")
-    @Column(name="prc_servcom", nullable=false, precision=5)
+    @Column(name="prc_servcom", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcServcom() {
         return this.prcServcom;
     }
@@ -549,7 +549,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Aportacion Servicios Comunes")
-    @Column(name="cuota_servcom", nullable=false, precision=11)
+    @Column(name="cuota_servcom", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaServcom() {
         return this.cuotaServcom;
     }
@@ -559,7 +559,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Deducciones Colaboracion Voluntaria")
-    @Column(name="base_dedcol", nullable=false, precision=11)
+    @Column(name="base_dedcol", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseDedcol() {
         return this.baseDedcol;
     }
@@ -569,7 +569,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje Deducciones Colaboracion Voluntaria")
-    @Column(name="prc_dedcol", nullable=false, precision=5)
+    @Column(name="prc_dedcol", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcDedcol() {
         return this.prcDedcol;
     }
@@ -579,7 +579,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Deducciones Colaboracion Voluntaria")
-    @Column(name="cuota_dedcol", nullable=false, precision=11)
+    @Column(name="cuota_dedcol", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaDedcol() {
         return this.cuotaDedcol;
     }
@@ -682,7 +682,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Accidentes")
-    @Column(name="base_acc", precision=11)
+    @Column(name="base_acc", scale=2, precision=11)
     public BigDecimal getBaseAcc() {
         return this.baseAcc;
     }
@@ -853,7 +853,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Otros Conceptos")
-    @Column(name="base_otrcon", nullable=false, precision=11)
+    @Column(name="base_otrcon", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseOtrcon() {
         return this.baseOtrcon;
     }
@@ -863,7 +863,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% Otros Conceptos")
-    @Column(name="prc_otrcon", nullable=false, precision=5)
+    @Column(name="prc_otrcon", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcOtrcon() {
         return this.prcOtrcon;
     }
@@ -873,7 +873,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Otros Conceptos")
-    @Column(name="cuota_otrcon", nullable=false, precision=11)
+    @Column(name="cuota_otrcon", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaOtrcon() {
         return this.cuotaOtrcon;
     }
@@ -883,7 +883,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Contingencias Comunes Cotización Empresarial")
-    @Column(name="base_concom_ce", nullable=false, precision=11)
+    @Column(name="base_concom_ce", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConcomCe() {
         return this.baseConcomCe;
     }
@@ -893,7 +893,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% Contingencias Comunes Cotización Empresarial")
-    @Column(name="prc_concom_ce", nullable=false, precision=5)
+    @Column(name="prc_concom_ce", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcConcomCe() {
         return this.prcConcomCe;
     }
@@ -903,7 +903,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Contingencias Comunes Cotización Empresarial")
-    @Column(name="cuota_concom_ce", nullable=false, precision=11)
+    @Column(name="cuota_concom_ce", nullable=false, scale=2, precision=11)
     public BigDecimal getCuotaConcomCe() {
         return this.cuotaConcomCe;
     }
@@ -913,7 +913,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Desempleo Cotización Empresarial")
-    @Column(name="base_desem_ce", nullable=false, precision=11)
+    @Column(name="base_desem_ce", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseDesemCe() {
         return this.baseDesemCe;
     }
@@ -923,7 +923,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="% Desempleo Cotización Empresarial")
-    @Column(name="prc_desem_ce", precision=5)
+    @Column(name="prc_desem_ce", scale=2, precision=5)
     public BigDecimal getPrcDesemCe() {
         return this.prcDesemCe;
     }
@@ -933,7 +933,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Desempleo Cotización Empresarial")
-    @Column(name="cuota_desem_ce", precision=11)
+    @Column(name="cuota_desem_ce", scale=2, precision=11)
     public BigDecimal getCuotaDesemCe() {
         return this.cuotaDesemCe;
     }
@@ -943,7 +943,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Desempleo")
-    @Column(name="base_desem", nullable=false, precision=11)
+    @Column(name="base_desem", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseDesem() {
         return this.baseDesem;
     }
@@ -963,7 +963,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Horas Complementarias")
-    @Column(name="impcomp", precision=11)
+    @Column(name="impcomp", scale=2, precision=11)
     public BigDecimal getImpcomp() {
         return this.impcomp;
     }
@@ -983,7 +983,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Horas Presenciales")
-    @Column(name="imppres", precision=11)
+    @Column(name="imppres", scale=2, precision=11)
     public BigDecimal getImppres() {
         return this.imppres;
     }
@@ -1003,7 +1003,7 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Horas Distancia")
-    @Column(name="impdist", precision=11)
+    @Column(name="impdist", scale=2, precision=11)
     public BigDecimal getImpdist() {
         return this.impdist;
     }

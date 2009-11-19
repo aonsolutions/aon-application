@@ -87,7 +87,7 @@ public class Otrperc  implements ITransferObject {
     }
     
 	
-    @Column(name="importe", nullable=false, precision=11)
+    @Column(name="importe", nullable=false, scale=2, precision=11)
     public BigDecimal getImporte() {
         return this.importe;
     }
@@ -97,7 +97,7 @@ public class Otrperc  implements ITransferObject {
     }
     
 	
-    @Column(name="base", nullable=false, precision=11)
+    @Column(name="base", nullable=false, scale=2, precision=11)
     public BigDecimal getBase() {
         return this.base;
     }
@@ -107,7 +107,7 @@ public class Otrperc  implements ITransferObject {
     }
     
 
-    @Column(name="prcret", nullable=false, precision=5)
+    @Column(name="prcret", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcret() {
         return this.prcret;
     }
@@ -117,7 +117,7 @@ public class Otrperc  implements ITransferObject {
     }
     
 	
-    @Column(name="retencion", precision=11)
+    @Column(name="retencion", scale=2, precision=11)
     public BigDecimal getRetencion() {
         return this.retencion;
     }
@@ -127,7 +127,7 @@ public class Otrperc  implements ITransferObject {
     }
     
 
-    @Column(name="aporta_ss", precision=11)
+    @Column(name="aporta_ss", scale=2, precision=11)
     public BigDecimal getAportaSs() {
         return this.aportaSs;
     }

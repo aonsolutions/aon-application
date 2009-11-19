@@ -100,7 +100,7 @@ public class Impresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_percep", nullable = false, precision = 11)
+	@Column(name = "imp_percep", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPercep() {
 		return this.impPercep;
 	}
@@ -114,7 +114,7 @@ public class Impresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_retenc", nullable = false, precision = 11)
+	@Column(name = "imp_retenc", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpRetenc() {
 		return this.impRetenc;
 	}

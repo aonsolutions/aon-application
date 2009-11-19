@@ -61,7 +61,7 @@ public class Linpercepcion implements ITransferObject {
 	 * Devuelve el Salario Base
 	 * @return
 	 */
-	@Column(name = "importe", precision = 11)
+	@Column(name = "importe", scale=2, precision=11)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}
@@ -74,7 +74,7 @@ public class Linpercepcion implements ITransferObject {
 	 * Devuelve el Complemento Nocturnidad
 	 * @return
 	 */
-	@Column(name = "nocturno", precision = 11)
+	@Column(name = "nocturno", scale=2, precision=11)
 	public BigDecimal getNocturno() {
 		return this.nocturno;
 	}
@@ -87,7 +87,7 @@ public class Linpercepcion implements ITransferObject {
 	 * Devuelve el Complemento Empresa
 	 * @return
 	 */
-	@Column(name = "empresa", precision = 11)
+	@Column(name = "empresa", scale=2, precision=11)
 	public BigDecimal getEmpresa() {
 		return this.empresa;
 	}

@@ -115,7 +115,7 @@ public class Autonomos  implements ITransferObject {
     }
     
 
-    @Column(name="honorarios", precision=11)
+    @Column(name="honorarios", scale=2, precision=11)
     public BigDecimal getHonorarios() {
         return this.honorarios;
     }
@@ -300,7 +300,7 @@ public class Autonomos  implements ITransferObject {
         this.otros = otros;
     }
     
-    @Column(name="baseminima", precision=6)
+    @Column(name="baseminima", scale=2, precision=6)
     public BigDecimal getBaseminima() {
         return this.baseminima;
     }
@@ -309,7 +309,7 @@ public class Autonomos  implements ITransferObject {
         this.baseminima = baseminima;
     }
     
-    @Column(name="baseelegida", precision=6)
+    @Column(name="baseelegida", scale=2, precision=6)
     public BigDecimal getBaseelegida() {
         return this.baseelegida;
     }
@@ -318,7 +318,7 @@ public class Autonomos  implements ITransferObject {
         this.baseelegida = baseelegida;
     }
     
-    @Column(name="basemaxima", precision=6)
+    @Column(name="basemaxima", scale=2, precision=6)
     public BigDecimal getBasemaxima() {
         return this.basemaxima;
     }

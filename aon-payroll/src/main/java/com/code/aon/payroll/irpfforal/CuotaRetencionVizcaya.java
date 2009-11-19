@@ -60,7 +60,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="desde_importe", nullable=false, precision=11)
+    @Column(name="desde_importe", nullable=false, scale=2, precision=11)
     public BigDecimal getDesdeImporte() {
         return this.desdeImporte;
     }
@@ -70,7 +70,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="hasta_importe", nullable=false, precision=11)
+    @Column(name="hasta_importe", nullable=false, scale=2, precision=11)
     public BigDecimal getHastaImporte() {
         return this.hastaImporte;
     }
@@ -80,7 +80,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="h_0", nullable=false, precision=5)
+    @Column(name="h_0", nullable=false, scale=2, precision=5)
     public BigDecimal getH0() {
         return this.h0;
     }
@@ -90,7 +90,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="h_1", nullable=false, precision=5)
+    @Column(name="h_1", nullable=false, scale=2, precision=5)
     public BigDecimal getH1() {
         return this.h1;
     }
@@ -100,7 +100,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="h_2", nullable=false, precision=5)
+    @Column(name="h_2", nullable=false, scale=2, precision=5)
     public BigDecimal getH2() {
         return this.h2;
     }
@@ -110,7 +110,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="h_3", nullable=false, precision=5)
+    @Column(name="h_3", nullable=false, scale=2, precision=5)
     public BigDecimal getH3() {
         return this.h3;
     }
@@ -120,7 +120,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 
-    @Column(name="h_4", nullable=false, precision=5)
+    @Column(name="h_4", nullable=false, scale=2, precision=5)
     public BigDecimal getH4() {
         return this.h4;
     }
@@ -130,7 +130,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="h_5", nullable=false, precision=5)
+    @Column(name="h_5", nullable=false, scale=2, precision=5)
     public BigDecimal getH5() {
         return this.h5;
     }
@@ -140,7 +140,7 @@ public class CuotaRetencionVizcaya  implements ITransferObject{
     }
     
 	
-    @Column(name="h_6", nullable=false, precision=5)
+    @Column(name="h_6", nullable=false, scale=2, precision=5)
     public BigDecimal getH6() {
         return this.h6;
     }

@@ -288,7 +288,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Total Devengos")
-    @Column(name="total_devengos", nullable=false, precision=11)
+    @Column(name="total_devengos", nullable=false, scale=2, precision=11)
     public BigDecimal getTotalDevengos() {
         return this.totalDevengos;
     }
@@ -298,7 +298,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Total a Deducir")
-    @Column(name="total_deducir", nullable=false, precision=11)
+    @Column(name="total_deducir", nullable=false, scale=2, precision=11)
     public BigDecimal getTotalDeducir() {
         return this.totalDeducir;
     }
@@ -308,7 +308,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Total Liquido")
-    @Column(name="total_liquido", nullable=false, precision=11)
+    @Column(name="total_liquido", nullable=false, scale=2, precision=11)
     public BigDecimal getTotalLiquido() {
         return this.totalLiquido;
     }
@@ -328,7 +328,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Contingencias Comunes")
-    @Column(name="base_concom", nullable=false, precision=11)
+    @Column(name="base_concom", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConcom() {
         return this.baseConcom;
     }
@@ -338,7 +338,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Accidentes Trabajo")
-    @Column(name="base_acctra", nullable=false, precision=11)
+    @Column(name="base_acctra", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAcctra() {
         return this.baseAcctra;
     }
@@ -348,7 +348,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Prorrata Pagas Extras")
-    @Column(name="base_proext", nullable=false, precision=11)
+    @Column(name="base_proext", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseProext() {
         return this.baseProext;
     }
@@ -358,7 +358,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Contingencias Comunes IT")
-    @Column(name="base_con_it", nullable=false, precision=11)
+    @Column(name="base_con_it", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConIt() {
         return this.baseConIt;
     }
@@ -368,7 +368,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Accidentes Trabajo IT")
-    @Column(name="base_acc_it", nullable=false, precision=11)
+    @Column(name="base_acc_it", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAccIt() {
         return this.baseAccIt;
     }
@@ -378,7 +378,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Contingencias Comunes Maternidad")
-    @Column(name="base_con_mat", nullable=false, precision=11)
+    @Column(name="base_con_mat", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConMat() {
         return this.baseConMat;
     }
@@ -388,7 +388,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Accidentes Trabajo Maternidad")
-    @Column(name="base_acc_mat", nullable=false, precision=11)
+    @Column(name="base_acc_mat", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAccMat() {
         return this.baseAccMat;
     }
@@ -398,7 +398,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Contingencias Comunes Maternidad No Aporta")
-    @Column(name="base_con_mat_no", nullable=false, precision=11)
+    @Column(name="base_con_mat_no", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConMatNo() {
         return this.baseConMatNo;
     }
@@ -408,7 +408,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Accidentes Trabajo no Aporta")
-    @Column(name="base_acc_mat_no", nullable=false, precision=11)
+    @Column(name="base_acc_mat_no", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAccMatNo() {
         return this.baseAccMatNo;
     }
@@ -418,7 +418,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Fondo Garantia Salarial")
-    @Column(name="base_fogasa", nullable=false, precision=11)
+    @Column(name="base_fogasa", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseFogasa() {
         return this.baseFogasa;
     }
@@ -428,7 +428,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Formacion Profesional")
-    @Column(name="base_fp", nullable=false, precision=11)
+    @Column(name="base_fp", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseFp() {
         return this.baseFp;
     }
@@ -438,7 +438,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Desempleo")
-    @Column(name="base_desempleo", nullable=false, precision=11)
+    @Column(name="base_desempleo", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseDesempleo() {
         return this.baseDesempleo;
     }
@@ -448,7 +448,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Horas Estras Estructurales")
-    @Column(name="base_hextras", nullable=false, precision=11)
+    @Column(name="base_hextras", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHextras() {
         return this.baseHextras;
     }
@@ -458,7 +458,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Horas Extras No Extructurales")
-    @Column(name="base_hextras_no", nullable=false, precision=11)
+    @Column(name="base_hextras_no", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHextrasNo() {
         return this.baseHextrasNo;
     }
@@ -468,7 +468,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Exceso Extrasalariales")
-    @Column(name="base_exceso", nullable=false, precision=11)
+    @Column(name="base_exceso", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseExceso() {
         return this.baseExceso;
     }
@@ -478,7 +478,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="No cotiza a S.S.")
-    @Column(name="base_nocotiza", nullable=false, precision=11)
+    @Column(name="base_nocotiza", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseNocotiza() {
         return this.baseNocotiza;
     }
@@ -488,7 +488,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base en Especie")
-    @Column(name="base_especie", nullable=false, precision=11)
+    @Column(name="base_especie", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseEspecie() {
         return this.baseEspecie;
     }
@@ -498,7 +498,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base IRPF")
-    @Column(name="base_irpf", nullable=false, precision=11)
+    @Column(name="base_irpf", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIrpf() {
         return this.baseIrpf;
     }
@@ -508,7 +508,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="IRPF en Especie")
-    @Column(name="base_irpf_especie", nullable=false, precision=11)
+    @Column(name="base_irpf_especie", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIrpfEspecie() {
         return this.baseIrpfEspecie;
     }
@@ -518,7 +518,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="IRPF no Cotiza")
-    @Column(name="base_irpf_nocotiza", nullable=false, precision=11)
+    @Column(name="base_irpf_nocotiza", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIrpfNocotiza() {
         return this.baseIrpfNocotiza;
     }
@@ -528,7 +528,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Horas Complementarias")
-    @Column(name="base_horascom", nullable=false, precision=11)
+    @Column(name="base_horascom", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHorascom() {
         return this.baseHorascom;
     }
@@ -538,7 +538,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Percepcion por Desempleo")
-    @Column(name="base_perdes", nullable=false, precision=11)
+    @Column(name="base_perdes", nullable=false, scale=2, precision=11)
     public BigDecimal getBasePerdes() {
         return this.basePerdes;
     }
@@ -548,7 +548,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Remuneracion")
-    @Column(name="remuneracion", nullable=false, precision=11)
+    @Column(name="remuneracion", nullable=false, scale=2, precision=11)
     public BigDecimal getRemuneracion() {
         return this.remuneracion;
     }
@@ -558,7 +558,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base IT")
-    @Column(name="base_it", nullable=false, precision=11)
+    @Column(name="base_it", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIt() {
         return this.baseIt;
     }
@@ -568,7 +568,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Total 1")
-    @Column(name="total_1", nullable=false, precision=11)
+    @Column(name="total_1", nullable=false, scale=2, precision=11)
     public BigDecimal getTotal1() {
         return this.total1;
     }
@@ -588,7 +588,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Contingencias Generales")
-    @Column(name="base_cg", nullable=false, precision=11)
+    @Column(name="base_cg", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseCg() {
         return this.baseCg;
     }
@@ -598,7 +598,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Accidentes Trabajo - Enfermedad Profesional")
-    @Column(name="base_acc", nullable=false, precision=11)
+    @Column(name="base_acc", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAcc() {
         return this.baseAcc;
     }
@@ -608,7 +608,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje Contingencias Generales")
-    @Column(name="prc_cg", nullable=false, precision=5)
+    @Column(name="prc_cg", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcCg() {
         return this.prcCg;
     }
@@ -618,7 +618,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje Accidentes")
-    @Column(name="prc_acc", nullable=false, precision=5)
+    @Column(name="prc_acc", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcAcc() {
         return this.prcAcc;
     }
@@ -628,7 +628,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje Horas Extras Estructurales")
-    @Column(name="prc_hex", nullable=false, precision=5)
+    @Column(name="prc_hex", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcHex() {
         return this.prcHex;
     }
@@ -638,7 +638,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje Horas Extras NO Estructurales")
-    @Column(name="prc_hexno", nullable=false, precision=5)
+    @Column(name="prc_hexno", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcHexno() {
         return this.prcHexno;
     }
@@ -648,7 +648,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Contingencias Comunes")
-    @Column(name="importe_cg", nullable=false, precision=11)
+    @Column(name="importe_cg", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteCg() {
         return this.importeCg;
     }
@@ -658,7 +658,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Accidentes Trabajo")
-    @Column(name="importe_acc", nullable=false, precision=11)
+    @Column(name="importe_acc", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteAcc() {
         return this.importeAcc;
     }
@@ -668,7 +668,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Horas Extras Estructurales")
-    @Column(name="importe_hex", nullable=false, precision=11)
+    @Column(name="importe_hex", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteHex() {
         return this.importeHex;
     }
@@ -678,7 +678,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Horas Extras NO Estructurales")
-    @Column(name="importe_hexno", nullable=false, precision=11)
+    @Column(name="importe_hexno", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteHexno() {
         return this.importeHexno;
     }
@@ -688,7 +688,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Tope Minimo para C.G.")
-    @Column(name="mincg", nullable=false, precision=11)
+    @Column(name="mincg", nullable=false, scale=2, precision=11)
     public BigDecimal getMincg() {
         return this.mincg;
     }
@@ -698,7 +698,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Tope Maximo para C.G.")
-    @Column(name="maxcg", nullable=false, precision=11)
+    @Column(name="maxcg", nullable=false, scale=2, precision=11)
     public BigDecimal getMaxcg() {
         return this.maxcg;
     }
@@ -708,7 +708,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Tope Minimo para Accidentes")
-    @Column(name="minacc", nullable=false, precision=11)
+    @Column(name="minacc", nullable=false, scale=2, precision=11)
     public BigDecimal getMinacc() {
         return this.minacc;
     }
@@ -718,7 +718,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Tope Maximo para Accidentes")
-    @Column(name="maxacc", nullable=false, precision=11)
+    @Column(name="maxacc", nullable=false, scale=2, precision=11)
     public BigDecimal getMaxacc() {
         return this.maxacc;
     }
@@ -728,7 +728,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Cuota Total de la Emrpesa")
-    @Column(name="cuota_empresa", precision=11)
+    @Column(name="cuota_empresa", scale=2, precision=11)
     public BigDecimal getCuotaEmpresa() {
         return this.cuotaEmpresa;
     }
@@ -738,7 +738,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Accidentes Trabajo Sin Horas Extras")
-    @Column(name="base_acc_sin_hex", precision=11)
+    @Column(name="base_acc_sin_hex", scale=2, precision=11)
     public BigDecimal getBaseAccSinHex() {
         return this.baseAccSinHex;
     }
@@ -748,7 +748,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Cuotas Deducciones")
-    @Column(name="importe_cuotas", nullable=false, precision=11)
+    @Column(name="importe_cuotas", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteCuotas() {
         return this.importeCuotas;
     }
@@ -758,7 +758,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje IRPF")
-    @Column(name="prc_irpf", nullable=false, precision=5)
+    @Column(name="prc_irpf", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcIrpf() {
         return this.prcIrpf;
     }
@@ -768,7 +768,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe IRPF")
-    @Column(name="importe_irpf", nullable=false, precision=11)
+    @Column(name="importe_irpf", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteIrpf() {
         return this.importeIrpf;
     }
@@ -838,7 +838,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Calculo Antiguedad")
-    @Column(name="baseant", precision=8)
+    @Column(name="baseant", scale=2, precision=8)
     public BigDecimal getBaseant() {
         return this.baseant;
     }
@@ -898,7 +898,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base Imponible IRPF de ejercicios anteriores")
-    @Column(name="base_irpf_ant", precision=11)
+    @Column(name="base_irpf_ant", scale=2, precision=11)
     public BigDecimal getBaseIrpfAnt() {
         return this.baseIrpfAnt;
     }
@@ -908,7 +908,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe de IRPF de ejercicios anteriores")
-    @Column(name="importe_irpf_ant", precision=11)
+    @Column(name="importe_irpf_ant", scale=2, precision=11)
     public BigDecimal getImporteIrpfAnt() {
         return this.importeIrpfAnt;
     }
@@ -918,7 +918,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe de cuotas S.S. de ejercicios anteriores")
-    @Column(name="importe_cuotas_ant", precision=11)
+    @Column(name="importe_cuotas_ant", scale=2, precision=11)
     public BigDecimal getImporteCuotasAnt() {
         return this.importeCuotasAnt;
     }
@@ -928,7 +928,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base de Contingencias Generales en Pesetas")
-    @Column(name="base_cg_pts", precision=11)
+    @Column(name="base_cg_pts", scale=2, precision=11)
     public BigDecimal getBaseCgPts() {
         return this.baseCgPts;
     }
@@ -938,7 +938,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base de Accidentes de Trabajo en Pesetas")
-    @Column(name="base_acc_pts", precision=11)
+    @Column(name="base_acc_pts", scale=2, precision=11)
     public BigDecimal getBaseAccPts() {
         return this.baseAccPts;
     }
@@ -948,7 +948,7 @@ public class Nominadf  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Base de Accidentes de Trabajo sin Horas Extras en Pesetas")
-    @Column(name="base_acc_sin_h_pts", precision=11)
+    @Column(name="base_acc_sin_h_pts", scale=2, precision=11)
     public BigDecimal getBaseAccSinHPts() {
         return this.baseAccSinHPts;
     }

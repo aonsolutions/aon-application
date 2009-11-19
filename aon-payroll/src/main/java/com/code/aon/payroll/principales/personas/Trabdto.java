@@ -111,7 +111,7 @@ public class Trabdto implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Importe Minoracion")
-	@Column(name = "importe", nullable = false, precision = 10)
+	@Column(name = "importe", nullable = false, scale=2, precision=10)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}

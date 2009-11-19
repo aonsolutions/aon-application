@@ -146,7 +146,7 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Importe Prestacion I.T. Seg. Social")
-	@Column(name = "pts_ss", nullable = false, precision = 11)
+	@Column(name = "pts_ss", nullable = false, scale=2, precision=11)
 	public BigDecimal getPtsSs() {
 		return this.ptsSs;
 	}
@@ -156,7 +156,7 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Importe Prestacion I.T. Empresa")
-	@Column(name = "ptsemp", nullable = false, precision = 11)
+	@Column(name = "ptsemp", nullable = false, scale=2, precision=11)
 	public BigDecimal getPtsemp() {
 		return this.ptsemp;
 	}
@@ -166,7 +166,7 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base Contingencias Generales I.T.")
-	@Column(name = "basecon", nullable = false, precision = 11)
+	@Column(name = "basecon", nullable = false, scale=2, precision=11)
 	public BigDecimal getBasecon() {
 		return this.basecon;
 	}
@@ -176,7 +176,7 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base Accidentes Trabajo I.T.")
-	@Column(name = "baseacc", nullable = false, precision = 11)
+	@Column(name = "baseacc", nullable = false, scale=2, precision=11)
 	public BigDecimal getBaseacc() {
 		return this.baseacc;
 	}
@@ -206,7 +206,7 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base C.G. Total")
-	@Column(name = "basecon_total", nullable = false, precision = 11)
+	@Column(name = "basecon_total", nullable = false, scale=2, precision=11)
 	public BigDecimal getBaseconTotal() {
 		return this.baseconTotal;
 	}
@@ -216,7 +216,7 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base ACC. Total")
-	@Column(name = "baseacc_total", nullable = false, precision = 11)
+	@Column(name = "baseacc_total", nullable = false, scale=2, precision=11)
 	public BigDecimal getBaseaccTotal() {
 		return this.baseaccTotal;
 	}

@@ -53,7 +53,7 @@ public class Cnae  implements ITransferObject {
         this.fecfin = fecfin;
     }
     
-    @Column(name="pctit", precision=5)
+    @Column(name="pctit", scale=2, precision=5)
     public BigDecimal getPctit() {
         return this.pctit;
     }
@@ -62,7 +62,7 @@ public class Cnae  implements ITransferObject {
         this.pctit = pctit;
     }
     
-    @Column(name="pctims", precision=5)
+    @Column(name="pctims", scale=2, precision=5)
     public BigDecimal getPctims() {
         return this.pctims;
     }
@@ -71,7 +71,7 @@ public class Cnae  implements ITransferObject {
         this.pctims = pctims;
     }
     
-    @Column(name="pcttotal", precision=5)
+    @Column(name="pcttotal", scale=2, precision=5)
     public BigDecimal getPcttotal() {
         return this.pcttotal;
     }

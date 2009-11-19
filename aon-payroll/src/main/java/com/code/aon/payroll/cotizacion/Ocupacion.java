@@ -61,7 +61,7 @@ public class Ocupacion  implements ITransferObject {
      * Devuelve el % I.T.
      * @return
      */
-    @Column(name="pctit", precision=5)
+    @Column(name="pctit", scale=2, precision=5)
     public BigDecimal getPctit() {
         return this.pctit;
     }
@@ -74,7 +74,7 @@ public class Ocupacion  implements ITransferObject {
      * Devuelve el % I.M.S.
      * @return
      */
-    @Column(name="pctims", precision=5)
+    @Column(name="pctims", scale=2, precision=5)
     public BigDecimal getPctims() {
         return this.pctims;
     }
@@ -87,7 +87,7 @@ public class Ocupacion  implements ITransferObject {
      * Devuelve el % Total
      * @return
      */
-    @Column(name="pcttotal", precision=5)
+    @Column(name="pcttotal", scale=2, precision=5)
     public BigDecimal getPcttotal() {
         return this.pcttotal;
     }

@@ -173,7 +173,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retr_ant", nullable = false, precision = 11)
+	@Column(name = "retr_ant", nullable = false, scale=2, precision=11)
 	public BigDecimal getRetrAnt() {
 		return this.retrAnt;
 	}
@@ -187,7 +187,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retr_acu_fij", nullable = false, precision = 11)
+	@Column(name = "retr_acu_fij", nullable = false, scale=2, precision=11)
 	public BigDecimal getRetrAcuFij() {
 		return this.retrAcuFij;
 	}
@@ -201,7 +201,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retr_acu_var", nullable = false, precision = 11)
+	@Column(name = "retr_acu_var", nullable = false, scale=2, precision=11)
 	public BigDecimal getRetrAcuVar() {
 		return this.retrAcuVar;
 	}
@@ -215,7 +215,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retr_pre_fij", nullable = false, precision = 11)
+	@Column(name = "retr_pre_fij", nullable = false, scale=2, precision=11)
 	public BigDecimal getRetrPreFij() {
 		return this.retrPreFij;
 	}
@@ -229,7 +229,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retr_pre_var", nullable = false, precision = 11)
+	@Column(name = "retr_pre_var", nullable = false, scale=2, precision=11)
 	public BigDecimal getRetrPreVar() {
 		return this.retrPreVar;
 	}
@@ -243,7 +243,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retr_estimada", nullable = false, precision = 11)
+	@Column(name = "retr_estimada", nullable = false, scale=2, precision=11)
 	public BigDecimal getRetrEstimada() {
 		return this.retrEstimada;
 	}
@@ -257,7 +257,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retr_consid", nullable = false, precision = 11)
+	@Column(name = "retr_consid", nullable = false, scale=2, precision=11)
 	public BigDecimal getRetrConsid() {
 		return this.retrConsid;
 	}
@@ -269,7 +269,7 @@ public class Calculo implements ITransferObject {
 	/**
 	 * Aportacion S.S. Acumulada
 	 */
-	@Column(name = "imp_acu_ss", nullable = false, precision = 11)
+	@Column(name = "imp_acu_ss", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpAcuSs() {
 		return this.impAcuSs;
 	}
@@ -283,7 +283,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_pre_ss", nullable = false, precision = 11)
+	@Column(name = "imp_pre_ss", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPreSs() {
 		return this.impPreSs;
 	}
@@ -297,7 +297,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_irreg", nullable = false, precision = 11)
+	@Column(name = "imp_irreg", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpIrreg() {
 		return this.impIrreg;
 	}
@@ -311,7 +311,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_rentas", nullable = false, precision = 11)
+	@Column(name = "imp_rentas", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpRentas() {
 		return this.impRentas;
 	}
@@ -325,7 +325,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_personal", nullable = false, precision = 11)
+	@Column(name = "imp_personal", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPersonal() {
 		return this.impPersonal;
 	}
@@ -339,7 +339,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_familiar", nullable = false, precision = 11)
+	@Column(name = "imp_familiar", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpFamiliar() {
 		return this.impFamiliar;
 	}
@@ -353,7 +353,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_descen", nullable = false, precision = 11)
+	@Column(name = "imp_descen", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpDescen() {
 		return this.impDescen;
 	}
@@ -367,7 +367,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_pension", nullable = false, precision = 11)
+	@Column(name = "imp_pension", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPension() {
 		return this.impPension;
 	}
@@ -381,7 +381,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_css", nullable = false, precision = 11)
+	@Column(name = "imp_css", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpCss() {
 		return this.impCss;
 	}
@@ -395,7 +395,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_ascen", nullable = false, precision = 11)
+	@Column(name = "imp_ascen", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpAscen() {
 		return this.impAscen;
 	}
@@ -409,7 +409,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "base_calculo", nullable = false, precision = 11)
+	@Column(name = "base_calculo", nullable = false, scale=2, precision=11)
 	public BigDecimal getBaseCalculo() {
 		return this.baseCalculo;
 	}
@@ -423,7 +423,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_anualid", nullable = false, precision = 11)
+	@Column(name = "imp_anualid", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpAnualid() {
 		return this.impAnualid;
 	}
@@ -437,7 +437,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "cuota_calculo", nullable = false, precision = 11)
+	@Column(name = "cuota_calculo", nullable = false, scale=2, precision=11)
 	public BigDecimal getCuotaCalculo() {
 		return this.cuotaCalculo;
 	}
@@ -451,7 +451,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "cuota_anualid", nullable = false, precision = 11)
+	@Column(name = "cuota_anualid", nullable = false, scale=2, precision=11)
 	public BigDecimal getCuotaAnualid() {
 		return this.cuotaAnualid;
 	}
@@ -465,7 +465,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "irpf_acu", nullable = false, precision = 11)
+	@Column(name = "irpf_acu", nullable = false, scale=2, precision=11)
 	public BigDecimal getIrpfAcu() {
 		return this.irpfAcu;
 	}
@@ -479,7 +479,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "irpf_cal", nullable = false, precision = 11)
+	@Column(name = "irpf_cal", nullable = false, scale=2, precision=11)
 	public BigDecimal getIrpfCal() {
 		return this.irpfCal;
 	}
@@ -493,7 +493,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "irpf", precision = 5)
+	@Column(name = "irpf", scale=2, precision=5)
 	public BigDecimal getIrpf() {
 		return this.irpf;
 	}
@@ -507,7 +507,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "irpf_anterior", precision = 5)
+	@Column(name = "irpf_anterior", scale=2, precision=5)
 	public BigDecimal getIrpfAnterior() {
 		return this.irpfAnterior;
 	}
@@ -625,7 +625,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "minforal", nullable = false, precision = 5)
+	@Column(name = "minforal", nullable = false, scale=2, precision=5)
 	public BigDecimal getMinforal() {
 		return this.minforal;
 	}
@@ -639,7 +639,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_discapacidadt", nullable = false, precision = 11)
+	@Column(name = "imp_discapacidadt", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpDiscapacidadt() {
 		return this.impDiscapacidadt;
 	}
@@ -653,7 +653,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_cuidadohijo", nullable = false, precision = 11)
+	@Column(name = "imp_cuidadohijo", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpCuidadohijo() {
 		return this.impCuidadohijo;
 	}
@@ -667,7 +667,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_discapacidad", nullable = false, precision = 11)
+	@Column(name = "imp_discapacidad", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpDiscapacidad() {
 		return this.impDiscapacidad;
 	}
@@ -681,7 +681,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_pensionista", nullable = false, precision = 11)
+	@Column(name = "imp_pensionista", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPensionista() {
 		return this.impPensionista;
 	}
@@ -695,7 +695,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_prolongacion", nullable = false, precision = 11)
+	@Column(name = "imp_prolongacion", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpProlongacion() {
 		return this.impProlongacion;
 	}
@@ -709,7 +709,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_movilidad", nullable = false, precision = 11)
+	@Column(name = "imp_movilidad", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpMovilidad() {
 		return this.impMovilidad;
 	}
@@ -723,7 +723,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_asistencia", nullable = false, precision = 11)
+	@Column(name = "imp_asistencia", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpAsistencia() {
 		return this.impAsistencia;
 	}
@@ -737,7 +737,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retanualn", nullable = false, precision = 13)
+	@Column(name = "retanualn", nullable = false, scale=2, precision=13)
 	public BigDecimal getRetanualn() {
 		return this.retanualn;
 	}
@@ -751,7 +751,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "retanualb", nullable = false, precision = 13)
+	@Column(name = "retanualb", nullable = false, scale=2, precision=13)
 	public BigDecimal getRetanualb() {
 		return this.retanualb;
 	}
@@ -765,7 +765,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "difret", nullable = false, precision = 13)
+	@Column(name = "difret", nullable = false, scale=2, precision=13)
 	public BigDecimal getDifret() {
 		return this.difret;
 	}
@@ -779,7 +779,7 @@ public class Calculo implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "irpfanual", nullable = false, precision = 5)
+	@Column(name = "irpfanual", nullable = false, scale=2, precision=5)
 	public BigDecimal getIrpfanual() {
 		return this.irpfanual;
 	}

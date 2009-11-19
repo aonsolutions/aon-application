@@ -56,7 +56,7 @@ public class Cuota implements ITransferObject {
      this.fecfin = fecfin;
  }
  
- @Column(name="hasta", nullable=false, precision=11)
+ @Column(name="hasta", nullable=false, scale=2, precision=11)
  public BigDecimal getHasta() {
      return this.hasta;
  }
@@ -65,7 +65,7 @@ public class Cuota implements ITransferObject {
      this.hasta = hasta;
  }
  
- @Column(name="pesetas", precision=11)
+ @Column(name="pesetas", scale=2, precision=11)
  public BigDecimal getPesetas() {
      return this.pesetas;
  }
@@ -74,7 +74,7 @@ public class Cuota implements ITransferObject {
      this.pesetas = pesetas;
  }
  
- @Column(name="resto", precision=11)
+ @Column(name="resto", scale=2, precision=11)
  public BigDecimal getResto() {
      return this.resto;
  }
@@ -83,7 +83,7 @@ public class Cuota implements ITransferObject {
      this.resto = resto;
  }
  
- @Column(name="porcentaje", precision=5)
+ @Column(name="porcentaje", scale=2, precision=5)
  public BigDecimal getPorcentaje() {
      return this.porcentaje;
  }

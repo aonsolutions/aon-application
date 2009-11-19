@@ -117,7 +117,7 @@ public class Finiquito implements ITransferObject {
 	 * Importe Vacaciones
 	 * @return
 	 */
-	@Column(name = "vacimporte", nullable = false, precision = 11)
+	@Column(name = "vacimporte", nullable = false, scale=2, precision=11)
 	public BigDecimal getVacimporte() {
 		return this.vacimporte;
 	}
@@ -130,7 +130,7 @@ public class Finiquito implements ITransferObject {
 	 * Total Conceptos Finiquito
 	 * @return
 	 */
-	@Column(name = "total_conceptos", nullable = false, precision = 11)
+	@Column(name = "total_conceptos", nullable = false, scale=2, precision=11)
 	public BigDecimal getTotalConceptos() {
 		return this.totalConceptos;
 	}
@@ -143,7 +143,7 @@ public class Finiquito implements ITransferObject {
 	 * Base I.R.P.F.
 	 * @return
 	 */
-	@Column(name = "base", nullable = false, precision = 11)
+	@Column(name = "base", nullable = false, scale=2, precision=11)
 	public BigDecimal getBase() {
 		return this.base;
 	}
@@ -156,7 +156,7 @@ public class Finiquito implements ITransferObject {
 	 * % I.R.P.F.
 	 * @return
 	 */
-	@Column(name = "irpf", nullable = false, precision = 5)
+	@Column(name = "irpf", nullable = false, scale=2, precision=5)
 	public BigDecimal getIrpf() {
 		return this.irpf;
 	}
@@ -169,7 +169,7 @@ public class Finiquito implements ITransferObject {
 	 * Importe Retenido I.R.P.F.
 	 * @return
 	 */
-	@Column(name = "importe_irpf", nullable = false, precision = 11)
+	@Column(name = "importe_irpf", nullable = false, scale=2, precision=11)
 	public BigDecimal getImporteIrpf() {
 		return this.importeIrpf;
 	}
@@ -182,7 +182,7 @@ public class Finiquito implements ITransferObject {
 	 * Importe Liquido
 	 * @return
 	 */
-	@Column(name = "liquido", nullable = false, precision = 11)
+	@Column(name = "liquido", nullable = false, scale=2, precision=11)
 	public BigDecimal getLiquido() {
 		return this.liquido;
 	}
@@ -195,7 +195,7 @@ public class Finiquito implements ITransferObject {
 	 * Importe Indemnizaciones no sujetas a I.R.P.F.
 	 * @return
 	 */
-	@Column(name = "importesin", nullable = false, precision = 11)
+	@Column(name = "importesin", nullable = false, scale=2, precision=11)
 	public BigDecimal getImportesin() {
 		return this.importesin;
 	}
@@ -304,7 +304,7 @@ public class Finiquito implements ITransferObject {
 	 * Coste S.S. empresa
 	 * @return
 	 */
-	@Column(name = "costessemp", nullable = false, precision = 11)
+	@Column(name = "costessemp", nullable = false, scale=2, precision=11)
 	public BigDecimal getCostessemp() {
 		return this.costessemp;
 	}
@@ -330,7 +330,7 @@ public class Finiquito implements ITransferObject {
 	 * Base Contingencias Generales
 	 * @return
 	 */
-	@Column(name = "basecg", nullable = false, precision = 11)
+	@Column(name = "basecg", nullable = false, scale=2, precision=11)
 	public BigDecimal getBasecg() {
 		return this.basecg;
 	}
@@ -343,7 +343,7 @@ public class Finiquito implements ITransferObject {
 	 * % Contingencias Generales
 	 * @return
 	 */
-	@Column(name = "prccg", nullable = false, precision = 5)
+	@Column(name = "prccg", nullable = false, scale=2, precision=5)
 	public BigDecimal getPrccg() {
 		return this.prccg;
 	}
@@ -356,7 +356,7 @@ public class Finiquito implements ITransferObject {
 	 * Importe Contingencias Generales
 	 * @return
 	 */
-	@Column(name = "importecg", nullable = false, precision = 11)
+	@Column(name = "importecg", nullable = false, scale=2, precision=11)
 	public BigDecimal getImportecg() {
 		return this.importecg;
 	}
@@ -369,7 +369,7 @@ public class Finiquito implements ITransferObject {
 	 * Base Accidente de Trabajo
 	 * @return
 	 */
-	@Column(name = "baseacc", nullable = false, precision = 11)
+	@Column(name = "baseacc", nullable = false, scale=2, precision=11)
 	public BigDecimal getBaseacc() {
 		return this.baseacc;
 	}
@@ -382,7 +382,7 @@ public class Finiquito implements ITransferObject {
 	 * % Accidente de Trabajo
 	 * @return
 	 */
-	@Column(name = "prcacc", nullable = false, precision = 5)
+	@Column(name = "prcacc", nullable = false, scale=2, precision=5)
 	public BigDecimal getPrcacc() {
 		return this.prcacc;
 	}
@@ -395,7 +395,7 @@ public class Finiquito implements ITransferObject {
 	 * Importe Accidente de Trabajo
 	 * @return
 	 */
-	@Column(name = "importeacc", nullable = false, precision = 11)
+	@Column(name = "importeacc", nullable = false, scale=2, precision=11)
 	public BigDecimal getImporteacc() {
 		return this.importeacc;
 	}

@@ -111,7 +111,7 @@ public class Lintc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe de la Base")
-    @Column(name="base", precision=11)
+    @Column(name="base", scale=2, precision=11)
     public BigDecimal getBase() {
         return this.base;
     }
@@ -151,7 +151,7 @@ public class Lintc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Deduccion / Compensacion")
-    @Column(name="dc_importe", precision=11)
+    @Column(name="dc_importe", scale=2, precision=11)
     public BigDecimal getDcImporte() {
         return this.dcImporte;
     }

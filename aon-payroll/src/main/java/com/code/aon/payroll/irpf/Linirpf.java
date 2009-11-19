@@ -67,7 +67,7 @@ public class Linirpf  implements  ITransferObject  {
     }
     
 	
-    @Column(name="hasta", nullable=false, precision=13)
+    @Column(name="hasta", nullable=false, scale=2, precision=13)
     public BigDecimal getHasta() {
         return this.hasta;
     }
@@ -76,7 +76,7 @@ public class Linirpf  implements  ITransferObject  {
         this.hasta = hasta;
     }
     
-    @Column(name="importe", precision=13)
+    @Column(name="importe", scale=2, precision=13)
     public BigDecimal getImporte() {
         return this.importe;
     }

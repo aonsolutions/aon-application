@@ -104,8 +104,6 @@ import com.code.aon.payroll.principales.personas.Nominait;
 import com.code.aon.payroll.principales.personas.Parteit;
 import com.code.aon.payroll.principales.personas.Parteconf;
 import com.code.aon.payroll.principales.personas.Prcdivtrab;
-import com.code.aon.payroll.principales.personas.Tipaut;
-import com.code.aon.payroll.principales.personas.Tipinc;
 import com.code.aon.payroll.principales.personas.Tipocont;
 import com.code.aon.payroll.principales.personas.Trabajo;
 import com.code.aon.payroll.principales.personas.Trabdto;
@@ -8942,56 +8940,6 @@ public interface IPayrollAlias {
 	* Hibernate value: Prcdivtrab.texto
 	*/
 	String  PRCDIVTRAB_TEXTO = PRCDIVTRAB_ENTRY.getAliasNames()[6];
-
-
-
-	/** 
-	* DAOConstantsEntry for Tipaut entity.
-	*/ 
-	DAOConstantsEntry TIPAUT_ENTRY = DAOConstants.getDAOConstant(Tipaut.class);
-
-	/** 
-	* Alias value: Tipaut_cdg
-	* Hibernate value: Tipaut.cdg
-	*/
-	String  TIPAUT_CDG = TIPAUT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Tipaut_descripcion
-	* Hibernate value: Tipaut.descripcion
-	*/
-	String  TIPAUT_DESCRIPCION = TIPAUT_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for Tipinc entity.
-	*/ 
-	DAOConstantsEntry TIPINC_ENTRY = DAOConstants.getDAOConstant(Tipinc.class);
-
-	/** 
-	* Alias value: Tipinc_cdg
-	* Hibernate value: Tipinc.cdg
-	*/
-	String  TIPINC_CDG = TIPINC_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Tipinc_descripcion
-	* Hibernate value: Tipinc.descripcion
-	*/
-	String  TIPINC_DESCRIPCION = TIPINC_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Tipinc_inddto
-	* Hibernate value: Tipinc.inddto
-	*/
-	String  TIPINC_INDDTO = TIPINC_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Tipinc_indresta
-	* Hibernate value: Tipinc.indresta
-	*/
-	String  TIPINC_INDRESTA = TIPINC_ENTRY.getAliasNames()[3];
 
 
 

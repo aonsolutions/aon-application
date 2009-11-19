@@ -85,7 +85,7 @@ public class Httcomplemento  implements ITransferObject {
         this.cotizacion = cotizacion;
     }
     
-    @Column(name="importe", precision=11)
+    @Column(name="importe", scale=2, precision=11)
     public BigDecimal getImporte() {
         return this.importe;
     }
@@ -94,7 +94,7 @@ public class Httcomplemento  implements ITransferObject {
         this.importe = importe;
     }
     
-    @Column(name="garantizado", precision=5)
+    @Column(name="garantizado", scale=2, precision=5)
     public BigDecimal getGarantizado() {
         return this.garantizado;
     }

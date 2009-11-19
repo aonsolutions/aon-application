@@ -74,7 +74,7 @@ public class Emprctra  implements ITransferObject {
         this.superficie = superficie;
     }
     
-    @Column(name="pelectri", precision=5)
+    @Column(name="pelectri", scale=2, precision=5)
     public BigDecimal getPelectri() {
         return this.pelectri;
     }
