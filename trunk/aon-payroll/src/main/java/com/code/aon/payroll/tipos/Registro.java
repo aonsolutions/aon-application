@@ -29,7 +29,7 @@ public class Registro implements ITransferObject{
 	 * @return
 	 */
 	@Id
-	@Column(name="cdg", unique=true, nullable=false, length=1)
+	@Column(name="cdg", unique=true, nullable=false, length=2)
     public String getCdg() {
 		return this.cdg;
     }
@@ -43,7 +43,7 @@ public class Registro implements ITransferObject{
 	 * 
 	 * @return
 	 */
-	@Column(name="descripcion", nullable=false, length=60)
+	@Column(name="descripcion", nullable=false, length=65)
 	public String getDescription() {
 		return this.description;
 	}
