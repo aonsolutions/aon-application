@@ -53,7 +53,7 @@ public class MinoracionesNavarra  implements ITransferObject {
     }
     
 	
-    @Column(name="desde_importe", nullable=false, precision=11)
+    @Column(name="desde_importe", nullable=false, scale=2, precision=11)
     public BigDecimal getDesdeImporte() {
         return this.desdeImporte;
     }
@@ -63,7 +63,7 @@ public class MinoracionesNavarra  implements ITransferObject {
     }
     
 	
-    @Column(name="hasta_importe", nullable=false, precision=11)
+    @Column(name="hasta_importe", nullable=false, scale=2, precision=11)
     public BigDecimal getHastaImporte() {
         return this.hastaImporte;
     }
@@ -73,7 +73,7 @@ public class MinoracionesNavarra  implements ITransferObject {
     }
     
 
-    @Column(name="min_minus", nullable=false, precision=5)
+    @Column(name="min_minus", nullable=false, scale=2, precision=5)
     public BigDecimal getMinMinus() {
         return this.minMinus;
     }
@@ -85,7 +85,7 @@ public class MinoracionesNavarra  implements ITransferObject {
 	
 
 
-    @Column(name="min_granminus", nullable=false, precision=5)
+    @Column(name="min_granminus", nullable=false, scale=2, precision=5)
     public BigDecimal getMinGranminus() {
         return this.minGranminus;
     }

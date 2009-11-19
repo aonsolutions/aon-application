@@ -57,7 +57,7 @@ public class Nomdto  implements ITransferObject {
         this.concepto = concepto;
     }
     
-    @Column(name="importe", nullable=false, precision=11)
+    @Column(name="importe", nullable=false, scale=2, precision=11)
     public BigDecimal getImporte() {
         return this.importe;
     }

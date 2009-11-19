@@ -64,7 +64,7 @@ public class Nomdtoex implements ITransferObject {
 	 * Importe Minoracion
 	 * @return
 	 */
-	@Column(name = "importe", nullable = false, precision = 11)
+	@Column(name = "importe", nullable = false, scale=2, precision=11)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}

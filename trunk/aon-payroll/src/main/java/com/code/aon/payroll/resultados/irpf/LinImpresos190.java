@@ -142,7 +142,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_per_din", nullable = false, precision = 11)
+	@Column(name = "imp_per_din", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPerDin() {
 		return this.impPerDin;
 	}
@@ -156,7 +156,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_ret_din", nullable = false, precision = 11)
+	@Column(name = "imp_ret_din", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpRetDin() {
 		return this.impRetDin;
 	}
@@ -170,7 +170,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_per_esp", nullable = false, precision = 11)
+	@Column(name = "imp_per_esp", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPerEsp() {
 		return this.impPerEsp;
 	}
@@ -184,7 +184,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_ing_cta", nullable = false, precision = 11)
+	@Column(name = "imp_ing_cta", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpIngCta() {
 		return this.impIngCta;
 	}
@@ -198,7 +198,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_ing_rep", nullable = false, precision = 11)
+	@Column(name = "imp_ing_rep", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpIngRep() {
 		return this.impIngRep;
 	}
@@ -380,7 +380,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_reducc", nullable = false, precision = 11)
+	@Column(name = "imp_reducc", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpReducc() {
 		return this.impReducc;
 	}
@@ -394,7 +394,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_gastos", nullable = false, precision = 11)
+	@Column(name = "imp_gastos", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpGastos() {
 		return this.impGastos;
 	}
@@ -408,7 +408,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_pension", nullable = false, precision = 11)
+	@Column(name = "imp_pension", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpPension() {
 		return this.impPension;
 	}
@@ -422,7 +422,7 @@ public class LinImpresos190 implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imp_anual", nullable = false, precision = 11)
+	@Column(name = "imp_anual", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpAnual() {
 		return this.impAnual;
 	}

@@ -56,7 +56,7 @@ public class Finidto implements ITransferObject {
 	 * Importe Descuento
 	 * @return
 	 */
-	@Column(name = "importe", precision = 11)
+	@Column(name = "importe", scale=2, precision=11)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}

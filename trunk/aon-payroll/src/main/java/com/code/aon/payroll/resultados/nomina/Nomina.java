@@ -336,7 +336,7 @@ public class Nomina  implements ITransferObject {
         this.diasnomina = diasnomina;
     }
     
-    @Column(name="total_devengos", nullable=false, precision=11)
+    @Column(name="total_devengos", nullable=false, scale=2, precision=11)
     public BigDecimal getTotalDevengos() {
         return this.totalDevengos;
     }
@@ -345,7 +345,7 @@ public class Nomina  implements ITransferObject {
         this.totalDevengos = totalDevengos;
     }
     
-    @Column(name="total_deducir", nullable=false, precision=11)
+    @Column(name="total_deducir", nullable=false, scale=2, precision=11)
     public BigDecimal getTotalDeducir() {
         return this.totalDeducir;
     }
@@ -354,7 +354,7 @@ public class Nomina  implements ITransferObject {
         this.totalDeducir = totalDeducir;
     }
     
-    @Column(name="total_liquido", nullable=false, precision=11)
+    @Column(name="total_liquido", nullable=false, scale=2, precision=11)
     public BigDecimal getTotalLiquido() {
         return this.totalLiquido;
     }
@@ -372,7 +372,7 @@ public class Nomina  implements ITransferObject {
         this.feccob = feccob;
     }
     
-    @Column(name="base_concom", nullable=false, precision=11)
+    @Column(name="base_concom", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConcom() {
         return this.baseConcom;
     }
@@ -381,7 +381,7 @@ public class Nomina  implements ITransferObject {
         this.baseConcom = baseConcom;
     }
     
-    @Column(name="base_acctra", nullable=false, precision=11)
+    @Column(name="base_acctra", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAcctra() {
         return this.baseAcctra;
     }
@@ -390,7 +390,7 @@ public class Nomina  implements ITransferObject {
         this.baseAcctra = baseAcctra;
     }
     
-    @Column(name="base_proext", nullable=false, precision=11)
+    @Column(name="base_proext", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseProext() {
         return this.baseProext;
     }
@@ -399,7 +399,7 @@ public class Nomina  implements ITransferObject {
         this.baseProext = baseProext;
     }
     
-    @Column(name="base_con_it", nullable=false, precision=11)
+    @Column(name="base_con_it", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConIt() {
         return this.baseConIt;
     }
@@ -408,7 +408,7 @@ public class Nomina  implements ITransferObject {
         this.baseConIt = baseConIt;
     }
     
-    @Column(name="base_acc_it", nullable=false, precision=11)
+    @Column(name="base_acc_it", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAccIt() {
         return this.baseAccIt;
     }
@@ -417,7 +417,7 @@ public class Nomina  implements ITransferObject {
         this.baseAccIt = baseAccIt;
     }
     
-    @Column(name="base_con_mat", nullable=false, precision=11)
+    @Column(name="base_con_mat", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConMat() {
         return this.baseConMat;
     }
@@ -426,7 +426,7 @@ public class Nomina  implements ITransferObject {
         this.baseConMat = baseConMat;
     }
     
-    @Column(name="base_acc_mat", nullable=false, precision=11)
+    @Column(name="base_acc_mat", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAccMat() {
         return this.baseAccMat;
     }
@@ -435,7 +435,7 @@ public class Nomina  implements ITransferObject {
         this.baseAccMat = baseAccMat;
     }
     
-    @Column(name="base_con_mat_no", nullable=false, precision=11)
+    @Column(name="base_con_mat_no", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConMatNo() {
         return this.baseConMatNo;
     }
@@ -444,7 +444,7 @@ public class Nomina  implements ITransferObject {
         this.baseConMatNo = baseConMatNo;
     }
     
-    @Column(name="base_acc_mat_no", nullable=false, precision=11)
+    @Column(name="base_acc_mat_no", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAccMatNo() {
         return this.baseAccMatNo;
     }
@@ -453,7 +453,7 @@ public class Nomina  implements ITransferObject {
         this.baseAccMatNo = baseAccMatNo;
     }
     
-    @Column(name="base_fogasa", nullable=false, precision=11)
+    @Column(name="base_fogasa", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseFogasa() {
         return this.baseFogasa;
     }
@@ -462,7 +462,7 @@ public class Nomina  implements ITransferObject {
         this.baseFogasa = baseFogasa;
     }
     
-    @Column(name="base_fp", nullable=false, precision=11)
+    @Column(name="base_fp", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseFp() {
         return this.baseFp;
     }
@@ -471,7 +471,7 @@ public class Nomina  implements ITransferObject {
         this.baseFp = baseFp;
     }
     
-    @Column(name="base_desempleo", nullable=false, precision=11)
+    @Column(name="base_desempleo", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseDesempleo() {
         return this.baseDesempleo;
     }
@@ -480,7 +480,7 @@ public class Nomina  implements ITransferObject {
         this.baseDesempleo = baseDesempleo;
     }
     
-    @Column(name="base_hextras", nullable=false, precision=11)
+    @Column(name="base_hextras", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHextras() {
         return this.baseHextras;
     }
@@ -489,7 +489,7 @@ public class Nomina  implements ITransferObject {
         this.baseHextras = baseHextras;
     }
     
-    @Column(name="base_hextras_no", nullable=false, precision=11)
+    @Column(name="base_hextras_no", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHextrasNo() {
         return this.baseHextrasNo;
     }
@@ -498,7 +498,7 @@ public class Nomina  implements ITransferObject {
         this.baseHextrasNo = baseHextrasNo;
     }
     
-    @Column(name="base_exceso", nullable=false, precision=11)
+    @Column(name="base_exceso", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseExceso() {
         return this.baseExceso;
     }
@@ -507,7 +507,7 @@ public class Nomina  implements ITransferObject {
         this.baseExceso = baseExceso;
     }
     
-    @Column(name="base_nocotiza", nullable=false, precision=11)
+    @Column(name="base_nocotiza", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseNocotiza() {
         return this.baseNocotiza;
     }
@@ -516,7 +516,7 @@ public class Nomina  implements ITransferObject {
         this.baseNocotiza = baseNocotiza;
     }
     
-    @Column(name="base_especie", nullable=false, precision=11)
+    @Column(name="base_especie", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseEspecie() {
         return this.baseEspecie;
     }
@@ -525,7 +525,7 @@ public class Nomina  implements ITransferObject {
         this.baseEspecie = baseEspecie;
     }
     
-    @Column(name="base_irpf", nullable=false, precision=11)
+    @Column(name="base_irpf", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIrpf() {
         return this.baseIrpf;
     }
@@ -534,7 +534,7 @@ public class Nomina  implements ITransferObject {
         this.baseIrpf = baseIrpf;
     }
     
-    @Column(name="base_irpf_especie", nullable=false, precision=11)
+    @Column(name="base_irpf_especie", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIrpfEspecie() {
         return this.baseIrpfEspecie;
     }
@@ -543,7 +543,7 @@ public class Nomina  implements ITransferObject {
         this.baseIrpfEspecie = baseIrpfEspecie;
     }
     
-    @Column(name="base_irpf_nocotiza", nullable=false, precision=11)
+    @Column(name="base_irpf_nocotiza", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIrpfNocotiza() {
         return this.baseIrpfNocotiza;
     }
@@ -552,7 +552,7 @@ public class Nomina  implements ITransferObject {
         this.baseIrpfNocotiza = baseIrpfNocotiza;
     }
     
-    @Column(name="base_horascom", nullable=false, precision=11)
+    @Column(name="base_horascom", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHorascom() {
         return this.baseHorascom;
     }
@@ -561,7 +561,7 @@ public class Nomina  implements ITransferObject {
         this.baseHorascom = baseHorascom;
     }
     
-    @Column(name="base_perdes", nullable=false, precision=11)
+    @Column(name="base_perdes", nullable=false, scale=2, precision=11)
     public BigDecimal getBasePerdes() {
         return this.basePerdes;
     }
@@ -570,7 +570,7 @@ public class Nomina  implements ITransferObject {
         this.basePerdes = basePerdes;
     }
     
-    @Column(name="remuneracion", nullable=false, precision=11)
+    @Column(name="remuneracion", nullable=false, scale=2, precision=11)
     public BigDecimal getRemuneracion() {
         return this.remuneracion;
     }
@@ -579,7 +579,7 @@ public class Nomina  implements ITransferObject {
         this.remuneracion = remuneracion;
     }
     
-    @Column(name="base_it", nullable=false, precision=11)
+    @Column(name="base_it", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseIt() {
         return this.baseIt;
     }
@@ -588,7 +588,7 @@ public class Nomina  implements ITransferObject {
         this.baseIt = baseIt;
     }
     
-    @Column(name="total_1", nullable=false, precision=11)
+    @Column(name="total_1", nullable=false, scale=2, precision=11)
     public BigDecimal getTotal1() {
         return this.total1;
     }
@@ -606,7 +606,7 @@ public class Nomina  implements ITransferObject {
         this.codbas = codbas;
     }
     
-    @Column(name="base_cg", nullable=false, precision=11)
+    @Column(name="base_cg", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseCg() {
         return this.baseCg;
     }
@@ -615,7 +615,7 @@ public class Nomina  implements ITransferObject {
         this.baseCg = baseCg;
     }
     
-    @Column(name="base_acc", nullable=false, precision=11)
+    @Column(name="base_acc", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAcc() {
         return this.baseAcc;
     }
@@ -624,7 +624,7 @@ public class Nomina  implements ITransferObject {
         this.baseAcc = baseAcc;
     }
     
-    @Column(name="prc_cg", nullable=false, precision=5)
+    @Column(name="prc_cg", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcCg() {
         return this.prcCg;
     }
@@ -633,7 +633,7 @@ public class Nomina  implements ITransferObject {
         this.prcCg = prcCg;
     }
     
-    @Column(name="prc_acc", nullable=false, precision=5)
+    @Column(name="prc_acc", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcAcc() {
         return this.prcAcc;
     }
@@ -642,7 +642,7 @@ public class Nomina  implements ITransferObject {
         this.prcAcc = prcAcc;
     }
     
-    @Column(name="prc_hex", nullable=false, precision=5)
+    @Column(name="prc_hex", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcHex() {
         return this.prcHex;
     }
@@ -651,7 +651,7 @@ public class Nomina  implements ITransferObject {
         this.prcHex = prcHex;
     }
     
-    @Column(name="prc_hexno", nullable=false, precision=5)
+    @Column(name="prc_hexno", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcHexno() {
         return this.prcHexno;
     }
@@ -660,7 +660,7 @@ public class Nomina  implements ITransferObject {
         this.prcHexno = prcHexno;
     }
     
-    @Column(name="importe_cg", nullable=false, precision=11)
+    @Column(name="importe_cg", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteCg() {
         return this.importeCg;
     }
@@ -669,7 +669,7 @@ public class Nomina  implements ITransferObject {
         this.importeCg = importeCg;
     }
     
-    @Column(name="importe_acc", nullable=false, precision=11)
+    @Column(name="importe_acc", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteAcc() {
         return this.importeAcc;
     }
@@ -678,7 +678,7 @@ public class Nomina  implements ITransferObject {
         this.importeAcc = importeAcc;
     }
     
-    @Column(name="importe_hex", nullable=false, precision=11)
+    @Column(name="importe_hex", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteHex() {
         return this.importeHex;
     }
@@ -687,7 +687,7 @@ public class Nomina  implements ITransferObject {
         this.importeHex = importeHex;
     }
     
-    @Column(name="importe_hexno", nullable=false, precision=11)
+    @Column(name="importe_hexno", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteHexno() {
         return this.importeHexno;
     }
@@ -696,7 +696,7 @@ public class Nomina  implements ITransferObject {
         this.importeHexno = importeHexno;
     }
     
-    @Column(name="mincg", nullable=false, precision=11)
+    @Column(name="mincg", nullable=false, scale=2, precision=11)
     public BigDecimal getMincg() {
         return this.mincg;
     }
@@ -705,7 +705,7 @@ public class Nomina  implements ITransferObject {
         this.mincg = mincg;
     }
     
-    @Column(name="maxcg", nullable=false, precision=11)
+    @Column(name="maxcg", nullable=false, scale=2, precision=11)
     public BigDecimal getMaxcg() {
         return this.maxcg;
     }
@@ -714,7 +714,7 @@ public class Nomina  implements ITransferObject {
         this.maxcg = maxcg;
     }
     
-    @Column(name="minacc", nullable=false, precision=11)
+    @Column(name="minacc", nullable=false, scale=2, precision=11)
     public BigDecimal getMinacc() {
         return this.minacc;
     }
@@ -723,7 +723,7 @@ public class Nomina  implements ITransferObject {
         this.minacc = minacc;
     }
     
-    @Column(name="maxacc", nullable=false, precision=11)
+    @Column(name="maxacc", nullable=false, scale=2, precision=11)
     public BigDecimal getMaxacc() {
         return this.maxacc;
     }
@@ -732,7 +732,7 @@ public class Nomina  implements ITransferObject {
         this.maxacc = maxacc;
     }
     
-    @Column(name="cuota_empresa", precision=11)
+    @Column(name="cuota_empresa", scale=2, precision=11)
     public BigDecimal getCuotaEmpresa() {
         return this.cuotaEmpresa;
     }
@@ -741,7 +741,7 @@ public class Nomina  implements ITransferObject {
         this.cuotaEmpresa = cuotaEmpresa;
     }
     
-    @Column(name="base_acc_sin_hex", precision=11)
+    @Column(name="base_acc_sin_hex", scale=2, precision=11)
     public BigDecimal getBaseAccSinHex() {
         return this.baseAccSinHex;
     }
@@ -750,7 +750,7 @@ public class Nomina  implements ITransferObject {
         this.baseAccSinHex = baseAccSinHex;
     }
     
-    @Column(name="importe_cuotas", nullable=false, precision=11)
+    @Column(name="importe_cuotas", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteCuotas() {
         return this.importeCuotas;
     }
@@ -759,7 +759,7 @@ public class Nomina  implements ITransferObject {
         this.importeCuotas = importeCuotas;
     }
     
-    @Column(name="prc_irpf", nullable=false, precision=5)
+    @Column(name="prc_irpf", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcIrpf() {
         return this.prcIrpf;
     }
@@ -768,7 +768,7 @@ public class Nomina  implements ITransferObject {
         this.prcIrpf = prcIrpf;
     }
     
-    @Column(name="importe_irpf", nullable=false, precision=11)
+    @Column(name="importe_irpf", nullable=false, scale=2, precision=11)
     public BigDecimal getImporteIrpf() {
         return this.importeIrpf;
     }
@@ -834,7 +834,7 @@ public class Nomina  implements ITransferObject {
         this.diasefec = diasefec;
     }
     
-    @Column(name="baseant", precision=8)
+    @Column(name="baseant", scale=2, precision=8)
     public BigDecimal getBaseant() {
         return this.baseant;
     }
@@ -888,7 +888,7 @@ public class Nomina  implements ITransferObject {
         this.feccobreal = feccobreal;
     }
     
-    @Column(name="base_irpf_ant", precision=11)
+    @Column(name="base_irpf_ant", scale=2, precision=11)
     public BigDecimal getBaseIrpfAnt() {
         return this.baseIrpfAnt;
     }
@@ -897,7 +897,7 @@ public class Nomina  implements ITransferObject {
         this.baseIrpfAnt = baseIrpfAnt;
     }
     
-    @Column(name="importe_irpf_ant", precision=11)
+    @Column(name="importe_irpf_ant", scale=2, precision=11)
     public BigDecimal getImporteIrpfAnt() {
         return this.importeIrpfAnt;
     }
@@ -906,7 +906,7 @@ public class Nomina  implements ITransferObject {
         this.importeIrpfAnt = importeIrpfAnt;
     }
     
-    @Column(name="importe_cuotas_ant", precision=11)
+    @Column(name="importe_cuotas_ant", scale=2, precision=11)
     public BigDecimal getImporteCuotasAnt() {
         return this.importeCuotasAnt;
     }
@@ -915,7 +915,7 @@ public class Nomina  implements ITransferObject {
         this.importeCuotasAnt = importeCuotasAnt;
     }
     
-    @Column(name="base_cg_pts", precision=11)
+    @Column(name="base_cg_pts", scale=2, precision=11)
     public BigDecimal getBaseCgPts() {
         return this.baseCgPts;
     }
@@ -924,7 +924,7 @@ public class Nomina  implements ITransferObject {
         this.baseCgPts = baseCgPts;
     }
     
-    @Column(name="base_acc_pts", precision=11)
+    @Column(name="base_acc_pts", scale=2, precision=11)
     public BigDecimal getBaseAccPts() {
         return this.baseAccPts;
     }
@@ -933,7 +933,7 @@ public class Nomina  implements ITransferObject {
         this.baseAccPts = baseAccPts;
     }
     
-    @Column(name="base_acc_sin_h_pts", precision=11)
+    @Column(name="base_acc_sin_h_pts", scale=2, precision=11)
     public BigDecimal getBaseAccSinHPts() {
         return this.baseAccSinHPts;
     }

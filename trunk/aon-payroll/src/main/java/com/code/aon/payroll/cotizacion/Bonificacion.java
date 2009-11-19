@@ -87,7 +87,7 @@ public class Bonificacion  implements ITransferObject {
      * 
      * @return
      */
-	@Column(name="prc_cg", nullable=false, precision=5)
+	@Column(name="prc_cg", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcCg() {
         return this.prcCg;
     }
@@ -101,7 +101,7 @@ public class Bonificacion  implements ITransferObject {
      * 
      * @return
      */
-	@Column(name="prc_acc", nullable=false, precision=5)
+	@Column(name="prc_acc", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcAcc() {
         return this.prcAcc;
     }
@@ -115,7 +115,7 @@ public class Bonificacion  implements ITransferObject {
      * 
      * @return
      */
-	@Column(name="prc_accfgs", nullable=false, precision=5)
+	@Column(name="prc_accfgs", nullable=false, scale=2, precision=5)
     public BigDecimal getPrcAccfgs() {
         return this.prcAccfgs;
     }

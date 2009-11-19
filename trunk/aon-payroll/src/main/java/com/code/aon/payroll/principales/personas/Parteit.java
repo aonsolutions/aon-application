@@ -186,7 +186,7 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base Retribucion Periodo Anterior")
-	@Column(name = "baseant", precision = 11)
+	@Column(name = "baseant", scale=2, precision=11)
 	public BigDecimal getBaseant() {
 		return this.baseant;
 	}
@@ -206,7 +206,7 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base Reguladora Diaria")
-	@Column(name = "baseregdia", precision = 11)
+	@Column(name = "baseregdia", scale=2, precision=11)
 	public BigDecimal getBaseregdia() {
 		return this.baseregdia;
 	}
@@ -216,7 +216,7 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base Diaria contingencias Generales I.T.")
-	@Column(name = "basediacg", precision = 11)
+	@Column(name = "basediacg", scale=2, precision=11)
 	public BigDecimal getBasediacg() {
 		return this.basediacg;
 	}
@@ -226,7 +226,7 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base Diaria Accidentes Trabajo I.T.")
-	@Column(name = "basediaacc", precision = 11)
+	@Column(name = "basediaacc", scale=2, precision=11)
 	public BigDecimal getBasediaacc() {
 		return this.basediaacc;
 	}
@@ -236,7 +236,7 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Prestacion Diaria 60 %")
-	@Column(name = "prest60", precision = 11)
+	@Column(name = "prest60", scale=2, precision=11)
 	public BigDecimal getPrest60() {
 		return this.prest60;
 	}
@@ -246,7 +246,7 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Prestacion Diaria 75 %")
-	@Column(name = "prest75", precision = 11)
+	@Column(name = "prest75", scale=2, precision=11)
 	public BigDecimal getPrest75() {
 		return this.prest75;
 	}

@@ -85,7 +85,7 @@ public class Httbonificacion  implements ITransferObject {
     }
     
 
-    @Column(name="importe", precision=8)
+    @Column(name="importe", scale=2, precision=8)
     public BigDecimal getImporte() {
         return this.importe;
     }

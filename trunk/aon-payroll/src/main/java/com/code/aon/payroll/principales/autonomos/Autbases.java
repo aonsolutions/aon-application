@@ -56,7 +56,7 @@ public class Autbases  implements ITransferObject {
     }
     
 	
-    @Column(name="base", precision=6)
+    @Column(name="base", scale=2, precision=6)
     public BigDecimal getBase() {
         return this.base;
     }
@@ -66,7 +66,7 @@ public class Autbases  implements ITransferObject {
     }
     
 
-    @Column(name="cuota", precision=6)
+    @Column(name="cuota", scale=2, precision=6)
     public BigDecimal getCuota() {
         return this.cuota;
     }

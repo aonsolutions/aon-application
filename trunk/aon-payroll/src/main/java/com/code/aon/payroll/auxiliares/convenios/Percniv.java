@@ -142,7 +142,7 @@ public class Percniv implements ITransferObject {
      * Devuelve las Unidades Complemento
      * @return
      */
-    @Column(name="unidades", precision=8)
+    @Column(name="unidades", scale=2, precision=8)
     public BigDecimal getUnidades() {
         return this.unidades;
     }
@@ -160,7 +160,7 @@ public class Percniv implements ITransferObject {
      * Devuelve el Importe Unitario
      * @return
      */
-    @Column(name="impuni", precision=11)
+    @Column(name="impuni", scale=2, precision=11)
     public BigDecimal getImpuni() {
         return this.impuni;
     }
@@ -173,7 +173,7 @@ public class Percniv implements ITransferObject {
      * Devuelve el Importe Complemento
      * @return
      */
-    @Column(name="importe", precision=11)
+    @Column(name="importe", scale=2, precision=11)
     public BigDecimal getImporte() {
         return this.importe;
     }
@@ -186,7 +186,7 @@ public class Percniv implements ITransferObject {
      * Devuelve el % Garantizado I.L.T.
      * @return
      */
-    @Column(name="garilt", precision=5)
+    @Column(name="garilt", scale=2, precision=5)
     public BigDecimal getGarilt() {
         return this.garilt;
     }

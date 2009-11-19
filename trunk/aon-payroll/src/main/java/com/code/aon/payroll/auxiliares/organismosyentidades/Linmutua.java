@@ -54,7 +54,7 @@ public class Linmutua  implements ITransferObject {
         this.fecfin = fecfin;
     }
    
-    @Column(name="prcacctrab", precision=5)
+    @Column(name="prcacctrab", scale=2, precision=5)
     public BigDecimal getPrcacctrab() {
         return this.prcacctrab;
     }
@@ -64,7 +64,7 @@ public class Linmutua  implements ITransferObject {
     }
     
 	
-    @Column(name="prcit", precision=5)
+    @Column(name="prcit", scale=2, precision=5)
     public BigDecimal getPrcit() {
         return this.prcit;
     }

@@ -58,7 +58,7 @@ public class Elemento  implements ITransferObject {
 	 * 
 	 * @return
 	 */
-    @Column(name="dato1", nullable=false, precision=8)
+    @Column(name="dato1", nullable=false, scale=2, precision=8)
     public BigDecimal getDato1() {
         return this.dato1;
     }
@@ -72,7 +72,7 @@ public class Elemento  implements ITransferObject {
 	 * 
 	 * @return
 	 */
-    @Column(name="dato2", nullable=false, precision=8)
+    @Column(name="dato2", nullable=false, scale=2, precision=8)
     public BigDecimal getDato2() {
         return this.dato2;
     }

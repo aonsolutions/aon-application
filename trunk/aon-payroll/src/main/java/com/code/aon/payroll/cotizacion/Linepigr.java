@@ -69,7 +69,7 @@ public class Linepigr  implements ITransferObject {
     }
     
 
-    @Column(name="canit", precision=8)
+    @Column(name="canit", scale=2, precision=8)
     public BigDecimal getCanit() {
         return this.canit;
     }
@@ -89,7 +89,7 @@ public class Linepigr  implements ITransferObject {
     }
     
 
-    @Column(name="canipm", precision=8)
+    @Column(name="canipm", scale=2, precision=8)
     public BigDecimal getCanipm() {
         return this.canipm;
     }

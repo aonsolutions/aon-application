@@ -57,7 +57,7 @@ public class Prcdivtrab implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Porcentaje")
-	@Column(name = "prc", nullable = false, precision = 5)
+	@Column(name = "prc", nullable = false, scale=2, precision=5)
 	public BigDecimal getPrc() {
 		return this.prc;
 	}

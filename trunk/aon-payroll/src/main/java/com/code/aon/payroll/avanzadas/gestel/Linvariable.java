@@ -59,7 +59,7 @@ public class Linvariable  implements ITransferObject {
         this.fecfin = fecfin;
     }
     
-    @Column(name="nocturnidad", precision=11)
+    @Column(name="nocturnidad", scale=2, precision=11)
     public BigDecimal getNocturnidad() {
         return this.nocturnidad;
     }
@@ -69,7 +69,7 @@ public class Linvariable  implements ITransferObject {
     }
     
 	
-    @Column(name="transporte", precision=11)
+    @Column(name="transporte", scale=2, precision=11)
     public BigDecimal getTransporte() {
         return this.transporte;
     }
@@ -79,7 +79,7 @@ public class Linvariable  implements ITransferObject {
     }
     
 
-    @Column(name="festivo", precision=11)
+    @Column(name="festivo", scale=2, precision=11)
     public BigDecimal getFestivo() {
         return this.festivo;
     }
@@ -89,7 +89,7 @@ public class Linvariable  implements ITransferObject {
     }
     
 
-    @Column(name="festivoesp", precision=11)
+    @Column(name="festivoesp", scale=2, precision=11)
     public BigDecimal getFestivoesp() {
         return this.festivoesp;
     }
@@ -99,7 +99,7 @@ public class Linvariable  implements ITransferObject {
     }
     
 
-    @Column(name="domingo", precision=11)
+    @Column(name="domingo", scale=2, precision=11)
     public BigDecimal getDomingo() {
         return this.domingo;
     }
@@ -109,7 +109,7 @@ public class Linvariable  implements ITransferObject {
     }
     
 
-    @Column(name="diurna", precision=5)
+    @Column(name="diurna", scale=2, precision=5)
     public BigDecimal getDiurna() {
         return this.diurna;
     }
@@ -118,7 +118,7 @@ public class Linvariable  implements ITransferObject {
         this.diurna = diurna;
     }
 
-    @Column(name="nocturna", precision=5)
+    @Column(name="nocturna", scale=2, precision=5)
     public BigDecimal getNocturna() {
         return this.nocturna;
     }
@@ -128,7 +128,7 @@ public class Linvariable  implements ITransferObject {
     }
     
 
-    @Column(name="festdiurna", precision=5)
+    @Column(name="festdiurna", scale=2, precision=5)
     public BigDecimal getFestdiurna() {
         return this.festdiurna;
     }
@@ -138,7 +138,7 @@ public class Linvariable  implements ITransferObject {
     }
     
 	
-    @Column(name="festnocturna", precision=5)
+    @Column(name="festnocturna", scale=2, precision=5)
     public BigDecimal getFestnocturna() {
         return this.festnocturna;
     }

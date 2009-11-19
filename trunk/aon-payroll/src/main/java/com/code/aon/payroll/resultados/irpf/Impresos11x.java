@@ -167,7 +167,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "tradinimp", precision = 11)
+	@Column(name = "tradinimp", scale=2, precision=11)
 	public BigDecimal getTradinimp() {
 		return this.tradinimp;
 	}
@@ -181,7 +181,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "tradinret", precision = 11)
+	@Column(name = "tradinret", scale=2, precision=11)
 	public BigDecimal getTradinret() {
 		return this.tradinret;
 	}
@@ -209,7 +209,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "traespimp", precision = 11)
+	@Column(name = "traespimp", scale=2, precision=11)
 	public BigDecimal getTraespimp() {
 		return this.traespimp;
 	}
@@ -223,7 +223,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "traespret", precision = 11)
+	@Column(name = "traespret", scale=2, precision=11)
 	public BigDecimal getTraespret() {
 		return this.traespret;
 	}
@@ -251,7 +251,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "actdinimp", precision = 11)
+	@Column(name = "actdinimp", scale=2, precision=11)
 	public BigDecimal getActdinimp() {
 		return this.actdinimp;
 	}
@@ -265,7 +265,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "actdinret", precision = 11)
+	@Column(name = "actdinret", scale=2, precision=11)
 	public BigDecimal getActdinret() {
 		return this.actdinret;
 	}
@@ -293,7 +293,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "actespimp", precision = 11)
+	@Column(name = "actespimp", scale=2, precision=11)
 	public BigDecimal getActespimp() {
 		return this.actespimp;
 	}
@@ -307,7 +307,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "actespret", precision = 11)
+	@Column(name = "actespret", scale=2, precision=11)
 	public BigDecimal getActespret() {
 		return this.actespret;
 	}
@@ -335,7 +335,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "predinimp", precision = 11)
+	@Column(name = "predinimp", scale=2, precision=11)
 	public BigDecimal getPredinimp() {
 		return this.predinimp;
 	}
@@ -349,7 +349,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "predinret", precision = 11)
+	@Column(name = "predinret", scale=2, precision=11)
 	public BigDecimal getPredinret() {
 		return this.predinret;
 	}
@@ -377,7 +377,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "preespimp", precision = 11)
+	@Column(name = "preespimp", scale=2, precision=11)
 	public BigDecimal getPreespimp() {
 		return this.preespimp;
 	}
@@ -391,7 +391,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "preespret", precision = 11)
+	@Column(name = "preespret", scale=2, precision=11)
 	public BigDecimal getPreespret() {
 		return this.preespret;
 	}
@@ -405,7 +405,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "liqtotal", precision = 11)
+	@Column(name = "liqtotal", scale=2, precision=11)
 	public BigDecimal getLiqtotal() {
 		return this.liqtotal;
 	}
@@ -594,7 +594,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imgimp", precision = 11)
+	@Column(name = "imgimp", scale=2, precision=11)
 	public BigDecimal getImgimp() {
 		return this.imgimp;
 	}
@@ -608,7 +608,7 @@ public class Impresos11x implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "imgret", precision = 11)
+	@Column(name = "imgret", scale=2, precision=11)
 	public BigDecimal getImgret() {
 		return this.imgret;
 	}

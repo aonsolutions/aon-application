@@ -200,7 +200,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Pension Compensatoria")
-    @Column(name="imp_pension", nullable=false, precision=11)
+    @Column(name="imp_pension", nullable=false, scale=2, precision=11)
     public BigDecimal getImpPension() {
         return this.impPension;
     }
@@ -210,7 +210,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Anualidades Alimentos")
-    @Column(name="imp_anual", nullable=false, precision=11)
+    @Column(name="imp_anual", nullable=false, scale=2, precision=11)
     public BigDecimal getImpAnual() {
         return this.impAnual;
     }
@@ -220,7 +220,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Reduccion Rentas Irregulares")
-    @Column(name="imp_irreg", nullable=false, precision=11)
+    @Column(name="imp_irreg", nullable=false, scale=2, precision=11)
     public BigDecimal getImpIrreg() {
         return this.impIrreg;
     }
@@ -230,7 +230,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Cotizacines S.S., Mutualidades, etc")
-    @Column(name="imp_ss", nullable=false, precision=11)
+    @Column(name="imp_ss", nullable=false, scale=2, precision=11)
     public BigDecimal getImpSs() {
         return this.impSs;
     }
@@ -240,7 +240,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Porcentaje de I.R.P.F. solicitado")
-    @Column(name="solicita", nullable=false, precision=5)
+    @Column(name="solicita", nullable=false, scale=2, precision=5)
     public BigDecimal getSolicita() {
         return this.solicita;
     }
@@ -328,7 +328,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Pluriempleo: % sobre Tope Minimo Cotizacion")
-    @Column(name="pluprcmin", nullable=false, precision=5)
+    @Column(name="pluprcmin", nullable=false, scale=2, precision=5)
     public BigDecimal getPluprcmin() {
         return this.pluprcmin;
     }
@@ -338,7 +338,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Pluriempleo: % sobre Tope Maximo Cotizacion")
-    @Column(name="pluprcmax", nullable=false, precision=5)
+    @Column(name="pluprcmax", nullable=false, scale=2, precision=5)
     public BigDecimal getPluprcmax() {
         return this.pluprcmax;
     }
@@ -389,7 +389,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Bruto Actual")
-    @Column(name="imp_actual", nullable=false, precision=11)
+    @Column(name="imp_actual", nullable=false, scale=2, precision=11)
     public BigDecimal getImpActual() {
         return this.impActual;
     }
@@ -399,7 +399,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Extrasalariales Actual")
-    @Column(name="imp_ext_actual", nullable=false, precision=11)
+    @Column(name="imp_ext_actual", nullable=false, scale=2, precision=11)
     public BigDecimal getImpExtActual() {
         return this.impExtActual;
     }
@@ -409,7 +409,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Seguridad Social Actual")
-    @Column(name="ss_actual", nullable=false, precision=11)
+    @Column(name="ss_actual", nullable=false, scale=2, precision=11)
     public BigDecimal getSsActual() {
         return this.ssActual;
     }
@@ -419,7 +419,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Retenido IRPF Actual")
-    @Column(name="irpf_actual", nullable=false, precision=11)
+    @Column(name="irpf_actual", nullable=false, scale=2, precision=11)
     public BigDecimal getIrpfActual() {
         return this.irpfActual;
     }
@@ -429,7 +429,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Neto Actual")
-    @Column(name="neto_actual", nullable=false, precision=11)
+    @Column(name="neto_actual", nullable=false, scale=2, precision=11)
     public BigDecimal getNetoActual() {
         return this.netoActual;
     }
@@ -439,7 +439,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Seguridad Social Empresa Actual")
-    @Column(name="ss_emp_actual", nullable=false, precision=11)
+    @Column(name="ss_emp_actual", nullable=false, scale=2, precision=11)
     public BigDecimal getSsEmpActual() {
         return this.ssEmpActual;
     }
@@ -449,7 +449,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Coste Total Actual")
-    @Column(name="coste_actual", nullable=false, precision=11)
+    @Column(name="coste_actual", nullable=false, scale=2, precision=11)
     public BigDecimal getCosteActual() {
         return this.costeActual;
     }
@@ -459,7 +459,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Bruto Supuesto")
-    @Column(name="imp_supuesto", nullable=false, precision=11)
+    @Column(name="imp_supuesto", nullable=false, scale=2, precision=11)
     public BigDecimal getImpSupuesto() {
         return this.impSupuesto;
     }
@@ -469,7 +469,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Extrasalariales Supuesto")
-    @Column(name="imp_ext_supuesto", nullable=false, precision=11)
+    @Column(name="imp_ext_supuesto", nullable=false, scale=2, precision=11)
     public BigDecimal getImpExtSupuesto() {
         return this.impExtSupuesto;
     }
@@ -479,7 +479,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Seguridad Social Supuesto")
-    @Column(name="ss_supuesto", nullable=false, precision=11)
+    @Column(name="ss_supuesto", nullable=false, scale=2, precision=11)
     public BigDecimal getSsSupuesto() {
         return this.ssSupuesto;
     }
@@ -489,7 +489,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Retenido IRPF Supuesto")
-    @Column(name="irpf_supuesto", nullable=false, precision=11)
+    @Column(name="irpf_supuesto", nullable=false, scale=2, precision=11)
     public BigDecimal getIrpfSupuesto() {
         return this.irpfSupuesto;
     }
@@ -499,7 +499,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Neto Supuesto")
-    @Column(name="neto_supuesto", nullable=false, precision=11)
+    @Column(name="neto_supuesto", nullable=false, scale=2, precision=11)
     public BigDecimal getNetoSupuesto() {
         return this.netoSupuesto;
     }
@@ -509,7 +509,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Seguridad Social Empresa Supuesto")
-    @Column(name="ss_emp_supuesto", nullable=false, precision=11)
+    @Column(name="ss_emp_supuesto", nullable=false, scale=2, precision=11)
     public BigDecimal getSsEmpSupuesto() {
         return this.ssEmpSupuesto;
     }
@@ -519,7 +519,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Coste Total Supuesto")
-    @Column(name="coste_supuesto", nullable=false, precision=11)
+    @Column(name="coste_supuesto", nullable=false, scale=2, precision=11)
     public BigDecimal getCosteSupuesto() {
         return this.costeSupuesto;
     }
@@ -529,7 +529,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Bruto Diferencia")
-    @Column(name="imp_diferencia", nullable=false, precision=11)
+    @Column(name="imp_diferencia", nullable=false, scale=2, precision=11)
     public BigDecimal getImpDiferencia() {
         return this.impDiferencia;
     }
@@ -539,7 +539,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Importe Extrasalariales Diferencia")
-    @Column(name="imp_ext_diferencia", nullable=false, precision=11)
+    @Column(name="imp_ext_diferencia", nullable=false, scale=2, precision=11)
     public BigDecimal getImpExtDiferencia() {
         return this.impExtDiferencia;
     }
@@ -549,7 +549,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Seguridad Social Diferencia")
-    @Column(name="ss_diferencia", nullable=false, precision=11)
+    @Column(name="ss_diferencia", nullable=false, scale=2, precision=11)
     public BigDecimal getSsDiferencia() {
         return this.ssDiferencia;
     }
@@ -559,7 +559,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Retenido IRPF Diferencia")
-    @Column(name="irpf_diferencia", nullable=false, precision=11)
+    @Column(name="irpf_diferencia", nullable=false, scale=2, precision=11)
     public BigDecimal getIrpfDiferencia() {
         return this.irpfDiferencia;
     }
@@ -569,7 +569,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Neto Diferencia")
-    @Column(name="neto_diferencia", nullable=false, precision=11)
+    @Column(name="neto_diferencia", nullable=false, scale=2, precision=11)
     public BigDecimal getNetoDiferencia() {
         return this.netoDiferencia;
     }
@@ -579,7 +579,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Seguridad Social Empresa Diferencia")
-    @Column(name="ss_emp_diferencia", nullable=false, precision=11)
+    @Column(name="ss_emp_diferencia", nullable=false, scale=2, precision=11)
     public BigDecimal getSsEmpDiferencia() {
         return this.ssEmpDiferencia;
     }
@@ -589,7 +589,7 @@ public class Costes  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Coste Total Diferencia")
-    @Column(name="coste_diferencia", nullable=false, precision=11)
+    @Column(name="coste_diferencia", nullable=false, scale=2, precision=11)
     public BigDecimal getCosteDiferencia() {
         return this.costeDiferencia;
     }

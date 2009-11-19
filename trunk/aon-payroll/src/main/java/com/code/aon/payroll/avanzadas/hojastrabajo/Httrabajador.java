@@ -454,7 +454,7 @@ public class Httrabajador  implements ITransferObject {
     }
     
 
-    @Column(name="irpf", precision=4)
+    @Column(name="irpf", scale=2, precision=4)
     public BigDecimal getIrpf() {
         return this.irpf;
     }
@@ -544,7 +544,7 @@ public class Httrabajador  implements ITransferObject {
     }
     
 
-    @Column(name="baseantiguedad", precision=8)
+    @Column(name="baseantiguedad", scale=2, precision=8)
     public BigDecimal getBaseantiguedad() {
         return this.baseantiguedad;
     }
@@ -564,7 +564,7 @@ public class Httrabajador  implements ITransferObject {
     }
     
 
-    @Column(name="minpluriempleo", precision=5)
+    @Column(name="minpluriempleo", scale=2, precision=5)
     public BigDecimal getMinpluriempleo() {
         return this.minpluriempleo;
     }
@@ -573,7 +573,7 @@ public class Httrabajador  implements ITransferObject {
         this.minpluriempleo = minpluriempleo;
     }
     
-    @Column(name="maxpluriempleo", precision=5)
+    @Column(name="maxpluriempleo", scale=2, precision=5)
     public BigDecimal getMaxpluriempleo() {
         return this.maxpluriempleo;
     }

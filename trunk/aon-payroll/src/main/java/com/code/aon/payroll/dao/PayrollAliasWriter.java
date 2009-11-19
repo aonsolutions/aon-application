@@ -89,8 +89,6 @@ import com.code.aon.payroll.principales.personas.Parteit;
 import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.payroll.principales.personas.Prcdivtrab;
-import com.code.aon.payroll.principales.personas.Tipaut;
-import com.code.aon.payroll.principales.personas.Tipinc;
 import com.code.aon.payroll.principales.personas.Tipocont;
 import com.code.aon.payroll.principales.personas.Trabajo;
 import com.code.aon.payroll.principales.personas.Trabdto;
@@ -228,8 +226,6 @@ public class PayrollAliasWriter {
 		        Parteit.class.getName(),
 		        Parteconf.class.getName(),
 		        Prcdivtrab.class.getName(),
-		        Tipaut.class.getName(),
-		        Tipinc.class.getName(),
 		        Tipocont.class.getName(),
 		        Trabajo.class.getName(),
 		        Trabdto.class.getName(),

@@ -61,7 +61,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 
-    @Column(name="mincot", nullable=false, precision=8)
+    @Column(name="mincot", nullable=false, scale=2, precision=8)
     public BigDecimal getMincot() {
         return this.mincot;
     }
@@ -71,7 +71,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 	
-    @Column(name="maxcot", nullable=false, precision=8)
+    @Column(name="maxcot", nullable=false, scale=2, precision=8)
     public BigDecimal getMaxcot() {
         return this.maxcot;
     }
@@ -81,7 +81,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 	
-    @Column(name="mindia", nullable=false, precision=8)
+    @Column(name="mindia", nullable=false, scale=2, precision=8)
     public BigDecimal getMindia() {
         return this.mindia;
     }
@@ -91,7 +91,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 	
-    @Column(name="minhor", nullable=false, precision=8)
+    @Column(name="minhor", nullable=false, scale=2, precision=8)
     public BigDecimal getMinhor() {
         return this.minhor;
     }
@@ -101,7 +101,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 	
-    @Column(name="jordiaagr", nullable=false, precision=8)
+    @Column(name="jordiaagr", nullable=false, scale=2, precision=8)
     public BigDecimal getJordiaagr() {
         return this.jordiaagr;
     }
@@ -111,7 +111,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 	
-    @Column(name="mindiaart1", nullable=false, precision=8)
+    @Column(name="mindiaart1", nullable=false, scale=2, precision=8)
     public BigDecimal getMindiaart1() {
         return this.mindiaart1;
     }
@@ -121,7 +121,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 
-    @Column(name="mindiaart2", nullable=false, precision=8)
+    @Column(name="mindiaart2", nullable=false, scale=2, precision=8)
     public BigDecimal getMindiaart2() {
         return this.mindiaart2;
     }
@@ -131,7 +131,7 @@ public class Linbasec  implements ITransferObject{
     }
     
 	
-    @Column(name="acdiaart", nullable=false, precision=8)
+    @Column(name="acdiaart", nullable=false, scale=2, precision=8)
     public BigDecimal getAcdiaart() {
         return this.acdiaart;
     }

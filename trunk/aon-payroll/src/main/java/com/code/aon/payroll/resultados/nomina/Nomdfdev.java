@@ -75,7 +75,7 @@ public class Nomdfdev  implements ITransferObject{
         this.descom = descom;
     }
     
-    @Column(name="unidades", nullable=false, precision=8)
+    @Column(name="unidades", nullable=false, scale=2, precision=8)
     public BigDecimal getUnidades() {
         return this.unidades;
     }
@@ -84,7 +84,7 @@ public class Nomdfdev  implements ITransferObject{
         this.unidades = unidades;
     }
     
-    @Column(name="impuni", nullable=false, precision=11)
+    @Column(name="impuni", nullable=false, scale=2, precision=11)
     public BigDecimal getImpuni() {
         return this.impuni;
     }
@@ -93,7 +93,7 @@ public class Nomdfdev  implements ITransferObject{
         this.impuni = impuni;
     }
     
-    @Column(name="importe", nullable=false, precision=11)
+    @Column(name="importe", nullable=false, scale=2, precision=11)
     public BigDecimal getImporte() {
         return this.importe;
     }

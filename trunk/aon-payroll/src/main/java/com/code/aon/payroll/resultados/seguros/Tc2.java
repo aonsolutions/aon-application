@@ -97,7 +97,7 @@ public class Tc2  implements ITransferObject {
     
 	//@DataDefinition(label="Tipo Cuenta Cotizacion")
     @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Tipccc")} )
-    @Column(name="codccc", nullable=false)
+    @Column(name="codccc", length=1)
     public Tipccc getCodccc() {
         return this.codccc;
     }
@@ -108,7 +108,7 @@ public class Tc2  implements ITransferObject {
     
 	//@DataDefinition(label="Convenio Colectivo",descriptionColumn=true)
 
-    @Column(name="codcon", nullable=false)
+    @Column(name="codcon", length=7)
     public String getCodcon() {
         return this.codcon;
     }
@@ -178,7 +178,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Contingencias Comunes")
-    @Column(name="base_concom", nullable=false, precision=11)
+    @Column(name="base_concom", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseConcom() {
         return this.baseConcom;
     }
@@ -188,7 +188,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Accidentes Trabajo")
-    @Column(name="base_acctra", nullable=false, precision=11)
+    @Column(name="base_acctra", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseAcctra() {
         return this.baseAcctra;
     }
@@ -198,7 +198,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Horas Extraordinarias Fuerza Mayor ( no Estruc )")
-    @Column(name="base_hexno", nullable=false, precision=11)
+    @Column(name="base_hexno", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHexno() {
         return this.baseHexno;
     }
@@ -208,7 +208,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Horas Extraordinarias Estructurales")
-    @Column(name="base_hexest", nullable=false, precision=11)
+    @Column(name="base_hexest", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseHexest() {
         return this.baseHexest;
     }
@@ -218,7 +218,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Contig. Comunes Cot. Empresarial")
-    @Column(name="base_cccemp", nullable=false, precision=11)
+    @Column(name="base_cccemp", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseCccemp() {
         return this.baseCccemp;
     }
@@ -228,7 +228,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Otras Cotizaciones Cot. Empresarial")
-    @Column(name="base_occemp", nullable=false, precision=11)
+    @Column(name="base_occemp", nullable=false, scale=2, precision=11)
     public BigDecimal getBaseOccemp() {
         return this.baseOccemp;
     }
@@ -238,7 +238,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Compensaciones IT Enfermedad Comun")
-    @Column(name="comp_ecal", nullable=false, precision=11)
+    @Column(name="comp_ecal", nullable=false, scale=2, precision=11)
     public BigDecimal getCompEcal() {
         return this.compEcal;
     }
@@ -248,7 +248,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Compensaciones IT Accidentes Trabajo")
-    @Column(name="comp_acc", nullable=false, precision=11)
+    @Column(name="comp_acc", nullable=false, scale=2, precision=11)
     public BigDecimal getCompAcc() {
         return this.compAcc;
     }
@@ -258,7 +258,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Reducciones contingencias Comunes")
-    @Column(name="red_concom", nullable=false, precision=11)
+    @Column(name="red_concom", nullable=false, scale=2, precision=11)
     public BigDecimal getRedConcom() {
         return this.redConcom;
     }
@@ -268,7 +268,7 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Bonif. Redudcc. INEM")
-    @Column(name="red_inem", nullable=false, precision=11)
+    @Column(name="red_inem", nullable=false, scale=2, precision=11)
     public BigDecimal getRedInem() {
         return this.redInem;
     }

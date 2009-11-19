@@ -139,7 +139,7 @@ public class Nominaex implements ITransferObject {
 	 * Importe Paga Extra
 	 * @return
 	 */
-	@Column(name = "importe", nullable = false, precision = 11)
+	@Column(name = "importe", nullable = false, scale=2, precision=11)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}
@@ -166,7 +166,7 @@ public class Nominaex implements ITransferObject {
 	 * % de I.R.P.F.
 	 * @return
 	 */
-	@Column(name = "irpf", nullable = false, precision = 4)
+	@Column(name = "irpf", nullable = false, scale=2, precision=4)
 	public BigDecimal getIrpf() {
 		return this.irpf;
 	}
@@ -179,7 +179,7 @@ public class Nominaex implements ITransferObject {
 	 * Importe I.R.P.F.
 	 * @return
 	 */
-	@Column(name = "impirpf", nullable = false, precision = 11)
+	@Column(name = "impirpf", nullable = false, scale=2, precision=11)
 	public BigDecimal getImpirpf() {
 		return this.impirpf;
 	}
@@ -192,7 +192,7 @@ public class Nominaex implements ITransferObject {
 	 * Importe Liquido
 	 * @return
 	 */
-	@Column(name = "liquido", nullable = false, precision = 11)
+	@Column(name = "liquido", nullable = false, scale=2, precision=11)
 	public BigDecimal getLiquido() {
 		return this.liquido;
 	}
@@ -421,7 +421,7 @@ public class Nominaex implements ITransferObject {
 	 * Total a deducir
 	 * @return
 	 */
-	@Column(name = "total_deducir", nullable = false, precision = 11)
+	@Column(name = "total_deducir", nullable = false, scale=2, precision=11)
 	public BigDecimal getTotalDeducir() {
 		return this.totalDeducir;
 	}

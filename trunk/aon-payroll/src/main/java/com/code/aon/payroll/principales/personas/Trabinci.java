@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.tipos.Incidencia;
 
 /**
  * Mantenimiento de Trabinci
@@ -34,7 +35,7 @@ public class Trabinci implements ITransferObject {
 	private Date fecmod;
 	private Date hormod;
 	private BigDecimal importe;
-	private Tipinc tipinc;
+	private Incidencia tipinc;
 	private Trabajador emprper;
 	private Empresa empresa;
 	private Persona persona;
@@ -122,7 +123,7 @@ public class Trabinci implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Importe")
-	@Column(name = "importe", precision = 8)
+	@Column(name = "importe", scale=2, precision=8)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}
@@ -133,11 +134,11 @@ public class Trabinci implements ITransferObject {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codinc", insertable = false, updatable = false)
-	public Tipinc getTipinc() {
+	public Incidencia getTipinc() {
 		return this.tipinc;
 	}
 
-	public void setTipinc(Tipinc tipinc) {
+	public void setTipinc(Incidencia tipinc) {
 		this.tipinc = tipinc;
 	}
 	

@@ -33,6 +33,7 @@ import com.code.aon.payroll.enumeration.RelacionLaboral;
 import com.code.aon.payroll.enumeration.Timecont;
 import com.code.aon.payroll.enumeration.TipIrpf;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.tipos.Autorizacion;
 
 /**
  * Mantenimiento de Trabajo
@@ -87,7 +88,7 @@ public class Trabajo implements ITransferObject {
 	private Boolean indceutamelilla;
 	private RelacionLaboral relacion;
 	private String ocupacion;
-	private Tipaut tipaut;
+	private Autorizacion tipaut;
 	private Base basecoti;
 	private Colectivos colectivos;
 	private Convenio convenio;
@@ -184,7 +185,7 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="% Retencion IRPF en Nomina")
-	@Column(name = "irpf", nullable = false, precision = 4)
+	@Column(name = "irpf", nullable = false, scale=2, precision=4)
 	public BigDecimal getIrpf() {
 		return this.irpf;
 	}
@@ -320,7 +321,7 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Pluriempleo: % sobre Tope Minimo Cotizacion")
-	@Column(name = "pluprcmin", precision = 5)
+	@Column(name = "pluprcmin", scale=2, precision=5)
 	public BigDecimal getPluprcmin() {
 		return this.pluprcmin;
 	}
@@ -330,7 +331,7 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Pluriempleo: % sobre Tope Maximo Cotizacion")
-	@Column(name = "pluprcmax", precision = 5)
+	@Column(name = "pluprcmax", scale=2, precision=5)
 	public BigDecimal getPluprcmax() {
 		return this.pluprcmax;
 	}
@@ -380,7 +381,7 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Base Calculo Antiguedad")
-	@Column(name = "baseant", nullable = false, precision = 8)
+	@Column(name = "baseant", nullable = false, scale=2, precision=8)
 	public BigDecimal getBaseant() {
 		return this.baseant;
 	}
@@ -573,11 +574,11 @@ public class Trabajo implements ITransferObject {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "autorizacion")
-	public Tipaut getTipaut() {
+	public Autorizacion getTipaut() {
 		return this.tipaut;
 	}
 
-	public void setTipaut(Tipaut tipaut) {
+	public void setTipaut(Autorizacion tipaut) {
 		this.tipaut = tipaut;
 	}
 

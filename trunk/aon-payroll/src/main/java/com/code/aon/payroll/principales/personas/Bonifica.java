@@ -74,7 +74,7 @@ public class Bonifica implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Importe Bonificacion Directo")
-	@Column(name = "importe", nullable = false, precision = 8)
+	@Column(name = "importe", nullable = false, scale=2, precision=8)
 	public BigDecimal getImporte() {
 		return this.importe;
 	}
