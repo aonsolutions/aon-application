@@ -5,56 +5,90 @@
 <hibernate-configuration>
 
 	<session-factory>
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_gtm?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-esferalia-com?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>	
 	
-		<!-- AON-FINANCE Mapping files -->	
-		<mapping class="com.code.aon.finance.InvoiceTax"/>
-		<mapping class="com.code.aon.finance.InvoiceDetail"/>
-		<mapping class="com.code.aon.finance.Invoice"/>
-		<mapping class="com.code.aon.finance.InvoiceAttachment"/>		
-		<mapping class="com.code.aon.finance.InvoicingGroup"/>
-		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
-		<mapping class="com.code.aon.finance.Bank"/>		
-		<mapping class="com.code.aon.finance.PayMethod"/>		
-		<mapping class="com.code.aon.finance.Finance"/>
-		<mapping class="com.code.aon.finance.FinanceTracking"/>
-		<mapping class="com.code.aon.finance.FinanceBatch"/>
-		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
-		<mapping class="com.code.aon.finance.RegistryBank"/>
-		<mapping class="com.code.aon.finance.RegistryPayMethod"/>
-		<mapping class="com.code.aon.finance.Creditor"/>
-		
-		<!-- AON-PRODUCT Mapping files -->	
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.Product"/>
-		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.Tax"/>
-		<mapping class="com.code.aon.product.Brand"/>
-		
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.registry.Registry"/>
-		<mapping class="com.code.aon.registry.RegistryAddress"/>
-		<mapping class="com.code.aon.registry.RegistryMedia"/>
-		<mapping class="com.code.aon.registry.RegistryAttachment"/>
-		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
 		
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
 		
-		<!-- AON-CONFIG Mapping files -->	
-		<mapping class="com.code.aon.config.Tariff"/>
+		<!-- AON-FINANCE Mapping files -->	
+		<mapping class="com.code.aon.finance.Creditor"/>
+		<mapping class="com.code.aon.finance.CustomerFee"/>
+		<mapping class="com.code.aon.finance.Finance"/>
+		<mapping class="com.code.aon.finance.FinanceBatch"/>
+		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
+		<mapping class="com.code.aon.finance.FinanceTracking"/>
+		<mapping class="com.code.aon.finance.Invoice"/>
+		<mapping class="com.code.aon.finance.InvoiceAddress"/>
+		<mapping class="com.code.aon.finance.InvoiceAttachment"/>
+		<mapping class="com.code.aon.finance.InvoiceDetail"/>
+		<mapping class="com.code.aon.finance.InvoiceTax"/>
+		<mapping class="com.code.aon.finance.InvoicingGroup"/>
+		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
+
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoTree"/>
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+
+		<!-- AON-PRODUCT Mapping files -->	
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Catalogue"/>
+		<mapping class="com.code.aon.product.CatalogueCategory"/>
+		<mapping class="com.code.aon.product.CatalogueItem"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemPos"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+		<mapping class="com.code.aon.product.TariffCatalogue"/>
+
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.Segment"/>
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
-		
-		<!-- AON-GEOZONE Mapping files -->		
-		<mapping class="com.code.aon.geozone.GeoZone"/>			
 		
 	</session-factory>
 
