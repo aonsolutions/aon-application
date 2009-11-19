@@ -148,7 +148,7 @@ public class Costes  implements ITransferObject {
     
 	//@DataDefinition(label="Codigo Trabajador")
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="codemp", nullable=false)
+    @JoinColumn(name="codemp")
     public Trabajador getCodemp() {
         return this.codemp;
     }
