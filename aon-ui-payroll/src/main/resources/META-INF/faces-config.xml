@@ -369,7 +369,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Delegacion_description</value>
+			<value>Delegacion_descripcion</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
