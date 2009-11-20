@@ -54,16 +54,20 @@
 			showAddInfo="true"
 		/>
 		<finance:invoice
-			showDeliveryData="false" 
+			showWarehouseData="false" 
 		/>
 	</finance:config>
 
 	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:catalogue
+			showEcommerceData="false"
+		/>
 		<product:product
+			showType="false"
 			showStock="false"
 			showAccount="true"
 			showAttachment="false"
-			showEcommerceDataTab="false"
+			showEcommerceData="false"
 		/>
 	</product:config>
 
