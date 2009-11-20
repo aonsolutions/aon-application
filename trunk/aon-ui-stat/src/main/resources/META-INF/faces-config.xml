@@ -217,6 +217,17 @@
 		</navigation-case>
 
 	</navigation-rule>
+	
+		<!-- *************Summary 12 + 1 Stats***************** -->
+	<navigation-rule>
+	
+		<navigation-case>
+			<from-outcome>invoice_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml</to-view-id>
+		</navigation-case>
+		
+	</navigation-rule>
 
 
 </faces-config>

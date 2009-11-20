@@ -38,6 +38,12 @@
     PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/customerStatsDay.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsDay.xhtml"
     TITLE="customer_stat_list_day" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="sales_accumulate_search::#com#code#aon#ui#stat#facelet#salesAccumulate#search.xhtml"
+    NAME="output6"
+    PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#search.xhtml"
+    TITLE="sales_accumulate_search" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM
@@ -183,8 +189,14 @@
     TARGET="rules:#com#code#aon#ui#stat#facelet#abcCustomer#search.xhtml"
     TITLE="abc_stats_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="customer_month_stats::#com#code#aon#ui#stat#facelet#abcCustomer#monthStats.xhtml"
+    ID="abc_customer_stats::#com#code#aon#ui#stat#facelet#abcCustomer#abcCustomerStats.xhtml"
     NAME="output8"
+    PATH="/com/code/aon/ui/stat/facelet/abcCustomer/abcCustomerStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#abcCustomer#abcCustomerStats.xhtml"
+    TITLE="abc_customer_stats" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="customer_month_stats::#com#code#aon#ui#stat#facelet#abcCustomer#monthStats.xhtml"
+    NAME="output9"
     PATH="/com/code/aon/ui/stat/facelet/abcCustomer/monthStats.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#abcCustomer#monthStats.xhtml"
     TITLE="customer_month_stats" model-entity="JSFProcessItemOutput"/>
@@ -278,4 +290,18 @@
   NAME="rules:#com#code#aon#ui#stat#facelet#categoryProductSales#productStats.xhtml"
   PATH="/com/code/aon/ui/stat/facelet/categoryProductSales/productStats.xhtml"
   SHAPE="272,1393,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::5" SHAPE="32,3569,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::5" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="invoice_list::#com#code#aon#ui#stat#facelet#generic#invoiceList.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#generic#invoiceList.xhtml"
+    TITLE="invoice_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#generic#invoiceList.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml"
+  SHAPE="240,3585,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

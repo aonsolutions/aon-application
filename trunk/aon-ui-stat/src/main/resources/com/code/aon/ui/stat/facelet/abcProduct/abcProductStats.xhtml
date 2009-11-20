@@ -15,6 +15,7 @@
            <ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 				<ui:param name="statController" value="#{stat}" />
 				<ui:param name="statModel" value="#{stat.abcStatModel}" />
+				<ui:param name="clickable" value="#{false}" />
 				<aon:methodParam name="backAction" value="abc_stats_searchProduct"/>
 				<ui:param name="categoryLabel" value="#{statBundle.stat_product}" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_abc_product}" />

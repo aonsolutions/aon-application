@@ -20,7 +20,8 @@
 			
 		<ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 			<ui:param name="statController" value="#{stat}" />
-			<ui:param name="statModel" value="#{stat.abcStatModel}" />			
+			<ui:param name="statModel" value="#{stat.abcStatModel}" />
+			<ui:param name="clickable" value="#{false}" />		
 			<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
 			<ui:param name="windowTitle" value="#{statBundle.stat_abc_customer}" />			
 			<ui:param name="paramName" value="customer" />
