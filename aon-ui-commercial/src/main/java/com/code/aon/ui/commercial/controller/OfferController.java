@@ -77,6 +77,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	private final String SALES_CONTROLLER = "sales";
 	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
+	private String selectedTab;
 	private List<SelectItem> addresses;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
@@ -88,7 +89,6 @@ public class OfferController extends BasicController implements ISignatureContro
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
-	private String selectedTab;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -351,6 +351,11 @@ public class OfferController extends BasicController implements ISignatureContro
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 
+	public void onPending(ActionEvent event) {
+		getOffer().setStatus(OfferStatus.PENDING);
+		accept(event);
+	}
+	
 	public void onApprove(ActionEvent event) {
 		getOffer().setStatus(OfferStatus.APPROVED);
 		accept(event);
@@ -361,8 +366,8 @@ public class OfferController extends BasicController implements ISignatureContro
 		accept(event);
 	}
 
-	public void onPending(ActionEvent event) {
-		getOffer().setStatus(OfferStatus.PENDING);
+	public void onBlock(ActionEvent event) {
+		getOffer().setStatus(OfferStatus.BLOCKED);
 		accept(event);
 	}
 	
@@ -371,11 +376,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		accept(event);
 	}
 
-	public void onBlock(ActionEvent event) {
-		getOffer().setStatus(OfferStatus.BLOCKED);
-		accept(event);
-	}
-	
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
 		setSalesSeries(to.getSeries());
