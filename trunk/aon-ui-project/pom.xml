@@ -10,10 +10,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.project</artifactId>
-	<version>4.2.0</version>
+	<version>4.3.0-SNAPSHOT</version>
 	<description>AON UI PROJECT</description>
 	<name>AON UI PROJECT</name>
 	<dependencies>
+<!-- A BORRAR CUANDO NO SEA SNAPSHOT -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.common</artifactId>
+			<version>4.1.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+<!-- FIN BORRAR -->
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
