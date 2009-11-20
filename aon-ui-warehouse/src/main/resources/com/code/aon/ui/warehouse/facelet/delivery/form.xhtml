@@ -131,6 +131,14 @@
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
 								actionType="search">
 							</aon:lookupButton>
+							<aon:lookupButton 
+								windowTitle="#{customerBundle.customer_new}"
+								disabled="#{!delivery.pending}" minWidth="650" minHeight="600"
+								property="#{delivery.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}"
+								lookupChangeListener="#{delivery.customerData}"
+								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
+								actionType="new">
+							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 
 								value="#{(delivery.to.customer.registry.fullName!=null)?(delivery.to.customer.registry.fullName):('')}"
 								disabled="true" size="60" />
@@ -147,7 +155,7 @@
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="DeliveryAddress">
 						<aon:selectOneMenu id="Delivery_address" 
-							value="#{delivery.to.raddress}" rendered="#{delivery.addressCount > 0}"
+							value="#{delivery.to.registryAddress}" rendered="#{delivery.addressCount > 0}"
 							disabled="#{!delivery.pending}">
 							<f:selectItems value="#{delivery.addresses}" />
 						</aon:selectOneMenu>
@@ -168,7 +176,7 @@
 						value="#{warehouseBundle.warehouse_warehouse}" />
 					<aon:selectOneMenu id="Delivery_warehouse" 
 						value="#{delivery.warehouse}"
-						disabled="#{!delivery.pending}">
+						disabled="#{!delivery.new}">
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
 
@@ -358,6 +366,14 @@
 												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"
 												actionType="search">
 											</aon:lookupButton>
+											<aon:lookupButton
+												windowTitle="#{productBundle.product_item_new}"
+												minHeight="360" minWidth="780"
+												property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
+												lookupChangeListener="#{deliveryDetail.onItemChanged}" 
+												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"
+												actionType="new">
+											</aon:lookupButton>
 											<aon:inputTextarea id="DeliveryDetail_item_product_name" 
 												value="#{deliveryDetail.to.description}"
 												cols="64" rows="#{!deliveryDetail.longDescription?1:5}"
@@ -391,6 +407,14 @@
 													lookupChangeListener="#{deliveryDetail.onItemChanged}"
 													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"
 													actionType="search">
+												</aon:lookupButton>
+												<aon:lookupButton
+													windowTitle="#{productBundle.product_item_new}"
+													minHeight="360" minWidth="780"
+													property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
+													lookupChangeListener="#{deliveryDetail.onItemChanged}" 
+													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"
+													actionType="new">
 												</aon:lookupButton>
 												<aon:inputTextarea id="DeliveryDetail_item_product_name-New" 
 													value="#{deliveryDetail.to.description}"
