@@ -106,7 +106,7 @@
 							</f:facet>
 							<aon:outputText value="#{controller.financeStatus}" />
 						</aon:column>
- 	
+
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
@@ -115,7 +115,7 @@
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
- 
+
 						<c:if test="#{company.EInvoice}">
 							<aon:column>
 								<f:facet name="header">
