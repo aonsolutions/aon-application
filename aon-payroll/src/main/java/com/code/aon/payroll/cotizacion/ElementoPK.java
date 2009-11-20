@@ -17,7 +17,7 @@ public class ElementoPK implements Serializable {
 	private String cdg;
 	private Date fecini;
 
-	@Column(name="cdg", nullable=false, length=8)
+	@Column(name="cdg", nullable=false, length=10)
 	public String getCdg() {
 		return this.cdg;
 	}

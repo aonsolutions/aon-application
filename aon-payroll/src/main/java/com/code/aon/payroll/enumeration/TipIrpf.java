@@ -12,7 +12,7 @@ import com.code.aon.common.enumeration.IStringEnum;
 public enum TipIrpf implements IResourceable, IStringEnum {
 
 
-	TIP1("Nada"),
+	TIP1("N"),
 	TIP2("C"),
 	TIP3("D"),
 	TIP4("E"),
