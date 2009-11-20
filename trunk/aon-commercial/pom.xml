@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.commercial</artifactId>
-	<version>4.5.0</version>
+	<version>4.5.1</version>
 	<description>AON COMMERCIAL</description>
 	<name>AON-COMMERCIAL</name>
 	<dependencies>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>4.3.1</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
