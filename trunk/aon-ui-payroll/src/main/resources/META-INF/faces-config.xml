@@ -4818,7 +4818,7 @@
 	<managed-bean>
 		<managed-bean-name>autbase</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.payroll.controller.AutbaseController
+			com.code.aon.ui.form.LinesController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -4837,7 +4837,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Autbases_cdg DESC</value>
+			<value>Autbases_id DESC</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -4859,8 +4859,7 @@
 
 	</managed-bean>
 
-
-<managed-bean>
+	<managed-bean>
 		<managed-bean-name>percepbasic</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.payroll.controller.PercepBasicController
@@ -5758,7 +5757,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finidto_cdg</value>
+			<value>Finidto_id</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -5814,7 +5813,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finindem_cdg</value>
+			<value>Finindem_id</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -5870,7 +5869,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finipext_cdg</value>
+			<value>Finipext_id</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>

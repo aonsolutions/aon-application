@@ -3,16 +3,13 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
 "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-    <property name="connection.provider_class">
-    com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
-    <property name="dialect">
-    com.transtools.ctsql.hibernate.dialect.CtsqlDialect</property>
-    <property name="show_sql">true</property>
-    <property name="connection.service">
-    jboss.admin:service=AonLdap</property>
-    <property name="connection.datasource">
-    java:comp/env/jdbc/AonPayroll</property>
-    <property name="hbm2ddl.atuo">validate</property>    
+
+	<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
+	<property name="connection.service">jboss.admin:service=AonLdap</property>
+	<property name="connection.datasource">java:comp/env/jdbc/AonPayroll</property>
+	<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+	<property name="show_sql">true</property>
+
     <!-- C3P0 Stuff -->
     <property name="c3p0.acquire_increment">1</property>
     <property name="c3p0.idle_test_period">1900</property>
@@ -21,6 +18,7 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <property name="c3p0.min_size">1</property>
     <property name="c3p0.max_statements">0</property>
     <property name="c3p0.preferredTestQuery">select 1;</property>
+
     <mapping package="com.code.aon.payroll" />
     <!-- TIPOS -->
     <mapping class="com.code.aon.payroll.tipos.Documento" />
@@ -119,8 +117,6 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <mapping class="com.code.aon.payroll.principales.personas.Parteit"/>
     <mapping class="com.code.aon.payroll.principales.personas.Parteconf"/>
     <mapping class="com.code.aon.payroll.principales.personas.Prcdivtrab"/>
-    <mapping class="com.code.aon.payroll.principales.personas.Tipaut"/>
-    <mapping class="com.code.aon.payroll.principales.personas.Tipinc"/>
     <mapping class="com.code.aon.payroll.principales.personas.Tipocont"/>
     <mapping class="com.code.aon.payroll.principales.personas.Trabajo"/>
     <mapping class="com.code.aon.payroll.principales.personas.Trabdto"/>
