@@ -10,11 +10,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.smb</artifactId>
 	<packaging>war</packaging>
-	<version>4.5.0</version>
+	<version>4.6.0</version>
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
-		<dbVersion>4.6.0</dbVersion>
+		<dbVersion>4.6.2</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-smb</finalName>
@@ -59,19 +59,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.10.0</version>
+			<version>4.10.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>4.2.5</version>
+			<version>4.2.6</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>4.8.0</version>
+			<version>4.9.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>4.12.0</version>
+			<version>4.13.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -101,7 +101,7 @@
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.5.2</version>
+			<version>4.6.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -113,13 +113,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>4.4.0</version>
+			<version>4.5.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.stat</artifactId>
-			<version>4.0.6</version>
+			<version>4.0.7</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
