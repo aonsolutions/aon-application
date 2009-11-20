@@ -1,5 +1,8 @@
 package com.code.aon.ui.util;
 
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.component.UIViewRoot;
@@ -86,7 +89,11 @@ public class ServleJSFtUtil {
 	 */
 	public static Object getManagedBean( ServletRequest request, ServletResponse response, String name ) {
 		FacesContext fc = getFacesContext( request, response );
+		ELContext elctx = fc.getELContext();
 		Application application = fc.getApplication();
-		return application.getVariableResolver().resolveVariable(fc, name);
+		ExpressionFactory ef = application.getExpressionFactory();
+		ValueExpression ve = ef.createValueExpression(elctx,"#{" + name + "}",Object.class);
+		return ve.getValue(elctx);
+//		return application.getVariableResolver().resolveVariable(fc, name);
 	}
 }

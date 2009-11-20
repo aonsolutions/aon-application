@@ -27,6 +27,8 @@ import com.code.aon.ql.Criteria;
 
 public class AttachmentServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -5390830325195763178L;
+
 	/** The Constant POJO_INIT_PARAMETER. */
 	private static final String POJO_INIT_PARAMETER = "pojo";
 	
@@ -63,7 +65,8 @@ public class AttachmentServlet extends HttpServlet {
      * @throws IOException the IO exception
      * @throws ServletException the servlet exception
      */
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    @SuppressWarnings("unchecked")
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		try {
 	    	if ( req.getParameter("file") != null ) {
 	    		FileInputStream in = new FileInputStream( req.getParameter("file") );

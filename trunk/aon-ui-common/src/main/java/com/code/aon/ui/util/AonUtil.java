@@ -19,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.common.role.RoleManager;
 
 /**
  * AonUtil includes some common methods.
@@ -61,6 +62,16 @@ public class AonUtil {
 	 */
 	public static ConfigurationController getConfigurationController() {
 		return AonUtil.getConfigurationController("aonConfiguration");
+
+	}
+
+	/**
+	 * Gets the Role Manager Controller
+	 * 
+	 * @return the Role Manager Controller
+	 */
+	public static RoleManager getRoleManager() {
+		return (RoleManager) AonUtil.getRegisteredBean("aonRole");
 
 	}
 

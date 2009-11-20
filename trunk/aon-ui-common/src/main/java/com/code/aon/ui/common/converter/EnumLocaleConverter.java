@@ -64,11 +64,10 @@ public class EnumLocaleConverter implements Converter {
 							if (item instanceof SelectItem) {
 								SelectItem si = (SelectItem) item;
 								return si.getValue().getClass();
-							} else {
-								t = item.getClass();
-								if (t.isArray() && t.getComponentType().isEnum()) {
-									return t;
-								}
+							} 
+							t = item.getClass();
+							if (t.isArray() && t.getComponentType().isEnum()) {
+								return t;
 							}
 						}
 					}
