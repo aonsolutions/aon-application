@@ -184,9 +184,9 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			getDeliveryTransferManager().getCheckedDelivery().remove(delivery);
 		}
 
-		InvoicingEngineFactory.register(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY, new DeliveryInvoicingEngine());
+		InvoicingEngineFactory.register(InvoicingEngineFactory.DELIVERY_ENGINE_KEY, new DeliveryInvoicingEngine());
 		try {
-			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY);
+			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.DELIVERY_ENGINE_KEY);
 			engine.setInvoicingDAO(new DeliveryInvoicingDAO());
 			engine.setInvoicingFeedBack(new ProgressionInvoicingFeedBack());
 			((DeliveryInvoicingEngine)engine).invoiceDeliveryList(getInvoice(), getDeliveryTransferManager().getCheckedDelivery());
