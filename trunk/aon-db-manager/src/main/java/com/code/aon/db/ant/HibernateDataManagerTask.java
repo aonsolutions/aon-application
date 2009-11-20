@@ -67,6 +67,10 @@ public class HibernateDataManagerTask extends Task {
 	public void setInsert(boolean insert) {
 		this.hdm.setInsert( insert );
 	}
+
+	public void setOnDemand(boolean onDemand) {
+		this.hdm.setOnDemand( onDemand );
+	}
 	
 	public void setMaxImport(int maxImport) {
 		this.hdm.setMaxImport( maxImport );
