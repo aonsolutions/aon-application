@@ -8,6 +8,8 @@ import com.code.aon.finance.invoicing.InvoicingException;
 public class InvoicingEngineFactory {
 
 	public static final String CUSTOMER_FEE_ENGINE_KEY = "customerFeeEngine";
+	public static final String DELIVERY_ENGINE_KEY = "deliveryEngine";
+	public static final String INCOME_ENGINE_KEY = "incomeEngine";
 	
 	private static InvoicingEngineFactory instance;
 	
