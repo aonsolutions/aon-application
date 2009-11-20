@@ -11,7 +11,7 @@ import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.SupplierAccount;
-import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,6 +31,15 @@ public class BasicAccountListener extends ControllerAdapter {
 	private String alias;
 	private Account account;
 	private IAccount to;
+	
+	private AccountBridgeUtil accountBridgeUtil;
+	
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
 
 	public String getPojo() {
 		return pojo;
@@ -176,28 +185,12 @@ public class BasicAccountListener extends ControllerAdapter {
 
 	public void onNewAccount(ActionEvent event) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(getPojo());
-			ITransferObject newTo = (ITransferObject) Class.forName(getPojo()).newInstance();
-			IAccount toAccount = (IAccount) newTo;
 			IController c = FormUtil.getController(getMasterController());
-			toAccount.setLinkedTo(c.getTo());
-			toAccount.setAccount(AccountUtil.obtainIRegistryAccount((IRegistry) c.getTo()));
-			newTo = bean.insert(newTo);
-			setTo(toAccount);
-			setAccount(toAccount.getAccount());
+			IRegistry registry = (IRegistry) c.getTo();
+			IAccount iaccount = getAccountBridgeUtil().obtainIRegistryAccount(registry);
+			setTo(iaccount);
+			setAccount(iaccount==null?null:iaccount.getAccount());
 		} catch (ManagerBeanException e) {
-			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (InstantiationException e) {
-			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (IllegalAccessException e) {
-			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (ClassNotFoundException e) {
 			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
