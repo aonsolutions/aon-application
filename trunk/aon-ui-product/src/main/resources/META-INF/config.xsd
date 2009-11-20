@@ -5,17 +5,25 @@
 	<xs:element name="config">	
 		<xs:complexType>
 		    <xs:sequence>
+		      <xs:element ref="catalogue" />
 		      <xs:element ref="product" />
 		    </xs:sequence>		
 			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="catalogue">
+		<xs:complexType>
+			<xs:attribute name="showEcommerceData" type="xs:boolean" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
 	<xs:element name="product">
 		<xs:complexType>
+			<xs:attribute name="showType" type="xs:boolean" use="required"/>
 			<xs:attribute name="showStock" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAttachment" type="xs:boolean" use="required"/>
-			<xs:attribute name="showEcommerceDataTab" type="xs:boolean" use="required"/>
+			<xs:attribute name="showEcommerceData" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
