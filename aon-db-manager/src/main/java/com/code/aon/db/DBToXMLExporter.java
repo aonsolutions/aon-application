@@ -1,10 +1,14 @@
 package com.code.aon.db;
 
+import java.util.logging.Logger;
+
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 
 public class DBToXMLExporter implements IEntityManager<Element> {
 
+	private static final Logger LOGGER = Logger.getLogger(DBToXMLExporter.class.getName());
+	
 	private HibernateDataManager hdm;
 	
 	private QueryIterable<Element> entityIterable;	
@@ -18,8 +22,8 @@ public class DBToXMLExporter implements IEntityManager<Element> {
 		try {
 	        XMLWriter writer = hdm.startDocument(entity);
 		       
-			this.entityIterable.setEntity( entity );	        
-			this.entityIterable.orderById();
+			this.entityIterable.setEntity( entity );
+	        LOGGER.info( "Enitity: " + entity + " rows " + entityIterable.getRowCount() );
 	        int counter = 0;
 	        for( Object element : entityIterable ) {
 	        	writer.write( element );

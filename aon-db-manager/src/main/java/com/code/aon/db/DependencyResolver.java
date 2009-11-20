@@ -23,9 +23,9 @@ public class DependencyResolver {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Set<Class> getDependencies( Class entity ) {
+	private Set<Class<? extends Serializable>> getDependencies( Class entity ) {
     	ClassMetadata cm = sessionFactory.getClassMetadata(entity);
-    	Set<Class> result = new HashSet<Class>();
+    	Set<Class<? extends Serializable>> result = new HashSet<Class<? extends Serializable>>();
     	for( Type type : cm.getPropertyTypes() ) {
     		if ( type.isEntityType() || type.isAnyType() ) {
     			AssociationType at = (AssociationType) type;
@@ -40,10 +40,15 @@ public class DependencyResolver {
     	if (! processed.contains(entity) ) {
        		if (! list.contains(entity) ) {
 	        	processed.add( entity );
-	    		for( Class<? extends Serializable> dependency : getDependencies( entity ) ) {
+	        	Set<Class<? extends Serializable>> dependencies = getDependencies( entity );
+	    		for( Class<? extends Serializable> dependency : dependencies ) {
                		process(list, processed, dependency );        			
 	           	}
-	    		list.add( entity );
+	    		if ( dependencies.isEmpty() ) {
+	    			list.add( 0, entity );
+	    		} else {
+	    			list.add( entity );
+	    		}
 	           	processed.remove( entity );
        		}	           
     	} else {
