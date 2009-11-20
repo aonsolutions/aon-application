@@ -28,30 +28,12 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
  */
 public class WarehouseCollectionsController {
 
-	private List<SelectItem> incomeStatuses;
-
 	private List<SelectItem> warehouses;
 	
 	private List<SelectItem> deliveryStatuses;
 	
-	/**
-	 * Returns a list of income statuses
-	 * 
-	 * @return IncomeStatus list
-	 */
-	public List<SelectItem> getIncomeStatuses() {
-		if ( incomeStatuses == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			incomeStatuses = new LinkedList<SelectItem>();
-			for (IncomeStatus type : IncomeStatus.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				incomeStatuses.add(item);
-			}
-		}
-		return incomeStatuses;
-	}
-	
+	private List<SelectItem> incomeStatuses;
+
 	public Warehouse getWarehouse() {
 		return null;
 	}
@@ -98,6 +80,24 @@ public class WarehouseCollectionsController {
 			}
 		}
 		return deliveryStatuses;
+	}
+	
+	/**
+	 * Returns a list of income statuses
+	 * 
+	 * @return IncomeStatus list
+	 */
+	public List<SelectItem> getIncomeStatuses() {
+		if ( incomeStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			incomeStatuses = new LinkedList<SelectItem>();
+			for (IncomeStatus type : IncomeStatus.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				incomeStatuses.add(item);
+			}
+		}
+		return incomeStatuses;
 	}
 	
 	/**
