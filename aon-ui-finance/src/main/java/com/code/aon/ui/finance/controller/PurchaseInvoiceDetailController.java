@@ -2,10 +2,15 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.Item;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.IncomeDetail;
 
 public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 
@@ -27,23 +32,17 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 	public String getLineSourceInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
 
-		/*InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
 		if (!isEditable() && invoiceDetail.getSourceId() != null) {
 			String message = "";
 			String refCode = "";
 			int line = 0;
-			if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
-				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
-				OfferDetail offerDetail = (OfferDetail)offerDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage("commercialBundle", "commercial_offer");
-				refCode = offerDetail.getOffer().getReferenceCode();
-				line = offerDetail.getLine().intValue();
-			} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
-				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
+			if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
+				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+				IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage("financeBundle", "finance_invoice_delivery");
-				refCode = deliveryDetail.getDelivery().getReferenceCode();
-				line = deliveryDetail.getLine().intValue();
+				refCode = incomeDetail.getIncome().getReferenceCode();
+				line = incomeDetail.getLine().intValue();
 			}
 
 			info.append(AonUtil.getMessage("financeBundle", "finance_source"));
@@ -55,7 +54,7 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 			info.append(AonUtil.getMessage("financeBundle", "finance_invoice_detail_line"));
 			info.append(" ");
 			info.append(line);
-		}*/
+		}
 		return info.toString();
 	}
 
