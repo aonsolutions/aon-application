@@ -91,6 +91,16 @@ public class Item implements ITransferObject {
     private boolean internet;
 
     /**
+     * Barcode.
+     */
+    private String barcode;
+
+    /**
+     * Alternative Item.
+     */
+    private Item alternativeItem;
+
+    /**
      * Returns the unique key.
      * 
      * @return Unique key.
@@ -294,7 +304,6 @@ public class Item implements ITransferObject {
 		this.purchasePrice = purchasePrice;
 	}
       
-    
 	/**
 	 *  Returns if the product is visible in internet or not
 	 * @return
@@ -303,13 +312,56 @@ public class Item implements ITransferObject {
 		return internet;
 	}
 
-	
 	/**
 	 * @param internet
 	 */
 	public void setInternet(boolean internet) {
 		this.internet = internet;
 	}
+
+    /**
+     * Returns this item's barcode.
+     * 
+     * @return item's barcode.
+     */
+    @Column(length=32)
+    public String getBarcode() {
+        return barcode;
+    }
+
+    /**
+     * Asign this item's barcode.
+     * 
+     * @param barcode
+     *            item's barcode.
+     */
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    /**
+     * Returns item's alternative item.
+     * 
+     * @return item's alternative item.
+     * 
+     */
+    @ManyToOne
+    @JoinColumn(name="alternative_item")
+    @ForeignKey(name = "FK_ALTENATIVE_ITEM")
+    @Index(name = "IDX_ALTENATIVE_ITEM")
+    public Item getAlternativeItem() {
+        return alternativeItem;
+    }
+
+    /**
+     * Asigns this item's alternative item.
+     * 
+     * @param alternativeItem
+     *            item's alternative item.
+     */
+    public void setAlternativeItem(Item alternativeItem) {
+        this.alternativeItem = alternativeItem;
+    }
 
 	@Override
 	public boolean equals(Object obj) {
@@ -319,6 +371,7 @@ public class Item implements ITransferObject {
 		final Item o = (Item) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.barcode, o.barcode)				
 				.append(this.description, o.description)				
 				.append(this.detail, o.detail)				
 				.append(this.expensesFixed, o.expensesFixed)				
@@ -337,7 +390,8 @@ public class Item implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(description)
+		.append(description)
+			.append(barcode)
 			.append(detail)
 			.append(expensesFixed)			
 			.append(expensesPercent)						
