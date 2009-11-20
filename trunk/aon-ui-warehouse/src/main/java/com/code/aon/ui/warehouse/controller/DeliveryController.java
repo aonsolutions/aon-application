@@ -64,7 +64,6 @@ public class DeliveryController extends BasicController {
 	private List<SelectItem> addresses;
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;
-	private Boolean valuableDelivery;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
 	private SalesTransferManager salesTransferManager;
@@ -73,6 +72,7 @@ public class DeliveryController extends BasicController {
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
+	private Boolean valuableDelivery;
 
     public List<SelectItem> getAddresses() {
 		return addresses;
@@ -336,7 +336,7 @@ public class DeliveryController extends BasicController {
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
-		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SHIPPING_ADDRESS_ID), to.getRaddress().getId());
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_STATUS), SalesStatus.PENDING);
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
