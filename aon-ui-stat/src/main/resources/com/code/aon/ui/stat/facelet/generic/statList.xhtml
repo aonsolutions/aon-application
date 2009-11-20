@@ -68,11 +68,21 @@
 					<f:facet name="header">
 						<aon:outputText value="#{categoryLabel}" />
 					</f:facet>
+					
+					<c:if  test="#{clickable}">
 					<h:commandLink styleClass="aon-dataTable-link-noicon"
 						value="#{to.name}" action="#{goAction}"
 						actionListener="#{goMethod}">
 						<f:param name="#{paramName}" value="#{to.key}" />
 					</h:commandLink>
+					</c:if>
+										
+					<c:if  test="#{!clickable}">
+					<aon:outputText value="#{to.name}">
+					<f:param name="#{paramName}" value="#{to.key}" />
+					</aon:outputText>
+					</c:if>
+					
 					<f:facet name="footer">
 						<aon:outputText value="#{statBundle.report_totals}">							
 					</aon:outputText>

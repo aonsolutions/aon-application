@@ -15,7 +15,7 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
+					<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
 					columnClasses="aon-portlets-column,aon-portlets-column">
 
 					<aon:panelGroup>
@@ -63,6 +63,69 @@
 							</aon:div>
 						</aon:panel>
 					</aon:panelGroup>
+					
+					<aon:panel headerClass="aon-panel-title">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_reports}" />
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="sales_accumulate_search" 
+									value="#{statBundle.stat_menu_acumulado2}">
+									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onPurchaseType}"/>
+								</aon:commandLink>
+							</aon:div>
+						
+						<!--<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="segment_stats_search" 
+									value="#{statBundle.stat_menu_segment}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div> -->
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="category_stats_search" 
+									value="#{statBundle.stat_menu_category}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onPurchaseType}"/>
+								</aon:commandLink>
+							</aon:div>
+							<!-- <aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink disabled="true" value="Comparativa Periodos" />
+							</aon:div> -->
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="summary_stats_search" 
+									value="#{statBundle.stat_menu_summary}"  >
+									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onPurchaseType}"/>
+								</aon:commandLink>
+							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="abc_stats_search" 
+									value="#{statBundle.stat_abc_supplier}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onPurchaseType}"/>
+								</aon:commandLink>
+							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="abc_stats_searchProduct" 
+									value="#{statBundle.stat_abc_product}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onPurchaseType}"/>
+								</aon:commandLink>
+							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="abc_stats_searchCategory" 
+									value="#{statBundle.stat_abc_category}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onPurchaseType}"/>
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panel>
 
 				</aon:panelGrid>
 				

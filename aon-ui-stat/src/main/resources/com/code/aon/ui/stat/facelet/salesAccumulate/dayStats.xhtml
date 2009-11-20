@@ -18,6 +18,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 				<ui:param name="statController" value="#{stat}" />
+				<ui:param name="clickable" value="#{false}" />
 				<ui:param name="statModel" value="#{stat.dayStatModel}" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
 				<ui:param name="paramName" value="day" />				

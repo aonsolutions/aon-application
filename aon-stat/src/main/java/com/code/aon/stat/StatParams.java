@@ -13,8 +13,15 @@ public class StatParams {
 	private Integer product;
 	private Integer customer;
 	private Locale locale;
+	private Integer invoiceType;
 	
-
+	
+	public Integer getInvoiceType() {
+		return invoiceType;
+	}
+	public void setInvoiceType(Integer invoiceType) {
+		this.invoiceType = invoiceType;
+	}
 	public Integer getProduct() {
 		return product;
 	}

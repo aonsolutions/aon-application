@@ -12,16 +12,21 @@
 	<ui:define name="content">
 		<aon:methodParam name="backAction" value="sales_stats_month" />	
 		<aon:methodParam name="backMethod" value="" type="actionListener" />
+		<aon:methodParam name="goAction" value="invoice_list"/>
+		<aon:methodParam name="goMethod" value="#{stat.onInvoiceList}" type="actionListener" />
 			<ui:decorate
 				template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">				
 				<ui:param name="statController" value="#{stat}" />
 				<ui:param name="showLastColumn" value="false" />
+				<ui:param name="clickable" value="#{true}" />
+				<ui:param name="paramName" value="customer" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_menu_customers}" />
 				<ui:param name="statModel" value="#{stat.customerStatModel}" />
 				<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
 				<ui:param name="reportKeyParam" value="customerStatsList" />
 				<ui:param name="reportGraphKeyParam" value="customerStatsGraph" />
-											
+				<f:setPropertyActionListener target="#{stat.invoiceListBackAction}"
+								value="customer_stat_list_month" />							
 			</ui:decorate>
 			
 	</ui:define>
