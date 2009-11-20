@@ -32,7 +32,7 @@
 
 					<aon:outputLabel for="Catalogue_endDate" value="#{bundle.aon_end_date}" />
 					<aon:selectInputDate id="Catalogue_endDate"
-						value="#{catalogue.to.endDate}"  required="true"
+						value="#{catalogue.to.endDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
@@ -52,8 +52,8 @@
 								<ui:param name="dataTableId" value="catalogueCategoryDataList" />
 							</ui:include>
 						</aon:panelTab>
-									
-						<c:if test="#{!aonConfiguration.bean.product.showEcommerceDataTab}">
+
+						<c:if test="#{aonConfiguration.bean.catalogue.showEcommerceData}">
 							<aon:panelTab id="ecommerceEccatalogue"   label="#{productBundle.product_eccatalogue}" >
 								<ui:include	src="/com/code/aon/ui/ebackoffice/facelet/ecCatalogue/tab_grid.xhtml" />
 							</aon:panelTab>
