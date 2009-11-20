@@ -27,16 +27,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************** ROLE CONTROLLER ****************** --> 
-	<managed-bean>
-		<managed-bean-name>role</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.project.controller.RoleController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	
 	<!-- ************* DOSSIER TYPE ***************** -->
 	<managed-bean>
 		<managed-bean-name>dossierType</managed-bean-name>

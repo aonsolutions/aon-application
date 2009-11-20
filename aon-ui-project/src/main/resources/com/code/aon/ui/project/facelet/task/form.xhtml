@@ -67,11 +67,11 @@
 						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
 						rendered="#{!task.monitor and !task.new and !task.to.finished and !task.to.deleted}" />
 					<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
-						rendered="#{role.monitorRole}">
+						rendered="#{aonRole.taskMonitor}">
 						<a4j:support event="onclick" reRender="toolbar,taskForm" />
 					</aon:selectBooleanCheckbox>
 					<aon:outputLabel for="monitor" value="Monitor"
-						rendered="#{role.monitorRole}" />
+						rendered="#{aonRole.taskMonitor}" />
 				</ui:define>
 			</ui:decorate>
 

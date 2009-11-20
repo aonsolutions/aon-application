@@ -40,13 +40,13 @@
 					actionListener="#{dailyTracking.onReset}" />
 
 				<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
-					rendered="#{role.monitorRole}">
+					rendered="#{aonRole.taskMonitor}">
 					<a4j:support event="onclick" reRender="toolbar,taskTableContainer"
 						actionListener="#{task.onSwicthMonitor}">
 					</a4j:support>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="monitor" value="Monitor"
-					rendered="#{role.monitorRole}" />
+					rendered="#{aonRole.taskMonitor}" />
 			</ui:define>
 		</ui:decorate>
 		<!--  aon-region-body -->
