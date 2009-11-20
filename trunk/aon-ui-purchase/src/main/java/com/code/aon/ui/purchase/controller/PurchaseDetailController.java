@@ -1,100 +1,127 @@
 package com.code.aon.ui.purchase.controller;
 
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 
-import javax.faces.event.ValueChangeEvent;
+import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.dao.IProductAlias;
+import com.code.aon.product.strategy.ICalculable;
+import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.IncomeDetail;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
 
-/**
- * Controller used in the purchaseDetail maintenance.
- */
 public class PurchaseDetailController extends LinesController {
+
+	private boolean longDescription;
+
+	private IPriceStrategy priceStrategy;
 	
-	/**
-	 * Gets the total of the purchaseDetail contained in the current row of the model
-	 * 
-	 * @return the total
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public double getTotal() throws ManagerBeanException{
-		if(this.getModel().isRowAvailable()){
-			PurchaseDetail pDetail = (PurchaseDetail)this.getModel().getRowData();
-			return round(pDetail.getPrice() * pDetail.getQuantity(), 2);
-		}
-		return 0.0;
-	}
-	
-	/**
-	 * Gets the amount of the current purchaseDetail.
-	 * 
-	 * @return the amount
-	 */
-	public double getAmount() {
-		if(this.getTo() != null){
-			return (round(((PurchaseDetail)this.getTo()).getPrice() * ((PurchaseDetail)this.getTo()).getQuantity() , 2));
-		}
-		return 0.0;
-	}
-	
-	/**
-	 * Gets the total of all the purchaseDetails loaded in the model.
-	 * 
-	 * @return the details total
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public double getDetailsTotal() throws ManagerBeanException{
-		double total = 0;
-		if(this.getModel().getRowCount() >0){
-			Iterator iter = ((ArrayList)this.getModel().getWrappedData()).iterator();
-			while(iter.hasNext()){
-				PurchaseDetail purchaseDetail = (PurchaseDetail)iter.next();
-				total += purchaseDetail.getPrice() * purchaseDetail.getQuantity(); 
-			}
-		}
-		return round(total,2);
-	}
-	
-	/**
-	 * Retrieves the whole <code>Item</code> object when the lookup field changes
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public void itemData(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null){
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_ID),event.getNewValue());
-			Iterator iter = itemBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				Item item = (Item)iter.next();
-				((PurchaseDetail)this.getTo()).setItem(item);
-			}
-		}
+	public boolean isLongDescription() {
+		return longDescription;
 	}
 
-	/**
-	 * Rounds a value using the parameter <code>precision</code>
-	 * 
-	 * @param value the value
-	 * @param precision the precision to use rounding
-	 * 
-	 * @return the double
-	 */
-	private double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
+	public void setLongDescription(boolean longDescription) {
+		this.longDescription = longDescription;
+	}
+
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
+	public void onLongDescription(ActionEvent event) {
+		setLongDescription(true);
+	}
+
+	public void onShortDescription(ActionEvent event) {
+		setLongDescription(false);
+	}
+
+	public boolean isPending() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+			if (purchaseDetail.getStatus() != null) {
+				return purchaseDetail.getStatus().equals(PurchaseDetailStatus.PENDING);
+			}
+		}
+		return false;
+	}
+
+	public boolean isSettled() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+			if (purchaseDetail.getStatus() != null) {
+				return purchaseDetail.getStatus().equals(PurchaseDetailStatus.SETTLED);
+			}
+		}
+		return false;
+	}
+
+	public void onItemChanged(LookupChangeEvent event) {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)getTo();
+		double price = 0;
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Item item = (Item)event.getNewValue();
+			purchaseDetail.setItem(item);
+			purchaseDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+
+			price = item.getPurchasePrice();
+		}
+		purchaseDetail.setPrice(price);
+	}	
+
+	public double getAmount() {
+		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());
+	}
+
+	public double getModelAmount() throws ManagerBeanException {
+		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
+	}
+
+	public String getLineStatusInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage("bundle", "aon_decimal3_truncate_pattern"));
+
+		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PURCHASE_DETAIL_ID), purchaseDetail.getId());
+		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
+			info.append("<p>");
+			info.append(AonUtil.getMessage("purchaseBundle", "purchase_transfered_to"));
+			info.append(" ");
+			info.append(AonUtil.getMessage("purchaseBundle", "purchase_to_income"));
+			info.append(" ");
+			info.append(incomeDetail.getIncome().getReferenceCode());
+			info.append(" - ");
+			info.append(AonUtil.getMessage("purchaseBundle", "purchase_detail_line"));
+			info.append(" ");
+			info.append(incomeDetail.getLine());
+			if (purchaseDetail.getQuantity() > incomeDetail.getQuantity()) {
+				info.append(" (");
+				info.append(formatter.format(incomeDetail.getQuantity()));
+				info.append(" ");
+				info.append(AonUtil.getMessage("purchaseBundle", "purchase_detail_units"));
+				info.append(")");
+			}
+			info.append("</p>");
+		}
+		return info.toString();
+	}
+
 }
