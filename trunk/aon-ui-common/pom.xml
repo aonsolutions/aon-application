@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.common</artifactId>
-	<version>4.0.0</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<description>AON UI COMMON</description>
 	<name>AON UI COMMON</name>
 	<dependencies>
