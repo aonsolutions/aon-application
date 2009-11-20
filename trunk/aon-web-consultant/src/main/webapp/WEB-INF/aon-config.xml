@@ -4,18 +4,69 @@
 	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
 	xmlns="http://www.esferalia.com/config" >
 
+	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="true" 
+			showCompanyOtherData="true"
+			showPanelTabSet="false" 
+			showDigitalCertificate="true"
+		/>
+	</company:config>
+
 	<customer:config version="1.0" xmlns:customer="http://www.esferalia.com/customer">
 		<customer:customer
 			showFinanceData="true" 
 			showProjectData="true"
-			showFinanceFeeData="false" 
-			showAccount="false"
-			showTariff="false" 
-			showSegment="false"
+			showFinanceFeeData="true" 
+			showAccount="true"
+			showTariff="true" 
+			showSegment="true"
 			showNote="true" 
 			showRelationship="true" 
 			showRecordData="true" 
+			showTaxInfoData="true"
+			showAddInfo="true"
 		/>
 	</customer:config>
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia showSendEmail="true" />
+	</registry:config>
+
+	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
+		<supplier:supplier
+			showFinanceData="true" 
+			showAccount="true"
+			showSegment="false"
+			showTaxInfoData="true"
+			showAddInfo="false"
+		/>
+	</supplier:config>
+
+	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
+		<finance:creditor
+			showFinanceData="true" 
+			showAccount="true"
+			showTaxInfoData="true"
+			showAddInfo="false"
+			showSegment="false"
+		/>
+		<finance:invoice
+			showWarehouseData="false" 
+		/>
+	</finance:config>
+
+	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:catalogue
+			showEcommerceData="false"
+		/>
+		<product:product
+			showStock="false"
+			showAccount="true"
+			showAttachment="false"
+			showEcommerceData="false"
+			showType="false"
+		/>
+	</product:config>
 
 </config>
