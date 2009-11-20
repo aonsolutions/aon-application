@@ -19,7 +19,7 @@
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonConfiguration.bean.invoice.showDeliveryData}">
+						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:commandButton id="deliveryTransfer"
 								value="#{financeBundle.finance_invoice_deliveries}"
 								immediate="#{true}" rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
