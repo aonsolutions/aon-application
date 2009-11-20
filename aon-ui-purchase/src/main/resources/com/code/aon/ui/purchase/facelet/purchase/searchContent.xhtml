@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+
+	<aon:outputLabel for="Purchase_supplier_id"
+		value="#{supplierBundle.supplier_supplier}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Purchase_supplier_id"  
+			value="#{purchaseSearch.supplier.id}"
+			lookup="#{supplierLookup}"
+			reRender="Purchase_supplier_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{supplierBundle.supplier_selection}" 
+			minHeight="460" minWidth="650" 
+			property="#{purchaseSearch.supplier}" lookup="#{supplierLookup}" 
+			selectReRender="Purchase_supplier_id,Purchase_supplier_full_name" 
+			actionType="search">
+		</aon:lookupButton>
+		<aon:inputText id="Purchase_supplier_full_name"
+			value="#{(purchaseSearch.supplier.registry.fullName!=null)?(purchaseSearch.supplier.registry.fullName):('')}"
+			disabled="true" size="50" />							
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Purchase_issueDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Purchase_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="Purchase_issueDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Purchase_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+							
+	<aon:outputLabel for="Purchase_securityLevel"
+		value="#{bundle.aon_security_level}" />
+	<aon:selectOneMenu id="Purchase_securityLevel"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commonCollections.securityLevels}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Purchase_documentType"
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="Purchase_documentType"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{purchaseCollections.documentTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{purchaseSearch.purchaseStatuses}">
+		<f:selectItems value="#{purchaseCollections.purchaseStatuses}"/>
+	</aon:selectManyCheckbox>							
+
+</ui:composition>
