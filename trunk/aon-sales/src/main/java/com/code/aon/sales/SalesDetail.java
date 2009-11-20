@@ -98,7 +98,7 @@ public class SalesDetail implements ITransferObject, ICalculable {
 	 * @return the sales
 	 */
 	@ManyToOne
-	@JoinColumn( name="sales", nullable=false , updatable=false)
+	@JoinColumn( name="sales", nullable=false , updatable=false )
     public Sales getSales() {
         return sales;
     }
