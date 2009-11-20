@@ -33,6 +33,8 @@
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Segment"/>
 		
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 
@@ -41,6 +43,7 @@
 		<mapping class="com.code.aon.company.resources.Employee"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
 
+		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Tariff"/>
