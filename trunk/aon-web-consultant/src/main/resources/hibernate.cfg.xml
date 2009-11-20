@@ -68,6 +68,9 @@
 		<mapping class="com.code.aon.campaign.ProcessDetailTransition"/>
 		<mapping class="com.code.aon.campaign.ProcessTransitionType"/>
 
+		<!-- AON-COMMERCIAL Mapping files -->
+		<mapping class="com.code.aon.commercial.Target"/>
+
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
