@@ -42,29 +42,6 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ****** PRODUCT CATEGORY ****** -->
-	<managed-bean>
-		<managed-bean-name>pcategory</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.product.ProductCategory</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>pcategory</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ProductCategory_name</value>
-		</managed-property>
-	</managed-bean>
-		
 		<!-- ****** PRODUCT CATEGORY GROUP ****** -->
 	<managed-bean>
 		<managed-bean-name>productCategoryGroup</managed-bean-name>
@@ -72,7 +49,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -117,6 +94,29 @@
 	</managed-bean>
 	
 	<!-- ****** PRODUCT CATEGORY ****** -->
+	<managed-bean>
+		<managed-bean-name>productCategory</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.ProductCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>productCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProductCategory_name</value>
+		</managed-property>
+	</managed-bean>
+
+<!-- 
 	<managed-bean>
 		<managed-bean-name>productCategory</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.product.controller.ProductCategoryController</managed-bean-class>
@@ -174,7 +174,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+ -->	
 	<managed-bean>
 		<managed-bean-name>categoryLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -199,13 +199,6 @@
 			<property-name>newPagePath</property-name>
 			<value>/com/code/aon/ui/product/facelet/lookup/category/form.xhtml</value>
 		</managed-property>
-	<!-- 	<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{catalogueLookupListener}</value>
-			</list-entries>
-		</managed-property> -->				
 	</managed-bean>
 	
 	<!-- ****** ITEM ****** -->
@@ -233,6 +226,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{itemSearch}</value>
 				<value>#{itemControllerListener}</value>
 				<value>#{itemAttachChildListener}</value>				
 			</list-entries>
@@ -247,6 +241,12 @@
 		<managed-bean-name>itemOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.event.ItemSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -308,18 +308,10 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		<!--  
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>TariffCatalogue_catalogue_name</value>
-		</managed-property>
-		-->
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
-		<!--  
-		-->  
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -681,16 +673,16 @@
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 	    <navigation-case>
-	      <from-outcome>pcategory_grid</from-outcome>
-	      <to-view-id>/com/code/aon/ui/product/facelet/category/grid.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
 	      <from-outcome>productCategoryGroup_form</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/categoryGroup/form.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
 	      <from-outcome>productCategoryGroup_list</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/categoryGroup/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>productCategory</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/category/grid.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
 	      <from-outcome>brand</from-outcome>
