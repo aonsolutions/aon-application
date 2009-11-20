@@ -89,7 +89,7 @@
 
 					<aon:outputLabel for="Offer_series-New"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
-					<aon:div>
+					<aon:div id="headerData">
 						<aon:selectOneMenu id="Offer_series-New" 
 							value="#{offer.to.series}" rendered="#{offer.new}"
 							valueChangeListener="#{offer.onSeriesChanged}" 
@@ -147,13 +147,13 @@
 							styleClass="aon-icon-commandButton aon-icon-unsettle" />							
 						<aon:commandButton id="block" value="&#160;"
 							actionListener="#{offer.onBlock}"
-							title="#{commercialBundle.commercial_offer_to_bloqued}"
-							immediate="true" rendered="#{!(offer.blocked or offer.invoiced)}"
+							title="#{commercialBundle.commercial_offer_to_block}"
+							immediate="true" rendered="#{!offer.new and !(offer.blocked or offer.invoiced)}"
 							styleClass="aon-icon-commandButton aon-icon-lock">
 						</aon:commandButton>										
 						<aon:commandButton id="unblock" value="&#160;"
 							actionListener="#{offer.onUnblock}"
-							title="#{commercialBundle.commercial_offer_to_unbloqued}"
+							title="#{commercialBundle.commercial_offer_to_unblock}"
 							immediate="true" rendered="#{offer.blocked}"
 							styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 						</aon:commandButton>										
@@ -248,9 +248,9 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{salesBundle.sales_seller_new}"
-								disabled="#{offer.readOnly}" minHeight="520" minWidth="650"
+								disabled="#{offer.readOnly}" minWidth="650" minHeight="600"
 								property="#{offer.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
-								lookupChangeListener="#{offer.targetData}"
+								lookupChangeListener="#{offer.sellerData}"
 								selectReRender="Seller_id,Seller_full_name"
 								actionType="new">
 							</aon:lookupButton>														
