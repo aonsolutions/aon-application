@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.payroll</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<description>AON UI PAYROLL</description>
 	<name>AON UI PAYROLL</name>
 	<build>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-payroll</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.0</version>
 			<scope>compile</scope>
 		</dependency>			
 		<dependency>
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.2.1</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>			
 		<dependency>
@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_02</version>
+			<version>1.2_13</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
