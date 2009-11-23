@@ -19,7 +19,9 @@
 
 	<xs:element name="product">
 		<xs:complexType>
+			<xs:attribute name="showBarcode" type="xs:boolean" use="required"/>
 			<xs:attribute name="showType" type="xs:boolean" use="required"/>
+			<xs:attribute name="showBrand" type="xs:boolean" use="required"/>
 			<xs:attribute name="showStock" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAttachment" type="xs:boolean" use="required"/>
