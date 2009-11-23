@@ -14,15 +14,22 @@
 		<aon:methodParam name="goAction" value="invoice_list"/>
 		<aon:methodParam name="goMethod"  value="#{stat.onInvoiceList}" type="actionListener" />
 		<aon:methodParam name="backMethod" value="" type="actionListener" />
+		<c:if test="#{stat.invoiceType==1}">
+			<ui:param name="windowTitle" value="#{statBundle.stat_menu_customers}" />
+			<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
+		</c:if>
+		<c:if test="#{stat.invoiceType==0}">
+			<ui:param name="windowTitle" value="#{statBundle.stat_menu_suppliers}" />
+			<ui:param name="categoryLabel" value="#{statBundle.stat_supplier}" />
+		</c:if>
 			<ui:decorate 
 			template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">				
 				<ui:param name="statController" value="#{stat}" />
 				<ui:param name="showLastColumn" value="false" />
 				<ui:param name="clickable" value="#{true}" />
 				<ui:param name="paramName" value="customer" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_menu_customers}" />
 				<ui:param name="statModel" value="#{stat.customerStatModel}" />
-				<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
+				
 				<ui:param name="reportKeyParam" value="customerStatsList" />
 				<ui:param name="reportGraphKeyParam" value="customerStatsGraph" />						
 			</ui:decorate>			

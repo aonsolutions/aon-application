@@ -8,20 +8,27 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 		<aon:form id="invoiceList">
+			<c:if test="#{stat.invoiceType==1}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.stat_finance_sale_invoice}" />
+			</c:if>
+			<c:if test="#{stat.invoiceType==0}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.stat_finance_purchase_invoice}" />
+			</c:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="toolbarTitle"
-					value="#{financeBundle.finance_sale_invoice_management_module}" />
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="additionalToolbarContent">
-					<h:commandButton value="#{bundle.aon_back}" action="#{stat.getBackAction}"
+					<h:commandButton value="#{bundle.aon_back}"
+						action="#{stat.getBackAction}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel">
-						
-					</h:commandButton>		
-				<!-- 	<h:commandLink value="&#160;" target="_blank"
+
+					</h:commandButton>
+					<!--<h:commandLink value="&#160;" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="saleInvoiceList" />
@@ -63,7 +70,12 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<h:outputText value="#{customerBundle.customer_customer}" />
+							<c:if test="#{stat.invoiceType==1}">
+								<aon:outputText value="#{statBundle.stat_customer}" />
+							</c:if>
+							<c:if test="#{stat.invoiceType==0}">
+								<aon:outputText value="#{statBundle.stat_supplier}" />
+							</c:if>
 						</f:facet>
 						<aon:outputText value="#{to.registryName}">
 							<aon:abbreviateConverter maxWidth="50" />
@@ -99,15 +111,15 @@
 							</f:facet>
 							<aon:outputText value="#{invoicePrint.financeStatus}" />
 						</aon:column>-->
-					
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</f:facet>
-							<aon:outputText value="#{stat.invoiceTotalPrice}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_total}" />
+						</f:facet>
+						<aon:outputText value="#{stat.invoiceTotalPrice}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
 				</aon:editDataTable>
 				<aon:dataScroller2 for="invoices" showNote="true" />
 			</aon:div>
