@@ -10,7 +10,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon-web-payroll</artifactId>
+	<artifactId>aon.web.payroll</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB PAYROLL</name>
 	<version>1.1.0</version>
