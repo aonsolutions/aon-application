@@ -37,7 +37,7 @@
 							<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<h:commandLink id="valuableDelivery" value="#{warehouseBundle.warehouse_delivery_detail_valuated}"
+						<h:commandLink id="valuableDelivery" value="#{warehouseBundle.warehouse_delivery_valuated}"
 							target="_new" rendered="#{!delivery.new}"
 							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
@@ -48,7 +48,7 @@
 							<f:setPropertyActionListener target="#{delivery.valuableDelivery}"
 								value="#{true}" />
 						</h:commandLink>
-						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery_detail_no_valuated}"
+						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery_no_valuated}"
 							target="_new" rendered="#{!delivery.new}"
 							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
