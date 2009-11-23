@@ -9,10 +9,31 @@
 	<ui:define name="content">
 		<aon:form id="purchaseList">
 
-			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_module}" />
 				<ui:param name="controller" value="#{purchase}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink id="purchase" value="#{purchaseBundle.purchase_list_report}"
+						target="_new" rendered="#{!purchase.new}"
+						action="#{report.onExecute}" 
+						disabled="#{purchaseDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="purchaseList" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+					<h:commandLink id="purchaseDetail" value="#{purchaseBundle.purchase_detailled_list_report}"
+						target="_new" rendered="#{!purchase.new}"
+						action="#{report.onExecute}" 
+						disabled="#{purchaseDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="purchaseDetailledList" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
