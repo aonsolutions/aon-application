@@ -40,6 +40,12 @@ public class CampaignController extends BasicController {
 		}
 		return campaignTaskManager;
 	}
+	
+	public void onStart(ActionEvent event) {
+		this.onEditSearch(event);
+		this.onSearch(event);
+	}
+	
 	public void onEditSearch(ActionEvent event) {
 		super.onEditSearch(event);
 		setStatusPending(true);
