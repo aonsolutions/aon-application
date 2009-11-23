@@ -106,7 +106,6 @@ public class StockController extends BasicController {
 		return false;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void move(ActionEvent event){
 		try {
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
@@ -143,7 +142,6 @@ public class StockController extends BasicController {
 		return this.availableSourceWarehouses;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void updateAvailableSourceWarehouses() {
 		this.availableSourceWarehouses = new LinkedList<SelectItem>();
 		for( Stock stock : stocks ) {
@@ -153,7 +151,7 @@ public class StockController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void loadStockkModel() throws ManagerBeanException {
+	public void loadStockModel() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getFieldName(IWarehouseAlias.STOCK_ITEM_ID), getStock().getItem().getId());
 		this.stocks = (List) getManagerBean().getList(criteria);
@@ -168,7 +166,7 @@ public class StockController extends BasicController {
 		setSourceWarehouse(null);
 		setTargetWarehouse(null);
 		setMovingQuantity(0.0);
-		loadStockkModel();
+		loadStockModel();
 		updateAvailableSourceWarehouses();		
 	}
 }
