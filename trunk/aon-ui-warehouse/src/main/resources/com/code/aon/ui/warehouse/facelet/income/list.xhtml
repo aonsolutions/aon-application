@@ -9,10 +9,31 @@
 	<ui:define name="content">
 		<aon:form id="incomeList">
 
-			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_income_module}" />
 				<ui:param name="controller" value="#{income}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_list_report}"
+						target="_new" rendered="#{!income.new}"
+						action="#{report.onExecute}" 
+						disabled="#{incomeDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="incomeList2" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+					<h:commandLink id="incomeDelivery" value="#{warehouseBundle.warehouse_detailled_list_report}"
+						target="_new" rendered="#{!income.new}"
+						action="#{report.onExecute}" 
+						disabled="#{incomeDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="incomeDetailledList" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
