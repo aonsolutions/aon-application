@@ -31,6 +31,11 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="seller" 
+										action="seller_search" actionListener="#{seller.onEditSearch}"
+										value="#{salesBundle.sales_seller_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="sales" 
 										action="sales_search" actionListener="#{sales.onEditSearch}"
 										value="#{salesBundle.sales_module}" />
