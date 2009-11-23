@@ -76,7 +76,6 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
 			<param id="company" value="#{company.obtainCompany}" />
@@ -87,6 +86,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
 			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
 			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
 			<param id="warehouse" value="#{delivery.getWarehouse}" />
@@ -105,5 +105,109 @@
 	<report id="deliveryVatBreakDown" description="VatBreakDown's Subreport">
 		<template path="/com/code/aon/ui/warehouse/report/deliveryVatBreakDown.jasper"/>
 	</report>
-  
+	
+	<!--  *********  Listado Detallado Factura de Ventas  ********* -->
+
+	<report id="deliveryList2" description="Listado de delivery">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryList2.jasper" />
+		<bean key="com.code.aon.warehouse.Delivery" />
+		<criteria provider="#{delivery}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
+			<param id="warehouse" value="#{delivery.getWarehouse}" />
+			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
+		</params>
+	</report>
+
+	<report id="deliveryDetailledList" description="Listado Detallado de delivery">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryDetailledList.jasper" />
+		<bean key="com.code.aon.warehouse.Delivery" />
+		<criteria provider="#{delivery}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
+			<param id="warehouse" value="#{delivery.getWarehouse}" />
+			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
+		</params>
+		<nested-report report="deliveryListDetail"/>
+		<nested-report report="deliveryListTaxBreakDown"/>
+	</report>
+	<report id="deliveryListDetail" description="delivery Details">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryListDetail.jasper" />
+	</report>
+	<report id="deliveryListTaxBreakDown" description="taxBreakDown">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryListTaxBreakDown.jasper"/>
+	</report>
+	
+	<!--  *********  Listado Detallado Albaran de Compras  ********* -->
+
+	<report id="incomeList2" description="Listado de income">
+		<template path="/com/code/aon/ui/warehouse/report/incomeList2.jasper" />
+		<bean key="com.code.aon.warehouse.Income" />
+		<criteria provider="#{income}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
+			<param id="TotalPrice" value="#{income.getTotalPrice}" />
+			<param id="defaultPayMethod" value="#{income.getDefaultPayMethod}" />
+		</params>
+	</report>
+
+	<report id="incomeDetailledList" description="Listado Detallado de income">
+		<template path="/com/code/aon/ui/warehouse/report/incomeDetailledList.jasper" />
+		<bean key="com.code.aon.warehouse.Income" />
+		<criteria provider="#{income}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
+			<param id="TotalPrice" value="#{income.getTotalPrice}" />
+			<param id="defaultPayMethod" value="#{income.getDefaultPayMethod}" />
+		</params>
+		<nested-report report="deliveryListDetail"/>
+		<nested-report report="deliveryListTaxBreakDown"/>
+	</report>
+	
 </report-config>
