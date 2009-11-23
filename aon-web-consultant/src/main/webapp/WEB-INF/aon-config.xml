@@ -37,9 +37,9 @@
 		<supplier:supplier
 			showFinanceData="true" 
 			showAccount="true"
-			showSegment="false"
+			showSegment="true"
 			showTaxInfoData="true"
-			showAddInfo="false"
+			showAddInfo="true"
 		/>
 	</supplier:config>
 
