@@ -136,11 +136,11 @@
 
 				<aon:column rendered="#{showLastColumn}">
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_showClients}" />
+						<aon:outputText value="#{lastColumnName}" />
 					</f:facet>
 					<h:commandLink styleClass="aon-dataTable-link-noicon"
 						actionListener="#{stat.onCustomerStats}" action="#{customerFacelet}"
-						value="Ver Clientes">
+						value="#{lastColumnName}">
 						<f:param name="#{paramName}" value="#{to.key}" />
 						<!-- <f:param name="yearmonth" value="#{to.extra}" /> -->
 					</h:commandLink>

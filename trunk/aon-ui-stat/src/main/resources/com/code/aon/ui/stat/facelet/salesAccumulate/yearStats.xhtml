@@ -13,9 +13,8 @@
 			<ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 				<ui:param name="statController" value="#{stat}" />
 				<ui:param name="statModel" value="#{stat.yearStatModel}" />
-				<ui:param name="categoryLabel" value="#{statBundle.stat_year}" />
+				<ui:param name="categoryLabel" value="#{statBundle.stat_year}" />				
 				<ui:param name="clickable" value="#{true}" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
 				<aon:methodParam name="backAction" value="sales_accumulate_search"/>
 				<aon:methodParam name="goAction" value="sales_stats_month"/>
 				<aon:methodParam name="goMethod" value="#{stat.onYearSelect}" type="actionListener" />
@@ -25,7 +24,15 @@
 				<ui:param name="showLastColumn" value="true" />
 			    <ui:param name="reportKeyParam" value="yearStatsList" />
 			    <ui:param name="reportGraphKeyParam" value="yearStatsGraph" />
-			    <aon:methodParam name="backMethod" value="" type="actionListener" />		    
+			    <aon:methodParam name="backMethod" value="" type="actionListener" />
+			    <c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_shows_supplier}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado2}" />
+				</c:if>		    
 			</ui:include>
 			
 	</ui:define>

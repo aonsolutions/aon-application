@@ -20,12 +20,19 @@
 				<ui:param name="statController" value="#{stat}" />
 				<ui:param name="clickable" value="#{false}" />
 				<ui:param name="statModel" value="#{stat.dayStatModel}" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
 				<ui:param name="paramName" value="day" />				
 				<ui:param name="showLastColumn" value="true" />
 				<ui:param name="categoryLabel" value="#{statBundle.stat_day}" />
 				<ui:param name="reportKeyParam" value="dayStatsList" />
 				<ui:param name="reportGraphKeyParam" value="dayStatsGraph" />
+				<c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_shows_supplier}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado2}" />
+				</c:if>	
 			</ui:decorate>
 			
 	</ui:define>
