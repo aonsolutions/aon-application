@@ -109,7 +109,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.stat</artifactId>
-			<version>4.0.7</version>
+			<version>4.1.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
