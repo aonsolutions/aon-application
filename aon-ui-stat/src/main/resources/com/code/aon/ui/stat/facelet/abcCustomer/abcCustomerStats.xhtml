@@ -10,23 +10,30 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-			<aon:methodParam name="backAction" value="abc_stats_search" />
-     		<aon:methodParam name="goAction" value="abc_customer_stats"/>
-			<!--  <aon:methodParam name="goMethod" value="#{stat.onAbcCustomerSelect}" type="actionListener" />
+		<aon:methodParam name="backAction" value="abc_stats_search" />
+		<aon:methodParam name="goAction" value="abc_customer_stats" />
+		<!--  <aon:methodParam name="goMethod" value="#{stat.onAbcCustomerSelect}" type="actionListener" />
 			<aon:methodParam name="backMethod" value="" type="actionListener" />
 			-->
-			<aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
-			<aon:methodParam name="backMethod" value="" type="actionListener" />
-			
+		<aon:methodParam name="goMethod" value="#{stat.onNoAction}"
+			type="actionListener" />
+		<aon:methodParam name="backMethod" value="" type="actionListener" />
+
 		<ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 			<ui:param name="statController" value="#{stat}" />
 			<ui:param name="statModel" value="#{stat.abcStatModel}" />
-			<ui:param name="clickable" value="#{false}" />		
-			<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
-			<ui:param name="windowTitle" value="#{statBundle.stat_abc_customer}" />			
+			<ui:param name="clickable" value="#{false}" />
 			<ui:param name="paramName" value="customer" />
 			<ui:param name="reportKeyParam" value="abcStatsList" />
 			<ui:param name="reportGraphKeyParam" value="abcStatsGraph" />
+			<c:if test="#{stat.invoiceType==1}">
+				<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_abc_customer}" />
+			</c:if>
+			<c:if test="#{stat.invoiceType==0}">
+				<ui:param name="categoryLabel" value="#{statBundle.stat_supplier}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_abc_supplier}" />
+			</c:if>
 		</ui:include>
 
 	</ui:define>

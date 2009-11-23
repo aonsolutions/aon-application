@@ -14,6 +14,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.hibernate.type.SetType;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -64,7 +66,9 @@ public class StatEngineController {
 	private String backAction;
 	private Integer invoiceType;
 	private InvoiceType iType;
+	private boolean type;
 
+	
 	public Integer getInvoiceType() {
 		return invoiceType;
 	}
@@ -72,7 +76,6 @@ public class StatEngineController {
 	public void setInvoiceType(Integer invoiceType) {
 		this.invoiceType = invoiceType;
 	}
-
 	
 	public InvoiceType getIType() {
 		return iType;
@@ -145,6 +148,7 @@ public class StatEngineController {
 	public void onSaleType(ActionEvent event) {
 		setInvoiceType(1);
 		setIType(InvoiceType.SALES);
+		
 	}
 
 	public void onPurchaseType(ActionEvent event) {

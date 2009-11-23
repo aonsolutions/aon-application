@@ -22,12 +22,18 @@
 				<ui:param name="clickable" value="#{true}" />
 				<ui:param name="statModel" value="#{stat.monthStatModel}" />
 				<ui:param name="categoryLabel" value="#{statBundle.stat_month}" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
-			    <ui:param name="paramName" value="month" />
+				<ui:param name="paramName" value="month" />
 			  	<ui:param name="showLastColumn" value="true" />
 				<ui:param name="reportKeyParam" value="monthStatsList" />
 				<ui:param name="reportGraphKeyParam" value="monthStatsGraph" />
-				
+				<c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_shows_supplier}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado2}" />
+				</c:if>	
 
 				<ui:define name="extendedHeader">
 					<aon:div>
