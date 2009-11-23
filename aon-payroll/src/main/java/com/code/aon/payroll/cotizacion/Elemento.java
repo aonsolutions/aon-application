@@ -33,7 +33,7 @@ public class Elemento  implements ITransferObject {
 
     @EmbeddedId    
     @AttributeOverrides( {
-        @AttributeOverride(name="cdg", column=@Column(name="cdg", nullable=false, length=8) ), 
+        @AttributeOverride(name="cdg", column=@Column(name="cdg", nullable=false, length=10) ), 
         @AttributeOverride(name="fecini", column=@Column(name="fecini", nullable=false, length=10) ) } )
     public ElementoPK getId() {
         return this.id;
