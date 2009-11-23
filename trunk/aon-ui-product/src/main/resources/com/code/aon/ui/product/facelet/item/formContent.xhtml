@@ -19,14 +19,24 @@
 		<aon:inputText id="Item_product_code" value="#{controller.to.product.code}"
 			required="true" size="20" maxLength="15" onblur="toUpperCase(this);" />
 	
-		<aon:outputLabel for="Item_barcode" value="#{productBundle.product_barcode}" />
-		<aon:inputText id="Item_barcode" value="#{controller.to.barcode}"
-			size="25" maxLength="32" />
-	
 		<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
 		<aon:selectOneMenu id="Item_status" value="#{controller.to.status}">
 			<f:selectItems value="#{productCollections.productStatuses}" />
 		</aon:selectOneMenu>
+
+		<aon:div>
+			<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+				<aon:outputLabel for="Item_barcode" value="#{productBundle.product_barcode}" />
+	 		</c:if>
+			<aon:outputText value="&#160;" />
+		</aon:div>
+		<aon:div>
+			<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+				<aon:inputText id="Item_barcode" value="#{controller.to.barcode}"
+					size="25" maxLength="32" />
+	 		</c:if>
+			<aon:outputText value="&#160;" />
+		</aon:div>
 
 	</aon:panelGrid>
 
@@ -79,11 +89,21 @@
 			<f:selectItems value="#{productCollections.categories}" />
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="Item_product_brand" value="#{productBundle.product_brand}" />
-		<aon:selectOneMenu id="Item_product_brand" value="#{controller.to.product.brand}">
-			<f:selectItem itemLabel="-" itemValue="" />
-			<f:selectItems value="#{productCollections.brands}" />
-		</aon:selectOneMenu>
+		<aon:div>
+			<c:if test="#{aonConfiguration.bean.product.showBrand}">
+				<aon:outputLabel for="Item_product_brand" value="#{productBundle.product_brand}" />
+			</c:if>
+			<aon:outputText value="&#160;" />
+		</aon:div>
+		<aon:div>
+			<c:if test="#{aonConfiguration.bean.product.showBrand}">
+				<aon:selectOneMenu id="Item_product_brand" value="#{controller.to.product.brand}">
+					<f:selectItem itemLabel="-" itemValue="" />
+					<f:selectItems value="#{productCollections.brands}" />
+				</aon:selectOneMenu>
+			</c:if>
+			<aon:outputText value="&#160;" />
+		</aon:div>
 
 		<aon:div>
 			<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">

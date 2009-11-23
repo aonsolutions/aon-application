@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -42,12 +43,14 @@
 						<aon:outputText value="#{to.product.category.name}" />
 					</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{productBundle.product_brand}" />
-						</f:facet>
-						<aon:outputText value="#{to.product.brand.name}" />
-					</aon:column>
+					<c:if test="#{aonConfiguration.bean.product.showBrand}">
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_brand}" />
+							</f:facet>
+							<aon:outputText value="#{to.product.brand.name}" />
+						</aon:column>
+					</c:if>
 
 					<aon:column>
 						<f:facet name="header">

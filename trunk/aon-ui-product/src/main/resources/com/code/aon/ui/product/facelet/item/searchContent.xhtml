@@ -11,9 +11,11 @@
 		valueChangeListener="#{controller.addExpression}"
 		onblur="toUpperCase(this);" />
 
-	<aon:outputLabel for="Item_barcode" value="#{productBundle.product_barcode}" />
-	<aon:inputText id="Item_barcode" size="15"
-		valueChangeListener="#{controller.addExpression}" />
+	<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+		<aon:outputLabel for="Item_barcode" value="#{productBundle.product_barcode}" />
+		<aon:inputText id="Item_barcode" size="15"
+			valueChangeListener="#{controller.addExpression}" />
+	</c:if>
 
 	<aon:outputLabel for="Item_product_name"
 		value="#{bundle.aon_description}" />
@@ -29,14 +31,16 @@
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
 	
-	<aon:outputLabel for="Item_product_brand_id"
-		value="#{productBundle.product_brand}" />
-	<aon:selectOneMenu id="Item_product_brand_id"
-		value="#{productCollections.brand}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" itemDisabled="true" />
-		<f:selectItems value="#{productCollections.brands}" />
-	</aon:selectOneMenu>
+	<c:if test="#{aonConfiguration.bean.product.showBrand}">
+		<aon:outputLabel for="Item_product_brand_id"
+			value="#{productBundle.product_brand}" />
+		<aon:selectOneMenu id="Item_product_brand_id"
+			value="#{productCollections.brand}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" itemDisabled="true" />
+			<f:selectItems value="#{productCollections.brands}" />
+		</aon:selectOneMenu>
+	</c:if>
 
 	<c:if test="#{aonConfiguration.bean.product.showStock}">
 		<aon:outputLabel for="Item_product_inventoriable"
