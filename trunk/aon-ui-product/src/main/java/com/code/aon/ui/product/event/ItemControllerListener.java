@@ -60,6 +60,24 @@ public class ItemControllerListener extends ControllerAdapter {
     	}
     }
 
+    @Override
+    public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+    	Item item = (Item)event.getController().getTo();
+    	initializeAlternative(item);
+    }
+    @Override
+    public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+    	Item item = (Item)event.getController().getTo();
+    	initializeAlternative(item);
+    }
+    
+	private void initializeAlternative(Item item) {
+    	if (item.getAlternativeItem() == null) {
+    		item.setAlternativeItem(new Item());
+        	item.getAlternativeItem().setProduct(new Product());
+    	}
+	}
+
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		if (event.getController().isNew()) {
