@@ -63,7 +63,9 @@
 			showEcommerceData="false"
 		/>
 		<product:product
+			showBarcode="true"
 			showType="false"
+			showBrand="true"
 			showStock="true"
 			showAccount="true"
 			showAttachment="false"
