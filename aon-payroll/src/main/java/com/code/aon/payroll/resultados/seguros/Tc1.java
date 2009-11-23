@@ -601,7 +601,7 @@ public class Tc1  implements ITransferObject {
     
 	//@DataDefinition(label="Codigo Persona")
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="codper", nullable=false)
+    @JoinColumn(name="codper")
     public Persona getCodper() {
         return this.codper;
     }
@@ -632,7 +632,7 @@ public class Tc1  implements ITransferObject {
     
 	//@DataDefinition(label="Contrato TC2")
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="codtc2", nullable=false)
+    @JoinColumn(name="codtc2")
     public Tc2 getCodtc2() {
         return this.codtc2;
     }
