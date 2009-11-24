@@ -20,6 +20,7 @@
 	        <listener>com.code.aon.warehouse.event.StockableBeanListener</listener>
 		</listeners>
 		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.DeliveryDetailBeanVetoListener</vetoListener>
 	        <vetoListener>com.code.aon.warehouse.event.StockableBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
@@ -38,6 +39,7 @@
 	        <listener>com.code.aon.warehouse.event.StockableBeanListener</listener>
 		</listeners>
 		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.IncomeDetailBeanVetoListener</vetoListener>
 	        <vetoListener>com.code.aon.warehouse.event.StockableBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>

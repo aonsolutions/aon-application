@@ -18,6 +18,9 @@
 		<listeners>
 	        <listener>com.code.aon.purchase.event.PurchaseDetailBeanListener</listener>
 		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.purchase.event.PurchaseDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
 	</bean>
 	
 </bean-config>
