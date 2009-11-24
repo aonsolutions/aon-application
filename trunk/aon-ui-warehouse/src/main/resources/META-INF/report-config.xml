@@ -201,8 +201,14 @@
 			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
 			<param id="defaultPayMethod" value="#{income.getDefaultPayMethod}" />
 		</params>
-		<nested-report report="deliveryListDetail"/>
-		<nested-report report="deliveryListTaxBreakDown"/>
+		<nested-report report="incomeListDetail"/>
+		<nested-report report="incomeListTaxBreakDown"/>
+	</report>
+	<report id="incomeListDetail" description="income Details">
+		<template path="/com/code/aon/ui/warehouse/report/incomeListDetail.jasper" />
+	</report>
+	<report id="incomeListTaxBreakDown" description="taxBreakDown">
+		<template path="/com/code/aon/ui/warehouse/report/incomeListTaxBreakDown.jasper"/>
 	</report>
 	
 </report-config>

@@ -124,13 +124,6 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_cif}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-112" x="283" y="0" width="69" height="13"/>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_client}]]></textFieldExpression>
-			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-4" mode="Opaque" x="467" y="13" width="69" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
@@ -186,6 +179,13 @@
 			<line>
 				<reportElement key="line-1" x="3" y="25" width="535" height="1" forecolor="#999999"/>
 			</line>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-112" x="283" y="0" width="69" height="13"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_holder}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
@@ -219,16 +219,16 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplier}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="24" y="15" width="513" height="15"/>
+				<reportElement key="subreport-1" positionType="Float" x="23" y="15" width="515" height="15"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("deliveryListDetail")]]></subreportExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("incomeListDetail")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-4" positionType="Float" x="24" y="30" width="514" height="16"/>
+				<reportElement key="subreport-4" positionType="Float" x="23" y="30" width="515" height="16"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
@@ -237,7 +237,7 @@
 					<subreportParameterExpression><![CDATA[$V{currentIncome}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentIncome},$V{currentIncome}.getSupplier()))]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("deliveryListTaxBreakDown")]]></subreportExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("incomeListTaxBreakDown")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-76" x="2" y="0" width="82" height="13"/>

@@ -129,7 +129,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_client}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_holder}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-4" mode="Opaque" x="467" y="13" width="69" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -219,7 +219,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="24" y="15" width="513" height="15"/>
+				<reportElement key="subreport-1" positionType="Float" x="23" y="15" width="515" height="15"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
@@ -228,7 +228,7 @@
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("salesListDetail")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-4" positionType="Float" x="24" y="30" width="514" height="16"/>
+				<reportElement key="subreport-4" positionType="Float" x="23" y="30" width="515" height="16"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
