@@ -111,7 +111,7 @@
 
 				<c:if test="#{!item.new}">
 					<c:if
-						test="#{aonConfiguration.bean.product.showAttachment or aonConfiguration.bean.product.showStock}">
+						test="#{aonConfiguration.bean.product.showAttachment or aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showSuppliers}">
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
 							<c:if test="#{aonConfiguration.bean.product.showAttachment}">
 								<aon:panelTab id="itemAttachPanelTab"
@@ -132,24 +132,19 @@
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+								<aon:panelTab id="itemSupplierPanelTab"
+									label="#{purchaseBundle.purchase_item_supplier_module}">
+									<ui:include
+										src="/com/code/aon/ui/purchase/facelet/itemsupplier/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
 						</aon:panelTabSet>
 					</c:if>
 				</c:if>
-				<!-- 
-				<c:if test="#{!item.new and aonConfiguration.bean.product.showAttachment}">		
-					<aon:div styleClass="aon-form-group">
-						<aon:div styleClass="aon-form-group-title">
-							<aon:div styleClass="aon-form-group-title-internal">
-								<aon:outputLabel for="itemAttachData" value="#{productBundle.product_attachment}" />
-							</aon:div>
-						</aon:div>
-						<ui:include src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
-							<ui:param name="controller" value="#{itemAttach}" />
-							<ui:param name="skipCategoryColumn" value="true" />
-						</ui:include>
-					</aon:div>
-				</c:if>
- -->
+
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
@@ -160,5 +155,10 @@
 					src="/com/code/aon/ui/warehouse/facelet/item/itemStockPanel.xhtml" />
 			</c:if>
 		</c:if>
+
+		<c:if test="#{!item.new and aonConfiguration.bean.product.showSuppliers}">
+			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		</c:if>
+		
 	</ui:define>
 </ui:composition>
