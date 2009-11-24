@@ -1,0 +1,124 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+
+		<aon:editDataTable id="domainApplicationData" var="to"
+			value="#{domainApplication.model}" rows="20"
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+			<aon:rowSelector toggleOnClick="#{domainApplication.to == null}"
+				actionListener="#{domainApplication.onSelect}" />
+				
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{domainApplication.onReset}" value=""
+							rendered="#{!domainApplication.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_application}" />
+				</f:facet>
+				<aon:outputText value="#{to.application.name}"
+					rendered="#{to!=domainApplication.to}" />
+				<aon:selectOneMenu rendered="#{to==domainApplication.to}"
+					required="true" value="#{domainApplication.to.application.id}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{auditCollections.applications}" />
+				</aon:selectOneMenu>								
+				<f:facet name="footer">
+					<aon:selectOneMenu rendered="#{domainApplication.new}"
+						required="true" value="#{domainApplication.to.application.id}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.applications}" />
+					</aon:selectOneMenu>								
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_domain_audit_level}" />
+				</f:facet>
+				<aon:outputText value="#{to.auditLevel}"
+					rendered="#{to!=domainApplication.to}" />
+				<aon:selectOneMenu rendered="#{to==domainApplication.to}"
+					required="true" value="#{domainApplication.to.auditLevel}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{auditCollections.auditLevels}" />
+				</aon:selectOneMenu>					
+				<f:facet name="footer">
+					<aon:selectOneMenu rendered="#{domainApplication.new}"
+						required="true" value="#{domainApplication.to.auditLevel}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.auditLevels}" />
+					</aon:selectOneMenu>					
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=domainApplication.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
+						actionListener="#{domainApplication.onAccept}" 
+						rendered="#{to==domainApplication.to}" value=""
+						reRender="domainApplicationDataScroller"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton id="cancelEdit-domainApplication" title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==domainApplication.to}"
+						actionListener="#{domainApplication.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="cancelRemove-domainApplication" title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==domainApplication.to}" reRender="domainApplicationDataScroller"
+						confirmTitle="#{bundle.aon_confirm_title}" 
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{domainApplication.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!domainApplication.new}">&#160;</f:verbatim>
+						<aon:commandButton title="#{bundle.aon_save}"
+							actionListener="#{domainApplication.onAccept}"
+							rendered="#{domainApplication.new}" value=""
+							reRender="domainApplicationDataScroller"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancelNew-domainApplication" title="#{bundle.aon_cancel}"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{domainApplication.new}"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{domainApplication.onCancel}" immediate="true"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</aon:editDataTable>
+
+		<aon:div id="domainApplicationDataScroller" layout="none">
+			<aon:dataScroller2 for="domainApplicationData" showNote="false" />
+		</aon:div>
+
+	</aon:div>
+</ui:composition>
