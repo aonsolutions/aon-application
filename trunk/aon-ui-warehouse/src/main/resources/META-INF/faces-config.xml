@@ -531,6 +531,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ ORDER PROPOSAL ************* -->
+	<managed-bean>
+		<managed-bean-name>orderProposal</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.warehouse.controller.OrderProposalController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>

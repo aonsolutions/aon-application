@@ -211,4 +211,14 @@
 		<template path="/com/code/aon/ui/warehouse/report/incomeListTaxBreakDown.jasper"/>
 	</report>
 	
+	<report id="orderProposal" description="Order Proposal report">
+		<template path="/com/code/aon/ui/warehouse/report/orderProposal.jasper" />
+		<collection provider="#{orderProposal}" forceRefresh="false"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />			
+		</params>
+	</report>
+
 </report-config>
