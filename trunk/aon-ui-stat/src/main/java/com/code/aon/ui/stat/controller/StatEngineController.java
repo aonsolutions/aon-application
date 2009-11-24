@@ -509,7 +509,7 @@ public class StatEngineController {
 			day = Integer.parseInt(params.get("day"));
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
-			cal.set(Calendar.MONTH, currentMonth);
+			cal.set(Calendar.MONTH, currentMonth-1);
 			cal.set(Calendar.DAY_OF_MONTH, day);
 			statParams.setFromDate(cal.getTime());
 			statParams.setToDate(cal.getTime());
