@@ -149,6 +149,8 @@
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.account.bridge -->
 			<value>#{productAccountListener}</value>
+			<!--  aon.ui.warehouse -->
+			<value>#{itemWarehouseChildListener}</value>
 		</list-entries>
 	</managed-bean>
 
