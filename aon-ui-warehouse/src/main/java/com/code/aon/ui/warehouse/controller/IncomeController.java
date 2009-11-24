@@ -283,7 +283,7 @@ public class IncomeController extends BasicController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_ADDRESS_ID), to.getRegistryAddress().getId());
+			criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_REGISTRY_ADDRESS_ID), to.getRegistryAddress().getId());
 		}
 		criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
 		criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
