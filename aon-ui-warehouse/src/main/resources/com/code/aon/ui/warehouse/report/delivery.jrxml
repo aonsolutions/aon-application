@@ -25,7 +25,7 @@
 	<field name="number" class="java.lang.Integer"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="customer" class="com.code.aon.customer.Customer"/>
-	<field name="raddress" class="com.code.aon.registry.IAddress"/>
+	<field name="registryAddress" class="com.code.aon.registry.IAddress"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="lines" class="java.util.Set"/>
 	<field name="bank" class="com.code.aon.config.Bank"/>
@@ -306,7 +306,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{raddress}.getAddress()==null?"":$F{raddress}.getAddress() + " ") + ($F{raddress}.getAddress2()==null?"":$F{raddress}.getAddress2() + " ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{registryAddress}.getAddress()==null?"":$F{registryAddress}.getAddress() + " ") + ($F{registryAddress}.getAddress2()==null?"":$F{registryAddress}.getAddress2() + " ")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" x="390" y="3" width="58" height="23"/>
@@ -443,7 +443,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{raddress}.getZip()+" "+$F{raddress}.getCity()+"  ("+$F{raddress}.getGeozone().getName()+")"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryAddress}.getZip()+" "+$F{registryAddress}.getCity()+"  ("+$F{registryAddress}.getGeozone().getName()+")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="2" y="251" width="69" height="23">

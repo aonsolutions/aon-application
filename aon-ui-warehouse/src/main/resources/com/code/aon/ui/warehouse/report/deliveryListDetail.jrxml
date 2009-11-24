@@ -38,7 +38,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="false">
 				<reportElement key="textField-7" x="356" y="0" width="59" height="12">
 					<printWhenExpression><![CDATA[new Boolean($F{quantity}.doubleValue()>0.0 ||$F{price}.doubleValue()>0.0)]]></printWhenExpression>
 				</reportElement>
@@ -68,7 +68,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{discountExpression}.getDiscountExpr()+"%"]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement key="textField-13" x="446" y="0" width="69" height="12">
 					<printWhenExpression><![CDATA[new Boolean($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0)]]></printWhenExpression>
 				</reportElement>
