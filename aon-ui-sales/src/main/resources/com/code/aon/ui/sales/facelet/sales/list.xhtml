@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{salesBundle.sales_module}" />
 				<ui:param name="controller" value="#{sales}" />
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink id="sales" value="#{salesBundle.sales_list_report}"
+					<h:commandLink id="sales" value="#{bundle.aon_listing}"
 						target="_new" rendered="#{!sales.new}"
 						action="#{report.onExecute}" 
 						disabled="#{salesDetail.to != null}"
@@ -23,7 +23,7 @@
 						<f:param name="reportKey" value="salesList2" />
 						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
-					<h:commandLink id="salesDetail" value="#{salesBundle.sales_detailled_list_report}"
+					<h:commandLink id="salesDetail" value="#{bundle.aon_detailed_listing}"
 						target="_new" rendered="#{!sales.new}"
 						action="#{report.onExecute}" 
 						disabled="#{salesDetail.to != null}"
