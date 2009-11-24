@@ -14,7 +14,16 @@
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_income_module}" />
 				<ui:param name="controller" value="#{income}" />
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink id="delivery" value="#{bundle.aon_listing}"
+					<h:commandLink id="income_excel" value="&#160;" 
+						target="_new" rendered="#{!delivery.new}"
+						action="#{report.onExecute}" 
+						disabled="#{deliveryDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="incomeList2" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+					<h:commandLink id="income" value="#{bundle.aon_listing}"
 						target="_new" rendered="#{!income.new}"
 						action="#{report.onExecute}" 
 						disabled="#{incomeDetail.to != null}"
@@ -22,6 +31,15 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="incomeList2" />
 						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+					<h:commandLink id="incomeDelivery_excel" value="&#160;"
+						target="_new" rendered="#{!delivery.new}"
+						action="#{report.onExecute}" 
+						disabled="#{deliveryDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="incomeDetailledList" />
+						<f:param name="outputFormat" value="MS Excel" />
 					</h:commandLink>
 					<h:commandLink id="incomeDelivery" value="#{bundle.aon_detailed_listing}"
 						target="_new" rendered="#{!income.new}"
