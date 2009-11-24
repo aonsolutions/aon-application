@@ -21,6 +21,12 @@
 	</build>
 	<dependencies>
 <!-- A BORRAR CUANDO SE QUITE SNAPSHOT -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.warehouse</artifactId>
+			<version>4.6.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 <!-- FIN BORRAR -->
 		<dependency>
 			<groupId>com.code.aon</groupId>
