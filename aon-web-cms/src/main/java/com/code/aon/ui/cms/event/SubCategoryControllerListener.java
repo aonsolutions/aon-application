@@ -21,20 +21,6 @@ public class SubCategoryControllerListener extends ControllerAdapter {
 		ProductCategory to = (ProductCategory)controller.getTo();
 		to.setParent(controller.getParent());
 		to.setActive(true);
-		assignSection(event);
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		assignSection(event);
-	}
-
-	private void assignSection(ControllerEvent event){
-		ProductCategory to = (ProductCategory)event.getController().getTo();
-		if (to.getSection().getId()==-1){
-			to.setSection(null);
-		}
 	}
 	
 	private void checkAlias(ControllerEvent event) throws ControllerListenerException{
