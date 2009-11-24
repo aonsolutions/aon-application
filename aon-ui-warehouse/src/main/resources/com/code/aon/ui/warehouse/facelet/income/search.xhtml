@@ -18,10 +18,13 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{income}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/warehouse/facelet/income/searchContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/warehouse/facelet/income/searchContent.xhtml" >
+						<ui:param name="searchController" value="#{incomeSearch}" />
+					</ui:include>					
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />		
 	</ui:define>
 </ui:composition>
