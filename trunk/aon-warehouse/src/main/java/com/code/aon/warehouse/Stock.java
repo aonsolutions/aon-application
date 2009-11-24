@@ -9,131 +9,88 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Item;
 
-/**
- * Transfer Object that represents a Stock line.
- * 
- * @author igayarre
- *
- */
 @Entity
 @Table(name="stock")
 public class Stock implements ITransferObject{
 	
 	private static final long serialVersionUID = -6415420632921077499L;
 
-	/**
-	 * Unique key
-	 */
 	private Integer id;
-	
-	/**
-	 * Item of the stock line
-	 */
 	private Item item;
-	
-	/**
-	 * Warehouse of the stock analisys
-	 */
 	private Warehouse warehouse;
-	
-	/**
-	 * Quantity of items in this warehouse
-	 */
 	private Double quantity;
 	
-	/**
-	 * Returns the unique key
-	 * 
-	 * @return unique key
-	 */
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
 	public Integer getId() {
 		return id;
 	}
-	
-	/**
-	 * Assigns the unique key
-	 * 
-	 * @param primaryKey
-	 */
 	public void setId(Integer primaryKey) {
 		this.id = primaryKey;
 	}
 	
-	/**
-	 * Returns the Item 
-	 * 
-	 * @return Returns the item.
-	 */
 	@ManyToOne
 	@JoinColumn( name="item",nullable=false )
 	public Item getItem() {
 		return item;
 	}
-	/**
-	 * Assgins a Item to this detail
-	 * 
-	 * @param item The item to set.
-	 */
 	public void setItem(Item item) {
 		this.item = item;
 	}
-	
-	/**
-	 * Returns the quantity
-	 * 
-	 * @return Returns the quantity.
-	 */
+
 	public Double getQuantity() {
 		return quantity;
 	}
-	/**
-	 * Assigns the quantity of Items
-	 * 
-	 * @param quantity The quantity to set.
-	 */
 	public void setQuantity(Double quantity) {
 		this.quantity = quantity;
 	}
 	
-	/**
-	 * Returns the warehouse
-	 * 
-	 * @return Returns the warehouse.
-	 */
 	@ManyToOne
 	@JoinColumn( name="warehouse",nullable=false )
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
-
-	/**
-	 * Assigns the warehouse
-	 * 
-	 * @param warehouse The warehouse to be set.
-	 */
 	public void setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Stock o = (Stock) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.item, o.item)
+				.append(this.warehouse, o.warehouse)
+				.append(this.quantity, o.quantity)
+				.isEquals();
 		}
-		if (obj instanceof Stock) {
-			Stock stock = (Stock) obj;
-			if (ObjectUtils.equals(getId(), stock.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)	
+			.append(item)			
+			.append(warehouse)
+			.append(quantity)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 	
 }

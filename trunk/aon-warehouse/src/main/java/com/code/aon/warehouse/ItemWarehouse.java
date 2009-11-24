@@ -17,17 +17,17 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Item;
 
 @Entity
-@Table(name="inventory_detail")
-public class InventoryDetail implements ITransferObject {
+@Table(name="item_warehouse")
+public class ItemWarehouse implements ITransferObject{
 	
-	private static final long serialVersionUID = -8584837639559704341L;
+	private static final long serialVersionUID = -6415420632921077499L;
 
 	private Integer id;
-	private Inventory inventory;
 	private Item item;
-	private double actualQuantity;
-	private double realQuantity;
-	private double cost;
+	private Warehouse warehouse;
+	private Double stockMin;
+	private Double stockMax;
+	private String location;
 
 	@Id
 	@GeneratedValue
@@ -35,65 +35,62 @@ public class InventoryDetail implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+	public void setId(Integer primaryKey) {
+		this.id = primaryKey;
 	}
-
+	
 	@ManyToOne
-    @JoinColumn(name="inventory", nullable = false, updatable = false)
-	public Inventory getInventory() {
-		return inventory;
-	}
-	public void setInventory(Inventory inventory) {
-		this.inventory = inventory;
-	}
-
-	@ManyToOne
-    @JoinColumn(name="item", nullable = false, updatable = false)
+	@JoinColumn(name="item",nullable=false)
 	public Item getItem() {
 		return item;
 	}
 	public void setItem(Item item) {
 		this.item = item;
 	}
-
-	@Column(name="actual_quantity")
-	public double getActualQuantity() {
-		return actualQuantity;
-	}
-	public void setActualQuantity(double actualQuantity) {
-		this.actualQuantity = actualQuantity;
-	}
 	
-	@Column(name="real_quantity")
-	public double getRealQuantity() {
-		return realQuantity;
+	@ManyToOne
+	@JoinColumn( name="warehouse",nullable=false )
+	public Warehouse getWarehouse() {
+		return warehouse;
 	}
-	public void setRealQuantity(double realQuantity) {
-		this.realQuantity = realQuantity;
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
 	}
 
-	@Column(name="cost")
-	public double getCost() {
-		return cost;
+	public Double getStockMin() {
+		return stockMin;
 	}
-	public void setCost(double cost) {
-		this.cost = cost;
+	public void setStockMin(Double stockMin) {
+		this.stockMin = stockMin;
 	}
 	
+	public Double getStockMax() {
+		return stockMax;
+	}
+	public void setStockMax(Double stockMax) {
+		this.stockMax = stockMax;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final InventoryDetail o = (InventoryDetail) obj;
+		final ItemWarehouse o = (ItemWarehouse) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.item, o.item)
-				.append(this.actualQuantity, o.actualQuantity)
-				.append(this.cost, o.cost)
-				.append(this.realQuantity, o.realQuantity)
-				.append(this.inventory, o.inventory)
+				.append(this.warehouse, o.warehouse)
+				.append(this.stockMax, o.stockMax)
+				.append(this.stockMin, o.stockMin)
+				.append(this.location, o.location)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -104,10 +101,10 @@ public class InventoryDetail implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)	
 			.append(item)			
-			.append(actualQuantity)
-			.append(cost)
-			.append(realQuantity)
-			.append(inventory)
+			.append(warehouse)
+			.append(stockMin)
+			.append(stockMax)
+			.append(location)
 			.toHashCode();
 	}
 
