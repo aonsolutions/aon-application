@@ -34,14 +34,14 @@
 			<band height="285" splitType="Stretch">
 				<pie3DChart>
 					<chart>
-						<reportElement key="element-1" x="96" y="49" width="338" height="215"/>
+						<reportElement key="element-1" positionType="Float" x="77" y="49" width="407" height="219"/>
 						<chartTitle/>
 						<chartSubtitle/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF">
 							<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						</chartLegend>
 					</chart>
-					<pieDataset maxCount="10">
+					<pieDataset maxCount="7">
 						<keyExpression><![CDATA[$F{name}]]></keyExpression>
 						<valueExpression><![CDATA[$F{amount}]]></valueExpression>
 					</pieDataset>

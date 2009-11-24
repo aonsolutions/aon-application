@@ -34,7 +34,7 @@
 				<stackedBar3DChart>
 					<chart isShowLegend="false">
 						<reportElement key="element-3" x="5" y="35" width="530" height="203"/>
-						<chartTitle/>
+						<chartTitle position="Top"/>
 						<chartSubtitle/>
 						<chartLegend/>
 					</chart>

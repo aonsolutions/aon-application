@@ -65,10 +65,26 @@ public class StatEngineController {
 	private Integer invoiceType;
 	private InvoiceType iType;
 	private Integer daysYear;
+	private Integer dayMonth;
 	private StatParams paramsBackUp;
-	
-		
-	
+	private Integer summaryMonth;
+
+	public Integer getSummaryMonth() {
+		return summaryMonth;
+	}
+
+	public void setSummaryMonth(Integer summaryMonth) {
+		this.summaryMonth = summaryMonth;
+	}
+
+	public Integer getDayMonth() {
+		return dayMonth;
+	}
+
+	public void setDayMonth(Integer dayMonth) {
+		this.dayMonth = dayMonth;
+	}
+
 	public StatParams getParamsBackUp() {
 		return paramsBackUp;
 	}
@@ -92,7 +108,7 @@ public class StatEngineController {
 	public void setInvoiceType(Integer invoiceType) {
 		this.invoiceType = invoiceType;
 	}
-	
+
 	public InvoiceType getIType() {
 		return iType;
 	}
@@ -132,8 +148,33 @@ public class StatEngineController {
 			Map<String, String> params = ec.getRequestParameterMap();
 			String cus = params.get("customer");
 			Integer customer = Integer.parseInt(cus);
-			Calendar fecini = new GregorianCalendar(currentYear, 0, 1);
-			Calendar fecfin = new GregorianCalendar(currentYear, 11, 31);
+			Calendar fecini = null;
+			Calendar fecfin = null;
+			// StatParams parameters = new StatParams();
+			// refreshControllerDates(parameters);
+			if (currentYear != null && currentMonth == null) {
+
+				fecini = new GregorianCalendar(currentYear, 0, 1);
+				fecfin = new GregorianCalendar(currentYear, 11, 31);
+
+			} else if (currentMonth != null && currentDay == null) {
+
+				fecini = new GregorianCalendar(currentYear, currentMonth - 1, 1);
+				fecfin = new GregorianCalendar(currentYear, currentMonth - 1,
+						31);
+				fecfin.set(Calendar.DAY_OF_MONTH, fecfin
+						.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+			} else if (currentYear != null && currentMonth != null
+					&& currentDay != null) {
+
+				fecini = new GregorianCalendar(currentYear, currentMonth - 1,
+						currentDay);
+				fecfin = new GregorianCalendar(currentYear, currentMonth - 1,
+						currentDay);
+
+			}
+
 			StatParams parameters = new StatParams();
 			parameters.setFromDate(fecini.getTime());
 			parameters.setToDate(fecfin.getTime());
@@ -146,7 +187,7 @@ public class StatEngineController {
 					.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), parameters
 					.getFromDate(), parameters.getToDate());
 			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IFinanceAlias.INVOICE_TYPE),iType);
+					.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
 
 			List<ITransferObject> list;
 			list = invoiceBean.getList(criteria);
@@ -164,12 +205,16 @@ public class StatEngineController {
 	public void onSaleType(ActionEvent event) {
 		setInvoiceType(1);
 		setIType(InvoiceType.SALES);
-		
+
 	}
 
 	public void onPurchaseType(ActionEvent event) {
 		setInvoiceType(0);
 		setIType(InvoiceType.PURCHASE);
+	}
+
+	public void onSummary(ActionEvent event) {
+
 	}
 
 	public void onReset(ActionEvent event) {
@@ -178,7 +223,7 @@ public class StatEngineController {
 				.getLocale());
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
-		setCurrentMonth(c.get(Calendar.MONTH) + 1);
+		setSummaryMonth(c.get(Calendar.MONTH) + 1);
 		c.set(Calendar.MONTH, 0);
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		params.setFromDate(c.getTime());
@@ -339,8 +384,14 @@ public class StatEngineController {
 			list.addAll(se.getYearStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			if (invoiceType == 1) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			} else {
+				setReportName(AonUtil
+						.getMessage(bundle, "stat_menu_acumulado2"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			}
 			yearStatModel = null;
 			setBackAction("customer_stat_list_year");
 		} catch (ManagerBeanException e) {
@@ -388,22 +439,20 @@ public class StatEngineController {
 
 	public void onSummaryStats(ActionEvent event) {
 		try {
-			System.out.println(currentMonth);
-			currentMonth--;
+
+			summaryMonth--;
 			Calendar c = new GregorianCalendar(1970, 0, 1);
 			c.setTime(new Date());
 
 			c.set(Calendar.DAY_OF_MONTH, 1);
-			c.set(Calendar.MONTH, currentMonth);
+			c.set(Calendar.MONTH, summaryMonth);
 			c.set(Calendar.YEAR, currentYear - 1);
 			params.setFromDate(c.getTime());
-			c.set(Calendar.MONTH, currentMonth);
+			c.set(Calendar.MONTH, summaryMonth);
 			c.set(Calendar.YEAR, currentYear);
 			c.set(Calendar.DAY_OF_MONTH, c
 					.getActualMaximum(Calendar.DAY_OF_MONTH));
 			params.setToDate(c.getTime());
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
 			params.setInvoiceType(invoiceType);
 			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
@@ -428,8 +477,14 @@ public class StatEngineController {
 			list.addAll(se.getABCStatsByCustomer(params));
 			setAbcStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_abcCustomer"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			if (invoiceType == 1) {
+				setReportName(AonUtil.getMessage(bundle, "stat_report_abcCustomer"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			} else {
+				setReportName(AonUtil.getMessage(bundle, "stat_abc_supplier"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_supplier"));
+			}
+		
 			abcStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -500,16 +555,18 @@ public class StatEngineController {
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
 			cal.set(Calendar.MONTH, month);
-			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH, cal
+					.getActualMinimum(Calendar.DAY_OF_MONTH));
 			statParams.setFromDate(cal.getTime());
-			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH, cal
+					.getActualMaximum(Calendar.DAY_OF_MONTH));
 			statParams.setToDate(cal.getTime());
 		}
 		if (params.get("day") != null) {
 			day = Integer.parseInt(params.get("day"));
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
-			cal.set(Calendar.MONTH, currentMonth-1);
+			cal.set(Calendar.MONTH, currentMonth - 1);
 			cal.set(Calendar.DAY_OF_MONTH, day);
 			statParams.setFromDate(cal.getTime());
 			statParams.setToDate(cal.getTime());
@@ -518,21 +575,40 @@ public class StatEngineController {
 
 	public void onCustomerStats(ActionEvent event) {
 		try {
+			ExternalContext ec = FacesContext.getCurrentInstance()
+					.getExternalContext();
+			Map<String, String> paramss = ec.getRequestParameterMap();
+			if (paramss.get("year") != null) {
+				Integer year = Integer.parseInt(paramss.get("year"));
+				setCurrentYear(year);
+			}
+			if (paramss.get("month") != null) {
+				Integer month = Integer.parseInt(paramss.get("month"));
+				setCurrentMonth(month);
+			}
+			if (paramss.get("day") != null) {
+				Integer day = Integer.parseInt(paramss.get("day"));
+				setCurrentDay(day);
+			}
 			StatParams params = new StatParams();
-			params.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+			params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale());
 			refreshControllerDates(params);
 			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
-			System.out.println(params.getInvoiceType());
 			setDaysYear(currentYear);
 			list.addAll(se.getCustomerStats(params));
 			setCustomerStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_customers"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			if (invoiceType == 1) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_customers"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			} else {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_suppliers"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_supplier"));
+			}
+			
 			customerStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -593,94 +669,105 @@ public class StatEngineController {
 		}
 	}
 
-	public void onDayBackAction(ActionEvent event) throws ManagerBeanException {		
+	public void onDayBackAction(ActionEvent event) throws ManagerBeanException {
 		setCurrentYear(daysYear);
-		System.out.println(currentYear);
 		getMonthStatistics();
+		setCurrentDay(null);
 	}
-	
-	public void onRegistryYearBackAction(ActionEvent event) throws ManagerBeanException {		
-	setParams(paramsBackUp);
-	StatEngine se = new StatEngine();
-	List<Stat> list = new LinkedList<Stat>();
-	list.addAll(se.getYearStats(params));
-	calculateTotals(list);
-	setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-	setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
-	yearStatModel = null;
-	setBackAction("customer_stat_list_year");
-	
+
+	public void onCustomerDayBackAction(ActionEvent event)
+			throws ManagerBeanException {
+		setCurrentYear(daysYear);
+		setCurrentMonth(dayMonth);
+		getDayStatititics();
 	}
-	
+
+	public void onRegistryYearBackAction(ActionEvent event)
+			throws ManagerBeanException {
+		setParams(paramsBackUp);
+		StatEngine se = new StatEngine();
+		List<Stat> list = new LinkedList<Stat>();
+		list.addAll(se.getYearStats(params));
+		calculateTotals(list);
+		setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
+		setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+		yearStatModel = null;
+		setBackAction("customer_stat_list_year");
+		setCurrentMonth(null);
+
+	}
 
 	private void getMonthStatistics() throws ManagerBeanException {
-		
+
 		StatEngine se = new StatEngine();
 		Calendar init = new GregorianCalendar();
 		Calendar fin = new GregorianCalendar();
 		init.setTime(params.getFromDate());
 		fin.setTime(params.getToDate());
-				
-		if(init.get(Calendar.YEAR)==currentYear && fin.get(Calendar.YEAR)==currentYear){
+
+		if (init.get(Calendar.YEAR) == currentYear
+				&& fin.get(Calendar.YEAR) == currentYear) {
 			params.setInvoiceType(invoiceType);
 			List<Stat> list = new LinkedList<Stat>();
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
 			params.setInvoiceType(invoiceType);
-			System.out.println(params.getInvoiceType());
 			list.addAll(se.getMonthsStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+			if (invoiceType == 1) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			} else {
+				setReportName(AonUtil
+						.getMessage(bundle, "stat_menu_acumulado2"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			}
 			monthStatModel = null;
 		}
-		/*if(init.get(Calendar.YEAR)!=currentYear && fin.get(Calendar.YEAR)==currentYear){
-			Calendar fecini = new GregorianCalendar(currentYear, 0, 1);
-			params.setFromDate(fecini.getTime());
-			params.setInvoiceType(invoiceType);
-			List<Stat> list = new LinkedList<Stat>();
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
-			list.addAll(se.getMonthsStats(params));
-			setMonthStats(list);
-			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
-			monthStatModel = null;
-		}
-		if(init.get(Calendar.YEAR)==currentYear && fin.get(Calendar.YEAR)!=currentYear){
+		/*
+		 * if(init.get(Calendar.YEAR)!=currentYear &&
+		 * fin.get(Calendar.YEAR)==currentYear){ Calendar fecini = new
+		 * GregorianCalendar(currentYear, 0, 1);
+		 * params.setFromDate(fecini.getTime());
+		 * params.setInvoiceType(invoiceType); List<Stat> list = new
+		 * LinkedList<Stat>(); System.out.println(params.getFromDate());
+		 * System.out.println(params.getToDate());
+		 * list.addAll(se.getMonthsStats(params)); setMonthStats(list);
+		 * calculateTotals(list); setReportName(AonUtil.getMessage(bundle,
+		 * "stat_menu_acumulado")); setItemTitle(AonUtil.getMessage(bundle,
+		 * "stat_month")); monthStatModel = null; }
+		 * if(init.get(Calendar.YEAR)==currentYear &&
+		 * fin.get(Calendar.YEAR)!=currentYear){ Calendar fecfin = new
+		 * GregorianCalendar(currentYear, 11, 31);
+		 * params.setToDate(fecfin.getTime()); List<Stat> list = new
+		 * LinkedList<Stat>(); System.out.println(params.getFromDate());
+		 * System.out.println(params.getToDate());
+		 * list.addAll(se.getMonthsStats(params)); setMonthStats(list);
+		 * calculateTotals(list); setReportName(AonUtil.getMessage(bundle,
+		 * "stat_menu_acumulado")); setItemTitle(AonUtil.getMessage(bundle,
+		 * "stat_month")); monthStatModel = null; }
+		 */
+		if (init.get(Calendar.YEAR) != currentYear
+				|| fin.get(Calendar.YEAR) != currentYear) {
+			Calendar fec = new GregorianCalendar(currentYear, 0, 1);
 			Calendar fecfin = new GregorianCalendar(currentYear, 11, 31);
+			params.setFromDate(fec.getTime());
 			params.setToDate(fecfin.getTime());
 			List<Stat> list = new LinkedList<Stat>();
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
-			list.addAll(se.getMonthsStats(params));
-			setMonthStats(list);
-			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
-			monthStatModel = null;		
-		}*/
-		if(init.get(Calendar.YEAR)!=currentYear || fin.get(Calendar.YEAR)!=currentYear){
-			Calendar fec = new GregorianCalendar(currentYear, 0, 1);
-			Calendar fecfin = new GregorianCalendar(currentYear, 11, 31);			
-			params.setFromDate(fec.getTime());
-			params.setToDate(fecfin.getTime());			
-			List<Stat> list = new LinkedList<Stat>();
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
 			params.setInvoiceType(invoiceType);
-			System.out.println(params.getInvoiceType());
 			list.addAll(se.getMonthsStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
-			monthStatModel = null;		
+			if (invoiceType == 1) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			} else {
+				setReportName(AonUtil
+						.getMessage(bundle, "stat_menu_acumulado2"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			}
+			monthStatModel = null;
 		}
-		
-			
+
 	}
 
 	private void getSegmentMonthStatistics() throws ManagerBeanException {
@@ -701,16 +788,15 @@ public class StatEngineController {
 		setTotalAmount(0.00);
 		setNumInvoices(0);
 		setPromAmount(0.00);
-		
+
 		while (i < list.size()) {
 
 			totalAmount += list.get(i).getAmount();
 			numInvoices += (int) list.get(i).getNumInvoice();
-			
 
 			i++;
 		}
-		promAmount +=totalAmount/numInvoices;
+		promAmount += totalAmount / numInvoices;
 	}
 
 	private void getSegmentDayStatistics() throws ManagerBeanException {
@@ -791,25 +877,30 @@ public class StatEngineController {
 					.getLocale());
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
-			cal.set(Calendar.MONTH, currentMonth-1);
-			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.MONTH, currentMonth - 1);
+			cal.set(Calendar.DAY_OF_MONTH, cal
+					.getActualMinimum(Calendar.DAY_OF_MONTH));
 			params.setFromDate(cal.getTime());
-			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH, cal
+					.getActualMaximum(Calendar.DAY_OF_MONTH));
 			params.setToDate(cal.getTime());
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
 			params.setInvoiceType(invoiceType);
-			System.out.println(params.getInvoiceType());
 			params.setInvoiceType(invoiceType);
 			List<Stat> list = new LinkedList<Stat>();
 			list.addAll(se.getDaysStats(params));
 			setDayStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
+			if (invoiceType == 1) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			} else {
+				setReportName(AonUtil
+						.getMessage(bundle, "stat_menu_acumulado2"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			}
 			dayStatModel = null;
-			System.out.println(currentYear);
 			setDaysYear(currentYear);
+			setDayMonth(currentMonth);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
