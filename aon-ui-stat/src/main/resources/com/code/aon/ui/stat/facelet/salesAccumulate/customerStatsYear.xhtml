@@ -13,7 +13,7 @@
 		<aon:methodParam name="backAction" value="sales_stats_year" />
 		<aon:methodParam name="goAction" value="invoice_list"/>
 		<aon:methodParam name="goMethod"  value="#{stat.onInvoiceList}" type="actionListener" />
-		<aon:methodParam name="backMethod" value="" type="actionListener" />
+		<aon:methodParam name="backMethod" value="#{stat.onRegistryYearBackAction}" type="actionListener" />
 		<c:if test="#{stat.invoiceType==1}">
 			<ui:param name="windowTitle" value="#{statBundle.stat_menu_customers}" />
 			<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
