@@ -23,8 +23,7 @@ public class VatCollection {
 			StringWriter stmt = new StringWriter();
 			stmt.append("SELECT i.type,YEAR(i.issue_date) YEAR,QUARTER(i.issue_date) QUARTER, ");
 			stmt.append("	   MONTH(i.issue_date) MONTH,it.percentage,it.surcharge,i.transaction,");
-			stmt.append("	   i.investment,SUM(id.taxable_base),");
-			stmt.append("	   SUM(ROUND(id.taxable_base * it.percentage / 100, 2)),SUM(ROUND(id.taxable_base * it.surcharge / 100, 2))");
+			stmt.append("	   i.investment,SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
@@ -65,8 +64,6 @@ public class VatCollection {
 				vat.setTransactionType(transaction);
 				vat.setInvestment(rs.getBoolean(8));
 				vat.setBase(rs.getDouble(9));
-				vat.setVatQuota(rs.getDouble(10));
-				vat.setSurchargeQuota(rs.getDouble(11));
 				vats.add(vat);
 			}
 			return vats;
@@ -96,8 +93,7 @@ public class VatCollection {
 			String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) "; 
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.type,i.transaction,i.issue_date,i.reference_code,i.rdocument,i.rname ");
-			stmt.append("  ,it.percentage,it.surcharge,SUM(id.taxable_base) ");
-			stmt.append("  ,SUM(ROUND(id.taxable_base * it.percentage / 100, 2)),SUM(ROUND(id.taxable_base * it.surcharge / 100, 2)),");
+			stmt.append("  ,it.percentage,it.surcharge,SUM(id.taxable_base), ");
 			stmt.append(operation + " vatType ");
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
@@ -169,9 +165,7 @@ public class VatCollection {
 				vat.setPercent(rs.getDouble(7));
 				vat.setSurcharge(rs.getDouble(8));
 				vat.setBase(rs.getDouble(9));
-				vat.setVatQuota(rs.getDouble(10));
-				vat.setSurchargeQuota(rs.getDouble(11));
-				VatType vatType = VatType.values()[(rs.getInt(12) - 1)];
+				VatType vatType = VatType.values()[(rs.getInt(10) - 1)];
 				vat.setVatType(vatType);
 				vats.add(vat);
 			}

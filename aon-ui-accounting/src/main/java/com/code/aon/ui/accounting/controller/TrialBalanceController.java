@@ -182,6 +182,6 @@ public class TrialBalanceController implements ICollectionProvider {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
-		return getCollection();
+		return getCollection(false);
 	}
 }

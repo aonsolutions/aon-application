@@ -8,11 +8,9 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -46,7 +44,6 @@ import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.desktop.applications.ApplicationsManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -69,8 +66,6 @@ public class DomainController extends BasicController implements IDesktopConstan
 	private BasicManagerBean ldapManagerBean;
 	
 	private DBManager manager = new DBManager();
-	
-	private ApplicationsManager.App selectedApplication;
 
 	public DomainController() {
 		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
@@ -84,30 +79,6 @@ public class DomainController extends BasicController implements IDesktopConstan
 		manager = new DBManager();
 	}
 
-	public ApplicationsManager.App getSelectedApplication() {
-		return selectedApplication;
-	}
-
-	public void setSelectedApplication(ApplicationsManager.App selectedApplication) {
-		this.selectedApplication = selectedApplication;
-	}
-
-	public String getCurrentDomainApplicationURL() throws ManagerBeanException {
-		if ( getModel().isRowAvailable() ) {
-			Domain domain = (Domain) getModel().getRowData();
-			StringBuffer url = new StringBuffer( "http://" );
-			url.append( domain.getCommonName() );
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-			if ( request.getRemotePort() != 80 ) {
-				url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
-			}
-			url.append( selectedApplication.getContext() );
-			return url.toString();
-		}
-		return null;
-	}
-	
 	public String getCurrentDomain() {
 		return currentDomain;
 	}
@@ -350,5 +321,5 @@ public class DomainController extends BasicController implements IDesktopConstan
 		Name usersDN = NameResolver.getUsersDN(domain);
 		addReferral(usersDN, currentUsersDN, ORGANIZATIONAL_UNIT);
 	}
-	
+
 }

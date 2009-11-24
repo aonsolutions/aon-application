@@ -10,23 +10,10 @@
 
 		<aon:form id="contactForm">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_domains}" />
 				<ui:param name="controller" value="#{domain}" />
-				<ui:param name="skipSaveButton" value="#{domain.new}" />
-				<ui:define name="beforeToolbarContent">
-					<c:if test="#{domain.new}">				
-						<aon:commandButton id="#{toolbarID}-save"
-							value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
-							action="#{saveAction}"
-							actionListener="#{saveActionListener}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" 
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-			     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-			     	</c:if>			     	
-		     	</ui:define>				
-			</ui:decorate>
+			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 
@@ -92,6 +79,5 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

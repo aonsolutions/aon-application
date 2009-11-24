@@ -24,9 +24,9 @@ public class SummaryProviderParameters {
 	private boolean lowerLevelVisible = false;
 	
 	/**
-	 * Si se desea que se devuelvan las flas con acumulados a cero.
+	 * Si se desea que se devuelvan las filas sin movimientos.
 	 */
-	private boolean zeroSumVisible = false;
+	private boolean noTouchedAccountVisible = false;
 	
 	/**
 	 * Nivel de las cuentas. Se devolverán las filas que cumplan la siguiente condición.
@@ -73,7 +73,7 @@ public class SummaryProviderParameters {
 		setAccountDescription(null);
 		setAccountAlias(null);
 		setLowerLevelVisible(false);
-		setZeroSumVisible(false);
+		setNoTouchedAccountVisible(false);
 		setAccountLevel(4);
 		setFromDate(null);
 		setToDate(null);
@@ -117,12 +117,12 @@ public class SummaryProviderParameters {
 		this.lowerLevelVisible = lowerLevelVisible;
 	}
 
-	public boolean isZeroSumVisible() {
-		return zeroSumVisible;
+	public boolean isNoTouchedAccountVisible() {
+		return noTouchedAccountVisible;
 	}
 
-	public void setZeroSumVisible(boolean zeroSumVisible) {
-		this.zeroSumVisible = zeroSumVisible;
+	public void setNoTouchedAccountVisible(boolean noTouchedAccountVisible) {
+		this.noTouchedAccountVisible = noTouchedAccountVisible;
 	}
 
 	public int getAccountLevel() {

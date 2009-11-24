@@ -70,7 +70,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	public Invoice() {
 		this.issueDate = new Date();
-		this.taxDate = new Date();
 	}
 
     /** The id. */
@@ -99,9 +98,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     
     /** The issue date. */
     private Date issueDate;
-
-    /** The tax date. */
-    private Date taxDate;
 
     /** The security level. */
     private SecurityLevel securityLevel;
@@ -138,8 +134,9 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	private Set<InvoiceAddress> invoiceAddresses = new HashSet<InvoiceAddress>();
 
 	private int issueYear;
+
 	private int issueMonth;
-	private int issueDay;
+	
 	/**
      * Gets the id.
      * 
@@ -168,7 +165,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
     @ForeignKey(name="FK_INVOICE_REGISTRY")
-    @Index(name="IDX_INVOICE_REGISTRY")  
+    @Index(name="IDX_INVOICE_REGISTRY")                        
     public Registry getRegistry() {
         return registry;
     }
@@ -228,7 +225,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="raddress")
     @ForeignKey(name="FK_INVOICE_RADDRESS")
-    @Index(name="IDX_INVOICE_RADDRESS") 
+    @Index(name="IDX_INVOICE_RADDRESS")                            
     public RegistryAddress getRegistryAddress() {
         return registryAddress;
     }
@@ -261,8 +258,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      */
     public void setIssueDate(Date issueDate) {
         this.issueDate = issueDate;
-        /*@TODO Quitar esta linea de abajo cuando el campo taxDate tenga mantenimiento.*/
-        this.taxDate = issueDate;
     }
 
     /**
@@ -270,11 +265,10 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      * 
      * @return the tax date
      */
-    @Column(name="tax_date")
-    @Temporal(TemporalType.DATE)
-    @Index(name="IDX_INVOICE_TAX_DATE")
+    @Transient
     public Date getTaxDate() {
-        return taxDate;
+        return issueDate;
+        // Retorna fecha de factura , hasta que la columna esté en la BD.        
     }
 
     /**
@@ -283,7 +277,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      * @param taxDate the tax date
      */
     public void setTaxDate(Date taxDate) {
-    	this.taxDate = taxDate;
+        // Nada, hasta que la columna esté en la BD.
     }
 
     /**
@@ -405,8 +399,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 * 
 	 * @return true, if a surcharge has to be applied.
 	 */
-	 
-	@Column(nullable=true) 
+	@Column(nullable=true)
 	public boolean isSurcharge() {
 		return surcharge;
 	}
@@ -478,25 +471,20 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	@Formula("year(issue_date)")
 	public int getIssueYear() {
-	 return issueYear;	
+		return issueYear;	
 	}
+
 	public void setIssueYear(int year) {
 		issueYear = year;
 	}
+
 	@Formula("month(issue_date)")
 	public int getIssueMonth() {
-	 return issueMonth;	
+		return issueMonth;	
 	}
+
 	public void setIssueMonth(int month) {
 		issueMonth = month;
-	}
-	
-	@Formula("day(issue_date)")
-	public int getIssueDay() {
-	 return issueDay;	
-	}
-	public void setIssueDay(int day) {
-		issueDay = day;
 	}
 	
 	/**

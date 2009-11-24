@@ -5,8 +5,6 @@
 <hibernate-configuration>
 
 	<session-factory>
-	
-		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category"/>
@@ -56,22 +54,6 @@
 		<!-- AON-MESSAGING Mapping files -->
 		<mapping class="com.code.aon.messaging.Message"/>
 		<mapping class="com.code.aon.messaging.MessageContent"/>		
-		
-		<!-- AON-PROJECT Mapping files --> 
-		<mapping class="com.code.aon.project.Activity"/>
-		<mapping class="com.code.aon.project.ActivityType"/>
-		<mapping class="com.code.aon.project.DailyTracking"/>
-		<mapping class="com.code.aon.project.Dossier"/>
-		<mapping class="com.code.aon.project.DossierType"/>
-		<mapping class="com.code.aon.project.JobType"/>
-		<mapping class="com.code.aon.project.Task"/>		
-
-		<!-- AON-CUSTOMER Mapping files -->
-		<mapping class="com.code.aon.customer.Customer"/>
-		<mapping class="com.code.aon.customer.CustomerSegment"/>
-
-		<!-- AON-PRODUCT Mapping files -->	
-		<mapping class="com.code.aon.product.Tariff"/>
 
 	</session-factory>
 

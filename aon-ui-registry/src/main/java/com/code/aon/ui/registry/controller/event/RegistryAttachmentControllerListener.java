@@ -9,15 +9,13 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 
 /**
  * Controller used in the RegistryAttachment maintenance
  */
-public class RegistryAttachmentControllerListener extends ControllerAdapter {
+public class RegistryAttachmentControllerListener extends ControllerAdapter implements IRegistryConstants {
 	
-	/** ATTACHMENT_CONTROLLER_NAME. */	
-	private static final String ATTACHMENT_CONTROLLER_NAME = "attachment";
-
 	/**
 	 * Gets the detail controller.
 	 * 

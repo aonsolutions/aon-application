@@ -5,7 +5,7 @@ function validateOnChange(field) {
 			p = a[0];
 			s = a[1];
 			le = p.length + s.length;
-			for (i=le;i<12;i++) {
+			for (i=le;i<9;i++) {
 				p += "0";
 			}
 			field.value = p + s;

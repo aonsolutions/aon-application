@@ -44,6 +44,22 @@ public class AccountUtil {
 	private static final Logger LOGGER = Logger.getLogger(AccountUtil.class.getName());
 
 	@SuppressWarnings("unchecked")
+	public static RegistryBank obtainRBank(String account) throws ManagerBeanException {
+		try {
+			IManagerBean rBankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addExpression(rBankAccountBean.getFieldName(IAccountBridgeAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID), account);
+			Iterator iter = rBankAccountBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return ((RegistryBankAccount)iter.next()).getRegistryBank();
+			}
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
 	public static Account obtainRBankAccount(RegistryBank rBank) {
 		try {
 			IManagerBean rBankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
@@ -275,22 +291,21 @@ public class AccountUtil {
 		Iterator iter = periodBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return (Period)iter.next();
-		} else {
-			Calendar initiation = new GregorianCalendar();
-			initiation.setTime(date);
-			initiation.set(Calendar.DAY_OF_MONTH, 1);
-			initiation.set(Calendar.MONTH, 0);
-			Calendar deadline = new GregorianCalendar();
-			deadline.setTime(date);
-			deadline.set(Calendar.DAY_OF_MONTH, 31);
-			deadline.set(Calendar.MONTH, 11);
+		} 
+		Calendar initiation = new GregorianCalendar();
+		initiation.setTime(date);
+		initiation.set(Calendar.DAY_OF_MONTH, 1);
+		initiation.set(Calendar.MONTH, 0);
+		Calendar deadline = new GregorianCalendar();
+		deadline.setTime(date);
+		deadline.set(Calendar.DAY_OF_MONTH, 31);
+		deadline.set(Calendar.MONTH, 11);
 
-			Period period = new Period();
-			period.setId(Integer.toString(initiation.get(Calendar.YEAR)));
-			period.setInitiationDate(initiation.getTime());
-			period.setDeadline(deadline.getTime());
-			return (Period)periodBean.insert(period);
-		}
+		Period period = new Period();
+		period.setId(Integer.toString(initiation.get(Calendar.YEAR)));
+		period.setInitiationDate(initiation.getTime());
+		period.setDeadline(deadline.getTime());
+		return (Period)periodBean.insert(period);
 	}
 	
 	@SuppressWarnings("unchecked")

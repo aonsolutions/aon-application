@@ -167,14 +167,6 @@
 			<from-outcome>domain_search</from-outcome>
 			<to-view-id>/facelet/domain/search.xhtml</to-view-id>
 		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_select</from-outcome>
-			<to-view-id>/facelet/domain/select.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_selectSearch</from-outcome>
-			<to-view-id>/facelet/domain/selectSearch.xhtml</to-view-id>
-		</navigation-case>
 	</navigation-rule>
 	
 </faces-config>

@@ -37,16 +37,11 @@
 						<f:setPropertyActionListener target="#{finance.showFinanceReturnWindow}"
 							value="#{true}" />
 					</aon:commandButton>
-					<aon:commandButton id="settle" 
-						value="#{financeBundle.finance_to_settle}"
-						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item-no-icon"
-						actionListener="#{finance.onSettleFinance}" />
 					<aon:commandButton id="fraction" 
 						value="#{financeBundle.finance_to_fraction}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
 						styleClass="aon-finding-toolbar-item-no-icon"
-						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
+						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction"/>
 				</ui:define>				
 			</ui:decorate>
 

@@ -410,76 +410,70 @@ public interface IFinanceAlias {
 	String  INVOICE_ISSUE_DATE = INVOICE_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Invoice_taxDate
-	* Hibernate value: Invoice.taxDate
-	*/
-	String  INVOICE_TAX_DATE = INVOICE_ENTRY.getAliasNames()[7];
-
-	/** 
 	* Alias value: Invoice_securityLevel
 	* Hibernate value: Invoice.securityLevel
 	*/
-	String  INVOICE_SECURITY_LEVEL = INVOICE_ENTRY.getAliasNames()[8];
+	String  INVOICE_SECURITY_LEVEL = INVOICE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Invoice_status
 	* Hibernate value: Invoice.status
 	*/
-	String  INVOICE_STATUS = INVOICE_ENTRY.getAliasNames()[9];
+	String  INVOICE_STATUS = INVOICE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Invoice_registryName
 	* Hibernate value: Invoice.registryName
 	*/
-	String  INVOICE_REGISTRY_NAME = INVOICE_ENTRY.getAliasNames()[10];
+	String  INVOICE_REGISTRY_NAME = INVOICE_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Invoice_registryDocument
 	* Hibernate value: Invoice.registryDocument
 	*/
-	String  INVOICE_REGISTRY_DOCUMENT = INVOICE_ENTRY.getAliasNames()[11];
+	String  INVOICE_REGISTRY_DOCUMENT = INVOICE_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Invoice_type
 	* Hibernate value: Invoice.type
 	*/
-	String  INVOICE_TYPE = INVOICE_ENTRY.getAliasNames()[12];
+	String  INVOICE_TYPE = INVOICE_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Invoice_taxFree
 	* Hibernate value: Invoice.taxFree
 	*/
-	String  INVOICE_TAX_FREE = INVOICE_ENTRY.getAliasNames()[13];
+	String  INVOICE_TAX_FREE = INVOICE_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Invoice_surcharge
 	* Hibernate value: Invoice.surcharge
 	*/
-	String  INVOICE_SURCHARGE = INVOICE_ENTRY.getAliasNames()[14];
+	String  INVOICE_SURCHARGE = INVOICE_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Invoice_withholding
 	* Hibernate value: Invoice.withholding
 	*/
-	String  INVOICE_WITHHOLDING = INVOICE_ENTRY.getAliasNames()[15];
+	String  INVOICE_WITHHOLDING = INVOICE_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Invoice_comments
 	* Hibernate value: Invoice.comments
 	*/
-	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[16];
+	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Invoice_investment
 	* Hibernate value: Invoice.investment
 	*/
-	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[17];
+	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Invoice_transaction
 	* Hibernate value: Invoice.transaction
 	*/
-	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[18];
+	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[17];
 
 
 

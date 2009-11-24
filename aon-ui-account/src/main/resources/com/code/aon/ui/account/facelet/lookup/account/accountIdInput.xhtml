@@ -10,10 +10,11 @@
 
 	<aon:div id="#{id}Container" rendered="#{renderedAttr}">
 		<a4j:region>
-			<aon:outputLabel for="#{id}" style="display:none"
+			<aon:outputLabel for="#{id}" style="display:none" 
 				value="#{accountBundle.account_account}" />
+				
 			<aon:inputText id="#{id}" value="#{entity}" disabled="#{disabled}"
-				required="#{required}" size="#{size}" maxlength="#{maxlength}">
+				required="#{required}" size="10" maxlength="9">
 				<a4j:support event="onkeyup"
 					onsubmit="if(event.keyCode != 113) return false;"
 					eventsQueue="#{id}KeyUp" ignoreDupResponses="true"
@@ -23,7 +24,7 @@
 				</a4j:support>
 
 				<a4j:support eventsQueue="#{id}OnChange"
-					onsubmit="validateOnChange(this)" ajaxSingle="true"
+					onsubmit="validateOnChange(this)" ajaxSingle="true" 
 					actionListener="#{wizard.onLookup}" ignoreDupResponses="true"
 					requestDelay="100" event="onchange"
 					reRender="#{id}Name,#{reRenderAttr}">
@@ -131,8 +132,20 @@
 									requestDelay="100" reRender="#{id}tableContainer"
 									oncomplete="selectFirstRow('#{id}table')">
 								</a4j:commandButton>
+								<a4j:commandButton value="#{bundle.aon_reset}"
+									reRender="#{id}modalPanel"
+									limitToList="true"
+									style="margin-left: 5px;" actionListener="#{wizard.onAccept}"
+									accesskey="#{bundle.aon_key_new}"
+									eventsQueue="#{id}NewQueue" ignoreDupResponses="true"
+									requestDelay="100"
+									oncomplete="selectFirstRow('#{id}table')">
+								</a4j:commandButton>
 							</aon:div>
 						</aon:panelGrid>
+						<aon:div id="aon-errors-#{id}" styleClass="aon-popupWindow-content">
+							<aon:messages />
+						</aon:div>
 					</rich:simpleTogglePanel>
 				</a4j:region>
 

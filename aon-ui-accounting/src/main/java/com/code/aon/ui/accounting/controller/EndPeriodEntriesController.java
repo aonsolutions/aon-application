@@ -23,7 +23,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
@@ -296,13 +295,13 @@ public class EndPeriodEntriesController {
 			detail.setConcept(getConcept());
 			Double debit = (Double) data[1];
 			Double credit = (Double) data[2];
-			double balance = CommonUtil.round(credit - debit);
-			sum = CommonUtil.round(sum + balance);
+			double balance = round(credit - debit);
+			sum = round(sum + balance);
 			if (balance > 0) {
 				detail.setDebit(balance);
 				detail.setCredit(0);
 			} else {
-				balance = CommonUtil.round(balance * (-1));
+				balance = round(balance * (-1));
 				detail.setCredit(balance);
 				detail.setDebit(0);
 			}
@@ -320,12 +319,17 @@ public class EndPeriodEntriesController {
 			detail.setCredit(sum);
 			detail.setDebit(0);
 		} else {
-			sum = CommonUtil.round(sum * (-1));
+			sum = round(sum * (-1));
 			detail.setDebit(sum);
 			detail.setCredit(0);
 		}
 		detail.setLine(i);
 		entryDetailBean.insert(detail);
+	}
+
+	private double round(double value) {
+		double decimal = Math.pow(10, 2);
+		return Math.round(decimal * value) / decimal;
 	}
 
 	@SuppressWarnings("unchecked")

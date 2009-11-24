@@ -51,30 +51,4 @@ public class FinanceTrackingWriter {
             LOGGER.log(Level.SEVERE, "Error removing last tracking by type of finance with id=" + finance.getId(), e);
 		}
     }
-
-	public static boolean isLastTracking(FinanceTracking tracking) throws ManagerBeanException {
-		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
-		criteria.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), false);
-		Iterator<?> iterator = trackingBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			FinanceTracking financeTracking = (FinanceTracking)iterator.next();
-			return financeTracking.getId().equals(tracking.getId());
-		}
-		return false;
-	}
-
-	public static boolean wasFinanceReturned(Finance finance) throws ManagerBeanException {
-		return (getReturnedTimes(finance) > 0);
-	}
-
-	public static int getReturnedTimes(Finance finance) throws ManagerBeanException {
-		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.RETURNED);
-		return (trackingBean.getCount(criteria));
-	}
-
 }

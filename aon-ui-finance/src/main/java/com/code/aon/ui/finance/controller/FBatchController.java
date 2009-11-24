@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.controller;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -14,10 +15,8 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -385,27 +384,28 @@ public class FBatchController extends BasicController implements ICollectionProv
 	}
 
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
-        try {
-    		FacesContext faces = FacesContext.getCurrentInstance();
-            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+		try {
+			FacesContext faces = FacesContext.getCurrentInstance();
+	        HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
 
-        	String fileName = ((FinanceBatch)this.getTo()).getFinanceBatchType().getName(AonUtil.getCurrentLocale());
+	        OutputStream out = response.getOutputStream();
+	        InputStream input = new FileInputStream(csbOutput.getFile());
+	        int BUFFER = 2048;
+	        byte data[] = new byte[BUFFER];
+	        int count;
+	        while ((count = input.read(data, 0, BUFFER)) != -1) {
+				out.write(data, 0, count);
+			}
+	        out.close();
+	        input.close();
+
+	        String fileName = ((FinanceBatch)this.getTo()).getFinanceBatchType().getName(AonUtil.getCurrentLocale());
 	        fileName += "-" + ((FinanceBatch)this.getTo()).getDescription();
 	        fileName = ((csbOutput.getErrors().size()>0) ? "ERROR-" : "") + fileName;
 
 	        response.setContentType(MimeType.MIME_TXT.getName());
+	        response.setContentLength(data.length);
 	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\"");
-
-	        ServletOutputStream output = response.getOutputStream();
-	        InputStream input = new FileInputStream(csbOutput.getFile());
-	        int size = IOUtils.copy(input, output);
-	        if (size > 0) {
-		        response.setHeader("Content-Length", String.valueOf(size));
-	        }
-	        output.close();
-	        input.close();
-
-	        response.flushBuffer();
 	        faces.responseComplete();
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);

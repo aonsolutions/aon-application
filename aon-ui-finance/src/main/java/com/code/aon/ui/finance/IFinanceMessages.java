@@ -14,7 +14,6 @@ public interface IFinanceMessages {
 	String UNABLE_RECORD_INACCURACY_ERROR_KEY = "finance_unable_record_inaccuracy_error";
 	String PAYMENT_INVALID_AMOUNT_ERROR = "finance_payment_invalid_amount_error";
 	String FINANCE_TRACKING_FRACTIONED = "finance_tracking_fractioned";
-	String FINANCE_TRACKING_SETTLED = "finance_tracking_settled";
 	String FINANCE_TRACKING_BATCHED = "finance_tracking_batched";
 	String FINANCE_TRACKING_RECORDED = "finance_tracking_recorded";
 	String FINANCE_BATCH_DATE_ERROR = "finance_batch_date_error";
