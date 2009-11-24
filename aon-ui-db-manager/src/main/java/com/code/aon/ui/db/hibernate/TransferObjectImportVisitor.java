@@ -38,9 +38,16 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 	private IManagerBean bean;
 	
 	private String lastEntityName;
+	
+	private ReplicationMode replicationMode;
 
 	public TransferObjectImportVisitor(SessionFactory sessionFactory, int maxImport) {
 		super(sessionFactory, maxImport);
+		this.replicationMode = ReplicationMode.EXCEPTION;
+	}
+	
+	public void setReplicationMode( ReplicationMode mode ) {
+		this.replicationMode = mode;
 	}
 
 	@Override
@@ -121,7 +128,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 			IManagerBean bean = getManagerBean(entityName);
 			ITransferObject to = (ITransferObject) bean.getPOJOClass().newInstance();
 			initialize(to, element);
-			bean.replicate(to, ReplicationMode.EXCEPTION);
+			bean.replicate(to, replicationMode);
 		} catch (Throwable th) {
 			LOGGER.severe( "Error in replicate " + entityName + ": " + element );
 			throw new EntityProcessException( th.getMessage(), th );

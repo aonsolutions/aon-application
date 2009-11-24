@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,7 +28,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -35,6 +35,7 @@ import org.richfaces.model.UploadItem;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.hibernate.IConfigurationFactory;
 import com.code.aon.common.dao.hibernate.ISessionFactoryNameProvider;
+import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.db.HibernateDataManager;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.db.hibernate.ReplicateConfigurationFactory;
@@ -51,6 +52,53 @@ public class DBManager {
 	private ISessionFactoryNameProvider previousNameProvider;
 	
 	private IConfigurationFactory previousConfigurationFactory;
+
+	private String pojos;
+	
+	private Boolean ignoreDependencies;
+	
+	private String replicationMode;
+		
+	public String getPojos() {
+		return pojos;
+	}
+
+	public void setPojos(String pojos) {
+		this.pojos = pojos;
+	}
+
+	public Boolean getIgnoreDependencies() {
+		return ignoreDependencies;
+	}
+
+	public void setIgnoreDependencies(Boolean ignoreDependencies) {
+		this.ignoreDependencies = ignoreDependencies;
+	}
+	
+	public String getReplicationMode() {
+		return replicationMode;
+	}
+
+	public void setReplicationMode(String replicationMode) {
+		this.replicationMode = replicationMode;
+	}
+
+	public ReplicationMode resolverReplicationMode() {
+		ReplicationMode rm = ReplicationMode.valueOf(this.replicationMode);
+		if ( rm == null ) {
+			return ReplicationMode.EXCEPTION;
+		}
+		return rm;
+	}
+	
+	protected void configure(HibernateDataManager hdm, boolean export) {
+		if (! StringUtils.isEmpty(getPojos()) ) {
+			hdm.setIncludeEntities( getIncludeEntities() );
+		}
+		if ( getIgnoreDependencies() != null ) {
+			hdm.setIgnoreDependencies( getIgnoreDependencies().booleanValue() );
+		}
+	}
 
 	private void responseZip(File file) throws IOException {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -88,6 +136,18 @@ public class DBManager {
 		response.flushBuffer();
 		tempFile.delete();
     }
+    
+	private List<Class<? extends Serializable>> getIncludeEntities() {
+    	List<Class<? extends Serializable>> list = new LinkedList<Class<? extends Serializable>>();
+    	for( String pojo : StringUtils.split(getPojos(), " ,") ) {
+    		try {
+				list.add( (Class) DBManager.class.forName(pojo) );
+			} catch (ClassNotFoundException e) {
+				LOGGER.severe( "Class not found: " + pojo );
+			}
+    	}
+    	return list;
+    }
 	
 	public void onExport( ActionEvent event ) {
 		HibernateDataManager hdm = new HibernateDataManager();
@@ -98,6 +158,7 @@ public class DBManager {
 			String factoryName = HibernateUtil.getSessionFactoryName();
 			SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
 			hdm.setExportFactory( factory );
+			configure(hdm, true);
 			hdm.execute();
 			responseZip( xmlFile );
 			xmlFile.delete();
@@ -178,7 +239,11 @@ public class DBManager {
 			SessionFactory sessionFactory = HibernateUtil.getSessionFactory(factoryName);
 			hdm.setImportFactory( sessionFactory );
 			TransferObjectImportVisitor visitor = new TransferObjectImportVisitor(sessionFactory, 0);
+			if (! StringUtils.isEmpty(getReplicationMode()) ) {
+				visitor.setReplicationMode( resolverReplicationMode() );
+			}
 			hdm.setVisitor(visitor);
+			configure(hdm, false);
 			for( AonFile file : this.files ) {
 				ByteArrayInputStream in = new ByteArrayInputStream(file.getData());
 				hdm.setInputStream( in );
