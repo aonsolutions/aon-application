@@ -1,0 +1,622 @@
+package com.code.aon.ui.accounting.controller;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.ListDataModel;
+
+import com.code.aon.account.bridge.AccountEntryFinanceBatch;
+import com.code.aon.account.bridge.AccountEntryFinanceTracking;
+import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
+import com.code.aon.account.bridge.LeasingAccount;
+import com.code.aon.account.bridge.LoanAccount;
+import com.code.aon.account.bridge.RegistryBankAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
+import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.ExpenseEntryHeader;
+import com.code.aon.accounting.InvoiceEntryDetail;
+import com.code.aon.accounting.InvoiceEntryHeader;
+import com.code.aon.accounting.Leasing;
+import com.code.aon.accounting.LeasingFeeEntryHeader;
+import com.code.aon.accounting.Loan;
+import com.code.aon.accounting.LoanFeeEntryHeader;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.SalaryEntryHeader;
+import com.code.aon.accounting.SocialInsuranceEntryHeader;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.finance.Finance;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.InvoiceTax;
+import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
+
+public class AccountEntryController extends BasicController {
+	
+	private static final Logger LOGGER = Logger.getLogger(AccountEntryController.class.getName());
+	
+	private static final String INVOICE_ENTRY_CONTROLLER_NAME = "invoiceEntry";
+	
+	private static final String FINANCE_ENTRY_CONTROLLER_NAME = "financeEntry";
+	
+	private static final String EXPENSE_ENTRY_CONTROLLER_NAME = "expenseEntry";
+	
+	private static final String SALARY_ENTRY_CONTROLLER_NAME = "salaryEntry";
+	
+	private static final String SOCIAL_INSURANCE_ENTRY_CONTROLLER_NAME = "socialInsuranceEntry";
+	
+	private static final String LOAN_ENTRY_CONTROLLER_NAME = "loanEntry";
+
+	private static final String LOAN_FEE_ENTRY_CONTROLLER_NAME = "loanFeeEntry";
+
+	private static final String LEASING_ENTRY_CONTROLLER_NAME = "leasingEntry";
+
+	private static final String LEASING_FEE_ENTRY_CONTROLLER_NAME = "leasingFeeEntry";
+	
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+	}
+	
+    @Override
+    public void onSearch(ActionEvent event) {
+        super.onSearch(event);
+        if (model.getRowCount() > 0) {
+            model.setRowIndex(0);
+            super.onSelect(null);
+        }
+    }
+
+    @Override
+    public void onRemove(ActionEvent event) {
+        super.onRemove(event);
+        try {
+            if (this.getModel().getRowCount() > 0) {
+                this.setTo((AccountEntry)this.getModel().getRowData());
+            }
+        } catch (ManagerBeanException e) {
+            LOGGER.log(Level.SEVERE, "Error removing Account Entry", e);
+        }
+    }
+
+	public void onSelectEntry(ActionEvent event) throws ManagerBeanException {
+		AccountEntry entry = (AccountEntry)this.getModel().getRowData();
+		this.setTo(entry);
+		if(entry.getType().equals(AccountEntryType.SALES_INVOICE) ||
+				entry.getType().equals(AccountEntryType.PURCHASE_INVOICE) ||
+				entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
+			loadInvoiceEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.PAYMENT) ||
+				entry.getType().equals(AccountEntryType.COLLECTION)){
+			loadFinanceEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.EXPENSES)){
+			loadExpenseEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.SALARY)){
+			loadSalaryEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.SOCIAL_INSURANCE)){
+			loadSocialInsuranceEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.LOAN)){
+			loadLoanEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.LOAN_FEE)){
+			loadLoanFeeEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.LEASING)){
+			loadLeasingEntryController(entry);
+		}
+		if(entry.getType().equals(AccountEntryType.LEASING_FEE)){
+			loadLeasingFeeEntryController(entry);
+		}
+	}
+	
+	public String searchAction() {
+		try {
+			return (getModel().getRowCount() > 0 )?"accountEntry_form":"accountEntry_list";
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo realizar la búsqueda.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	
+	public String onNavigate() {
+		AccountEntry entry = (AccountEntry)getTo(); 
+		if (entry.getType() == AccountEntryType.SALES_INVOICE ||
+			entry.getType() == AccountEntryType.PURCHASE_INVOICE ||
+			entry.getType() == AccountEntryType.EXPENSE_INVOICE){
+			return "account_invoice_entry";
+		}
+		if(entry.getType().equals(AccountEntryType.PAYMENT) ||
+				entry.getType().equals(AccountEntryType.COLLECTION)){
+			return "account_finance_entry";
+		}
+		if(entry.getType() == AccountEntryType.EXPENSES){
+			return "account_expense_entry";
+		}
+		if(entry.getType() == AccountEntryType.SALARY){
+			return "account_salary_entry";
+		}
+		if(entry.getType() == AccountEntryType.SOCIAL_INSURANCE){
+			return "account_social_insurance_entry";
+		}
+		if(entry.getType() == AccountEntryType.LOAN) {
+			return "account_loan_entry";
+		}
+		if(entry.getType() == AccountEntryType.LOAN_FEE){
+			return "account_loan_fee_entry";
+		}
+		if(entry.getType()== AccountEntryType.LEASING){
+			return "account_leasing_entry";
+		}
+		if(entry.getType() == AccountEntryType.LEASING_FEE){
+			return "account_leasing_fee_entry";
+		}
+		return "";
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void loadInvoiceEntryController(AccountEntry entry) {
+		try {
+			InvoiceEntryController invoiceEntryController = (InvoiceEntryController)AonUtil.getRegisteredBean(INVOICE_ENTRY_CONTROLLER_NAME);
+			invoiceEntryController.onReset(null);
+			invoiceEntryController.setNew(false);
+			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), entry.getId());
+			Iterator iter = accountEntryInvoiceBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
+				invoiceEntryController.setAccountEntryInvoice(accountEntryInvoice);
+				InvoiceEntryHeader header = new InvoiceEntryHeader();
+				AccountEntryDetail detail = null;
+				if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
+					header.setType(InvoiceType.SALES);
+					detail = obtainEntryDetailFromAccountPattern(entry, "70*");
+					header.setAccount((detail!=null)?detail.getAccount():null);
+				}
+				if(entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)){
+					header.setType(InvoiceType.PURCHASE);
+					detail = obtainEntryDetailFromAccountPattern(entry, "60*");
+					header.setAccount((detail!=null)?detail.getAccount():null);
+				}
+				if(entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
+					header.setType(InvoiceType.EXPENSES);
+					detail = obtainEntryDetailFromAccountPattern(entry, "6*");
+					header.setAccount((detail!=null)?detail.getAccount():null);
+				}
+				header.setDate(entry.getEntryDate());
+				header.setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
+				header.setName(accountEntryInvoice.getInvoice().getRegistryName());
+				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
+				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
+				header.setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
+				header.setPeriod(new Period());
+				header.getPeriod().setId(entry.getAccountPeriod());
+				header.setSecurityLevel(entry.getSecurityLevel());
+				header.setRegistry(accountEntryInvoice.getInvoice().getRegistry());
+				header.setWithholding(accountEntryInvoice.getInvoice().isWithholding());
+				header.setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
+				header.setTaxFree(accountEntryInvoice.getInvoice().isTaxFree());
+				header.setInvestment(accountEntryInvoice.getInvoice().isInvestment());
+				header.setTransaction(accountEntryInvoice.getInvoice().getTransaction());
+				header.setAccountEntryId(entry.getId());
+				invoiceEntryController.setHeader(header);
+				invoiceEntryController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
+				invoiceEntryController.setDetails(new ListDataModel(obtainDetails(accountEntryInvoice.getInvoice())));
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void loadFinanceEntryController(AccountEntry entry) {
+		try {
+			FinanceEntryController financeEntryController = (FinanceEntryController)AonUtil.getRegisteredBean(FINANCE_ENTRY_CONTROLLER_NAME);
+			financeEntryController.onReset(null);
+			financeEntryController.setNew(false);
+
+			IManagerBean accountEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID), entry.getId());
+			Iterator iter = accountEntryFBatchBean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				String msg = "Asiento generado automáticamente. No se puede modificar.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else {
+				financeEntryController.setAccountEntry(entry);
+				financeEntryController.setPayment(entry.getType().equals(AccountEntryType.PAYMENT) ? true : false);
+				financeEntryController.setDate(entry.getEntryDate());
+				IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+				criteria.addOrder(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ID), false);
+				iter = accountEntryDetailBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
+					financeEntryController.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+					financeEntryController.setConcept(accountEntryDetail.getConcept());
+				}
+
+				IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), entry.getId());
+				iter = accountEntryFTrackingBean.getList(criteria).iterator();
+				while (iter.hasNext()) {
+					AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
+					((List)financeEntryController.getLines().getWrappedData()).add(accountEntryFinanceTracking.getFinanceTracking().getFinance());
+				}
+				financeEntryController.loadAvailableFinances(financeEntryController.getPayment());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
+		}
+	}
+	
+	private void loadExpenseEntryController(AccountEntry entry) {
+		ExpenseEntryController expenseEntryController = (ExpenseEntryController)AonUtil.getRegisteredBean(EXPENSE_ENTRY_CONTROLLER_NAME);
+		expenseEntryController.onReset(null);
+		expenseEntryController.setNew(false);
+		expenseEntryController.setAccountEntry(entry);
+		ExpenseEntryHeader header = new ExpenseEntryHeader();
+		Period period = new Period();
+		period.setId(entry.getAccountPeriod());
+		header.setPeriod(period);
+		header.setDate(entry.getEntryDate());
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "6*");
+		header.setAccount(accountEntryDetail.getAccount());
+		header.setDescription(accountEntryDetail.getConcept());
+		header.setAmount(accountEntryDetail.getDebit());
+		header.setRBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
+		header.setSecurityLevel(entry.getSecurityLevel());
+		expenseEntryController.setHeader(header);
+	}
+	
+	private void loadSalaryEntryController(AccountEntry entry) {
+		SalaryEntryController salaryController = (SalaryEntryController)AonUtil.getRegisteredBean(SALARY_ENTRY_CONTROLLER_NAME);
+		salaryController.onReset(null);
+		salaryController.setNew(false);
+		salaryController.setAccountEntry(entry);
+
+		SalaryEntryHeader header = new SalaryEntryHeader();
+		header.setDate(entry.getEntryDate());
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "465*");
+		if (accountEntryDetail != null) {
+			header.setConcept(accountEntryDetail.getConcept());
+		} else {
+			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			if (accountEntryDetail != null) {
+				header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+				header.setConcept(accountEntryDetail.getConcept());
+			}
+		}
+		header.setSecurityLevel(entry.getSecurityLevel());
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "640*");
+		header.setGrossSalary((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "475*");
+		header.setRetention((accountEntryDetail != null)?accountEntryDetail.getCredit():0);
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "642*");
+		header.setCompanySocialInsurance((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "476*");
+		header.setEmployeeSocialInsurance((accountEntryDetail != null)?accountEntryDetail.getCredit() - header.getCompanySocialInsurance():0);
+		salaryController.setHeader(header);
+	}
+	
+	private void loadSocialInsuranceEntryController(AccountEntry entry) {
+		SocialInsuranceEntryController socialInsController = (SocialInsuranceEntryController)AonUtil.getRegisteredBean(SOCIAL_INSURANCE_ENTRY_CONTROLLER_NAME);
+		socialInsController.onReset(null);
+		socialInsController.setNew(false);
+		socialInsController.setAccountEntry(entry);
+
+		SocialInsuranceEntryHeader header = new SocialInsuranceEntryHeader();
+		header.setDate(entry.getEntryDate());
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "570*");
+		if (accountEntryDetail != null) {
+			header.setConcept(accountEntryDetail.getConcept());
+		} else {
+			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+			header.setConcept(accountEntryDetail.getConcept());
+		}
+		header.setSecurityLevel(entry.getSecurityLevel());
+		header.setAmount(accountEntryDetail.getCredit());
+		socialInsController.setHeader(header);
+	}
+
+	private void loadLoanEntryController(AccountEntry entry) {
+		try {
+			LoanEntryController loanController = (LoanEntryController)AonUtil.getRegisteredBean(LOAN_ENTRY_CONTROLLER_NAME);
+			loanController.onReset(null);
+			loanController.setNew(false);
+			loanController.setAccountEntry(entry);
+			Loan loan = obtainLoan(entry);
+			loanController.setLoan(loan);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading LoanEntryController", e);
+		}
+	}
+
+	private void loadLoanFeeEntryController(AccountEntry entry) {
+		try {
+			LoanFeeEntryController loanFeeController = (LoanFeeEntryController)AonUtil.getRegisteredBean(LOAN_FEE_ENTRY_CONTROLLER_NAME);
+			loanFeeController.onReset(null);
+			loanFeeController.setNew(false);
+			loanFeeController.setAccountEntry(entry);
+			LoanFeeEntryHeader header = new LoanFeeEntryHeader();
+			Loan loan = obtainLoan(entry);
+			AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+			header.setAmortization(accountEntryDetail.getDebit());
+			header.setDescription(accountEntryDetail.getConcept());
+			header.setFeeDate(entry.getEntryDate());
+			header.setLoan(loan);
+			header.setRegistryBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
+			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
+			header.setInterest(accountEntryDetail.getDebit());
+			loanFeeController.setHeader(header);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading LoanFeeEntryController", e);
+		}
+	}
+	
+	private void loadLeasingEntryController(AccountEntry entry) {
+		try {
+			LeasingEntryController leasingController = (LeasingEntryController)AonUtil.getRegisteredBean(LEASING_ENTRY_CONTROLLER_NAME);
+			leasingController.onReset(null);
+			leasingController.setNew(false);
+			leasingController.setAccountEntry(entry);
+			Leasing leasing = obtainLeasing(entry);
+			leasingController.setLeasing(leasing);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading LeasingEntryController", e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void loadLeasingFeeEntryController(AccountEntry entry) {
+		try {
+			LeasingFeeEntryController leasingEntryFeeController = (LeasingFeeEntryController)AonUtil.getRegisteredBean(LEASING_FEE_ENTRY_CONTROLLER_NAME);
+			leasingEntryFeeController.onReset(null);
+			leasingEntryFeeController.setNew(false);
+			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), entry.getId());
+			Iterator iter = accountEntryInvoiceBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
+				leasingEntryFeeController.setAccountEntryInvoice(accountEntryInvoice);
+				LeasingFeeEntryHeader header = new LeasingFeeEntryHeader();
+				AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+				header.setRBank(obtainRBank(detail.getAccount().getId()));
+				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
+				header.setInterest(detail.getDebit());
+				detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+				header.setAmortization(detail.getDebit());
+				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
+				header.setExpenses(detail.getDebit());
+				header.setLeasing(obtainLeasing(entry));
+				header.setLeasingFeeDate(accountEntryInvoice.getInvoice().getIssueDate());
+				header.setSecurityLevel(accountEntryInvoice.getInvoice().getSecurityLevel());
+				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
+				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
+				header.setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
+				
+				leasingEntryFeeController.setHeader(header);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private List obtainFinances(Invoice invoice) {
+		List<Finance> finances = new LinkedList<Finance>();
+		try {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+			Iterator iter = financeBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				finances.add((Finance)iter.next());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining finances for invoice with id=" + invoice.getId(), e);
+		}
+		return finances;
+	}
+	
+	private List<InvoiceEntryDetail> obtainDetails(Invoice invoice) {
+		List<InvoiceEntryDetail> details = new LinkedList<InvoiceEntryDetail>();
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+			IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				InvoiceEntryDetail detail = new InvoiceEntryDetail();
+				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+				if (invoiceDetail.getSource() != InvoiceSource.ACCOUNT) {
+					String msg = "Asiento generado automáticamente. No se puede modificar.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+				detail.setTaxableBase(invoiceDetail.getTaxableBase());
+
+				Criteria taxCriteria = new Criteria();
+				taxCriteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
+				Iterator<?> taxIter= invoiceTaxBean.getList(taxCriteria).iterator();
+				while(taxIter.hasNext()){
+					InvoiceTax invoiceTax = (InvoiceTax)taxIter.next();
+					if(invoiceTax.getTaxType().equals(TaxType.VAT)){
+						detail.setVatPercent(invoiceTax.getPercentage());
+						detail.setSurchargePercent(invoiceTax.getSurcharge());
+						
+					} else if(invoiceTax.getTaxType().equals(TaxType.RETENTION)){
+						detail.setRetentionPercent(invoiceTax.getPercentage());
+					}
+				}
+
+				Criteria accountCriteria = new Criteria();
+				accountCriteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
+				Iterator<?> accountIter= invoiceAccountBean.getList(accountCriteria).iterator();
+				if(accountIter.hasNext()){
+					InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)accountIter.next();
+					detail.setAccount(invoiceDetailAccount.getAccount());
+				}
+
+				details.add(detail);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading details for invoice with id=" + invoice.getId(), e);
+		}
+		return details;
+	}
+
+	@SuppressWarnings("unchecked")
+	private AccountEntryDetail obtainEntryDetailFromAccountPattern(AccountEntry entry, String accountPattern) {
+		try {
+			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountPattern);
+			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return (AccountEntryDetail)iter.next();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining the account with accountPattern= " + accountPattern, e);
+		} catch (ExpressionException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining the account with accountPattern= " + accountPattern, e);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private RegistryBank obtainRBank(String account) {
+		try {
+			IManagerBean rBankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addExpression(rBankAccountBean.getFieldName(IAccountBridgeAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID), account);
+			Iterator iter = rBankAccountBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return ((RegistryBankAccount)iter.next()).getRegistryBank();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining rBank related with accoount= " + account, e);
+		} catch (ExpressionException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining rBank related with accoount= " + account, e);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
+		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((LoanAccount)iter.next()).getLoan();
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
+		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((LeasingAccount)iter.next()).getLeasing();
+		}
+		return null;
+	}
+
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null ){
+			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+			String field = event.getComponent().getId();
+			getCriteria().addEqualExpression(accountEntryBean.getFieldName(field), event.getNewValue());
+		}
+	}
+
+    public boolean isManual() {
+    	AccountEntry entry = (AccountEntry) this.getTo();
+        return (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL || entry.getType() == AccountEntryType.OPENING));
+    }
+
+    @SuppressWarnings("unchecked")
+    public double getTotalDebit() {
+        double debit = 0;
+        if (this.getTo() != null ) {
+	        try {
+	            Integer id = ((AccountEntry)this.getTo()).getId();
+	            IManagerBean detailsBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+	            Criteria criteria = new Criteria();
+	            criteria.addEqualExpression(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
+	            Iterator iterator = detailsBean.getList(criteria).iterator();
+	            while (iterator.hasNext()) {
+	                AccountEntryDetail detail = (AccountEntryDetail)iterator.next();
+	                debit += detail.getDebit();
+	            }
+	        } catch (ManagerBeanException e) {
+	            LOGGER.log(Level.SEVERE, "Error getting Account Entry Details", e);
+	        }
+        }
+        return debit;
+    }
+
+    @SuppressWarnings("unchecked")
+    public double getTotalCredit() {
+        double credit = 0;
+        if (this.getTo() != null ) {
+	        try {
+	            Integer id = ((AccountEntry)this.getTo()).getId();
+	            IManagerBean detailsBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+	            Criteria criteria = new Criteria();
+	            criteria.addEqualExpression(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
+	            Iterator iterator = detailsBean.getList(criteria).iterator();
+	            while (iterator.hasNext()) {
+	                AccountEntryDetail detail = (AccountEntryDetail)iterator.next();
+	                credit += detail.getCredit();
+	            }
+	        } catch (ManagerBeanException e) {
+	            LOGGER.log(Level.SEVERE, "Error getting Account Entry Details", e);
+	        }
+        }
+        return credit;
+    }
+
+}

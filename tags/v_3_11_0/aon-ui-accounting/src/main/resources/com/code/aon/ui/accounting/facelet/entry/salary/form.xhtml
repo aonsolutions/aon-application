@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="salaryEntryForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_salary_entry_module}" />
+				<ui:param name="toolbarDescription" value="#{salaryEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{salaryEntry.accept}"
+						action="accountEntry_form"
+						disabled="#{salaryEntry.header.grossSalary == 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}"
+						actionListener="#{salaryEntry.onReset}"
+						rendered="#{!salaryEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
+						actionListener="#{salaryEntry.onRemove}"
+						rendered="#{!salaryEntry.new}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div id="entryContainer" styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="Account_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate required="true" id="Account_date"
+						value="#{salaryEntry.header.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Account_registryBank"
+						value="#{configBundle.config_bank}" />
+					<aon:selectOneMenu id="Account_registryBank"
+						value="#{salaryEntry.header.registryBank}">
+						<f:selectItem itemLabel="#{accountingBundle.accounting_pending_salary}" value="#{null}" />
+						<f:selectItems value="#{salaryEntry.companyRegistryBanks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Account_concept"
+						value="#{bundle.aon_concept}" />
+					<aon:inputText id="Account_concept"
+						value="#{salaryEntry.header.concept}" size="50" maxlength="32" />
+
+					<aon:outputLabel for="AccountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="AccountEntry_securityLevel"
+						value="#{salaryEntry.header.securityLevel}">
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Account_gross_salary"
+						value="#{accountingBundle.accounting_gross_salary}" />
+					<aon:inputText id="Account_gross_salary"
+						value="#{salaryEntry.header.grossSalary}" size="15"
+						ajaxSingle="true" reRender="save,Account_net_salary" />
+
+					<aon:outputLabel for="Account_retention"
+						value="#{bundle.aon_retention}" />
+					<aon:inputText id="Account_retention"
+						value="#{salaryEntry.header.retention}" size="15"
+						ajaxSingle="true" reRender="Account_net_salary" />
+
+					<h:outputLabel for="Account_employee_social_insurance"
+						value="#{accountingBundle.accounting_employee_social_insurance}" />
+					<aon:inputText id="Account_employee_social_insurance"
+						value="#{salaryEntry.header.employeeSocialInsurance}" size="15"
+						ajaxSingle="true" reRender="Account_net_salary" />
+
+					<h:outputLabel for="Account_company_social_insurance"
+						value="#{accountingBundle.accounting_company_social_insurance}" />
+					<aon:inputText id="Account_company_social_insurance"
+						value="#{salaryEntry.header.companySocialInsurance}" size="15" />
+
+					<aon:outputLabel for="Account_net_salary"
+						value="#{accountingBundle.accounting_net_salary}" />
+					<aon:outputText id="Account_net_salary"
+					 	styleClass="aon-bold"
+						value="#{salaryEntry.header.netSalary}"
+						size="15">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

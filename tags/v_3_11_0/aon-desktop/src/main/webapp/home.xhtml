@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+	
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="mainContent">
+		<c:if test="#{(!currentUser.passwordExpired) and (company.model.rowCount > 0)}">
+			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{false}" />
+			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{false}" />
+			<a4j:include id="aonContent" ajaxRendered="false"
+				viewId="/homepage.xhtml" />
+		</c:if>
+		<c:if test="#{currentUser.passwordExpired and (company.model.rowCount > 0)}">
+ 			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{true}" />
+			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{true}" />
+			<a4j:include id="aonContent" ajaxRendered="false"
+				viewId="/facelet/user/expiredPasswordContent.xhtml" />
+		</c:if>
+		<c:if test="#{company.model.rowCount == 0}" >
+			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{true}" />
+			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{true}" />
+			<aon:set var="#{company.showPanelTabSet}" value="#{false}" />
+			<aon:outputText value="#{company.onNew}" style="display: none;" />
+			<a4j:include id="aonContent" ajaxRendered="false"
+				viewId="/com/code/aon/ui/company/facelet/company/form.xhtml" />
+		</c:if>     		
+	</ui:define>
+  
+</ui:composition>
+
+</body>
+</html>

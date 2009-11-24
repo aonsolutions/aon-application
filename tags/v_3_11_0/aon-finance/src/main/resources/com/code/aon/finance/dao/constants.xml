@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.finance.Creditor">
+		<alias names="id,registry_id,status,registry_name,registry_surname,registry_alias,registry_document,withholding,scope_id"/>
+		<hibernate names="id,registry.id,status,registry.name,registry.surname,registry.alias,registry.document,withholding,scope.id"/>
+	</bean>
+	
+	<bean class="com.code.aon.finance.CustomerFee" sqlName="customer_fee">
+		<alias names="id,customer_id,customer_registry_name,customer_registry_surname,customer_status,customer_scope_id,item_id,description,quantity,price,discountExpression,initialDate,finalDate,billingDate,period,securityLevel,workPlace_id"/>
+		<hibernate names="id,customer.id,customer.registry.name,customer.registry.surname,customer.status,customer.scope.id,item.id,description,quantity,price,discountExpression,initialDate,finalDate,billingDate,period,securityLevel,workPlace.id"/>
+	</bean>
+
+	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
+		<alias names="id,series,number,referenceCode,registry_id,registryAddress_id,issueDate,securityLevel,status,registryName,registryDocument,type,taxFree,surcharge,withholding,comments,investment,transaction" />
+		<hibernate names="id,series,number,referenceCode,registry.id,registryAddress.id,issueDate,securityLevel,status,registryName,registryDocument,type,taxFree,surcharge,withholding,comments,investment,transaction" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
+		<alias names="sourceId,description,discountExpression,id,invoice_id,item_id,line,price,quantity,source,item_product_type,item_product_code,taxableBase,taxes,,workPlace_id" />
+		<hibernate names="sourceId,description,discountExpression,id,invoice.id,item.id,line,price,quantity,source,item.product.type,item.product.code,taxableBase,taxes,workPlace.id" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">
+		<alias names="id,invoiceDetail_id,invoiceDetail_invoice_id,taxType,percentage,surcharge" />
+		<hibernate names="id,invoiceDetail.id,invoiceDetail.invoice.id,taxType,percentage,surcharge" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.InvoicingGroup" sqlName="invoicing_group">
+		<alias names="id,parent_id,parent_surname,parent_name" />
+		<hibernate names="id,parent.id,parent.surname,parent.name" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.Finance" sqlName="finance">
+		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_type,payment,registry_id,securityLevel,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate" />
+		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice.id,payMethod.id,payMethod.type,payment,registry.id,securityLevel,invoice.series,invoice.number,invoice.referenceCode,invoice.issueDate" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.FinanceTracking" sqlName="finance_tracking">
+		<alias names="amount,description,finance_id,id,trackingDate,type,finance_invoice_id" />
+		<hibernate names="amount,description,finance.id,id,trackingDate,type,finance.invoice.id" />
+	</bean>
+
+	<bean class="com.code.aon.finance.FinanceBatchDetail" sqlName="fbatch_detail">
+		<alias names="amount,financeBatch_id,finance_id,id,status,financeBatch_issueDate,finance_invoice_series,finance_invoice_number,finance_dueDate" />
+		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,finance.invoice.series,finance.invoice.number,finance.dueDate" />
+	</bean>
+</dao>
