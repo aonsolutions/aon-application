@@ -10,11 +10,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.enterprise</artifactId>
 	<packaging>war</packaging>
-	<version>4.5.0</version>
+	<version>4.5.1</version>
 	<description>AON WEB ENTERPRISE</description>
 	<name>AON WEB ENTERPRISE</name>
 	<properties>
-		<dbVersion>4.6.2</dbVersion>
+		<dbVersion>4.7.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-enterprise</finalName>
