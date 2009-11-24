@@ -151,6 +151,8 @@
 			<value>#{productAccountListener}</value>
 			<!--  aon.ui.warehouse -->
 			<value>#{itemWarehouseChildListener}</value>
+			<!--  aon.ui.purchase -->
+			<value>#{itemSupplierChildListener}</value>
 		</list-entries>
 	</managed-bean>
 

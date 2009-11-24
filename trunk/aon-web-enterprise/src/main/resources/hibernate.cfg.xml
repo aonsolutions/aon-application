@@ -132,6 +132,7 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.ItemSupplier"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 

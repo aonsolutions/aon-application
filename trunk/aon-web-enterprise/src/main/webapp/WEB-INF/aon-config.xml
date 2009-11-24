@@ -67,8 +67,9 @@
 			showType="false"
 			showBrand="true"
 			showStock="true"
+			showSuppliers="true"
 			showAccount="true"
-			showAttachment="true"
+			showAttachment="false"
 			showEcommerceData="false"
 		/>
 	</product:config>
