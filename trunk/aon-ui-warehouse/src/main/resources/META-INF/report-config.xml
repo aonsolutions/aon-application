@@ -88,7 +88,6 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
 			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
-			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
 			<param id="warehouse" value="#{delivery.getWarehouse}" />
 			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
 			<param id="valuableDelivery" value="#{delivery.getValuableDelivery}" />
