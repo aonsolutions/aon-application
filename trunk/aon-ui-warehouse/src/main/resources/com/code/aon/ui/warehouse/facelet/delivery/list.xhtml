@@ -14,6 +14,15 @@
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_delivery_module}" />
 				<ui:param name="controller" value="#{delivery}" />
 				<ui:define name="additionalToolbarContent">
+					<h:commandLink id="delivery_excel" value="&#160;" 
+						target="_new" rendered="#{!delivery.new}"
+						action="#{report.onExecute}" 
+						disabled="#{deliveryDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="deliveryList2" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
 					<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_list_report}"
 						target="_new" rendered="#{!delivery.new}"
 						action="#{report.onExecute}" 
@@ -22,6 +31,15 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="deliveryList2" />
 						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+					<h:commandLink id="detailledDelivery_excel" value="&#160;"
+						target="_new" rendered="#{!delivery.new}"
+						action="#{report.onExecute}" 
+						disabled="#{deliveryDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="deliveryDetailledList" />
+						<f:param name="outputFormat" value="MS Excel" />
 					</h:commandLink>
 					<h:commandLink id="detailledDelivery" value="#{warehouseBundle.warehouse_detailled_list_report}"
 						target="_new" rendered="#{!delivery.new}"
