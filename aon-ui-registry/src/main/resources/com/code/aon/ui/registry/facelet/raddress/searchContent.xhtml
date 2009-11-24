@@ -21,24 +21,26 @@
 	<aon:outputLabel for="#{searchController.preffix}addresses_geozone_id"
 		value="#{registryBundle.registry_geozone}" />
 	<aon:div id="geoZoneDiv">
-		<a4j:repeat value="#{searchController.geoZones}" rowKeyVar="index" var="geoZone">
-			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-				<aon:selectOneMenu id="#{searchController.preffix}addresses_geozone_id"
+		<a4j:region>
+			<a4j:repeat value="#{searchController.geoZones}" rowKeyVar="index" var="geoZone">
+				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+					<aon:selectOneMenu id="#{searchController.preffix}addresses_geozone_id"
 					value="#{searchController.geoZones[index]}">
 					<f:selectItem itemLabel="-" itemValue="#{searchController.emptyGeoZone}"/>
-					<f:selectItems value="#{geozoneCollections.geoTrees}" />
-					<a4j:support event="onchange" reRender="geoZoneDiv"/>
-				</aon:selectOneMenu>
-				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="geoZoneDiv"
-					actionListener="#{searchController.onRemoveGeoZone}"
-					rendered="#{geoZone.id != null}">
-					<f:param name="index" value="#{index}" />
-				</aon:commandButton>
-				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="geoZoneDiv"
-					actionListener="#{searchController.onAddGeoZone}"
-					rendered="#{(geoZone.id != null) and (index == (searchController.geoZonesSize-1))}"/>					
-			</aon:div>						
-		</a4j:repeat>
+						<f:selectItems value="#{geozoneCollections.geoTrees}" />
+						<a4j:support event="onchange" reRender="geoZoneDiv"/>
+					</aon:selectOneMenu>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="geoZoneDiv"
+						actionListener="#{searchController.onRemoveGeoZone}"
+						rendered="#{geoZone.id != null}">
+						<f:param name="index" value="#{index}" />
+					</aon:commandButton>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="geoZoneDiv"
+						actionListener="#{searchController.onAddGeoZone}"
+						rendered="#{(geoZone.id != null) and (index == (searchController.geoZonesSize-1))}"/>					
+				</aon:div>						
+			</a4j:repeat>
+		</a4j:region>
 	</aon:div>			
 
 </ui:composition>
