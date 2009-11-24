@@ -125,7 +125,6 @@
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
-			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
 			<param id="warehouse" value="#{delivery.getWarehouse}" />
 			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
 		</params>
@@ -148,7 +147,6 @@
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
-			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
 			<param id="warehouse" value="#{delivery.getWarehouse}" />
 			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
 		</params>
@@ -181,7 +179,6 @@
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
-			<param id="TotalPrice" value="#{income.getTotalPrice}" />
 			<param id="defaultPayMethod" value="#{income.getDefaultPayMethod}" />
 		</params>
 	</report>
@@ -203,7 +200,6 @@
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
-			<param id="TotalPrice" value="#{income.getTotalPrice}" />
 			<param id="defaultPayMethod" value="#{income.getDefaultPayMethod}" />
 		</params>
 		<nested-report report="deliveryListDetail"/>
