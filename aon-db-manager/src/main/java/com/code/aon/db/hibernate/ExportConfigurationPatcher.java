@@ -22,6 +22,8 @@ public class ExportConfigurationPatcher implements IConfigurationPatcher {
 	private static final Logger LOGGER = Logger.getLogger(ExportConfigurationPatcher.class.getName());
 	
 	private List<ClassMetadata> entities;
+	
+	private List<String> collections;
 
 	@SuppressWarnings("unchecked")
 	private static List<ClassMetadata> getEntities( SessionFactory sessionFactory ) {
@@ -44,16 +46,15 @@ public class ExportConfigurationPatcher implements IConfigurationPatcher {
 		return null;
 	}
 	
-	private List<String> getCollections( ClassMetadata cm ) {
-		List<String> list = new LinkedList<String>();
+	private void init( ClassMetadata cm ) {
+		this.collections = new LinkedList<String>();
 		String[] names = cm.getPropertyNames();
 		Type[] types = cm.getPropertyTypes();
 		for( int i = 0; i < names.length; i++ ) {
 			if ( types[i].isCollectionType() ) {
-				list.add( names[i] );
+				this.collections.add( names[i] );
 			}
 		}
-		return list;
 	}
 	
 	private Document createDocument() {
@@ -63,8 +64,8 @@ public class ExportConfigurationPatcher implements IConfigurationPatcher {
 		document.appendChild(root);
 
 		for( ClassMetadata cm : entities ) {
-			List<String> collections = getCollections(cm);
-			if (! collections.isEmpty() ) {
+			init(cm);
+			if ( !collections.isEmpty() ) {
 				Element entity = document.createElement("entity");
 				entity.setAttribute( "class", cm.getEntityName() );
 				root.appendChild(entity);

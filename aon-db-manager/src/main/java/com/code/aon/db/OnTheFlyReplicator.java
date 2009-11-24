@@ -80,6 +80,7 @@ public class OnTheFlyReplicator implements IEntityManager {
 	private boolean isEntityFullImported(Class entity) {
 		Integer rowCount = entityIterable.getRowCount();
 		Integer rowCount2 = CountComparator.getRowCount(hdm.getImportFactory(), entity);
+		LOGGER.info( "Count entity " + entity.getName() + ": " + rowCount + "/" + rowCount2 );
 		return ObjectUtils.equals(rowCount, rowCount2);
 	}
 	
