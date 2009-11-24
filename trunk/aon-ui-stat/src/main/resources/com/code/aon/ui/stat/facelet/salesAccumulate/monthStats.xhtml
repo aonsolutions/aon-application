@@ -14,7 +14,7 @@
 		<aon:methodParam name="goAction" value="sales_stats_day" />
 		<aon:methodParam name="goMethod" value="#{stat.onMonthSelect}"
 			type="actionListener" />
-		<aon:methodParam name="backMethod" value="" type="actionListener" />
+		<aon:methodParam name="backMethod" value="#{stat.onRegistryYearBackAction}" type="actionListener" />
 		<aon:methodParam name="customerFacelet"
 			value="customer_stat_list_month" />
 		<c:if test="#{stat.invoiceType==1}">

@@ -11,7 +11,7 @@
 
 	<ui:define name="content">
 			<aon:methodParam name="backAction" value="sales_stats_month"/>
-			<aon:methodParam name="backMethod" value="#{stat.onNoAction}" type="actionListener" />
+			<aon:methodParam name="backMethod" value="#{stat.onDayBackAction}" type="actionListener" />
 		    <aon:methodParam name="goAction" value="sales_stats_day"/>
 		    <aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
 			<aon:methodParam  name="customerFacelet" value="customer_stat_list_day" />
