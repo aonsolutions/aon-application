@@ -9,25 +9,27 @@
 	<aon:outputLabel for="#{searchController.preffix}medias_mediaType"
 		value="#{registryBundle.registry_media_type}" />
 	<aon:div id="mediaTypeDiv">
-		<a4j:repeat value="#{searchController.mediaTypes}" rowKeyVar="index" var="mediaType">
-			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-				<aon:selectOneMenu id="#{searchController.preffix}medias_mediaType"
-					converter="aon.EnumConverter" 
-					value="#{searchController.mediaTypes[index]}">
-					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{registryCollections.mediaTypes}" />
-					<a4j:support event="onchange" reRender="mediaTypeDiv"/>
-				</aon:selectOneMenu>
-				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="mediaTypeDiv"
-					actionListener="#{searchController.onRemoveMediaType}"
-					rendered="#{mediaType != null}">
-					<f:param name="index" value="#{index}" />
-				</aon:commandButton>
-				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
-					actionListener="#{searchController.onAddMediaType}"
-					rendered="#{(mediaType != null) and (index == (searchController.mediaTypesSize-1))}"/>					
-			</aon:div>						
-		</a4j:repeat>
+		<a4j:region>
+			<a4j:repeat value="#{searchController.mediaTypes}" rowKeyVar="index" var="mediaType">
+				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+					<aon:selectOneMenu id="#{searchController.preffix}medias_mediaType"
+						converter="aon.EnumConverter" 
+						value="#{searchController.mediaTypes[index]}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{registryCollections.mediaTypes}" />
+						<a4j:support event="onchange" reRender="mediaTypeDiv"/>
+					</aon:selectOneMenu>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="mediaTypeDiv"
+						actionListener="#{searchController.onRemoveMediaType}"
+						rendered="#{mediaType != null}">
+						<f:param name="index" value="#{index}" />
+					</aon:commandButton>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
+						actionListener="#{searchController.onAddMediaType}"
+						rendered="#{(mediaType != null) and (index == (searchController.mediaTypesSize-1))}"/>					
+				</aon:div>						
+			</a4j:repeat>
+		</a4j:region>
 	</aon:div>			
 	
 	<aon:outputLabel for="#{searchController.preffix}medias_value"
