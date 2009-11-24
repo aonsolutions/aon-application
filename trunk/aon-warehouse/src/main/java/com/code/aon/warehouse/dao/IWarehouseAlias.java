@@ -561,28 +561,46 @@ public interface IWarehouseAlias {
 	String  ITEM_WAREHOUSE_ITEM_ID = ITEM_WAREHOUSE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: ItemWarehouse_location
-	* Hibernate value: ItemWarehouse.location
+	* Alias value: ItemWarehouse_warehouse_id
+	* Hibernate value: ItemWarehouse.warehouse.id
 	*/
-	String  ITEM_WAREHOUSE_LOCATION = ITEM_WAREHOUSE_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: ItemWarehouse_stockMax
-	* Hibernate value: ItemWarehouse.stockMax
-	*/
-	String  ITEM_WAREHOUSE_STOCK_MAX = ITEM_WAREHOUSE_ENTRY.getAliasNames()[3];
+	String  ITEM_WAREHOUSE_WAREHOUSE_ID = ITEM_WAREHOUSE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ItemWarehouse_stockMin
 	* Hibernate value: ItemWarehouse.stockMin
 	*/
-	String  ITEM_WAREHOUSE_STOCK_MIN = ITEM_WAREHOUSE_ENTRY.getAliasNames()[4];
+	String  ITEM_WAREHOUSE_STOCK_MIN = ITEM_WAREHOUSE_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: ItemWarehouse_warehouse_id
-	* Hibernate value: ItemWarehouse.warehouse.id
+	* Alias value: ItemWarehouse_stockMax
+	* Hibernate value: ItemWarehouse.stockMax
 	*/
-	String  ITEM_WAREHOUSE_WAREHOUSE_ID = ITEM_WAREHOUSE_ENTRY.getAliasNames()[5];
+	String  ITEM_WAREHOUSE_STOCK_MAX = ITEM_WAREHOUSE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ItemWarehouse_location
+	* Hibernate value: ItemWarehouse.location
+	*/
+	String  ITEM_WAREHOUSE_LOCATION = ITEM_WAREHOUSE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ItemWarehouse_item_product_name
+	* Hibernate value: ItemWarehouse.item.product.name
+	*/
+	String  ITEM_WAREHOUSE_ITEM_PRODUCT_NAME = ITEM_WAREHOUSE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ItemWarehouse_item_product_category_id
+	* Hibernate value: ItemWarehouse.item.product.category_id
+	*/
+	String  ITEM_WAREHOUSE_ITEM_PRODUCT_CATEGORY_ID = ITEM_WAREHOUSE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ItemWarehouse_item_product_category_name
+	* Hibernate value: ItemWarehouse.item.product.category.name
+	*/
+	String  ITEM_WAREHOUSE_ITEM_PRODUCT_CATEGORY_NAME = ITEM_WAREHOUSE_ENTRY.getAliasNames()[8];
 
 
 
