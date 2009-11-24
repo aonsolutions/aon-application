@@ -1976,16 +1976,18 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-icon/aon-icon-search-add.png) scroll left center no-repeat;
 	border: 0;
 	padding-left: 15px;
-	padding-top: 15px;
+	padding-top: 7px;
 	margin-left: 5px;
+	vertical-align:top;	
 }
 
 .aon-search-minus{
 	background:transparent url(images/aon-icon/aon-icon-search-minus.png) scroll left center no-repeat;
 	border: 0;
 	padding-left: 15px;
-	padding-top: 15px;
+	padding-top: 7px;
 	margin-left: 5px;
+	vertical-align:top;	
 }
 
 .new-mail-button{
