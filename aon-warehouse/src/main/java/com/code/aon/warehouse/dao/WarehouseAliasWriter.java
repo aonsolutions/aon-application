@@ -12,6 +12,7 @@ import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
+import com.code.aon.warehouse.ItemWarehouse;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
 
@@ -35,6 +36,7 @@ public class WarehouseAliasWriter {
 			IncomeDetail.class.getName(),
 			Inventory.class.getName(),
 			InventoryDetail.class.getName(),
+			ItemWarehouse.class.getName(),
 			Stock.class.getName(),
 			Warehouse.class.getName() };
 		HibernateUtil.getSessionFactory(null);

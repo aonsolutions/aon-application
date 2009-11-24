@@ -9,6 +9,7 @@ import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
+import com.code.aon.warehouse.ItemWarehouse;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
 
@@ -539,6 +540,49 @@ public interface IWarehouseAlias {
 	* Hibernate value: InventoryDetail.item.product.category.name
 	*/
 	String  INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_NAME = INVENTORY_DETAIL_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for ItemWarehouse entity.
+	*/ 
+	DAOConstantsEntry ITEM_WAREHOUSE_ENTRY = DAOConstants.getDAOConstant(ItemWarehouse.class);
+
+	/** 
+	* Alias value: ItemWarehouse_id
+	* Hibernate value: ItemWarehouse.id
+	*/
+	String  ITEM_WAREHOUSE_ID = ITEM_WAREHOUSE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ItemWarehouse_item_id
+	* Hibernate value: ItemWarehouse.item.id
+	*/
+	String  ITEM_WAREHOUSE_ITEM_ID = ITEM_WAREHOUSE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ItemWarehouse_location
+	* Hibernate value: ItemWarehouse.location
+	*/
+	String  ITEM_WAREHOUSE_LOCATION = ITEM_WAREHOUSE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ItemWarehouse_stockMax
+	* Hibernate value: ItemWarehouse.stockMax
+	*/
+	String  ITEM_WAREHOUSE_STOCK_MAX = ITEM_WAREHOUSE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ItemWarehouse_stockMin
+	* Hibernate value: ItemWarehouse.stockMin
+	*/
+	String  ITEM_WAREHOUSE_STOCK_MIN = ITEM_WAREHOUSE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ItemWarehouse_warehouse_id
+	* Hibernate value: ItemWarehouse.warehouse.id
+	*/
+	String  ITEM_WAREHOUSE_WAREHOUSE_ID = ITEM_WAREHOUSE_ENTRY.getAliasNames()[5];
 
 
 
