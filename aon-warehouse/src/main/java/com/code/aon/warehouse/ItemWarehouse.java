@@ -57,6 +57,7 @@ public class ItemWarehouse implements ITransferObject{
 		this.warehouse = warehouse;
 	}
 
+	@Column(name="stock_min")
 	public Double getStockMin() {
 		return stockMin;
 	}
@@ -64,6 +65,7 @@ public class ItemWarehouse implements ITransferObject{
 		this.stockMin = stockMin;
 	}
 	
+	@Column(name="stock_max")
 	public Double getStockMax() {
 		return stockMax;
 	}
