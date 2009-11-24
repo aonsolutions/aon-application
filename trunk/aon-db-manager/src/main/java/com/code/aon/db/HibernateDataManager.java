@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -37,9 +36,6 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.db.hibernate.ExportConfigurationPatcher;
 import com.code.aon.db.hibernate.IConfigurationPatcher;
-import com.code.aon.payroll.principales.personas.Trabdto;
-import com.code.aon.payroll.resultados.seguros.Tc2;
-import com.code.aon.payroll.tipos.Incidencia;
 
 public class HibernateDataManager {
 	
@@ -491,10 +487,7 @@ public class HibernateDataManager {
     	hdm.setDirectory( new File("/tmp/tol/export") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
     	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/ctsql.properties") );
-    	List<Class<? extends Serializable>> entities = new LinkedList<Class<? extends Serializable>>();
-    	entities.add(Trabdto.class);
     	hdm.setMaxExport(50000);
-    	hdm.setIncludeEntities(entities);
     	hdm.setIgnoreDependencies(true);
     	hdm.execute();
     }
@@ -514,15 +507,13 @@ public class HibernateDataManager {
     	hdm.setOnTheFly(true);
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
     	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/ctsql.properties") );
-    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );   
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
     	/*
-    	List<Class<? extends Serializable>> entities = new LinkedList<Class<? extends Serializable>>();
-    	entities.add(Tc2.class);
-    	hdm.setIncludeEntities(entities);
     	hdm.setIgnoreDependencies(true);
-    	*/
     	hdm.setMaxImport(100);
     	hdm.setMaxExport(100);
+    	hdm.setOnDemand(true);
+    	 */
     	hdm.setOnDemand(true);
     	hdm.execute();
     }
