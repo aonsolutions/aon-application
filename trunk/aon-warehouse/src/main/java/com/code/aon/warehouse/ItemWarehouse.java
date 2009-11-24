@@ -1,5 +1,7 @@
 package com.code.aon.warehouse;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,14 +9,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 @Entity
 @Table(name="item_warehouse")
@@ -78,6 +86,26 @@ public class ItemWarehouse implements ITransferObject{
 	}
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	@Transient
+	public Double getStock() {
+		try {
+			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
+			Criteria criteria = new Criteria();
+			String iAlias = stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID);
+			String wAlias = stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID);
+			criteria.addEqualExpression(iAlias, getItem().getId());
+			criteria.addEqualExpression(wAlias, getWarehouse().getId());
+			List<ITransferObject> list = stockBean.getList(criteria);
+			if (list != null && list.size() > 0 ) {
+				Stock stock = (Stock) list.get(0);
+				return stock.getQuantity();
+			}
+		} catch (ManagerBeanException e) {
+			
+		}
+		return 0.0;
 	}
 
 	@Override
