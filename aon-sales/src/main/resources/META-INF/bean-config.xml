@@ -18,6 +18,9 @@
 		<listeners>
 	        <listener>com.code.aon.sales.event.SalesDetailBeanListener</listener>
 		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.sales.event.SalesDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
 	</bean>
 	
 </bean-config>
