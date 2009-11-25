@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="financeSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
+				<ui:param name="controller" value="#{finance}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{finance}" />
+				<ui:define name="searchContent">
+
+					<aon:outputLabel for="Customer_lookup"
+						rendered="#{!finance.payment}"
+						value="#{customerBundle.customer_customer}" />
+					<aon:div id="Customer_lookup" styleClass="aon-lookup" rendered="#{!finance.payment}">
+						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+							reRender="Customer_full_name"
+							value="#{financeSearch.customer.id}" size="5" />
+						<aon:lookupButton 
+							windowTitle="#{customerBundle.customer_selection}"
+							selectReRender="Customer_id,Customer_full_name" actionType="search"
+							lookup="#{customerLookup}" minHeight="460" minWidth="650"
+							property="#{financeSearch.customer}">
+						</aon:lookupButton>
+						<aon:inputText id="Customer_full_name"
+							value="#{(financeSearch.customer.registry.fullName!=null)?(financeSearch.customer.registry.fullName):('')}"
+							size="50" disabled="true" />							
+					</aon:div>
+
+					<aon:outputLabel for="Supplier_lookup"
+						rendered="#{finance.payment}"
+						value="#{supplierBundle.supplier_supplier}" />
+					<aon:div id="Supplier_lookup" styleClass="aon-lookup" rendered="#{finance.payment}">
+						<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
+							reRender="Supplier_full_name"
+							value="#{financeSearch.supplier.id}" size="5" />
+						<aon:lookupButton 
+							windowTitle="#{supplierBundle.supplier_selection}"
+							selectReRender="Supplier_id,Supplier_full_name" actionType="search"
+							lookup="#{supplierLookup}" minHeight="460" minWidth="650"
+							property="#{financeSearch.supplier}">
+						</aon:lookupButton>
+						<aon:inputText id="Supplier_full_name"
+							value="#{(financeSearch.supplier.registry.fullName!=null)?(financeSearch.supplier.registry.fullName):('')}"
+							size="50" disabled="true" />							
+					</aon:div>
+
+					<aon:outputLabel for="Creditor_lookup"
+						rendered="#{finance.payment}"
+						value="#{financeBundle.finance_creditor}" />
+					<aon:div id="Creditor_lookup" styleClass="aon-lookup" rendered="#{finance.payment}">
+						<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
+							reRender="Creditor_full_name"
+							value="#{financeSearch.creditor.id}" size="5" />
+						<aon:lookupButton 
+							windowTitle="#{financeBundle.finance_creditor_selection}"
+							selectReRender="Creditor_id,Creditor_full_name" actionType="search"
+							lookup="#{creditorLookup}" minHeight="460" minWidth="650"
+							property="#{financeSearch.creditor}">
+						</aon:lookupButton>
+						<aon:inputText id="Creditor_full_name"
+							value="#{(financeSearch.creditor.registry.fullName!=null)?(financeSearch.creditor.registry.fullName):('')}"
+							size="50" disabled="true" />							
+					</aon:div>
+
+					<c:if test="#{!finance.payment}">
+						<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml">
+							<ui:param name="aliasPreffix" value="Finance_invoice" />						
+						</ui:include>
+					</c:if>
+
+					<aon:outputLabel for="Finance_invoice_referenceCode"
+						rendered="#{finance.payment}"
+						value="#{financeBundle.finance_invoice_number}" />
+					<aon:inputText id="Finance_invoice_referenceCode"
+						rendered="#{finance.payment}"
+						valueChangeListener="#{finance.addExpression}"
+						size="20" />
+
+					<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
+					<aon:div>
+						<aon:outputLabel for="Finance_invoice_issueDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Finance_invoice_issueDate-From"
+							valueChangeListener="#{finance.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Finance_invoice_issueDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Finance_invoice_issueDate-To"
+							valueChangeListener="#{finance.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+					
+					<aon:outputLabel 
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:div>
+						<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Finance_dueDate-From"
+							valueChangeListener="#{finance.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Finance_dueDate-To"
+							valueChangeListener="#{finance.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+					
+					<aon:outputLabel for="Finance_registryBank_id"
+						value="#{configBundle.config_bank}" />
+					<aon:selectOneMenu id="Finance_registryBank_id"
+						value="#{financeSearch.registryBank}">
+						<f:selectItem itemLabel="-" value="#{null}"  />
+						<f:selectItems value="#{finance.companyRegistryBanks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Finance_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Finance_amount"
+						valueChangeListener="#{finance.addExpression}"
+						size="10" />
+					
+					<aon:outputLabel for="Finance_payMethod_id"
+						value="#{configBundle.config_pay_method}" />
+					<aon:selectOneMenu id="Finance_payMethod_id"
+						value="#{configCollections.payMethod}"
+						valueChangeListener="#{finance.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Finance_financeStatus"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Finance_financeStatus"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{finance.addEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{financeCollections.financeStatuses}" />
+					</aon:selectOneMenu>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+	</ui:define>
+</ui:composition>

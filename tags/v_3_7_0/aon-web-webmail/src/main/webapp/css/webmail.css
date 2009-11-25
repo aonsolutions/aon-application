@@ -1,0 +1,36 @@
+.aon-tree-column{
+	width:200px;
+	padding:5px 0 5px 5px;	
+	vertical-align:top !important;
+	}
+.aon-messages-column{
+	width:auto;
+	padding:5px 5px 5px 0;
+	vertical-align:top;	
+	}
+.aon-width-50percent{
+	width:50%;
+	}
+.modalPanel-scroll1{
+	height:325px;
+	overflow:scroll;
+ }
+.aon-border-newmessage{
+	 border:#ccc 1px solid;
+	 border-top-width:0;
+ }
+.dr-table-cell{
+	border-right:0;
+}
+ .aon-icon-big-sendingMail{
+	background:transparent url(../images/aon-sending-mail.gif) scroll left center no-repeat;	
+ }
+.aon-dataScroller-text, .aon-dataScroller-buttons{
+	padding:0 1em 3px 1em;
+	}
+.aon-dataScroller{
+}
+.aon-dataScroller table{
+	line-height:18px;
+	height:18px;
+}

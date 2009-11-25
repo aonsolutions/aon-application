@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{customerFee}" />
+		<ui:param name="columnClasses" 
+			value="aon-editDataTable-textColumn aon-nowrap,
+				   aon-editDataTable-numberColumn aon-nowrap,
+				   aon-editDataTable-numberColumn aon-nowrap,
+				   aon-editDataTable-numberColumn aon-nowrap,
+				   aon-editDataTable-textColumn aon-nowrap,
+				   aon-editDataTable-textColumn aon-nowrap,
+				   aon-editDataTable-textColumn aon-nowrap,
+				   aon-editDataTable-textColumn aon-nowrap,
+				   aon-editDataTable-textColumn aon-nowrap" 
+		/>
+
+		<ui:define name="columns">
+
+			<aon:column width="345">
+				<f:facet name="header">
+					<aon:outputLabel for="item_product_code" value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}"
+					rendered="#{to!=customerFee.to}" />
+				<aon:div styleClass="aon-lookup" rendered="#{to==customerFee.to}">
+					<a4j:region>
+						<aon:lookupInputText id="item_product_code" ajaxSingle="false"
+							value="#{customerFee.to.item.product.code}" lookup="#{itemLookup}"
+							reRender="item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
+							lookupChangeListener="#{customerFee.onItemChanged}"
+							onblur="toUpperCase(this);" required="true" size="10">
+							<aon:joinProperty alias="Item_product_code"
+								value="#{customerFee.to.item.product.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{productBundle.product_item_selection}"
+							actionType="search" property="#{customerFee.to.item}"
+							selectReRender="item_product_code,item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
+							lookup="#{itemLookup}" minHeight="460" minWidth="650"
+							lookupChangeListener="#{customerFee.onItemChanged}">
+						</aon:lookupButton>
+						<aon:inputText id="item_product_name-Edit"
+							value="#{customerFee.to.description}" size="30" />
+					</a4j:region>
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup" rendered="#{customerFee.new}">
+						<a4j:region>
+							<aon:lookupInputText id="item_product_code-New"
+								value="#{customerFee.to.item.product.code}"
+								lookup="#{itemLookup}" ajaxSingle="false"
+								reRender="item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
+								lookupChangeListener="#{customerFee.onItemChanged}"
+								onblur="toUpperCase(this);" required="true" size="10">
+								<aon:joinProperty alias="Item_product_code"
+									value="#{customerFee.to.item.product.code}" />
+							</aon:lookupInputText>
+							<aon:lookupButton
+								windowTitle="#{productBundle.product_item_selection}"
+								actionType="search" property="#{customerFee.to.item}"
+								selectReRender="item_product_code-New,item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
+								lookup="#{itemLookup}" minHeight="460" minWidth="650"
+								lookupChangeListener="#{customerFee.onItemChanged}">
+							</aon:lookupButton>
+							<aon:inputText id="item_product_name-New"
+								value="#{customerFee.to.description}" size="30" />
+						</a4j:region>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_quantity" value="#{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}"
+					rendered="#{to.id!=customerFee.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="CustomerFee_quantity" 
+					rendered="#{to.id==customerFee.to.id}" size="4"
+					value="#{customerFee.to.quantity}" />
+				<f:facet name="footer">
+					<aon:inputText id="CustomerFee_quantity-New"
+						rendered="#{customerFee.new}" size="4"
+						value="#{customerFee.to.quantity}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_price" value="#{bundle.aon_price}" />
+				</f:facet>
+				<aon:outputText
+					value="#{to.price}"
+					rendered="#{to.id!=customerFee.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="CustomerFee_price"
+					rendered="#{to.id==customerFee.to.id}" size="7"
+					value="#{customerFee.to.price}" />
+				<f:facet name="footer">
+					<aon:inputText id="CustomerFee_price-New" rendered="#{customerFee.new}"
+						size="7" value="#{customerFee.to.price}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_discount" value="#{financeBundle.finance_fee_discount}" />
+				</f:facet>
+				<aon:outputText value="#{to.discountExpression.discountExpr}"
+					rendered="#{to.id!=customerFee.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="CustomerFee_discount"
+					rendered="#{to.id==customerFee.to.id}" size="5"
+					value="#{customerFee.to.discountExpression.discountExpr}" />
+				<f:facet name="footer">
+					<aon:inputText id="CustomerFee_discount-New" rendered="#{customerFee.new}"
+						size="5" value="#{customerFee.to.discountExpression.discountExpr}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_initialDate" value="#{bundle.aon_date_from}" />
+				</f:facet>
+				<aon:outputText value="#{to.initialDate}"
+					rendered="#{to.id!=customerFee.to.id}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="CustomerFee_initialDate"
+					rendered="#{to.id==customerFee.to.id}"
+					value="#{customerFee.to.initialDate}"
+					inputSize="7" required="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="CustomerFee_initialDate-New"
+						rendered="#{customerFee.new}"
+						value="#{customerFee.to.initialDate}"
+						inputSize="7" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_finalDate" value="#{bundle.aon_date_to}" />
+				</f:facet>
+				<aon:outputText value="#{to.finalDate}"
+					rendered="#{to.id!=customerFee.to.id}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="CustomerFee_finalDate"
+					rendered="#{to.id==customerFee.to.id}"
+					value="#{customerFee.to.finalDate}"
+					inputSize="7"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="CustomerFee_finalDate-New"
+						rendered="#{customerFee.new}"
+						value="#{customerFee.to.finalDate}"
+						inputSize="7"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_billingDateYear" value="#{financeBundle.finance_fee_billing_date_abrv}" />
+				</f:facet>
+				<aon:div rendered="#{to.id!=customerFee.to.id}"  styleClass="aon-nowrap">
+					<aon:outputText value="#{to.billingDateMonth}" />
+					<aon:outputText value="/#{to.billingDateYear}" />
+				</aon:div>
+				<aon:div rendered="#{to.id==customerFee.to.id}" styleClass="aon-nowrap">
+					<aon:selectOneMenu value="#{customerFee.to.billingDateMonth}">
+						<f:selectItems value="#{commonCollections.months}" />
+					</aon:selectOneMenu>
+					<aon:inputText id="CustomerFee_billingDateYear" required="true" size="3"
+						value="#{customerFee.to.billingDateYear}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div rendered="#{customerFee.new}" styleClass="aon-nowrap">
+						<aon:selectOneMenu value="#{customerFee.to.billingDateMonth}">
+							<f:selectItems value="#{commonCollections.months}" />
+						</aon:selectOneMenu>
+						<aon:inputText id="CustomerFee_billingDateYear-New" required="true" size="3"
+							value="#{customerFee.to.billingDateYear}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column width="70">
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_period" value="#{financeBundle.finance_fee_period}" />
+				</f:facet>
+				<aon:outputText value="#{to.period}"
+					rendered="#{to.id!=customerFee.to.id}" />
+				<aon:selectOneMenu id="CustomerFee_period"
+					value="#{customerFee.to.period}"
+					rendered="#{to==customerFee.to}">
+					<f:selectItems value="#{financeCollections.billingPeriods}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="CustomerFee_period-New"
+						value="#{customerFee.to.period}"
+						rendered="#{customerFee.new}">
+						<f:selectItems value="#{financeCollections.billingPeriods}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
+				</f:facet>
+				<aon:outputText value="#{to.workPlace.description}"
+					rendered="#{to.id!=customerFee.to.id}" />
+				<aon:selectOneMenu id="CustomerFee_workPlace" 
+					value="#{customerFee.to.workPlace}"
+					rendered="#{to==customerFee.to}">
+					<f:selectItems value="#{companyCollections.workPlaces}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="CustomerFee_workPlace-New"
+						value="#{customerFee.to.workPlace}"
+						rendered="#{customerFee.new}">
+						<f:selectItems value="#{companyCollections.workPlaces}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+		</ui:define>
+
+	</ui:decorate>
+
+</ui:composition>
