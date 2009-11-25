@@ -4,10 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.metadata.ClassMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IFinderBean;
@@ -31,7 +32,7 @@ public class BeanConfigManager {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-    private static final Logger LOGGER = Logger.getLogger(BeanConfigManager.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(BeanConfigManager.class);
 
     /**
      * Registered beans.
@@ -47,7 +48,7 @@ public class BeanConfigManager {
 	public void addBeanConfiguration(BeanConfig config) throws ManagerBeanException {
         if (!beans.containsKey(config.getPojoClass())) {
             beans.put(config.getPojoClass(), config);
-            LOGGER.info("Registered bean configuration " + config.getPojoClass());
+            LOGGER.info("Registered bean configuration {}", config.getPojoClass());
         } else {
         	mergeListeners(beans.get(config.getPojoClass()),config);
         }

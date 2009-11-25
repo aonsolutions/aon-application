@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.code.aon.common.dao.hibernate.HibernateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class manages bean metadata such as alias names.
@@ -22,7 +21,7 @@ public class DAOConstants {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-    private static final Logger LOGGER = Logger.getLogger(DAOConstants.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(DAOConstants.class);
 	private static final String RESOURCE_NAME = "/dao/constants.xml";
 	private static Map<String,DAOConstantsEntry> DAO_CONSTANTS; 
 	private static Set<String> CHECKED_RESOURCES;	
@@ -68,7 +67,7 @@ public class DAOConstants {
 			if (! CHECKED_RESOURCES.contains(resource) ) {			
 				InputStream in = DAOConstantsEntry.class.getResourceAsStream(resource);
 				if ( in != null ) {
-					LOGGER.fine( resource + " found, obtaining properties" );					
+					LOGGER.debug( resource + " found, obtaining properties" );					
 					DAOConstantsReader.parse( resource, in );
 					entry = DAO_CONSTANTS.get( pojo );
 				}

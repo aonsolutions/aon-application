@@ -1,11 +1,13 @@
 package com.code.aon.common.dao.hibernate;
 
 import java.security.Principal;
-import java.util.logging.Logger;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.security.auth.Subject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -13,7 +15,7 @@ import javax.security.auth.Subject;
  */
 public class DefaultSessionFactoryNameProvider implements ISessionFactoryNameProvider {
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultSessionFactoryNameProvider.class.getName());	
+	private final static Logger LOGGER = LoggerFactory.getLogger(DefaultSessionFactoryNameProvider.class);
 	
     private static final ISessionFactoryNameProvider SINGLETON = new DefaultSessionFactoryNameProvider();
     
@@ -41,7 +43,7 @@ public class DefaultSessionFactoryNameProvider implements ISessionFactoryNamePro
                 return (index > -1)? name.substring(index + 1, name.length()): name;
             }
         } catch (NamingException e) {
-            LOGGER.fine(e.getMessage());
+            LOGGER.debug(e.getMessage());
         } 
         return HibernateUtil.DEFAULT_SESSION_FACTORY_NAME;
 	}

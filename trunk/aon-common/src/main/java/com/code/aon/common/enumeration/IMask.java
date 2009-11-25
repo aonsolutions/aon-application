@@ -1,6 +1,5 @@
 package com.code.aon.common.enumeration;
 
-import com.code.aon.common.enumeration.IResourceable;
 
 /**
  * Interface that defines object mask, such as Decimal, Date, ...

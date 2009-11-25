@@ -2,7 +2,9 @@ package com.code.aon.common;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.bean.BeanConfigManager;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -18,7 +20,7 @@ public class BeanManager {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-	private static final Logger LOGGER = Logger.getLogger(BeanManager.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BeanManager.class);
 
 	/**
 	 * Map of registered beans in the application.
@@ -36,7 +38,7 @@ public class BeanManager {
 	public static void register(String instance, IFinderBean bean) {
 		if (!beans.containsKey(bean)) {
 			beans.put(instance, bean);
-			LOGGER.info("Registered bean " + instance + " - " + bean);
+			LOGGER.info("Registered bean {} - {}", instance, bean);
 		}
 	}
 
