@@ -299,7 +299,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					if (ContentLevel.CATEGORY == level ){
 						idents = collections.getParentCategories();
 					} else if (ContentLevel.ELEMENT == level ){
-						idents = collections.getBrands();
+						idents = collections.getBrandList(true);
 					}
 					break;
 				case ACTIVITY:

@@ -12,64 +12,30 @@
 	<ui:define name="content">
 		<aon:form id="list">
 
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-			
-				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{appBundle.product}"/>	  						
-				</aon:div>					
-				
-				<aon:div styleClass="aon-finding-subtitle-internal">
-					<aon:outputText
-						value="#{bundle.aon_search}" />
-				</aon:div>					
-					
-
-				<!--  toolbar navigation -->
-				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="product_list"
-						rendered="#{cms.roleEditor}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_search}">
-						<aon:actionListener method="#{product.onSearch}" />
-					</aon:commandButton>					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="product_form"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}">
-						<aon:actionListener method="#{product.onReset}" />
-					</aon:commandButton>
-					<aon:commandButton id="cancel"
-						value="#{bundle.aon_cancel}"
-						action="product_list" 
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_cancel}">
-						<aon:actionListener method="#{product.onCancel}" />
-					</aon:commandButton>
-				</aon:div>			
-			<!-- end toolbar navigation -->
-			</aon:panelGrid>	
-		</aon:div>
-
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="main_panel" columns="2" dir="true">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.product}" />
+				<ui:param name="controller" value="#{product}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+			</ui:include>		
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{product}" />
+				<ui:define name="searchContent">
 	
 					<aon:outputLabel for="Product_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="Product_alias" size="50"
-						valueChangeListener="#{product.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 
-					<aon:outputLabel for="Product_shortDesc"
+					<aon:outputLabel for="Product_details_shortLabel"
 						value="#{appBundle.product_shorLabel}" />
-					<aon:inputText id="Product_shortDesc" size="50"
-						value="#{product.shortDesc}" />
+					<aon:inputText id="Product_details_shortLabel" size="50"
+						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Product_productCategory_id"
 						value="#{appBundle.product_category}"/>
 					<aon:selectOneMenu id="Product_productCategory_id"  
-						valueChangeListener="#{product.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{collections.categories}" />
 					</aon:selectOneMenu>
@@ -77,13 +43,23 @@
 					<aon:outputLabel for="Product_brand_id"
 						value="#{appBundle.product_brand}"/>
 					<aon:selectOneMenu id="Product_brand_id"  
-						valueChangeListener="#{product.addExpression}">
-						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{collections.brands}" />
+						valueChangeListener="#{controller.addIdEqualExpression}"
+						value="#{collections.brand}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{collections.brandList}" />
 					</aon:selectOneMenu>
-	
-				</aon:panelGrid>
-			</aon:div>
+						
+					<aon:outputLabel for="Product_active"
+						value="#{appBundle.cms_active}" />
+					<aon:selectOneMenu id="Product_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>	
+						
+				</ui:define>
+			</ui:decorate>	
 			
 		</aon:form>
 	</ui:define>

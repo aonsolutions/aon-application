@@ -13,90 +13,30 @@
 
 		<aon:form id="productForm">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.product}" />
+				<ui:param name="controller" value="#{product}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
 				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.product}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{product.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!product.new and cms.roleEditor}"
-							action="product_form"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{product.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
-							rendered="#{product.to!=null or product.new}"
-							action="product_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{product.accept}" />
-						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!product.new and cms.roleEditor}" 
-							immediate="true"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{product.onRemove}" 
-							confirmAction="product_list"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search" 
-							value="#{bundle.aon_search}"
-							immediate="#{true}"
-							action="product_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{product.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="list"
-							value="#{bundle.aon_list}"
-							action="product_list" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{product.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
-							action="home" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{product.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="product_categories"
-							value="#{appBundle.product_category}"
-							action="productCategory_list"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-							<aon:actionListener method="#{productCategory.onSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="brands"
-							value="#{appBundle.brand}"
-							action="brand_list"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-							<aon:actionListener method="#{brand.onSearch}" />
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>		
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="product_categories"
+						value="#{appBundle.product_category}"
+						action="productCategory_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{productCategory.onSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="brands"
+						value="#{appBundle.brand}"
+						action="brand_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{brand.onSearch}" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>
 					
 			<aon:div styleClass="aon-scroll-area" style="width:99%;">
 	
@@ -113,21 +53,23 @@
 						<aon:outputLabel for="productDetail_shortLabel"
 							value="#{appBundle.product_shorLabel}" />
 						<aon:inputText id="productDetail_shortLabel"
-							size="80" maxlength="64"
+							size="80" maxlength="64" required="true"
 							value="#{product.toI18n.shortLabel}" />
 							
 						<ui:include src="/facelet/content/utils/contentInput.xhtml" >
 							<ui:param name="labelValue" value="#{appBundle.product_label}" />
 							<ui:param name="inputTextId" value="productDetail_label" />
 							<ui:param name="inputTextValue" value="#{product.toI18n.label}" />
+							<ui:param name="inputTextRequired" value="#{true}" />
 							<ui:param name="richTextEnabled" value="#{product.richTextEnabled}" />
 						</ui:include>																	
 							
 						<aon:outputLabel for="product_brand"
 							value="#{appBundle.product_brand}" />
 						<aon:selectOneMenu id="product_brand"  
-							value="#{product.to.brand.id}">
-							<f:selectItems value="#{collections.brands}" />
+							value="#{product.to.brand}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{collections.brandList}" />
 						</aon:selectOneMenu> 
 
 						<aon:outputLabel for="product_category"

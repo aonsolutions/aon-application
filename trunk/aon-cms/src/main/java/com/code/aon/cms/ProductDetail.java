@@ -9,11 +9,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "product_i18n")
 public class ProductDetail implements ITransferObject {
+
+	private static final long serialVersionUID = -2996398881856921866L;
 
 	private Integer id;
 
@@ -85,4 +93,45 @@ public class ProductDetail implements ITransferObject {
 		this.alt = alt;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ProductDetail o = (ProductDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alt, o.alt)
+				.append(this.label, o.label)
+				.append(this.language, o.language)
+				.append(this.product, o.product)
+				.append(this.shortLabel, o.shortLabel)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(alt)
+			.append(id)	
+			.append(label)
+			.append(language)
+			.append(product)
+			.append(shortLabel)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("alt", alt).
+			append("id", id).
+			append("label", StringUtils.abbreviate(label, 32)).
+			append("language", language.getId()).
+			append("product", product.getId()).
+			append("shortLabel", shortLabel).
+			toString();
+	}		
 }

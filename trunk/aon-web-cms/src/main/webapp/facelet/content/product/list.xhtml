@@ -11,74 +11,47 @@
 
 	<ui:define name="content">
 
-		<aon:form id="list_form">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.product}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="reset" 
-							value="#{bundle.aon_reset}"
-							rendered="#{cms.roleEditor}"
-							action="product_form"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{product.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="search" 
-							value="#{bundle.aon_search}"
-							action="product_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{product.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="generate" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" immediate="true"
-							rendered="#{cms.roleEditor}"
-							actionListener="#{generator.onGenerateProducts}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<a4j:support 
-								event="onclick" reRender="poll,grid" ajaxSingle="true"
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-						</aon:commandButton>	
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
-							action="home" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>
-						<aon:commandButton id="product_categories"
-							value="#{appBundle.product_category}"
-							action="productCategory_list"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-							<aon:actionListener method="#{productCategory.onSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="brands"
-							value="#{appBundle.brand}"
-							action="brand_list"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-							<aon:actionListener method="#{brand.onSearch}" />
-						</aon:commandButton>
-					</aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+		<aon:form id="productList">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.product}" />
+				<ui:param name="controller" value="#{product}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="generate" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" immediate="true"
+						rendered="#{cms.roleEditor}"
+						actionListener="#{generator.onGenerateProducts}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<a4j:support 
+							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>	
+					<aon:commandButton id="home"
+						value="#{bundle.aon_home}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+					<aon:commandButton id="product_categories"
+						value="#{appBundle.product_category}"
+						action="productCategory_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{productCategory.onSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="brands"
+						value="#{appBundle.brand}"
+						action="brand_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{brand.onSearch}" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>		
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -100,7 +73,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.product_label}" />
+							<aon:outputText value="#{appBundle.product_shorLabel}" />
 						</f:facet>
 						<aon:outputText value="#{product.i18nShortLabel}" />
 					</aon:column>
@@ -126,14 +99,14 @@
 						<aon:div onmouseover="disableRowSelector();"
 							onmouseout="enableRowSelector();" >																															
 							<aon:commandLink title="#{appBundle.product_activate}" 
-								action="product_list"
+								action="product_list" ajaxSingle="true"
 								actionListener="#{product.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
 									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.product_deactivate}" 
-								action="product_list"
+								action="product_list" ajaxSingle="true"
 								actionListener="#{product.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
