@@ -14,7 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Transfer Object that represents a product.
@@ -28,7 +33,9 @@ import com.code.aon.common.ITransferObject;
 @Table(name="product")
 public class Product implements ITransferObject{
 
-    /**
+	private static final long serialVersionUID = 9207032363854912347L;
+
+	/**
      * Unique key.
      */
     private Integer id;
@@ -153,4 +160,43 @@ public class Product implements ITransferObject{
 		this.image = image;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Product o = (Product) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.brand, o.brand)
+				.append(this.image, o.image)
+				.append(this.offerPrice, o.offerPrice)
+				.append(this.price, o.price)
+				.append(this.productCategory, o.productCategory)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)		
+			.append(alias)
+			.append(brand)
+			.append(id)
+			.append(image)
+			.append(offerPrice)			
+			.append(price)
+			.append(productCategory)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
+	
 }

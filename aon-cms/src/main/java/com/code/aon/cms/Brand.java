@@ -10,7 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Transfer Object that represents a brand.
@@ -24,7 +29,9 @@ import com.code.aon.common.ITransferObject;
 @Table(name="brand")
 public class Brand implements ITransferObject{
 
-    /**
+	private static final long serialVersionUID = 7360145800785775502L;
+
+	/**
      * Unique key.
      */
     private Integer id;
@@ -79,5 +86,33 @@ public class Brand implements ITransferObject{
 		this.details = details;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Brand o = (Brand) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)		
+			.append(alias)
+			.append(id)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
 
 }

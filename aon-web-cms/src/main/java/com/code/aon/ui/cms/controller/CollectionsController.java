@@ -192,7 +192,18 @@ public class CollectionsController implements ICMSConstants {
 		return languajes;
 	}
 	
-	public List<SelectItem> getBrands() throws ManagerBeanException {
+	public Brand getBrand() {
+		return null;
+	}
+
+	public void setBrand(Brand brand) {
+	}
+	
+	public List<SelectItem> getBrandList() throws ManagerBeanException {
+		return getBrandList(false);
+	}
+	
+	public List<SelectItem> getBrandList( boolean onlyId ) throws ManagerBeanException {
 		List<SelectItem> brands = new LinkedList<SelectItem>();
 		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
 		Criteria criteria = new Criteria();
@@ -201,9 +212,8 @@ public class CollectionsController implements ICMSConstants {
 		List<ITransferObject> list = brandBean.getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
 			Brand brand = (Brand)list.get(i);
-			int id = brand.getId();
 			String name = brand.getAlias();
-			SelectItem item = new SelectItem(id, name);
+			SelectItem item = new SelectItem( onlyId ? brand.getId() : brand, name);
 			brands.add(item);
 		}
 		return brands;
@@ -731,7 +741,7 @@ public class CollectionsController implements ICMSConstants {
 				SelectItem subItem = new SelectItem(pcdSubCat.getId(),"-"+pcdSubCat.getAlias());
 				subList[j] = subItem; 
 			}
-			SelectItem item = new SelectItemGroup(pcd.getAlias(),pcd.getAlias(),true,subList);
+			SelectItem item = new SelectItemGroup(pcd.getAlias(),pcd.getAlias(),false,subList);
 			categories.add(item);
 		}
 		return categories;

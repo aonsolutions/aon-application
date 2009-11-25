@@ -12,51 +12,18 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="list">
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-			
-				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{appBundle.direct_access}"/>	  						
-				</aon:div>					
-				
-				<aon:div styleClass="aon-finding-subtitle-internal">
-					<aon:outputText
-						value="#{bundle.aon_search}" />
-				</aon:div>					
-					
-
-				<!--  toolbar navigation -->
-				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="direct_access_list"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_search}">
-						<aon:actionListener method="#{direct_access.onSearch}" />
-					</aon:commandButton>					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="direct_access_form"
-						rendered="#{cms.roleEditor}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}">
-						<aon:actionListener method="#{direct_access.onReset}" />
-					</aon:commandButton>
-					<aon:commandButton id="cancel"
-						value="#{bundle.aon_cancel}"
-						action="direct_access_list" 
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_cancel}">
-						<aon:actionListener method="#{direct_access.onCancel}" />
-					</aon:commandButton>
-				</aon:div>			
-			<!-- end toolbar navigation -->
-			</aon:panelGrid>	
-		</aon:div>
-
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="main_panel" columns="2" dir="true">
-	
+		<aon:form id="directAccessSearch">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.direct_access}" />
+				<ui:param name="controller" value="#{direct_access}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+			</ui:include>		
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{direct_access}" />
+				<ui:define name="searchContent">
+		
 					<aon:outputLabel for="DirectAccess_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="DirectAccess_alias" size="50"
@@ -85,8 +52,17 @@
 					<aon:inputText id="DirectAccess_position" size="10"
 						valueChangeListener="#{direct_access.addExpression}" />
 	
-				</aon:panelGrid>
-			</aon:div>
+					<aon:outputLabel for="DirectAccess_active"
+						value="#{appBundle.cms_active}" />
+					<aon:selectOneMenu id="DirectAccess_active"
+						valueChangeListener="#{direct_access.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>	
+						
+				</ui:define>
+			</ui:decorate>	
 			
 		</aon:form>
 	</ui:define>
