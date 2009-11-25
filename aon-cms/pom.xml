@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.cms</artifactId>
-	<version>3.6.1</version>
+	<version>3.7.0</version>
 	<description>AON CMS</description>
 	<name>AON CMS</name>
 	<dependencies>
