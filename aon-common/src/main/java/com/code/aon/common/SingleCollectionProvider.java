@@ -4,18 +4,13 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SingleCollectionProvider implements ICollectionProvider {
 	
-	private static final Logger LOGGER = Logger.getLogger(SingleCollectionProvider.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(SingleCollectionProvider.class);
 	
 	private ITransferObject to;
 	
@@ -28,7 +23,7 @@ public class SingleCollectionProvider implements ICollectionProvider {
 		try {
 			return getCollection(false);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}

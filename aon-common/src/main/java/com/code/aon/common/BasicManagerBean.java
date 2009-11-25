@@ -5,12 +5,13 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Stack;
-import java.util.logging.Logger;
 
 import javax.persistence.Transient;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Cascade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.IDAO;
@@ -34,7 +35,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerSupport;
  */
 public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 
-	private static final Logger LOGGER = Logger.getLogger(BasicManagerBean.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BasicManagerBean.class);
 	
     // Manages the listeners.
 	private ManagerBeanListenerSupport listeners;
@@ -120,28 +121,28 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	public void initializePOJO(ITransferObject to) throws ManagerBeanException {
 		try {
 			Class clazz = to.getClass();
-			LOGGER.fine("Initializing " + clazz.getName());
+			LOGGER.debug("Initializing " + clazz.getName());
 			getPojoDependences().push(clazz);
 			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
-			LOGGER.fine("Found " + pds.length + " properties");
+			LOGGER.debug("Found " + pds.length + " properties");
 			for (PropertyDescriptor pd : pds) {
 				Class fieldClass = pd.getPropertyType();
 				String name = pd.getName();
 				if (needInitialize(to, pd)) {
 					if (ITransferObject.class.isAssignableFrom(fieldClass)) {
-						LOGGER.fine("Initializing TO " + name + " property");
+						LOGGER.debug("Initializing TO " + name + " property");
 						ITransferObject childTO = (ITransferObject) fieldClass.newInstance();
 						if (!getPojoDependences().contains(fieldClass)) {
 							initializePOJO(childTO);
 							getPojoDependences().pop();
 						}
 						PropertyUtils.setProperty(to, name, childTO);
-						LOGGER.fine("Assigned TO " + fieldClass + " to " + clazz.getName());
+						LOGGER.debug("Assigned TO " + fieldClass + " to " + clazz.getName());
 					} else if (!fieldClass.getName().startsWith("java")) {
-						LOGGER.fine("Initializing " + name + " property");
+						LOGGER.debug("Initializing " + name + " property");
 						Object o = fieldClass.newInstance();
 						PropertyUtils.setProperty(to, name, o);
-						LOGGER.fine("Assigned " + fieldClass + " to " + clazz.getName());
+						LOGGER.debug("Assigned " + fieldClass + " to " + clazz.getName());
 					}
 				}
 			}
@@ -168,13 +169,13 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 				return to;
 			}
 			String msg = "Can not create new POJO." + clazz.getName() + " must be a implementation of ITransferObject";
-			LOGGER.severe(msg);
+			LOGGER.error(msg);
 			throw new ManagerBeanException(msg);
 		} catch (InstantiationException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new ManagerBeanException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage());
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}
@@ -183,15 +184,15 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	public void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException {
 		try {
 			Class clazz = to.getClass();
-			LOGGER.fine("Restoring null values on " + clazz.getName());
+			LOGGER.debug("Restoring null values on " + clazz.getName());
 			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
-			LOGGER.fine("Found " + pds.length + " properties");
+			LOGGER.debug("Found " + pds.length + " properties");
 			for (PropertyDescriptor pd : pds) {
 				Class fieldClass = pd.getPropertyType();
 				String name = pd.getName();
 				if (ITransferObject.class.isAssignableFrom(fieldClass)) {
 					if (!pd.getReadMethod().isAnnotationPresent(Cascade.class)) {
-						LOGGER.fine("Initializing TO " + name + " property");
+						LOGGER.debug("Initializing TO " + name + " property");
 						ITransferObject childTO = (ITransferObject) PropertyUtils.getProperty(to, name);
 						if (childTO != null ) {
 							IManagerBean bean = BeanManager.getManagerBean(fieldClass);
@@ -199,7 +200,7 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 							if (id == null) {
 								if(!pd.getReadMethod().isAnnotationPresent(AonPOJOInitializationInvalidateRestoreNull.class)){
 									PropertyUtils.setProperty(to, name, null);
-									LOGGER.fine("Assigned NULL to " + fieldClass);
+									LOGGER.debug("Assigned NULL to " + fieldClass);
 								}
 							}
 						}

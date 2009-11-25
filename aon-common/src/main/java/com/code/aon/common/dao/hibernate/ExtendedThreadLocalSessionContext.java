@@ -1,12 +1,12 @@
 package com.code.aon.common.dao.hibernate;
 
-import java.util.logging.Logger;
-
 import org.hibernate.FlushMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.hibernate.context.ThreadLocalSessionContext;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO
@@ -16,11 +16,7 @@ import org.hibernate.engine.SessionFactoryImplementor;
 public class ExtendedThreadLocalSessionContext extends
 		ThreadLocalSessionContext {
 
-	/**
-	 * TODO
-	 */
-	private static final Logger LOGGER = Logger
-			.getLogger(ExtendedThreadLocalSessionContext.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(ExtendedThreadLocalSessionContext.class);
 
 	/**
 	 * TODO
@@ -35,10 +31,10 @@ public class ExtendedThreadLocalSessionContext extends
 	 * @see org.hibernate.context.ThreadLocalSessionContext#buildOrObtainSession()
 	 */
 	protected Session buildOrObtainSession() {
-		LOGGER.fine("Opening a new Session");
+		LOGGER.debug("Opening a new Session");
 		Session s = super.buildOrObtainSession();
 
-		LOGGER.fine("Disabling automatic flushing of the Session");
+		LOGGER.debug("Disabling automatic flushing of the Session");
 		s.setFlushMode(FlushMode.MANUAL);
 
 		return s;
