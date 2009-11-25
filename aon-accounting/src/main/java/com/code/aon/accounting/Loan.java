@@ -9,6 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -98,6 +103,7 @@ public class Loan implements ITransferObject {
 	 * @return the loan date
 	 */
 	@Column(name="loan_date",nullable=false)
+	@Temporal(TemporalType.DATE)
 	public Date getLoanDate() {
 		return loanDate;
 	}
@@ -173,6 +179,7 @@ public class Loan implements ITransferObject {
 	 * 
 	 * @return the amount
 	 */
+	@Column(nullable=true, precision=15, scale=3)
 	public double getAmount() {
 		return amount;
 	}
@@ -191,6 +198,7 @@ public class Loan implements ITransferObject {
 	 * 
 	 * @return the expenses
 	 */
+	@Column(nullable=true, precision=15, scale=3)
 	public double getExpenses() {
 		return expenses;
 	}
@@ -211,6 +219,8 @@ public class Loan implements ITransferObject {
 	 */
     @ManyToOne
     @JoinColumn(name="rbank", nullable=false)
+	@ForeignKey(name = "FK_LOAN_RBANK")
+	@Index(name = "IDX_LOAN_RBANK")			    
     public RegistryBank getRegistryBank() {
 		return registryBank;
 	}

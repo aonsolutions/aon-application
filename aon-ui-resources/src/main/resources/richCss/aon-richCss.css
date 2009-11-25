@@ -33,15 +33,21 @@ padding:0;
 display:inline;
 }
 
+input:focus, select:focus, textarea:focus{
+background-color: #FBEDB6;
+}
 input, select, textarea {
 font: 1em "arial","lucida Grande","Trebuchet MS",sans-serif;
+}
+select {
+border: solid #808080 1px;
 }
 input{
  }
 textarea {
 line-height:1.25;
 }
- ul, ol{
+ul, ol{
  margin:0;
  padding:0;
  }
@@ -1198,11 +1204,16 @@ color:#000;
 	
 	}
 .aon-editDataTable-button{
+	min-height: 16px;
 	border:0;
 	cursor:pointer;
-	padding-left:16px;
+	padding-left: 15px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
 	background-color:transparent;
-	}
+	margin-right: 5px;
+}
 /*************************/
 /******  PANEL TABSET  ******/
 /*************************/
@@ -1376,7 +1387,7 @@ color:#000;
 	 background:transparent url(images/aon-icon/aon-icon-menu-top-item.png) left top no-repeat;
  }
  .aon-menuItem-selectClass{
- 	background-color:red; 		
+ 	background-color:#ddd; 		
  }
  .aon-menuItem-no-iconClass{
  	display:none;
@@ -1892,14 +1903,16 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	}
 .aon-search-add{
 	background:transparent url(images/aon-icon/aon-icon-search-add.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
-	border: 0;	
- }
+	border: 0;
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}
 
 .aon-search-minus{
 	background:transparent url(images/aon-icon/aon-icon-search-minus.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
 	border: 0;
- }
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}

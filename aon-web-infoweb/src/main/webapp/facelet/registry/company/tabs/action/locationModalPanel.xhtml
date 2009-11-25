@@ -1,34 +1,35 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
-<body>
-<ui:composition>
-	<style>
-	.infoL {
-	    height: 110px;
-	    width: 96%;
-	    overflow: auto;
-	}
-	</style>
 
-
-	<aon:panelGroup id="showLocationModalPanel">
-		<rich:modalPanel id="locationModalPanel"
+	<aon:panelGroup id="showLocationModalPanel" styleClass="aon-popupWindow">
+		<c:if test="#{webPage.showLocationModalPanel}">
+			<rich:modalPanel id="locationModalPanel"
 				rendered="#{webPage.showLocationModalPanel}" showWhenRendered="true"
-				headerClass="aon-popupWindow-title"
-				minHeight="240" height="240" minWidth="800" width="800" top="50" left="100" zindex="1000">
-			<f:facet name="header">
-	           	<h:outputText value="#{appBundle.infoweb_page_location}"/>
-			</f:facet>
+				minHeight="190" height="190" minWidth="800" width="800">
 
-			<aon:form id="pagesLocationForm">
-				<aon:div id="infoL">
-					<rich:panel bodyClass="infoL">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{appBundle.infoweb_page_location}" />
+					</aon:div>
+				</f:facet>				
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+							reRender="showLocationModalPanel" immediate="true">
+							<f:setPropertyActionListener target="#{webPage.showLocationModalPanel}" value="#{false}" />
+							<rich:componentControl for="locationModalPanel" operation="hide" event="onclick" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				
+				<aon:form id="pagesLocationForm">
+					<rich:panel>
 
 						<aon:div styleClass="aon-toolbar">
 							<aon:commandButton id="savel" value="#{bundle.aon_save}"
@@ -37,43 +38,31 @@
 								<f:setPropertyActionListener target="#{webPage.showLocationModalPanel}" value="#{false}" />
 								<rich:componentControl for="locationModalPanel" operation="hide" event="onclick" />
 							</aon:commandButton>
-						</aon:div>
-
-						<aon:div style="float:left;margin-right:20px;">
-							<aon:panelGrid columns="2" dir="true" >
-						
-								<aon:outputLabel for="Generic_extra" value="#{appBundle.infoweb_page_extra_coords}" />
-								<aon:inputText id="Generic_extra" 
-									size="70" maxlength="255" value="#{webPage.detail.extra}" />
-
-								<aon:outputLabel value="&#160;" />
-								<aon:div>
-									<aon:outputText value="#{appBundle.infoweb_page_extra_coords_exp}. "/>
-									<aon:outputText value=" #{appBundle.infoweb_page_extra_coords_exp2}"/>
-								</aon:div>
-							</aon:panelGrid>
-						</aon:div>
-					</rich:panel>
-				</aon:div>
-
-				<aon:div id="closeLocationModalPanel" >
-					<aon:div style="text-align:right;">
-						<rich:spacer height="3"/>
-						<br/>
-			            <aon:panelGrid style="float:right;border:1px gray solid">
-							<aon:commandButton  
-									reRender="infoL, closeLocationModalPanel"  style="padding-right:15px"
-									value="#{appBundle.infoweb_close}" immediate="true"
-									styleClass="aon-icon-commandButton aon-icon-cancel">
+							<aon:commandButton value="#{bundle.aon_close}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true" >
 								<f:setPropertyActionListener target="#{webPage.showLocationModalPanel}" value="#{false}" />
 								<rich:componentControl for="locationModalPanel" operation="hide" event="onclick" />
 							</aon:commandButton>
+							
+						</aon:div>
+	
+						<aon:panelGrid columns="2" dir="true" >
+					
+							<aon:outputLabel for="Generic_extra" value="#{appBundle.infoweb_page_extra_coords}" />
+							<aon:inputText id="Generic_extra" 
+								size="70" maxlength="255" value="#{webPage.detail.extra}" />
+
+							<aon:outputLabel value="&#160;" />
+							<aon:div>
+								<aon:outputText value="#{appBundle.infoweb_page_extra_coords_exp}. "/>
+								<aon:outputText value=" #{appBundle.infoweb_page_extra_coords_exp2}"/>
+							</aon:div>
 						</aon:panelGrid>
-					</aon:div>
-				</aon:div>
-			</aon:form>	
-		</rich:modalPanel>
+
+					</rich:panel>
+				</aon:form>	
+			</rich:modalPanel>
+		</c:if>
 	</aon:panelGroup>
+	
 </ui:composition>
-</body>
-</html>

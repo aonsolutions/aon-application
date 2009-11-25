@@ -2,7 +2,7 @@ package com.code.aon.ui.infoweb.velocity;
 
 public interface VelocityConstants {
 
-	public static final String
+	String
 
 	//APLICATION CONSTANTS
 	APLICATION_NAME				= "webinfo",
@@ -13,14 +13,13 @@ public interface VelocityConstants {
 	DOMAINS_PATH				= "/home/DOMAINS",
 	WEBSITE_PATH				= "WEBSITES",
 	RESOURCE_PATH				= "DOMAIN-RESOURCES",
-
+	IMAGE_PAGE_PREFFIX 			= "aonInfoWeb_",
+	
 	CSS_PATH					= "css",
-	CSS_STYLE_FILE				= "style.vm",
 	CSS_STYLE_DEFAULTS			= "default.properties",
 	CSSIMG_PATH					= "img",
 	IMAGES_PATH					= "images",
-
-	MESSAGES_FILE				= "messages",
+	INDEX_TITLE					= "Inicio",
 
 	TEMPORAL_PATH				= "/home/COMMON-RESOURCES/aon-web-info/temporal",
 
@@ -30,6 +29,21 @@ public interface VelocityConstants {
 	//VELOCITY PROPERTIES
 	VELOCITY_FILE_ENCODING		= "iso-8859-1",
 	VELOCITY_LOG_FILE			= "velocity.log";
+
+	//TEMPLATES
+	String INDEX_TEMPLATE		= "index.vm";	
+	String GALLERY_TEMPLATE		= "gallery.vm";
+	String IMAGE_VIEW_TEMPLATE	= "imageview.vm";
+	String LOCATION_TEMPLATE	= "location.vm";
+	String CONTACT_TEMPLATE		= "contact.vm";
+	String MAIL_TEMPLATE		= "mail.vm";
+	String HOME_TEMPLATE		= "home.vm";
+	String STYLE_TEMPLATE		= "style.vm";
+	String ERROR_TEMPLATE		= "404error.vm";
 	
+	//FILE
+	String ERROR_HTML			= "404error.html";
+	String INDEX_HTML			= "index.html";
+	String MAIL_PHP				= "mail.php";
 
 }

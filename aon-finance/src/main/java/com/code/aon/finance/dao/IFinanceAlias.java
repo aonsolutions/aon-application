@@ -337,28 +337,22 @@ public interface IFinanceAlias {
 	String  FINANCE_BATCH_DETAIL_STATUS = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: FinanceBatchDetail_financeBatch_issueDate
-	* Hibernate value: FinanceBatchDetail.financeBatch.issueDate
-	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_BATCH_ISSUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: FinanceBatchDetail_finance_invoice_series
 	* Hibernate value: FinanceBatchDetail.finance.invoice.series
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[6];
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: FinanceBatchDetail_finance_invoice_number
 	* Hibernate value: FinanceBatchDetail.finance.invoice.number
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[7];
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: FinanceBatchDetail_finance_dueDate
 	* Hibernate value: FinanceBatchDetail.finance.dueDate
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[8];
+	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[7];
 
 
 

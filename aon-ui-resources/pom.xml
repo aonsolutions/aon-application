@@ -11,14 +11,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.resources</artifactId>
-	<version>3.6.0</version>
+	<version>3.7.0</version>
 	<description>AON UI RESOURCES</description>
 	<name>AON UI RESOURCES</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_04-p02</version>
+			<version>1.2_09</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

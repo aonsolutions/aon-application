@@ -6,18 +6,6 @@
 <faces-config>
 
 	<managed-bean>
-		<managed-bean-name>itemListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
-			<value>#{productAccountListener}</value>
-		</list-entries>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>productAccountListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.account.bridge.event.ProductAccountListener
@@ -26,31 +14,9 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>accountListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
-			<value>#{accountControllerCascadeListener}</value>
-		</list-entries>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>accountControllerCascadeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.account.bridge.event.AccountControllerCascadeListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>customerListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<list-entries>
-			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<value>#{customerAccount}</value>
-		</list-entries>
 	</managed-bean>
 
 	<managed-bean>
@@ -68,16 +34,6 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>supplierListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<list-entries>
-			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<value>#{supplierAccount}</value>
-		</list-entries>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>supplierAccount</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.account.bridge.event.BasicAccountListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
@@ -89,16 +45,6 @@
 			<property-name>alias</property-name>
 			<value>SupplierAccount_supplier_id</value>
 		</managed-property>		
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>creditorListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<list-entries>
-			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<value>#{creditorAccount}</value>
-		</list-entries>
 	</managed-bean>
 
 	<managed-bean>
@@ -115,4 +61,12 @@
 		</managed-property>		
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>taxAccountListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.bridge.event.TaxAccountListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>

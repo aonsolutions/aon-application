@@ -13,13 +13,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.PageType;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "menu_option")
 public class MenuOption implements ITransferObject, IPositionObject {
+
+	private static final long serialVersionUID = 5319348327075177292L;
 
 	private Integer id;
 
@@ -80,7 +87,7 @@ public class MenuOption implements ITransferObject, IPositionObject {
 		this.separator = separator;
 	}
 
-	@Column(name = "type")
+	@Column(name = "type", nullable=false)
 	public PageType getType() {
 		return this.type;
 	}
@@ -133,5 +140,46 @@ public class MenuOption implements ITransferObject, IPositionObject {
 	public void setDetails( Set<MenuOptionDetail> details ) {
 		this.details = details;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final MenuOption o = (MenuOption) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.ident, o.ident)
+				.append(this.level, o.level)
+				.append(this.menu, o.menu)
+				.append(this.position, o.position)
+				.append(this.separator, o.separator)
+				.append(this.type, o.type)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(id)			
+			.append(ident)			
+			.append(level)
+			.append(menu)			
+			.append(position)
+			.append(separator)	
+			.append(type)			
+			.toHashCode();
+	}
 
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
+	
 }

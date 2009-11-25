@@ -1,7 +1,5 @@
 package com.code.aon.accounting;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
@@ -36,16 +39,7 @@ public class AccountBudget implements ITransferObject {
     /** The security level. */
     private SecurityLevel securityLevel;
 
-    /** The entry date. */
-    private Date date;
-
-    /** The debit. */
-	private double debit;
-	
-	/** The credit. */
-	private double credit;
-
-	/**
+    /**
 	 * Gets the id.
 	 * 
 	 * @return the id
@@ -71,7 +65,8 @@ public class AccountBudget implements ITransferObject {
 	 * 
 	 * @return the account period
 	 */
-	@Column(name="account_period", length=4)
+	@Column(name="account_period", length=4, nullable=false)
+	@Index(name = "IDX_ACCOUNT_BUDGET_ACCOUNT_PERIOD")	
 	public String getPeriod() {
 		return period;
 	}
@@ -92,6 +87,8 @@ public class AccountBudget implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account", nullable=false )
+	@ForeignKey(name = "FK_ACCOUNT_BUDGET_ACCOUNT")
+	@Index(name = "IDX_ACCOUNT_BUDGET_ACCOUNT")
 	public Account getAccount() {
 		return account;
 	}
@@ -123,59 +120,5 @@ public class AccountBudget implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
-
-    /**
-     * Gets the entry date.
-     * 
-     * @return the entry date
-     */
-    @Column(name="entry_date")
-    public Date getDate() {
-        return date;
-    }
-
-    /**
-     * Sets the entry date.
-     * 
-     * @param entryDate the entry date
-     */
-    public void setDate(Date dateate) {
-        this.date = dateate;
-    }
-
-    /**
-     * Gets the debit.
-     * 
-     * @return the debit
-     */
-    public double getDebit() {
-        return debit;
-    }
-
-    /**
-     * Sets the debit.
-     * 
-     * @param debit the debit
-     */
-    public void setDebit(double debit) {
-        this.debit = debit;
-    }
-
-	/**
-	 * Gets the credit.
-	 * 
-	 * @return the credit
-	 */
-	public double getCredit() {
-		return credit;
-	}
-
-	/**
-	 * Sets the credit.
-	 * 
-	 * @param credit the credit
-	 */
-	public void setCredit(double credit) {
-		this.credit = credit;
-	}
+	
 }

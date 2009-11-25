@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.controller.RichLookupBean;
 
 public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, ILookupComponent {
 
@@ -22,7 +23,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
     
     private ValueExpression property;
     
-    private ValueExpression lookup;
+    private RichLookupBean lookup;
     
     private String lookupProperty;
     
@@ -40,15 +41,15 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
         this.joinBindingsMap = Collections.emptyMap();
     }
     
-	public ValueExpression getLookup() {
+	public RichLookupBean getLookup() {
     	if (null != this.lookup) {
             return this.lookup;
         }
     	ValueExpression _vb = getValueExpression(LOOKUP);
-        return (_vb != null) ? (ValueExpression) _vb.getValue(getFacesContext().getELContext()) : null;
+        return (_vb != null) ? (RichLookupBean) _vb.getValue(getFacesContext().getELContext()) : null;
 	}
 
-	public void setLookup(ValueExpression lookup) {
+	public void setLookup(RichLookupBean lookup) {
 		this.lookup = lookup;
 	}
 
@@ -100,6 +101,15 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
 	}
 	
 	/**
+	 * Sets the join bindings map.
+	 * 
+	 * @param joinBindingsMap the join bindings map
+	 */
+	public void setJoinBindingsMap(Map<String, ValueExpression> joinBindingsMap) {
+		this.joinBindingsMap = joinBindingsMap;
+	}
+
+	/**
      * <p>Gets the state of the instance as a <code>Serializable</code>
      * Object.</p>
      *
@@ -109,7 +119,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
   	public void restoreState(FacesContext context, Object value) {  
   		this._state = (Object[]) value;  
   		super.restoreState(context, this._state[0]);  
-  		lookup = (ValueExpression) this._state[1];
+  		lookup = (RichLookupBean) this._state[1];
   		property = (ValueExpression) this._state[2];
   		joinBindingsMap = (Map<String, ValueExpression>) this._state[3];
   		lookupChangeListener = (MethodExpression) this._state[4];  	

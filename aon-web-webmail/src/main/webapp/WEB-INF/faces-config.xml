@@ -1,8 +1,9 @@
-<faces-config version="1.2"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 
+<faces-config>
 	<application>
 		<message-bundle>
 			com.code.aon.ui.common.i18n.messages
@@ -10,11 +11,24 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
-		<resource-bundle>
-			<base-name>com.code.aon.ui.webmail.i18n.application</base-name>
-			<var>appBundle</var>
-		</resource-bundle>		
 	</application>
+
+	<!--  *************** COLLECTIONS ***************** -->
+
+	<!--  *************** CONVERTERS ***************** -->
+	<converter>
+		<description>Conversor para los Enum</description>
+		<converter-for-class>java.lang.Enum</converter-for-class>
+		<converter-class>
+			com.code.aon.ui.converter.EnumLocaleConverter
+		</converter-class>
+	</converter>
+
+	<lifecycle>
+		<phase-listener>
+			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
+		</phase-listener>
+	</lifecycle>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
 	<managed-bean>
@@ -29,7 +43,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.6.0</value>
+			<value>/aonResource/1.3.1</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -49,6 +63,40 @@
 				<value>#{aonResource.resolveLocal['/css/webmail.css']}</value>
 			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>applicationBundles</property-name>
+			<map-entries>
+				<map-entry>
+					<key>bundle</key>
+					<value>com.code.aon.ui.common.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>appBundle</key>
+					<value>com.code.aon.ui.webmail.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>menuBundle</key>
+					<value>com.code.aon.ui.webmail.i18n.menu</value>
+				</map-entry>
+				<map-entry>
+					<key>securityBundle</key>
+					<value>com.code.aon.bridge.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>groupwareBundle</key>
+					<value>com.code.aon.ui.groupware.i18n.messages</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ***************** FAILED LOGIN ******************** --> 
+	<managed-bean>
+		<managed-bean-name>failedLogin</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.bridge.session.FailedLogin
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>

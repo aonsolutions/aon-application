@@ -11,7 +11,9 @@
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
-		<property name="connection.password">serubd2000</property>		
+		<property name="connection.password">serubd2000</property>
+		
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>		
 
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.cms.AlbumCategory"/>
@@ -80,6 +82,7 @@
 		<mapping class="com.code.aon.cms.DownloadConfig"/>
 		<mapping class="com.code.aon.cms.Company"/>
 		<mapping class="com.code.aon.cms.Activity"/>
+		<mapping class="com.code.aon.cms.ActivityConfig"/>
 		<mapping class="com.code.aon.cms.ActivityDetail"/>
 		<mapping class="com.code.aon.cms.CompanyActivity"/>
 		<mapping class="com.code.aon.cms.Bulletin"/>

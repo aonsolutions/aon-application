@@ -33,40 +33,22 @@ public interface IAccountingAlias {
 	String  ACCOUNT_BUDGET_ACCOUNT_ID = ACCOUNT_BUDGET_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: AccountBudget_credit
-	* Hibernate value: AccountBudget.credit
-	*/
-	String  ACCOUNT_BUDGET_CREDIT = ACCOUNT_BUDGET_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: AccountBudget_date
-	* Hibernate value: AccountBudget.date
-	*/
-	String  ACCOUNT_BUDGET_DATE = ACCOUNT_BUDGET_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: AccountBudget_debit
-	* Hibernate value: AccountBudget.debit
-	*/
-	String  ACCOUNT_BUDGET_DEBIT = ACCOUNT_BUDGET_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: AccountBudget_id
 	* Hibernate value: AccountBudget.id
 	*/
-	String  ACCOUNT_BUDGET_ID = ACCOUNT_BUDGET_ENTRY.getAliasNames()[4];
+	String  ACCOUNT_BUDGET_ID = ACCOUNT_BUDGET_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: AccountBudget_period
 	* Hibernate value: AccountBudget.period
 	*/
-	String  ACCOUNT_BUDGET_PERIOD = ACCOUNT_BUDGET_ENTRY.getAliasNames()[5];
+	String  ACCOUNT_BUDGET_PERIOD = ACCOUNT_BUDGET_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: AccountBudget_securityLevel
 	* Hibernate value: AccountBudget.securityLevel
 	*/
-	String  ACCOUNT_BUDGET_SECURITY_LEVEL = ACCOUNT_BUDGET_ENTRY.getAliasNames()[6];
+	String  ACCOUNT_BUDGET_SECURITY_LEVEL = ACCOUNT_BUDGET_ENTRY.getAliasNames()[3];
 
 
 

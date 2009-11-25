@@ -10,9 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.common.ITransferObject;
@@ -53,6 +57,8 @@ public class AmortizationDetail implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="amortization", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_DETAIL_AMORTIZATION")
+	@Index(name = "IDX_AMORTIZATION_DETAIL_AMORTIZATION")		
 	public Amortization getAmortization() {
 		return amortization;
 	}
@@ -62,6 +68,7 @@ public class AmortizationDetail implements ITransferObject {
 	}
 
 	@Column(name = "from_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -71,6 +78,7 @@ public class AmortizationDetail implements ITransferObject {
 	}
 
 	@Column(name = "to_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	public Date getToDate() {
 		return toDate;
 	}
@@ -79,7 +87,7 @@ public class AmortizationDetail implements ITransferObject {
 		this.toDate = toDate;
 	}
 
-	@Column(nullable = false)
+	@Column(nullable = false, precision=15, scale=3)
     public Double getAllocation() {
         return allocation;
     }
@@ -88,7 +96,7 @@ public class AmortizationDetail implements ITransferObject {
         this.allocation = allocation;
     }
 	
-	@Column(nullable = false)
+	@Column(nullable = false, precision=15, scale=3)
     public Double getCoefficient() {
         return coefficient;
     }
@@ -109,6 +117,8 @@ public class AmortizationDetail implements ITransferObject {
 	
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account_entry")
+	@ForeignKey(name = "FK_AMORTIZATION_DETAIL_ACCOUNT_ENTRY")
+	@Index(name = "IDX_AMORTIZATION_DETAIL_ACCOUNT_ENTRY")			
 	public AccountEntry getAccountEntry() {
 		return accountEntry;
 	}

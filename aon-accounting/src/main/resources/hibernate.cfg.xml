@@ -15,6 +15,7 @@
 
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.accounting.AccountBudget"/>
+		<mapping class="com.code.aon.accounting.AccountBudgetDetail"/>
 		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
@@ -25,19 +26,17 @@
 		<mapping class="com.code.aon.accounting.Loan"/>
 		<mapping class="com.code.aon.accounting.Leasing"/>
 		<mapping class="com.code.aon.accounting.Period"/>
+
 		
 		<!-- ACCOUNT -->
 		<mapping class="com.code.aon.account.Account"/>
 
-		<!-- FINANCE -->
-		<mapping class="com.code.aon.finance.RegistryBank"/>
-		<mapping class="com.code.aon.finance.Bank"/>
-				
 		<!-- REGISTRY -->
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
-		
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+				
 		<!-- GEOZONE -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 		
@@ -49,7 +48,16 @@
 		<mapping class="com.code.aon.product.Brand"/>
 
 		<!-- CONFIG -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
 	</session-factory>
 
 </hibernate-configuration>

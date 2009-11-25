@@ -16,23 +16,62 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="2">
+				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
 
 					<ui:include
 						src="/com/code/aon/ui/supplier/facelet/supplier/formContent.xhtml">
 						<ui:param name="controller" value="#{supplier}" />
 					</ui:include>
 
-					<c:if test="#{supplier.showAccount}">
-						<aon:outputLabel for="Supplier_account"
-							value="#{accountingBundle.accounting_account}" />
-						<aon:inputText id="Supplier_account" 
-							rendered="#{supplierAccount.account != null}"
-							value="#{supplierAccount.account.id} - #{supplierAccount.account.description}"
-							disabled="true" size="60" />
-						<aon:inputText rendered="#{supplierAccount.account == null}"
-							value="" disabled="true" size="60" />
-					</c:if>					
+				</aon:panelGrid>
+				
+				<aon:panelGrid id="accountDataTable" styleClass="aon-margin-top"
+					columns="2" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+					<c:if test="#{supplier.showAccount and !supplier.new}">
+						<aon:outputLabel for="Supplier_account" value="#{accountBundle.account_accounting}" />
+						<h:panelGrid columns="2" id="accountContainer">
+							<ui:include
+								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+								<ui:param name="wizard" value="#{accountWizard}" />
+								<ui:param name="id" value="Supplier_account" />
+								<ui:param name="required" value="#{false}" />
+								<ui:param name="size" value="9" />
+								<ui:param name="maxlength" value="9" />
+								<ui:param name="renderDescription" value="#{true}" />
+								<ui:param name="renderedAttr" value="#{true}" />
+								<ui:param name="disabled" value="#{false}" />
+								<ui:param name="reRenderAttr" value="none" />
+								<ui:param name="entity" value="#{supplierAccount.account}" />
+								<ui:param name="ELExpression" value="supplierAccount.account" />
+							</ui:include>
+
+							<aon:commandButton
+								value="#{accountBundle.account_synchronize}"
+								title="#{accountBundle.account_synchronize}"
+								style="border: #808080 1px solid;"
+								styleClass="aon-finding-toolbar-item aon-icon-refresh"
+								rendered="#{supplierAccount.accountSynchronizable}"
+								reRender="accountContainer"
+								actionListener="#{supplierAccount.onAccountSynchronize}">
+							</aon:commandButton>
+
+							<aon:commandButton
+								value="#{accountBundle.account_new_account}" 
+								title="#{accountBundle.account_new_account}"
+								style="border: #808080 1px solid;"
+								styleClass="aon-finding-toolbar-item aon-icon-reset"
+								rendered="#{supplierAccount.account == null}"
+								reRender="accountContainer"
+								actionListener="#{supplierAccount.onNewAccount}">
+							</aon:commandButton>
+
+						</h:panelGrid>
+					</c:if>
 				</aon:panelGrid>
 				
 				<c:if test="#{!supplier.new}">
