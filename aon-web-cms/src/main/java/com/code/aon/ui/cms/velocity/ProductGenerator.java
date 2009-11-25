@@ -50,8 +50,7 @@ public class ProductGenerator extends Generator {
 
 			List<ProductCategoryHandler> listCategoryHandler = new ArrayList<ProductCategoryHandler>();
 
-			for (Iterator<ProductCategoryDetail> iteratorPC = productCategoryDetailList.iterator(); iteratorPC.hasNext();) {
-				ProductCategoryDetail productCategoryDetail = iteratorPC.next();
+			for( ProductCategoryDetail productCategoryDetail : productCategoryDetailList ) {
 
 				ProductCategoryHandler categoryHandler = new ProductCategoryHandler(productCategoryDetail);
 
