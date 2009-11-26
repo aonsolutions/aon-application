@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.9.2" />
+	<property name="version" value="1.9.0" />
 	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
@@ -38,8 +38,13 @@
 	<property name="commons.io.home" value="${user.home}/.m2/repository/commons-io/commons-io/1.4" />
 	<property name="commons.io.jar" value="commons-io-1.4.jar" />
 
+	<property name="org.slf4j.api.home" value="${user.home}/.m2/repository/org/slf4j/slf4j-api/1.5.8" />
+	<property name="org.slf4j.api.jar" value="slf4j-api-1.5.8.jar" />
+	<property name="org.jboss.slf4j.home" value="${user.home}/.m2/repository/org/jboss/slf4j/slf4j-jboss-logging/1.0.2.GA" />
+	<property name="org.jboss.slf4j.jar" value="slf4j-jboss-logging-1.0.2.GA.jar" />
+	
 	<!-- AON -->
-	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/1.0.0" />
+	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/1.1.0" />
 
 	<!-- The classpath required to build classes. -->
     <path id="javac.classpath">
@@ -82,7 +87,8 @@
     <!-- The classpath required to build classes. -->
     <path id="jboss.ldap.javac.classpath">
 		<path refid="jboss.javac.classpath"/>
-        <pathelement path="${aon.ldap.home}/aon.ldap-1.0.0.jar"/>		
+        <pathelement path="${aon.ldap.home}/aon.ldap-1.1.0.jar"/>		
+    	<pathelement path="${org.slf4j.api.home}/${org.slf4j.api.jar}"/>
     	<pathelement path="${commons.lang.home}/${commons.lang.jar}"/>
     	<pathelement path="${commons.io.home}/${commons.io.jar}"/>
     </path>
@@ -471,8 +477,14 @@
     		<fileset dir="${commons.io.home}">
 				<include name="${commons.io.jar}"/>
 			</fileset>
+    		<fileset dir="${org.slf4j.api.home}">
+				<include name="${org.slf4j.api.jar}"/>
+			</fileset>
+    		<fileset dir="${org.jboss.slf4j.home}">
+				<include name="${org.jboss.slf4j.jar}"/>
+			</fileset>
     		<fileset dir="${aon.ldap.home}">
-				<include name="aon.ldap-1.0.0.jar"/>
+				<include name="aon.ldap-1.1.0.jar"/>
 			</fileset>
 			<fileset dir="${mgr.dist.dir}">
 				<include name="${mgr}-${version}.jar"/>
