@@ -2,8 +2,6 @@ package com.code.aon.webmail.bean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.mail.FetchProfile;
 import javax.mail.Flags;
@@ -14,6 +12,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.webmail.WebmailException;
 
@@ -36,7 +36,7 @@ public class AonFolder extends AonMessageSortableList {
     // Spam folder decloration
     public static final String SPAM_FOLDER_NAME = "spam";
 	
-	private static final Logger LOGGER = Logger.getLogger(AonFolder.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AonFolder.class);
 	
 	private AonServer server;
 
@@ -69,8 +69,9 @@ public class AonFolder extends AonMessageSortableList {
                 }
             }
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE, "Folder list " + folder.getName(), e);
-			throw new WebmailException(e);
+			String msg = "Folder list " + folder.getName();
+			LOGGER.error(msg, e);
+			throw new WebmailException(msg,e);
 		}
 		return folderList;
 	}
@@ -80,7 +81,7 @@ public class AonFolder extends AonMessageSortableList {
 			close(false);
 			folder.delete(content);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Deleting folder failed", e);
+			LOGGER.error("Deleting folder failed", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -109,7 +110,7 @@ public class AonFolder extends AonMessageSortableList {
 			}
 			setMessageList(list);
         } catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error reading messages ", e);
+			LOGGER.error("Error reading messages ", e);
 			throw new WebmailException(e);
         }
     }
@@ -121,7 +122,8 @@ public class AonFolder extends AonMessageSortableList {
     		}
 			return true;
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error opening folder " + folder.getName() + " in mode " +mode, e);
+			LOGGER.error("Error opening folder {} in mode {}: {}",folder.getName(),mode);
+			LOGGER.error("Error opening folder", e);
 		}
 		return false;
     }
@@ -130,7 +132,8 @@ public class AonFolder extends AonMessageSortableList {
     	try {
 	    	folder.close(mode);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error closing folder " + folder.getName() + " in mode " +mode, e);
+			LOGGER.error("Error closing folder {} in mode ",folder.getName(),mode);
+			LOGGER.error("Error closing folder", e);
 		}
 		return false;
     }
@@ -140,7 +143,7 @@ public class AonFolder extends AonMessageSortableList {
     	try {
     		return ( folder.getType() & Folder.HOLDS_FOLDERS ) != 0;
     	} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error getting folder type", e);
+			LOGGER.error("Error getting folder type", e);
 		}
     	return false;
     }
@@ -149,7 +152,7 @@ public class AonFolder extends AonMessageSortableList {
     	try {
     		return ( folder.getType() & Folder.HOLDS_MESSAGES ) != 0;
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error getting folder type", e);
+			LOGGER.error("Error getting folder type", e);
 		}
     	return false;    	
     }
@@ -160,7 +163,7 @@ public class AonFolder extends AonMessageSortableList {
 				return true;
 			}
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error checking if is root", e);
+			LOGGER.error("Error checking if is root", e);
 		}
 		return false;
 	}
@@ -205,7 +208,7 @@ public class AonFolder extends AonMessageSortableList {
 				count = folder.getUnreadMessageCount();				
 			}
 		} catch (MessagingException e) {
-			LOGGER.log( Level.WARNING, "Error getting unread message count", e );
+			LOGGER.warn( "Error getting unread message count", e );
 		}    	
 		return count;
     }

@@ -2,17 +2,17 @@ package com.code.aon.webmail.bean;
 
 import java.util.Comparator;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.webmail.WebmailException;
 
 public class AonMessageComparator {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(AonMessageComparator.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessageComparator.class);
 	
 	public static Comparator<AonMessage> getComparator(String column, boolean ascending) {
 		if (AonMessageSortableList.DATE_COLUMN.equals(column) ) {
@@ -54,7 +54,7 @@ public class AonMessageComparator {
 				}
 				return m2.getSubject().compareToIgnoreCase(m1.getSubject());
 			} catch (WebmailException e) {
-				LOGGER.log(Level.SEVERE, "Sort error", e);
+				LOGGER.error("Sort error", e);
 				return 0;
 			}
 		}
@@ -76,7 +76,7 @@ public class AonMessageComparator {
 				}
 				return m2.getSender().compareToIgnoreCase(m1.getSender());
 			} catch (WebmailException e) {
-				LOGGER.log(Level.SEVERE, "Sort error", e);
+				LOGGER.error("Sort error", e);
 				return 0;
 			}
 		}
@@ -99,7 +99,7 @@ public class AonMessageComparator {
 				}
 				return m2.getRecipientsTo().compareToIgnoreCase(m1.getRecipientsTo());
 			} catch (WebmailException e) {
-				LOGGER.log(Level.SEVERE, "Sort error", e);
+				LOGGER.error("Sort error", e);
 				return 0;
 			}
 		}
@@ -130,20 +130,17 @@ public class AonMessageComparator {
 				if ( d1 != null ) { 
 					if (d2 != null) {
 						return d1.compareTo(d2);
-					} else {
-						return 1;
-					}
-				} else {
-					if ( d2 != null ) {
-						return -1;
-					} else {
-						return 0;
-					}
-				}
+					} 
+					return 1;
+				} 
+				if ( d2 != null ) {
+					return -1;
+				} 
+				return 0;
 			} catch (WebmailException e) {
-				LOGGER.log(Level.SEVERE, "Sort error", e);
+				LOGGER.error("Sort error", e);
 			} catch (MessagingException e) {
-				LOGGER.log(Level.SEVERE, "Sort error", e);
+				LOGGER.error("Sort error", e);
 			}
 			return 0;
 		}
@@ -166,7 +163,7 @@ public class AonMessageComparator {
 				}
 				return new Integer(m2.getMessage().getSize()).compareTo(m1.getMessage().getSize());
 			} catch (MessagingException e) {
-				LOGGER.log(Level.SEVERE, "Sort error", e);
+				LOGGER.error("Sort error", e);
 				return 0;
 			}
 		}

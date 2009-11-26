@@ -12,7 +12,7 @@
 	<artifactId>aon.webmail</artifactId>
 	<packaging>jar</packaging>
 	<name>AON WEBMAIL</name>
-	<version>3.9.0</version>
+	<version>3.10.0</version>
 	<description>AON WEBMAIL</description>
 	<repositories>
 		<repository>
@@ -26,20 +26,14 @@
 		<dependency>
 		   <groupId>com.code.aon</groupId>
 		   <artifactId>aon.common</artifactId>
-		   <version>3.4.0</version>
+		   <version>3.5.0</version>
 		   <scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common.ldap</artifactId>
-			<version>1.1.0</version>
+			<version>1.2.0</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging-api</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>bouncycastle</groupId>
