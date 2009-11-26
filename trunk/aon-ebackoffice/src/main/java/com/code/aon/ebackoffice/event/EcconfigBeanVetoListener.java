@@ -2,7 +2,9 @@ package com.code.aon.ebackoffice.event;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -17,7 +19,7 @@ import com.code.aon.ebackoffice.util.EmailUtils;
 
 public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final Logger LOGGER = Logger
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EcconfigBeanVetoListener.class.getName());
 
 	@Override
