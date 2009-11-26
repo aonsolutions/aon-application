@@ -3,20 +3,17 @@ package com.code.aon.jaas.vendor.jboss;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.management.ObjectName;
-
 import javax.security.auth.login.AppConfigurationEntry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.system.ServiceMBeanSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.client.ast.IOption;
@@ -45,7 +42,7 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
         IDeployer, JBossMainDeployerMBean {
 
     /** JBossMainDeployer proper Logger. */
-    private static final Log LOGGER = LogFactory.getLog( JBossMainDeployer.class.getName() );
+    private final static Logger LOGGER = LoggerFactory.getLogger(JBossMainDeployer.class);
 
     /** XMLLoginConfig ObjectName. */
 	public static final ObjectName LOGIN_OBJECT_NAME = org.jboss.mx.util.ObjectNameFactory.create("jboss.security:service=XMLLoginConfig");
@@ -83,7 +80,7 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 	 * @jmx:managed-operation
 	 */
 	public DeploymentInfo deploy(URL url) throws DeploymentException {
-		LOGGER.info( "deploy: " + url.getPath() );
+		LOGGER.info( "deploy: {}", url.getPath() );
 		File file = new File( url.getPath() );
 		if ( !file.canRead() ) {
 			try {
@@ -91,7 +88,7 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 				URL serverHomeURL = (URL) getServer().getAttribute( oname, "ServerHomeURL" );
 				url = new File( serverHomeURL.getPath() + "farm/" + file.getName() ).toURL();
 			} catch (Exception e) {
-				LOGGER.fatal( "Error searching file: " + e.getMessage() );
+				LOGGER.error( "Error searching file", e );
 				throw new DeploymentException( e.getMessage(), e );
 			}
 		}

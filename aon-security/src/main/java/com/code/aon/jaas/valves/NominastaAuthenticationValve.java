@@ -27,8 +27,8 @@ import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.auth.IConstants;
@@ -46,7 +46,7 @@ import com.code.aon.jaas.client.ast.IUser;
 public class NominastaAuthenticationValve extends ValveBase implements IConstants {
 
 	/** CosmosAuthenticationValve Logger instance. */
-	private static final Log LOGGER = LogFactory.getLog( NominastaAuthenticationValve.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(NominastaAuthenticationValve.class);
 
 	@Override
 	public void invoke(Request request, Response response) throws IOException, ServletException {
@@ -110,20 +110,20 @@ public class NominastaAuthenticationValve extends ValveBase implements IConstant
 	 */
 	private void flushSessionPrincipal(String sessionId, AonGenericPrincipal principal) {
 		try {
-			LOGGER.debug( "Flushing LOCAL session:" + sessionId + " principal:" + principal.getUserPrincipal() );
+			LOGGER.debug( "Flushing LOCAL session: {} principal: {}", sessionId, principal.getUserPrincipal() );
 			Object[] params = { sessionId, principal };
 			String[] sig = { String.class.getName(), Object.class.getName() };
 			mserver.invoke( new ObjectName( "jboss.admin:service=AonSessionManager" ), "flushSSOPrincipal", params, sig );
 		} catch (MalformedObjectNameException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (NullPointerException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (InstanceNotFoundException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (MBeanException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (ReflectionException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		}
 	}
 
@@ -147,15 +147,15 @@ public class NominastaAuthenticationValve extends ValveBase implements IConstant
 			}
 			return roles;
 		} catch (MalformedObjectNameException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (NullPointerException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (InstanceNotFoundException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (MBeanException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (ReflectionException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		}
 		return null;
 	}
@@ -176,15 +176,15 @@ public class NominastaAuthenticationValve extends ValveBase implements IConstant
 				(IDomain) mserver.invoke( new ObjectName( "jboss.admin:service=AonLdap" ), "getDomain", params, sig );
 			return d.standaloneUsers().get( username ); 
 		} catch (MalformedObjectNameException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (NullPointerException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (InstanceNotFoundException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (MBeanException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch (ReflectionException e) {
-			LOGGER.error( e );
+			LOGGER.error( e.getMessage(), e );
 		}
 		return null;
 	}
@@ -214,21 +214,21 @@ public class NominastaAuthenticationValve extends ValveBase implements IConstant
 				password = rs.getString( 1 );
 			}
 		} catch(NamingException e) {
-			 LOGGER.fatal( "JNDI could not create InitalContext", e );
+			 LOGGER.error( "JNDI could not create InitalContext", e );
 		} catch (SQLException e) {
-			 LOGGER.fatal( "Unable to obtain authentication info", e );
+			 LOGGER.error( "Unable to obtain authentication info", e );
 		} finally {
 			if ( stmt != null )
 				try {
 					stmt.close();
 				} catch (SQLException e) {
-					 LOGGER.fatal( "Unable to close statement", e );
+					 LOGGER.error( "Unable to close statement", e );
 				}
 			if ( conn != null )
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					 LOGGER.fatal( "Unable to close connection", e );
+					 LOGGER.error( "Unable to close connection", e );
 				}
 		}
 		return password;

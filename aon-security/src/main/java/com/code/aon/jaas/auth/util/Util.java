@@ -21,8 +21,8 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.IConstants;
 
@@ -37,7 +37,7 @@ import com.code.aon.jaas.auth.IConstants;
 public class Util {
 
     /** Proper Class logger. */
-    private static final Log LOGGER = LogFactory.getLog( Util.class.getName() );
+    private final static Logger LOGGER = LoggerFactory.getLogger(Util.class);
 
     /** Encoding BASE64 type. */
     public static final String BASE64_ENCODING = "BASE64";
@@ -92,8 +92,8 @@ public class Util {
             }
 
         } catch (UnsupportedEncodingException uee) {
-            LOGGER.fatal("charset " + hashCharset //$NON-NLS-1$
-                    + " not found. Using platform default." + uee.getMessage()); //$NON-NLS-1$
+            LOGGER.error("charset " + hashCharset //$NON-NLS-1$
+                    + " not found. Using platform default", uee); //$NON-NLS-1$
             passBytes = password.getBytes();
         }
 
@@ -105,11 +105,11 @@ public class Util {
             } else if (hashEncoding.equalsIgnoreCase(BASE16_ENCODING)) {
                 passwordHash = Util.encodeBase16(hash);
             } else {
-                LOGGER.fatal("Unsupported hash encoding format " + hashEncoding); //$NON-NLS-1$
+                LOGGER.error("Unsupported hash encoding format {}", hashEncoding); //$NON-NLS-1$
             }
         } catch (NoSuchAlgorithmException e) {
             // TODO [iayerbe] Mirar si se debe propagar esta excepción.
-            LOGGER.fatal("Password hash calculation failed " + e.getMessage()); //$NON-NLS-1$
+            LOGGER.error("Password hash calculation failed", e); //$NON-NLS-1$
         }
         return passwordHash;
     }
@@ -165,7 +165,7 @@ public class Util {
             base64 = Base64Encoder.encode(bytes);
         } catch (IOException e) {
             // TODO [iayerbe] Mirar si se debe propagar esta excepción.
-            LOGGER.fatal("Encode failed " + e.getMessage()); //$NON-NLS-1$
+            LOGGER.error("Encode failed", e); //$NON-NLS-1$
         }
         return base64;
     }
@@ -209,17 +209,16 @@ public class Util {
 		try {
 			String thisIp = InetAddress.getLocalHost().getHostAddress();
 			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( "Serializing deployed applications:" + l + " on " + thisIp );
+			LOGGER.debug( "Serializing deployed applications: {} on {}", l, thisIp );
 			ostream = new FileOutputStream( path );
 			/* Create the output stream */
 			ObjectOutputStream oopstream = new ObjectOutputStream( ostream );
 			oopstream.writeObject( l );
 			oopstream.flush();
 		} catch (UnknownHostException e) {
-			LOGGER.fatal( e );
+			LOGGER.error( e.getMessage(), e );
 		} catch(IOException e) {
-			LOGGER.fatal( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 			throw e;
 		} finally {
 			if ( ostream != null ) 
@@ -238,16 +237,15 @@ public class Util {
 		FileInputStream istream = null;
 		try {
 			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( "Deserializing deployed applications from " + thisIp );
+			LOGGER.debug( "Deserializing deployed applications from {}", thisIp );
 			istream = new FileInputStream( path );
 			/* Create the output stream */
 			ObjectInputStream p = new ObjectInputStream( istream );
 			return (List) p.readObject();
 		} catch(IOException e) {
-			LOGGER.fatal( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		} catch (ClassNotFoundException e) {
-			LOGGER.fatal( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		} finally {
 			if ( istream != null )
 				try {

@@ -10,8 +10,8 @@ import java.util.Map;
 import javax.naming.Name;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
@@ -33,7 +33,7 @@ import com.code.aon.ldap.Scope;
 public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 	
 	/** Obtiene un logger apropiado. */
-	private static final Log LOGGER = LogFactory.getLog( Domain.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(Domain.class);
 
 	private static final long serialVersionUID = -8630396330009341954L;
 
