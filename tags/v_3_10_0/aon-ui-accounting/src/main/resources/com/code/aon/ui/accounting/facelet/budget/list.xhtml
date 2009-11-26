@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountBudgetList">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_account_budget_module}" />
+				<ui:param name="controller" value="#{accountBudget}" />
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{bundle.aon_listing}" action="#{report.onExecute}">
+						<f:param name="reportKey" value="budgetList" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div id="accountBudgetData" styleClass="aon-scroll-area">
+				<aon:dataTable id="accountBudgetDataList" value="#{accountBudget.model}"
+					rows="20" var="to" rendered="#{accountBudget.model.rowCount > 0}">
+
+					<aon:rowSelector action="accountBudget_form" 
+						actionListener="#{accountBudget.onSelect}" />
+ 
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+						<f:facet name="header">
+							<aon:outputText value="#{accountingBundle.accounting_period}: " />
+						</f:facet>
+						<aon:outputText value="#{to.period}"/>
+					</aon:column>
+
+					<!--  
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_month}: " />
+						</f:facet>
+						<aon:outputText value="#{to.date}">
+							<f:convertDateTime pattern="MM" 
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					-->
+
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<f:facet name="header">
+							<aon:outputText value="#{accountBundle.account_account}" />
+						</f:facet>
+						<aon:div style="width: 100px;float:left;">
+							<aon:outputText value="#{to.account.id}"/>
+						</aon:div>
+						<aon:outputText value="#{to.account.description}"
+							styleClass="aon-italic" 
+							style="width: auto; font-size: 0.9em;">
+						</aon:outputText>
+					</aon:column>
+					
+					<!--  
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{accountingBundle.accounting_debit}" />
+						</f:facet>
+						<aon:outputText value="#{to.debit}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{accountingBundle.accounting_credit}" />
+						</f:facet>
+						<aon:outputText value="#{to.credit}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
+					-->
+					
+				</aon:dataTable>
+				<aon:dataScroller2 for="accountBudgetDataList" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
