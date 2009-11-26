@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,6 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -54,7 +54,7 @@ import com.code.aon.supplier.Supplier;
 public class Purchase implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
 	private static final long serialVersionUID = -7426746100676646853L;
-	private static final Logger LOGGER = Logger.getLogger(Purchase.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Purchase.class.getName());
     private static final String DELIM = " ";
 	
 	private Integer id;
@@ -292,7 +292,7 @@ public class Purchase implements ITransferObject, IHeaderObject, ICalculableCont
 			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), getId());
 			return purchaseDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining purchaseDetail list", e);
+			LOGGER.error("Error obtaining purchaseDetail list", e);
 		}
 		return null;
 	}
