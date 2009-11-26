@@ -5,8 +5,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.Principal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sun.net.util.IPAddressUtil;
 
@@ -29,7 +29,7 @@ public class AuthPrincipal implements Principal, Serializable {
 
 	private static final long serialVersionUID = 1L;
     /** Obtiene un logger apropiado. */
-	private static final Log LOGGER = LogFactory.getLog( AuthPrincipal.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(AuthPrincipal.class);
 
 	/** Principal name. ej: shortName@domain/context */
     private String name;
@@ -163,14 +163,15 @@ public class AuthPrincipal implements Principal, Serializable {
     	String _domain = value.substring( value.indexOf(IConstants.IDENTITY_SEPARATOR) + 1, value.indexOf(IConstants.CONTEXT_SEPARATOR) ); 
 		try {
 			InetAddress thisIp = InetAddress.getLocalHost();
-			LOGGER.debug( "Principal Domain: " + _domain + " InetAddress[" + thisIp.getCanonicalHostName() + ", " + thisIp.getHostAddress() + ", " + thisIp.getHostName() + "]"  );
+			LOGGER.debug( "Principal Domain: {} InetAddress[{}, {}, {}]",
+							new Object[] {_domain, thisIp.getCanonicalHostName(), thisIp.getHostAddress(), thisIp.getHostName()} );
 			if ( (_domain != null) && isIPAddress(_domain) ) {
 				if ( thisIp.getHostAddress().equals(_domain) || IDomain.DEFAULT_DOMAIN_IP.equals(_domain) ) {
 					_domain = IDomain.DEFAULT_DOMAIN_NAME;
 				}
 			}
 		} catch(UnknownHostException e) {
-			LOGGER.warn( e );
+			LOGGER.warn( e.getMessage(), e );
 		}
     	return _domain; 
     }

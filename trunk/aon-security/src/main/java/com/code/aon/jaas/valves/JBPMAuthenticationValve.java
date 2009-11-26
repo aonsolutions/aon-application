@@ -23,8 +23,8 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.realm.JDBCRealm;
 import org.apache.catalina.valves.ValveBase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used by BPN application for user authentication in an e-Commerce area. The 
@@ -37,14 +37,14 @@ import org.apache.commons.logging.LogFactory;
 public class JBPMAuthenticationValve extends ValveBase {
 
 	/** SecurityValve Log */
-	private static final Log LOGGER = LogFactory.getLog( JBPMAuthenticationValve.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(JBPMAuthenticationValve.class);
 
 	/* (non-Javadoc)
 	 * @see org.apache.catalina.valves.ValveBase#invoke(org.apache.catalina.connector.Request, org.apache.catalina.connector.Response)
 	 */
 	@Override
 	public void invoke(Request request, Response response) throws IOException, ServletException {
-LOGGER.info( "invoke:" + request.getParameter( "j_hidden" ) + "-" + request.getUserPrincipal());
+		LOGGER.info( "invoke: {}-{}", request.getParameter( "j_hidden" ), request.getUserPrincipal() );
 		if ( request.getParameter( "j_hidden" ) != null && request.getUserPrincipal() == null) {
         	authenticate(request);
 		}
@@ -60,7 +60,7 @@ LOGGER.info( "invoke:" + request.getParameter( "j_hidden" ) + "-" + request.getU
 	private void authenticate(Request req) {
 		String username = req.getParameter( Constants.FORM_USERNAME );
 		String password = req.getParameter( Constants.FORM_PASSWORD );
-LOGGER.info( "authenticate:" + username + "-" + password);
+		LOGGER.info( "authenticate: {}-{}", username, password);
 		Principal principal = null;
 		Realm realm = req.getContext().getRealm();
 		if (realm instanceof JDBCRealm) {
@@ -70,7 +70,7 @@ LOGGER.info( "authenticate:" + username + "-" + password);
 			principal = 
 				new GenericPrincipal( realm, username, password, getRoles( (JDBCRealm)realm, username ) );
 		}
-LOGGER.info( "authenticate:" + principal + "-" );
+		LOGGER.info( "authenticate: {}", principal );
 	    req.setAuthType( Constants.FORM_METHOD );
 	    req.setUserPrincipal(principal);
 		Session session = req.getSessionInternal(true);
@@ -127,7 +127,7 @@ LOGGER.info( "authenticate:" + principal + "-" );
                         try {
                             rs.close();
                         } catch(SQLException e) {
-                        	LOGGER.info( sm.getString("jdbcRealm.abnormalCloseResultSet") );
+                        	LOGGER.info( sm.getString("jdbcRealm.abnormalCloseResultSet"), e );
                         }
                     }
                     conn.commit();
@@ -141,7 +141,7 @@ LOGGER.info( "authenticate:" + principal + "-" );
                     try {
                         conn.close();
                     } catch (SQLException ex) {
-                    	LOGGER.warn( sm.getString("jdbcRealm.close") ); // Just log it here
+                    	LOGGER.warn( sm.getString("jdbcRealm.close"), e ); // Just log it here
                     }
             }
             numberOfTries--;

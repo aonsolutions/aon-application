@@ -9,29 +9,25 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.core.Application;
-
 import com.code.aon.jaas.deployment.DeployerFactoryManager;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.jaas.deployment.DeploymentInfo;
 import com.code.aon.jaas.deployment.DeploymentState;
 import com.code.aon.jaas.deployment.IDeployer;
-
 import com.code.aon.jaas.deployment.event.DeployerEvent;
 import com.code.aon.jaas.deployment.event.IDeployerListener;
 import com.code.aon.jaas.deployment.util.FileUtils;
-
 import com.code.aon.jaas.vendor.VendorFactoryManager;
 
 /**
@@ -45,7 +41,7 @@ import com.code.aon.jaas.vendor.VendorFactoryManager;
 public class MainDeployer implements IDeployer {
 
     /** MainDeployer Logger. */
-    private static final Log LOGGER = LogFactory.getLog( MainDeployer.class.getName() );
+    private final static Logger LOGGER = LoggerFactory.getLogger(MainDeployer.class);
 
 	/** URL map -> DeploymentInfo */
     private final Map<URL, DeploymentInfo> deploymentMap = new LinkedHashMap<URL, DeploymentInfo>();
@@ -204,15 +200,15 @@ public class MainDeployer implements IDeployer {
 	protected void deploy(DeploymentInfo deployment) throws DeploymentException {
 //	If we are already deployed return
 		if (isDeployed(deployment.url)) {
-			LOGGER.debug( "Package: " + deployment.url + " is already deployed" );
+			LOGGER.debug( "Package: {} is already deployed", deployment.url  );
 			return;
         }
-		LOGGER.debug( "Starting deployment of package: " + deployment.url );
+		LOGGER.debug( "Starting deployment of package: {}", deployment.url );
 		if (init(deployment)) {
 			start(deployment);
-			LOGGER.debug("Deployed package: " + deployment.url);
+			LOGGER.debug("Deployed package: {}", deployment.url);
 		} else {
-			LOGGER.debug( "Deployment of package: " + deployment.url + " is waiting for an appropriate deployer." );
+			LOGGER.debug( "Deployment of package: {} is waiting for an appropriate deployer", deployment.url );
 		}
 	}
 
@@ -237,7 +233,7 @@ public class MainDeployer implements IDeployer {
             try {
 				element.applicationDeployed(event);
 			} catch (DeploymentException e) {
-				LOGGER.fatal( "Deploying exception:" + e.getMessage() );
+				LOGGER.error( "Deploying exception", e );
 			}
         }
     }
@@ -254,7 +250,7 @@ public class MainDeployer implements IDeployer {
             try {
 				element.applicationUndeployed(event);
 			} catch (DeploymentException e) {
-				LOGGER.fatal( "Undeploying exception:" + e.getMessage() );
+				LOGGER.error( "Undeploying exception", e );
 			}
         }
     }
@@ -269,7 +265,7 @@ public class MainDeployer implements IDeployer {
     private boolean init(DeploymentInfo deployment) throws DeploymentException {
         //	If we are already deployed return
         if (isDeployed(deployment.url)) {
-            LOGGER.debug( "Package: " + deployment.url + " is already deployed" );
+            LOGGER.debug( "Package: {} is already deployed", deployment.url );
             return false;
         }
 
@@ -361,7 +357,7 @@ public class MainDeployer implements IDeployer {
                 deployment.state = DeploymentState.STARTED;
                 deployment.status = DeploymentInfo.DEPLOYED;
             } else {
-                LOGGER.fatal( "Still no deployer for package in start step: " + deployment.shortName );
+                LOGGER.error( "Still no deployer for package in start step: {}", deployment.shortName );
             }
         } catch (Throwable t) {
             if (t instanceof DeploymentException && 
@@ -387,24 +383,24 @@ public class MainDeployer implements IDeployer {
         deploymentMap.remove(di.url);
 //	Nuke my stuff, this includes the class loader
         di.cleanup();
-        LOGGER.debug( "Undeployed " + di.url );
+        LOGGER.debug( "Undeployed {}", di.url );
     }
 
     static {
         try {
             Class.forName(EARDeployerFactory.class.getName());
         } catch (ClassNotFoundException e) {
-            LOGGER.fatal( "EARDeployerFactory:" + e.getMessage() );
+            LOGGER.error( "EARDeployerFactory", e );
         }
         try {
             Class.forName(JARDeployerFactory.class.getName());
         } catch (ClassNotFoundException e) {
-            LOGGER.fatal( "JARDeployerFactory:" + e.getMessage() );
+            LOGGER.error( "JARDeployerFactory", e );
         }
         try {
             Class.forName(WARDeployerFactory.class.getName());
         } catch (ClassNotFoundException e) {
-            LOGGER.fatal( "WARDeployerFactory:" + e.getMessage() );
+            LOGGER.error( "WARDeployerFactory", e );
         }
     }
 

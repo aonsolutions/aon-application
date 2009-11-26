@@ -11,8 +11,8 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.deployment.DeploymentInfo;
 
@@ -23,7 +23,8 @@ import com.code.aon.jaas.deployment.DeploymentInfo;
 public class FileUtils {
 
     /** FileUtils Logger. */
-    private static final Log LOGGER = LogFactory.getLog( FileUtils.class.getName() );
+    private final static Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
+    
     /** Tells the <b>updated<b> extension. */
     public static final String UP_TO_DATE = "updated";
     /** The default buffer size to use. */
@@ -373,7 +374,7 @@ public class FileUtils {
 				JarUtils.extractWEBINFFiles( url, destDir );
 			}
 		} catch(FileNotFoundException e) {
-			LOGGER.warn( "File " + url.getPath() + " not Found. " + e.getMessage() );
+			LOGGER.warn( "File " + url.getPath() + " not Found", e );
 		}
 		return destDir.toURL();
 	}

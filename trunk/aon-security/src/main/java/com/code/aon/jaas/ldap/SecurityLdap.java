@@ -7,8 +7,8 @@ import java.util.Properties;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IRelation;
@@ -25,7 +25,7 @@ import com.code.aon.ldap.Scope;
 public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 	
 	/** Obtiene un logger apropiado. */
-	private static final Log LOGGER = LogFactory.getLog( SecurityLdap.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityLdap.class);
 	
 	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
 	

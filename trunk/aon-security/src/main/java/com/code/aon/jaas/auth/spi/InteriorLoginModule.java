@@ -27,6 +27,9 @@ import javax.security.auth.login.LoginException;
 
 import oracle.jdbc.driver.OracleTypes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.jaas.auth.AuthGroup;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
@@ -38,6 +41,8 @@ import com.code.aon.jaas.auth.IConstants;
 @SuppressWarnings("unchecked")
 public class InteriorLoginModule extends AbstractLoginModule {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(InteriorLoginModule.class);
+	
     /** Default identity to use in case of user and password are null */
 	protected Principal unauthenticatedIdentity;
 
@@ -88,7 +93,7 @@ public class InteriorLoginModule extends AbstractLoginModule {
         String name = (String) options.get( IConstants.UNAUTHENTICATED_IDENTITY );
         if (name != null) {
             unauthenticatedIdentity = new AuthPrincipal(name);
-            LOGGER.debug("Saw unauthenticatedIdentity=" + name);
+            LOGGER.debug("Saw unauthenticatedIdentity={}", name);
         }
         this.url = (String) options.get("url");
         this.user = (String) options.get("user");
@@ -129,7 +134,7 @@ public class InteriorLoginModule extends AbstractLoginModule {
         String passwd = info[1];
         if (username == null && passwd == null) {
             identity = unauthenticatedIdentity;
-            LOGGER.debug("Authenticating as unauthenticatedIdentity=" + identity); //$NON-NLS-1$
+            LOGGER.debug("Authenticating as unauthenticatedIdentity={}", identity); //$NON-NLS-1$
         }
 
         if (identity == null) {
@@ -144,8 +149,7 @@ public class InteriorLoginModule extends AbstractLoginModule {
             	ex.printStackTrace();
                 throw new FailedLoginException("Failed to find driver class: " + driver);
             } catch (SQLException ex) {
-            	ex.printStackTrace();
-            	LOGGER.debug("SQLException '" + identity + " " + url  +":"+  user +","+ this.password );//$NON-NLS-1$ //$NON-NLS-2$
+            	LOGGER.debug("SQLException '" + identity + " " + url  +":"+  user +","+ this.password, ex );//$NON-NLS-1$ //$NON-NLS-2$
                 throw new FailedLoginException("Failed to establish a connection to: " + url);
             }
         }
@@ -155,7 +159,7 @@ public class InteriorLoginModule extends AbstractLoginModule {
             sharedState.put("javax.security.auth.login.name", username); //$NON-NLS-1$
             sharedState.put("javax.security.auth.login.password", credential); //$NON-NLS-1$
         }
-        LOGGER.debug("User '" + identity + "' authenticated, loginOk=" + loginOk);//$NON-NLS-1$ //$NON-NLS-2$
+        LOGGER.debug("User '{}' authenticated, loginOk={}", identity, loginOk);//$NON-NLS-1$ //$NON-NLS-2$
         return true;
 	}
 

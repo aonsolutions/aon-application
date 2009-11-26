@@ -7,8 +7,8 @@ import java.util.List;
 
 import javax.naming.Name;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomainApplication;
@@ -28,7 +28,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 	private static final long serialVersionUID = 2524989244667666833L;
 
 	/** Obtiene un logger apropiado. */
-	private static final Log LOGGER = LogFactory.getLog( DomainApplication.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplication.class);
 	
 	/** Domain identifier. */
 	private String id;
