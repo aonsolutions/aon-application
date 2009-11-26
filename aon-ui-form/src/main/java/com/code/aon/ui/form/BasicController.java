@@ -8,8 +8,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -46,7 +47,7 @@ import com.code.aon.ui.form.event.IControllerListener;
 public class BasicController extends AbstractPojoController implements IController,
 		ICollectionProvider {
 
-	private static final Logger LOGGER = Logger.getLogger(BasicController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicController.class);
 
 	private Criteria criteria = new Criteria();
 
@@ -299,14 +300,14 @@ public class BasicController extends AbstractPojoController implements IControll
 				setNew(false);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onAccept " + e.getMessage());
+			LOGGER.error(">>>> onAccept",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
 			try {
 				getManagerBean().initializePOJO(this.to);
 			} catch (ManagerBeanException e) {
-				LOGGER.severe(">>>> onAccept initializePOJO " + e.getMessage());
+				LOGGER.error(">>>> onAccept initializePOJO ",e);
 				addMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
@@ -348,11 +349,11 @@ public class BasicController extends AbstractPojoController implements IControll
 				controllerListenerSupport.fireAfterBeanUpdated(evt);
 			}
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> onAccept " + e.getMessage());
+			LOGGER.error(">>>> onAccept ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onAccept " + e.getMessage());
+			LOGGER.error(">>>> onAccept ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -369,7 +370,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			controllerListenerSupport.fireAfterBeanReset(evt);
 			controllerListenerSupport.fireAfterModelSearched(evt);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> onSearch " + e.getMessage());
+			LOGGER.error(">>>> onSearch ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -394,11 +395,11 @@ public class BasicController extends AbstractPojoController implements IControll
 			initializeModel();
 			controllerListenerSupport.fireAfterBeanRemoved(evt);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> onRemove exception[" + e.getMessage() + "]");
+			LOGGER.error(">>>> onRemove exception ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onRemove exception[" + e.getMessage() + "]");
+			LOGGER.error(">>>> onRemove exception ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -420,11 +421,11 @@ public class BasicController extends AbstractPojoController implements IControll
 			restoreState();
 			controllerListenerSupport.fireAfterBeanCanceled(evt);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> onCancel " + e.getMessage());
+			LOGGER.error(">>>> onCancel ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onCancel " + e.getMessage());
+			LOGGER.error(">>>> onCancel ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -439,11 +440,11 @@ public class BasicController extends AbstractPojoController implements IControll
 			setNew(true);
 			controllerListenerSupport.fireAfterBeanCreated(evt);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> onReset " + e.getMessage());
+			LOGGER.error(">>>> onReset ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onReset " + e.getMessage());
+			LOGGER.error(">>>> onReset ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -460,11 +461,11 @@ public class BasicController extends AbstractPojoController implements IControll
 			controllerListenerSupport.fireAfterBeanReset(evt);
 			controllerListenerSupport.fireAfterEditSearch(evt);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> onEditSearch " + e.getMessage());
+			LOGGER.error(">>>> onEditSearch ", e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onEditSearch " + e.getMessage());
+			LOGGER.error(">>>> onEditSearch ", e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -480,7 +481,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			try {
 				getModel().setRowIndex(0);
 			} catch (ManagerBeanException e) {
-				LOGGER.severe(">>>> onSelectFirst exception:[" + e.getMessage() + "]");
+				LOGGER.error(">>>> onSelectFirst exception: ", e);
 				addMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
@@ -498,7 +499,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			try {
 				getModel().setRowIndex(getSelectedIndex() - 1);
 			} catch (ManagerBeanException e) {
-				LOGGER.severe(">>>> onSelectFirst exception:[" + e.getMessage() + "]");
+				LOGGER.error(">>>> onSelectFirst exception: ", e);
 				addMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
@@ -520,7 +521,7 @@ public class BasicController extends AbstractPojoController implements IControll
 				onSelect(event);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onSelectFirst exception:[" + e.getMessage() + "]");
+			LOGGER.error(">>>> onSelectFirst exception: ", e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -538,7 +539,7 @@ public class BasicController extends AbstractPojoController implements IControll
 				onSelect(event);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onSelectFirst exception:[" + e.getMessage() + "]");
+			LOGGER.error(">>>> onSelectFirst exception: ", e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -550,7 +551,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeBeanSelected(evt);
 			selectedIndex = getSelectedTOIndex();
-			LOGGER.fine(">>>> onSelect rowIndex:[" + selectedIndex + "]");
+			LOGGER.debug(">>>> onSelect rowIndex: {}",selectedIndex);
 			ITransferObject to = (ITransferObject) getSelectedTO();
 			getManagerBean().initializePOJO(to);
 			setTo(to);
@@ -558,11 +559,11 @@ public class BasicController extends AbstractPojoController implements IControll
 			controllerListenerSupport.fireAfterBeanSelected(evt);
 			saveState(to);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> onSelect exception:[" + e.getMessage() + "]");
+			LOGGER.error(">>>> onSelect exception: ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onSelect exception:[" + e.getMessage() + "]");
+			LOGGER.error(">>>> onSelect exception: ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -645,7 +646,7 @@ public class BasicController extends AbstractPojoController implements IControll
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeModelInitialized(evt);
-			LOGGER.fine(">>>> before InitializeModel");
+			LOGGER.debug(">>>> before InitializeModel");
 			if (model == null) {
 				int count = getManagerBean().getCount(getCriteria());
 				model = new PageDataModel(this, count, getPageLimit());
@@ -656,19 +657,19 @@ public class BasicController extends AbstractPojoController implements IControll
 				pdm.resize(getManagerBean().getCount(getCriteria()));
 			}
 			selectedIndex = -1;
-			LOGGER.fine("initializeModel RowCount[" + model.getRowCount() + "]");
+			LOGGER.debug("initializeModel RowCount {}",model.getRowCount());
 			controllerListenerSupport.fireAfterModelInitialized(evt);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> initializeModel " + e.getMessage());
+			LOGGER.error(">>>> initializeModel ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> initializeModel " + e.getMessage());
+			LOGGER.error(">>>> initializeModel ",e);
 			addMessage(e.getMessage());
 			try {
 				clearCriteria();
 			} catch (ManagerBeanException e1) {
-				LOGGER.severe(">>>> Unable to clear crtieria! " + e.getMessage());
+				LOGGER.error(">>>> Unable to clear crtieria! ",e);
 				addMessage(e.getMessage());
 			}
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -714,7 +715,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @throws ManagerBeanException
 	 */
 	protected ITransferObject add() throws ManagerBeanException {
-		LOGGER.fine("Adding Id:[" + getTo() + "]");
+		LOGGER.debug("Adding Id: [{}]",getTo());
 		ITransferObject inserted = getManagerBean().insert(getTo());
 		saveState(inserted);
 		return inserted;
@@ -727,7 +728,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @throws ManagerBeanException
 	 */
 	protected ITransferObject update() throws ManagerBeanException {
-		LOGGER.fine("Setting Id:[" + getTo() + "]");
+		LOGGER.debug("Setting Id: [{}]",getTo());
 		ITransferObject updated = getManagerBean().update(getTo());
 		saveState(updated);
 		return updated;
@@ -739,7 +740,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @throws ManagerBeanException
 	 */
 	protected void remove() throws ManagerBeanException {
-		LOGGER.fine("Removing Id:[" + getTo() + "]");
+		LOGGER.debug("Removing Id: [{}]",getTo());
 		getManagerBean().remove(getTo());
 	}
 
@@ -858,7 +859,7 @@ public class BasicController extends AbstractPojoController implements IControll
 				Serializable id = getManagerBean().getId(to);
 				this.savedToId = (Serializable) SerializationUtils.clone(id);
 			} catch (Throwable e) {
-				LOGGER.severe(">>>> saveState " + e.getMessage());
+				LOGGER.error(">>>> saveState ",e);
 				addMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
@@ -980,7 +981,7 @@ public class BasicController extends AbstractPojoController implements IControll
 						this.initExpressions.add(expression);
 					}
 				} catch (ExpressionException e) {
-					LOGGER.log(Level.SEVERE, "Error resolving expression " + entry.getValue(), e);
+					LOGGER.error("Error resolving expression {}: {}",entry.getValue(), e.getMessage());
 				}
 			}
 			updateInitExpression();
