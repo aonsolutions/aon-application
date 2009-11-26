@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.naming.Name;
 import javax.naming.ldap.Rdn;
@@ -16,6 +15,9 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.IDAO;
@@ -40,7 +42,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-	private static final Logger LOGGER = Logger.getLogger(LdapDAO.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(LdapDAO.class);
 
 	private EntityMetadata metadata;
 	
@@ -153,7 +155,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		try {
 			Name dn = getDN(criteria);
 			String filter = getFilter(criteria);
-			LOGGER.info( "getCount, dn=" + dn + ",filter=" + filter );
+			LOGGER.info( "getCount, dn={},filter={}",dn,filter );
 			count = getLdapSession().getCount(dn, filter, Scope.ONELEVEL_SCOPE );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + metadata.getMainObjectClass(), e );
@@ -279,11 +281,11 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return true;
 	}
 
-	private Name getDN( Criteria criteria ) throws DAOException {
+	private Name getDN( Criteria criteria ) {
 		return this.baseDN;
 	}
 
-	private String getFilter( Criteria criteria ) throws DAOException {
+	private String getFilter( Criteria criteria ){
 		String expression = NameResolver.getObjectClass(metadata.getMainObjectClass()); 
 		if ( criteria != null ) {
 			LdapRenderer renderer = new LdapRenderer();
@@ -303,7 +305,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 				Order order = orderList.get(i);
 				String attribute = order.getExpression().getName();
 				EntryComparator comparator = new EntryComparator( attribute, order.isAscending() );
-				LOGGER.info( "Sorting " + order );
+				LOGGER.info( "Sorting {}",order );
 				Collections.sort( list, comparator );
 			}
 		}
@@ -313,7 +315,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private List<Entry> getSubList( List<Entry> list, int offset, int count ) {
 		if ( offset >= 0 ) {
 			int toIndex = Math.min( offset+count, list.size() );
-			LOGGER.info( "SubList, offset=" + offset + ",toIndex=" + toIndex );
+			LOGGER.info( "SubList, offset={},toIndex={}",offset,toIndex );
 			return list.subList( offset, toIndex );	
 		}
 		return list;
@@ -324,7 +326,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		if ( info.isTransferObject() ) {
 			IDAO dao = getDAO(info);
 			Name id = NameResolver.getName( value.toString() );
-			result = dao.get( (Serializable) id );								
+			result = dao.get( id );								
 		} else {
 			result = ConvertUtils.convert(value, info.getBaseClass());	
 		}
@@ -339,7 +341,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return result;
 	}
 	
-	private void setProperty( ITransferObject to, PropertyInfo info, Entry entry ) throws InstantiationException, IllegalAccessException, InvocationTargetException, DAOException {
+	private void setProperty( ITransferObject to, PropertyInfo info, Entry entry ) throws IllegalAccessException, InvocationTargetException, DAOException {
 		if ( entry.containsKey(info.getLdapName()) ) {
 			Object value = null;
 			if ( info.isCollection() ) {
@@ -382,7 +384,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		try {
 			Name dn = getDN(criteria);
 			String filter = getFilter(criteria);
-			LOGGER.info( "getList, dn=" + dn + ",filter=" + filter );
+			LOGGER.info( "getList, dn={},filter={}",dn,filter );
 			List<Entry> list = getLdapSession().search(dn, filter, Scope.ONELEVEL_SCOPE );
 			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
@@ -412,7 +414,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
-		LOGGER.info( "Get: " + pk );
+		LOGGER.info( "Get: {}",pk );
 		ITransferObject to = null;
 		Name dn = (Name) pk;
 		if ( exists(dn, metadata.getMainObjectClass()) ) {
@@ -475,25 +477,22 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	@Override
 	public ITransferObject replicate(ITransferObject to, ReplicationMode mode)
 			throws DAOException {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	public void setProperty(ITransferObject to, String propertyName,
 			Object value) throws DAOException {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List getList(ProjectionList projectionList, Criteria criteria)
 			throws DAOException {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	public Object getUniqueResult(Projection projection, Criteria criteria)
 			throws DAOException {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
