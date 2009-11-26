@@ -1,8 +1,6 @@
 package com.code.aon.ldap;
 
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
@@ -10,10 +8,12 @@ import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NameResolver implements ILdapConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(NameResolver.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(NameResolver.class);
 	
 	public static final String DOMAINS = "domains";
 	
@@ -41,7 +41,7 @@ public class NameResolver implements ILdapConstants {
 		try {
 			return new Rdn(type, value);
 		} catch (InvalidNameException e) {
-			LOGGER.log( Level.SEVERE, "Error creating Rdn " + type + ": " + value, e);			
+			LOGGER.error( "Error creating Rdn " + type + ": " + value, e);			
 		}
 		return null;		
 	}
@@ -55,7 +55,7 @@ public class NameResolver implements ILdapConstants {
 			Name newName = (Name) suffix.clone();
 			return newName.addAll(preffix);
 		} catch (InvalidNameException e) {
-			LOGGER.log( Level.SEVERE, "Error creating Name with " + preffix + " and " + suffix, e);			
+			LOGGER.error( "Error creating Name with " + preffix + " and " + suffix, e);			
 		}
 		return null;		
 	}	
@@ -65,7 +65,7 @@ public class NameResolver implements ILdapConstants {
 			Name name = (Name) suffix.clone();
 			return name.addAll(getName(rdn));
 		} catch (InvalidNameException e) {
-			LOGGER.log( Level.SEVERE, "Error creating Name with " + rdn + " and " + suffix, e);			
+			LOGGER.error( "Error creating Name with " + rdn + " and " + suffix, e);			
 		}
 		return null;		
 	}
@@ -79,7 +79,7 @@ public class NameResolver implements ILdapConstants {
 			}
 			return new LdapName( name );
 		} catch (InvalidNameException e) {
-			LOGGER.log( Level.SEVERE, "Error creating Name: " + name, e);			
+			LOGGER.error( "Error creating Name: " + name, e);			
 		}
 		return null;		
 	}
@@ -95,7 +95,7 @@ public class NameResolver implements ILdapConstants {
 			int index = newName.size()-1-pos;
 			return newName.getRdn(index).getValue().toString();
 		} catch (InvalidNameException e) {
-			LOGGER.log( Level.SEVERE, "Error getting value " + pos + " of Name: " + name, e);			
+			LOGGER.error( "Error getting value " + pos + " of Name: " + name, e);			
 		}
 		return null;		
 	}

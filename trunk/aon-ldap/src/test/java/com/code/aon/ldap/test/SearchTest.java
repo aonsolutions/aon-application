@@ -3,13 +3,10 @@ package com.code.aon.ldap.test;
 import java.util.List;
 import java.util.Properties;
 
-import javax.naming.Context;
 import javax.naming.Name;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -24,26 +21,17 @@ import com.code.aon.ldap.NameResolver;
 
 public class SearchTest implements IAonObjectClasses, ILdapConstants {
 
-	private static Log LOGGER = LogFactory.getLog(SearchTest.class.getName());
-	
-	private static final String HOST = "192.168.2.100";
-	
-	private static final String BASE_DN = "o=Esferalia-CODE,c=ES";
+	private static final String BASE_DN = "o=aondirectory";
 	
 	private static final String USER = "cn=Manager," + BASE_DN;
 	
-	private static final String PASSWORD = "secret";
 	
 	private static LdapSession session;
 
 	@BeforeClass
 	public static synchronized void runBeforeAllTests() {
 		session = new LdapSession();
-		Properties properties = new Properties();
-		properties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		properties.put(Context.PROVIDER_URL, "ldap://" + HOST + "/" + BASE_DN);
-		properties.put(Context.SECURITY_PRINCIPAL, USER);
-		properties.put(Context.SECURITY_CREDENTIALS, PASSWORD);
+		Properties properties = ValidateTest.loadProperties();
 		try {
 			session.open( properties );
 		} catch (LdapException e) {

@@ -3,13 +3,14 @@ package com.code.aon.ldap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.naming.Name;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class BasicLdap {
@@ -17,7 +18,7 @@ public class BasicLdap {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-	private static final Logger LOGGER = Logger.getLogger(BasicLdap.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BasicLdap.class);
 	
 	private Properties properties;
 	
@@ -55,7 +56,6 @@ public class BasicLdap {
 		return server;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Properties getLdapProperties() {
 		Properties ldapProperties = null;
 		MBeanServer server = getMBeanServer();
@@ -65,7 +65,7 @@ public class BasicLdap {
 				(Properties) server.invoke( oname, "getLdapProperties", 
 											new Object[] {}, new String[] {} );
 		} catch (Throwable th) {
-			LOGGER.log( Level.SEVERE, "Error getting Ldap connection properties", th);
+			LOGGER.error( "Error getting Ldap connection properties", th);
 		}
 		return ldapProperties;
 	}
@@ -89,7 +89,7 @@ public class BasicLdap {
 				session.close();
 			}
 		} catch (Throwable th) {
-			LOGGER.log( Level.SEVERE, th.getMessage(), th );
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			session = null;
 		}
@@ -108,7 +108,7 @@ public class BasicLdap {
 		try {
 			exists = getLdapSession().exists( dn, NameResolver.getObjectClass(objectClass) );
 		} catch ( Throwable th ) {
-			LOGGER.log( Level.SEVERE, th.getMessage(), th );
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
@@ -120,7 +120,7 @@ public class BasicLdap {
 		try {
 			entry = getLdapSession().get( dn, NameResolver.getObjectClass(objectClass), attributes );
 		} catch ( Throwable th ) {
-			LOGGER.log( Level.SEVERE, th.getMessage(), th );
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
