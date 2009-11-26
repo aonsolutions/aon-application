@@ -11,8 +11,8 @@ import javax.faces.context.FacesContext;
 import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
@@ -34,7 +34,7 @@ public class FailedLogin implements ILdapConstants, IAonObjectClasses {
 	protected static final String AON_LAST_EXCEPTION_KEY = "AON_LAST_EXCEPTION_KEY";
 	
     /** Obtains the SessionFilter Logger. */
-	private static final Log LOGGER = LogFactory.getLog( FailedLogin.class.getName() );	
+	private final static Logger LOGGER = LoggerFactory.getLogger(FailedLogin.class);
 	
 	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
 	
@@ -92,7 +92,7 @@ public class FailedLogin implements ILdapConstants, IAonObjectClasses {
 			if ( entry != null ) {
 				return entry.getAsString(MESSAGE_ATTRIBUTE);	
 			} else {
-				LOGGER.error( "Error retrieving message from LDAP: " + status );	
+				LOGGER.error( "Error retrieving message from LDAP: {}", status );	
 			}
 		}
 		return null;

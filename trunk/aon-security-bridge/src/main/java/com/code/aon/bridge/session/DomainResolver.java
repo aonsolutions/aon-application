@@ -5,8 +5,8 @@ import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sun.net.util.IPAddressUtil;
 
@@ -19,7 +19,7 @@ import com.code.aon.ldap.NameResolver;
 
 public class DomainResolver implements ILdapConstants, IAonObjectClasses {
 
-	private static final Log LOGGER = LogFactory.getLog( DomainResolver.class.getName() );	
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainResolver.class);
 
     private static boolean isIPAddress( String host ) {
     	return IPAddressUtil.isIPv4LiteralAddress(host) || IPAddressUtil.isIPv6LiteralAddress(host);

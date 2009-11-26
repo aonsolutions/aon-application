@@ -12,15 +12,18 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
 import com.code.aon.bridge.jmx.mbean.Messages;
+import com.code.aon.bridge.session.FailedLogin;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.MaximumLoginException;
 import com.code.aon.jaas.auth.util.Util;
@@ -45,11 +48,11 @@ public class UserManager implements Serializable {
 
 	private static final long serialVersionUID = 5967483672644450772L;
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserManager.class);
+	
 	public static final String USER_DESCRIPTION = "Usuario Generado"; 
 	public static final String SECURITY_CONTEXT_NAME = "/aon-security";
 	public static final String LDAP_SECURITY_DOMAIN = "aon-ldap"; 
-	/** UserManager Logger instance. */
-	private static final Logger LOGGER = Logger.getLogger( UserManager.class.getName() );
 
 	transient ResourceBundle bundle;
     transient IConsoleAdmin console;
@@ -85,7 +88,7 @@ public class UserManager implements Serializable {
 				bundle = ResourceBundle.getBundle( IOperation.MESSAGES_FILE, ctx.getViewRoot().getLocale() );
 			console = Utils.getSecurityConsole();
 		} catch (Exception e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -290,7 +293,7 @@ public class UserManager implements Serializable {
 				_user = (User)console.invoke( oname, IOperation.GET_USER, params, sig );
 			}
 		} catch (DeploymentException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 		return _user;
 	}
@@ -364,7 +367,7 @@ public class UserManager implements Serializable {
 		try {
 			return getAvailableProfiles( getApplication().getId(), getDomain() );
 		} catch (DeploymentException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 		return new ArrayList<SelectItem>();
 	}
@@ -419,7 +422,7 @@ public class UserManager implements Serializable {
 			if ( this.relation == null )
 				this.relation = new Relation( this.user.getId() );
 		} catch (DeploymentException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 			setNew( true ); 
 			this.user = new User();
 			setDescription( UserManager.USER_DESCRIPTION );
@@ -453,7 +456,7 @@ public class UserManager implements Serializable {
 				throw new MaximumLoginException( "aon_login_err_4", Integer.toString( maxUsers ) );
 			}
 		} catch (DeploymentException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		}
 		return null;
 	}
@@ -512,7 +515,7 @@ public class UserManager implements Serializable {
 			IDomain domain = getDomain();
 			saveUser( app, domain.getId(), null );
 		} catch (DeploymentException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		}	
 	}
 
@@ -525,7 +528,7 @@ public class UserManager implements Serializable {
 			IDomain domain = getDomain();
 			remove( app, domain.getId() );
 		} catch (DeploymentException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		}
 	}
 
@@ -544,7 +547,7 @@ public class UserManager implements Serializable {
 				console.invoke( oname, IOperation.REMOVE_USER, params, sig );
 			}
 		} catch (Exception e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		}
 	}
 
