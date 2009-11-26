@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.deployment.DeployerFactoryManager;
 import com.code.aon.jaas.deployment.DeploymentException;
@@ -56,7 +56,7 @@ public class EARDeployer extends SubDeployer {
     /**
      * // TODO [iayerbe] Documéntame!
      */
-    private static Log LOGGER = LogFactory.getLog( EARDeployer.class.getName() );
+    private final static Logger LOGGER = LoggerFactory.getLogger(EARDeployer.class);
 
     /**
      * // TODO [iayerbe] Documéntame!
@@ -194,13 +194,13 @@ public class EARDeployer extends SubDeployer {
                         } catch (Exception mue) {
                             // TODO [iayerbe] Mirar que se debe hacer con esta
                             // excepción.
-                            LOGGER.fatal(mue.getMessage());
+                            LOGGER.error(mue.getMessage(), mue);
                         }
                     }
                 } catch (Exception e1) {
                     // TODO [iayerbe] Mirar que se debe hacer con esta
                     // excepción.
-                    LOGGER.fatal(e1.getMessage());
+                    LOGGER.error(e1.getMessage(), e1);
                 }
             }
         }

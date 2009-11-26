@@ -20,6 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.mx.util.MBeanServerLocator;
 import org.jboss.system.ServiceMBeanSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -40,7 +42,7 @@ public class JBossSessionManager extends ServiceMBeanSupport
 		implements JBossSessionManagerMBean, ExpiredSessionListener {
 
 	/** JBossSessionManager Logger instance. */
-	private static final Log LOGGER = LogFactory.getLog( JBossSessionManager.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(JBossSessionManager.class);
 	/** Field STANDARD_HOST (value is ""jboss.web:type=Host,host=localhost"") */
 	static final String STANDARD_HOST = "jboss.web:type=Host,host=localhost";
 	/** Managed Resource Constant name */
@@ -226,7 +228,7 @@ public class JBossSessionManager extends ServiceMBeanSupport
 											principal  ) 
 							);
 					}
-					LOGGER.debug( "Active Session:" + sessions[i].getId() );
+					LOGGER.debug( "Active Session: {}", sessions[i].getId() );
 				}
 			}
 		} catch (Exception e) {
@@ -271,7 +273,7 @@ public class JBossSessionManager extends ServiceMBeanSupport
 		try {
 			invalidate( sessionInfo.getPrincipal().getContext(), sessionInfo.getSessionId() );
 		} catch (DeploymentException e) {
-			LOGGER.fatal( e );
+			LOGGER.error( e.getMessage(), e );
 		}
 	}
 

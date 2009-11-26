@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
+	xmlns="http://www.esferalia.com/config" >
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+	
+	<webmail:config version="1.0" xmlns:webmail="http://www.esferalia.com/webmail" />
+		
+	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="true" 
+			showCompanyOtherData="true"
+			showPanelTabSet="true" 
+			showDigitalCertificate="true"
+		/>
+	</company:config>
+
+	<customer:config version="1.0" xmlns:customer="http://www.esferalia.com/customer">
+		<customer:customer
+			showFinanceData="true" 
+			showProjectData="false"
+			showFinanceFeeData="true" 
+			showTaxInfoData="false"
+			showAccount="true"
+			showTariff="true" 
+			showSegment="true"
+			showNote="false"
+			showRelationship="false"
+			showRecordData="false"
+			showAddInfo="true"
+		/>
+	</customer:config>
+
+	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:product
+			showStock="false"
+			showAccount="false"
+			showAttachment="true"
+			showEcommerceDataTab="false"
+		/>
+	</product:config>
+
+	<marketing:config version="1.1" xmlns:marketing="http://www.esferalia.com/marketing">
+		<marketing:campaign
+			showSurvey="true"
+			showPhoneActionMediaType="true"
+		/>
+		<marketing:communicationCenter
+			showTarget="true"
+		/>		
+	</marketing:config>
+	
+	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
+		<commercial:offer
+			showInvoicing="false"
+			showSalesOrder="false"
+		/>
+		<commercial:target
+			showTaxInfoData="false"
+			showEcommerceTab="false"
+			showProfile="true"
+			showSearchOnlyCustomers="true"
+			showCommercialTracking="true"
+			showProduct="true"
+			showSeller="true"
+			showAddInfo="true"			
+		/>
+	</commercial:config>
+		
+</config>

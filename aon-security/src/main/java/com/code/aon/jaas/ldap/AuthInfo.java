@@ -4,6 +4,7 @@ import com.code.aon.jaas.auth.IAuthInfo;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IRelation;
+import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.ILdapConstants;
 
@@ -38,11 +39,14 @@ public class AuthInfo implements IAuthInfo, ILdapConstants, ILdapSecurityConstan
 	}
 
 	@Override
-	public String getUserPassword(String domainName, String name)
+	public String getUserPassword(String domainId, String userId)
 			throws AuthenticationLoginException {
-		Entry user = ldap.getUser(domainName, name);
-		if ( user != null ) {
-			return ldap.getUser(user).getPasswd();
+		Domain domain = Domain.get(ldap, domainId);
+		if ( domain != null ) {
+			IUser user = domain.getStandaloneUser(userId);
+			if ( user != null ) {
+				return user.getPasswd();
+			}
 		}
 		return null;
 	}
@@ -51,7 +55,11 @@ public class AuthInfo implements IAuthInfo, ILdapConstants, ILdapSecurityConstan
 	public IRelation getUserRelation(String domainName, String context,
 			String name) throws AuthenticationLoginException {
 		String application = ldap.getApplicationId(context);
-		return ldap.getUserRelation(domainName, application, name);
+		DomainApplication da = DomainApplication.get(ldap, domainName, application);
+		if ( da != null ) {
+			return da.getUser(name);
+		}
+		return null;
 	}
 	
 	@Override

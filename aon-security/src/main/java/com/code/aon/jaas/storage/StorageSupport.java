@@ -12,8 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
@@ -44,7 +44,7 @@ import com.code.aon.jaas.deployment.util.FileUtils;
 public class StorageSupport implements IOperation {
 
     /** StorageSupport Logger. */
-    private static final Log LOGGER = LogFactory.getLog( StorageSupport.class.getName() );
+    private final static Logger LOGGER = LoggerFactory.getLogger(StorageSupport.class);
 
     /** Applications storage manager. */
 	public ApplicationsStorage as;
@@ -193,7 +193,7 @@ public class StorageSupport implements IOperation {
 	    	LOGGER.debug( "Reading deployed applications file" );
 			return this.as.read(); // Devuelve la URL de aplicaciones desplegadas.
 		}
-    	LOGGER.debug( "Reading application: ENTITY[" + domain.getId() + "]" );
+    	LOGGER.debug( "Reading application: ENTITY[{}]", domain.getId() );
 		try {
 			IStorage es = getStorage(domain);
 			if (es != null) {
@@ -343,13 +343,13 @@ public class StorageSupport implements IOperation {
 			write(null);
 		} catch (InterruptedException e) {
 			String msg = "Unable to update domain: " + domain.getId() + " inside " + appId + " application";
-			LOGGER.fatal( msg, e );
+			LOGGER.error( msg, e );
 		} catch (AstException e) {
 			String msg = "Unable to update domain: " + domain.getId() + " inside " + appId + " application";
-			LOGGER.fatal( msg, e );
+			LOGGER.error( msg, e );
 		} catch (IOException e) {
 			String msg = "Unable to replace domain: " + domain.getId() + " in each application." + e.getMessage();
-			LOGGER.fatal( msg, e );
+			LOGGER.error( msg, e );
 		}
 	}
 
@@ -367,10 +367,10 @@ public class StorageSupport implements IOperation {
 			write(null);
 		} catch (AstException e) {
 			String msg = "Unable to update domain: " + domain.getId() + " inside each application";
-			LOGGER.fatal( msg, e );
+			LOGGER.error( msg, e );
 		} catch (IOException e) {
 			String msg = "Unable to replace domain: " + domain.getId() + " in each application." + e.getMessage();
-			LOGGER.fatal( msg, e );
+			LOGGER.error( msg, e );
 		}
 	}
 
@@ -462,12 +462,12 @@ public class StorageSupport implements IOperation {
 			write(null);
 		} catch (AstException e) {
 			String msg = "Unable to update domain: " + domain.getId() + " inside each application";
-			LOGGER.fatal( msg, e );
+			LOGGER.error( msg, e );
 		} catch (IOException e) {
 			String msg = "Unable to replace domain: " + domain.getId() + " in each application." + e.getMessage();
-			LOGGER.fatal( msg, e );
+			LOGGER.error( msg, e );
 		} catch (InterruptedException e) {
-			LOGGER.fatal( "Unable to load storaged domain: " + domain.getId(), e );
+			LOGGER.error( "Unable to load storaged domain: " + domain.getId(), e );
 		}
 		return errors;
 	}
@@ -533,7 +533,7 @@ public class StorageSupport implements IOperation {
 	    	LOGGER.debug( "Writing deployed applications file" );
 			this.as.write(); // Serializa el fichero de aplicaciones desplegadas.
 		} else {
-	    	LOGGER.debug( "Writing application: DOMAIN[" + domain.getId() + "]" );
+	    	LOGGER.debug( "Writing application: DOMAIN[{}]", domain.getId() );
 			try {
 				IStorage es = getStorage(domain);
 				if (es != null) {
