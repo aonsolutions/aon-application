@@ -1,8 +1,9 @@
 package com.code.aon.finance.event;
 
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,7 +23,7 @@ import com.code.aon.ql.Criteria;
 public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
 	/** The LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(InvoiceDetailBeanVetoListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceDetailBeanVetoListener.class.getName());
 
 	/**
 	 * Bean removed. Removes the related InvoiceTax before updating the InvoiceDetail
@@ -38,7 +39,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 			try {
 				removeInvoiceTax(invoiceDetail);
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
+				LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
 			}
 		}
 	}
@@ -57,7 +58,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 			try {
 				removeInvoiceTax(invoiceDetail);
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
+				LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
 			}
 		}
 	}
