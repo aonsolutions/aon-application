@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.AonFolder;
-import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.bean.AonServer;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.WebMailController;
 
 public class WebmailManager implements IServices {
 
@@ -23,10 +22,11 @@ public class WebmailManager implements IServices {
 		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
 		app = apps.getApplication( "aon-webmail" );
 		if ( app != null && isExecutable() ) {
+			//Connect to mail server.
 			try {
-				AuthPrincipal user = Utils.getAuthPrincipal();
-				MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
-				this.mail_server = new AonServer(mailAccount);
+				WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean( WebMailConstants.BEAN_WEBMAIL );
+				webmail.initDesktop( Utils.getAuthPrincipal() );
+				mail_server = webmail.getServer();
 			}
 			catch (Exception e) {
 				e.printStackTrace();

@@ -130,28 +130,29 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
-			<value>#{targetListeners}</value>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{targetControllerListener}</value>
+				<value>#{targetSearch}</value>
+				<value>#{targetAddressListener}</value>
+				<value>#{targetMediaListener}</value>
+				<value>#{targetSegmentListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{targetOptionalListeners}</value>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>targetListeners</managed-bean-name>
+		<managed-bean-name>targetOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
-			<value>#{targetControllerListener}</value>
-			<value>#{targetSearch}</value>
-			<value>#{targetAddressListener}</value>
-			<value>#{targetMediaListener}</value>
-			<value>#{targetSegmentListener}</value>
-			<value>#{targetItemListener}</value>
-			<value>#{targetSellerListener}</value>
-		</list-entries>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
+	
 	<managed-bean>
 		<managed-bean-name>targetControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -504,7 +505,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>targetLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.event.TargetLookupListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	

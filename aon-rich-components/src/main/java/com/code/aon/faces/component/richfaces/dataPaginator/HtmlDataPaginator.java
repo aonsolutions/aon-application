@@ -1,7 +1,7 @@
 package com.code.aon.faces.component.richfaces.dataPaginator;
 
-import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 
 import org.richfaces.component.html.HtmlDatascroller;
 
@@ -50,8 +50,8 @@ public class HtmlDataPaginator extends HtmlDatascroller {
         if (_rowsCountVar != null) {
             return _rowsCountVar;
         }
-        ValueExpression vb = getValueExpression( ROWS_COUNT_ATTRIBUTE );
-        return vb != null ? (String) vb.getValue(getFacesContext().getELContext()) : null;
+        ValueBinding vb = getValueBinding( ROWS_COUNT_ATTRIBUTE );
+        return vb != null ? (String) vb.getValue(getFacesContext()) : null;
     }
 
     /**
@@ -69,8 +69,8 @@ public class HtmlDataPaginator extends HtmlDatascroller {
         if (_displayedRowsCountVar != null) {
             return _displayedRowsCountVar;
         }
-        ValueExpression vb = getValueExpression( DISPLAYED_ROWS_COUNT_ATTRIBUTE );
-        return vb != null ? (String) vb.getValue(getFacesContext().getELContext()) : null;
+        ValueBinding vb = getValueBinding( DISPLAYED_ROWS_COUNT_ATTRIBUTE );
+        return vb != null ? (String) vb.getValue(getFacesContext()) : null;
     }
 
     /**
@@ -87,8 +87,8 @@ public class HtmlDataPaginator extends HtmlDatascroller {
         if (_firstRowIndexVar != null) {
             return _firstRowIndexVar;
         }
-        ValueExpression vb = getValueExpression( FIRST_ROW_INDEX_ATTRIBUTE );
-        return vb != null ? (String) vb.getValue(getFacesContext().getELContext()) : null;
+        ValueBinding vb = getValueBinding( FIRST_ROW_INDEX_ATTRIBUTE );
+        return vb != null ? (String) vb.getValue(getFacesContext()) : null;
     }
 
     /**
@@ -105,8 +105,8 @@ public class HtmlDataPaginator extends HtmlDatascroller {
         if (_lastRowIndexVar != null) {
             return _lastRowIndexVar;
         }
-        ValueExpression vb = getValueExpression( LAST_ROW_INDEX_ATTRIBUTE );
-        return vb != null ? (String) vb.getValue(getFacesContext().getELContext()) : null;
+        ValueBinding vb = getValueBinding( LAST_ROW_INDEX_ATTRIBUTE );
+        return vb != null ? (String) vb.getValue(getFacesContext()) : null;
     }
 
     @Override

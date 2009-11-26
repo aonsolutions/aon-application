@@ -7,7 +7,6 @@ public interface VelocityConstants {
 	//APLICATION CONSTANTS
 	APLICATION_NAME				= "webinfo",
 	TEMPLATE_NAME_PARAM			= "WEBINFO_TEMPLATE_NAME",
-	HOMEPAGE_NAME_PARAM			= "WEBINFO_HOMEPAGE_ID",
 	SESSION_CONFIG 				= "servlet_session_cms_config",
 	SESSION_CURRENT_LANGUAGE	= "servlet_session_cms_current_language",
 	DOMAINS_PATH				= "/home/DOMAINS",

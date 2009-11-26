@@ -250,10 +250,10 @@
 						height="14"
 						key="textField"/>
 					<box></box>
-					<textElement textAlignment="Right">
+					<textElement>
 						<font fontName="Arial" size="11"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{letter_goodbye}                    ]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{letter_goodbye}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -263,7 +263,7 @@
 						height="30"
 						key="textField"/>
 					<box></box>
-					<textElement textAlignment="Right">
+					<textElement>
 						<font fontName="Arial" size="11"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{letter_signature}]]></textFieldExpression>

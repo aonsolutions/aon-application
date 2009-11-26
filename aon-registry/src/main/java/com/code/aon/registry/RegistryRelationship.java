@@ -9,8 +9,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Transfer Object that represents the relationship between two registries.
@@ -67,6 +72,8 @@ public class RegistryRelationship implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "registry", nullable = false)
+	@ForeignKey(name = "FK_RRELATIONSHIP_REGISTRY")
+	@Index(name = "IDX_RRELATIONSHIP_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -88,6 +95,8 @@ public class RegistryRelationship implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "related_registry", nullable = false)
+	@ForeignKey(name = "FK_RRELATIONSHIP_RELATED_REGISTRY")
+	@Index(name = "IDX_RRELATIONSHIP_RELATED_REGISTRY")
 	public Registry getRelatedRegistry() {
 		return relatedRegistry;
 	}
@@ -108,7 +117,9 @@ public class RegistryRelationship implements ITransferObject {
 	 * @return the type of the relationship
 	 */
 	@ManyToOne
-	@JoinColumn(name = "relationship")
+	@JoinColumn(name = "relationship", nullable = false)
+	@ForeignKey(name = "FK_RRELATIONSHIP_RELATIONSHIP")
+	@Index(name = "IDX_RRELATIONSHIP_RELATIONSHIP")
 	public Relationship getRelationship() {
 		return relationship;
 	}
@@ -145,24 +156,35 @@ public class RegistryRelationship implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryRelationship o = (RegistryRelationship) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.comments, o.comments)
+				.append(this.registry, o.registry)				
+				.append(this.relatedRegistry, o.relatedRegistry)
+				.append(this.relationship, o.relationship)
+				.isEquals();
 		}
-		if (obj instanceof RegistryRelationship) {
-			RegistryRelationship o = (RegistryRelationship) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(comments)
+			.append(id)
+			.append(registry)			
+			.append(relatedRegistry)
+			.append(relationship)	
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	} 
     
 }

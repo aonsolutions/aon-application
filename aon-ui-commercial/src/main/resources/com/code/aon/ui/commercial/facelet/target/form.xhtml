@@ -16,7 +16,7 @@
 		<aon:form id="targetForm">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_module}" />
+				<ui:param name="toolbarTitle" value="#{target.bundle.commercial_target_module}" />
 				<ui:param name="controller" value="#{target}" />
 			</ui:include>
 
@@ -48,13 +48,17 @@
 							<ui:include src="/com/code/aon/ui/commercial/facelet/targetSegment/tab_grid.xhtml" />
 						</aon:panelTab>
 
-						<aon:panelTab id="targetItem" label="#{productBundle.product_module}">
-							<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/tab_grid.xhtml" />
-						</aon:panelTab>
+						<c:if test="#{target.showProduct}">
+							<aon:panelTab id="targetItem" label="#{productBundle.product_module}">
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/tab_grid.xhtml" />
+							</aon:panelTab>
+						</c:if>
 
-						<aon:panelTab id="targetSeller" label="#{salesBundle.sales_seller}">
-							<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/tab_grid.xhtml" />
-						</aon:panelTab>
+						<c:if test="#{target.showSeller}">
+							<aon:panelTab id="targetSeller" label="#{salesBundle.sales_seller}">
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/tab_grid.xhtml" />
+							</aon:panelTab>
+						</c:if>
 
 						<c:if test="#{target.showCommercialTracking}">
 							<aon:panelTab id="targetTracking" label="#{commercialBundle.commercial_target_tracking_module}">
@@ -72,8 +76,12 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />	
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<c:if test="#{target.showProduct}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</c:if>	
+		<c:if test="#{target.showSeller}">
+			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		</c:if>
 		<c:if test="#{target.showProfile}">
 			<aon:lookupButtonPopup lookup="#{questionLookup}" />
 		</c:if>	

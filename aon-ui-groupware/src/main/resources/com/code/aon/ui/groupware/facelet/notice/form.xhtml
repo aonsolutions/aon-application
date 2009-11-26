@@ -22,108 +22,98 @@
 
 				<aon:panelGrid columns="2" dir="true">
 
-					<aon:outputLabel for="Notice_date"
-						value="#{bundle.aon_date}" />
+						<aon:outputLabel for="Notice_date"
+							value="#{groupwareBundle.aon_date}" />
 
-					<aon:selectInputDate id="Notice_date" 
-						inputSize="18" value="#{notice.to.date}"
-						popupDateFormat="#{appBundle.aon_date_pattern}">
-					</aon:selectInputDate>
-					
-					<aon:outputLabel for="Notice_workGroup_id"
-						value="#{groupwareBundle.notice_work_group}" />
-					<aon:selectOneMenu id="Notice_workGroup_id" focus="Notice_recipient_id"
-						validator="#{notice.workGroupCheck}"
-						value="#{notice.to.workGroup.id}" reRender="Notice_workGroup_id,Notice_recipient_id, Notice_sendEmail, Notice_sendSMS"
-						valueChangeListener="#{notice.workGroupChange}" >
-						<c:if test="#{notice.to.workGroup.id == notice.selectOneValue}">
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
-						</c:if>
-						<c:if test="#{notice.workGroupCount &gt; 1}">
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_all}" value="#{null}"/>
-						</c:if>
-						<f:selectItems value="#{notice.workGroups}" />
-					</aon:selectOneMenu>
+						<aon:selectInputDate id="Notice_date" 
+							renderAsPopup="true" value="#{notice.to.date}"
+							popupDateFormat="#{appBundle.aon_date_pattern}">
+						</aon:selectInputDate>
 
-					<aon:outputLabel for="Notice_recipient_id" 
-						value="#{groupwareBundle.notice_recipient}" />
-					<aon:selectOneMenu id="Notice_recipient_id"
-						disabled="#{!notice.recipientSelectable}" focus="Notice_source"
-						value="#{notice.to.recipient}" reRender="Notice_recipient_id,Notice_sendEmail, Notice_sendSMS"
-						valueChangeListener="#{notice.recipientChange}">
-						<c:if test="#{!notice.recipientSelectable}">
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
-						</c:if>
-						<c:if test="#{notice.recipientSelectable}">						
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_all}" value="#{null}"/>
-							<f:selectItems value="#{notice.users}" />
-						</c:if>
-					</aon:selectOneMenu>
+						<aon:outputLabel for="Notice_workGroup_id"
+							value="#{groupwareBundle.notice_work_group}" />
+						<aon:selectOneMenu id="Notice_workGroup_id" 
+							value="#{notice.to.workGroup.id}" reRender="Notice_recipient_area, Notice_sendEmail, Notice_sendSMS"
+							valueChangeListener="#{notice.workGroupChange}" > 
+							<f:selectItem value="#{desktop.allValue}" />
+							<f:selectItems value="#{notice.workgroups}" />
+						</aon:selectOneMenu>
 
-					<aon:outputLabel for="Notice_source"
-						value="#{groupwareBundle.notice_source}" />
-					<aon:inputText id="Notice_source"
-						maxlength="64" size="100"
-						value="#{notice.to.source}" />
+						<aon:outputLabel for="Notice_recipient_area" 
+							value="#{groupwareBundle.notice_recipient}" />
+						<aon:div id="Notice_recipient_area">
+							<aon:selectOneMenu id="Notice_recipient_id"
+								value="#{notice.to.recipient.id}" reRender="Notice_sendEmail, Notice_sendSMS"
+								valueChangeListener="#{notice.recipientChange}">
+								<f:selectItem value="#{desktop.allValue}" />
+								<f:selectItems value="#{notice.users}" />
+							</aon:selectOneMenu>
+						</aon:div>
 
-					<aon:outputLabel for="Notice_company"
-						value="#{groupwareBundle.notice_company}" />
-					<aon:inputText id="Notice_company"
-						maxlength="64" size="100"
-						value="#{notice.to.company}" />
+						<aon:outputLabel for="Notice_source"
+							value="#{groupwareBundle.notice_source}" />
+						<aon:inputText id="Notice_source"
+							maxlength="64" size="100"
+							value="#{notice.to.source}" />
 
-					<aon:outputLabel for="Notice_phone"
-						value="#{groupwareBundle.notice_phone}" />
-					<aon:inputText id="Notice_phone"
-						maxlength="16" size="20"
-						value="#{notice.to.phone}" />
+						<aon:outputLabel for="Notice_company"
+							value="#{groupwareBundle.notice_company}" />
+						<aon:inputText id="Notice_company"
+							maxlength="64" size="100"
+							value="#{notice.to.company}" />
+
+						<aon:outputLabel for="Notice_phone"
+							value="#{groupwareBundle.notice_phone}" />
+						<aon:inputText id="Notice_phone"
+							maxlength="16" size="20"
+							value="#{notice.to.phone}" />
+							
+						<aon:outputLabel for="Notice_status" 
+							value="#{groupwareBundle.notice_status}" />
+						<aon:selectOneMenu id="Notice_status"
+							value="#{notice.to.status}">
+							<f:selectItems value="#{groupWareCollections.noticeStatuses}" />
+						</aon:selectOneMenu>
 						
-					<aon:outputLabel for="Notice_status" 
-						value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Notice_status"
-						value="#{notice.to.status}">
-						<f:selectItems value="#{groupWareCollections.noticeStatuses}" />
-					</aon:selectOneMenu>
-						
-					<aon:outputLabel for="Notice_type" 
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Notice_type"
-						value="#{notice.to.type}">
-						<f:selectItems value="#{groupWareCollections.noticeTypes}" />
-					</aon:selectOneMenu>
+						<aon:outputLabel for="Notice_type" 
+							value="#{groupwareBundle.notice_type}" />
+						<aon:selectOneMenu id="Notice_type"
+							value="#{notice.to.type}">
+							<f:selectItems value="#{groupWareCollections.noticeTypes}" />
+						</aon:selectOneMenu>
 
-					<aon:outputLabel for="Notice_priority" 
-						value="#{groupwareBundle.notice_priority}" />
-					<aon:selectOneMenu id="Notice_priority"
-						value="#{notice.to.priority}">
-						<f:selectItems value="#{groupWareCollections.priorities}" />
-					</aon:selectOneMenu>
+						<aon:outputLabel for="Notice_priority" 
+							value="#{groupwareBundle.notice_priority}" />
+						<aon:selectOneMenu id="Notice_priority"
+							value="#{notice.to.priority}">
+							<f:selectItems value="#{groupWareCollections.priorities}" />
+						</aon:selectOneMenu>
 
-					<aon:outputLabel for="Notice_subject"
-						value="#{groupwareBundle.notice_subject}" />
-					<aon:inputTextarea id="Notice_subject"
-						value="#{notice.to.subject}" cols="100" rows="7" />	
+						<aon:outputLabel for="Notice_subject"
+							value="#{groupwareBundle.notice_subject}" />
+						<aon:inputTextarea id="Notice_subject"
+							value="#{notice.to.subject}" cols="100" rows="7" />	
 
-					<aon:outputLabel for="Notice_sendEmail" value="#{groupwareBundle.notice_send_email}" rendered="#{notice.new}"/>
-					<aon:div id="Notice_sendEmail" style="vertical-align:top" rendered="#{notice.new}">
-						<aon:selectBooleanCheckbox id="Notice_sendEmail_checkbox"
-							value="#{notice.sendMail}" style="vertical-align:top" reRender="Notice_sendEmail" />
-						<aon:inputTextarea id="Notice_sendEmail_list" value="#{notice.mailList}" cols="97" rows="4" rendered="#{notice.sendMail}"/>	
-					</aon:div>
+						<aon:outputLabel for="Notice_sendEmail" value="#{groupwareBundle.notice_send_email}" rendered="#{notice.new}"/>
+						<aon:div id="Notice_sendEmail" style="vertical-align:top" rendered="#{notice.new}">
+							<aon:selectBooleanCheckbox id="Notice_sendEmail_checkbox" value="#{notice.sendMail}" style="vertical-align:top">
+ 								<a4j:support event="onclick" reRender="Notice_sendEmail" />
+							</aon:selectBooleanCheckbox>
+							<aon:inputTextarea id="Notice_sendEmail_list" value="#{notice.mailList}" cols="97" rows="4" rendered="#{notice.sendMail}"/>	
+						</aon:div>
 
-					<aon:outputLabel for="Notice_sendSMS" value="#{groupwareBundle.notice_send_sms}" rendered="#{notice.new and smsManager.noticeEnabled}"/>
-					<a4j:region>
-						<aon:div id="Notice_sendSMS" style="vertical-align:top" rendered="#{notice.new and smsManager.noticeEnabled}">
-							<aon:selectBooleanCheckbox id="Notice_sendSMS_checkbox" reRender="Notice_sendSMS"
-								value="#{notice.sendSMS}" style="vertical-align:top" disabled="#{!smsManager.sidebarEnabled}" />
-	
+						<aon:outputLabel for="Notice_sendSMS" value="#{groupwareBundle.notice_send_sms}" rendered="#{notice.new and sms.noticeEnabled}"/>
+						<aon:div id="Notice_sendSMS" style="vertical-align:top" rendered="#{notice.new and sms.noticeEnabled}">
+							<aon:selectBooleanCheckbox id="Notice_sendSMS_checkbox" value="#{notice.sendSMS}" style="vertical-align:top" disabled="#{!sms.sidebarEnabled}">
+ 								<a4j:support event="onclick" reRender="Notice_sendSMS" />
+							</aon:selectBooleanCheckbox>
+
 							<aon:div id="Notice_sendSMS_list" rendered="#{notice.sendSMS}">
 								<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{notice.recipient}" >
 									<f:validateLength maximum="13" />
 									<f:validateLongRange maximum="0099999999999" />
 								</aon:inputText>
-								<aon:commandButton id="add2List"
-									value="#{smsBundle.sms_add2list}"
+								<aon:commandButton id="add2List" value="#{appBundle.aon_sms_add2list}" title="#{appBundle.aon_sms_add2list}"
 									styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
 									actionListener="#{notice.add2List}"
 									reRender="SMS_recipient, recipientList"
@@ -133,20 +123,20 @@
 											style="margin-left:1.1em;" rowKeyVar="row" >
 				           				<h:outputText value="#{recipient}"/>
 										<a4j:commandButton id="removeFromList" value="" 
-											title="#{smsBundle.sms_removeFromlist}"
-											styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
-											reRender="SMS_recipient, recipientList"
-											accesskey="#{bundle.aon_key_remove}" >
-								            <a4j:actionparam name="selected" value="#{row}"
-								            	assignTo="#{notice.selected}" actionListener="#{notice.removeFromList}"/>
+												title="#{appBundle.aon_sms_removeFromlist}"
+												styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
+												actionListener="#{notice.removeFromList}"
+												reRender="SMS_recipient, recipientList"
+												accesskey="#{bundle.aon_key_save}" >
+								            <a4j:actionparam name="selected" value="#{row}" assignTo="#{notice.selected}"/>
 										</a4j:commandButton>
 							        </rich:dataList>
 						        </aon:div>
 							</aon:div>
-						</aon:div>
-					</a4j:region>
 
-				</aon:panelGrid>
+						</aon:div>
+
+					</aon:panelGrid>
 					
 			</aon:div>
 

@@ -138,6 +138,8 @@ public class ReportConfigurationParser {
 	 * Returns the <code>ReportConfigurationManager</code> for the
 	 * configuration file specified in the URL <code>reportConfigFile</code>.
 	 * 
+	 * @param reportConfigFile
+	 *            An URL pointing to a configuration file.
 	 * @return the <code>ReportConfigurationManager</code>.
 	 * @throws ReportException
 	 *             When an IOException or a SAXException ocurred.
@@ -170,6 +172,7 @@ public class ReportConfigurationParser {
 	 * 
 	 * @param in
 	 *            The InputStream of the configuration file.
+	 * @return the <code>ReportConfigurationManager</code>.
 	 * @throws ReportException
 	 *             When an IOException or a SAXException ocurred.
 	 */

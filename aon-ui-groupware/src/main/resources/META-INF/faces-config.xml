@@ -140,6 +140,32 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************* CONTACT ***************** -->
+	<managed-bean>
+		<managed-bean-name>contact</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.groupware.controller.ContactController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.groupware.Contact</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contact</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Contact_displayName</value>
+		</managed-property>
+	</managed-bean>
+	
+	
 	<!-- ************* FAVORITE ***************** -->
 	<managed-bean>
 		<managed-bean-name>favorite</managed-bean-name>
@@ -282,6 +308,22 @@
 	    </navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Contact ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contact_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/groupware/facelet/contact/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contact_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/groupware/facelet/contact/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>contact_search</from-outcome>
+	        <to-view-id>/com/code/aon/ui/groupware/facelet/contact/search.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
 	<!-- =================== Favorite ================= -->	
 	<navigation-rule>
 		<navigation-case>
@@ -313,6 +355,10 @@
         <to-view-id>/com/code/aon/ui/groupware/facelet/alarm/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
+        <from-outcome>contact</from-outcome>
+        <to-view-id>/com/code/aon/ui/groupware/facelet/contact/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
         <from-outcome>favorite</from-outcome>
         <to-view-id>/com/code/aon/ui/groupware/facelet/favorite/list.xhtml</to-view-id>
     </navigation-case>
@@ -321,5 +367,4 @@
         <to-view-id>/com/code/aon/ui/groupware/facelet/favorite/category/grid.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
-
 </faces-config>

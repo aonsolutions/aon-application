@@ -7,13 +7,22 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.registry.enumeration.NoteType;
 
 @Entity
@@ -47,6 +56,8 @@ public class RegistryNote implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="registry", nullable=false)
+	@ForeignKey(name = "FK_RNOTE_REGISTRY")
+	@Index(name = "IDX_RNOTE_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -65,6 +76,7 @@ public class RegistryNote implements ITransferObject {
 	}
 
 	@Column(name="note_date")
+	@Temporal(TemporalType.DATE)
 	public Date getNoteDate() {
 		return noteDate;
 	}
@@ -73,7 +85,8 @@ public class RegistryNote implements ITransferObject {
 		this.noteDate = noteDate;
 	}
 
-	@Column(length=65535, nullable=false)
+	@Lob
+	@Type(type="stringClob")
 	public String getComments() {
 		return comments;
 	}
@@ -108,24 +121,37 @@ public class RegistryNote implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryNote o = (RegistryNote) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.comments, o.comments)
+				.append(this.description, o.description)				
+				.append(this.noteDate, o.noteDate)
+				.append(this.notetype, o.notetype)
+				.append(this.registry, o.registry)
+				.isEquals();
 		}
-		if (obj instanceof RegistryNote) {
-			RegistryNote o = (RegistryNote) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(comments)
+			.append(description)
+			.append(id)
+			.append(noteDate)
+			.append(notetype)	
+			.append(registry)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	} 
 
 }

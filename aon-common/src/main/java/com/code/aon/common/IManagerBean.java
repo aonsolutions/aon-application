@@ -1,5 +1,7 @@
 package com.code.aon.common;
 
+import com.code.aon.common.dao.hibernate.ReplicationMode;
+
 /**
  * Interface that allows operations such as create, read, update and delete, over
  * the entities of the model.
@@ -17,6 +19,14 @@ public interface IManagerBean extends IFinderBean {
 	 * @throws ManagerBeanException
 	 */
 	void initializePOJO(ITransferObject to) throws ManagerBeanException;
+	
+	/**
+	 * Restores null value in framework created subpojos.
+	 * 
+	 * @param to
+	 * @throws ManagerBeanException
+	 */
+	void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException;
 	
 	/**
 	 * Create a new <code>ITransferObject</code> attending to the POJO.
@@ -62,5 +72,16 @@ public interface IManagerBean extends IFinderBean {
      * @throws ManagerBeanException if an unexpected error occurs.
      */
     ITransferObject insertOrUpdate(ITransferObject to) throws ManagerBeanException;
+ 
+    /**
+     * Replicate in the data source, the <code>ITransferObject</code>.
+     * 
+     * @param to Transfer Object to insert.
+	 * @param mode defines the replication mode
+	 *  
+     * @return Transfer Object con los datos insertados.
+     * @throws ManagerBeanException if an unexpected error occurs.
+     */
+    ITransferObject replicate(ITransferObject to, ReplicationMode mode) throws ManagerBeanException;
     
 }

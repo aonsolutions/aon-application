@@ -15,17 +15,17 @@
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_mediaType" value="#{registryBundle.registry_media_type}" />
+					<aon:outputText value="#{registryBundle.registry_media_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.mediaType}"
 					rendered="#{formList}" />
-				<aon:selectOneMenu id="RegistryMedia_mediaType"
-					value="#{controller.to.mediaType}" rendered="#{formEdit}">
+				<aon:selectOneMenu value="#{controller.to.mediaType}"
+					rendered="#{formEdit}">
 					<f:selectItems value="#{registryCollections.mediaTypes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="RegistryMedia_mediaType-New"
-						value="#{controller.to.mediaType}" rendered="#{formNew}">
+					<aon:selectOneMenu value="#{controller.to.mediaType}"
+						rendered="#{formNew}">
 						<f:selectItems value="#{registryCollections.mediaTypes}" />
 					</aon:selectOneMenu>
 				</f:facet>
@@ -33,15 +33,15 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_value" value="#{bundle.aon_value}" />
+					<aon:outputText value="#{bundle.aon_value}" />
 				</f:facet>
 				<aon:outputText value="#{to.value}"
 					rendered="#{formList}" />
-				<aon:inputText id="RegistryMedia_value" value="#{to.value}"
+				<aon:inputText value="#{to.value}"
 					rendered="#{formEdit}" required="true" size="40"
 					onblur="toLowerCase(this);" />
 				<f:facet name="footer">
-					<aon:inputText id="RegistryMedia_value-New" value="#{controller.to.value}"
+					<aon:inputText id="Media" value="#{controller.to.value}"
 						rendered="#{formNew}" required="true" size="40"
 						onblur="toLowerCase(this);" />
 				</f:facet>
@@ -49,15 +49,15 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_comment" value="#{bundle.aon_comment}" />
+					<aon:outputText value="#{bundle.aon_comment}" />
 				</f:facet>
 				<aon:outputText value="#{to.comment}"
 					rendered="#{formList}" />
-				<aon:inputText id="RegistryMedia_comment"
-					value="#{to.comment}" rendered="#{formEdit}" size="40" />
+				<aon:inputText value="#{to.comment}"
+					rendered="#{formEdit}" size="40" />
 				<f:facet name="footer">
-					<aon:inputText id="RegistryMedia_comment-New"
-						value="#{controller.to.comment}" rendered="#{formNew}" size="40" />
+					<aon:inputText value="#{controller.to.comment}"
+						rendered="#{formNew}" size="40" />
 				</f:facet>
 			</aon:column>
 		</ui:define>

@@ -7,15 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -30,7 +26,6 @@ import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
@@ -89,8 +84,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean showRegistryBank = true;
 
 	private boolean showCompanyOtherData = true;
-	
-	private boolean showPanelTabSet = true;
 
     /**
      * The empty constructor.
@@ -600,11 +593,22 @@ public class CompanyParentController extends BasicController implements ICompany
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
-	public String getOnNew() {
-		if(this.getTo() == null) {
-			this.onLoad();
+	/**
+	 * If the company has been defined navigates to the homepage, 
+	 * otherwise navigates to the company maintenance.
+	 * 
+	 * @return The url of the page that will be loaded
+	 * 
+	 * @throws ManagerBeanException
+	 */
+	public String getCompanyNavigation() throws ManagerBeanException {
+		String context = 
+			FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+		if ( this.getModel().getRowCount() > 0 ) {
+			return context + "/facelet/homepage/firstContent.faces";
 		}
-		return "";
+		this.onLoad();
+		return context + "/facelet/registry/company/init.faces";
 	}
 
 	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
@@ -646,13 +650,5 @@ public class CompanyParentController extends BasicController implements ICompany
 
 	public void setShowCompanyOtherData(boolean showCompanyOtherData) {
 		this.showCompanyOtherData = showCompanyOtherData;
-	}
-
-	public boolean isShowPanelTabSet() {
-		return showPanelTabSet;
-	}
-
-	public void setShowPanelTabSet(boolean showPanelTabSet) {
-		this.showPanelTabSet = showPanelTabSet;
 	}
 }

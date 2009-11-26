@@ -5,9 +5,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicMatch;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -47,19 +44,19 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 		if (companyController.getAonFile() != null) {
 			AonFile aonFile = companyController.getAonFile();
 			try {
-				if (aonFile.getSize() > 262144) {
+				if (aonFile.getSize() > 100000) {
 					ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
 					throw new ControllerListenerException(bundle
-							.getString("company_logo_max_size_error"));
+							.getString("aon_company_logo_max_size_error"));
 				}
 				RegistryAttachment attach = new RegistryAttachment();
 				attach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
-				attach.setDescription("aon-logo");
+				attach.setDescription("");
 				attach.setRegistry((Company) event.getController().getTo());
-				MimeType mt = getMimeType(aonFile.getFileName(), aonFile.getData());
-				attach.setMimeType(mt);
+				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(
+						aonFile.getFileName().lastIndexOf(".") + 1)));
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
 			} catch (IOException e) {
@@ -87,10 +84,10 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 			RegistryAttachment attach = obtainRegistryAttachment(((Company) event.getController()
 					.getTo()).getId());
 			try {
-				if (aonFile.getSize() > 262144) {
+				if (aonFile.getSize() > 100000) {
 					ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
 					throw new ControllerListenerException(bundle
-							.getString("company_logo_max_size_error"));
+							.getString("aon_company_logo_max_size_error"));
 				}
 				if (attach == null) {
 					attach = new RegistryAttachment();
@@ -98,10 +95,8 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 				attach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
-				attach.setDescription("aon-logo");
+				attach.setDescription("");
 				attach.setRegistry((Company) event.getController().getTo());
-				MimeType mt = getMimeType(aonFile.getFileName(), aonFile.getData());
-				attach.setMimeType(mt);
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				if (attach.getId() == null) {
 					companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
@@ -128,26 +123,6 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 			f.addAonFileListener(companyController);
 			companyController.setAonFile(f);
 		}
-	}
-	
-	private MimeType getMimeType(String resource, byte[] data) {
-		MimeType result = null;
-		int pos = resource.lastIndexOf('.');
-		if (pos != -1) {
-			String extension = resource.substring(pos + 1);
-			result = MimeType.getByExtension(extension);
-		}
-		if (result == null) {
-			try {
-				MagicMatch match = Magic.getMagicMatch(data, true);
-				if (match != null) {
-					result = MimeType.getByExtension(match.getMimeType());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
 	}
 
 }

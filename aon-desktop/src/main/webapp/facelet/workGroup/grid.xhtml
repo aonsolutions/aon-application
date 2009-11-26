@@ -38,7 +38,7 @@
 					
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_description}" />
+									<aon:outputText value="#{groupwareBundle.aon_workgroup_description}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}" rendered="#{to!=workGroup.to}" />
 								<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -53,7 +53,7 @@
 	
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_status}" />
+									<aon:outputText value="#{groupwareBundle.aon_workgroup_status}" />
 								</f:facet>
 								<aon:outputText value="#{to.status}" rendered="#{to!=workGroup.to}" />
 								<aon:selectOneMenu rendered="#{to==workGroup.to}" value="#{workGroup.to.status}">

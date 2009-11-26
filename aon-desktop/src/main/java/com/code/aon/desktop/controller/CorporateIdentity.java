@@ -100,7 +100,6 @@ public class CorporateIdentity implements ICollectionProvider{
     	identityReport.setFax_number("");
     	identityReport.setFax_phone_number("");
     	identityReport.setFax_page_number("");
-    	identityReport.setFax_date(new Date());
     	identityReport.setLetter_date("");
     	identityReport.setLetter_salutation("");
     	identityReport.setLetter_content("");
@@ -110,20 +109,10 @@ public class CorporateIdentity implements ICollectionProvider{
     	identityReport.setPagare_de("");
     	identityReport.setPagare_cantidad("");
     	identityReport.setPagare_cantidad_num("");
-    	identityReport.setPagare_concepto("");
-    	identityReport.setPagare_fecha("");
-    	identityReport.setPagare_para("");
-    	identityReport.setPagare_info("");
+    	identityReport.setPagare_fecha_dia("");
+    	identityReport.setPagare_fecha_mes("");
+    	identityReport.setPagare_fecha_ano("");
     	identityReport.setPrintRegistryData(false);
-    	identityReport.setLabel_to("");
-    	identityReport.setLabel_att("");
-    	identityReport.setLabel_to_address("");
-    	identityReport.setLabel_to_address2("");
-    	identityReport.setLabel_to_phone("");
-    	identityReport.setLabel_to_fax("");
-    	identityReport.setLabel_to_obs("");
-    	identityReport.setLabel_to_bultos("1");
-    	
     }
 
     public void onInit(ActionEvent event) throws ManagerBeanException{
@@ -154,7 +143,6 @@ public class CorporateIdentity implements ICollectionProvider{
     	identityReport.setFax_number("");
     	identityReport.setFax_phone_number("");
     	identityReport.setFax_page_number("1");
-    	identityReport.setFax_date(new Date());
     	identityReport.setLetter_date("En " + city + " a " + day +" de " + month + " de " + year + "");
     	identityReport.setLetter_salutation("Estimado señor:");
     	identityReport.setLetter_content("");
@@ -164,19 +152,10 @@ public class CorporateIdentity implements ICollectionProvider{
     	identityReport.setPagare_de("");
     	identityReport.setPagare_cantidad("");
     	identityReport.setPagare_cantidad_num("");
-    	identityReport.setPagare_concepto("");
-    	identityReport.setPagare_fecha("" + day + " de " + month + " de " + year + "");
-    	identityReport.setPagare_para("");
-    	identityReport.setPagare_info("DNI: ");
+    	identityReport.setPagare_fecha_dia(day);
+    	identityReport.setPagare_fecha_mes(month);
+    	identityReport.setPagare_fecha_ano(year);
     	identityReport.setPrintRegistryData(false);
-    	identityReport.setLabel_to("");
-    	identityReport.setLabel_att("");
-    	identityReport.setLabel_to_address("");
-    	identityReport.setLabel_to_address2("");
-    	identityReport.setLabel_to_phone("");
-    	identityReport.setLabel_to_fax("");
-    	identityReport.setLabel_to_obs("");
-    	identityReport.setLabel_to_bultos("1");
     }
 
 	private Company recoverCompany() throws ManagerBeanException{
@@ -240,16 +219,7 @@ public class CorporateIdentity implements ICollectionProvider{
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		if (! forceRefresh) {
 			List<IdentityReport> list = new LinkedList<IdentityReport>();
-			int num = 1;
-			try {
-				num = Integer.parseInt(identityReport.getLabel_to_bultos());
-			}
-			catch (NumberFormatException nfe) {
-				num = 1;
-			}
-			for (int i = 1; i <= num; i++) {
-				list.add(identityReport);
-			}
+			list.add(identityReport);
 			return list;
 		} else {
 			throw new IllegalArgumentException( "forceRefresh not supported" );
@@ -338,14 +308,14 @@ public class CorporateIdentity implements ICollectionProvider{
 		        int num_ = Integer.parseInt(str1);
 		        int dec_ = Integer.parseInt(str2);
 		        numero = new n2t();
-		        res = numero.convertirLetras(num_) + " euros";
+		        res = numero.convertirLetras(num_);
 		        res += " con ";
-		        res += numero.convertirLetras(dec_) + " centimos";
+		        res += numero.convertirLetras(dec_);
 			}
 			else {
 		        int num_ = Integer.parseInt(num);
 		        numero = new n2t();
-		        res = numero.convertirLetras(num_) + " euros";
+		        res = numero.convertirLetras(num_);
 			}
 			identityReport.setPagare_cantidad(res);
     	} catch (Exception e) {

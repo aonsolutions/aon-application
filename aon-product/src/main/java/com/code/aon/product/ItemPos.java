@@ -10,8 +10,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.enumeration.PluProductType;
 
 /**
@@ -88,6 +93,8 @@ public class ItemPos implements ITransferObject {
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "item", nullable = false)
+    @ForeignKey(name = "FK_ITEM_POS_ITEM")
+    @Index(name = "IDX_ITEM_POS_ITEM")    	
 	public Item getItem() {
 		return item;
 	}
@@ -107,7 +114,7 @@ public class ItemPos implements ITransferObject {
 	 * 
 	 * @return the barcode.
 	 */
-	@Column(name = "barcode")
+	@Column(name = "barcode", length = 15)
 	public String getBarcode() {
 		return barcode;
 	}
@@ -126,7 +133,7 @@ public class ItemPos implements ITransferObject {
 	 * 
 	 * @return plu.
 	 */
-	@Column(name = "plu")
+	@Column(name = "plu", length = 4, nullable = false)
 	public String getPlu() {
 		return plu;
 	}
@@ -145,7 +152,7 @@ public class ItemPos implements ITransferObject {
 	 * 
 	 * @return the shortDescription.
 	 */
-	@Column(name = "desc_short")
+	@Column(name = "desc_short", length = 20)
 	public String getShortDescription() {
 		return shortDescription;
 	}
@@ -162,7 +169,7 @@ public class ItemPos implements ITransferObject {
 	/**
 	 * @return the pluProductType
 	 */
-	@Column(name = "plu_product_type")
+	@Column(name = "plu_product_type", nullable = false)
 	public PluProductType getPluProductType() {
 		return pluProductType;
 	}
@@ -176,24 +183,37 @@ public class ItemPos implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ItemPos o = (ItemPos) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.barcode, o.barcode)			
+				.append(this.item, o.item)								
+				.append(this.plu, o.plu)				
+				.append(this.pluProductType, o.pluProductType)								
+				.append(this.shortDescription, o.shortDescription)				
+				.isEquals();
 		}
-		if (obj instanceof ItemPos) {
-			ItemPos o = (ItemPos) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(barcode)
+			.append(id)		
+			.append(item)						
+			.append(plu)						
+			.append(pluProductType)						
+			.append(shortDescription)			
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

@@ -20,7 +20,6 @@ import com.sun.facelets.tag.jsf.ComponentHandler;
  * 
  * @author atellitu
  */
-@Deprecated
 public class RegionableInputHandler extends TagHandler implements IRichFacesTags {
 
 	private static final String REGION_RENDERER_TYPE = "org.ajax4jsf.components.AjaxRegionRenderer";
@@ -29,6 +28,8 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	
 	private static final String LOOKUP_INPUT_TEXT_COMPONENT_TYPE = "com.code.aon.faces.HtmlLookupInputText";
 	
+	private static final String SELECT_INPUT_DATE_COMPONENT_TYPE = "com.code.aon.faces.SelectInputDate";
+
 	private static final String INPUT_RICH_TEXT_COMPONENT_TYPE = "com.code.aon.faces.InputRichText";
 
 	private ComponentConfig config;

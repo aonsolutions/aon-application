@@ -25,7 +25,6 @@
     	<attribute name="inputClass" value="aon-selectInputDate-inputClass" />
     	<attribute name="disabledStyleClass" value="aon-selectInputDate-inputClass-disabled" />
     	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />
-    	<attribute name="inputSize" value="10" type="2" />
     	<attribute name="enableManualInput" value="true" type="1" />    	
 	</component>
 	
@@ -65,14 +64,12 @@
 	</component>
 
 	<component localName="commandButton">
-    	<attribute name="styleClass" value="aon-commandButton" />
-    	<attribute name="reRender" value="aonContent" />			
+    	<attribute name="styleClass" value="aon-commandButton" />			
 	</component>
 
 	<component localName="commandLink">
     	<attribute name="styleClass" value="aon-commandLink" />
     	<attribute name="disabledStyleClass" value="aon-commandLink-disabled" />			
-    	<attribute name="reRender" value="aonContent" />
 	</component>
 	
 	<component localName="panelTabSet">
@@ -161,7 +158,6 @@
     	<attribute name="mouseOverClass" ignore="true" />
     	<attribute name="event" value="onRowClick" />
     	<attribute name="toggleOnClick" alias="rendered" />
-    	<attribute name="reRender" value="aonContent" />
 	</component>
 
 	<component localName="mediaOutput">
@@ -191,7 +187,6 @@
 		<attribute name="selectClass" value="aon-menuItem-selectClass" /> 				
 		<attribute name="submitMode" value="ajax" />       
 		<attribute name="immediate" value="true" type="1" />
-		<attribute name="reRender" value="aonContent" />
 	</component>
 	
 	<component localName="panelCollapsible">

@@ -18,8 +18,6 @@ public class CustomerController extends BasicController {
 	
 	private boolean showFinanceData = true;
 	
-	private boolean showAccount;
-	
 	public Person getPerson() {
 		return person;
 	}
@@ -55,14 +53,6 @@ public class CustomerController extends BasicController {
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
-	}
-
-	public boolean isShowAccount() {
-		return showAccount;
-	}
-
-	public void setShowAccount(boolean showAccount) {
-		this.showAccount = showAccount;
 	}
 	
 }

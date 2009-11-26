@@ -234,7 +234,7 @@ public class ReportConfig {
 	}
 
 	/**
-	 * @return dynamicParamsProvider
+	 * @return
 	 */
 	public String getDynamicParamsProvider() {
 		return dynamicParamsProvider;

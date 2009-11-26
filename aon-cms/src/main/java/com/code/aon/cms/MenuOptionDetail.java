@@ -9,11 +9,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "menu_option_i18n")
 public class MenuOptionDetail implements ITransferObject {
+
+	private static final long serialVersionUID = 5818793320863652487L;
 
 	private Integer id;
 
@@ -73,5 +80,38 @@ public class MenuOptionDetail implements ITransferObject {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final MenuOptionDetail o = (MenuOptionDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.label, o.label)
+				.append(this.language, o.language)
+				.append(this.menu_option, o.menu_option)
+				.append(this.url, o.url)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)			
+			.append(label)			
+			.append(language)
+			.append(menu_option)			
+			.append(url)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}		
 
 }

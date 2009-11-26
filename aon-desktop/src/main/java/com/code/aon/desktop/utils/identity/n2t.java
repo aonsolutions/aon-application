@@ -322,7 +322,7 @@ public class n2t {
 	
 	public String convertirLetras(int numero){
 		num_letras = decmillon(numero);
-		return num_letras + "";
+		return num_letras;
 	} 	
 	
 	public static void main(String Arg[ ]){

@@ -8,24 +8,22 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
+import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 21/05/2007
@@ -36,7 +34,7 @@ public class FailedLogin implements ILdapConstants, IAonObjectClasses {
 	protected static final String AON_LAST_EXCEPTION_KEY = "AON_LAST_EXCEPTION_KEY";
 	
     /** Obtains the SessionFilter Logger. */
-	private static final Log LOGGER = LogFactory.getLog( FailedLogin.class.getName() );	
+	private final static Logger LOGGER = LoggerFactory.getLogger(FailedLogin.class);
 	
 	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
 	
@@ -76,27 +74,26 @@ public class FailedLogin implements ILdapConstants, IAonObjectClasses {
 	
 	private String getLdapMessage( int status, String language ) {
 		BasicLdap ldap = new BasicLdap();		
-		String filter = LdapSession.getObjectClass(MESSAGE);
-		DistinguishedName dn = AonDN.getMessageDN(status, language);
+		Name dn = NameResolver.getMessageDN(status, language);
 		if (! ldap.exists(dn, MESSAGE) ) {
-			dn = AonDN.getMessageDN(status);
+			dn = NameResolver.getMessageDN(status);
 			if (! ldap.exists(dn, MESSAGE) ) {
-				dn = AonDN.getMessageDN(DEFAULT_STATUS, language);
+				dn = NameResolver.getMessageDN(DEFAULT_STATUS, language);
 				if (! ldap.exists(dn, MESSAGE) ) {
-					dn = AonDN.getMessageDN(DEFAULT_STATUS);
+					dn = NameResolver.getMessageDN(DEFAULT_STATUS);
 					if (! ldap.exists(dn, MESSAGE) ) {
 						dn = null;
 					}
 				}
 			}
 		}
-		try {
-			if ( dn != null ) {
-				Entry entry = ldap.getLdapSession().get(dn.toString(), filter, MESSAGE_ATTRIBUTE);
-				return entry.getAsString(MESSAGE_ATTRIBUTE);
+		if ( dn != null ) {
+			Entry entry = ldap.get(dn, MESSAGE, MESSAGE_ATTRIBUTE);
+			if ( entry != null ) {
+				return entry.getAsString(MESSAGE_ATTRIBUTE);	
+			} else {
+				LOGGER.error( "Error retrieving message from LDAP: {}", status );	
 			}
-		} catch (LdapException e) {
-			LOGGER.error( "Error retrieving message from LDAP: " + status, e);
 		}
 		return null;
 	}

@@ -81,13 +81,6 @@
 						size="50" 
 						value="#{corporateIdentity.identityReport.fax_phone_number}" />
 	
-					<aon:outputLabel for="fax_date" 
-						value="#{appBundle.aon_corporate_identity_date}" />
-					<aon:selectInputDate id="fax_date" 
-						renderAsPopup="true" value="#{corporateIdentity.identityReport.fax_date}"
-						popupDateFormat="dd/MM/yyyy">
-					</aon:selectInputDate>
-	
 				</aon:panelGrid>
 				<aon:div styleClass="aon-scroll-area">
 				</aon:div>
@@ -104,7 +97,7 @@
 					<aon:inputTextarea id="letter_content"
 						value="#{corporateIdentity.identityReport.fax_content}"
 						cols="120" rows="25"/>
-
+						
 				</aon:panelGrid>
 			</aon:div>
 	

@@ -4,13 +4,14 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
 		<aon:form id="targetSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_module}" />
+				<ui:param name="toolbarTitle" value="#{target.bundle.commercial_target_module}" />
 				<ui:param name="controller" value="#{target}" />
 			</ui:include>
 
@@ -26,6 +27,11 @@
 			</ui:decorate>
 
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />	
+		<c:if test="#{target.showSeller}">
+			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		</c:if>
+		<c:if test="#{target.showProfile}">
+			<aon:lookupButtonPopup lookup="#{questionLookup}" />
+		</c:if>	
 	</ui:define>
 </ui:composition>

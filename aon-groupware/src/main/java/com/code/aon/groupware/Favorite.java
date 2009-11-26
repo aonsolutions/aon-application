@@ -9,10 +9,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.User;
 
 @Entity
@@ -45,6 +50,8 @@ public class Favorite implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="favorite_category", nullable=false)
+	@ForeignKey(name = "FK_FAVORITE_FAVORITE_CATEGORY")
+	@Index(name = "IDX_FAVORITE_FAVORITE_CATEGORY")	
 	public FavoriteCategory getFavoriteCategory() {
 		return favoriteCategory;
 	}
@@ -72,8 +79,10 @@ public class Favorite implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user")
+	@JoinColumn(name="user_id",nullable=false)
 	@Fetch(FetchMode.JOIN)
+	@ForeignKey(name = "FK_FAVORITE_USER_ID")
+	@Index(name = "IDX_FAVORITE_USER_ID")		
 	public User getUser() {
 		return user;
 	}
@@ -84,24 +93,33 @@ public class Favorite implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Favorite o = (Favorite) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.append(this.favoriteCategory, o.favoriteCategory)
+				.append(this.url, o.url)
+				.append(this.user, o.user)
+				.isEquals();
 		}
-		if (obj instanceof Favorite) {
-			Favorite o = (Favorite) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
 	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
-	}	
+		return new HashCodeBuilder().
+			append(description).append(favoriteCategory).
+			append(id).append(url).
+			append(user).
+			toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 	
 }

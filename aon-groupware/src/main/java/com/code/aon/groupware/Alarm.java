@@ -4,15 +4,23 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.User;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
@@ -51,7 +59,9 @@ public class Alarm implements ITransferObject {
 		this.id = id;
 	}
 
-	@Column(length=65535, nullable=false)
+	@Column(nullable=false)
+	@Lob
+	@Type(type="stringClob")	
 	public String getDescription() {
 		return description;
 	}
@@ -76,6 +86,7 @@ public class Alarm implements ITransferObject {
 		this.status = status;
 	}
 
+	@Column(nullable=false)
 	public AlarmSource getSource() {
 		return source;
 	}
@@ -94,7 +105,9 @@ public class Alarm implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user")
+	@JoinColumn(name="user_id")
+	@ForeignKey(name = "FK_ALARM_USER_ID")
+	@Index(name = "IDX_ALARM_USER_ID")
 	public User getUser() {
 		return user;
 	}
@@ -104,6 +117,7 @@ public class Alarm implements ITransferObject {
 	}
 
 	@Column(nullable=false)
+	@Enumerated
 	public Priority getPriority() {
 		return priority;
 	}
@@ -114,24 +128,37 @@ public class Alarm implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Alarm o = (Alarm) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alarmDate, o.alarmDate)
+				.append(this.description, o.description)
+				.append(this.priority, o.priority)
+				.append(this.source, o.source)
+				.append(this.sourceId, o.sourceId)
+				.append(this.status, o.status)
+				.append(this.user, o.user)
+				.isEquals();
 		}
-		if (obj instanceof Alarm) {
-			Alarm o = (Alarm) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(alarmDate).append(description).
+			append(id).append(priority).
+			append(source).append(sourceId).
+			append(status).append(user).
+			toHashCode();
 	}
 
 	@Override
-	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
-	
+
 }

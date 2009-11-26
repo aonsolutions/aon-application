@@ -7,14 +7,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.User;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.enumeration.NoticeStatus;
@@ -63,7 +70,7 @@ public class Notice implements ITransferObject {
 		this.id = id;
 	}
 
-    @Column(name="date", nullable=false)
+    @Column(name="date", nullable=false)   
 	public Date getDate() {
 		return date;
 	}
@@ -75,6 +82,8 @@ public class Notice implements ITransferObject {
 	@ManyToOne
 	@JoinColumn(name="sender", nullable=false)
 	@Fetch(FetchMode.JOIN)
+	@ForeignKey(name = "FK_NOTICE_SENDER")
+	@Index(name = "IDX_NOTICE_SENDER")					
 	public User getSender() {
 		return sender;
 	}
@@ -85,6 +94,8 @@ public class Notice implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="work_group")
+	@ForeignKey(name = "FK_NOTICE_WORK_GROUP")
+	@Index(name = "IDX_NOTICE_WORK_GROUP")							
 	public WorkGroup getWorkGroup() {
 		return workGroup;
 	}
@@ -96,6 +107,8 @@ public class Notice implements ITransferObject {
 	@ManyToOne
 	@JoinColumn(name="recipient")
 	@Fetch(FetchMode.JOIN)
+	@ForeignKey(name = "FK_NOTICE_RECIPIENT")
+	@Index(name = "IDX_NOTICE_RECIPIENT")						
 	public User getRecipient() {
 		return recipient;
 	}
@@ -131,7 +144,8 @@ public class Notice implements ITransferObject {
 		this.phone = phone;
 	}
 
-	@Column(length=65535)
+	@Lob
+	@Type(type="stringClob")
 	public String getSubject() {
 		return subject;
 	}
@@ -169,24 +183,49 @@ public class Notice implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Notice o = (Notice) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.company, o.company)
+				.append(this.date, o.date)
+				.append(this.phone, o.phone)
+				.append(this.priority, o.priority)				
+				.append(this.recipient, o.recipient)
+				.append(this.sender, o.sender)
+				.append(this.source, o.source)
+				.append(this.status, o.status)
+				.append(this.subject, o.subject)
+				.append(this.type, o.type)
+				.append(this.workGroup, o.workGroup)				
+				.isEquals();
 		}
-		if (obj instanceof Notice) {
-			Notice o = (Notice) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
 	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
+		return new HashCodeBuilder()
+			.append(this.company)
+			.append(this.date)
+			.append(this.id)
+			.append(this.phone)
+			.append(this.priority)				
+			.append(this.recipient)
+			.append(this.sender)
+			.append(this.source)
+			.append(this.status)
+			.append(this.subject)
+			.append(this.type)
+			.append(this.workGroup)				
+			.toHashCode();		
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 	
 }

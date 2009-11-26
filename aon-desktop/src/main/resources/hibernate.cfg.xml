@@ -62,16 +62,15 @@
 		<mapping class="com.code.aon.groupware.Alarm"/>
 		<mapping class="com.code.aon.groupware.Note"/>
 		<mapping class="com.code.aon.groupware.Notice"/>
+		<mapping class="com.code.aon.groupware.Contact"/>
 		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
 		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.Message"/>
+		<mapping class="com.code.aon.groupware.MessageContent"/>
 		
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 		<mapping class="com.code.aon.geozone.GeoTree"/>			
-		
-		<!-- AON-MESSAGING Mapping files -->
-		<mapping class="com.code.aon.messaging.Message"/>
-		<mapping class="com.code.aon.messaging.MessageContent"/>		
 
 	</session-factory>
 

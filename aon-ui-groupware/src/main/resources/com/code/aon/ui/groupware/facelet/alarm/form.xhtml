@@ -47,17 +47,11 @@
 				<aon:panelGrid columns="2" dir="true">
 
 					<aon:outputLabel for="Alarm_alarmDate"
-						value="#{bundle.aon_date}" />
+						value="#{groupwareBundle.aon_date}" />
 					<aon:outputText id="Alarm_alarmDate" value="#{alarm.to.alarmDate}">
 						<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-
-					<c:if test="#{alarm.sender != null}" >
-						<aon:outputLabel for="Alarm_Sender"
-							value="#{groupwareBundle.groupware_sender}" />
-						<aon:outputText id="Alarm_Sender" value="#{alarm.sender}" />
-					</c:if>
 
 					<aon:outputLabel for="Alarm_delayTime"
 						value="#{groupwareBundle.alarm_delay_time}" />
@@ -71,11 +65,11 @@
 					<aon:outputText id="Alarm_priority" value="#{alarm.to.priority}"/>
 					
 					<aon:outputLabel for="Alarm_status"
-						value="#{bundle.aon_status}" />
+						value="#{groupwareBundle.alarm_status}" />
 					<aon:outputText id="Alarm_status" value="#{alarm.to.status}"/>
 
 					<aon:outputLabel for="Alarm_description"
-						value="#{bundle.aon_description}" />
+						value="#{groupwareBundle.alarm_description}" />
 					<aon:inputTextarea id="Alarm_description"
 						cols="60" rows="7" 
 						value="#{alarm.to.description}" />

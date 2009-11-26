@@ -70,7 +70,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
     private InvoiceSource source;
     
     /** A reference to a DeliveryDetail or an IncomeDetail. */
-    private Integer sourceId;
+    private Integer deliveryDetail;
     
     /** The taxable base. */
     private double taxableBase;
@@ -252,22 +252,22 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
     }
 
     /**
-     * Gets the source id.
+     * Gets the delivery detail.
      * 
-     * @return the source id
+     * @return the delivery detail
      */
-    @Column(name="source_id")
-    public Integer getSourceId() {
-        return sourceId;
+    @Column(name="delivery_detail")
+    public Integer getDeliveryDetail() {
+        return deliveryDetail;
     }
 
     /**
-     * Sets the source id.
+     * Sets the delivery detail.
      * 
-     * @param sourceId the source id
+     * @param deliveryDetail the delivery detail
      */
-    public void setSourceId(Integer sourceId) {
-        this.sourceId = sourceId;
+    public void setDeliveryDetail(Integer deliveryDetail) {
+        this.deliveryDetail = deliveryDetail;
     }
     
     /**
@@ -360,8 +360,8 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return 0;
+	}
 	
 }

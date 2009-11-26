@@ -13,7 +13,7 @@
 			<aon:outputLabel for="#{id}" style="display:none"
 				value="#{accountBundle.account_account}" />
 			<aon:inputText id="#{id}" value="#{entity}" disabled="#{disabled}"
-				required="#{required}" size="#{size}">
+				required="#{required}" size="#{size}" maxlength="#{maxlength}">
 				<a4j:support event="onkeyup"
 					onsubmit="if(event.keyCode != 113) return false;"
 					eventsQueue="#{id}KeyUp" ignoreDupResponses="true"

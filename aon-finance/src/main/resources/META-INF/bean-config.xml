@@ -33,32 +33,4 @@
 		</vetoListeners>
 	</bean>
 	
-	<bean description="">
-		<pojo>com.code.aon.finance.FinanceBatchDetail</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.FinanceBatchDetailBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
-	<bean description="Evita que se borre un cliente con facturas">
-		<pojo>com.code.aon.customer.Customer</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="Evita que se borre un proveedor con facturas">
-		<pojo>com.code.aon.supplier.Supplier</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="Evita que se borre un acreedor con facturas">
-		<pojo>com.code.aon.finance.Creditor</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
 </bean-config>

@@ -267,7 +267,7 @@ public abstract class AbstractWizard {
 
 	private void fireValueChangeListener(ActionEvent event, Object oldValue, Object newValue) {
 		String expression = getELValueChangeListener();
-		if (!"#{null}".equals(expression) && !"#{}".equals(expression)) {
+		if (!"#{null}".equals(expression)) {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ELContext elctx = ctx.getELContext();
 			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();

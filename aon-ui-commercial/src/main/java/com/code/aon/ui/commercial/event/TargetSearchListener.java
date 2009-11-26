@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
@@ -29,6 +30,8 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 	private CommercialTrackingStatus[] trackingStatuses;
 	
 	private List<MediaType> mediaTypes;
+	
+	private List<String> segments;
 
 	public Seller getSeller() {
 		return seller;
@@ -65,6 +68,28 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 	public int getMediaTypesSize() {
 		return mediaTypes.size();
 	}
+		
+	public List<String> getSegments() {
+		return segments;
+	}
+
+	public void setSegments(List<String> segments) {
+		this.segments = segments;
+	}
+	
+	public int getSegmentsSize() {
+		return this.segments.size();
+	}	
+
+	public List<Integer> getSegmentsIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for( String segment : getSegments() ) {
+			if (! StringUtils.isBlank(segment) ) {
+				ids.add( Integer.valueOf(segment) );
+			}
+		}
+		return ids;
+	}
 	
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -75,21 +100,29 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 		collections.refreshActivities();		
 		setMediaTypes( new LinkedList<MediaType>() );
 		getMediaTypes().add( null );
+		setSegments( new LinkedList<String>() );
+		getSegments().add( null );
 	}
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
-			criteria.addEqualExpression("Target.trackings.seller.id", getSeller().getId());			
+			String activity = getController().resolveAlias("Target_trackings_seller_id");
+			criteria.addEqualExpression(activity, getSeller().getId());			
 		}
 		if (getActivity() != null) {
-			criteria.addEqualExpression("Target.trackings.activity.id", getActivity().getId());			
+			String activity = getController().resolveAlias("Target_trackings_activity_id");
+			criteria.addEqualExpression(activity, getActivity().getId());			
 		}		
 		if (! ArrayUtils.isEmpty(getTrackingStatuses()) ) {
-			addEnumToCriteria( criteria, "Target.trackings.status", getTrackingStatuses() );
+			String status = getController().resolveAlias("Target_trackings_status");
+			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
-		addEnumToCriteria( criteria, "Target.registry.medias.mediaType", getMediaTypes().toArray() );
+		String mediaType = getController().resolveAlias("Target_registry_medias_mediaType");
+		addEnumToCriteria( criteria, mediaType, getMediaTypes().toArray() );
+		String segment = getController().resolveAlias("Target_segments_segment_id");
+		addEnumToCriteria( criteria, segment, getSegmentsIds().toArray() );
 	}
 	
 	public void onAddMediaType( ActionEvent event ) {
@@ -104,4 +137,16 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 			this.mediaTypes.add( null );
 		}
 	}
-}
+
+	public void onAddSegment( ActionEvent event ) {
+		getSegments().add( null );
+	}
+	
+	public void onRemoveSegment( ActionEvent event ) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf( context.getExternalContext().getRequestParameterMap().get("index") );		
+		getSegments().remove( index );
+		if ( getSegments().isEmpty() ) {
+			getSegments().add( null );
+		}
+	}}
