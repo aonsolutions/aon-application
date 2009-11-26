@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRDataSourceProvider;
@@ -23,6 +22,9 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRLoader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IFinderBean;
@@ -50,7 +52,7 @@ public class JRReport {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(JRReport.class.getName());
+	private static Logger LOGGER = LoggerFactory.getLogger(JRReport.class);
 
 	/**
 	 * The report configuration of this report.
@@ -225,12 +227,14 @@ public class JRReport {
 				JasperPrint print = JasperFillManager.fillReport(jr, map, ds);
 
 				map.put(JRExporterParameter.JASPER_PRINT, print);
-				debugParameters( map );
+				if ( LOGGER.isDebugEnabled()) {
+					debugParameters( map );
+				}
 				JRExporter exporter = factory.getJRExporter();
 				exporter.setParameters(map);
 				exporter.exportReport();
 				long  delay = (new Date()).getTime() - startDate.getTime(); 
-				LOGGER.info(" Report execution : " + ((double)(delay/1000)) + " seconds.");
+				LOGGER.info(" Report execution : {} seconds.",((double)(delay/1000)));
 				if (hasCache) {
 					cleanCache(map);
 				}
@@ -245,18 +249,18 @@ public class JRReport {
 	}
 
 	private void debugParameters(Map<Object, Object> map) {
-		LOGGER.finest( "Begin Parameters:" );
+		LOGGER.debug( "Begin Parameters:" );
 		Set<Object> keys = map.keySet();
 		for (Object key: keys){
 			Object value  = map.get(key);
-			LOGGER.finest( "\tParameter: "+ key + " ---> " + value );	
+			LOGGER.debug( "\tParameter: {} ---> {}",key,value );	
 		}
-		LOGGER.finest( "End Parameters:" );
+		LOGGER.debug( "End Parameters:" );
 	}
 
 	private void passDynamicParameters(Map<Object, Object> map) {
 		if (dynParams != null) {
-			LOGGER.fine("Passing Dynamic Parameters");
+			LOGGER.debug("Passing Dynamic Parameters");
 			map.putAll(dynParams);
 		}
 	}
@@ -283,8 +287,7 @@ public class JRReport {
 			JRFileVirtualizer virt;
 			String path = System.getProperty("java.io.tmpdir");
 			int vms = fetchMode.getVirtualizerPageMax();
-			LOGGER.info("Report Virtualizer. Page Max: " + vms + " Path: "
-					+ path);
+			LOGGER.info("Report Virtualizer. Page Max: {} Path: {}",vms,path);
 			virt = new JRFileVirtualizer(vms, path);
 			map.put(JRParameter.REPORT_VIRTUALIZER, virt);
 		}
@@ -321,7 +324,7 @@ public class JRReport {
 				JRReport nestedReport = JRReportFactory
 						.getJRReport(nestedReportKey);
 				JasperReport jnr = nestedReport.getJasperReport();
-				LOGGER.info("Nested Report " + nestedReportKey);
+				LOGGER.info("Nested Report {}",nestedReportKey);
 				nested.put(nestedReportKey, jnr);
 			}
 			map.put(IReportConstants.NESTED_REPORTS, nested);
@@ -339,7 +342,7 @@ public class JRReport {
 	protected void passCustomParameters(Map<Object, Object> map)
 			throws ReportException {
 		if (customParams != null) {
-			LOGGER.fine("Passing Custom Parameters");
+			LOGGER.debug("Passing Custom Parameters");
 			map.putAll(customParams);
 		}
 	}
@@ -356,7 +359,7 @@ public class JRReport {
 			throws ReportException {
 		ReportConfig defaultConfig = getDefaultConfig();
 		if (defaultConfig != null && defaultConfig.getParams() != null) {
-			LOGGER.fine("Passing Default Parameters");
+			LOGGER.debug("Passing Default Parameters");
 			map.putAll(defaultConfig.getParams());
 		}
 	}
