@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	
+	<bean class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos" sqlName="tipocont">
+		<alias names="cdg,description,desemple,excsocial,gradomin,incaread,mujersub,mujersubbol,porcentajeMaestro_cdg,primertra" />
+		<hibernate names="cdg,description,desemple,excsocial,gradomin,incaread,mujersub,mujersubbol,porcentajeMaestro.cdg,primertra" />
+	</bean>
+	
+</dao>
