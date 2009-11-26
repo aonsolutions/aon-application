@@ -119,11 +119,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging-api</artifactId>
-			<version>1.1</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jcl</artifactId>
+			<version>1.5.8</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>		
 	</dependencies>
 </project>
 
