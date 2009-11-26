@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.component.html.HtmlCalendar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.util.FaceletUtil;
@@ -31,7 +31,7 @@ public class ComponentManager {
 	
 	private static final String SELECT_INPUT_DATE_STYLE_CLASS = "inputClass";
 	
-    private final static Logger log = Logger.getLogger(ComponentManager.class.getName());	
+    private final static Logger LOGGER = LoggerFactory.getLogger(ComponentManager.class);
 	
 	private static final ComponentManager SINGLETON = new ComponentManager();
 	
@@ -49,13 +49,13 @@ public class ComponentManager {
 	        for (int i = 0; i < urls.length; i++) {
 	            try {
 	            	addComponentLibrary( urls[i] );
-	                log.info("Added Library from: " + urls[i]);
+	                LOGGER.debug("Added Library from: " + urls[i]);
 	            } catch (Exception e) {
-	                log.log(Level.SEVERE, "Error Loading Library: " + urls[i], e);
+	            	LOGGER.error("Error Loading Library: " + urls[i], e);
 	            }
 	        }
         } catch ( IOException ioe ) {
-        	log.log(Level.SEVERE, "Error searching files with suffix: " + SUFFIX, ioe);
+        	LOGGER.error("Error searching files with suffix: " + SUFFIX, ioe);
         }
     }
 	
