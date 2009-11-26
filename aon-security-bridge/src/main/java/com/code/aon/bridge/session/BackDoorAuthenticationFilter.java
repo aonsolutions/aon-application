@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AonGenericPrincipal;
@@ -33,7 +33,7 @@ import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
 public class BackDoorAuthenticationFilter implements Filter, IConstants {
 
 	/** AuthenticationValve Logger */
-	private static final Log LOGGER = LogFactory.getLog( BackDoorAuthenticationFilter.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(BackDoorAuthenticationFilter.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -53,7 +53,7 @@ public class BackDoorAuthenticationFilter implements Filter, IConstants {
 			try {
 				agp = Utils.getSSOPrincipal( httpRequest.getSession().getId() );
 			} catch (DeploymentException e) {
-				LOGGER.error( e );
+				LOGGER.error( e.getMessage(), e );
 			}
 			if ( agp != null && httpRequest.getAuthType().equals( AUTH_TYPE ) ) {
 				AuthPrincipal principal = (AuthPrincipal) agp.getUserPrincipal();

@@ -6,8 +6,8 @@ package com.code.aon.bridge.session;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.jmx.mbean.ConsoleAdminFactoryManager;
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
@@ -21,13 +21,13 @@ import com.code.aon.jaas.deployment.DeploymentException;
 public class ConcurrentSessionListener implements HttpSessionListener {
 
     /** Obtiene un logger apropiado. */
-	protected static final Log LOGGER = LogFactory.getLog( ConcurrentSessionListener.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(ConcurrentSessionListener.class);
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpSessionListener#sessionCreated(javax.servlet.http.HttpSessionEvent)
 	 */
 	public void sessionCreated(HttpSessionEvent se) {
-		LOGGER.debug( "Session Created: " + se.getSession().getId() );
+		LOGGER.debug( "Session Created: {}", se.getSession().getId() );
 	}
 
 	/* (non-Javadoc)
@@ -40,9 +40,9 @@ public class ConcurrentSessionListener implements HttpSessionListener {
 			IConsoleAdmin console = ConsoleAdminFactoryManager.createConsoleAdmin();
 			String oname = console.getAonSessionManagerName();
 			console.invoke( oname, IOperation.REMOVE_SESSION, params, sig );
-			LOGGER.debug( "Session Destroyed: " + se.getSession().getId() );
+			LOGGER.debug( "Session Destroyed: {}", se.getSession().getId() );
 		} catch (DeploymentException e) {
-			LOGGER.fatal( e );
+			LOGGER.error( e.getMessage(), e );
 		}
 	}
 
