@@ -10,10 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
 
 import javax.xml.rpc.ServiceException;
 import javax.xml.soap.SOAPException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.messaging.event.ISenderListener;
 import com.code.aon.messaging.event.SenderEvent;
@@ -26,7 +28,7 @@ import com.esendex.sdk.ems.soapinterface.SendServiceSoap_BindingStub;
 
 public class Sender implements IConstants, Runnable {
 
-	private static final Logger LOGGER = Logger.getLogger( Sender.class.getName() );
+	private static final Logger LOGGER = LoggerFactory.getLogger( Sender.class.getName() );
 
 	List<ISenderListener> listeners;
 	Properties bootstrap;
@@ -110,9 +112,9 @@ public class Sender implements IConstants, Runnable {
 			MessageStatusCode status = service.getMessageStatus( id );
 			return status.getValue();
 		} catch (ServiceException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage() );
 		} catch (RemoteException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage() );
 		}
 		return null;
 	}
@@ -199,9 +201,9 @@ public class Sender implements IConstants, Runnable {
 				sender.init( username );
 			sender.send( message );
 		} catch (IOException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage() );
 		} catch (SOAPException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage() );
 		}
 	}
 
@@ -263,10 +265,10 @@ public class Sender implements IConstants, Runnable {
 				}
 			}
 		} catch (ServiceException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage() );
 			fireMessageFailed( new SenderEvent( messages.get( 0 ) ) );
 		} catch (RemoteException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage() );
 			fireMessageFailed( new SenderEvent( messages.get( 0 ), 2 ) );
 		} finally {
 			messages = new ArrayList<Message>();
