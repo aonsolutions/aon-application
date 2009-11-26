@@ -14,16 +14,16 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_profiles}" />
-				<ui:param name="toolbarDescription" value="#{appBundle.aon_application} : #{currentDomain.da.id}" />
+				<ui:param name="toolbarDescription" value="#{appBundle.aon_application} : #{domain.da.id}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="resetProfile" value="#{bundle.aon_reset}"
-						action="profile_form" rendered="#{currentDomain.currentTab != 'users'}"
-						actionListener="#{currentDomain.onResetProfile}"
+						action="profile_form" rendered="#{domain.currentTab != 'users'}"
+						actionListener="#{domain.onResetProfile}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}" />
 					<aon:commandButton id="resetUser" value="#{bundle.aon_reset}"
-						action="user_profile_form" rendered="#{(currentDomain.currentTab == 'users') and currentDomain.userManagement}"
-						actionListener="#{currentDomain.onResetUser}"
+						action="user_profile_form" rendered="#{(domain.currentTab == 'users') and domain.userManagement}"
+						actionListener="#{domain.onResetUser}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}" />
 					<aon:commandButton id="cancel" value="#{bundle.aon_back}"
@@ -36,13 +36,13 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelTabSet id="applicationTabSet" value="#{currentDomain.currentTab}">
+				<aon:panelTabSet id="applicationTabSet" value="#{domain.currentTab}">
 					<aon:panelTab name="profiles" label="#{appBundle.aon_profiles}" reRender="aonToolbar">
 						<aon:dataTable id="profileDataList" 
-							value="#{currentDomain.profiles}" var="to" rows="30"
+							value="#{domain.profiles}" var="to" rows="30"
 							styleClass="aon-dataTable">
 
-							<aon:rowSelector action="profile_form" actionListener="#{currentDomain.onSelectProfile}" />	
+							<aon:rowSelector action="profile_form" actionListener="#{domain.onSelectProfile}" />	
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="#{securityBundle.aon_security_profiles}"/>
@@ -51,15 +51,15 @@
 							</aon:column>
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.desktop_profile_type}"/>
+									<aon:outputText value="#{appBundle.aon_desktop_profile_type}"/>
 								</f:facet>
 								<aon:outputText
-									value="#{appBundle.desktop_profile_domain}"
-									rendered="#{!currentDomain.currentSystemProfile}">
+									value="#{appBundle.aon_desktop_profile_domain}"
+									rendered="#{!domain.currentSystemProfile}">
 								</aon:outputText>
 								<aon:outputText
-									value="#{appBundle.desktop_profile_system}"
-									rendered="#{currentDomain.currentSystemProfile}" />
+									value="#{appBundle.aon_desktop_profile_system}"
+									rendered="#{domain.currentSystemProfile}" />
 							</aon:column>
 
 						</aon:dataTable>
@@ -67,10 +67,10 @@
 
 					<aon:panelTab name="users" label="#{appBundle.aon_users}" reRender="aonToolbar">
 						<aon:dataTable id="usersDataList" 
-							value="#{currentDomain.users}" var="to" rows="30"
+							value="#{domain.users}" var="to" rows="30"
 							styleClass="aon-dataTable">
 
-							<aon:rowSelector action="user_profile_form" actionListener="#{currentDomain.onSelectUser}" />	
+							<aon:rowSelector action="user_profile_form" actionListener="#{domain.onSelectUser}" />	
 							
 		 					<aon:column>
 								<f:facet name="header">
@@ -83,14 +83,14 @@
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_login_user}" />
 								</f:facet>
-								<aon:outputText value="#{currentDomain.currentUserName}"/>
+								<aon:outputText value="#{domain.currentUserName}"/>
 							</aon:column>
 		
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="#{securityBundle.aon_security_profiles}"/>
 								</f:facet>
-								<aon:outputText value="#{currentDomain.currentUserProfiles}"/>
+								<aon:outputText value="#{domain.currentUserProfiles}"/>
 							</aon:column>
 
 						</aon:dataTable>

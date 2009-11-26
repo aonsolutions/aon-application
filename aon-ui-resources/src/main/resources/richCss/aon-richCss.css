@@ -33,15 +33,21 @@ padding:0;
 display:inline;
 }
 
+input:focus, select:focus, textarea:focus{
+background-color: #FBEDB6;
+}
 input, select, textarea {
 font: 1em "arial","lucida Grande","Trebuchet MS",sans-serif;
+}
+select {
+border: solid #808080 1px;
 }
 input{
  }
 textarea {
 line-height:1.25;
 }
- ul, ol{
+ul, ol{
  margin:0;
  padding:0;
  }
@@ -84,8 +90,9 @@ color:#000;
 .aon-padding-right					{padding-right:0.7em;}
 .aon-padding-top, .padding-top		{padding-top:0.7em;}
 .aon-padding-bottom					{padding-bottom:0.7em;}
+.aon-nomargin						{margin:0; }
 .aon-margin-left, .margin-left		{margin-left:0.7em;}
-.aon-margin-right, .margin-right		{margin-right:0.7em;}
+.aon-margin-right, .margin-right	{margin-right:0.7em;}
 .aon-margin-top, .margin-top		{margin-top:0.7em;}
 .aon-margin-bottom					{margin-bottom:0.7em;}
 .aon-noindent, .noindent			{margin-left:0;padding-left:0;}
@@ -122,8 +129,32 @@ color:#000;
 .aon-width-100{
 	width:100px;
 }	
+.aon-width-110{
+	width:110px;
+}	
+.aon-width-120{
+	width:120px;
+}	
+.aon-width-130{
+	width:130px;
+}	
+.aon-width-140{
+	width:140px;
+}	
 .aon-width-150{
 	width:150px;
+}	
+.aon-width-160{
+	width:160px;
+}	
+.aon-width-170{
+	width:170px;
+}	
+.aon-width-180{
+	width:180px;
+}	
+.aon-width-190{
+	width:190px;
 }	
 .aon-width-200{
 	width:200px;
@@ -164,7 +195,6 @@ color:#000;
 /* commanLink que no tienen desplegables */
 .aon-top-menu-item{
 	font-family:arial,verdana, "sans-serif";
-	cursor:pointer;
 	color:#000;
  	text-transform:uppercase; 	
  	font-size:1em;
@@ -285,6 +315,9 @@ color:#000;
 .aon-icon-big-configuration{
 	background:transparent url(images/aon-icon-big/aon-icon-big-configuration.png) center  center no-repeat;
 	}
+ .aon-icon-big-sendingMail{
+	background:transparent url(images/aon-icon-big/aon-icon-big-sending-mail.gif) scroll left center no-repeat;	
+ }
 
 /*************************/
 /*******  ICONS  *********/
@@ -415,16 +448,40 @@ color:#000;
  .aon-icon-predetermine{
 	background:transparent url(images/aon-icon/aon-icon-predetermine.png) scroll left center no-repeat;	
  }
+ .aon-icon-predetermine2{
+	background:transparent url(images/aon-icon/aon-icon-predetermine2.png) scroll left center no-repeat;	
+ }
  .aon-icon-errorwarning{
 	background:transparent url(images/aon-icon/aon-icon-errorwarning.png) scroll left center no-repeat;	
  }
  .aon-icon-exception{
 	background:transparent url(images/aon-icon/aon-icon-exception.png) scroll left center no-repeat;	
  }
+ .aon-icon-payment{
+	background:transparent url(images/aon-icon/aon-icon-payment.png) scroll left center no-repeat;	
+ }
+ .aon-icon-return{
+	background:transparent url(images/aon-icon/aon-icon-return.png) scroll left center no-repeat;	
+ }
+ .aon-icon-fraction{
+	background:transparent url(images/aon-icon/aon-icon-fraction.png) scroll left center no-repeat;	
+ }
+ .aon-icon-settle{
+	background:transparent url(images/aon-icon/aon-icon-settle.png) scroll left center no-repeat;	
+ }
+ .aon-icon-unsettle{
+	background:transparent url(images/aon-icon/aon-icon-unsettle.png) scroll left center no-repeat;	
+ }
 
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
+	}
+.aon-icon-contact{
+	background:transparent url(images/aon-icon/aon-icon-contact.png) scroll left center no-repeat;
+	}
+.aon-icon-contactGroup{
+	background:transparent url(images/aon-icon/aon-icon-contactGroup.png) scroll left center no-repeat;
 	}
 .aon-icon-agenda-newContact{
 	background:transparent url(images/aon-icon/aon-icon-agenda-newContact.png) scroll left center no-repeat;
@@ -451,7 +508,13 @@ color:#000;
 .aon-icon-rubber{
 	background:transparent url(images/aon-icon/aon-icon-rubber.png) scroll left center no-repeat;	
 }
- 
+.aon-icon-lock{
+	background:transparent url(images/aon-icon/aon-icon-lock.png) scroll left center no-repeat;	
+}
+.aon-icon-unlock{
+	background:transparent url(images/aon-icon/aon-icon-unlock.png) scroll left center no-repeat;	
+}
+
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
@@ -655,6 +718,9 @@ color:#000;
 }
 .aon-icon-excel{
 	background:transparent url(images/aon-icon/aon-icon-excel-file.png) scroll left center no-repeat;
+}
+.aon-icon-word{
+	background:transparent url(images/aon-icon/aon-icon-word-file.png) scroll left center no-repeat;
 }
 .aon-icon-csv{
 	background:transparent url(images/aon-icon/aon-icon-csv-file.png) scroll left center no-repeat;	
@@ -1198,11 +1264,16 @@ color:#000;
 	
 	}
 .aon-editDataTable-button{
+	min-height: 16px;
 	border:0;
 	cursor:pointer;
-	padding-left:16px;
+	padding-left: 15px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
 	background-color:transparent;
-	}
+	margin-right: 5px;
+}
 /*************************/
 /******  PANEL TABSET  ******/
 /*************************/
@@ -1348,7 +1419,6 @@ color:#000;
  	text-transform:uppercase; 	
  	font-size:1em;
  	font-weight:bold;
-	cursor:pointer;
  	display:block;
 	height: 16px;
 	}
@@ -1376,7 +1446,7 @@ color:#000;
 	 background:transparent url(images/aon-icon/aon-icon-menu-top-item.png) left top no-repeat;
  }
  .aon-menuItem-selectClass{
- 	background-color:red; 		
+ 	background-color:#ddd; 		
  }
  .aon-menuItem-no-iconClass{
  	display:none;
@@ -1892,14 +1962,31 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	}
 .aon-search-add{
 	background:transparent url(images/aon-icon/aon-icon-search-add.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
-	border: 0;	
- }
+	border: 0;
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}
 
 .aon-search-minus{
 	background:transparent url(images/aon-icon/aon-icon-search-minus.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
 	border: 0;
- }
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}
+
+.new-mail-button{
+    font-weight:bold;
+	cursor:hand;
+	background:transparent url(images/aon-content/aon-fileupload-button.png) scroll left center no-repeat;	
+	padding:4px 1em !important;
+	margin:0;
+	border:transparent 1px solid;
+	width:100px;
+}
+
+.aon-list-icon {
+ 	display:block;
+ 	padding:2px 5px 1px 18px; 	
+}

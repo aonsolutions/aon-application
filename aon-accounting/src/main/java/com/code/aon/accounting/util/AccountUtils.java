@@ -1,6 +1,7 @@
 package com.code.aon.accounting.util;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.code.aon.accounting.AccountEntry;
@@ -12,9 +13,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.util.ExpressionException;
 
 public class AccountUtils {
 
@@ -61,8 +64,8 @@ public class AccountUtils {
 		if (details.size() > 0) {
 			for (ITransferObject to : details) {
 				AccountEntryDetail detail = (AccountEntryDetail) to;
-				debit = round(debit + detail.getDebit());
-				credit = round(credit + detail.getCredit());
+				debit = CommonUtil.round(debit + detail.getDebit());
+				credit = CommonUtil.round(credit + detail.getCredit());
 			}
 		}
 		Balance balance = null;
@@ -115,11 +118,11 @@ public class AccountUtils {
 		if (excludeClosingEntry) {
 			substractAmounts(balance, fromDate, accountId, AccountEntryType.CLOSING);
 		}
-		double bal = round(debit - credit);
+		double bal = CommonUtil.round(debit - credit);
 		if (bal > 0) {
 			balance.setUnpaidBalance(bal);
 		} else {
-			balance.setCreditBalance(round(bal * (-1)));
+			balance.setCreditBalance(CommonUtil.round(bal * (-1)));
 		}
 		return balance;
 	}
@@ -134,15 +137,24 @@ public class AccountUtils {
 				inRange = (fromDate.compareTo(openingEntryDate) > 0);
 			}
 			if (!inRange) {
-				balance.setDebit(round(balance.getDebit() - openingBalance.getDebit()));
-				balance.setCredit(round(balance.getCredit() - openingBalance.getCredit()));
+				balance.setDebit(CommonUtil.round(balance.getDebit() - openingBalance.getDebit()));
+				balance.setCredit(CommonUtil.round(balance.getCredit() - openingBalance.getCredit()));
 			}
 		}
 	}
 
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
+	@SuppressWarnings("unchecked")
+	public AccountEntryDetail getEntryDetailFromAccountPattern(AccountEntry entry, String accountPattern) throws ManagerBeanException{
+		try {
+			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountPattern);
+			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+			return iter.hasNext()?(AccountEntryDetail)iter.next():null;
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		}
 	}
-
+	
 }

@@ -34,6 +34,9 @@ public class InvoiceEntryHeader implements ITransferObject {
 	/** The date. */
 	private Date date;
 	
+	/** The date. */
+	private Date taxDate;
+
 	/** The period. */
 	private Period period;
 	
@@ -130,38 +133,23 @@ public class InvoiceEntryHeader implements ITransferObject {
 		this.document = document;
 	}
 
-	/**
-	 * Gets the date.
-	 * 
-	 * @return the date
-	 */
 	public Date getDate() {
 		return date;
 	}
-
-	/**
-	 * Sets the date.
-	 * 
-	 * @param date the date
-	 */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	/**
-	 * Gets the period.
-	 * 
-	 * @return the period
-	 */
+	public Date getTaxDate() {
+		return taxDate;
+	}
+	public void setTaxDate(Date taxDate) {
+		this.taxDate = taxDate;
+	}
+
 	public Period getPeriod() {
 		return period;
 	}
-
-	/**
-	 * Sets the period.
-	 * 
-	 * @param period the period
-	 */
 	public void setPeriod(Period period) {
 		this.period = period;
 	}

@@ -14,7 +14,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
 				<ui:param name="controller" value="#{user}" />
-				<ui:param name="skipResetButton" value="#{!currentDomain.userManagement}" />
+				<ui:param name="skipResetButton" value="#{!domain.userManagement}" />
 			</ui:include>			
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
@@ -32,15 +32,6 @@
 						value="#{configBundle.config_user_login}" />
 					<aon:inputText id="User_login" size="20"
 						valueChangeListener="#{user.addExpression}" />
-
-					<aon:outputLabel for="User_available"
-						value="#{configBundle.config_user_active}" />
-					<aon:selectOneMenu id="User_available"
-						valueChangeListener="#{user.addExpression}">
-						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneMenu>
 				</ui:define>
 				
 			</ui:decorate>							

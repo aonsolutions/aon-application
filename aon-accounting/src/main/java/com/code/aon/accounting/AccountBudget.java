@@ -48,7 +48,7 @@ public class AccountBudget implements ITransferObject {
 	 */
 	@Id
 	@GeneratedValue
-	@Column(nullable = false, length = 4)
+	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
@@ -110,7 +110,7 @@ public class AccountBudget implements ITransferObject {
 	 * 
 	 * @return the security level
 	 */
-	@Column(name="security_level", length = 2)
+	@Column(name="security_level")
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}

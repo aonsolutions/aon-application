@@ -37,16 +37,11 @@
 						<f:setPropertyActionListener target="#{finance.showFinanceReturnWindow}"
 							value="#{true}" />
 					</aon:commandButton>
-					<aon:commandButton id="settle" 
-						value="#{financeBundle.finance_to_settle}"
-						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item-no-icon"
-						actionListener="#{finance.onSettleFinance}" />
 					<aon:commandButton id="fraction" 
 						value="#{financeBundle.finance_to_fraction}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
 						styleClass="aon-finding-toolbar-item-no-icon"
-						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
+						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction"/>
 				</ui:define>				
 			</ui:decorate>
 
@@ -114,7 +109,7 @@
 						valueChangeListener="#{finance.onPayMethodChanged}"
 						reRender="Finance_registryBank_id,Finance_bankAccount"
 						disabled="#{!finance.pending and !finance.returned}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItem itemLabel ="-" value="#{null}" />
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 
@@ -179,7 +174,7 @@
 						value="#{registryCollections.registryBank}" reRender="Finance_bankAccount"
 						valueChangeListener="#{finance.onRegistryBankChanged}"
 						disabled="#{!finance.pending and !finance.returned}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItem itemLabel ="-" value="#{null}" />
 						<f:selectItems value="#{finance.banks}" />
 					</aon:selectOneMenu>
 

@@ -16,7 +16,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
@@ -358,7 +357,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoiceDetail.setItem(customerFee.getItem());
         invoiceDetail.setDescription(obtainFeeDescription(customerFee, invoice, params));
         invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
-		invoiceDetail.setPrice(CommonUtil.round(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params), 2));
+		invoiceDetail.setPrice(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params));
 		invoiceDetail.setQuantity(customerFee.getQuantity());
 		invoiceDetail.setSource(InvoiceSource.FEE);
 		invoiceDetail.setTaxes(0.0);

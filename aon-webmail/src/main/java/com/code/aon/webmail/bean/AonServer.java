@@ -3,9 +3,8 @@ package com.code.aon.webmail.bean;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -15,12 +14,13 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.URLName;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailException;
@@ -28,7 +28,11 @@ import com.sun.mail.imap.IMAPStore;
 
 public class AonServer {
 	
-	private static final Logger LOGGER = Logger.getLogger(AonServer.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AonServer.class);
+	
+	private static final String X_MAILER = "X-Mailer";
+	
+	private static final String WEBMAIL_MAILER = "OfficeWeb - AonWebMail 4.11.0";
 	
 	private static final String IMAP = "imap";
 	
@@ -61,7 +65,7 @@ public class AonServer {
 					return ! ArrayUtils.isEmpty(quotas);
 				}
     		} catch (MessagingException e) {
-    			LOGGER.log(Level.SEVERE,"Error checking is QUOTA enabled" + account.toString(),e);
+    			LOGGER.error("Error checking is QUOTA enabled" + account.toString(),e);
     		}
 		}
     	return false;
@@ -77,7 +81,7 @@ public class AonServer {
 				}
 			}
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error getting QUOTA" + account.toString(),e);
+			LOGGER.error("Error getting QUOTA" + account.toString(),e);
 		}
 		return null;
     }
@@ -121,10 +125,9 @@ public class AonServer {
                     String.valueOf(account.getIncomingPort()));
             mailProperties.setProperty("mail.imap.socketFactory.port",
                     String.valueOf(account.getIncomingPort()));
-        }
-        // otherwise log on using http, avoid using incomingSsl properties as
-        // it will botch the connection .
-        else {
+        } else {
+            // otherwise log on using http, avoid using incomingSsl properties as
+            // it will botch the connection .
             mailProperties.remove("mail.imap.socketFactory.class");
             mailProperties.remove("mail.imap.socketFactory.fallback");
             mailProperties.remove("mail.imap.port");
@@ -144,7 +147,7 @@ public class AonServer {
     	try {
     		store.close();
     	} catch (MessagingException e) {
-    		LOGGER.log(Level.SEVERE,"Messaging Exception on disconnect method",e);
+    		LOGGER.error("Messaging Exception on disconnect method",e);
     	}
     }
 
@@ -158,7 +161,7 @@ public class AonServer {
         	ensureConnection();
             return store.getDefaultFolder();
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"getRoot failed " , e);
+        	LOGGER.error("getRoot failed " , e);
             return null;
         }
     }
@@ -168,7 +171,7 @@ public class AonServer {
         	ensureConnection();
             return new AonFolder(store.getFolder(folderName), this);
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"getAonFolder failed " , e);
+        	LOGGER.error("getAonFolder failed " , e);
             return null;
         }
     }
@@ -179,18 +182,17 @@ public class AonServer {
 			if (parent == null){
 				new_folder = getRoot().getFolder(folderName);	
 			}else{
-				new_folder = getRoot().getFolder(parent.getFolder().getName()+getRoot().getSeparator()+folderName);
+				new_folder = getRoot().getFolder(parent.getFolder().getFullName()+getRoot().getSeparator()+folderName);
 			}
 			if (!new_folder.exists()) {
-				LOGGER.log(Level.INFO, "Creating folder : " + folderName);
+				LOGGER.info( "Creating folder : {}",folderName);
 				new_folder.create(type);
 			} else {
-				LOGGER.log(Level.INFO, "Found folder : " + folderName);
+				LOGGER.info("Found folder : {}",folderName);
 			}
 			return new AonFolder(new_folder, this);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,
-					"Creating new folder failed ", e);
+			LOGGER.error("Creating new folder failed ", e);
 		}
 		return null;
 	}
@@ -200,10 +202,14 @@ public class AonServer {
         return this.account.toString();
     }
         
-    public AonMessage createAonMessage( String address, String personal ) throws AddressException, MessagingException, WebmailException, UnsupportedEncodingException{
+    public AonMessage createAonMessage( String address, String personal ) throws UnsupportedEncodingException, WebmailException {
+    	return createAonMessage(new InternetAddress(address, personal));
+    }
+
+    public AonMessage createAonMessage( Address from ) throws WebmailException {
     	AonMessage aonMessage = new AonMessage();
 		aonMessage.setMessage(new MimeMessage(session));
-		aonMessage.setSender(new InternetAddress(address, personal));
+		aonMessage.setSender( from );
     	return aonMessage;
     }
     
@@ -237,10 +243,11 @@ public class AonServer {
                     message != null &&
                     message.getFrom() != null) {
                 message.setSentDate(new Date());
+                message.setHeader(X_MAILER, WEBMAIL_MAILER);
                 transport.sendMessage(message,
                         message.getAllRecipients());
             } else {
-            	LOGGER.log(Level.SEVERE,"Could not send message, null message");
+            	LOGGER.error("Could not send message, null message");
             }
         } catch (SendFailedException e) {
         	throw new WebmailException( "Message send failed", e );

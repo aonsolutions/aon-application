@@ -14,18 +14,19 @@ import org.hibernate.Session;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.DesktopController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.messaging.controller.SMSController;
 import com.code.aon.ui.util.AonUtil;
 
-public class SMSManager implements Serializable, IServices, IDesktopConstants  {
+public class SMSManager implements Serializable, IServices {
 
 	private static final long serialVersionUID = -5534264216750579958L;
 	
 	private static final Logger LOGGER = Logger.getLogger( SMSManager.class.getName() );
 	
+	private static final String DESKTOP_CONTROLLER_NAME = "desktop";
+	private static final String SMS_CONTROLLER_NAME = "sms";
 	private static final String APP_BUNDLE = "appBundle";
 	
 	private static final String totalMessages = "SELECT count(*) FROM Message as msg " +
@@ -37,7 +38,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 	public SMSManager() {
 		try {
 			ApplicationsManager apps = 
-				(ApplicationsManager) AonUtil.getRegisteredBean( APPLICATIONS_CONTROLLER_NAME );
+				(ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
 			app = apps.getApplication( SMSController.AON_SMS_APPLICATION );
 			initSMSController();
 		} catch (ManagerBeanException e) {

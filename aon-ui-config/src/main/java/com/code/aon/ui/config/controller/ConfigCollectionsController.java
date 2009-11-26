@@ -15,6 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
@@ -292,6 +293,27 @@ public class ConfigCollectionsController {
 			payMethods.add(item);
 		}
 		return payMethods;
+	}
+
+	/**
+	 * Gets the tariffs.
+	 * 
+	 * @return the tariffs
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public List<SelectItem> getTariffs() throws ManagerBeanException {
+		List<SelectItem> tariffs = new LinkedList<SelectItem>();
+		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(tariffBean.getFieldName(IConfigAlias.TARIFF_NAME));
+		Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Tariff tariff = (Tariff) iter.next();
+			SelectItem item = new SelectItem(tariff, tariff.getName());
+			tariffs.add(item);
+		}
+		return tariffs;
 	}
 
 	/**

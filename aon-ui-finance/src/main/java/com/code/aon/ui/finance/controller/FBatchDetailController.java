@@ -20,6 +20,21 @@ public class FBatchDetailController extends LinesController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public void checkAll(ActionEvent event) throws ManagerBeanException{
+		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
+		while(iter.hasNext()){
+			FinanceBatchDetail detail = (FinanceBatchDetail)iter.next();
+			if (!checks.contains( detail )) {
+				checks.add( detail );
+			}
+		}
+	}
+
+	public void checkNone(ActionEvent event) {
+		clearCheckedFinanceBatchDetails();
+	}
+
 	public boolean getRowChecked() {
 		FinanceBatchDetail to = (FinanceBatchDetail) model.getRowData();
 		return checks.contains(to);
@@ -45,21 +60,6 @@ public class FBatchDetailController extends LinesController {
 
 	public void clearCheckedFinanceBatchDetails() {
 		checks = new ArrayList<FinanceBatchDetail>();
-	}
-
-	@SuppressWarnings("unchecked")
-	public void checkAll(ActionEvent event) throws ManagerBeanException{
-		Iterator iterator = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while (iterator.hasNext()) {
-			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
-			if (!checks.contains(detail)) {
-				checks.add( detail );
-			}
-		}
-	}
-
-	public void checkNone(ActionEvent event) {
-		clearCheckedFinanceBatchDetails();
 	}
 
 }

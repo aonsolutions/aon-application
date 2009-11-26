@@ -144,7 +144,6 @@
 												style="width: 100px;" value="#{company.aonFile.key}"
 												rendered="#{company.aonFile.size > 0}"
 												createContent="#{company.createCurrentLogoContent}">
-												<f:param value="#{company.timeStamp}" name="time" />
 											</a4j:mediaOutput>
 											<aon:fileUpload id="attach_file"
 												addControlLabel="#{bundle.aon_fileUpload_add}"
@@ -237,6 +236,14 @@
 								<ui:param name="controller" value="#{companyRecordData}" />
 							</ui:include>
 						</aon:panelTab>				
+						<c:if test="#{company.showDigitalCertificate}">
+							<aon:panelTab label="#{registryBundle.registry_digital_certificates}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyCertificate}" />
+									<ui:param name="skipCategoryColumn" value="#{true}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</aon:div>
 			</c:if>

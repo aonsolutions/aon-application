@@ -11,45 +11,24 @@ public class ExpenseEntryHeader implements ITransferObject {
 	
 	private static final long serialVersionUID = -3850406267453485925L;
 
-	/** The account. */
-	private Account account;
-	
 	/** The date. */
 	private Date date;
 	
-	/** The period. */
-	private Period period;
+	/** The registry bank. */
+	private RegistryBank registryBank;
+
+	/** The concept. */
+	private String concept;
 	
-	/** The description. */
-	private String description;
+	/** The account. */
+	private Account account;
 	
 	/** The amount. */
 	private double amount;
 	
-	/** The Registry Bank. */
-	private RegistryBank rBank;
-
 	/** The security level. */
 	private SecurityLevel securityLevel;
 	
-	/**
-	 * Gets the account.
-	 * 
-	 * @return the account
-	 */
-	public Account getAccount() {
-		return account;
-	}
-
-	/**
-	 * Sets the account.
-	 * 
-	 * @param account the account
-	 */
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
 	/**
 	 * Gets the date.
 	 * 
@@ -69,39 +48,57 @@ public class ExpenseEntryHeader implements ITransferObject {
 	}
 
 	/**
-	 * Gets the period.
+	 * Gets the registry bank.
 	 * 
-	 * @return the period
+	 * @return the registry bank
 	 */
-	public Period getPeriod() {
-		return period;
+	public RegistryBank getRegistryBank() {
+		return registryBank;
 	}
 
 	/**
-	 * Sets the period.
+	 * Sets the registry bank.
 	 * 
-	 * @param period the period
+	 * @param registryBank the registry bank
 	 */
-	public void setPeriod(Period period) {
-		this.period = period;
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
 	}
 
 	/**
-	 * Gets the description.
+	 * Gets the concept.
 	 * 
-	 * @return the description
+	 * @return the concept
 	 */
-	public String getDescription() {
-		return description;
+	public String getConcept() {
+		return concept;
 	}
 
 	/**
-	 * Sets the description.
+	 * Sets the concept.
 	 * 
-	 * @param description the description
+	 * @param concept the concept
 	 */
-	public void setDescription(String description) {
-		this.description = description;
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+
+	/**
+	 * Gets the account.
+	 * 
+	 * @return the account
+	 */
+	public Account getAccount() {
+		return account;
+	}
+
+	/**
+	 * Sets the account.
+	 * 
+	 * @param account the account
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 	/**
@@ -123,24 +120,6 @@ public class ExpenseEntryHeader implements ITransferObject {
 	}
 
 	/**
-	 * Gets the Registry bank.
-	 * 
-	 * @return the Registry bank
-	 */
-	public RegistryBank getRBank() {
-		return rBank;
-	}
-
-	/**
-	 * Sets the Registry bank.
-	 * 
-	 * @param rBank the Registry
-	 */
-	public void setRBank(RegistryBank rBank) {
-		this.rBank = rBank;
-	}
-
-	/**
 	 * Gets the security level.
 	 * 
 	 * @return the security level
@@ -157,4 +136,5 @@ public class ExpenseEntryHeader implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+
 }

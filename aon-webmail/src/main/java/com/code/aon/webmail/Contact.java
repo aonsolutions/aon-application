@@ -1,26 +1,26 @@
 package com.code.aon.webmail;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.naming.Name;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
+import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
 
-@Entity
-@Table(name="contact")
 @EntryObject(mainObjectClass=IAonObjectClasses.CONTACT, objectClasses={IAonObjectClasses.TOP})
-public class Contact implements ITransferObject {
+public class Contact implements ILdapTransferObject {
 
 	private static final long serialVersionUID = 7825997921660369372L;
 
@@ -29,6 +29,8 @@ public class Contact implements ITransferObject {
 	private String displayName;
 	
 	private String name;
+	
+	private String outlookName;
 	
 	private String surname;
 	
@@ -45,7 +47,9 @@ public class Contact implements ITransferObject {
 	private String postalCode;
 	
 	private String city;
-	
+
+	private String outlookCity;
+		
 	private String state;
 	
 	private String note;
@@ -67,10 +71,16 @@ public class Contact implements ITransferObject {
 	private String organizationState;
 	
 	private String web;
+
+	private String country;
+	
+	private String title;
+	
+	private Boolean contactGroup = Boolean.FALSE;
+	
+	private List<GroupContact> contacts;
 	
 	@Id
-	@GeneratedValue
-	@Column(nullable=false)
 	public Name getId() {
 		return id;
 	}
@@ -89,8 +99,7 @@ public class Contact implements ITransferObject {
 		this.displayName = displayName;
 	}
 
-	@Column(length=64)
-	@Attribute(name="cn", length=64)
+	@Attribute(name="cn")
 	public String getName() {
 		return name;
 	}
@@ -99,8 +108,16 @@ public class Contact implements ITransferObject {
 		this.name = name;
 	}
 
-	@Transient
-	@Attribute(name="sn", length=64)
+	@Attribute(name="gn")
+	public String getOutlookName() {
+		return outlookName;
+	}
+
+	public void setOutlookName(String outlookName) {
+		this.outlookName = outlookName;
+	}
+
+	@Attribute(name="sn")
 	public String getSurname() {
 		return surname;
 	}
@@ -109,8 +126,7 @@ public class Contact implements ITransferObject {
 		this.surname = surname;
 	}
 
-	@Column(length=64)
-	@Attribute(name="o", length=64)
+	@Attribute(name="o")
 	public String getOrganization() {
 		return organization;
 	}
@@ -119,8 +135,7 @@ public class Contact implements ITransferObject {
 		this.organization = organization;
 	}
 
-	@Column(length=20)
-	@Attribute(name="homePhone", length=20)
+	@Attribute(name="homePhone")
 	public String getPhone() {
 		return phone;
 	}
@@ -129,8 +144,7 @@ public class Contact implements ITransferObject {
 		this.phone = phone;
 	}
 
-	@Column(name="cellular_phone", length=20)
-	@Attribute(name="mobile", length=20)
+	@Attribute(name="mobile")
 	public String getCellularPhone() {
 		return cellularPhone;
 	}
@@ -139,8 +153,7 @@ public class Contact implements ITransferObject {
 		this.cellularPhone = cellularPhone;
 	}
 
-	@Column(length=20)
-	@Attribute(name="facsimileTelephoneNumber", length=20)
+	@Attribute(name="facsimileTelephoneNumber")
 	public String getFax() {
 		return fax;
 	}
@@ -149,8 +162,7 @@ public class Contact implements ITransferObject {
 		this.fax = fax;
 	}
 
-	@Column(length=64)
-	@Attribute(name="mail",length=64)
+	@Attribute(name="mail",length=256)
 	public String getEmail() {
 		return email;
 	}
@@ -159,8 +171,7 @@ public class Contact implements ITransferObject {
 		this.email = email;
 	}
 
-	@Column(length=128)
-	@Attribute(name="postalAddress",length=128)
+	@Attribute(name="postalAddress")
 	public String getAddress() {
 		return address;
 	}
@@ -169,8 +180,7 @@ public class Contact implements ITransferObject {
 		this.address = address;
 	}
 
-	@Transient
-	@Attribute(name="postalCode",length=16)
+	@Attribute(name="postalCode",length=40)
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -179,7 +189,6 @@ public class Contact implements ITransferObject {
 		this.postalCode = postalCode;
 	}
 	
-	@Column(length=65535)
 	@Attribute(name="info",length=2048)
 	public String getNote() {
 		return note;
@@ -189,7 +198,6 @@ public class Contact implements ITransferObject {
 		this.note = note;
 	}
 
-	@Column(length=64)
 	@Attribute(name="city",length=64)
 	public String getCity() {
 		return city;
@@ -199,8 +207,16 @@ public class Contact implements ITransferObject {
 		this.city = city;
 	}
 
-	@Column(length=64)
-	@Attribute(name="st",length=64)
+	@Attribute(name="l")
+	public String getOutlookCity() {
+		return outlookCity;
+	}
+
+	public void setOutlookCity(String outlookCity) {
+		this.outlookCity = outlookCity;
+	}
+
+	@Attribute(name="st")
 	public String getState() {
 		return state;
 	}
@@ -209,7 +225,6 @@ public class Contact implements ITransferObject {
 		this.state = state;
 	}
 
-	@Column(length=128)
 	@Attribute(name="businessCategory",length=128)
 	public String getCategory() {
 		return category;
@@ -219,8 +234,7 @@ public class Contact implements ITransferObject {
 		this.category = category;
 	}
 
-	@Column(length=20)
-	@Attribute(name="telephoneNumber",length=20)
+	@Attribute(name="telephoneNumber",length=32)
 	public String getOrganizationPhone() {
 		return organizationPhone;
 	}
@@ -229,8 +243,7 @@ public class Contact implements ITransferObject {
 		this.organizationPhone = organizationPhone;
 	}
 
-	@Column(length=20)
-	@Attribute(name="oFacsimileTelephoneNumber",length=20)
+	@Attribute(name="oFacsimileTelephoneNumber")
 	public String getOrganizationFax() {
 		return organizationFax;
 	}
@@ -239,8 +252,7 @@ public class Contact implements ITransferObject {
 		this.organizationFax = organizationFax;
 	}
 
-	@Column(length=128)
-	@Attribute(name="oPostalAddress",length=128)
+	@Attribute(name="oPostalAddress")
 	public String getOrganizationAddress() {
 		return organizationAddress;
 	}
@@ -249,8 +261,7 @@ public class Contact implements ITransferObject {
 		this.organizationAddress = organizationAddress;
 	}
 
-	@Transient
-	@Attribute(name="oPostalCode",length=16)
+	@Attribute(name="oPostalCode")
 	public String getOrganizationPostalCode() {
 		return organizationPostalCode;
 	}
@@ -259,7 +270,6 @@ public class Contact implements ITransferObject {
 		this.organizationPostalCode = organizationPostalCode;
 	}
 
-	@Column(length=64)
 	@Attribute(name="oCity",length=64)
 	public String getOrganizationCity() {
 		return organizationCity;
@@ -269,8 +279,7 @@ public class Contact implements ITransferObject {
 		this.organizationCity = organizationCity;
 	}
 
-	@Column(length=64)
-	@Attribute(name="oSt",length=64)
+	@Attribute(name="oSt")
 	public String getOrganizationState() {
 		return organizationState;
 	}
@@ -279,8 +288,7 @@ public class Contact implements ITransferObject {
 		this.organizationState = organizationState;
 	}
 
-	@Column(length=128)
-	@Attribute(name="labeledURI",length=128)
+	@Attribute(name="labeledURI")
 	public String getWeb() {
 		return web;
 	}
@@ -289,38 +297,167 @@ public class Contact implements ITransferObject {
 		this.web = web;
 	}
 	
-	@Transient
-	public String getEmailLarge() {
-		if ( getEmail() != null ) {
-			String name = getDisplayName();
+	@Attribute(name="co")
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	@Attribute(name="title")
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@Attribute(name="contactGroup")
+	public Boolean getContactGroup() {
+		return contactGroup;
+	}
+
+	public void setContactGroup(Boolean contactGroup) {
+		this.contactGroup = contactGroup;
+	}
+		
+	@BaseDN("{this}")	
+	@Attribute(name="member",baseClass="com.code.aon.webmail.GroupContact")
+	public List<GroupContact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<GroupContact> contacts) {
+		this.contacts = contacts;
+	}
+	
+	private String getEmailLarge( String displayName, String email ) {
+		if ( email != null ) {
+			String name = displayName;
 			if (! StringUtils.isAsciiPrintable(name) ) {
 				name = "\"" + name + "\"";
 			}
-			return name + " &lt;" + getEmail() + "&gt;";			
+			return name + " &lt;" + email + "&gt;";			
 		}
 		return null;
 	}
 
+	public String getEmailLarge() {
+		if ( getContactGroup() ) {
+			List<String> list = new LinkedList<String>();
+			if ( getContacts() != null ) {
+				for( GroupContact gc : getContacts() ) {
+					if ( ! StringUtils.isBlank(gc.getEmail()) ) {
+						String email = getEmailLarge( gc.getDisplayName(), gc.getEmail() );
+						list.add( email );						
+					}
+				}				
+			}
+			String emails = StringUtils.join( list, ", " );
+			return StringUtils.trimToNull( emails );			
+		}
+		return getEmailLarge( getDisplayName(), getEmail() );
+	}
+	
+	public String getEmailSummary() {
+		String emails = getEmails();
+		return StringUtils.abbreviate( emails, 80 );
+	}
+
+	public String getEmails() {
+		if ( getContactGroup() ) {
+			List<String> list = new LinkedList<String>();
+			if ( getContacts() != null ) {
+				for( GroupContact gc : getContacts() ) {
+					if ( ! StringUtils.isBlank(gc.getEmail()) ) {
+						list.add( gc.getEmail() );						
+					}
+				}				
+			}
+			String emails = StringUtils.join( list, ", " );
+			return StringUtils.trimToNull( emails );
+		} 
+		return getEmail();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Contact o = (Contact) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.address, o.address)
+				.append(this.category, o.category)				
+				.append(this.cellularPhone, o.cellularPhone)
+				.append(this.city, o.city)		
+				.append(this.contactGroup, o.contactGroup)
+				.append(this.country, o.country)
+				.append(this.displayName, o.displayName)
+				.append(this.email, o.email)				
+				.append(this.fax, o.fax)
+				.append(this.name, o.name)				
+				.append(this.note, o.note)
+				.append(this.organization, o.organization)
+				.append(this.organizationAddress, o.organizationAddress)				
+				.append(this.organizationCity, o.organizationCity)
+				.append(this.organizationFax, o.organizationFax)				
+				.append(this.organizationPhone, o.organizationPhone)
+				.append(this.organizationPostalCode, o.organizationPostalCode)
+				.append(this.organizationState, o.organizationState)				
+				.append(this.outlookCity, o.outlookCity)
+				.append(this.outlookName, o.outlookName)				
+				.append(this.phone, o.phone)
+				.append(this.postalCode, o.postalCode)				
+				.append(this.state, o.state)
+				.append(this.surname, o.surname)				
+				.append(this.title, o.title)
+				.append(this.web, o.web)
+				.isEquals();
 		}
-		if (obj instanceof Contact) {
-			Contact o = (Contact) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(address)
+			.append(category)
+			.append(cellularPhone)
+			.append(city)
+			.append(contactGroup)
+			.append(country)
+			.append(displayName)
+			.append(email)
+			.append(fax)
+			.append(id)	
+			.append(name)			
+			.append(note)
+			.append(organization)			
+			.append(organizationAddress)
+			.append(organizationCity)			
+			.append(organizationFax)
+			.append(organizationPhone)			
+			.append(organizationPostalCode)
+			.append(organizationState)			
+			.append(outlookCity)			
+			.append(outlookName)
+			.append(phone)			
+			.append(postalCode)
+			.append(state)
+			.append(surname)
+			.append(title)
+			.append(web)
+			.toHashCode();
 	}
 
 	@Override
-	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
-	}	
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 	
 }

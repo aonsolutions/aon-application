@@ -5,8 +5,24 @@
 <hibernate-configuration>
 
 	<session-factory>
-	
-		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+ 
+		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
+		<property name="connection.service">jboss.admin:service=AonLdap</property>
+		<!--
+		<property name="connection.service">Catalina:type=Security,name=AonSecurity</property>
+		 -->
+		<property name="connection.datasource">java:comp/env/jdbc/AonDesktop</property>		
+		<property name="show_sql">true</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+
+		<!-- C3P0 Stuff -->
+		<property name="c3p0.acquire_increment">1</property>
+		<property name="c3p0.idle_test_period">1900</property>
+		<property name="c3p0.timeout">3600</property>
+		<property name="c3p0.max_size">30</property>
+		<property name="c3p0.min_size">1</property>
+		<property name="c3p0.max_statements">0</property>
+		<property name="c3p0.preferredTestQuery">select 1;</property>
 
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category"/>
@@ -56,22 +72,6 @@
 		<!-- AON-MESSAGING Mapping files -->
 		<mapping class="com.code.aon.messaging.Message"/>
 		<mapping class="com.code.aon.messaging.MessageContent"/>		
-		
-		<!-- AON-PROJECT Mapping files --> 
-		<mapping class="com.code.aon.project.Activity"/>
-		<mapping class="com.code.aon.project.ActivityType"/>
-		<mapping class="com.code.aon.project.DailyTracking"/>
-		<mapping class="com.code.aon.project.Dossier"/>
-		<mapping class="com.code.aon.project.DossierType"/>
-		<mapping class="com.code.aon.project.JobType"/>
-		<mapping class="com.code.aon.project.Task"/>		
-
-		<!-- AON-CUSTOMER Mapping files -->
-		<mapping class="com.code.aon.customer.Customer"/>
-		<mapping class="com.code.aon.customer.CustomerSegment"/>
-
-		<!-- AON-PRODUCT Mapping files -->	
-		<mapping class="com.code.aon.product.Tariff"/>
 
 	</session-factory>
 

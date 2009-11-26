@@ -11,6 +11,7 @@
 					value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
 					action="#{saveAction}"
 					actionListener="#{saveActionListener}"
+					onclick="#{saveOnClick}" oncomplete="#{saveOnComplete}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
 			</c:if>
@@ -34,6 +35,8 @@
 					confirmMessage="#{bundle.aon_remove_confirm}"
 					confirmActionListener="#{removeActionListener}"
 					confirmAction="#{removeAction}"
+					confirmOnClick="#{removeOnClick}"
+					confirmOnComplete="#{removeOnComplete}"
 					accesskey="#{bundle.aon_key_remove}" />
 			</c:if>
 			<c:if test="#{!skipSearchButton}">			

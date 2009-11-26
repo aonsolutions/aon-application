@@ -20,6 +20,7 @@ import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 
 /**
@@ -59,8 +60,8 @@ public class AccountSummaryManager {
             accountSummary.setSecurityLevel(securityLevel);
             accountSummary.setEntryDate(entryDate);
         }
-        accountSummary.setDebit(round(accountSummary.getDebit() + debit, 2));
-        accountSummary.setCredit(round(accountSummary.getCredit() + credit, 2));
+        accountSummary.setDebit(CommonUtil.round(accountSummary.getDebit() + debit, 2));
+        accountSummary.setCredit(CommonUtil.round(accountSummary.getCredit() + credit, 2));
 
         if (accountSummary.getId() == null) {
         	accountSummaryBean.insert(accountSummary);
@@ -76,7 +77,7 @@ public class AccountSummaryManager {
 	public static void deleteAccountSummary(Period accountPeriod) {
 		String delete = "delete from AccountSummary as summary";
 		delete += (accountPeriod != null)?" where summary.accountPeriod = '" + accountPeriod.getId() + "'":"";
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(null);
         Transaction t = session.beginTransaction();
         Query query = session.createQuery(delete);
         int rows = query.executeUpdate();
@@ -95,7 +96,7 @@ public class AccountSummaryManager {
 						"where entry.id = entryDetail.accountEntry.id " +
 						"and entry.accountPeriod = '" + accountPeriod.getId() + "' " + 
 						"group by entryDetail.account, entry.securityLevel, entry.entryDate ";
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(null);
         Query query = session.createQuery(select);
         List list = query.list();
         int count = list.size();
@@ -109,17 +110,12 @@ public class AccountSummaryManager {
         	accountSummary.setAccount((Account)obj[0]);
         	accountSummary.setSecurityLevel((SecurityLevel)obj[1]);
         	accountSummary.setEntryDate((Date)obj[2]);
-        	accountSummary.setDebit(round(((Double)obj[3]).doubleValue(),2));
-        	accountSummary.setCredit(round(((Double)obj[4]).doubleValue(),2));
+        	accountSummary.setDebit(CommonUtil.round(((Double)obj[3]).doubleValue(),2));
+        	accountSummary.setCredit(CommonUtil.round(((Double)obj[4]).doubleValue(),2));
         	addAccountSummary(accountSummary);
         	i++;    	
         	progressionBean.setProgressionCurrentValue((long) ( i * 100 / count));
         }
 	}
-
-	private static double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
 
 }

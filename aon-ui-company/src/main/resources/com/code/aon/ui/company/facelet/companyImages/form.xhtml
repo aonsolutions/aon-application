@@ -45,7 +45,7 @@
 					
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_description}" />
+									<aon:outputText value="#{bundle.aon_name}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}"/>
 								<c:if test="#{companyImages.maximumNumber != 0}">
@@ -93,8 +93,9 @@
 			
 									<aon:panelGrid columns="2">	
 																			
-										<aon:outputLabel for="RegistryAttachment_description" value="#{bundle.aon_description}" />
+										<aon:outputLabel for="RegistryAttachment_description" value="#{bundle.aon_name}" />
 										<aon:inputText id="RegistryAttachment_description" size="45" required="true"
+											validator="#{companyImages.imageNameCheck}"
 											maxlength="50" value="#{companyImages.to.description}" />		
 				
 										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{companyBundle.company_image}" />

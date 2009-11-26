@@ -19,10 +19,10 @@
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="applicationDataList" value="#{currentDomain.applications}"
+				<aon:dataTable id="applicationDataList" value="#{domain.applications}"
 					var="to" rows="20" columnClasses="aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="profile_list" actionListener="#{currentDomain.onSelectApplication}" />
+					<aon:rowSelector action="profile_list" actionListener="#{domain.onSelectApplication}" />
 
 					<aon:column>
 						<f:facet name="header">

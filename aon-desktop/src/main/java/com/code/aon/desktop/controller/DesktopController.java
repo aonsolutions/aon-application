@@ -1,9 +1,5 @@
 package com.code.aon.desktop.controller;
 
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,8 +8,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -31,7 +25,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
 import com.code.aon.desktop.DesktopAlarm;
 import com.code.aon.desktop.DesktopNoticeSummary;
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -47,11 +40,14 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
+import com.code.aon.ui.util.AonUtil;
 
-public class DesktopController extends BasicController implements IDesktopConstants {
+public class DesktopController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(DesktopController.class.getName());
-	
+	private static final String NOTE_CONTROLLER_NAME = "note";
+	private static final String ALARM_CONTROLLER_NAME = "alarm";
+    private static final String NOTICE_CONTROLLER_NAME = "notice";
+
 	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
 	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
     
@@ -60,8 +56,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
-    
-    private boolean checkUpdateURL = true;
 
 	public SelectItem getNullValue() {
 		return NULL_SELECT_ITEM;
@@ -110,8 +104,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
 
     @SuppressWarnings("unchecked")
     private List createQuery(String select) {
-    	String name = HibernateUtil.getSessionFactoryName();
-        Session session = HibernateUtil.getSession(name);
+        Session session = HibernateUtil.getSession();
         Query query = session.createQuery(select);
         return query.list();
     }
@@ -337,40 +330,8 @@ public class DesktopController extends BasicController implements IDesktopConsta
 		if (session.getAttribute("AON_KEY_VALIDATOR_OK") != null) return true;
 		return false;
     }
-
-	public String getUpdateURL() {
-    	String server = null;
-		try {
-			server = InetAddress.getLocalHost().getCanonicalHostName();
-		} catch (UnknownHostException e) {
-			try {
-				server = InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e1) {
-				LOGGER.log( Level.SEVERE, "Error getting server address. " + e1.getMessage(), e1);
-			}
-		}
-    	return "http://" + server + ":7654";		
-	}
-	    
-    public boolean isUpdatesAvailable() {
-    	boolean available = false;
-    	if ( checkUpdateURL ) {
-	    	try {
-				URL url = new URL( getUpdateURL() + "/hasupdate.rpy" );
-				InputStream in = url.openStream();
-				char result = (char) in.read();
-				in.close();
-				available = (result == '1');
-			} catch (Throwable e) {
-				checkUpdateURL = false;
-				LOGGER.log( Level.INFO, "Error getting updates available. " + e.getMessage(), e);
-			}
-    	}
-    	return available;
-    }
     
-	public String getUpdateApplicationURL() {
-		return getUpdateURL() + "/update.rpy";
-	}
-
+    public boolean isRoleManager() {
+    	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole("Manager");
+    }
 }

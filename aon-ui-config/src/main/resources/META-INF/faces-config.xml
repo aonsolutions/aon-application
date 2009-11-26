@@ -455,6 +455,11 @@
 			<from-outcome>bank</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/bank/grid.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<description>BANK NAVIGATION SEARCH</description>
+			<from-outcome>bank_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/bank/search.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 </faces-config>

@@ -1,9 +1,9 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -142,8 +142,7 @@ public class FinanceFractionController {
 				financeBean.insert(finance);
 			}
 
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED);
-			FinanceTrackingWriter.addFinanceTracking(targetFinance, new Date(), FinanceTrackingType.FRACTIONED, message);
+			FinanceTrackingWriter.addFinanceTracking(targetFinance, FinanceTrackingType.FRACTIONED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED));
 			initializeFinanceControllerList(((List)getModel().getWrappedData()));
 		} catch (AonException e) {
 			AonUtil.addErrorMessage(e.getMessage());

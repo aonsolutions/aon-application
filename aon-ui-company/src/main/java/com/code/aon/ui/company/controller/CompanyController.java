@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -13,13 +12,13 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.common.io.IAonFileListener;
 
 /**
  * Controller used in the company maintenance.
  */
-public class CompanyController extends CompanyParentController implements IAonFileListener {
+public class CompanyController extends CompanyParentController {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
@@ -63,16 +62,12 @@ public class CompanyController extends CompanyParentController implements IAonFi
 				byte[] data = IOUtils.toByteArray(in);
 				f.setData(data);
 			}
-			f.setFileName(item.getFileName());
-			f.addAonFileListener(this);
+			f.setFileName( item.getFileName() );
+			f.setMimeType( MimeType.get(item.getContentType()) );
 			setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
-	}
-
-	public void fileDeleted(AonFile aonFile) {
-		setAonFile(null);
 	}
 
 	/**
@@ -97,8 +92,11 @@ public class CompanyController extends CompanyParentController implements IAonFi
 		}
 	}
 	
-	public Date getTimeStamp() {
-		return new Date();	
+	public String getLogoMimeType() {
+		if ( getAttach().getMimeType() != null ) {
+			return getAttach().getMimeType().getName();
+		}
+		return "*";	
 	}
 
 }

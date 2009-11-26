@@ -15,8 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.BeanManager;
@@ -109,8 +107,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="invoice", nullable = false)
-    @ForeignKey(name="FK_INVOICE_DETAIL_INVOICE")
-    @Index(name="IDX_INVOICE_DETAIL_INVOICE")                                    
     public Invoice getInvoice() {
         return invoice;
     }
@@ -129,7 +125,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * 
      * @return the line
      */
-    @Column(nullable=true)
     public int getLine() {
         return line;
     }
@@ -150,8 +145,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="item")
-    @ForeignKey(name="FK_INVOICE_DETAIL_ITEM")
-    @Index(name="IDX_INVOICE_DETAIL_ITEM")                                        
     public Item getItem() {
         return item;
     }
@@ -170,7 +163,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * 
      * @return the description
      */
-    @Column(length=64)
     public String getDescription() {
         return description;
     }
@@ -189,7 +181,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * 
      * @return the quantity
      */
-    @Column(nullable=true)
     public double getQuantity() {
         return quantity;
     }
@@ -208,7 +199,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * 
      * @return the price
      */
-    @Column(nullable=true)
     public double getPrice() {
         return price;
     }
@@ -227,7 +217,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * 
      * @return the discount expression
      */
-    @Column(name ="discount_expr",length=32)
+    @Column(name ="discount_expr")
     @Type(type = "com.code.aon.product.util.DiscountExpressionUserType")
     public DiscountExpression getDiscountExpression() {
         return discountExpression;
@@ -267,7 +257,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * @return the source id
      */
     @Column(name="source_id")
-    @Index(name="IDX_INVOICE_DETAIL_SOURCE_ID")
     public Integer getSourceId() {
         return sourceId;
     }
@@ -286,7 +275,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * 
      * @return the taxable base
      */
-    @Column(name="taxable_base", precision=15, scale=3)
+    @Column(name="taxable_base")
 	public double getTaxableBase() {
 		return taxableBase;
 	}
@@ -305,7 +294,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 	 * 
 	 * @return the taxes
 	 */
-	@Column(nullable=true, precision=15, scale=3)
 	public double getTaxes() {
 		return taxes;
 	}
@@ -321,8 +309,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 	
     @ManyToOne
     @JoinColumn(name="workplace", nullable = false)
-    @ForeignKey(name="FK_INVOICE_DETAIL_WORKPLACE")
-    @Index(name="IDX_INVOICE_DETAIL_WORKPLACE")                                            
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}

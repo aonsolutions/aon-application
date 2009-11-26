@@ -17,9 +17,9 @@
 					<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
 				</aon:commandLink>
 	
-				<aon:commandLink id="otherdata" 
-					title="#{appBundle.infoweb_data}" action="otherdata" 
-					value="#{appBundle.infoweb_data}"
+				<aon:commandLink id="companyWebInfo" 
+					title="#{infowebBundle.infoweb_data}" action="companyWebInfo" 
+					value="#{infowebBundle.infoweb_data}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 				</aon:commandLink>
 	
@@ -30,23 +30,24 @@
 					<aon:actionListener method="#{companyImages.onCancel}" />
 				</aon:commandLink>
 	
-				<aon:commandLink id="pages" 
-					title="#{appBundle.infoweb_pages}" action="pages" 
-					value="#{appBundle.infoweb_pages}"
+				<aon:commandLink id="webPage" 
+					title="#{infowebBundle.infoweb_pages}" action="webPage" 
+					value="#{infowebBundle.infoweb_pages}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
+					<aon:actionListener method="#{webPage.onInit}" />
 				</aon:commandLink>
 	
-				<aon:commandLink id="templates" 
-					title="#{appBundle.infoweb_template}" action="templates" 
-					value="#{appBundle.infoweb_template}"
+				<aon:commandLink id="webPageStyle" 
+					title="#{infowebBundle.infoweb_template}" action="webPageStyle" 
+					value="#{infowebBundle.infoweb_template}"
 					styleClass="aon-top-menu-item">
 					<aon:actionListener method="#{companyWebInfo.onInit}" />
 					<aon:actionListener method="#{webPageStyle.onLoad}" />
 				</aon:commandLink>
 	
-				<aon:commandLink id="generate" 
-					title="#{appBundle.infoweb_generate}" action="generate" 
-					value="#{appBundle.infoweb_generate}"
+				<aon:commandLink id="generator" 
+					title="#{infowebBundle.infoweb_generate}" action="generator" 
+					value="#{infowebBundle.infoweb_generate}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 				</aon:commandLink>
 				

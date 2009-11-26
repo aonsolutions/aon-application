@@ -9,8 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.geozone.GeoZone;
@@ -49,8 +47,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 
     @ManyToOne
     @JoinColumn(name="invoice", nullable = false)
-    @ForeignKey(name="FK_INVOICE_ADDRESS_INVOICE")
-    @Index(name="IDX_INVOICE_ADDRESS_INVOICE")                                
 	public Invoice getInvoice() {
 		return invoice;
 	}
@@ -97,8 +93,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 
     @ManyToOne
     @JoinColumn(name="geozone", nullable = false)
-    @ForeignKey(name="FK_INVOICE_ADDRESS_GEOZONE")
-    @Index(name="IDX_INVOICE_ADDRESS_GEOZONE")                            
 	public GeoZone getGeozone() {
 		return geozone;
 	}

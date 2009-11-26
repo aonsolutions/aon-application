@@ -5,6 +5,8 @@ import java.text.NumberFormat;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.util.CommonUtil;
+
 public class Summary {
 	public Summary() {
 	}
@@ -101,7 +103,7 @@ public class Summary {
 	 */
 	public double getUnpaidBalance() {
 		if (getDebit() > getCredit()) {
-			return round(getDebit() - getCredit());
+			return CommonUtil.round(getDebit() - getCredit());
 		}
 		return 0;
 	}
@@ -114,7 +116,7 @@ public class Summary {
 	 */
 	public double getCreditBalance() {
 		if (getCredit() > getDebit()) {
-			return round(getCredit() - getDebit());
+			return CommonUtil.round(getCredit() - getDebit());
 		}
 		return 0;
 	}
@@ -128,11 +130,6 @@ public class Summary {
     public double getDifference() {
         return (credit - debit);
     }
-
-    protected double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
-	}
 
 	public String toString() {
 		return (StringUtils.rightPad(getId(), 12) + "\t" + isLastLevel() + "\t"

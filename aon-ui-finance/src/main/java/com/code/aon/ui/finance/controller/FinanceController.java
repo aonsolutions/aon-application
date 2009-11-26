@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -82,8 +81,6 @@ public class FinanceController extends BasicController {
 	private boolean showFinancePaymentWindow;
 
 	private boolean showFinanceReturnWindow;
-	
-	private List orderedList;
 
 	/**
 	 * A list of finances currently checked
@@ -368,18 +365,16 @@ public class FinanceController extends BasicController {
 			throw new AbortProcessingException();
 		}
 
-		if (getPaymentAmount() != finance.getTotalAmount()) {
+		if(getPaymentAmount() != finance.getTotalAmount()) {
 			getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(finance.getTotalAmount() - getPaymentAmount(), 2));
 			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses(), 2));
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED);
-			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message);
+			FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.FRACTIONED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED));
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		getManagerBean().update(finance);
 
 		AccountEntry entry = getWriter().recordFinance(finance, getPaymentRegistryBank(), getPaymentDate());
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RECORDED, message);
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RECORDED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId());
 		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
@@ -394,8 +389,7 @@ public class FinanceController extends BasicController {
 		returnFinanceBatchDetail(finance);
 
 		AccountEntry entry = getWriter().returnFinance(finance, getReturnRegistryBank(), getReturnDate());
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RETURNED, message);
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RETURNED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId());
 		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
@@ -416,33 +410,48 @@ public class FinanceController extends BasicController {
 		}
 	}
 
-	public void onSettleFinance(ActionEvent event) throws ManagerBeanException {
-		Finance finance = (Finance)this.getTo();
-		finance.setFinanceStatus(FinanceStatus.SETTLED);
-		getManagerBean().update(finance);
-
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_SETTLED);
-		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
-
-		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
-		financeTrackingController.onSearch(null);
-	}
-
 	/**
-	 * CHECK LIST CONTROL 
+	 * If the value changed sets the row to be checked or not.
+	 * true to add or false to remove
+	 * 
+	 * @param event the event that is launched by value change
 	 */
-
 	public void rowSelected(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
 			setRowChecked(((Boolean)event.getNewValue()).booleanValue());
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void checkAll(ActionEvent event) throws ManagerBeanException {
+		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
+		while(iter.hasNext()){
+			Finance finance = (Finance)iter.next();
+			if (!checks.contains(finance)) {
+				checks.add(finance);
+			}
+		}
+	}
+
+	public void checkNone(ActionEvent event) {
+		clearCheckedFinances();
+	}
+
+	/**
+	 * Determines if the current row is selected or not
+	 * 
+	 * @return true if the current row is selected
+	 */
 	public boolean getRowChecked() {
 		Finance to = (Finance) model.getRowData();
 		return checks.contains(to);
 	}
 	
+	/**
+	 * Adds or removes a Delivery in the checks list
+	 * 
+	 * @param rowChecked true to add and false to remove
+	 */
 	public void setRowChecked(boolean rowChecked) {
 		if (rowChecked) {
 			Finance to = (Finance) model.getRowData();
@@ -461,68 +470,8 @@ public class FinanceController extends BasicController {
 		return checks;
 	}
 	
-	public void clearCheckedFinances() {
+	public void clearCheckedFinances(){
 		checks = new ArrayList<Finance>();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		Iterator iterator = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (!checks.contains(finance)) {
-				checks.add(finance);
-			}
-		}
-	}
-
-	public void checkNone(ActionEvent event) {
-		clearCheckedFinances();
-	}
-
-	public List getOrderedList() {
-		return orderedList;
-	}
-
-	public void setOrderedList(List orderedList) {
-		this.orderedList = orderedList;
-	}
-	
-	public void onOrderFinanceList(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String date = bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
-		String invoiceseries = bean.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES);
-		String invoicenumber = bean.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER);
-		cr.addOrder(date,true);
-		cr.addOrder(invoiceseries,true);
-		cr.addOrder(invoicenumber,true);
-		orderedList=bean.getList(cr);
-	}
-	
-	public void onOrderFinanceListByRegistry(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String registry = bean.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);		
-		cr.addOrder(registry,true);
-		orderedList=bean.getList(cr);
-	}
-	
-	public void onOrderFinanceListByDate(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String date = bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
-		String id = bean.getFieldName(IFinanceAlias.FINANCE_ID);
-		cr.addOrder(date,true);
-		cr.addOrder(id,true);
-		orderedList=bean.getList(cr);
-	}
-
-
 }

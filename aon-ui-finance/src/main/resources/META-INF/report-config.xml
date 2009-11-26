@@ -112,7 +112,8 @@
 	<!--  *********  FinanceList  ********* -->
 	<report id="financeList" description="Finance List">
 		<template path="/com/code/aon/ui/finance/report/financeList.jasper" />
-		<collection provider="#{finance.orderedList}" />
+		<bean key="com.code.aon.finance.Finance" />
+		<criteria provider="#{finance}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -121,30 +122,6 @@
 		</params>
 	</report>
 
-    <!--  *********  FinanceList  ********* -->
-	<report id="financeListByAccount" description="Finance List">
-		<template path="/com/code/aon/ui/finance/report/financeListByAccount.jasper" />
-		<collection provider="#{finance.orderedList}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{financeSearch.getPayment}" />
-		</params>
-	</report>
-
-    <!--  *********  FinanceList  ********* -->
-	<report id="financeListByDate" description="Finance List">
-		<template path="/com/code/aon/ui/finance/report/financeListByDate.jasper" />
-		<collection provider="#{finance.orderedList}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{financeSearch.getPayment}" />
-		</params>
-	</report>
-	
 	<!--  *********  FinanceBatchList  ********* -->
 	<report id="fBatchList" description="Finance Batch List">
 		<template path="/com/code/aon/ui/finance/report/fBatchList.jasper" />

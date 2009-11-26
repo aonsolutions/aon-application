@@ -1,8 +1,11 @@
 package com.code.aon.accounting.summary;
 
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.code.aon.common.util.CommonUtil;
 
 public class SummaryCollection {
 
@@ -25,14 +28,9 @@ public class SummaryCollection {
 	public void add(Summary summary) {
 		summaryList.add(summary);
 		if (summary.isLastLevel()) {
-			setDebit(round(getDebit() + summary.getDebit()));
-			setCredit(round(getCredit() + summary.getCredit()));
+			setDebit(CommonUtil.round(getDebit() + summary.getDebit()));
+			setCredit(CommonUtil.round(getCredit() + summary.getCredit()));
 		}
-	}
-
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
 	}
 
 	public double getInitialDebit() {
@@ -74,6 +72,13 @@ public class SummaryCollection {
 		this.summaryList = list;
 	}
 
+	public List<Summary> getSortedSummaryList() {
+		List<Summary> sortedSummaryList = new LinkedList<Summary>();
+		sortedSummaryList.addAll(summaryList);
+		Collections.sort(sortedSummaryList, new SummaryComparator());
+		return sortedSummaryList;
+	}
+
 	public void print(PrintStream out) {
 		for (Summary s : getSummaryList()) {
 			out.println(s.toString());
@@ -85,7 +90,7 @@ public class SummaryCollection {
 	 */
 	public double getUnpaidBalance() {
 		if (getDebit() > getCredit()) {
-			return round(getDebit() - getCredit());
+			return CommonUtil.round(getDebit() - getCredit());
 		}
 		return 0;
 	}
@@ -95,7 +100,7 @@ public class SummaryCollection {
 	 */
 	public double getCreditBalance() {
 		if (getCredit() > getDebit()) {
-			return round(getCredit() - getDebit());
+			return CommonUtil.round(getCredit() - getDebit());
 		}
 		return 0;
 	}

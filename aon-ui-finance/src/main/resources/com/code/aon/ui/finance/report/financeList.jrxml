@@ -341,7 +341,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistry().getName()+ " "+ $F{invoice}.getRegistry().getSurname() ]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{invoice}.getRegistry().getSurname() == null || $F{invoice}.getRegistry().getSurname().equals(""))?"":$F{invoice}.getRegistry().getSurname() + ", ") + $F{invoice}.getRegistry().getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

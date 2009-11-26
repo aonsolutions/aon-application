@@ -20,8 +20,9 @@
 					<aon:outputLabel for="Account_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="Account_id" value="#{account.to.id}"
-						required="#{true}" size="16" disabled="#{!account.new}">
-						<f:validateLength maximum="12" />
+						required="#{true}" size="10" maxlength="9"  
+						disabled="#{!account.new}">
+						<f:validateLength maximum="9" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_description"
