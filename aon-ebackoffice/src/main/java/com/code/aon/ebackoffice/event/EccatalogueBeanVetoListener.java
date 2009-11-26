@@ -1,6 +1,7 @@
 package com.code.aon.ebackoffice.event;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -12,7 +13,7 @@ import com.code.aon.ebackoffice.enumeration.CatalogueType;
 
 public class EccatalogueBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final Logger LOGGER = Logger
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EccatalogueBeanVetoListener.class.getName());
 
 	@Override
