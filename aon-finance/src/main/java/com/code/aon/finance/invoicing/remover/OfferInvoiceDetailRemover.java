@@ -1,7 +1,7 @@
 package com.code.aon.finance.invoicing.remover;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
@@ -18,7 +18,7 @@ import com.code.aon.ql.Criteria;
 
 public class OfferInvoiceDetailRemover implements IInvoiceDetailRemover {
 	
-	private static final Logger LOGGER = Logger.getLogger(OfferInvoiceDetailRemover.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(OfferInvoiceDetailRemover.class.getName());
 
 	@Override
 	public boolean accept(InvoiceSource source) {
@@ -45,7 +45,7 @@ public class OfferInvoiceDetailRemover implements IInvoiceDetailRemover {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error removing Details", e);
+			LOGGER.error("Error removing Details", e);
 			throw new InvoicingException(e.getMessage(),e);
 		}
 	}

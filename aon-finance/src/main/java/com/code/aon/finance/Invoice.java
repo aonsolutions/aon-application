@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +25,8 @@ import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -64,7 +64,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	private static final long serialVersionUID = 5692053383866684819L;
 
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(Invoice.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Invoice.class.getName());
 	
 	/**
 	 * The Constructor. Sets TODAY to issueDate.
@@ -626,7 +626,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getId());
 			return invoiceDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining invoiceDetail list", e);
+			LOGGER.error("Error obtaining invoiceDetail list", e);
 		}
 		return null;
 	}
@@ -649,7 +649,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID));
 			return invoiceDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
+			LOGGER.error("Error obtaining invoiceDetail orderedList", e);
 		}
 		return null;
 	}

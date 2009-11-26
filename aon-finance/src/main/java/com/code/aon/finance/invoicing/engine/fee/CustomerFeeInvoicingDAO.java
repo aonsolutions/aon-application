@@ -6,8 +6,9 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,7 +28,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 
 public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	
-	private static final Logger LOGGER = Logger.getLogger(CustomerFeeInvoicingDAO.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerFeeInvoicingDAO.class.getName());
 	
 	private List<Invoice> invoicingCollection;
 	
@@ -47,7 +48,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 			invoicingCollection.add(invoice);
 			return invoice;
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting invoice wiht id=" + invoice.getId(), e);
+			LOGGER.error("Error inserting invoice wiht id=" + invoice.getId(), e);
 		}
 		return null;
 	}
@@ -58,7 +59,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			invoiceDetailBean.insert(invoiceDetail);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting invoiceDetail with id=" + invoiceDetail.getId(), e);
+			LOGGER.error("Error inserting invoiceDetail with id=" + invoiceDetail.getId(), e);
 		}
 	}
 	
@@ -80,7 +81,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error updating customerFee with id=" + customerFee.getId(), e);
+			LOGGER.error("Error updating customerFee with id=" + customerFee.getId(), e);
 		}
 	}
 
@@ -103,7 +104,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 				return (RegistryAddress)iter.next();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining address for registry with id= " + id, e);
+			LOGGER.error("Error obtaining address for registry with id= " + id, e);
 		}
 		return null;
 	}

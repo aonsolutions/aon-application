@@ -2,8 +2,9 @@ package com.code.aon.finance.invoicing.finance;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -16,7 +17,7 @@ import com.code.aon.ql.Criteria;
 
 public class FinanceTrackingWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(FinanceTrackingWriter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FinanceTrackingWriter.class.getName());
 
     public static FinanceTracking addFinanceTracking(Finance finance, Date trackingDate, FinanceTrackingType trackingType, String description) {
         FinanceTracking tracking = new FinanceTracking();
@@ -29,7 +30,7 @@ public class FinanceTrackingWriter {
             tracking.setAmount(finance.getTotalAmount());
             tracking = (FinanceTracking)financeTrackingBean.insert(tracking);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error inserting finance tracking of finance with id=" + finance.getId(), e);
+            LOGGER.error("Error inserting finance tracking of finance with id=" + finance.getId(), e);
         }
         return tracking;
     }
@@ -48,7 +49,7 @@ public class FinanceTrackingWriter {
 				financeTrackingBean.remove(tracking);
 			}
 		} catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error removing last tracking by type of finance with id=" + finance.getId(), e);
+            LOGGER.error("Error removing last tracking by type of finance with id=" + finance.getId(), e);
 		}
     }
 
