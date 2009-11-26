@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="financeFractionForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fractioning}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:confirmButton id="save"
+						value="#{bundle.aon_accept}"
+						rendered="#{financeFraction.fractionable}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_accept_confirm}"
+						confirmActionListener="#{financeFraction.onAcceptFractions}"
+						confirmAction="finance_list"						
+						accesskey="#{bundle.aon_key_save}" />
+					<aon:confirmButton id="cancel"
+						value="#{bundle.aon_cancel}" immediate="true" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_cancel_confirm}"
+						confirmAction="finance_form"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<aon:outputLabel for="Finance_registry_id"
+						value="#{financeFraction.targetFinance.payment?(financeBundle.finance_creditor):(financeBundle.finance_debtor)}" />
+					<aon:inputText id="Finance_registry_id" forceId="#{true}"
+						size="40" disabled="true"
+						value="#{financeFraction.targetFinance.registry.name} #{financeFraction.targetFinance.registry.surname==null?' ':(finance.to.registry.surname)}" />	
+													
+					<aon:outputLabel for="Finance_invoice_series"
+						value="#{financeBundle.finance_invoice}" />
+					<aon:div>
+						<aon:inputText id="Finance_invoice_series"
+							value="#{financeFraction.targetFinance.invoice.series}"
+							disabled="true" size="4" maxlength="5" />
+						<aon:div layout="inline" styleClass="aon-padding-left">
+							<aon:inputText id="Finance_invoice_number"
+								value="#{financeFraction.targetFinance.invoice.number}"
+								disabled="true" size="7" />
+						</aon:div>
+					</aon:div>					
+					
+					<aon:outputLabel for="Finance_dueDate"
+						value="#{financeBundle.finance_invoice_date}" />
+					<aon:inputText id="Finance_dueDate"
+						size="10" disabled="true"
+						value="#{financeFraction.targetFinance.dueDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:inputText>
+					
+					<aon:outputLabel for="Finance_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Finance_amount"
+						value="#{finance.to.amount}" size="10" disabled="true">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:inputText>	
+
+					<aon:outputLabel for="Finance_expenses"
+						value="#{financeBundle.finance_expenses}" />
+					<aon:inputText id="Finance_expenses"
+						value="#{finance.to.expenses}" size="10" disabled="true">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:inputText>	
+
+					<aon:outputLabel for="Finance_totalAmount"
+						value="#{bundle.aon_total}" />
+					<aon:inputText id="Finance_totalAmount"
+						value="#{finance.to.totalAmount}" size="10" disabled="true">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:inputText>	
+						
+				</aon:panelGrid>
+					
+				<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="financeFractionData" value="#{financeBundle.finance_resulting_finances}" />
+						</aon:div>
+					</aon:div>
+					<aon:div styleClass="aon-scroll-area">
+					
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+							<ui:param name="controller" value="#{financeFraction}" />
+							<ui:param name="columnClasses" value="aon-editDataTable-text,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn" />
+							<ui:param name="skipRemoveButton" value="#{!financeFraction.removableFraction}" />
+							<ui:param name="saveButtonReRender" value="aonToolbar" />
+							<ui:param name="removeButtonReRender" value="aonToolbar" />
+							<ui:param name="newSaveButtonReRender" value="aonToolbar" />
+	
+							<ui:define name="columns">
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_date}" />
+									</f:facet>
+									<aon:outputText value="#{to.dueDate}" rendered="#{formList}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+									<aon:selectInputDate required="true"
+										value="#{financeFraction.to.dueDate}"
+										rendered="#{formEdit}"
+										timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}"/>											
+									<f:facet name="footer">
+										<aon:selectInputDate required="true"
+											value="#{financeFraction.to.dueDate}"
+											rendered="#{formNew}"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+									</f:facet>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_expenses}" />
+									</f:facet>
+									<aon:outputText value="#{to.expenses}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_amount}" />
+									</f:facet>
+									<aon:outputText value="#{to.amount}" 
+										rendered="#{formList}" >
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+									<aon:inputText required="true"
+										rendered="#{formEdit}"
+										value="#{financeFraction.to.amount}" />
+									<f:facet name="footer">
+										<aon:inputText rendered="#{formNew}" required="true"
+											value="#{financeFraction.to.amount}">
+										</aon:inputText>
+									</f:facet>
+								</aon:column>
+
+							</ui:define>
+						</ui:decorate>
+					
+					</aon:div>
+				</aon:div>
+									
+					<!-- 
+					<aon:div styleClass="aon-form-group">
+						<aon:div styleClass="aon-form-group-title">
+							<aon:outputLabel for="financeFractionData"
+								value="#{financeBundle.aon_finance_resulting_finances}" />
+						</aon:div>
+
+						<aon:div styleClass="aon-form-group-body">
+							<aon:dataTable id="financeFractionData" var="to" value="#{financeFraction.fractionModel}"
+								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer" rows="20"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" 
+								rowOnClick="sendRow( this )"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-buttons"
+								cellpadding="0" cellspacing="0">
+								
+								<aon:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<aon:commandLink immediate="true"
+										styleClass="aon-table-row-selected"
+										rendered="#{to!=financeFraction.currentFinance}"
+										actionListener="#{financeFraction.onSelectFraction}" />
+									<f:facet name="footer">
+										<aon:div>
+											<aon:commandButton value=""
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+												title="#{bundle.aon_reset}"
+												actionListener="#{financeFraction.onNewFraction}"
+												rendered="#{!financeFraction.new}"
+												accesskey="#{bundle.aon_key_new_line}" />
+										</aon:div>
+									</f:facet>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.aon_date}" />
+									</f:facet>
+									<aon:outputText value="#{to.dueDate}" rendered="#{to!=financeFraction.currentFinance}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+									<aon:inputCalendar size="10" required="true"
+										rendered="#{to==financeFraction.currentFinance}"
+										value="#{financeFraction.currentFinance.dueDate}"
+										monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+										currentDayCellClass="currentDayCell" renderAsPopup="true"
+										styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+										popupTodayString="#{bundle.aon_popup_today}"
+										popupWeekString="#{bundle.aon_popup_week}" />
+									<f:facet name="footer">
+										<aon:div>
+											<aon:inputCalendar size="10" required="true"
+												rendered="#{financeFraction.new}" value="#{financeFraction.currentFinance.dueDate}"
+												monthYearRowClass="yearMonthHeader"
+												weekRowClass="weekHeader" forceId="true"
+												popupButtonStyleClass="aon-form-calendar-button"
+												currentDayCellClass="currentDayCell"
+												renderAsPopup="true" styleClass="aon-form-input-text"
+												popupTodayString="#{bundle.aon_popup_today}"
+												popupWeekString="#{bundle.aon_popup_week}"/>
+										</aon:div>
+									</f:facet>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_expenses}" />
+									</f:facet>
+									<aon:outputText
+										value="#{to.expenses}" forceId="true">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.aon_amount}" />
+									</f:facet>
+									<aon:outputText id="Finance_amount"
+										rendered="#{to!=financeFraction.currentFinance}"
+										value="#{to.amount}" forceId="true">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+									<aon:inputText id="Finance_amount-Edit"
+										rendered="#{to==financeFraction.currentFinance}" forceId="true"
+										value="#{financeFraction.currentFinance.amount}" required="true" />
+									<f:facet name="footer">
+										<aon:div style="text-align:right;">
+											<aon:inputText id="Finance_amount-New"
+												rendered="#{financeFraction.new}"
+												value="#{financeFraction.currentFinance.amount}">
+											</aon:inputText>
+										</aon:div>
+									</f:facet>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<aon:div rendered="#{to==financeFraction.currentFinance}">
+										<aon:commandButton title="#{bundle.aon_save}"
+											actionListener="#{financeFraction.onUpdateFraction}"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											value="" accesskey="#{bundle.aon_key_save_line}" />
+										<aon:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{financeFraction.onCancelFraction}"
+											immediate="true"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}" />
+										<aon:commandButton title="#{bundle.aon_remove}"
+											actionListener="#{financeFraction.onRemoveFraction}"
+											immediate="true" rendered="#{financeFraction.removableFraction}"
+											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+											value="" accesskey="#{bundle.aon_key_remove_line}" />
+									</aon:div>
+									<f:facet name="footer">
+										<aon:div>
+											<aon:div rendered="#{financeFraction.new}">
+												<aon:commandButton title="#{bundle.aon_save}"
+													actionListener="#{financeFraction.onAddFraction}"
+													onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+													value="" accesskey="#{bundle.aon_key_save_line}" />
+												<aon:commandButton title="#{bundle.aon_cancel}"
+													actionListener="#{financeFraction.onCancelFraction}"
+													immediate="true"
+													onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+													value="" accesskey="#{bundle.aon_key_cancel_line}" />
+											</aon:div>
+										</aon:div>
+									</f:facet>
+								</aon:column>
+									
+							</aon:dataTable>	
+						</aon:div>
+
+					</aon:div>
+					-->
+
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="surveyForm">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_survey_module}" />
+				<ui:param name="controller" value="#{survey}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+					<aon:outputLabel for="Survey_id"
+						rendered="#{!survey.new}" value="#{bundle.aon_id}" />
+					<aon:inputText id="Survey_id" value="#{survey.to.id}"
+						rendered="#{!survey.new}" size="15" disabled="true" />
+
+					<aon:outputLabel for="Survey_creationDate"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="Survey_creationDate" required="true"
+						value="#{survey.to.creationDate}" timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>		
+						
+					<aon:outputLabel for="Survey_text"
+						value="#{bundle.aon_description}" />
+					<aon:inputTextarea id="Survey_text" required="true"
+						value="#{survey.to.description}" cols="60" rows="4" >
+						<f:validateLength  maximum="64"/>
+					</aon:inputTextarea>
+					
+					<aon:outputLabel for="Survey_active"
+						value="#{marketingBundle.marketing_active}" />
+					<aon:selectBooleanCheckbox id="Survey_active" 
+						value="#{survey.to.active}" />
+
+				</aon:panelGrid>
+
+				<aon:div styleClass="aon-form-group" rendered="#{!survey.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="surveyQuestionData" value="#{marketingBundle.marketing_question_module}" />
+						</aon:div>
+					</aon:div>
+					<ui:include src="/com/code/aon/ui/marketing/facelet/surveyQuestion/grid.xhtml" />
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{questionLookup}" /> 
+		<ui:include src="/com/code/aon/ui/marketing/facelet/surveyQuestion/workflowGrid.xhtml" />		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

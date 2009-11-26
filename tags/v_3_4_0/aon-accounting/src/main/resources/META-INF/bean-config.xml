@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="Listener para escribir los acumulados por cuenta">
+		<pojo>com.code.aon.accounting.AccountEntry</pojo>
+		<listeners>
+	        <listener>com.code.aon.accounting.event.AccountEntrySummaryBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AccountEntrySummaryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Listener para escribir los acumulados por cuenta">
+		<pojo>com.code.aon.accounting.AccountEntryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="Listener que se encarga de recalcular las dotaciones.">
+		<pojo>com.code.aon.accounting.Amortization</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AmortizationVetoableBeanListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+</bean-config>

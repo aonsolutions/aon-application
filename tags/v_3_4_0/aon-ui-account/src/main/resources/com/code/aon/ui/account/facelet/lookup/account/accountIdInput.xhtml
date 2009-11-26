@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div id="#{id}Container" rendered="#{renderedAttr}">
+		<a4j:region>
+			<aon:outputLabel for="#{id}" style="display:none"
+				value="#{accountBundle.account_account}" />
+			<aon:inputText id="#{id}" value="#{entity}" disabled="#{disabled}"
+				required="#{required}" size="#{size}" maxlength="#{maxlength}">
+				<a4j:support event="onkeyup"
+					onsubmit="if(event.keyCode != 113) return false;"
+					eventsQueue="#{id}KeyUp" ignoreDupResponses="true"
+					requestDelay="100" actionListener="#{wizard.onShow}"
+					immediate="true" reRender="#{id}Container"
+					oncomplete="searchFieldForFocus('#{id}searchName')">
+				</a4j:support>
+
+				<a4j:support eventsQueue="#{id}OnChange"
+					onsubmit="validateOnChange(this)"
+					actionListener="#{wizard.onLookup}" ignoreDupResponses="true"
+					requestDelay="100" event="onchange"
+					reRender="#{id}Name,#{reRenderAttr}">
+					<a4j:actionparam name="lookupActionParam"
+						value="#{onLookupELExpression}"
+						assignTo="#{wizard.extendedAttributesValueExpression}">
+					</a4j:actionparam>
+					<a4j:actionparam name="valueChangeListener"
+						value="#{valueChangeListener}"
+						assignTo="#{wizard.valueChangeListener}">
+					</a4j:actionparam>
+				</a4j:support>
+			</aon:inputText>
+		</a4j:region>
+		<rich:suggestionbox for="#{id}"
+			suggestionAction="#{wizard.autocompleteId}" var="result"
+			onsubmit="if (!activateSuggestionBox(this)) return false;"
+			immediate="true"
+			eventsQueue="#{id}Sug" ignoreDupResponses="true"
+			requestDelay="100" width="500" height="200"
+			nothingLabel="#{bundle.aon_search_no_results}">
+			<aon:column>
+				<aon:outputText value="#{result.id}" />
+			</aon:column>
+			<aon:column>
+				<aon:outputText value="#{result.description}" />
+			</aon:column>
+			<a4j:support event="onselect" reRender="#{id}Container">
+				<f:setPropertyActionListener target="#{entity}" value="#{result}" />
+			</a4j:support>
+		</rich:suggestionbox>
+		<a4j:commandButton styleClass="aon-lookupButton" value=""
+			disabled="#{disabled}" actionListener="#{wizard.onShow}"
+			immediate="true" oncomplete="searchFieldForFocus('#{id}searchName')"
+			reRender="#{id}Container" />
+		<aon:div id="#{id}Name" style="display:inline" rendered="#{renderDescription}">
+			<aon:outputText rendered="#{entity.description != null}"
+				value="#{entity.description}">
+				<aon:abbreviateConverter maxWidth="35" />
+			</aon:outputText>
+			<aon:outputText rendered="#{entity.description == null}"
+				value="---------------------------------" />
+		</aon:div>
+		<c:if test="#{wizard.visible}">
+			<rich:modalPanel id="#{id}modalPanel" minHeight="600"
+				rendered="#{wizard.visible}" showWhenRendered="true" minWidth="650"
+				top="50" left="100" height="600" width="650" zindex="2000"
+				resizeable="true">
+
+				<a4j:support event="onkeyup"
+					onsubmit="if(event.keyCode != 27) return false;"
+					eventsQueue="#{id}EscKeyUp" ignoreDupResponses="true"
+					requestDelay="100" actionListener="#{wizard.onClose}"
+					immediate="true" reRender="#{id}Container"
+					oncomplete="searchFieldForFocus('#{id}')">
+				</a4j:support>
+
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{accountBundle.account_selection}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<a4j:commandButton type="button" styleClass="aon-popupWindow-close"
+						actionListener="#{wizard.onClose}" immediate="true"
+						reRender="#{id}Container"
+						oncomplete="searchFieldForFocus('#{id}')">
+					</a4j:commandButton>
+				</f:facet>
+				<a4j:region>
+					<rich:simpleTogglePanel id="#{id}SearchPanelContainer"
+						label="#{bundle.aon_search_info}"
+						styleClass="aon-panelGrid-search" switchType="client"
+						headerClass="aon-panelGrid-search-info-internal"
+						bodyClass="aon-panelGrid-search-body">
+
+						<aon:panelGrid columns="2" style="width:100%;">
+							<aon:outputText value="#{bundle.aon_description}" />
+							<aon:inputText id="#{id}searchName" value="#{wizard.description}" size="40">
+								<a4j:support event="onchange" ajaxSingle="true"
+									eventsQueue="#{id}nm" ignoreDupResponses="true"
+									requestDelay="100" actionListener="#{wizard.inputChanged}" />
+							</aon:inputText>
+
+							<aon:outputText value="#{bundle.aon_alias}" />
+							<aon:inputText value="#{wizard.alias}" size="20">
+								<a4j:support event="onchange" ajaxSingle="true"
+									eventsQueue="#{id}ac" ignoreDupResponses="true"
+									requestDelay="100" actionListener="#{wizard.inputChanged}" />
+							</aon:inputText>
+
+							<aon:outputText value="#{accountBundle.account_account}" />
+							<aon:div>
+								<aon:inputText value="#{wizard.id}" size="15">
+									<a4j:support event="onchange" ajaxSingle="true"
+										eventsQueue="#{id}ic" ignoreDupResponses="true"
+										requestDelay="100" actionListener="#{wizard.inputChanged}" />
+								</aon:inputText>
+								<a4j:commandButton value="#{bundle.aon_search}"
+									style="margin-left: 5px;" actionListener="#{wizard.onSearch}"
+									accesskey="#{bundle.aon_key_search}"
+									eventsQueue="#{id}SearchQueue" ignoreDupResponses="true"
+									requestDelay="100" reRender="#{id}tableContainer"
+									oncomplete="selectFirstRow('#{id}table')">
+								</a4j:commandButton>
+							</aon:div>
+						</aon:panelGrid>
+					</rich:simpleTogglePanel>
+				</a4j:region>
+
+				<rich:separator height="2px;"
+					style="margin-top: 5px;margin-bottom: 5px;" />
+
+				<aon:div id="#{id}tableContainer">
+					<aon:editDataTable id="#{id}table" value="#{wizard.model}"
+						var="acc" rows="15" rendered="#{wizard.model.rowCount > 0}"
+						columnClasses="aon-editDataTable-iconColumn,
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn">
+						<aon:column>
+							<aon:commandButton id="#{id}RowSelector"
+								styleClass="aon-editDataTable-button aon-icon-rowSelector"
+								immediate="true"
+								ajaxSingle="true" eventsQueue="#{id}SelectQueue"
+								requestDelay="100" ignoreDupResponses="true"
+								onkeyup="tableKeyUp(event.keyCode)"
+								reRender="#{id}Container,#{reRenderAttr}">
+								<a4j:actionparam name="actionParam" value="#{ELExpression}"
+									assignTo="#{wizard.valueExpression}">
+								</a4j:actionparam>
+								<a4j:actionparam name="lookupActionParam"
+									value="#{onLookupELExpression}"
+									assignTo="#{wizard.extendedAttributesValueExpression}">
+								</a4j:actionparam>
+								<a4j:actionparam name="valueChangeListener"
+									value="#{valueChangeListener}"
+									assignTo="#{wizard.valueChangeListener}">
+								</a4j:actionparam>
+								<aon:actionListener method="#{wizard.onSelect}" />
+							</aon:commandButton>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{accountBundle.account_account}" />
+							</f:facet>
+							<aon:outputText value="#{acc.id}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{acc.description}">
+								<aon:abbreviateConverter maxWidth="75" />
+							</aon:outputText>
+						</aon:column>
+					</aon:editDataTable>
+
+					<aon:dataScroller2 for="#{id}table" showNote="true" />
+				</aon:div>
+			</rich:modalPanel>
+		</c:if>
+		<a4j:loadScript src="/js/extendedInput.js" />
+		<a4j:loadScript
+			src="/aonResource/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.js" />
+	</aon:div>
+</ui:composition>
