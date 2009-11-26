@@ -7,11 +7,12 @@ package com.code.aon.ui.common.listener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.bean.BeanConfigParser;
@@ -40,7 +41,7 @@ import com.code.aon.common.util.Classpath;
 public class BeanRegisterContextListener implements ServletContextListener {
 
 	/** Gets a suitable <code>Logger</code>. */
-	private static Logger LOGGER = Logger.getLogger(BeanRegisterContextListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BeanRegisterContextListener.class);
 	
 	/** The Constant CONFIG_FILE_PARAM. */
 	private static final String CONFIG_FILE = "bean-config.xml";
@@ -54,7 +55,7 @@ public class BeanRegisterContextListener implements ServletContextListener {
 			
 			is.close();
 		} catch (ManagerBeanException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		}		
 	}
 	
@@ -72,11 +73,11 @@ public class BeanRegisterContextListener implements ServletContextListener {
 	            	addBeanConfig( urls[i] );
 	            	LOGGER.info("Added Bean Config from: " + urls[i]);
 	            } catch (Exception e) {
-	                LOGGER.log(Level.SEVERE, "Error Loading Library: " + urls[i], e);
+	                LOGGER.error( "Error Loading Library: " + urls[i], e);
 	            }
 	        }
 		} catch (IOException e) {
-        	LOGGER.log(Level.SEVERE, "Error searching files: " + CONFIG_FILE, e);
+        	LOGGER.error( "Error searching files: " + CONFIG_FILE, e);
         }		
 	}
 

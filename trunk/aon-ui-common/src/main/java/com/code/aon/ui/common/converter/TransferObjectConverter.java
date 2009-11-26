@@ -1,8 +1,6 @@
 package com.code.aon.ui.common.converter;
 
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
@@ -13,6 +11,8 @@ import javax.faces.convert.ConverterException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,7 +25,7 @@ import com.code.aon.common.ManagerBeanException;
  */
 public class TransferObjectConverter implements Converter {
 
-	private static final Logger LOGGER = Logger.getLogger(TransferObjectConverter.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TransferObjectConverter.class);
 	
 	private Serializable getId( String value ) {
 		Serializable id = null;
@@ -33,7 +33,7 @@ public class TransferObjectConverter implements Converter {
 	        byte[] data = Base64.decodeBase64(value.getBytes());
 	        id = (Serializable) SerializationUtils.deserialize(data);			
 		} catch ( Throwable th ) {
-			LOGGER.log( Level.FINE, "Error deserializing: " + value, th );	
+			LOGGER.debug( "Error deserializing: " + value, th );	
 		}
         return id;
 	}

@@ -17,8 +17,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
  * 
  */
 public class CommonCollections {
-	Map<Locale,List<SelectItem>> months = new HashMap<Locale,List<SelectItem>>();  
-	Map<Locale,List<SelectItem>> levels = new HashMap<Locale,List<SelectItem>>();
+	
+	private Map<Locale,List<SelectItem>> months = new HashMap<Locale,List<SelectItem>>();  
+	private Map<Locale,List<SelectItem>> levels = new HashMap<Locale,List<SelectItem>>();
 	
 	/**
      * Get year months.
