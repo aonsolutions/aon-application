@@ -10,15 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ldap</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<description>AON LDAP</description>
 	<name>AON LDAP</name>
 	<dependencies>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging-api</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.8</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -31,5 +30,11 @@
 			<version>4.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.5.8</version>
+			<scope>test</scope>
+		</dependency>				
 	</dependencies>
 </project>
