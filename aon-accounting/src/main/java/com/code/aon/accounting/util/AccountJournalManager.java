@@ -1,8 +1,9 @@
 package com.code.aon.accounting.util;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountHelper;
@@ -21,7 +22,7 @@ import com.code.aon.ql.Criteria;
 
 public class AccountJournalManager {
 
-	private static final Logger LOGGER = Logger.getLogger(AccountJournalManager.class.getName()); 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountJournalManager.class.getName()); 
 	private IManagerBean bean;
 
 	public IManagerBean getBean() throws ManagerBeanException {
@@ -84,7 +85,7 @@ public class AccountJournalManager {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.log(Level.SEVERE, msg, e);
+					LOGGER.error(msg, e);
 				}
 				throw new ManagerBeanException(e.getMessage(),e);
 			} finally {
