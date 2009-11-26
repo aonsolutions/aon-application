@@ -30,7 +30,7 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	private static final String LOOKUP_INPUT_TEXT_COMPONENT_TYPE = "com.code.aon.faces.HtmlLookupInputText";
 	
 	private static final String SELECT_INPUT_DATE_COMPONENT_TYPE = "com.code.aon.faces.SelectInputDate";
-	
+
 	private static final String INPUT_RICH_TEXT_COMPONENT_TYPE = "com.code.aon.faces.InputRichText";
 
 	private ComponentConfig config;

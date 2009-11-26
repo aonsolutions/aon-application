@@ -61,7 +61,7 @@
 		<component>
 			<component-type>com.code.aon.faces.Form</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxComponentHandler
+				com.code.aon.faces.component.richfaces.form.FormHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -192,7 +192,7 @@
 				com.code.aon.faces.InputRichTextRenderer
 			</renderer-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.inputRichText.InputRichTextHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
