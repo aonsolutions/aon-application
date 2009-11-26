@@ -31,8 +31,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LdapSession implements ILdapConstants, IAonObjectClasses {
 
@@ -52,8 +52,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	
 	private static final SimpleDateFormat GENERALIZED_TIME_FORMAT = new SimpleDateFormat( "yyyyMMddHHmmss'Z'" );
 
-	private static final Log LOGGER = LogFactory.getLog(LdapSession.class
-			.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(LdapSession.class);
 
 	private DirContext dc;
 	
@@ -381,7 +380,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			} else if ( childDN.startsWith(fullDN) ) {
 				deleteDepth(childDN, true);	
 			} else {
-				LOGGER.debug( "Skipping " + childDN );
+				LOGGER.debug( "Skipping {}", childDN );
 			}				
 		}
 		if ( selfDelete ) {

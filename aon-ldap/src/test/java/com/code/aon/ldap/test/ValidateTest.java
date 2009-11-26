@@ -11,12 +11,12 @@ import javax.naming.Name;
 import junit.framework.JUnit4TestAdapter;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
@@ -30,7 +30,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 
 	private static final String AON_WEBMAIL = "aon-webmail";
 
-	private static Log LOGGER = LogFactory.getLog(ValidateTest.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ValidateTest.class);
 	
 	private static final String LDAP_PROPERTIES = "ldap.properties";
 	
@@ -123,7 +123,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 			Entry entry = new Entry(dn);
 			entry.addObjectClasses(new String[]{TOP, ORGANIZATIONAL_UNIT});
 			entry.put( ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, NameResolver.getFirstValue(dn) );
-			LOGGER.info( "Add Organization Unit entry: " + dn );
+			LOGGER.info( "Add Organization Unit entry: {}", dn );
 			ldap.getLdapSession().add(entry);
 		} catch ( LdapException e ) {
 			LOGGER.error(e.getMessage(), e);
@@ -133,7 +133,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 	}	
 	private void ensureOrganizationalUnit( Name dn ) {
 		if (! ldap.exists(dn, ORGANIZATIONAL_UNIT) ) {
-			LOGGER.warn( ORGANIZATIONAL_UNIT + " " + dn + " doesn't exist" );
+			LOGGER.warn(  "{} {} doesn't exist", ORGANIZATIONAL_UNIT, dn );
 			addOrganizationUnit(dn);
 		}
 	}
@@ -171,10 +171,10 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 	private void checkName( Name name, String objectClass, Name container, Name preffix ) {
 		if ( ldap.exists(name, objectClass) ) {
 			if (! name.startsWith(preffix) ) {
-				LOGGER.error( objectClass + " " + name + " must have preffix  " + preffix + " in " + container );
+				LOGGER.error( "{} {} must have preffix {} in {}", new Object[]{objectClass, name, preffix, container} );
 			}
 		} else {
-			LOGGER.error( objectClass + " doesn't exist " + name + " in " + container );
+			LOGGER.error( "{} doesn't exist {} in {}", new Object[] {objectClass, name, container} );
 		}	
 	}
 	
@@ -216,7 +216,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		String filter = NameResolver.getCommonName(name);
 		List<Entry> applications = getDeepList(applicationsDN, filter, DOMAIN_APPLICATION_USER);
 		if ( applications.isEmpty() ) {
-			LOGGER.warn( "User not registered in any application: " + user.getDN() );
+			LOGGER.warn( "User not registered in any application: {}", user.getDN() );
 		}
 	}
 
@@ -225,7 +225,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		String filter = NameResolver.getEqualExpression(DATA_SOURCE_ATTRIBUTE, db.getDN().toString());
 		List<Entry> applications = getDeepList(applicationsDN, filter, DOMAIN_APPLICATION);
 		if ( applications.isEmpty() ) {
-			LOGGER.warn( "DBConnection not used in any application: " + db.getDN() );
+			LOGGER.warn( "DBConnection not used in any application: {}", db.getDN() );
 		}
 	}
 	
@@ -273,7 +273,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		
 		List<Entry> users = getList(usersDN, DOMAIN_APPLICATION_USER);
 		if ( users.isEmpty() ) {
-			LOGGER.info( "DomainApplication " + application.getDN() + " with users empty" );	
+			LOGGER.info( "DomainApplication {} with users empty", application.getDN() );	
 		}
 		for( Entry user : users ) {
 			testDomainApplicationUser( user, name, domain );
@@ -307,14 +307,14 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 				ensureOrganizationalUnit( signaturesDN );
 				List<Entry> signatures = getList(signaturesDN, SIGNATURE);
 				if ( signatures.isEmpty() ) {
-					LOGGER.error( "User " + userDN + " with signatures empty" );	
+					LOGGER.error( "User {} with signatures empty", userDN );	
 				}
 				
 				Name accounts = NameResolver.getUserAccountsDN(domain, name);
 				ensureOrganizationalUnit( accounts );
 				List<Entry> mailAccounts = getList(accounts, MAIL_ACCOUNT);
 				if ( mailAccounts.isEmpty() ) {
-					LOGGER.error( "User " + userDN + " with mail accounts empty" );	
+					LOGGER.error( "User {} with mail accounts empty", userDN );	
 				} else {
 					for( Entry mailAccount : mailAccounts ) {
 						testMailAccount(mailAccount, getFullDN(signaturesDN));
