@@ -2,14 +2,14 @@ package com.code.aon.facturae;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.company.Company;
 import com.code.aon.finance.Invoice;
@@ -18,7 +18,7 @@ import es.mityc.facturae31.AmountType;
 
 public class Util {
 
-	private static final Logger LOGGER = Logger.getLogger(FacturaeWriter.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FacturaeWriter.class.getName());
 
 	public static String getBatchIdentifier( Invoice invoice, Company company ) {
 		StringBuffer id = new StringBuffer( company.getDocument() );
@@ -33,7 +33,7 @@ public class Util {
 		try {
 			return DatatypeFactory.newInstance().newXMLGregorianCalendar( calendar );
 		} catch (DatatypeConfigurationException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}

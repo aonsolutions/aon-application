@@ -2,13 +2,13 @@ package com.code.aon.facturae;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -85,7 +85,7 @@ public class FacturaeWriter {
 	
 	private static final String RETENTION_TAX_TYPE_CODE = "04";
 
-	private static final Logger LOGGER = Logger.getLogger(FacturaeWriter.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FacturaeWriter.class.getName());
 	
 	private Company company;
 	
@@ -626,7 +626,7 @@ public class FacturaeWriter {
 		    try {
 				HibernateUtil.rollbackTransaction(sessionFactoryName);
 			} catch (DAOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.error(e.getMessage(), e);
 			}
 		} finally {
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
