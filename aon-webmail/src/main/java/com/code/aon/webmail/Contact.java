@@ -379,9 +379,8 @@ public class Contact implements ILdapTransferObject {
 			}
 			String emails = StringUtils.join( list, ", " );
 			return StringUtils.trimToNull( emails );
-		} else {
-			return getEmail();
-		}
+		} 
+		return getEmail();
 	}
 	
 	@Override
