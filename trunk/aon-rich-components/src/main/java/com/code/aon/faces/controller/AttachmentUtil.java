@@ -2,8 +2,6 @@ package com.code.aon.faces.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
@@ -21,6 +19,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
@@ -32,7 +32,7 @@ import com.sun.faces.util.MessageFactory;
 
 public class AttachmentUtil implements ICommonConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(AttachmentUtil.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(AttachmentUtil.class);
 	
 	/**
 	 * Checks if is uploaded.
@@ -81,7 +81,7 @@ public class AttachmentUtil implements ICommonConstants {
 					mt = MimeType.get(match.getMimeType());					
 				}
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, "Error finding file Mime Type", th );
+				LOGGER.error( "Error finding file Mime Type", th );
 			}
 		} else {
 			mt = MimeType.getByExtension(ext);	
@@ -149,7 +149,7 @@ public class AttachmentUtil implements ICommonConstants {
 			response.flushBuffer();
 	        context.responseComplete();    	
 		} catch (IOException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			LOGGER.error( e.getMessage(), e );
 		}
 	}
 	

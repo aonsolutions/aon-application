@@ -3,7 +3,6 @@ package com.code.aon.faces.component.util;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import javax.el.ELException;
 import javax.el.ExpressionFactory;
@@ -19,6 +18,8 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.net.DummyHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
@@ -32,7 +33,7 @@ import com.sun.facelets.tag.TagException;
 
 public class FaceletUtil {
 
-	private static final Logger LOGGER = Logger.getLogger(FaceletUtil.class.getName());	
+	private final static Logger LOGGER = LoggerFactory.getLogger(FaceletUtil.class);
 	
 	public final static Class[] ACTION_SIG = new Class[0];
 
@@ -60,7 +61,7 @@ public class FaceletUtil {
 		try {
 			url = new URL(null, url.toExternalForm(), new DummyHandler() );
 		} catch (MalformedURLException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage(), e );
 		}
 		return url;
 	}
