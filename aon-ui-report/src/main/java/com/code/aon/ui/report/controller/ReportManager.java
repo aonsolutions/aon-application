@@ -12,8 +12,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.application.Application;
 import javax.faces.context.ExternalContext;
@@ -22,6 +20,8 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ICriteriaProvider;
@@ -49,7 +49,7 @@ public class ReportManager {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(ReportManager.class.getName());
+	private static Logger LOGGER = LoggerFactory.getLogger(ReportManager.class);
 
 	/**
 	 * Output format of the report.
@@ -233,13 +233,12 @@ public class ReportManager {
 
 			String dp = report.getReportConfig().getDynamicParamsProvider();
 			if (dp != null) {
-				LOGGER.info(dp);
+				LOGGER.debug(dp);
 				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) AonUtil
 						.getRegisteredBean(dp);
 				Map<String, Object> dynParams = dpp.getDynamicParamsMap();
-				LOGGER.info("" + dynParams.size());
 				report.setDynamicParams(dynParams);
-				LOGGER.info("Dynamic params set!");
+				LOGGER.debug("Dynamic params set!");
 			}
 
 			String out = report.run(outputFormat, os, getBundle(), criteria, collection);
@@ -248,10 +247,11 @@ public class ReportManager {
 			HibernateUtil.closeSession(sessionFactoryName);
 			return out;
 		} catch (Throwable t) {
+			LOGGER.error(t.getMessage(), t);
 			try {
 				HibernateUtil.rollbackTransaction(sessionFactoryName);
 			} catch (DAOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.error(e.getMessage(), e);
 			}
 			AonUtil.addFatalMessage("Report Error:" + t.getMessage());
 			if (t instanceof ReportException) {
@@ -322,7 +322,7 @@ public class ReportManager {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ExternalContext ec = ctx.getExternalContext();
 			HttpServletResponse res = (HttpServletResponse) ec.getResponse();
-			LOGGER.info("ContentType " + getOutputFormat().getMimeType());
+			LOGGER.info("ContentType {}",getOutputFormat().getMimeType());
 			res.setContentType(getOutputFormat().getMimeType());
 			String contentDisposition = getContentDispositionHeader();
 			if (contentDisposition != null) {
@@ -330,7 +330,7 @@ public class ReportManager {
 			}
 			return res.getOutputStream();
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
@@ -472,7 +472,7 @@ public class ReportManager {
 	private void resolveCustomParameters(JRReport report) {
 		ReportConfig config = report.getReportConfig();
 		if (config.getParams() != null) {
-			LOGGER.fine("Passing Custom Parameters");
+			LOGGER.debug("Passing Custom Parameters");
 			Map<String, Object> map = new HashMap<String, Object>();
 			Iterator<Object> iter = config.getParams().keySet().iterator();
 			while (iter.hasNext()) {
@@ -488,8 +488,8 @@ public class ReportManager {
 						Object obj = m.invoke(o, new Object[0]);
 						map.put(key, obj);
 					} catch (Throwable th) {
-						LOGGER.log(Level.SEVERE, "Error resolving expression " + value + ". "
-								+ th.getMessage(), th);
+						LOGGER.warn("Error resolving expression {}.",value);
+						LOGGER.warn(th.getMessage(), th);								
 					}
 				}
 			}
