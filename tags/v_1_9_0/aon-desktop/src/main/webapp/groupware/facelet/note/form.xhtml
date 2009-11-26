@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="noteForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_note}" />
+				<ui:param name="controller" value="#{note}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2" dir="true">
+
+					<aon:outputLabel for="Note_date"
+						rendered="#{!note.new}" value="#{groupwareBundle.aon_date}" />
+					<aon:outputText id="Note_date" value="#{note.to.date}"
+						rendered="#{!note.new}" styleClass="aon-inputText-disabled"
+						style="padding-left:1em;padding-right:1em;">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					
+					<aon:outputLabel for="Note_subject"
+						value="#{groupwareBundle.note_subject}" />
+					<aon:inputText id="Note_subject"
+						maxlength="64" size="98" required="true"
+						value="#{note.to.subject}" />
+
+					<aon:outputLabel for="Note_note" value="#{groupwareBundle.note_note}" />
+					<aon:inputTextarea id="Note_note"
+						value="#{note.to.note}" cols="100" rows="7" />
+
+				</aon:panelGrid>
+					
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
