@@ -2,8 +2,9 @@ package com.code.aon.ui.campaign.event;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.dao.ICampaignAlias;
@@ -28,7 +29,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class CampaignControllerListener extends ControllerAdapter {
 
-    private static final Logger LOGGER = Logger.getLogger(CampaignControllerListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(CampaignControllerListener.class);
 
     @Override
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -42,7 +43,7 @@ public class CampaignControllerListener extends ControllerAdapter {
         	}
             controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DESCRIPTION));
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error initializing Campaign Model", e);
+            LOGGER.error("Error initializing Campaign Model", e);
         }
     }
 

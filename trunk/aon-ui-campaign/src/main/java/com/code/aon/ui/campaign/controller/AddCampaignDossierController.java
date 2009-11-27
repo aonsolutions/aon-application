@@ -3,8 +3,6 @@ package com.code.aon.ui.campaign.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -14,6 +12,8 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
@@ -36,9 +36,10 @@ import com.code.aon.ui.project.util.CampaignTaskManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class AddCampaignDossierController {
-
-    private static final Logger LOGGER = Logger.getLogger(AddCampaignDossierController.class.getName());
-
+	
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(AddCampaignDossierController.class);
+	
 	private boolean addPanelVisible;
 	private List<CampaignDossier> checked;
 	private List<CampaignDossier> dossiers;
@@ -185,7 +186,7 @@ public class AddCampaignDossierController {
             campaignDossierController.onSearch(null);
             hideAddPanel(event);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error adding campaign dossier", e);
+            LOGGER.error("Error adding campaign dossier", e);
         }
     }
 
@@ -295,7 +296,7 @@ public class AddCampaignDossierController {
 				availableDossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers!", e);
+			LOGGER.error("Error loading dossiers!", e);
 		}
 	}
 	

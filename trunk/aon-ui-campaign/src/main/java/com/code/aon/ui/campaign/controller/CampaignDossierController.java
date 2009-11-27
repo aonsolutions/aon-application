@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -15,6 +13,8 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
@@ -35,8 +35,8 @@ import com.code.aon.ui.project.util.CampaignTaskManager;
 
 public class CampaignDossierController extends LinesController {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(CampaignDossierController.class.getName());
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CampaignDossierController.class);
 
 	private Criteria mainCriteria;
 	private String sortColumn;
@@ -94,7 +94,7 @@ public class CampaignDossierController extends LinesController {
 			setCriteria(criteria);
 			onSearch(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error sorting campaign dossier list", e);
+			LOGGER.error("Error sorting campaign dossier list", e);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class CampaignDossierController extends LinesController {
 
 			checks = new ArrayList<CampaignDossierExtended>();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error removing campaign dossier in campaign with id="
+			LOGGER.error("Error removing campaign dossier in campaign with id="
 					+ ((CampaignDossier) this.getTo()).getCampaign(), e);
 		}
 	}
@@ -256,7 +256,7 @@ public class CampaignDossierController extends LinesController {
             }
             mergeCampaignDossier(to,cd);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error changing process detail. ",e);
+            LOGGER.error("Error changing process detail. ",e);
         }
     }
 }

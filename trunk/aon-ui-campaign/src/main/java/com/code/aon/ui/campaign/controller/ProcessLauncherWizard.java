@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -17,6 +15,8 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.ActivityProcess;
 import com.code.aon.campaign.Campaign;
@@ -52,7 +52,7 @@ public class ProcessLauncherWizard implements Serializable {
 
 	private static final long serialVersionUID = 8114094812276365212L;
 
-	private static final Logger LOGGER = Logger.getLogger(ProcessLauncherWizard.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ProcessLauncherWizard.class);
 
 	private static final String[] STEPS = { "process_wizard_step0", "process_wizard_step1",
 			"process_wizard_step2", "process_wizard_step3" };
@@ -226,7 +226,7 @@ public class ProcessLauncherWizard implements Serializable {
 				availableDossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers!", e);
+			LOGGER.error("Error loading dossiers!", e);
 		}
 	}
 
