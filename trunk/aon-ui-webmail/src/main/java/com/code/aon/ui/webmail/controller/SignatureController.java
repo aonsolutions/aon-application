@@ -5,12 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -35,7 +37,7 @@ public class SignatureController extends GridController {
 
 	private static final String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
 
-	private static final Logger LOGGER = Logger.getLogger(SignatureController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(SignatureController.class);
 
 	private LdapDAO dao;
 	
@@ -85,11 +87,11 @@ public class SignatureController extends GridController {
 				}
 			}
 		} catch (ManagerBeanException e) {
-	        LOGGER.severe(">>>> accept " + e.getMessage());
+	        LOGGER.error(">>>> accept", e);
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		} catch (DAOException e) {
-	        LOGGER.severe(">>>> accept " + e.getMessage());
+			LOGGER.error(">>>> accept", e);
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
@@ -123,7 +125,7 @@ public class SignatureController extends GridController {
 			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_SIGNATURE_ID), id);
 			list = (List) mailAccountBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-            LOGGER.severe(">>>> getReferences " + e.getMessage());
+            LOGGER.error(">>>> getReferences", e);
 		}		
 		return list;
 	}
@@ -136,7 +138,7 @@ public class SignatureController extends GridController {
 				mailAccountBean.update( mailAccount );
 			}
 		} catch (ManagerBeanException e) {
-            LOGGER.severe(">>>> getReferences " + e.getMessage());
+			LOGGER.error(">>>> updateReferences", e);
 		}					
 	}
 	

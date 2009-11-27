@@ -2,11 +2,12 @@ package com.code.aon.ui.webmail.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,7 +22,7 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class MultiSelectionEmailBean {
 
-	private static final Logger LOGGER = Logger.getLogger(MultiSelectionEmailBean.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(MultiSelectionEmailBean.class);
 	
 	private ListDataModel model;
 	
@@ -68,7 +69,7 @@ public class MultiSelectionEmailBean {
 	            	emails.add(se);
 	            }
 	    	} catch (ManagerBeanException e) {
-	    		LOGGER.log( Level.SEVERE, e.getMessage(), e );
+	    		LOGGER.error( e.getMessage(), e );
 			}
 	    	this.model = new ListDataModel( emails );
 		} else {
