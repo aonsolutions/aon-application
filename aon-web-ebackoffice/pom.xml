@@ -9,50 +9,50 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.ebackoffice</artifactId>
 	<packaging>war</packaging>
-	<version>4.3.0</version>
+	<version>4.4.0</version>
 	<description>AON WEB EBACKOFFICE</description>
 	<name>AON WEB EBACKOFFICE</name>
 	<build>
 		<finalName>aon-ebackoffice</finalName>
 	</build>
 	<properties>
-		<dbVersion>4.6.0</dbVersion>
+		<dbVersion>4.7.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.4.0</version>
+			<version>4.5.0</version>
 			<scope>compile</scope>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.ebackoffice</artifactId>
-			<version>4.1.0</version>
+			<version>4.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.11.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 			<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>4.4.0</version>
+			<version>4.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 				
