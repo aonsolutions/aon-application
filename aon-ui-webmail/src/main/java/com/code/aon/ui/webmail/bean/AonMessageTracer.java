@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +16,10 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.BeanManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
@@ -29,7 +31,7 @@ import com.sun.mail.util.BASE64DecoderStream;
  */
 public class AonMessageTracer implements IMimeType {
 
-	private static final Logger LOGGER = Logger.getLogger(AonMessageTracer.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BeanManager.class);
 
 	private static final Pattern CID_PATTERN = Pattern.compile(
 			"(cid:[^\"\']+)(\"|\')", Pattern.CASE_INSENSITIVE);
@@ -73,7 +75,7 @@ public class AonMessageTracer implements IMimeType {
 					}
 					data = parseCids(data);
 				} else {
-					LOGGER.severe( "Multipart/alternative unexpected content: " + bodyPart.getContentType() );					
+					LOGGER.warn( "Multipart/alternative unexpected content: {}", bodyPart.getContentType() );					
 				}
 			}
 		}
@@ -116,7 +118,7 @@ public class AonMessageTracer implements IMimeType {
 					}
 					return data;
 				} else {
-					LOGGER.severe( "Multipart/mixed unexpected content: " + bodyPart.getContentType() );					
+					LOGGER.warn( "Multipart/mixed unexpected content: {}", bodyPart.getContentType() );					
 				}
 			}
 		} else if (mimepart instanceof String) {
@@ -124,7 +126,7 @@ public class AonMessageTracer implements IMimeType {
 			data = AonMessageUtils.parse_tags(data);
 			data = AonMessageUtils.parse_cr(data);
 		} else {
-			LOGGER.severe( "Multipart/mixed unexpected content: " + mimepart );
+			LOGGER.warn( "Multipart/mixed unexpected content: {}", mimepart );
 		}
 		return data;
 	}
@@ -161,7 +163,7 @@ public class AonMessageTracer implements IMimeType {
 					}
 					return data;
 				} else {
-					LOGGER.severe( "Multipart/related unexpected content: " + bodyPart.getContentType() );										
+					LOGGER.warn( "Multipart/related unexpected content: {}", bodyPart.getContentType() );										
 				}
 			}
 		} else if (mimepart instanceof String) {
@@ -169,7 +171,7 @@ public class AonMessageTracer implements IMimeType {
 			data = AonMessageUtils.parse_tags(data);
 			data = AonMessageUtils.parse_cr(data);
 		} else {
-			LOGGER.severe( "Multipart/related unexpected content: " + mimepart );
+			LOGGER.warn( "Multipart/related unexpected content: {}", mimepart );
 		}
 		return data;
 	}
@@ -197,7 +199,7 @@ public class AonMessageTracer implements IMimeType {
 					data = new StringBuffer( tmpdata );
 				}
 			} else {
-				LOGGER.severe( "Multipart/* unexpected content: " + bodyPart.getContentType() );
+				LOGGER.warn( "Multipart/* unexpected content: {}", bodyPart.getContentType() );
 			}
 		}
 		return data.toString();
@@ -213,7 +215,7 @@ public class AonMessageTracer implements IMimeType {
 			value = AonMessageUtils.parse_cr(value);
 			return value;
 		} else {
-			LOGGER.severe( "Unexpected content: " + mimepart );
+			LOGGER.warn( "Unexpected content: {}", mimepart );
 		}
 		return value;
 	}
@@ -255,9 +257,9 @@ public class AonMessageTracer implements IMimeType {
 				traceContent(message);
 				parseRelateds();
 			} catch (IOException e) {
-				LOGGER.log( Level.SEVERE, "Error parsing cids & relateds", e );
+				LOGGER.error( "Error parsing cids & relateds", e );
 			} catch (MessagingException e) {
-				LOGGER.log( Level.SEVERE, "Error parsing cids & relateds", e );
+				LOGGER.error( "Error parsing cids & relateds", e );
 			}
 		}
 		return relateds;

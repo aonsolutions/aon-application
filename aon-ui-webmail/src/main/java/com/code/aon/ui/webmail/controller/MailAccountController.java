@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -16,6 +14,8 @@ import javax.mail.MessagingException;
 import javax.naming.Name;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -36,7 +36,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 
 	private static final String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
 
-	private static final Logger LOGGER = Logger.getLogger(MailAccountController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(MailAccountController.class);
 	
 	private LdapDAO dao;	
 	
@@ -91,11 +91,11 @@ public class MailAccountController extends BasicController implements WebMailCon
 				}
 			}
 		} catch (ManagerBeanException e) {
-	        LOGGER.severe(">>>> accept " + e.getMessage());
+	        LOGGER.error(">>>> accept", e);
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		} catch (DAOException e) {
-	        LOGGER.severe(">>>> accept " + e.getMessage());
+			LOGGER.error(">>>> accept", e);
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
@@ -110,7 +110,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 				folderController.getFolder().getFolder().close(false);
 				folderController.setFolder(null);
 			} catch (MessagingException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.error( e.getMessage(), e);
 			}
 		}		
 	}
@@ -125,7 +125,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 			try {
 				webmail.init((MailAccount)previous);
 			} catch (MessagingException e1) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.error( e.getMessage(), e);
 			}
 			AonUtil.addErrorMessage( e.getMessage() );
 		} finally {
@@ -213,7 +213,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 				try {
 					getModel().setRowIndex(i);
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error( e.getMessage(), e);
 				}
 				break;
 			}
