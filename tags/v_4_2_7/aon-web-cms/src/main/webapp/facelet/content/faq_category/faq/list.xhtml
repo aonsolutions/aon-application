@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="list">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.faq}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" 
+							value="#{bundle.aon_reset}"
+							rendered="#{cms.roleEditor}"
+							action="faq_form"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{faq.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							action="faq_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{faq.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="generate" reRender="aonStatus"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateFaqs}" />
+							<a4j:support 
+								event="onclick" reRender="poll,grid" 
+								actionListener="#{generator_status.onActivePoll}"  
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+						</aon:commandButton>	
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+						<aon:commandButton id="categories"
+							value="#{appBundle.faq_category}"
+							action="faq_category_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item-no-icon">
+							<aon:actionListener method="#{faq_category.onInit}" />
+							<aon:actionListener method="#{faq_category.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+					
+				<aon:dataTable id="dataTable" rows="#{faq.pageLimit}" var="to"
+					value="#{faq.model}" rendered="#{faq.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-iconColumn">
+			
+					<aon:rowSelector
+						action="faq_form" actionListener="#{faq.onSelect}" />
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.faq_question}" />
+						</f:facet>
+						<aon:outputText value="#{faq.i18nQuestion}"
+							styleClass="aon-editDataTable-button"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.faq_category}" />
+						</f:facet>
+						<aon:outputText value="#{to.faqCategory.alias}" styleClass="aon-editDataTable-button" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.faq_position}" />
+						</f:facet>
+						<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.faq_active}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																				
+							<aon:commandLink title="#{appBundle.faq_activate}" 
+								action="faq_list"
+								actionListener="#{faq.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="Link_active" alt="#{appBundle.faq_activate}"
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.faq_deactivate}" 
+								action="faq_list"
+								actionListener="#{faq.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="Link_deactive" alt="#{appBundle.faq_deactivate}"
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:column>
+
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
+
+			</aon:div>
+		</aon:form>
+		
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
