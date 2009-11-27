@@ -11,7 +11,8 @@ import com.code.aon.common.enumeration.IStringEnum;
  */
 public enum SkinType implements IResourceable, IStringEnum {
 
-	DEFAULT("0");
+	BASICO1("0"),
+	BASICO2("1");
 	
 
 
