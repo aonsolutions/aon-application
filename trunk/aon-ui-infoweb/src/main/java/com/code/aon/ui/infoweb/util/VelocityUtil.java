@@ -5,21 +5,21 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.CommonsLogLogChute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class VelocityUtil extends VelocityEngine implements VelocityConstants {
     
-	private static final Logger LOGGER = Logger.getLogger(VelocityUtil.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(VelocityUtil.class.getName());
 	
 	public static final int INFO = 0;
 
@@ -65,7 +65,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
         try {
         	this.init();
         } catch (Throwable th) {
-            LOGGER.log(Level.SEVERE, th.getMessage(), th);
+            LOGGER.error(th.getMessage(), th);
         }
     }
 
@@ -81,7 +81,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	}
 
 	public void put(String key, Object value) {
-		LOGGER.fine( "Key: " + key + ", Value: " + value );
+		LOGGER.debug( "Key: " + key + ", Value: " + value );
 		this.context.put(key, value);
 	}
 
@@ -91,7 +91,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
     public boolean generate(File template, File page) {
 		boolean error = true;
-		LOGGER.fine( "Template: " + template + " -> " + page );
+		LOGGER.debug( "Template: " + template + " -> " + page );
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
@@ -103,7 +103,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 					writer.flush();
 					error = false;
 				} catch (Throwable th) {
-				    LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				    LOGGER.error(th.getMessage(), th);
 					addMessage("Error al evaluar el contexto en el fichero '" + template + "' <BR/>" + th.getMessage(), ERROR);
 				}
 			} else {

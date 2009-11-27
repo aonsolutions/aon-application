@@ -13,8 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
@@ -22,6 +20,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -60,7 +60,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController extends BasicController implements VelocityConstants  {
 
-	private static final Logger LOGGER = Logger.getLogger(GeneratorController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorController.class.getName());
 	
 	private VelocityUtil vu;
 	
@@ -83,7 +83,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			try {
 				this.properties.load( new FileInputStream(file) );
 			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e );
+				LOGGER.error(e.getMessage(), e );
 			}
 		}
 	}
@@ -102,7 +102,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				template = ap.getValue();				
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e );
+			LOGGER.error(e.getMessage(), e );
 		}
 		return template;
 	}
@@ -121,7 +121,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				homepage = Integer.parseInt(ap.getValue());				
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return homepage;
 	}
@@ -158,7 +158,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			//Añadimos al contexto todo lo necesario para las paginas
 			
 			String template = getTemplate();
-			LOGGER.fine( "Using template: " + template );
+			LOGGER.debug( "Using template: " + template );
 			vu.setTemplate(template);
 			//Indicamos el directorio del template
 			File templateDirectory = PathUtil.getTemplatePath(template);
@@ -226,7 +226,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			this.generated = true;
 
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th );
+			LOGGER.error(th.getMessage(), th );
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la generacion de los contenidos.");
 		} finally {
 			HibernateUtil.setCloseSession(true);
@@ -245,7 +245,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			this.webPage = "http://www." + getDomain() + "/";
 			AonUtil.addInfoMessage("OK: La web ha sido publicada." );
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th );
+			LOGGER.error(th.getMessage(), th );
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
 		}		
 	}	
@@ -257,10 +257,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if ( srcFile.exists() ) {
 				FileUtils.copyFile(srcFile, destFile);	
 			} else {
-				LOGGER.warning( "File doesn't exists: " + srcFile );
+				LOGGER.warn( "File doesn't exists: " + srcFile );
 			}
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e );
+			LOGGER.error(e.getMessage(), e );
 		}
 	}
 	
@@ -270,15 +270,15 @@ public class GeneratorController extends BasicController implements VelocityCons
 				LOGGER.info( "Copy directory: " + srcDir + " -> " + destDir );
 				FileUtils.copyDirectoryToDirectory(srcDir, destDir );
 			} else {
-				LOGGER.warning( "Directory doesn't exists: " + srcDir );
+				LOGGER.warn( "Directory doesn't exists: " + srcDir );
 			}
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e );
+			LOGGER.error(e.getMessage(), e );
 		}		
 	}
 
 	private void generateGenericPage(WebInfoPage wip) throws ManagerBeanException {
-		LOGGER.fine( "Generating gallery: " + wip );
+		LOGGER.debug( "Generating gallery: " + wip );
 		IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 		Criteria wipdCriteria = new Criteria();
 		wipdCriteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
@@ -335,7 +335,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private void generateGalleryPage(WebInfoPage wip) throws ManagerBeanException {
-		LOGGER.fine( "Generating gallery: " + wip);
+		LOGGER.debug( "Generating gallery: " + wip);
 		ArrayList<ImageHandler> images = new ArrayList<ImageHandler>();
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
@@ -442,7 +442,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 					return WebInfoFontType.VERDANA.getValue();
 				}
 			} catch (NumberFormatException n) {
-				LOGGER.log(Level.SEVERE, n.getMessage(), n );
+				LOGGER.error(n.getMessage(), n );
 			}
 		}
 		return "Verdana";
@@ -461,7 +461,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 					filename = getImageName(ra);
 				}
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th );
+				LOGGER.error(th.getMessage(), th );
 			}
 		}
 		return filename;
@@ -489,7 +489,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				try {
 					web = new URL("http://" +value);
 				} catch (MalformedURLException e1) {
-					LOGGER.log(Level.WARNING, e1.getMessage(), e1 );
+					LOGGER.error(e1.getMessage(), e1 );
 				}
 			}
 		}
@@ -587,7 +587,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				ImageHandler ih = new ImageHandler(filename, getImagePageLink(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);
 			} else {
-				LOGGER.warning( "Invalid image: " + ra );
+				LOGGER.warn( "Invalid image: " + ra );
 			}
 		}
 		vu.put(ALL_IMAGES_KEY, all_images);	
@@ -644,7 +644,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.put(ADDRESSES_KEY, addresses);
 		}
 		if (defaultAddress != null) {
-			LOGGER.fine( "Default address: " + defaultAddress );
+			LOGGER.debug( "Default address: " + defaultAddress );
 			vu.put(ADDRESS_KEY, defaultAddress);		
 		}
 	}

@@ -2,8 +2,6 @@ package com.code.aon.ui.infoweb.controller;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -15,6 +13,8 @@ import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -36,7 +36,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CompanyWebInfoPageController extends BasicController implements IInfoWebConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyWebInfoPageController.class.getName());
 	
 	private static final char[] VALID_CHARS = new char[] {' ', '-', '_', '(', ')', '$', '&', '{', '}'};
 
@@ -83,7 +83,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 				++position;
 			}
 		}catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return position;
 	}
@@ -103,7 +103,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			wip.setActive(active);
 			getManagerBean().update(wip);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> activate " + e.getMessage());
+			LOGGER.error(">>>> activate " + e.getMessage());
 			addMessage( "Error cambiando el estado activo de la pagina " + wip.getName() );
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -127,7 +127,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		
 			initializeModel();
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> move " + e.getMessage());
+			LOGGER.error(">>>> move " + e.getMessage());
 			addMessage( "Error cambiando la posición de la pagina " + wip.getName() );
 			throw new AbortProcessingException(e.getMessage(), e);
 		}			
@@ -208,7 +208,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			resources = new ListDataModel(listWipr);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -225,7 +225,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			detail.setWebInfoPage( current );
 			wipdBean.insertOrUpdate( detail );
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
     }
 
@@ -236,7 +236,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
     }
 
     public void onCancelResource(ActionEvent event) {
-		LOGGER.fine(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " CANCELED.");
+		LOGGER.debug(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " CANCELED.");
 		resource = new WebInfoPageResource();
 		resetResource();
     }
@@ -260,7 +260,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
     }
 
@@ -274,7 +274,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
     }
 
