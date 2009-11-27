@@ -11,14 +11,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.cms</artifactId>
-	<version>3.7.0</version>
+	<version>3.7.1</version>
 	<description>AON CMS</description>
 	<name>AON CMS</name>
 	<dependencies>
 		<dependency>
 		   <groupId>com.code.aon</groupId>
 		   <artifactId>aon.common</artifactId>
-		   <version>3.4.0</version>
+		   <version>3.5.0</version>
 		   <scope>compile</scope>
 		</dependency>
 	</dependencies>
