@@ -17,7 +17,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.util.EmailUtilController;
+import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.sign.controller.CertificateController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
@@ -76,7 +76,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 
 	public void sendInvoicesByEmail( SecurityInfo si ) throws UnsupportedEncodingException, MessagingException, ManagerBeanException {
 		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-		EmailUtilController emailController = controller.getEmailController();
+		FinanceEmailUtil emailController = controller.getEmailController();
 		EmailSender sender = emailController.getEmailSender();
 		sender.connect();
 		Criteria criteria = getCriteria();
