@@ -3,10 +3,10 @@ package com.code.aon.ui.cms.velocity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.hibernate.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.BrandDetail;
@@ -27,7 +27,7 @@ import com.code.aon.ui.cms.velocity.attribute.ProductHandler;
 
 public class ProductGenerator extends Generator {
 
-	private static final Logger LOGGER = Logger.getLogger(ProductGenerator.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ProductGenerator.class);
 	
 	public static final String MAIN_PAGE = "main_page"; 
 
@@ -162,7 +162,7 @@ public class ProductGenerator extends Generator {
 			vu.remove("mainPageURL");
 
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 			logger.error(th.getMessage());
 		} finally {
 			productCategoryDetailList = null;

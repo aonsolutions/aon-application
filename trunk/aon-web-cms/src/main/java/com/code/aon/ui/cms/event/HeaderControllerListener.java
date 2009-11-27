@@ -1,8 +1,9 @@
 package com.code.aon.ui.cms.event;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Header;
 import com.code.aon.cms.Section;
@@ -19,7 +20,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class HeaderControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(HeaderControllerListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(HeaderControllerListener.class);
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -47,7 +48,7 @@ public class HeaderControllerListener extends ControllerAdapter {
 				header.setDefault_(true);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	

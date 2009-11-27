@@ -1,7 +1,7 @@
 package com.code.aon.ui.cms.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.HiruOrganizerCentre;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -14,7 +14,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class HiruOrganizerCentreControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(HiruOrganizerCentreControllerListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(HiruOrganizerCentreControllerListener.class);
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -25,7 +25,7 @@ public class HiruOrganizerCentreControllerListener extends ControllerAdapter {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.HIRU_ORGANIZER_CENTRE_NAME));
 			event.getController().setCriteria(criteria);
 		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 	}
 

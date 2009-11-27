@@ -2,11 +2,12 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.ModularPageOption;
@@ -24,7 +25,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ModularPageOptionController extends BasicI18nController implements IOrderedControllerListener, ICMSConstants, Constants {
 
-	private static final Logger LOGGER = Logger.getLogger(ModularPageOptionController.class.getName());	
+	private final static Logger LOGGER = LoggerFactory.getLogger(ModularPageOptionController.class);
 	
 	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.MODULAR_PAGE_OPTION_POSITION);
 
@@ -130,7 +131,7 @@ public class ModularPageOptionController extends BasicI18nController implements 
 		try {
 			criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID),currentModularPage.getId());
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -138,7 +139,7 @@ public class ModularPageOptionController extends BasicI18nController implements 
 		try {
 			orderedControllerSupport.reorderObjects(this);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

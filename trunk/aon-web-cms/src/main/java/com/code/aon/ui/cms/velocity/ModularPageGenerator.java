@@ -2,8 +2,9 @@ package com.code.aon.ui.cms.velocity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.ModularPageDetail;
@@ -23,7 +24,7 @@ import com.code.aon.ui.cms.velocity.attribute.ModularPageOptionHandler;
 
 public class ModularPageGenerator extends Generator {
 	
-	private static final Logger LOGGER = Logger.getLogger(ModularPageGenerator.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ModularPageGenerator.class);
 
 	public void generate(ModularPage selected_modular) {
 		VelocityUtil vu = context.initVelocityUtil();			
@@ -119,7 +120,7 @@ public class ModularPageGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

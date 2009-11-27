@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.cms.enumeration.PageType;
@@ -16,8 +16,8 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class DomainUtilities {
 	
-	private static final Logger LOGGER = Logger.getLogger(DomainUtilities.class.getName());
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUtilities.class);
+	
 	private boolean adminProfile = false;
 	
 	public DomainUtilities(){
@@ -42,7 +42,7 @@ public class DomainUtilities {
 		try {
 			propDefPageType.load(PageType.class.getResourceAsStream(PAGETYPE));
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		
 		File file = new File( ControllerUtil.getConfigPath(), PAGETYPE );
@@ -52,7 +52,7 @@ public class DomainUtilities {
 				stream = new FileInputStream(file);
 				propDomainPageType.load(stream);
 			}catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 			}finally{
 				IOUtils.closeQuietly(stream);
 				stream= null;
@@ -71,7 +71,7 @@ public class DomainUtilities {
 					return true;
 			}
 		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		return false;
 	}
@@ -89,7 +89,7 @@ public class DomainUtilities {
 		try {
 			propDefSidebarType.load(PageType.class.getResourceAsStream(SIDEBARTYPE));
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		
 		File file = new File( ControllerUtil.getConfigPath(), SIDEBARTYPE );
@@ -99,7 +99,7 @@ public class DomainUtilities {
 				stream = new FileInputStream(file);
 				propDomainSidebarType.load(stream);
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 			}finally{
 				IOUtils.closeQuietly(stream);
 				stream= null;
@@ -118,7 +118,7 @@ public class DomainUtilities {
 					return true;
 			}
 		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		return false;
 	}
@@ -136,7 +136,7 @@ public class DomainUtilities {
 		try {
 			propDefModularPageOptionType.load(PageType.class.getResourceAsStream(MODULARPAGEOPTIONTYPE));
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		
 		File file = new File( ControllerUtil.getConfigPath(), MODULARPAGEOPTIONTYPE );
@@ -146,7 +146,7 @@ public class DomainUtilities {
 				stream = new FileInputStream(file);
 				propDomainModularPageOptionType.load(stream);
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 			} finally {
 				IOUtils.closeQuietly(stream);
 				stream= null;
@@ -165,7 +165,7 @@ public class DomainUtilities {
 					return true;
 			}
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		return false;
 	}
@@ -183,7 +183,7 @@ public class DomainUtilities {
 		try {
 			propDefMenu.load(PageType.class.getResourceAsStream(MENU));
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		
 		File file = new File( ControllerUtil.getConfigPath(), MENU );
@@ -193,7 +193,7 @@ public class DomainUtilities {
 				stream = new FileInputStream(file);
 				propDomainMenu.load(stream);
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 			} finally {
 				IOUtils.closeQuietly(stream);
 				stream= null;
@@ -212,28 +212,28 @@ public class DomainUtilities {
 					return true;
 			}
 		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		return false;
 	}
 
-	private static String MENU = "menu.properties";
+	private static final String MENU = "menu.properties";
 	
-	private static String MENU_MODULAR_OPTION = "MODULAR_OPTION";
-	private static String MENU_GENERIC_PAGE = "GENERIC_PAGE";
-	private static String MENU_LINK = "MENU_LINK";
-	private static String MENU_FAQ = "MENU_FAQ";
-	private static String MENU_ARTICLE = "MENU_ARTICLE";
-	private static String MENU_BANNER = "MENU_BANNER";
-	private static String MENU_DOWNLOAD = "MENU_DOWNLOAD";
-	private static String MENU_ALBUM = "MENU_ALBUM";
-	private static String MENU_DIRECT_ACCESS = "MENU_DIRECT_ACCESS";
-	private static String MENU_ACTIVITY = "MENU_ACTIVITY";
-	private static String MENU_PRODUCT = "MENU_PRODUCT";
-	private static String MENU_HIRU = "MENU_HIRU";
-	private static String MENU_BULLETIN = "MENU_BULLETIN";
-	private static String MENU_SPORT = "MENU_SPORT";
-	private static String MENU_STRUCTURE = "MENU_STRUCTURE";
+	private static final String MENU_MODULAR_OPTION = "MODULAR_OPTION";
+	private static final String MENU_GENERIC_PAGE = "GENERIC_PAGE";
+	private static final String MENU_LINK = "MENU_LINK";
+	private static final String MENU_FAQ = "MENU_FAQ";
+	private static final String MENU_ARTICLE = "MENU_ARTICLE";
+	private static final String MENU_BANNER = "MENU_BANNER";
+	private static final String MENU_DOWNLOAD = "MENU_DOWNLOAD";
+	private static final String MENU_ALBUM = "MENU_ALBUM";
+	private static final String MENU_DIRECT_ACCESS = "MENU_DIRECT_ACCESS";
+	private static final String MENU_ACTIVITY = "MENU_ACTIVITY";
+	private static final String MENU_PRODUCT = "MENU_PRODUCT";
+	private static final String MENU_HIRU = "MENU_HIRU";
+	private static final String MENU_BULLETIN = "MENU_BULLETIN";
+	private static final String MENU_SPORT = "MENU_SPORT";
+	private static final String MENU_STRUCTURE = "MENU_STRUCTURE";
 
 	public boolean isModularMenu(){
 		return hasMenuOption(MENU_MODULAR_OPTION);

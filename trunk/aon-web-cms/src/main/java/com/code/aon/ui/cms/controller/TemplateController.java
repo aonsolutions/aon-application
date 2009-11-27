@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
@@ -20,6 +18,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.cms.Config;
@@ -36,7 +36,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TemplateController extends BasicController implements Constants {
 	
-	private static final Logger LOGGER = Logger.getLogger(TemplateController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TemplateController.class);
 
 	private ListDataModel templates = new ListDataModel();
 	
@@ -68,7 +68,7 @@ public class TemplateController extends BasicController implements Constants {
 			checkList = new ArrayList<TemplateObject>();
 			list = getTemplateList();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		templates = new ListDataModel(list);
 	}
@@ -103,9 +103,9 @@ public class TemplateController extends BasicController implements Constants {
 						list.add(to);
 						++count;
 					} catch (SAXException e) {
-						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						LOGGER.error(e.getMessage(), e);
 					} catch (IOException e) {
-						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						LOGGER.error(e.getMessage(), e);
 					}finally{
 						IOUtils.closeQuietly(fis);
 						fis = null;
@@ -212,9 +212,9 @@ public class TemplateController extends BasicController implements Constants {
 		try {
 			saxParser = saxParserFactory.newSAXParser();
 		} catch (ParserConfigurationException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (SAXException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

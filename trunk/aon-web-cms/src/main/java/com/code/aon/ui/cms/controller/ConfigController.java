@@ -1,12 +1,13 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Config;
 import com.code.aon.cms.ConfigDetail;
@@ -21,7 +22,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class ConfigController extends BasicI18nController{
 
-	private static final Logger LOGGER = Logger.getLogger(ConfigController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ConfigController.class);
 	
 	private Config currentConfig;
 
@@ -31,7 +32,7 @@ public class ConfigController extends BasicI18nController{
 		try {
 			init();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -43,11 +44,11 @@ public class ConfigController extends BasicI18nController{
 		LOGGER.info( "CARGANDO CONFIGURACION...");
 		IManagerBean configBean = BeanManager.getManagerBean(Config.class);
 		List<ITransferObject> list = configBean.getList(null);
-		LOGGER.info( "Number of Config: " + list.size());
+		LOGGER.info( "Number of Config: {}", list.size());
 		if (list.size() > 0) {
 			setCurrentConfig((Config)list.get(0));
 		}
-		LOGGER.info( "CurrentConfig: " + currentConfig);
+		LOGGER.info( "CurrentConfig: {}", currentConfig);
 	}
 
 	public Config getCurrentConfig() {
@@ -66,7 +67,7 @@ public class ConfigController extends BasicI18nController{
 				return cd;
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}

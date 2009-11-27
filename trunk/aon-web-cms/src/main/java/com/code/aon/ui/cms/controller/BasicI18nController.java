@@ -3,12 +3,13 @@ package com.code.aon.ui.cms.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -27,7 +28,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class BasicI18nController extends BasicController implements I18NControllerListener, IController, ICollectionProvider {
 
-    private static final Logger LOGGER = Logger.getLogger(BasicI18nController.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(BasicI18nController.class);
 
 	private IManagerBean managerBeanI18n;
 
@@ -62,11 +63,11 @@ public class BasicI18nController extends BasicController implements I18NControll
             setNew(true);
             controllerListenerSupport.fireAfterBeanCreated(evt);
         } catch (ControllerListenerException e) {
-            LOGGER.severe(">>>> onReset " + e.getMessage());
+            LOGGER.error(">>>> onReset", e);
             addMessage(e.getMessage());
             throw new AbortProcessingException(e.getMessage(), e);
         } catch (ManagerBeanException e) {
-            LOGGER.severe(">>>> onReset " + e.getMessage());
+        	LOGGER.error(">>>> onReset", e);
             addMessage(e.getMessage());
             throw new AbortProcessingException(e.getMessage(), e);
         }
@@ -97,7 +98,7 @@ public class BasicI18nController extends BasicController implements I18NControll
      * @throws ManagerBeanException
      */
     protected ITransferObject add() throws ManagerBeanException {
-        LOGGER.fine("Adding Id:[" + getTo() + "]");
+        LOGGER.debug("Adding Id:[{}]", getTo());
         ITransferObject inserted = getManagerBean().insert(getTo());
     	addI18n(inserted);
         saveState(inserted);
@@ -111,7 +112,7 @@ public class BasicI18nController extends BasicController implements I18NControll
      * @throws ManagerBeanException
      */
     protected ITransferObject update() throws ManagerBeanException {
-        LOGGER.fine("Setting Id:[" + getTo() + "]");
+        LOGGER.debug("Setting Id:[{}]", getTo());
         ITransferObject updated = getManagerBean().update(getTo());
     	updateI18n(updated);
         saveState(updated);
@@ -132,12 +133,11 @@ public class BasicI18nController extends BasicController implements I18NControll
      * 
      * @param event
      */
-    @SuppressWarnings("unused")
     public void removeI18n(ActionEvent event) {
         try {
             removeI18n();
         } catch (ManagerBeanException e) {
-            LOGGER.severe(">>>> onRemove exception[" + e.getMessage() + "]");
+            LOGGER.error(">>>> onRemove", e);
             addMessage(e.getMessage());
             throw new AbortProcessingException(e.getMessage(), e);
         }
@@ -149,7 +149,7 @@ public class BasicI18nController extends BasicController implements I18NControll
      * @throws ManagerBeanException
      */
     protected void removeI18n() throws ManagerBeanException {
-        LOGGER.fine("Removing Id:[" + getToI18n() + "]");
+        LOGGER.debug("Removing Id:[{}]", getToI18n());
         getManagerBeanI18n().remove(getToI18n());
     }
 
@@ -164,7 +164,7 @@ public class BasicI18nController extends BasicController implements I18NControll
 			this.managerBeanI18n = BeanManager.getManagerBean(getPojoI18n());
 			if (this.managerBeanI18n == null) {
 				String msg = "Unknown IManagerBeanI18n for " + getPojoI18n();
-				LOGGER.severe(msg);
+				LOGGER.error(msg);
 				throw new ManagerBeanException(msg);
 			}
 		}
@@ -190,7 +190,7 @@ public class BasicI18nController extends BasicController implements I18NControll
 				}
 			}
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 	}
 
@@ -336,7 +336,7 @@ public class BasicI18nController extends BasicController implements I18NControll
 				}
 			}
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		return null;
 	}

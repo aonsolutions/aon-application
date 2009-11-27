@@ -2,8 +2,9 @@ package com.code.aon.ui.cms.velocity.attribute;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Language;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -16,7 +17,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class BulletinSuscribeHandler {
 	
-	private static final Logger LOGGER = Logger.getLogger(BulletinSuscribeHandler.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BulletinSuscribeHandler.class);
 
 	private String from;
 	
@@ -48,7 +49,7 @@ public class BulletinSuscribeHandler {
 				list.add(lh);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return list;
 	}

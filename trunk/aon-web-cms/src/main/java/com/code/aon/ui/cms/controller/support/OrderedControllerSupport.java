@@ -1,8 +1,9 @@
 package com.code.aon.ui.cms.controller.support;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.IPositionObject;
 import com.code.aon.common.ITransferObject;
@@ -13,7 +14,7 @@ import com.code.aon.ui.form.IController;
 
 public class OrderedControllerSupport {
 	
-	private static final Logger LOGGER = Logger.getLogger(OrderedControllerSupport.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(OrderedControllerSupport.class);
 	
 	protected OrderedControllerListenerSupport orderedControllerListenerSupport = new OrderedControllerListenerSupport(); 
 	
@@ -100,7 +101,7 @@ public class OrderedControllerSupport {
 			orderedControllerListenerSupport.fireBeforeUseCriteria(criteria);
 			position = controller.getManagerBean().getCount(criteria);
 		}catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return position;
 	}
