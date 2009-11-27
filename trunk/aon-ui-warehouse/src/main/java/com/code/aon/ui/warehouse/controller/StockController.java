@@ -3,14 +3,15 @@ package com.code.aon.ui.warehouse.controller;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -24,7 +25,7 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 public class StockController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(StockController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(StockController.class.getName());
 
 	private static final String BASE_NAME = "com.code.aon.ui.warehouse.i18n.messages";
 	
@@ -100,7 +101,7 @@ public class StockController extends BasicController {
 				IManagerBean bean = BeanManager.getManagerBean(Warehouse.class);
 				return bean.getCount(null) > 1;
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return false;
@@ -132,7 +133,7 @@ public class StockController extends BasicController {
 			}
 			initTransferData();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}

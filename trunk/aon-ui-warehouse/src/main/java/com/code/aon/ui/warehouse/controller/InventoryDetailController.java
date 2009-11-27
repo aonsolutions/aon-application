@@ -3,9 +3,11 @@ package com.code.aon.ui.warehouse.controller;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
@@ -27,7 +29,7 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
 public class InventoryDetailController extends LinesController implements ICollectionProvider {
 	
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(InventoryDetailController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryDetailController.class.getName());
 
 	/** Inventory controller. */
 	private static final String INVENTORY_CONTROLLER_NAME = "inventory";
@@ -97,7 +99,7 @@ public class InventoryDetailController extends LinesController implements IColle
 			criteria.setOrderByList( oldOrderList );
 			return collection;
 		} catch (ManagerBeanException e) {
-			LOGGER.severe( e.getMessage() );
+			LOGGER.error( e.getMessage() );
 		}
 		return Collections.emptyList();
 	}
