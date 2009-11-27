@@ -1,13 +1,13 @@
 package com.code.aon.ui.config.controller;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.common.ManagerBeanException;
@@ -18,7 +18,7 @@ import com.code.aon.ui.form.BasicController;
 
 public class UserController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
 	/** User manager. */
     private UserManager userManager = new UserManager();
@@ -32,7 +32,7 @@ public class UserController extends BasicController {
 				Criteria criteria = getCriteria(); 
 				criteria.addEqualExpression(getFieldName(IConfigAlias.USER_AVAILABLE), Boolean.TRUE);
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.error( e.getMessage(), e);
 			}
 			this.firstSearch = false;
 		}
