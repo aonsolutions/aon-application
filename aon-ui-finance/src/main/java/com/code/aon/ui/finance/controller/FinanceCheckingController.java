@@ -2,11 +2,12 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -29,7 +30,7 @@ public class FinanceCheckingController extends GridController {
 	/**
 	 * The logger of the class
 	 */
-	private static final Logger LOGGER = Logger.getLogger(FinanceCheckingController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceCheckingController.class.getName());
 	
 	/**
 	 * Sel sales(false) or purchase(true) mode
@@ -87,7 +88,7 @@ public class FinanceCheckingController extends GridController {
 			this.clearCriteria();
 			this.payment = new Boolean(true);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error setting purchase mode", e);
+			LOGGER.error("Error setting purchase mode", e);
 		}
 	}
 	
@@ -100,7 +101,7 @@ public class FinanceCheckingController extends GridController {
 		try {
 			this.clearCriteria();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error setting sales mode", e);
+			LOGGER.error("Error setting sales mode", e);
 		}
 		this.payment = new Boolean(false);
 	}
@@ -117,7 +118,7 @@ public class FinanceCheckingController extends GridController {
 			this.pending = null;
 			super.onEditSearch(event);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error reseting criteria", e);
+			LOGGER.error("Error reseting criteria", e);
 		}
 	}
 

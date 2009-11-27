@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -20,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -72,7 +72,7 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(FBatchController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchController.class.getName());
 
 	private Company company;
 	private CSBOutput csbOutput;
@@ -166,7 +166,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 				}
 			}
 		}catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining account entry id", e);
+			LOGGER.error("Error obtaining account entry id", e);
 		}
     	return null;
 	}
@@ -176,7 +176,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			FinanceBatch fbatch = (FinanceBatch) this.getModel().getRowData();
 			return getFinanceBatchTotalDetails(fbatch);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining modelTo fbatch total details", e);
+			LOGGER.error("Error obtaining modelTo fbatch total details", e);
 		}
 		return new Integer(0);
 	}
@@ -193,7 +193,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
 			return fBatchDetailBean.getCount(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total details", e);
+			LOGGER.error("Error obtaining fbatch total details", e);
 		}
 		return new Integer(0);
 	}
@@ -203,7 +203,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			FinanceBatch fbatch = (FinanceBatch) this.getModel().getRowData();
 			return getFinanceBatchTotalAmount(fbatch);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining modelTo fbatch total amount", e);
+			LOGGER.error("Error obtaining modelTo fbatch total amount", e);
 		}
 		return new Double(0);
 	}
@@ -224,7 +224,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 				return (Double)value;
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total amount", e);
+			LOGGER.error("Error obtaining fbatch total amount", e);
 		}
 		return new Double(0);
 	}
@@ -257,7 +257,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             controller.setCriteria(criteria);
             controller.onSearch(null);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error reloading Finance model", e);
+            LOGGER.error("Error reloading Finance model", e);
         }
     }
 
@@ -275,7 +275,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 getManagerBean().update(fBatch);
                 setCsbOutput(null);
             } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
+                LOGGER.error("Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
         }
 
@@ -301,7 +301,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 				FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
             }
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error adding selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
+			LOGGER.error("Error adding selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
 		}
 
         financeController.clearCheckedFinances();
@@ -318,7 +318,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 getManagerBean().update(fBatch);
                 setCsbOutput(null);
             } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
+                LOGGER.error("Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
         }
 
@@ -332,7 +332,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        	financeBatchDetailBean.remove(fBatchDetail);
 	        }
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error removing selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
+			LOGGER.error("Error removing selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
 		}
 
 		fBatchDetailController.clearCheckedFinanceBatchDetails();

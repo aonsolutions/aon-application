@@ -1,8 +1,9 @@
 package com.code.aon.ui.finance.event;
 
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
@@ -22,7 +23,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FBatchControllerListener extends ControllerAdapter implements IFinanceConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(FBatchControllerListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchControllerListener.class.getName());
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -54,7 +55,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
                 AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DATE_ERROR);
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error obtaining FinanceBatch with id=" + fBatch.getId(), e);
+            LOGGER.error("Error obtaining FinanceBatch with id=" + fBatch.getId(), e);
         }
 
         fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);

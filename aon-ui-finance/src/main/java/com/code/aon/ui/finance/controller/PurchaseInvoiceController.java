@@ -3,10 +3,11 @@ package com.code.aon.ui.finance.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
@@ -42,7 +43,7 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
 
 public class PurchaseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
-	private static final Logger LOGGER = Logger.getLogger(PurchaseInvoiceController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseInvoiceController.class.getName());
 	
 	private RegistryValidationManager vm;
 	private IncomeTransferManager incomeTransferManager;
@@ -190,7 +191,7 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 				return (IAttachment) list.get(0);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error getting invoice pdf file " + to, e );
+			LOGGER.error("Error getting invoice pdf file " + to, e );
 		}
 		return null;
 	}
