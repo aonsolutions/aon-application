@@ -2,10 +2,11 @@ package com.code.aon.ui.accounting.util;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Period;
@@ -21,7 +22,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountingPeriodUtil {
 
-	private static final Logger LOGGER = Logger.getLogger(AccountingPeriodUtil.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountingPeriodUtil.class.getName());
 	private static final String ACCOUNT_APP_PARAM_CONTROLLER_NAME = "accAppParams";
 
 	public static Period getDefaultPeriod() throws ManagerBeanException {
@@ -46,7 +47,7 @@ public class AccountingPeriodUtil {
 		Iterator iter = periodBean.getList(criteria).iterator();
 		if (!iter.hasNext()) {
 			String msg = "No hay ejercicio contable definido para la fecha indicada";
-			LOGGER.log(Level.SEVERE, msg);
+			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}

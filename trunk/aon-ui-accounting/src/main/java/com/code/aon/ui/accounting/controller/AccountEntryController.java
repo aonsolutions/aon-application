@@ -1,11 +1,12 @@
 package com.code.aon.ui.accounting.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -23,7 +24,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(AccountEntryController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryController.class.getName());
 	private static final Double ZERO = new Double(0);
 	
 	private SpecialEntryControllerManager controllerManager;
@@ -184,7 +185,7 @@ public class AccountEntryController extends BasicController {
 	        } catch (ManagerBeanException e) {
 	        	setTotalDebit(ZERO);
 	        	setTotalCredit(ZERO);
-	            LOGGER.log(Level.SEVERE, "Error getting Account Entry Details", e);
+	            LOGGER.error("Error getting Account Entry Details", e);
 	        }
         } else {
         	setTotalDebit(null);
