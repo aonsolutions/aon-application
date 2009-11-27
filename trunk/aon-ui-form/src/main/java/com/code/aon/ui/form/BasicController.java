@@ -747,7 +747,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	@Override
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
-		LOGGER.info("Searching Expression:[" + ((criteria != null) ? criteria.toString() : null)
+		LOGGER.info("search:[" + ((criteria != null) ? criteria.toString() : null)
 				+ ",start=" + start + ",count=" + count + "]");
 		List<ITransferObject> list = getManagerBean().getList(criteria, start, count);
 		return list;
@@ -759,7 +759,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param listener
 	 */
 	public void addControllerListener(IControllerListener listener) {
-		LOGGER.info("Listener registered " + listener);
+		LOGGER.debug("Listener registered " + listener);
 		controllerListenerSupport.addControllerListener(listener);
 	}
 
@@ -769,7 +769,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param listener
 	 */
 	public void removeControllerListener(IControllerListener listener) {
-		LOGGER.info("Listener removed " + listener);
+		LOGGER.debug("Listener removed " + listener);
 		controllerListenerSupport.removeControllerListener(listener);
 	}
 

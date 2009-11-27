@@ -38,7 +38,7 @@ public class BeanManager {
 	public static void register(String instance, IFinderBean bean) {
 		if (!beans.containsKey(bean)) {
 			beans.put(instance, bean);
-			LOGGER.info("Registered bean {} - {}", instance, bean);
+			LOGGER.debug("Registered bean {}", instance);
 		}
 	}
 
@@ -51,7 +51,7 @@ public class BeanManager {
 	 */
 	public static IManagerBean getManagerBean(String pojo) throws ManagerBeanException {
 		try {
-			Class pojoClass = Class.forName( pojo );
+			Class<?> pojoClass = Class.forName( pojo );
 			return getManagerBean( pojoClass );
 		} catch (ClassNotFoundException e) {
             throw new ManagerBeanException(e.getMessage(), e);
@@ -65,7 +65,7 @@ public class BeanManager {
 	 * @return The requested <code>IManagerBean</code>.
 	 * @throws ManagerBeanException
 	 */
-	public static IManagerBean getManagerBean(Class pojoClass) throws ManagerBeanException {
+	public static IManagerBean getManagerBean(Class<?> pojoClass) throws ManagerBeanException {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
         String key = sessionFactoryName + "/" + pojoClass ;
         BasicManagerBean managerBean = (BasicManagerBean) beans.get( key );
