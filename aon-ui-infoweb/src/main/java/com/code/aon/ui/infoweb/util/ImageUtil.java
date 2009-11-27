@@ -5,13 +5,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.RegistryAttachment;
@@ -22,7 +22,7 @@ import com.sun.jimi.core.raster.JimiRasterImage;
 
 public class ImageUtil {
 
-	private static final Logger LOGGER = Logger.getLogger(ImageUtil.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class.getName());
 	
 	public static boolean copyRegistryBlobToFile(RegistryAttachment ra, File path, String name) {
 		return copyRegistryBlobToFile(ra, path, 0, 0, name); 
@@ -42,9 +42,9 @@ public class ImageUtil {
 			}
 			return true;
 		} catch (FileNotFoundException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return false;
 	}
@@ -79,9 +79,9 @@ public class ImageUtil {
 			fos.flush();
 			fos.close();
 		} catch (JimiException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
