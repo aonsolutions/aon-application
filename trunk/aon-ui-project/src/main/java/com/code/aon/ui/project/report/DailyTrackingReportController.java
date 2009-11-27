@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -15,6 +13,8 @@ import javax.faces.model.SelectItemGroup;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -37,16 +37,14 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
-import com.code.aon.report.ReportException;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class DailyTrackingReportController implements ICollectionProvider {
 
-	private static final Logger LOGGER = Logger.getLogger(DailyTrackingReportController.class
-			.getName());
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(DailyTrackingReportController.class);
+	
 	private static final String EXCEL = "dailyTrackingExcel";
 	private static final String BY_CUSTOMER = "dailyTrackingByCustomer";
 	private static final String BY_USER = "dailyTrackingByUser";
@@ -282,7 +280,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				dossierTypes.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossier types", e);
+			LOGGER.error("Error loading dossier types", e);
 		}
 	}
 
@@ -335,7 +333,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				group.setSelectItems((SelectItem[]) temp.toArray(new SelectItem[temp.size()]));
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading activity types", e);
+			LOGGER.error("Error loading activity types", e);
 		}
 	}
 
@@ -441,7 +439,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				dossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers related with customer with id= "
+			LOGGER.error("Error loading dossiers related with customer with id= "
 					+ customerId.toString(), e);
 		}
 	}
@@ -467,7 +465,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				allDossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading all dossiers!", e);
+			LOGGER.error("Error loading all dossiers!", e);
 		}
 	}
 
@@ -526,7 +524,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				activities.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading activities related with dossier with id= "
+			LOGGER.error("Error loading activities related with dossier with id= "
 					+ dossierId.toString(), e);
 		}
 	}
@@ -569,7 +567,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading users related with workgroup with id= "
+			LOGGER.error("Error loading users related with workgroup with id= "
 					+ workgroupId, e);
 		}
 	}
@@ -791,7 +789,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 		return sentence.toString();
 	}
 
-	public String onReport() throws ReportException{
+	public String onReport() {
 		ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 		manager.setReportKey(getReportKey());
 		manager.setOutputFormat(getOutputFormat() == null ? OutputFormat.PDF : getOutputFormat());

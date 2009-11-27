@@ -2,8 +2,9 @@ package com.code.aon.ui.project.event;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,7 +19,7 @@ import com.code.aon.ui.project.controller.ActivityController;
 
 public class ActivityControllerListener extends ControllerAdapter {
 	
-	private static final Logger LOGGER = Logger.getLogger(ActivityControllerListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ActivityControllerListener.class);
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
@@ -49,7 +50,7 @@ public class ActivityControllerListener extends ControllerAdapter {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining ActivityController model", e);
+			LOGGER.error("Error obtaining ActivityController model", e);
 		}
 	}
 	

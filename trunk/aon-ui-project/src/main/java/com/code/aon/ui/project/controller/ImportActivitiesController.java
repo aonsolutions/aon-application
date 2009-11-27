@@ -3,13 +3,14 @@ package com.code.aon.ui.project.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,9 +28,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ImportActivitiesController {
 
-	private static final Logger LOGGER = Logger.getLogger(ImportActivitiesController.class
-			.getName());
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(ImportActivitiesController.class);
+	
 	private boolean importPanel;
 	private Integer dossierId;
 	private DataModel model;
@@ -88,7 +88,7 @@ public class ImportActivitiesController {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error importing activities", e);
+			LOGGER.error("Error importing activities", e);
 		} finally {
 			FormUtil.getController("activity").onSearch(event);
 			AonUtil.addInfoMessage("" + i + " activities imported");			
@@ -122,7 +122,7 @@ public class ImportActivitiesController {
 				dossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers", e);
+			LOGGER.error("Error loading dossiers", e);
 		}
 		return dossiers;
 	}
@@ -143,7 +143,7 @@ public class ImportActivitiesController {
 				list.add(ca);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers", e);
+			LOGGER.error("Error loading dossiers", e);
 		}
 		setModel(new ListDataModel(list));
 	}
