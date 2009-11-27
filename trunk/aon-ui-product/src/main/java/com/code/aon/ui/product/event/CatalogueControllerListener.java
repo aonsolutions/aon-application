@@ -17,22 +17,20 @@ public class CatalogueControllerListener extends ControllerAdapter implements II
 		if (endDate != null) {
 			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
-				throw new ControllerListenerException(AonUtil.getMessage("productBundle",
-						"product_catalogue_dates_error"));
+				throw new ControllerListenerException(AonUtil.getMessage("productBundle", "product_catalogue_dates_error"));
 			}
 		}
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-
-		if (((Catalogue) this.getController().getTo()).getEndDate().before(
-				((Catalogue) this.getController().getTo()).getStartDate())) {
-
-			throw new ControllerListenerException(AonUtil.getMessage("productBundle",
-					"product_catalogue_dates_error"));
+		Date endDate = ((Catalogue) this.getController().getTo()).getEndDate();
+		if (endDate != null) {
+			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
+			if (endDate.before(startDate)) {
+				throw new ControllerListenerException(AonUtil.getMessage("productBundle", "product_catalogue_dates_error"));
+			}
 		}
-
 	}
 
 }
