@@ -94,12 +94,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security</artifactId>
-			<version>1.9.0</version>
-			<scope>provided</scope>
-		</dependency>		
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse.bridge</artifactId>
 			<version>4.1.1</version>
 			<scope>compile</scope>
