@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -14,6 +12,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.commercial.Offer;
@@ -72,7 +72,7 @@ import com.code.aon.webmail.SecurityInfo;
  */
 public class OfferController extends BasicController implements ISignatureController, ICommercialConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(OfferController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(OfferController.class.getName());
 	
 	private final String SALES_CONTROLLER = "sales";
 	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
@@ -498,7 +498,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		try {
 			return BeanManager.getManagerBean(OfferAttachment.class);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}
