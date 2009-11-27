@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="sessionForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.aon_sessions}" />
+				<ui:param name="controller" value="#{auditSession}" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
+					<aon:outputLabel for="Session_id" value="#{bundle.aon_id}" />
+					<aon:outputText id="Session_id" value="#{auditSession.to.id}" />
+				
+					<aon:outputLabel for="Session_startDate"
+						value="#{appBundle.aon_session_startDate}" />
+					<aon:outputText id="Session_startDate"
+						value="#{auditSession.to.startDate}">
+						<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputLabel for="Session_endDate"
+						value="#{appBundle.aon_session_endDate}" />
+					<aon:outputText id="Session_endDate"
+						value="#{auditSession.to.endDate}">
+						<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputLabel for="Session_user_domain_name"
+						value="#{appBundle.aon_domain}" />
+					<aon:outputText id="Session_user_domain_name"
+						value="#{auditSession.to.user.domain.name}"/>
+					
+					<aon:outputLabel for="Session_application_name"
+						value="#{appBundle.aon_application}" />
+					<aon:outputText id="Session_application_name"
+						value="#{auditSession.to.application.name}"/>
+
+					<aon:outputLabel for="Session_user_login"
+						value="#{appBundle.aon_user}" />
+					<aon:outputText id="Session_user_login"
+						value="#{auditSession.to.user.login}"/>
+					
+				</aon:panelGrid>
+				
+				<aon:div styleClass="aon-form-group" rendered="#{!auditSession.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:outputLabel for="actionExecutionData" value="#{menuBundle.aon_actions}" />
+					</aon:div>
+					<ui:include src="/audit/session/action/list.xhtml"/>
+				</aon:div>
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
