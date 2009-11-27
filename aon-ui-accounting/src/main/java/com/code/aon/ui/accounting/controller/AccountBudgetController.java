@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountBudgetDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,7 +31,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountBudgetController extends BasicController {
 
-	private static final Logger LOGGER = Logger.getLogger(AccountBudgetController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountBudgetController.class.getName());
 	private Account account;
 	private Month month;
 	private Period period;
@@ -201,10 +201,10 @@ public class AccountBudgetController extends BasicController {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.log(Level.SEVERE, msg, e);
+					LOGGER.error(msg, e);
 				}
 				String msg = "Error on aon-account:  " + e.getMessage() ;
-				LOGGER.log(Level.SEVERE, msg, e);
+				LOGGER.error(msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -262,7 +262,7 @@ public class AccountBudgetController extends BasicController {
 				creditTotal = sumSet.getDouble(2);
 			}
 		} catch (SQLException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage());
 		} finally {
 			try {
 				sum.close();
@@ -303,9 +303,9 @@ public class AccountBudgetController extends BasicController {
 				}
 			}
 		} catch (SQLException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage());
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage());
 		} finally {
 			try {
 				sum.close();

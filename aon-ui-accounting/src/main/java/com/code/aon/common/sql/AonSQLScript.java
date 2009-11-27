@@ -3,11 +3,13 @@ package com.code.aon.common.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AonSQLScript {
 
-	private static final Logger LOGGER = Logger.getLogger(AonSQLScript.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AonSQLScript.class.getName());
 	
 	private static final String MSG1 = " row(s) updated/inserted.";
 		

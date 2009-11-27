@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -16,6 +14,9 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
@@ -53,7 +54,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FinanceEntryController implements ISpecialAccountEntry{
 
-	private static final Logger LOGGER = Logger.getLogger(FinanceEntryController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceEntryController.class.getName());
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private AccountEntryFinanceWriter writer;
@@ -267,7 +268,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
             criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
             this.finances = new ListDataModel(financeBean.getList(criteria));
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error loading Finance model", e);
+            LOGGER.error("Error loading Finance model", e);
         }
     }
 
@@ -388,10 +389,10 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
 				String msg = "Unable to rollback transaction!";
-				LOGGER.log(Level.SEVERE, msg, e);
+				LOGGER.error(msg, e);
 			}
 			String msg = "No se pudo generar el apunte contable. " + e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		} finally {
@@ -421,10 +422,10 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
 				String msg = "Unable to rollback transaction!";
-				LOGGER.log(Level.SEVERE, msg, e);
+				LOGGER.error(msg, e);
 			}
 			String msg = "No se pudo borrar el apunte contable. " + e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		} finally {
@@ -543,7 +544,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		} catch (ManagerBeanException e) {
 			String m = "Error loading AccountEntryController";
 			AonUtil.addErrorMessage(m);
-			LOGGER.log(Level.SEVERE, m, e);
+			LOGGER.error(m, e);
 		}
 	}
 

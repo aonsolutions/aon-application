@@ -3,8 +3,6 @@ package com.code.aon.ui.accounting.controller;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -12,6 +10,8 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
@@ -37,7 +37,7 @@ import com.code.aon.ui.util.AonUtil;
 public class EndPeriodEntriesController {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	private static final Logger LOGGER = Logger.getLogger(EndPeriodEntriesController.class
+	private static final Logger LOGGER = LoggerFactory.getLogger(EndPeriodEntriesController.class
 			.getName());
 
 	private Date date;
@@ -255,11 +255,11 @@ public class EndPeriodEntriesController {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.log(Level.SEVERE, msg, e);
+					LOGGER.error(msg, e);
 				}
 				String msg = "Error al generar el asiento de apertura del ejercicio " + getPeriod()
 						+ ". (" + e.getMessage() + ")";
-				LOGGER.log(Level.SEVERE, msg, e);
+				LOGGER.error(msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -308,11 +308,11 @@ public class EndPeriodEntriesController {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.log(Level.SEVERE, msg, e);
+					LOGGER.error(msg, e);
 				}
 				String msg = "Error al generar el asiento de cierre del ejercicio " + getPeriod()
 				+ ". (" + e.getMessage() + ")";
-				LOGGER.log(Level.SEVERE, msg, e);
+				LOGGER.error(msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -385,11 +385,11 @@ public class EndPeriodEntriesController {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.log(Level.SEVERE, msg, e);
+					LOGGER.error(msg, e);
 				}
 				String msg = "Error al generar el asiento de explotación del ejercicio " + getPeriod()
 					+ ". (" + e.getMessage() + ")";
-				LOGGER.log(Level.SEVERE, msg, e);
+				LOGGER.error(msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {

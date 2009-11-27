@@ -1,7 +1,9 @@
 package com.code.aon.ui.accounting.event;
 
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -15,7 +17,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryDetailControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(AccountEntryDetailControllerListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryDetailControllerListener.class.getName());
 	private static final String ENTRY_CONTROLLER = "accountEntry";
 
 	private String concept;
@@ -67,7 +69,7 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 			setAccount(null);
 			setConcept(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe("Unable to initialize pojo. " + e.getMessage());
+			LOGGER.error("Unable to initialize pojo. " + e.getMessage());
 		}
 	}
 

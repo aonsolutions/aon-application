@@ -3,13 +3,13 @@ package com.code.aon.ui.accounting.controller;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
@@ -42,7 +42,7 @@ public class AccountChangeController {
 	private String debit;
 	private String credit;
 	private SecurityLevel securityLevel;
-	private static final Logger LOGGER = Logger.getLogger(AccountEntryDetail.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryDetail.class.getName());
 	
 	
 	public void onReset(ActionEvent e){
@@ -62,7 +62,7 @@ public class AccountChangeController {
 	public void onChangeAccounts(ActionEvent e)  {
 		if(!finalAccount.isEntryEnabled()){
 			String msg ="La Cuenta Destino no permite apuntes";
-				LOGGER.log(Level.SEVERE, msg);
+				LOGGER.error(msg);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 		}
@@ -166,10 +166,10 @@ public class AccountChangeController {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.log(Level.SEVERE, msg, ex);
+					LOGGER.error(msg, ex);
 				}
 				String msg = "Error on aon-account:  " + ex.getMessage();
-				LOGGER.log(Level.SEVERE, msg, ex);
+				LOGGER.error(msg, ex);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
