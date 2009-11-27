@@ -3,8 +3,9 @@ package com.code.aon.ui.cms.velocity.attribute;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.FooterBannerCategory;
 import com.code.aon.cms.FooterDetail;
@@ -18,7 +19,7 @@ import com.code.aon.ui.cms.velocity.MenuGenerator;
 
 public class FooterHandler {
 	
-	private static final Logger LOGGER = Logger.getLogger(FooterHandler.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(FooterHandler.class);
 
 	private List<MenuOptionHandler> menu;
 
@@ -56,7 +57,7 @@ public class FooterHandler {
 				list.add(BannerGenerator.getBannerCategoryHandler(fbc.getBannerCategory()));
 			}
 		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 		return list;
 	}

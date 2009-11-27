@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.ConfigDetail;
 import com.code.aon.cms.Footer;
@@ -47,7 +47,7 @@ import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
 
 public class GeneratorContext implements IVelocityConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(GeneratorContext.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(GeneratorContext.class);
 	
 	private Section defaultSection;
 	
@@ -64,7 +64,7 @@ public class GeneratorContext implements IVelocityConstants {
 		try {
 			defaultSection = GeneratorConfigController.defaultSection();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}			
 		velocityUtil = new VelocityUtil();
 		velocityUtil.setLogger( logger );
@@ -91,7 +91,7 @@ public class GeneratorContext implements IVelocityConstants {
 				list.add(lh);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return list;
 	}
@@ -108,7 +108,7 @@ public class GeneratorContext implements IVelocityConstants {
 				return lang.getLanguage().getLocale().getLanguage();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -178,7 +178,7 @@ public class GeneratorContext implements IVelocityConstants {
 				return hh;
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -213,7 +213,7 @@ public class GeneratorContext implements IVelocityConstants {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return list;
 	}
@@ -231,7 +231,7 @@ public class GeneratorContext implements IVelocityConstants {
 				return fh;
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}	
@@ -322,7 +322,7 @@ public class GeneratorContext implements IVelocityConstants {
 			try {
 				return new URL("file", null, bundleFile.getAbsolutePath()) ;
 			} catch (MalformedURLException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.error(e.getMessage(), e);
 			}
 			return super.findResource(name);
 		}

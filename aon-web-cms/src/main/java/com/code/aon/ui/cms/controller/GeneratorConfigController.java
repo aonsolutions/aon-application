@@ -1,10 +1,11 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.ActivityConfig;
 import com.code.aon.cms.AlbumConfig;
@@ -30,7 +31,7 @@ import com.code.aon.ql.Criteria;
  */
 public class GeneratorConfigController {
 	
-	private static final Logger LOGGER = Logger.getLogger(GeneratorConfigController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(GeneratorConfigController.class);
 
 	private Section section;
 	
@@ -89,9 +90,9 @@ public class GeneratorConfigController {
 			IManagerBean bean = BeanManager.getManagerBean(c);
 			bean.insertOrUpdate(config);
 		} catch (InstantiationException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

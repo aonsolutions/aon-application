@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -17,6 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
@@ -28,8 +28,8 @@ import com.code.aon.ui.form.BasicController;
 
 public abstract class GalleryController extends BasicController implements IGalleryController {
 
-	private static final Logger LOGGER = Logger.getLogger(GalleryController.class.getName());
-	
+	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryController.class);
+
 	private boolean showImageWindow;
 	
 	private boolean showThumbnailImageWindow;
@@ -111,7 +111,7 @@ public abstract class GalleryController extends BasicController implements IGall
 		        outputStream.write(data);
 				chargeImageList();
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 			} finally {
 		        IOUtils.closeQuietly(outputStream);
 			}

@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -19,6 +17,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -35,7 +35,7 @@ import com.code.aon.ql.Criteria;
 
 public class XmlBuilder {
 	
-	private static final Logger LOGGER = Logger.getLogger(XmlBuilder.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(XmlBuilder.class);
 	
 	private File destDir;
 
@@ -275,7 +275,7 @@ public class XmlBuilder {
 			XmlBuilder b = new XmlBuilder( new File("c:/tmp"+"/"+"hiru"),"http://hiru.com/xml");
 			b.generate();			
 		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}
 	}
 	

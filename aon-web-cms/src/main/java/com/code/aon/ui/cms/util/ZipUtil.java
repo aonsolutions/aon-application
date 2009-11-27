@@ -8,17 +8,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
 
 public class ZipUtil {
 	
-	private static final Logger LOGGER = Logger.getLogger(ZipUtil.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ZipUtil.class);
 	
 	static final int BUFFER = 2048;
 
@@ -65,7 +66,7 @@ public class ZipUtil {
 				}
 				return true;
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 				addMessage(" ", GEN_ERROR);
 				addMessage("<STRONG> Error al leer el fichero zip.</STRONG>", GEN_ERROR);
 				return false;
@@ -102,7 +103,7 @@ public class ZipUtil {
 			zis.close();
 			return true;
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 			return false;
 		}
 	}
@@ -126,10 +127,10 @@ public class ZipUtil {
 				zos.close();
 			}
 		} catch (FileNotFoundException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			error = true;
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			error = true;
 		}
 		if (error)

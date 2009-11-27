@@ -5,8 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDetail;
@@ -23,7 +24,7 @@ import com.code.aon.ui.cms.velocity.ArticleGenerator;
 
 public class ArticleHandler {
 	
-	private static final Logger LOGGER = Logger.getLogger(ArticleHandler.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ArticleHandler.class);
 
 	private String title;
 
@@ -168,7 +169,7 @@ public class ArticleHandler {
 					}
 				}
 			}catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 			}
 		}
 		return relateds;
@@ -197,7 +198,7 @@ public class ArticleHandler {
 					}
 				}
 			}catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+				LOGGER.error(th.getMessage(), th);
 			}
 		}
 		return documents;

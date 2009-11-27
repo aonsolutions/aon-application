@@ -5,10 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGeneratorLogger;
@@ -17,7 +18,7 @@ import com.code.aon.ui.cms.util.FTPUtil;
 
 public class GeneratorStatusController implements IGeneratorLogger {
 	
-	private static final Logger LOGGER = Logger.getLogger(GeneratorStatusController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(GeneratorStatusController.class);
 	
 	private static final DateFormat TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.MEDIUM); 
 
@@ -130,7 +131,7 @@ public class GeneratorStatusController implements IGeneratorLogger {
 				this.published = true;
 			}
 		}catch (Throwable th) {		
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
 		}
@@ -144,7 +145,7 @@ public class GeneratorStatusController implements IGeneratorLogger {
 			if (FTPUtil.uploadPreviewFTP())
 				this.published = true;
 		}catch (Throwable th) {			
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
 		}

@@ -2,11 +2,12 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
@@ -24,7 +25,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SidebarOptionController extends BasicI18nController implements IOrderedControllerListener, ICMSConstants, Constants {
 
-	private static final Logger LOGGER = Logger.getLogger(SidebarOptionController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(SidebarOptionController.class);
 	
 	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.SIDEBAR_OPTION_POSITION);
 
@@ -132,9 +133,9 @@ public class SidebarOptionController extends BasicI18nController implements IOrd
 		try {
 			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.SIDEBAR_OPTION_SIDEBAR_ID), "" + getCurrentSidebar().getId());
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -142,7 +143,7 @@ public class SidebarOptionController extends BasicI18nController implements IOrd
 		try {
 			orderedControllerSupport.reorderObjects(this);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

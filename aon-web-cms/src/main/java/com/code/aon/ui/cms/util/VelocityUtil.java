@@ -5,13 +5,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.Constants;
@@ -20,7 +20,7 @@ import com.code.aon.ui.cms.controller.ICMSConstants;
 
 public class VelocityUtil extends VelocityEngine implements Constants, ICMSConstants {
     
-	private static final Logger LOGGER = Logger.getLogger(VelocityUtil.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(VelocityUtil.class);
 	
 	public static final int INFO = 0;
 
@@ -66,7 +66,7 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
         try {
         	this.init();
         } catch (Throwable th) {
-        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
+        	LOGGER.error(th.getMessage(), th);
         }
     }
     
@@ -92,14 +92,14 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		} catch(Throwable th) {
 		    error = true;
 		    logger.error("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage() + "");
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		} finally {
 	        try {
 	            if (writer != null) {
 	                writer.flush();
 	            }
 	        } catch (Throwable th) {
-	        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
+	        	LOGGER.error(th.getMessage(), th);
 	        }
 	        IOUtils.closeQuietly(writer);
 	        IOUtils.closeQuietly(fw);
@@ -138,7 +138,7 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		} catch(Throwable th) {
 		    error = true;
 		    logger.error("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage());
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		} finally {
 			IOUtils.closeQuietly(reader);
 			IOUtils.closeQuietly(fr);

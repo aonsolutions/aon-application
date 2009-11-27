@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +16,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Config;
 import com.code.aon.ui.cms.Constants;
@@ -40,7 +40,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 	
 	private static final long EXPIRED = 8640000L;
 
-	private static final Logger LOGGER = Logger.getLogger(ThumbnailServlet.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ThumbnailServlet.class);
 	
 	private void setNoCacheControl( HttpServletResponse res ) {
     	res.setHeader("Expires", "0");
@@ -124,7 +124,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         	}
             res.flushBuffer();
         } catch (Throwable th) {
-        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
+        	LOGGER.error(th.getMessage(), th);
             throw new ServletException(th.getMessage(), th);
         } finally {
         	IOUtils.closeQuietly(bis);

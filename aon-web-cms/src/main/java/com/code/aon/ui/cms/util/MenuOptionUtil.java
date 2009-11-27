@@ -3,12 +3,12 @@ package com.code.aon.ui.cms.util;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Activity;
 import com.code.aon.cms.Album;
@@ -52,7 +52,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class MenuOptionUtil implements ICMSConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(MenuOptionUtil.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(MenuOptionUtil.class);
 
 	private static final SelectItem LEVEL_TOP = getSelectItem(ContentLevel.TOP);
 
@@ -333,7 +333,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						return link;
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case DIRECT_ACCESS:
@@ -350,7 +350,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						return link;
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case MENU:
@@ -367,7 +367,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						return link;
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case LINK:
@@ -395,7 +395,7 @@ public class MenuOptionUtil implements ICMSConstants {
 							break;
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case FAQ:
@@ -423,7 +423,7 @@ public class MenuOptionUtil implements ICMSConstants {
 							break;
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case MODULAR:
@@ -444,7 +444,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case ALBUM_IMAGES:
@@ -486,7 +486,7 @@ public class MenuOptionUtil implements ICMSConstants {
 							}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case ARTICLE_EVENTS:
@@ -540,7 +540,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case DOWNLOAD:
@@ -573,7 +573,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case DIARY:
@@ -600,7 +600,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case BRANDS:
@@ -623,7 +623,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case HIRU:
@@ -660,7 +660,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;
 			case ACTIVITY:
@@ -682,7 +682,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 					}
 				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				return null;				
 		}		
