@@ -9,7 +9,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.util.EmailUtilController;
+import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -66,10 +65,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private AccountEntryInvoiceWriter accountWriter;
 	private List<SelectItem> addresses;
 	private boolean showInvoiceAddressWindow;
-	private EmailUtilController emailController;
+	private FinanceEmailUtil emailController;
 	
 	public InvoiceController() {
-		this.emailController = new EmailUtilController();
+		this.emailController = new FinanceEmailUtil();
 	}
 
 	public String getInvoiceAddressControllerName() {
@@ -393,7 +392,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return "invoice_" + invoice.getReferenceCode().replace("/", "-");
 	}
 	
-	public EmailUtilController getEmailController() {
+	public FinanceEmailUtil getEmailController() {
 		return emailController;
 	}
 	
@@ -420,21 +419,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		Invoice invoice = getInvoice();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
-		String[] emails = emailController.getEmails(invoice);
-		if (! ArrayUtils.isEmpty(emails) ) {
-			messageController.setRecipientsTo( emails[0] );
-			if ( emails.length > 1 ) { 
-				String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
-				messageController.setRecipientsCc( recipientsCc );
-			}
-		}
-		messageController.setSubject( emailController.getEmailSubject(invoice) );
-		messageController.setContent( emailController.getEmailBody(invoice) );
 		IAttachment attach = getInvoiceData(invoice);
-		messageController.addAttachment( emailController.getInvoiceFile(attach, invoice) );
-		if ( facturae ) {
-			messageController.addAttachment( emailController.getInvoiceXml(invoice) );	
-		}
+		emailController.initMessageController(messageController, invoice, attach, facturae);
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
 	}
