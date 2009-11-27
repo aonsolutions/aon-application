@@ -4,13 +4,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -24,7 +25,7 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 public class LabourReportController implements ICollectionProvider{
 	
-	private static final Logger LOGGER = Logger.getLogger(LabourReportController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(LabourReportController.class.getName());
 	
 	private ListDataModel model;
 	
@@ -105,7 +106,7 @@ public class LabourReportController implements ICollectionProvider{
 			}
 			setModel(new ListDataModel(labourReportList));
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
