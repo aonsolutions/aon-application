@@ -2,13 +2,14 @@ package com.code.aon.db;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 public class XMLToDBImporter implements IEntityManager {
 
-	private static final Logger LOGGER = Logger.getLogger(XMLToDBImporter.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(XMLToDBImporter.class.getName());
 	
 	private HibernateDataManager hdm;
 	
