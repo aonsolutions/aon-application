@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
@@ -17,6 +15,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
@@ -50,7 +50,7 @@ import com.code.aon.webmail.WebmailUtil;
 
 public class EmailUtilController implements IFinanceMessages, IFinanceConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(EmailUtilController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(EmailUtilController.class.getName());
 	
 	private EmailSender sender;
 	
@@ -214,7 +214,7 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 				xml.getFile().delete();
 			}
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 			String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL_ERROR);
 			String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );				
 			AonUtil.addErrorMessage(message);

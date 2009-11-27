@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
@@ -17,7 +18,7 @@ import com.code.aon.ui.form.FormUtil;
 
 public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(FBatchPrinter.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchPrinter.class.getName());
 	
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
@@ -34,7 +35,7 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 				reportFBatchList.add(rFBatch);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining FinanceBatchList Collection", e);
+			LOGGER.error("Error obtaining FinanceBatchList Collection", e);
 		}
 		return reportFBatchList;
 	}

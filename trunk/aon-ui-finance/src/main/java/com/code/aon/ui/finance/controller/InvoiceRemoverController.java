@@ -2,11 +2,12 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -26,7 +27,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceRemoverController extends BasicController implements IProgression{
 
-	private static final Logger LOGGER = Logger.getLogger(InvoiceRemoverController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceRemoverController.class.getName());
 	
 	private ArrayList<Invoice> checks = new ArrayList<Invoice>();
 	
@@ -133,10 +134,10 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 						HibernateUtil.rollbackTransaction(sessionName);
 					} catch (DAOException daoe) {
 						String msg =  "Unable to rollback transaction!";
-						LOGGER.log(Level.SEVERE, msg, e);
+						LOGGER.error(msg, e);
 					}
 					String msg =  "Error deleting invoice:  " + invoice.getReferenceCode();
-					LOGGER.log(Level.SEVERE, msg, e);
+					LOGGER.error(msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				} finally {

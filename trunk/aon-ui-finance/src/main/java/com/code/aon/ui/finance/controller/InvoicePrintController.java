@@ -3,12 +3,13 @@ package com.code.aon.ui.finance.controller;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.mail.MessagingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -24,7 +25,7 @@ import com.code.aon.webmail.SecurityInfo;
 
 public class InvoicePrintController extends InvoiceController implements IFinanceConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(InvoicePrintController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoicePrintController.class.getName());
 	
 	private IPriceStrategy priceStrategy;
 	
@@ -55,7 +56,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		try {		
 			sendInvoicesByEmail( getSecurityInfo(signer) );
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
@@ -67,7 +68,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		try {		
 			sendInvoicesByEmail( null );
 		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		}

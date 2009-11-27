@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -13,6 +11,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
@@ -56,7 +56,7 @@ import com.code.aon.webmail.SecurityInfo;
 
 public class InvoiceController extends BasicController implements ISignatureController {
 
-	private static final Logger LOGGER = Logger.getLogger(InvoiceController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceController.class.getName());
 	
 	private String invoiceAddressControllerName;
 	private String invoiceDetailControllerName;
@@ -345,7 +345,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		try {
 			return BeanManager.getManagerBean(InvoiceAttachment.class);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}
