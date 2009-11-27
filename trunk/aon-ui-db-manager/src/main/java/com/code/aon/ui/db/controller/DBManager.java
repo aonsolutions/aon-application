@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -31,6 +30,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.hibernate.IConfigurationFactory;
@@ -45,7 +46,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DBManager {
 
-	private static final Logger LOGGER = Logger.getLogger(DBManager.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(DBManager.class.getName());
 	
 	private List<AonFile> files;
 	
@@ -143,7 +144,7 @@ public class DBManager {
     		try {
 				list.add( (Class) DBManager.class.forName(pojo) );
 			} catch (ClassNotFoundException e) {
-				LOGGER.severe( "Class not found: " + pojo );
+				LOGGER.error( "Class not found: " + pojo );
 			}
     	}
     	return list;
@@ -163,7 +164,7 @@ public class DBManager {
 			responseZip( xmlFile );
 			xmlFile.delete();
 		} catch (Throwable e) {
-			LOGGER.severe( ">>>> onExport " + e.getMessage() );
+			LOGGER.error( ">>>> onExport " + e.getMessage() );
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -250,7 +251,7 @@ public class DBManager {
 				hdm.execute();	
 			}
 		} catch (Throwable e) {
-			LOGGER.severe( ">>>> onExport " + e.getMessage() );
+			LOGGER.error( ">>>> onExport " + e.getMessage() );
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {

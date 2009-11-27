@@ -1,13 +1,13 @@
 package com.code.aon.db;
 
-import java.util.logging.Logger;
-
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DBToXMLExporter implements IEntityManager<Element> {
 
-	private static final Logger LOGGER = Logger.getLogger(DBToXMLExporter.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(DBToXMLExporter.class.getName());
 	
 	private HibernateDataManager hdm;
 	

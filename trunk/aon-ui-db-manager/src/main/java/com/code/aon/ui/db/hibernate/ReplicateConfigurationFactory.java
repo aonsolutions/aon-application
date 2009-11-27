@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.DefaultConfigurationFactory;
 import com.code.aon.common.dao.hibernate.IConfigurationFactory;
@@ -18,7 +18,7 @@ public class ReplicateConfigurationFactory extends DefaultConfigurationFactory {
 
 	private static final String TEST_HIBERNATE_PROPERTIES_FILE = "/test.properties";
 
-	private static final Logger LOGGER = Logger.getLogger(ReplicateConfigurationFactory.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReplicateConfigurationFactory.class.getName());
 	
 	private IConfigurationFactory defaultFactory;
 
@@ -49,7 +49,7 @@ public class ReplicateConfigurationFactory extends DefaultConfigurationFactory {
 				in.close();
 			}			
 		} catch (IOException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			LOGGER.error( e.getMessage(), e );
 		}		
 	}
 	

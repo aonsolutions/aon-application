@@ -2,8 +2,6 @@ package com.code.aon.ui.db.hibernate;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +12,8 @@ import org.hibernate.engine.Mapping;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,7 +27,7 @@ import com.code.aon.db.EntityProcessException;
 
 public class TransferObjectImportVisitor extends EntityImportVisitor {
 	
-	private static final Logger LOGGER = Logger.getLogger(TransferObjectImportVisitor.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(TransferObjectImportVisitor.class.getName());
 	
 	private boolean previousBeginTransaction;
 	
@@ -65,7 +65,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 		try {
 			HibernateUtil.beginTransaction(factoryName);
 		} catch (DAOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
@@ -74,7 +74,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 		try {
 			HibernateUtil.commitTransaction(factoryName);
 		} catch (DAOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		HibernateUtil.setBeginTransaction(this.previousBeginTransaction);
 		HibernateUtil.setCloseSession(this.previousCloseSession);
@@ -105,7 +105,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 					try {
 						PropertyUtils.setProperty(to, propertyName, value);
 					} catch (Throwable th) {
-						LOGGER.severe( "Error in set property " + propertyName + " value " + value + " for element " + element );
+						LOGGER.error( "Error in set property " + propertyName + " value " + value + " for element " + element );
 						throw new EntityProcessException( th.getMessage(), th );
 					}
 				}
@@ -130,7 +130,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 			initialize(to, element);
 			bean.replicate(to, replicationMode);
 		} catch (Throwable th) {
-			LOGGER.severe( "Error in replicate " + entityName + ": " + element );
+			LOGGER.error( "Error in replicate " + entityName + ": " + element );
 			throw new EntityProcessException( th.getMessage(), th );
 		}
 	}
