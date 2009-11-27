@@ -17,19 +17,19 @@
 	     <dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.stat</artifactId>
-			<version>4.1.0-SNAPSHOT</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
