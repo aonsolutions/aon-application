@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -16,6 +17,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.wizard.AbstractWizard;
+import com.code.aon.ui.util.AonUtil;
 
 public class AccountWizard extends AbstractWizard {
 
@@ -149,4 +151,25 @@ public class AccountWizard extends AbstractWizard {
 		this.orderByAlias = orderByAlias;
 	}
 
+	public void onAccept(ActionEvent event) {
+		if (StringUtils.isEmpty(getId())) {
+			AonUtil.addErrorMessage("El código de cuenta contable es requerido.");
+		} else if (StringUtils.isEmpty(getDescription())) {
+			AonUtil.addErrorMessage("La descripción de la cuenta contable es requerida.");
+		} else {
+			try {
+				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+				Account account = new Account();
+				account.setId(getId());
+				account.setDescription(getDescription());
+				account.setAlias(getAlias());
+				account = (Account) accountBean.insert(account);
+				onSearch(event);
+			} catch (ManagerBeanException e) {
+				FacesContext context = FacesContext.getCurrentInstance();
+				FacesMessage message = new FacesMessage(e.getMessage());
+				context.addMessage(null, message);
+			}
+		}
+	}
 }

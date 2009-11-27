@@ -155,7 +155,7 @@ public class AccountCollectionsController {
 	private List<SelectItem> getChargedRetentionAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "475*");
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "4751*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
 		return getAccounts(criteria,pojo);
@@ -184,6 +184,38 @@ public class AccountCollectionsController {
 		return getSalaryAccounts(false);
 	}
 
+
+	private List<SelectItem> getSalaryAllowanceAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "629*");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
+				new Boolean(true));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getSalaryAllowanceAccounts() throws ManagerBeanException, ExpressionException {
+		return getSalaryAllowanceAccounts(true);
+	}
+	public List<SelectItem> getSalaryAllowanceAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getSalaryAllowanceAccounts(false);
+	}
+
+
+	private List<SelectItem> getSalaryCompensationAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "641*");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
+				new Boolean(true));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getSalaryCompensationAccounts() throws ManagerBeanException, ExpressionException {
+		return getSalaryCompensationAccounts(true);
+	}
+	public List<SelectItem> getSalaryCompensationAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getSalaryCompensationAccounts(false);
+	}
+	
 	private List<SelectItem> getPendingSalaryAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
@@ -232,19 +264,50 @@ public class AccountCollectionsController {
 		return getEnterpriseSocialInsuranceAccounts(false);
 	}
 
-	private List<SelectItem> getFixedAssestsAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+	private List<SelectItem> getFixedAssetAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "21*");
-		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "20*|21*");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_LEVEL), new Integer(4));
 		return getAccounts(criteria,pojo);
 	}
-	public List<SelectItem> getFixedAssestsAccounts() throws ManagerBeanException, ExpressionException {
-		return getFixedAssestsAccounts(true);
+	public List<SelectItem> getFixedAssetAccounts() throws ManagerBeanException, ExpressionException {
+		return getFixedAssetAccounts(true);
 	}
-	public List<SelectItem> getFixedAssestsAccountsIds() throws ManagerBeanException, ExpressionException {
-		return getFixedAssestsAccounts(false);
+	public List<SelectItem> getFixedAssetAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getFixedAssetAccounts(false);
+	}
+
+	private List<SelectItem> getAccumulatedDepreciationAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "280*|281*");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_LEVEL), new Integer(4));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getAccumulatedDepreciationAccounts() throws ManagerBeanException, ExpressionException {
+		return getAccumulatedDepreciationAccounts(true);
+	}
+	public List<SelectItem> getAccumulatedDepreciationAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getAccumulatedDepreciationAccounts(false);
+	}
+
+	
+	private List<SelectItem> getAmortizationAllocationAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "680*|681*");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_LEVEL), new Integer(4));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getAmortizationAllocationAccounts() throws ManagerBeanException, ExpressionException {
+		return getAmortizationAllocationAccounts(true);
+	}
+	public List<SelectItem> getAmortizationAllocationAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getAmortizationAllocationAccounts(false);
 	}
 
 	private List<SelectItem> getDebtInterestAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
