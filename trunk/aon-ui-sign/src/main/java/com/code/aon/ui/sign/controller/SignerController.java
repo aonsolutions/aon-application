@@ -4,10 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
@@ -26,7 +28,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SignerController implements ISignConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(SignerController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(SignerController.class.getName());
 	
 	private ISignatureController signatureController;
 	
@@ -92,7 +94,7 @@ public class SignerController implements ISignConstants {
 			attachment.setMimeType(getMimeType(outputFormat));
 			attachment.setDescription( signatureController.getDescription(to));
 		} catch (Throwable e) {
-			LOGGER.severe(">>>> onReport " + e.getMessage());
+			LOGGER.error(">>>> onReport " + e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}			
@@ -126,7 +128,7 @@ public class SignerController implements ISignConstants {
 				AttachmentUtil.downloadAttachment(attach);
 			}
 		} catch (Throwable e) {
-			LOGGER.severe(">>>> onReport " + e.getMessage());
+			LOGGER.error(">>>> onReport " + e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}			
@@ -193,7 +195,7 @@ public class SignerController implements ISignConstants {
 				sign( to, signatureController.generateReportAttachment(to) );	
 			}
 		} catch (Throwable e) {
-			LOGGER.severe(">>>> onSign " + e.getMessage());
+			LOGGER.error(">>>> onSign " + e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
@@ -205,7 +207,7 @@ public class SignerController implements ISignConstants {
 		try {
 			cancelSign( signatureController.getTo() );
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> onCancelSign " + e.getMessage());
+			LOGGER.error(">>>> onCancelSign " + e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
