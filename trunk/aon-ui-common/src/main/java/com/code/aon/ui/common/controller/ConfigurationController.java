@@ -160,7 +160,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 					LOGGER.warn("Imposible determinar la versión");
 				}
 			} catch (Throwable e) {
-				LOGGER.warn("Imposible determinar la versión", e);
+				LOGGER.warn("Imposible determinar la versión");
 			}
 		}
 		return version;
