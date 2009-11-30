@@ -131,6 +131,7 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.ItemSupplier"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
@@ -169,6 +170,7 @@
 		<mapping class="com.code.aon.warehouse.IncomeDetail"/>
 		<mapping class="com.code.aon.warehouse.Inventory"/>
 		<mapping class="com.code.aon.warehouse.InventoryDetail"/>
+		<mapping class="com.code.aon.warehouse.ItemWarehouse"/>
 		<mapping class="com.code.aon.warehouse.Stock"/>
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
 				
