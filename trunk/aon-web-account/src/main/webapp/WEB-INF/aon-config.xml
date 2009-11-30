@@ -52,7 +52,7 @@
 			showSegment="false"
 		/>
 		<finance:invoice
-			showDeliveryData="false" 
+			showWarehouseData="false" 
 		/>
 	</finance:config>
 </config>
