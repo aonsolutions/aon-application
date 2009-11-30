@@ -1,0 +1,110 @@
+/****************************************/
+/*********** FORM LAYOUTS **********/
+/****************************************/
+
+/******* UNITS ************/
+
+/* You it to group your controls (label and it´s field) when you have a form and you want to define one of the four layouts defined bellow */
+
+/* groups label and input text field */
+div.aon-form-unit{
+	}
+/*contains a textarea and it´s label*/
+div.aon-form-textarea{
+	clear:both;
+	display:block;	
+	}
+/* Contains the label, the input fields and the button of the lookup control*/
+div.aon-form-lookup{
+	}
+/*Div that contains the label and the selectOneListBox*/
+div.aon-form-selectOneListBox{
+	clear:both;
+	display:block;
+	vertical-align:top;
+	}
+
+/*Div that contains all the fields of a calendar object*/
+div.aon-form-calendar{	
+	}
+/*Div that contains a time object*/
+div.aon-form-time{
+	}
+/*Div that contains the selectOneListBox object*/
+div.aon-form-selectOneMenu{
+	}
+div.aon-form-nowrap{
+	white-space:nowrap;
+	}
+/*  FORM LAYOUTS  */
+/* Use it to organize units (a label and a field) of a form, you can display them horizontally or vertically */
+/*********** LAYOUT 1: UNIT INLINE AND LABEL INLINE**********/
+/* Apply it simultaniously with each unit */
+.aon-form-layout-unit-inline-label-inline{
+	float:left;
+	white-space:nowrap;
+	height:2em;
+	padding-right:1em;
+	}
+
+/*********** LAYOUT 2: UNIT INLINE AND LABEL BLOCK**********/
+/* Apply it simultaniously with each unit */
+.aon-form-layout-unit-inline-label-block{
+	float:left;
+	padding-right:1em;
+	height:3.5em;
+	}
+	
+/*********** LAYOUT 3: UNIT BLOCK AND LABEL BLOCK**********/
+/* Apply it simultaniously with each unit */
+.aon-form-layout-unit-block-label-block{
+	display:block;
+	clear:both;
+	padding-bottom:0.5em;
+	}
+
+/*********** LAYOUT 4: UNIT BLOCK AND LABEL INLINE**********/
+/* Apply it simultaniously with each unit */
+.aon-form-layout-unit-block-label-inline{
+	display:block;
+	clear:both;
+	margin-bottom:0.5em;
+	}
+	
+/*********** LAYOUT LABEL:label block ****/
+/* Use it with the label block declarations. Apply it simultaneously with the label generic style */
+.aon-form-layout-label-block{
+	display:block;	
+	}
+	
+	
+/*----IMPORTANT----this declaration must follow the aon-form-layout-unit-hztal one*/
+.aon-form-selectOneListBox, .aon-form-textarea, .aon-form-selectOneRadio{
+	height:auto;
+	margin-bottom:0.5em;
+	clear:both;
+	display:block;
+	float:none;
+	}
+
+/*---- HACKS----*/
+
+.aon-form-layout-unit-inline-label-inline .aon-form-lookup-button, .aon-form-layout-unit-inline-label-block.aon-form-lookup-button{
+	_left:2px;
+	}
+.aon-form-selectBooleanCheckbox .aon-form-layout-label-block{
+	display:inline;
+	white-space:nowrap;
+	}
+
+/**************************/
+/***********BREAK LINE ****/
+/**************************/
+
+/* Use it to break the fields flow. Creates a new line */
+div.aon-form-breakline{
+	clear:both;
+	display:block;
+	margin:0;
+	padding:0;
+	}
