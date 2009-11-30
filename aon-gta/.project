@@ -33,11 +33,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/main/webapp/_finance</name>
-			<type>2</type>
-			<location>C:/AON-PROJECT/aon-web-finance/src/main/webapp/_finance</location>
-		</link>
-	</linkedResources>
 </projectDescription>
