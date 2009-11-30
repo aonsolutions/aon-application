@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.enterprise</artifactId>
 	<packaging>war</packaging>
-	<version>4.6.0</version>
+	<version>4.6.1</version>
 	<description>AON WEB ENTERPRISE</description>
 	<name>AON WEB ENTERPRISE</name>
 	<properties>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.11.0</version>
+			<version>4.11.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -71,13 +71,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>4.10.0</version>
+			<version>4.11.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.4.0</version>
+			<version>4.5.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -95,7 +95,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>4.14.0</version>
+			<version>4.14.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -107,13 +107,13 @@
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.7.0</version>
+			<version>4.7.1</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.purchase</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
@@ -125,7 +125,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>4.6.0</version>
+			<version>4.7.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -137,13 +137,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.3.1</version>
+			<version>4.3.2</version>
 			<scope>runtime</scope>
 		</dependency>	
 	    <dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.warehouse</artifactId>
-			<version>4.6.0</version>
+			<version>4.7.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
