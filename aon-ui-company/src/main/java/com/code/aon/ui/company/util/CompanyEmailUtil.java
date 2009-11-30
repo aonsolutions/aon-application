@@ -1,5 +1,10 @@
 package com.code.aon.ui.company.util;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -13,9 +18,12 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
@@ -23,18 +31,23 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 
 public class CompanyEmailUtil implements ICompanyConstants {
 
+	private final static String PDF_EXTENSION = "." + MimeType.MIME_PDF.getExtension();
+	
 	private EmailSender sender;
 	
 	private Company company;
@@ -136,5 +149,27 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		}
 		return body.toString();
 	}
+	
+	private String getFileName( ITransferObject to, String report ) {
+		String name = report;
+		if ( IHeaderObject.class.isAssignableFrom(to.getClass()) ) {
+			name = report + "_" + ((IHeaderObject)to).getReferenceCode().replace("/", "-");
+		}
+		return name + PDF_EXTENSION;
+	}
+	
+	public AonFile getReport( ITransferObject to, String report ) throws IOException, ReportException {
+		AonFile aonFile = new AonFile();
+		File file = File.createTempFile( report, PDF_EXTENSION );
+		aonFile.setFile( file );
+		aonFile.setFileName( getFileName(to, report) );
+
+		ReportManager reportManager = new ReportManager();
+		reportManager.setCollectionProvider( new SingleCollectionProvider(to) );
+		OutputStream out = new BufferedOutputStream( new FileOutputStream(file) );
+		reportManager.execute( out, report );
+		out.close();
+		return aonFile;
+	}		
 	
 }
