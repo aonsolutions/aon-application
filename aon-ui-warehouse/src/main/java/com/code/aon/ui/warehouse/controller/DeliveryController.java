@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -35,6 +37,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
@@ -47,6 +50,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -73,8 +80,13 @@ public class DeliveryController extends BasicController {
 	private int invoiceNumber;
 	private Date invoiceDate;
 	private Boolean valuableDelivery;
+	private WarehouseEmailUtil emailUtil;
+	
+    public DeliveryController() {
+    	this.emailUtil = new WarehouseEmailUtil();
+    }
 
-    public List<SelectItem> getAddresses() {
+	public List<SelectItem> getAddresses() {
 		return addresses;
 	}
 	
@@ -395,4 +407,11 @@ public class DeliveryController extends BasicController {
 		invoiceController.onSelect(null);
 	}
 
+	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+		messageController.initNewMessage();
+		emailUtil.initMessageController(messageController, (Delivery) getTo());
+		messageController.setShowNewMessageWindow(true);
+	}	
+	
 }
