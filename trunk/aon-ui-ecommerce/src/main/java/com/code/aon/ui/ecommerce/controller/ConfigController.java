@@ -146,7 +146,7 @@ public class ConfigController {
 			Ecconfig to = new Ecconfig();
 			to.setActive(true);
 			to.setName("default");
-			to.setSkin(SkinType.DEFAULT);
+			to.setSkin(SkinType.BASICO1);
 			to.setEmail("your@email.com");
 			Tariff tariff = new Tariff();
 			tariff.setId(1);

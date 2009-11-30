@@ -39,6 +39,7 @@
 						reRender="itemContent"
 						styleClass="none">
 						<aon:actionListener method="#{shopItems.onSelect}" />
+						<aon:actionListener method="#{shopItem.onLoadAttachment}" />
 						<aon:outputText value="#{to.product.name}" 
 							style="font-weight: bold;color:#000;"/>
 					</aon:commandLink>
@@ -143,6 +144,7 @@
 						reRender="itemContent"
 						styleClass="aon-editDataTable-button aon-icon-info">
 						<aon:actionListener method="#{shopItems.onSelect}" />
+						<aon:actionListener method="#{shopItem.onLoadAttachment}" />
 					</aon:commandButton>
 					<aon:commandButton value="&#160;" action="shopingCart_list"
 						title="#{ecommerceBundle.aon_ecommerce_addToCart}"

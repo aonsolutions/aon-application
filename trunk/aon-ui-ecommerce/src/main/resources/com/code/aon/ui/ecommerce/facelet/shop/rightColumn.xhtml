@@ -36,7 +36,7 @@
 				<aon:div id="login-box-header" styleClass="box-header">
 					<aon:div id="login-box-icon" styleClass="login-box-header-icon"></aon:div>
 					<aon:commandLink action="registry_form">
-						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
+						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_access}" />
 					</aon:commandLink>
 				</aon:div>
 			
@@ -99,7 +99,7 @@
 				value="#{bundle.aon_remove}"
 				action="#"
 				rendered="#{!(shoppingCart.model.rowCount==0)}"
-				reRender="right-panel"
+				reRender="shopForm"
 				styleClass="aon-finding-toolbar-item aon-icon-remove">
 				<aon:actionListener method="#{shoppingCart.onCartClean}" />
 			</aon:commandButton>

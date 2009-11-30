@@ -38,10 +38,6 @@
 				<c:forEach var="cat" items="#{group.categoryList}">
 					<rich:panelMenuItem label="#{cat.name}" value="#{cat}"
 						actionListener="#{categoryGadget.onCategorySelect}">
-<!--  
-						<a4j:support event="onclick" reRender="itemContent"	
-							actionListener="#{categoryGadget.onCategorySelect}" />
--->						
 					</rich:panelMenuItem>
 				</c:forEach>
 			</rich:panelMenuGroup>
