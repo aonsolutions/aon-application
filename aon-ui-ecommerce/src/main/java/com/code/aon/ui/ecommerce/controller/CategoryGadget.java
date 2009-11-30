@@ -4,15 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
-import javax.faces.component.html.HtmlOutputText;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.richfaces.component.html.HtmlPanelMenuGroup;
 import org.richfaces.component.html.HtmlPanelMenuItem;
-import org.richfaces.taglib.PanelMenuItemTag;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,7 +25,6 @@ import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class CategoryGadget {
-
 	
 	private DataModel groupModel;
 	private DataModel categoryModel;
@@ -76,9 +72,7 @@ public class CategoryGadget {
 //			ProductCategory cat = (ProductCategory) categoryModel.getRowData();
 //			cg.categoryModel.getRowData();
 			
-			HtmlPanelMenuGroup group = (HtmlPanelMenuGroup) c.getParent();
 //			ProductCategory cat = (ProductCategory)cg.categoryModel.getRowData();
-//			ProductCategory cat = (ProductCategory)group.getValue();
 			Criteria criteria = new Criteria();
 			String identifier = BeanManager.getManagerBean(Item.class)
 					.getFieldName(IECommerceConstants.CATEGORY_ALIAS);
@@ -102,23 +96,26 @@ public class CategoryGadget {
 	
 	public List<CategoryGroup> getCategoryGroupList(){
 		List<CategoryGroup> cgList = new LinkedList<CategoryGroup>();
+		List<ITransferObject> catList;
+		
 		for(ITransferObject to:getGroupList()){
 			ProductCategoryGroup pcg = (ProductCategoryGroup)to;
-			categoryModel = new ListDataModel(getCategoryList(pcg));
+			catList = getCategoryList(pcg);
+			categoryModel = new ListDataModel(catList);
 			CategoryGroup cg = new CategoryGroup();
 			cg.setPcg(pcg);
 			cg.setCategoryModel(categoryModel);
-			cg.setCategoryList(getCategoryList(pcg));
+			cg.setCategoryList(catList);
 			cgList.add(cg);
 		}
 		return cgList;
 	}
 	
 	private List<ITransferObject> getGroupList(){
-		List<ITransferObject> categoryList = getCategoryList(null);
+		List<ITransferObject> categoryList = getCategoryList();
 		List<ITransferObject> groupList = new LinkedList<ITransferObject>();
 		List<ITransferObject> otherGroupList = new LinkedList<ITransferObject>();
-		List<CategoryGroup> cgList = new LinkedList<CategoryGroup>();
+//		List<CategoryGroup> cgList = new LinkedList<CategoryGroup>();
 		
 		for(ITransferObject to:categoryList){
 			ProductCategory pc = (ProductCategory)to;
@@ -135,14 +132,14 @@ public class CategoryGadget {
 		}
 		groupList.addAll(otherGroupList);
 		
-		for(ITransferObject to:groupList){
-			ProductCategoryGroup pcg = (ProductCategoryGroup)to;
-			categoryModel = new ListDataModel(getCategoryList(pcg));
-			CategoryGroup cg = new CategoryGroup();
-			cg.setPcg(pcg);
-			cg.setCategoryModel(categoryModel);
-			cgList.add(cg);
-		}
+//		for(ITransferObject to:groupList){
+//			ProductCategoryGroup pcg = (ProductCategoryGroup)to;
+//			categoryModel = new ListDataModel(getCategoryList(pcg));
+//			CategoryGroup cg = new CategoryGroup();
+//			cg.setPcg(pcg);
+//			cg.setCategoryModel(categoryModel);
+//			cgList.add(cg);
+//		}
 		return groupList;
 	}
 	
@@ -154,14 +151,29 @@ public class CategoryGadget {
 			Item item = (Item)to;
 			ProductCategory pc = item.getProduct().getCategory();
 			
-			
 			if(pcg != null && !categoryList.contains(pc)){
 				if(pc.getGroup()!=null && pcg.equals(pc.getGroup())){
 					categoryList.add(pc);
 				}
 			} else if(pcg == null && !categoryList.contains(pc)){
-				categoryList.add(pc);
+				if(pc.getGroup()==null){
+					categoryList.add(pc);
+				}
 			}
+		}
+		return categoryList;
+	}
+	private List<ITransferObject> getCategoryList(){
+		List<ITransferObject> itemList = getItemList();
+		List<ITransferObject> categoryList = new LinkedList<ITransferObject>() ;
+		
+		for(ITransferObject to:itemList){
+			Item item = (Item)to;
+			ProductCategory pc = item.getProduct().getCategory();
+			
+			if(!categoryList.contains(pc)){
+				categoryList.add(pc);
+			} 
 		}
 		return categoryList;
 	}

@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -15,6 +13,9 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -29,7 +30,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ShopItemController {
 	
-	private static final Logger LOGGER = Logger
+	private static final Logger LOGGER = LoggerFactory
 	.getLogger(ShopItemController.class.getName());
 
 	private ShopItem item;
@@ -212,7 +213,7 @@ public class ShopItemController {
 			sos.close();
 			response.flushBuffer();
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	

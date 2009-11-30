@@ -1,13 +1,14 @@
 package com.code.aon.ui.ecommerce.hibernate;
 
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.naming.Name;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.dao.hibernate.DefaultConfigurationFactory;
@@ -24,7 +25,7 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class DomainConfigurationFactory extends DefaultConfigurationFactory implements IAonObjectClasses, ILdapConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(DomainConfigurationFactory.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(DomainConfigurationFactory.class.getName());
 	
 	private static final IConfigurationFactory SINGLETON = new DomainConfigurationFactory();
 
@@ -75,11 +76,11 @@ public class DomainConfigurationFactory extends DefaultConfigurationFactory impl
 					String driverClassName = dataSource.getAsString(DRIVER_CLASS_NAME_ATTRIBUTE);
 					properties.put(Environment.DRIVER, driverClassName);
 				} else {
-					LOGGER.severe( "DataSource not found: " + dataSourceDN );
+					LOGGER.error( "DataSource not found: " + dataSourceDN );
 				}
 			}
 		} else {
-			LOGGER.severe( "Domain Application not found: " + domainApplicationDN );
+			LOGGER.error( "Domain Application not found: " + domainApplicationDN );
 		}
     	return properties;
     }

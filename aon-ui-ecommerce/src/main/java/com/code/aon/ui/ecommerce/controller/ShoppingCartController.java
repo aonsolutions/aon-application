@@ -350,8 +350,10 @@ public class ShoppingCartController extends EmailParentController{
 	}
 	
 	public void onCartClean(ActionEvent event){
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
 		setList(null);
 		setModel(null);
+		sc.setContentView( ViewEnum.ITEM_LIST );
 	}
 
 

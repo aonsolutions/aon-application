@@ -1,10 +1,10 @@
 package com.code.aon.ui.ecommerce.controller;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.faces.event.AbortProcessingException;
 import javax.mail.internet.InternetAddress;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
@@ -15,7 +15,7 @@ import com.code.aon.webmail.bean.AonServer;
 
 public class EmailParentController {
 	
-	private static final Logger LOGGER = Logger.getLogger(EmailParentController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(EmailParentController.class.getName());
 	
 	public void email(String subject, String from, String to, String content) {
 		String domain = "localhost";
@@ -40,7 +40,7 @@ public class EmailParentController {
 			server.sendMessage(aonMessage);
 			server.disconnect();
 		} catch (Throwable e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage( e.getMessage() );
 			throw new AbortProcessingException( e.getMessage(), e);
 		}
