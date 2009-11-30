@@ -65,6 +65,7 @@
 			showType="false"
 			showBrand="false"
 			showStock="false"
+			showSuppliers="false"
 			showAccount="true"
 			showAttachment="false"
 			showEcommerceData="false"
