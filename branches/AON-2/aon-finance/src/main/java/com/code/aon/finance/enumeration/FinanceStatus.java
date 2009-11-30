@@ -23,8 +23,11 @@ public enum FinanceStatus implements IResourceable {
 	RETURNED,
     
 	/** PAID. */
-	PAID;
+	PAID,
     
+	/** SETTLED. */
+	SETTLED;
+
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
     
