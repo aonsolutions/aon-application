@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -17,6 +19,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="bank")
 public class Bank implements ITransferObject{
 	
+	private static final long serialVersionUID = 1084181539066235328L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -84,4 +88,24 @@ public class Bank implements ITransferObject{
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Bank) {
+			Bank bank = (Bank) obj;
+			if (ObjectUtils.equals(getId(), bank.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+	
 }

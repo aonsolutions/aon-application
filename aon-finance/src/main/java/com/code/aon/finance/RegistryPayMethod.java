@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
 
@@ -25,7 +27,9 @@ import com.code.aon.registry.Registry;
 @Table(name = "rpaymethod")
 public class RegistryPayMethod implements ITransferObject {
 
-    /** The id. */
+	private static final long serialVersionUID = -8346359421638707402L;
+
+	/** The id. */
     private Integer id;
 
     /** The registry. */
@@ -203,4 +207,24 @@ public class RegistryPayMethod implements ITransferObject {
 
     /** The DELIM. */
     private final String DELIM = " ";
+    
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof RegistryPayMethod) {
+			RegistryPayMethod o = (RegistryPayMethod) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+    
 }
