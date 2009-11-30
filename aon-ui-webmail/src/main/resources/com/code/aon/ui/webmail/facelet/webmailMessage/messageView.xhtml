@@ -22,7 +22,7 @@
 						title="#{webmailBundle.webmail_previous_message}"
 						rendered="#{webmailMessage.previousMessage}"
 						action="message"
-						actionListener="#{webmailMessage.onPreviousMessage}"
+						actionListener="#{webmailMessage.previousMessage}"
 						value="#{webmailBundle.webmail_previous_message}"
 						styleClass="aon-icon-commandButton aon-icon-mailPrevious">
 					</aon:commandButton>
@@ -38,7 +38,7 @@
 						title="#{webmailBundle.webmail_next_message}"
 						rendered="#{webmailMessage.nextMessage}"
 						action="message"
-						actionListener="#{webmailMessage.onNextMessage}"
+						actionListener="#{webmailMessage.nextMessage}"
 						value="#{webmailBundle.webmail_next_message}"
 						styleClass="aon-icon-commandButton aon-icon-mailNext">
 					</aon:commandButton>
@@ -59,7 +59,7 @@
 						id="newMailMessage"
 						title="#{webmailBundle.webmail_newmail}"
 						action="messageNew"
-						actionListener="#{webmailMessage.onNewMessage}"
+						actionListener="#{webmailMessage.createNewMessage}"
 						value="#{webmailBundle.webmail_newmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-newMail"
 						>
@@ -70,7 +70,7 @@
 						id="replyButton"
 						title="#{webmailBundle.webmail_newmail_reply}"
 						action="messageNew"
-						actionListener="#{webmailMessage.onReplyMessage}"
+						actionListener="#{webmailMessage.replyToSelectedMessage}"
 						value="#{webmailBundle.webmail_newmail_reply}"
 						styleClass="aon-finding-toolbar-item aon-icon-mailReply"
 						>
@@ -81,7 +81,7 @@
 						id="replyAllButton"
 						title="#{webmailBundle.webmail_newmail_replyAll}"
 						action="messageNew"
-						actionListener="#{webmailMessage.onReplyAllMessage}"
+						actionListener="#{webmailMessage.replyToAllMessage}"
 						value="#{webmailBundle.webmail_newmail_replyAll}"
 						styleClass="aon-finding-toolbar-item aon-icon-mailReplyAll">
 					</aon:commandButton>							
@@ -91,7 +91,7 @@
 						id="forwardButton"
 						title="#{webmailBundle.webmail_newmail_forward}"
 						action="messageNew"
-						actionListener="#{webmailMessage.onForwardMessage}"
+						actionListener="#{webmailMessage.forwardMessage}"
 						value="#{webmailBundle.webmail_newmail_forward}"
 						styleClass="aon-finding-toolbar-item aon-icon-mailForward">
 					</aon:commandButton>					
@@ -188,27 +188,27 @@
 					<aon:div>
 						<aon:commandButton
 							reRender="webmailForm"
-							rendered="#{webmailMessage.shortMessageToControlDown}" 
-							actionListener="#{webmailMessage.onChangeShortMessageTo}"
+							rendered="#{webmailMessage.shotMessageToControlDown}" 
+							actionListener="#{webmailMessage.changeShotMessageTo}"
 							styleClass="aon-icon-commandButton aon-icon-drop-down">
 						</aon:commandButton>
 						<aon:commandButton
 							reRender="webmailForm"
-							rendered="#{webmailMessage.shortMessageToControlUp}" 
-							actionListener="#{webmailMessage.onChangeShotMessageTo}"
+							rendered="#{webmailMessage.shotMessageToControlUp}" 
+							actionListener="#{webmailMessage.changeShotMessageTo}"
 							styleClass="aon-icon-commandButton aon-icon-drop-up">
 						</aon:commandButton>
 						<aon:outputText escape="false"
-							rendered="#{!webmailMessage.shortMessageTo}" 
+							rendered="#{!webmailMessage.shotMessageTo}" 
 							value="#{webmailMessage.message.recipientsTo}" >
 							<aon:abbreviateConverter maxWidth="120" />
 						</aon:outputText>
 						<aon:outputText escape="false" 
-							rendered="#{webmailMessage.shortMessageTo}" 
+							rendered="#{webmailMessage.shotMessageTo}" 
 							converter="longString" 
 							value="#{webmailMessage.message.recipientsTo}" />
 						<aon:outputText escape="false"
-							rendered="#{webmailMessage.shortMessageToControlDown}" 
+							rendered="#{webmailMessage.shotMessageToControlDown}" 
 							value="..." />
 					</aon:div>
 				</aon:div>
@@ -221,27 +221,27 @@
 						<aon:outputText value="&#160;" />
 						<aon:commandButton
 							reRender="webmailForm"
-							rendered="#{webmailMessage.shortMessageCcControlDown}" 
-							actionListener="#{webmailMessage.onChangeShortMessageCc}"
+							rendered="#{webmailMessage.shotMessageCcControlDown}" 
+							actionListener="#{webmailMessage.changeShotMessageCc}"
 							styleClass="aon-icon-commandButton aon-icon-drop-down">
 						</aon:commandButton>
 						<aon:commandButton
 							reRender="webmailForm"
-							rendered="#{webmailMessage.shortMessageCcControlUp}" 
-							actionListener="#{webmailMessage.onChangeShortMessageCc}"
+							rendered="#{webmailMessage.shotMessageCcControlUp}" 
+							actionListener="#{webmailMessage.changeShotMessageCc}"
 							styleClass="aon-icon-commandButton aon-icon-drop-up">
 						</aon:commandButton>
 						<aon:outputText escape="false"
-							rendered="#{!webmailMessage.shortMessageCc}" 
+							rendered="#{!webmailMessage.shotMessageCc}" 
 							value="#{webmailMessage.message.recipientsCc}" >
 							<aon:abbreviateConverter maxWidth="120" />
 						</aon:outputText>
 						<aon:outputText escape="false" 
-							rendered="#{webmailMessage.shortMessageCc}" 
+							rendered="#{webmailMessage.shotMessageCc}" 
 							converter="longString" 
 							value="#{webmailMessage.message.recipientsCc}" />
 						<aon:outputText escape="false"
-							rendered="#{webmailMessage.shortMessageCcControlDown}" 
+							rendered="#{webmailMessage.shotMessageCcControlDown}" 
 							value="..." />
 					</aon:div>
 				</aon:div>
@@ -250,7 +250,7 @@
 					value="#{webmailBundle.webmail_subject}: " />
 				<aon:div>
 					<aon:outputText value="&#160;" />
-					<aon:outputText escape="true" converter="longString" value="#{webmailMessage.message.subject}" />
+					<aon:outputText escape="false" converter="longString" value="#{webmailMessage.message.displaySubject}" />
 				</aon:div>
 						
 				<!-- Date -->

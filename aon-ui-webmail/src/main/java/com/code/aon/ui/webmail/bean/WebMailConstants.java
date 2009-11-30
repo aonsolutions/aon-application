@@ -2,8 +2,6 @@ package com.code.aon.ui.webmail.bean;
 
 public interface WebMailConstants {
 
-	String BUNDLE_NAME = "webmailBundle";	
-	
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
@@ -37,19 +35,4 @@ public interface WebMailConstants {
 	String BEAN_SPAM = "spam";
 	String BEAN_LOGGED_USER = "loggedUser";
 	
-	// ************************************************************
-	// LDAP
-	// ************************************************************
-
-	String WEBMAIL_CONFIG = "aonWebmailConfig";
-	String REJECTED_EXTENSIONS = "webmailRejectedExtension";
-	String MAX_ATTACHMENT_SIZE = "webmailMaxAttachmentSize";
-
-	// ************************************************************
-	// MESSAGE ID
-	// ************************************************************	
-	
-	String CONTACT_DUPLICATED = "webmail_contact_duplicated";
-	String CONTACT_USED = "webmail_contact_used";
-	String NOT_MAIL_ACCOUNT = "aon_not_mail_account";
 }

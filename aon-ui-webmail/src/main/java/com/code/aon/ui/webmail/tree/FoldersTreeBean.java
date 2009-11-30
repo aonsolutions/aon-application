@@ -1,6 +1,8 @@
 package com.code.aon.ui.webmail.tree;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.FacesException;
 
@@ -10,8 +12,6 @@ import org.richfaces.component.UITree;
 import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -24,7 +24,7 @@ import com.code.aon.webmail.bean.AonServer;
 
 public class FoldersTreeBean implements WebMailConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(FoldersTreeBean.class);
+	private static final Logger LOGGER = Logger.getLogger(FoldersTreeBean.class.getName());
 	
 	private TreeNode rootNode;
 
@@ -80,7 +80,7 @@ public class FoldersTreeBean implements WebMailConstants {
 			try{
 				loadTree();
 			} catch (Exception e) {
-				LOGGER.error( "Error loading folder tree", e);
+				LOGGER.log(Level.SEVERE, "Error loading folder tree", e);
 			}
 		}
 		return rootNode;
@@ -129,7 +129,6 @@ public class FoldersTreeBean implements WebMailConstants {
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
    		MessageController message = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
    		message.moveSelectedMessageAndMove(destinyFolder);
-   		getFolderController().updateModel();
 	}
 	
 	public boolean isTreeLoaded(){
