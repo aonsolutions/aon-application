@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<a4j:loadScript src="#{aonResource.resolve['/com/code/aon/ui/sign/idazki/signPdf.js']}"/>
+
+	<aon:div styleClass="aon-note" >
+		<aon:div styleClass="aon-note-internal">
+			<aon:panelGroup>
+				<aon:outputText value="#{signBundle.sign_smartCard_warning}" />
+			</aon:panelGroup>
+		</aon:div>
+	</aon:div>
+
+	<aon:div styleClass="aon-text-center" >
+		<applet id="izenpeApplet" name="izenpeApplet" 
+			code="izenpe.app.applet.AppletApplication.class"
+			archive="#{aonResource.resolve['/com/code/aon/ui/sign/idazki/izenpesigner-applet.jar']}" >
+			<param name="boxmessage" value="Mensaje de Prueba" />
+		</applet>									
+	</aon:div>
+	
+	<aon:inputTextarea id="pdf64Data" style="display: none;"
+		value="#{certificate.pdf64Data}" />
+	
+	<aon:inputTextarea id="pdf64SignedData" style="display: none;"
+		value="#{certificate.pdf64SignedData}" />
+	
+</ui:composition>
