@@ -18,6 +18,8 @@ import com.code.aon.ql.Criteria;
 
 public class PreInvoiceDetail extends InvoiceDetail {
 	
+	private static final long serialVersionUID = -8846731278767129686L;
+
 	private List<InvoiceTax> taxList;
 	
 	public PreInvoiceDetail(){
@@ -66,6 +68,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		this.taxList.add(invoiceTax);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
@@ -85,6 +88,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List getTaxBreakDowns() {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
 		Iterator iter = this.taxList.iterator();

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAcademicSkill;
 import com.code.aon.academy.CourseAlumn;
+import com.code.aon.academy.CourseInstructor;
 import com.code.aon.academy.dao.IAcademyAlias;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.print.ReportTemplateMark;
@@ -18,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.resources.Employee;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.academy.controller.CourseController;
@@ -39,6 +41,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 				Course course = (Course)iter.next();
 				ReportTemplateMark reportTemplateMark = new ReportTemplateMark();
 				reportTemplateMark.setCourse(course);
+				reportTemplateMark.setInstructor(obtainCourseInstructor(course));
 				obtainDetails(reportTemplateMark,course);
 				reportTemplateMarkList.add(reportTemplateMark);
 			}
@@ -46,6 +49,18 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 			LOGGER.log(Level.SEVERE, "Error obtaining Collection", e);
 		}
 		return reportTemplateMarkList;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Employee obtainCourseInstructor(Course course) throws ManagerBeanException {
+		IManagerBean courseInstructorBean = BeanManager.getManagerBean(CourseInstructor.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(courseInstructorBean.getFieldName(IAcademyAlias.COURSE_INSTRUCTOR_COURSE_ID), course.getId());
+		Iterator iter = courseInstructorBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((CourseInstructor)iter.next()).getEmployee();
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

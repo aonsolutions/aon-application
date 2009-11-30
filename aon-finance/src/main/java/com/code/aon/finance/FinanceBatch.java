@@ -15,9 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -38,6 +39,8 @@ import com.code.aon.ql.Criteria;
 @Table(name = "fbatch")
 public class FinanceBatch implements ITransferObject {
 	
+	private static final long serialVersionUID = 804673961013565165L;
+
 	private static final Logger LOGGER = Logger.getLogger(FinanceBatch.class.getName());
 
     /** The id. */
@@ -231,5 +234,24 @@ public class FinanceBatch implements ITransferObject {
 			LOGGER.log(Level.SEVERE, "Error obtaining financeBatchDetail list", e);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof FinanceBatch) {
+			FinanceBatch o = (FinanceBatch) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
 	}
 }

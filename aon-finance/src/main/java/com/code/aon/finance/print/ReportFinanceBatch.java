@@ -5,6 +5,8 @@ import com.code.aon.finance.FinanceBatch;
 
 public class ReportFinanceBatch implements ITransferObject {
 
+	private static final long serialVersionUID = -929901176929210472L;
+
 	private FinanceBatch financeBatch;
 	
 	private Integer regs;
