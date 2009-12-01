@@ -19,7 +19,7 @@
 			<version>3.5.0</version>
 			<scope>compile</scope>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
 			<version>4.2.1</version>
