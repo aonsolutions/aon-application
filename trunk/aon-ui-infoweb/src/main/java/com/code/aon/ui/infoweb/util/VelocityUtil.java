@@ -81,7 +81,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	}
 
 	public void put(String key, Object value) {
-		LOGGER.debug( "Key: " + key + ", Value: " + value );
+		LOGGER.debug( "Key: {}, Value: {}",  key, value );
 		this.context.put(key, value);
 	}
 
@@ -91,7 +91,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
     public boolean generate(File template, File page) {
 		boolean error = true;
-		LOGGER.debug( "Template: " + template + " -> " + page );
+		LOGGER.debug( "Template: {} -> {}", template, page );
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
