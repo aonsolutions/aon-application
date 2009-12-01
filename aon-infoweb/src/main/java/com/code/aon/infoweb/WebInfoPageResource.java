@@ -110,7 +110,7 @@ public class WebInfoPageResource implements ITransferObject {
 	     return new ToStringBuilder(this).
 	       append("id", id).
 	       append("webInfoPage", webInfoPage.getId()).	       
-	       append("rattach", rattach.getId()).
+	       append("rattach", (rattach != null) ? rattach.getId() : "null").
 	       append("content", StringUtils.abbreviate(content, 32)).
 	       toString();
 	}	
