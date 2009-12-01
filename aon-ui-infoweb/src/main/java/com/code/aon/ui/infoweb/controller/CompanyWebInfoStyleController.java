@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
@@ -20,6 +21,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +61,20 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		super.onSelect(event);
 	}
 
+	private boolean isValidTemplateDirectory( File directory ) {
+		if ( directory.exists() && directory.isDirectory() && directory.canRead() ) {
+			String template = directory.getName();
+			File styleDefaults = PathUtil.getStyleDefaults(template);
+			if ( styleDefaults.exists() && styleDefaults.isFile() && styleDefaults.canRead() ) {
+				File styleTemplate = PathUtil.getStyleTemplate(template);
+				if ( styleTemplate.exists() && styleTemplate.isFile() && styleTemplate.canRead() ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public List<SelectItem> getTemplates() throws ManagerBeanException {
 		List<SelectItem> templates = new LinkedList<SelectItem>();
 
@@ -66,16 +82,18 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		if (!f.exists()) {
 			AonUtil.addErrorMessage("ERROR: No existe el directorio de plantillas. Contacte con su administrador."); 
 		} else {
-			File directories[] = f.listFiles();
-			Arrays.sort(directories);
 			SelectItem item = new SelectItem("","");
 			templates.add(item);
-			for (int i=0;i<directories.length;i++) {
-				File temp = directories[i];
-				if (temp.isDirectory()) {
-					String template = temp.getName();
-					item = new SelectItem(template, template);
-					templates.add(item);
+			File list[] = f.listFiles();
+			if (! ArrayUtils.isEmpty(list) ) {
+				Arrays.sort(list);
+				for (int i=0;i<list.length;i++) {
+					File directory = list[i];
+					if ( isValidTemplateDirectory(directory) ) {
+						String template = directory.getName();
+						item = new SelectItem(template, template);
+						templates.add(item);
+					}
 				}
 			}
 		}
@@ -104,7 +122,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 
 	public void chargeValues() {
 		List<ITransferObject> vars = new ArrayList<ITransferObject>();
-		HashMap<String,String> varMap = parseTemplateStyle();
+		Map<String,String> varMap = parseTemplateStyle();
 
 		try {
 			IManagerBean wisBean = BeanManager.getManagerBean(WebInfoStyle.class);
@@ -117,8 +135,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 				WebInfoStyle wis = new WebInfoStyle();
 				if (list.size() > 0) {
 					wis = (WebInfoStyle)list.get(0);
-				}
-				else {
+				} else {
 					wis.setVariable(var);
 					WebInfoVariableType type = getVariableType(var); 
 					String value = getDefaultValue(var, type);
@@ -133,8 +150,8 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		}
 	}
 
-	public HashMap<String,String> parseTemplateStyle() {
-		HashMap<String,String> styleMap = new HashMap<String,String>();
+	public Map<String,String> parseTemplateStyle() {
+		Map<String,String> styleMap = new HashMap<String,String>();
 		File f = PathUtil.getStyleTemplate( getTemplate() );
 		if (!f.exists()) {
 			AonUtil.addErrorMessage("ERROR: No existe el fichero de estilos para esta plantilla. Contacte con su administrador."); 
@@ -271,7 +288,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     	} catch (ManagerBeanException e ) {
     		LOGGER.error( e.getMessage(), e );
     	}
-    	LOGGER.error( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ERROR OBTENIENDO getRowData de "+this.model+"" );	
+    	LOGGER.warn( "No row available in model: {}", this.model );	
 		return WebInfoVariableType.IMAGE;
     }
 
@@ -363,7 +380,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
 			Integer id = rattach.getId();
 			String name = rattach.getDescription();
-			LOGGER.debug(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
+			LOGGER.debug("{}", rattach);
 			SelectItem item = new SelectItem(id, name);
 			images.add(item);
 		}
