@@ -19,9 +19,7 @@ import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicMatch;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 
@@ -35,23 +33,18 @@ import com.code.aon.common.enumeration.MimeType;
 public class ResourceServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -2158184452139430686L;
-	
+
 	/**
 	 * Logger initialization
 	 */
 	private static final Logger LOGGER = Logger.getLogger(ResourceServlet.class
 			.getName());
 
-	/**
-	 * One week in milliseconds.
-	 */
-	public static final long ONE_HUNDRED_DAYS_MILLIS = 8640000000L;
-
 	private static final int LAST_MODIFIED_YEAR = 2008;
 	
-	private static final int LAST_MODIFIED_MOTH = 7;
+	private static final int LAST_MODIFIED_MOTH = 5;
 	
-	private static final int LAST_MODIFIED_DAY = 14;
+	private static final int LAST_MODIFIED_DAY = 19;
 	
 	private static final String MODIFY = calcModify();
 
@@ -113,20 +106,8 @@ public class ResourceServlet extends HttpServlet {
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf.format(date);
 	}	
-	
-	private boolean isVersionString( String value ) {
-		String[] numbers = StringUtils.split( value, '.');
-		if (! ArrayUtils.isEmpty(numbers) ) {
-			for( String number : numbers ) {
-				if (! NumberUtils.isNumber(number) ) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	private String getResource(HttpServletRequest req, boolean includeBasePath) {
+
+	private String getResource(HttpServletRequest req) {
 		String uri = req.getRequestURI();
 		String context = req.getContextPath();
 		if (uri.startsWith(context)) {
@@ -135,18 +116,7 @@ public class ResourceServlet extends HttpServlet {
 		if (uri.startsWith(pattern)) {
 			uri = uri.substring(pattern.length());
 		}
-		int start = 0;
-		int pos = uri.indexOf('/', start );
-		if ( pos == 0 ) {
-			pos = uri.indexOf('/', ++start );
-		}
-		if ( pos != -1 ) {
-			String version = uri.substring(start, pos);
-			if ( isVersionString(version) ) {
-				uri = uri.substring( pos );
-			}
-		}
-		if (includeBasePath && (basePath != null)) {
+		if (basePath != null) {
 			uri = basePath + uri;
 		}
 		return uri;
@@ -193,11 +163,6 @@ public class ResourceServlet extends HttpServlet {
 			response.setHeader("Cache-Control", "Public");
 
 			response.setHeader("Last-Modified", MODIFY);
-
-			// Set Expires to current time + one year.
-			long currentTime = System.currentTimeMillis();
-
-			response.setDateHeader("Expires", currentTime + ONE_HUNDRED_DAYS_MILLIS);
 		}
 	}
 
@@ -217,17 +182,12 @@ public class ResourceServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 		try {
-			String resource = getResource(req, true);
-			LOGGER.fine("Request for resource (in jar): " + resource);
+			String resource = getResource(req);
+			LOGGER.fine("Request for resource: " + resource);
 			InputStream in = getClass().getResourceAsStream(resource);
 			if (in == null) {
-				resource = getResource(req, false);
-				LOGGER.fine("Request for resource (in war): " + resource);
-				in = getClass().getResourceAsStream(resource);
-				if (in == null) {
-					res.sendError(HttpServletResponse.SC_NOT_FOUND);
-					return;
-				}
+				res.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
 			}
 			byte[] data = IOUtils.toByteArray(in);
 			setHeaders(res, resource, data);

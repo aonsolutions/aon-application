@@ -11,14 +11,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.resources</artifactId>
-	<version>3.6.1</version>
+	<version>1.0.2</version>
 	<description>AON UI RESOURCES</description>
 	<name>AON UI RESOURCES</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.4.0</version>
+			<version>1.9.19</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -42,16 +42,12 @@
 					<groupId>xml-apis</groupId>
 					<artifactId>xmlParserAPIs</artifactId>
 				</exclusion>
-				<exclusion>
-				      <groupId>log4j</groupId>
-				      <artifactId>log4j</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
+			<version>1.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -59,16 +55,5 @@
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>1.2_09</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.facelets</groupId>
-			<artifactId>jsf-facelets</artifactId>
-			<version>1.1.14</version>
-	    </dependency>				
 	</dependencies>
 </project>
