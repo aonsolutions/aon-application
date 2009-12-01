@@ -19,8 +19,6 @@ import com.code.aon.ebackoffice.util.EmailUtils;
 
 public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(EcconfigBeanVetoListener.class.getName());
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt)
