@@ -1,13 +1,13 @@
 package com.code.aon.desktop;
 
-import java.util.logging.Logger;
-
 import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
@@ -21,7 +21,7 @@ public class DomainApplication implements ITransferObject, Cloneable {
 
 	private static final long serialVersionUID = -1729654908005345126L;
 	
-	private static final Logger LOGGER = Logger.getLogger(DomainApplication.class.getName());;
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplication.class);
 
 	private Name id;
 	
@@ -77,7 +77,7 @@ public class DomainApplication implements ITransferObject, Cloneable {
         try {
             obj=super.clone();
         } catch (CloneNotSupportedException ex) {
-        	LOGGER.severe( "Error cloning DBConnection" );
+        	LOGGER.error( "Error cloning DBConnection", ex );
         }
         return obj;
 	}

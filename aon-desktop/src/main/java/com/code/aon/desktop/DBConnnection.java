@@ -1,7 +1,6 @@
 package com.code.aon.desktop;
 
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.naming.Name;
 import javax.persistence.Column;
@@ -12,12 +11,13 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.cfg.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.desktop.controller.DomainController;
 import com.code.aon.ldap.IAonObjectClasses;
 
 @EntryObject(mainObjectClass=IAonObjectClasses.DB_CONNECTION, objectClasses={IAonObjectClasses.TOP})
@@ -25,7 +25,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 
 	private static final long serialVersionUID = -16395756416577198L;
 	
-	private static final Logger LOGGER = Logger.getLogger(DomainController.class.getName());	
+	private final static Logger LOGGER = LoggerFactory.getLogger(DBConnnection.class);
 
 	private Name id;
 	
@@ -121,7 +121,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
         try {
             obj=super.clone();
         } catch (CloneNotSupportedException ex) {
-        	LOGGER.severe( "Error cloning DBConnection" );
+        	LOGGER.error( "Error cloning DBConnection", ex );
         }
         return obj;
 	}

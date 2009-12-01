@@ -1,9 +1,8 @@
 package com.code.aon.desktop.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
@@ -17,7 +16,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DomainControllerListener extends ControllerAdapter implements IDesktopConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(DomainControllerListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainControllerListener.class);
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
@@ -42,7 +41,7 @@ public class DomainControllerListener extends ControllerAdapter implements IDesk
 			domainController.createApplications(dbConnection, name);
 			domainController.addAccessPolicy(name);
 		} catch (Throwable e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			domainController.removeDomain(name, true);
 			domain.setCommonName(StringUtils.substringBefore(domain.getCommonName(), "."));
 			throw new ControllerListenerException( e.getMessage(), e );

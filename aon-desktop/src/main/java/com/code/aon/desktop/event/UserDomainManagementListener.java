@@ -2,7 +2,9 @@ package com.code.aon.desktop.event;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
@@ -23,7 +25,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class UserDomainManagementListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses, IDesktopConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(DomainController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserDomainManagementListener.class);
 	
 	private void addUser( Domain domain, User user, DomainController controller ) throws AonException {
 		DBConnnection dbc = controller.getDBConnection( domain.getCommonName() );
@@ -31,7 +33,7 @@ public class UserDomainManagementListener extends ControllerAdapter implements I
 			List<ITransferObject> users = Arrays.asList( new ITransferObject[]{user} );
 			controller.replicateUsers(dbc, users);
 		} else {
-			LOGGER.warning( "No DBConnection found for domain " + domain.getCommonName() );
+			LOGGER.warn( "No DBConnection found for domain {}", domain.getCommonName() );
 		}
 	}
 	

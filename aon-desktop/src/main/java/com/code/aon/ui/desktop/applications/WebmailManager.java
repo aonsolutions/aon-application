@@ -3,8 +3,9 @@ package com.code.aon.ui.desktop.applications;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.desktop.IDesktopConstants;
@@ -18,7 +19,7 @@ import com.code.aon.webmail.bean.AonServer;
 
 public class WebmailManager implements IServices, IDesktopConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger( WebmailManager.class.getName() );
+	private final static Logger LOGGER = LoggerFactory.getLogger(WebmailManager.class);
 
 	private ApplicationsManager.App app;
 
@@ -34,7 +35,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
 				this.webmailServer = new AonServer(mailAccount);
 				this.webmailServer.connect();
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, "Error on Webmail init", th);
+				LOGGER.error("Error on Webmail init", th);
 			}
 		}
 	}
@@ -58,7 +59,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
 				}
 			}
 		} catch (Throwable th) {
-    		LOGGER.log(Level.SEVERE, "Error on Webmail init", th);
+    		LOGGER.error("Error on Webmail init", th);
     	}
 		return false;
     }
