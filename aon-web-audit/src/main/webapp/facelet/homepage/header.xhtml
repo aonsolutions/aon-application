@@ -8,7 +8,7 @@
 <body>
 
 <ui:composition>
-	<aon:div id="aon-header">	
+	<aon:div id="aonHeader" styleClass="aon-header">	
 		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
 			<aon:div>
@@ -39,8 +39,9 @@
 			</aon:div>			
 		</aon:panelGrid>
 		<aon:form>
-			<aon:div styleClass="aon-header-additionalInfo">				
-				<aon:div styleClass="aon-float-right">
+			<aon:div styleClass="aon-header-additionalInfo">
+            	<aon:div styleClass="aon-float-right"
+               		rendered="#{!aonConfiguration.properties.hideHeaderLinks}">				
 					<aon:div styleClass="aon-header-menu-item">
 						<h:outputLink 
 							target="_top"

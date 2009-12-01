@@ -15,10 +15,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 
 /**
@@ -224,6 +228,45 @@ public class Session implements ITransferObject {
 	 */
 	public void setRemoteHost(String remoteHost) {
 		this.remoteHost = remoteHost;
+	}	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Session o = (Session) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.application, o.application)
+				.append(this.endDate, o.endDate)
+				.append(this.remoteAddress, o.remoteAddress)
+				.append(this.remoteHost, o.remoteHost)
+				.append(this.sessionId, o.sessionId)
+				.append(this.startDate, o.startDate)
+				.append(this.user, o.user)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(application)
+			.append(endDate)
+			.append(id)
+			.append(remoteAddress)
+			.append(remoteHost)
+			.append(sessionId)
+			.append(startDate)
+			.append(user)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}	
 	
 }

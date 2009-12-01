@@ -2,34 +2,32 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
-	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
 <ui:composition>
 
-	<aon:form id="menuForm">
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+		<aon:form id="menuForm">
+			<aon:menuBar> 
+				<aon:commandLink id="domain"
+					value="#{auditBundle.audit_domains_module}"
+					styleClass="aon-top-menu-item aon-icon-domains" immediate="true" 
+					action="domain_list" actionListener="#{domain.onSearch}" />
+				<aon:commandLink id="application"
+					value="#{auditBundle.audit_applications_module}"
+					styleClass="aon-top-menu-item aon-icon-applications" immediate="true" 
+					action="auditApplication_list" actionListener="#{auditApplication.onSearch}" />
+				<aon:commandLink id="session"
+					value="#{auditBundle.audit_sessions_module}"
+					styleClass="aon-top-menu-item aon-icon-sessions" immediate="true" 
+					action="auditSession_list" actionListener="#{auditSession.onSearch}" />
+			</aon:menuBar>
+			
 	
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid dir="true"
-				columnClasses="aon-finding-toolbar">
-
-				<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
-					<aon:commandButton id="domain" value="#{menuBundle.aon_domains}"
-						immediate="true" action="domain" actionListener="#{domain.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-domains" />
-					<aon:commandButton id="application" value="#{menuBundle.aon_applications}"
-						immediate="true" action="auditApplication" actionListener="#{auditApplication.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-applications" />
-					<aon:commandButton id="session" value="#{menuBundle.aon_sessions}"
-						immediate="true" action="auditSession" actionListener="#{auditSession.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-sessions" />
-				</aon:div>
-
-			</aon:panelGrid>
-		</aon:div>
-
-	</aon:form>
+		</aon:form>
+	</c:if>
 
 </ui:composition>
 
