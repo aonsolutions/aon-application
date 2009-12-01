@@ -136,6 +136,15 @@
 							<f:selectItems value="#{salesCollections.billingPeriods}" />
 						</h:selectOneMenu>	
 
+						<t:outputLabel for="CustomerFee_securityLevel"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{financeBundle.aon_security_level}" />
+						<h:selectOneMenu id="CustomerFee_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{feeToGroup.fee.securityLevel}">
+							<f:selectItems value="#{financeCollections.securityLevels}" />
+						</h:selectOneMenu>
+
 					</h:panelGrid>
 
 					<t:div styleClass="aon-form-group">

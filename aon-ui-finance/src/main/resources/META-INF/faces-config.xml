@@ -33,6 +33,50 @@
 	
 	<!-- ************* BANK LOOKUP ***************** -->
 	<managed-bean>
+		<managed-bean-name>bankLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.finance.Bank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Bank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>code</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>id</value>
+				<value>name</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/_finance/facelet/sw/bankSearch.faces</value>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Add Select Window</description>
+			<property-name>newPagePath</property-name>
+			<value>/_finance/facelet/sw/bankNew.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* BANK LOOKUP ***************** -->
+	<managed-bean>
 		<managed-bean-name>rBankLookup</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.LookupController
@@ -66,7 +110,51 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ********* CREDITOR SCOPE LISTENER ************** -->
+	<!-- ************* CREDITOR LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>creditorLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.CreditorLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.finance.Creditor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Creditor_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>registry.document</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/sw/creditorSearch.faces</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{creditorScopeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>creditorScopeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
@@ -853,7 +941,6 @@
   <!-- =================== Navigation Rules ================= -->
 	
   <!-- **************** MENU  *************** -->	
-<!--
   <navigation-rule>
 	<navigation-case>
 		<from-outcome>content</from-outcome>
@@ -887,6 +974,10 @@
  		<from-outcome>finance_payment</from-outcome>
 		<to-view-id>/_finance/facelet/finance/payment/search.faces</to-view-id>
 	</navigation-case>
+	<navigation-case>
+      <from-outcome>creditor</from-outcome>
+      <to-view-id>/_finance/facelet/creditor/form.faces</to-view-id>
+    </navigation-case>
     <navigation-case>
       <from-outcome>invoicingGroup</from-outcome>
       <to-view-id>/_finance/facelet/invoicing_group/list.faces</to-view-id>
@@ -912,9 +1003,8 @@
       <to-view-id>/_finance/facelet/util/fee_print/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
--->  
+  
   	<!-- =================== Finance Batch ================= -->
-<!--
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>fbatch_list</from-outcome>
@@ -929,9 +1019,8 @@
 			<to-view-id>/_finance/facelet/fbatch/form.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
--->	
+	
 	<!-- =================== Finance ================= -->
-<!--
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_list</from-outcome>
@@ -950,9 +1039,8 @@
 			<to-view-id>/_finance/facelet/finance/fraction/form.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
--->	
+	
 	<!-- =================== FinanceReturn ================= -->
-<!--
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_return_search</from-outcome>
@@ -963,9 +1051,8 @@
 			<to-view-id>/_finance/facelet/finance/return/return.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
--->	
+	
 	<!-- =================== FinancePayment ================= -->
-<!--
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_payment_search</from-outcome>
@@ -976,10 +1063,32 @@
 			<to-view-id>/_finance/facelet/finance/payment/payment.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
--->	
+	
+  <!-- =================== Creditor ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>creditor_form</from-outcome>
+      <to-view-id>/_finance/facelet/creditor/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>creditor_list</from-outcome>
+      <to-view-id>/_finance/facelet/creditor/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>creditor_search</from-outcome>
+      <to-view-id>/_finance/facelet/creditor/search.faces</to-view-id>
+    </navigation-case>
+	<navigation-case>
+		<from-outcome>creditor_sw</from-outcome>
+		<to-view-id>/facelet/sw/creditor.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>creditor_sw_search</from-outcome>
+		<to-view-id>/facelet/sw/creditorSearch.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
   
   <!-- =================== Invoicing Group ========================== -->
-<!--
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoicing_group_form</from-outcome>
@@ -994,9 +1103,8 @@
       <to-view-id>/_finance/facelet/invoicing_group/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
--->
+
   <!-- =================== Invoice Recording ========================== -->
-<!--
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoice_recording_list</from-outcome>
@@ -1007,9 +1115,8 @@
       <to-view-id>/_finance/facelet/invoice_recording/search.faces</to-view-id>
     </navigation-case>
    </navigation-rule> 
--->  
+  
   <!-- =================== Invoice Remover ========================== -->
-<!--
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoice_remover_list</from-outcome>
@@ -1020,9 +1127,8 @@
       <to-view-id>/_finance/facelet/invoice_removing/search.faces</to-view-id>
     </navigation-case>
    </navigation-rule> 
--->  
+  
   <!-- =================== Invoice Print ========================== -->
-<!--
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoice_print_search</from-outcome>
@@ -1033,9 +1139,8 @@
       <to-view-id>/facelet/finance/invoice_print/list.faces</to-view-id>
     </navigation-case>
    </navigation-rule> 
--->  
+  
   <!-- =================== Fee Print ========================== -->
-<!--
   <navigation-rule>
     <navigation-case>
       <from-outcome>fee_print_list</from-outcome>
@@ -1046,61 +1151,17 @@
       <to-view-id>/_finance/facelet/util/fee_print/search.faces</to-view-id>
     </navigation-case>
    </navigation-rule> 
--->   
-	<!--  ********* CREDITOR WIZARD  ***************** -->
-	<managed-bean>
-		<managed-bean-name>creditorWizard</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.CreditorWizard
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<!--  ********* CREDITOR CONVERTER ***************** -->
-	<converter>
-		<converter-id>CreditorRegistryConverter</converter-id>
-		<converter-class>com.code.aon.ui.finance.converter.CreditorRegistryConverter</converter-class>
-	</converter>
-	<!--  ********* BANK WIZARD  ***************** -->
-	<managed-bean>
-		<managed-bean-name>bankWizard</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.BankWizard
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<!-- ************ BANK LOOKUP ************** -->
-	<managed-bean>
-		<managed-bean-name>bankLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>bankLookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.finance.Bank</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/finance/lookup/bank/list.xhtml</value>
-		</managed-property>
-	</managed-bean>
-	
-  <!-- =================== ACCOUNT CREDITOR ================= -->
-	<navigation-rule>
+   
+  <!-- =================== Select Windows ========================== -->
+  <navigation-rule>
 		<navigation-case>
-			<from-outcome>creditor_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/creditor/form.xhtml</to-view-id>
+			<from-outcome>bank_sw</from-outcome>
+			<to-view-id>/_finance/facelet/sw/bank.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>creditor_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/creditor/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>creditor_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/creditor/search.xhtml</to-view-id>
+			<from-outcome>bank_sw_search</from-outcome>
+			<to-view-id>/_finance/facelet/sw/bankSearch.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
+	
 </faces-config>

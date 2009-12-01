@@ -21,28 +21,16 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.maven.ide.eclipse.maven2Builder</name>
+			<name>org.devzuz.q.maven.jdt.core.mavenIncrementalBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.maven.ide.eclipse.maven2Nature</nature>
-		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
 		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
 		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/main/webapp/_account</name>
-			<type>2</type>
-			<location>C:/AON-PROJECT/aon-web-account/src/main/webapp/_account</location>
-		</link>
-		<link>
-			<name>src/main/webapp/_finance</name>
-			<type>2</type>
-			<location>C:/AON-PROJECT/aon-web-finance/src/main/webapp/_finance</location>
-		</link>
-	</linkedResources>
 </projectDescription>

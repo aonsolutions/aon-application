@@ -46,11 +46,12 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.report.OutputFormat;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
+import com.code.aon.ui.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IncomeController;
@@ -119,7 +120,16 @@ public class InvoicingController extends BasicController {
 		this.warehouseId = warehouseId;
 	}
 
-
+	/**
+	 * Resets the controller
+	 * 
+	 * @param event menu event
+	 */
+	@SuppressWarnings("unused")
+	public void onReset(MenuEvent event){
+		super.onReset(null);
+	}
+	
 	public boolean isEditable() {
 		if(this.getTo() != null){
 			if(((Invoice)this.getTo()).getStatus() == null){
