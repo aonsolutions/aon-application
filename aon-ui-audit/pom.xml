@@ -10,26 +10,26 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.audit</artifactId>
-	<version>1.0.4</version>
+	<version>1.1.0</version>
 	<description>AON UI AUDIT</description>
 	<name>AON UI AUDIT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.security</artifactId>
-			<version>1.8.0</version>
+			<version>1.9.0</version>
 			<scope>provided</scope>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.audit</artifactId>
-			<version>0.9.0</version>
+			<version>0.9.1</version>
 			<scope>compile</scope>
 		</dependency>	
 		<dependency>
