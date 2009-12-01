@@ -60,6 +60,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController extends BasicController implements VelocityConstants  {
 
+	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DESCRIPTION = "WebInfoPageResource.rattach.description";
+
+	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DATA = "WebInfoPageResource.rattach.data";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorController.class.getName());
 	
 	private VelocityUtil vu;
@@ -158,26 +162,28 @@ public class GeneratorController extends BasicController implements VelocityCons
 			//Añadimos al contexto todo lo necesario para las paginas
 			
 			String template = getTemplate();
-			LOGGER.debug( "Using template: " + template );
+			LOGGER.info( "Using template: {}", template );
 			vu.setTemplate(template);
 			//Indicamos el directorio del template
 			File templateDirectory = PathUtil.getTemplatePath(template);
 			if (! PathUtil.isReadableDirectory(templateDirectory) ) {
 				return;
 			}
+			LOGGER.info( "Template directory: {}", templateDirectory );
 			File previewDirectory = PathUtil.getPreviewPath(getDomain());
 			if (! PathUtil.isReadableDirectory(previewDirectory) ) {
 				return;
 			}
+			LOGGER.info( "Preview directory: {}", previewDirectory );
 			FileUtils.cleanDirectory(previewDirectory);
 			vu.setTemplateDirectory(templateDirectory);
 			vu.setOutputDirectory(previewDirectory);
 			vu.initialize();
 			
-			File imagesTemporalDirectory = new File( previewDirectory, IMAGES_PATH );
-			imagesTemporalDirectory.mkdirs();
-			File cssTemporalDirectory = new File( previewDirectory, CSS_PATH );
-			cssTemporalDirectory.mkdirs();
+			File imagesPreviewDirectory = new File( previewDirectory, IMAGES_PATH );
+			imagesPreviewDirectory.mkdirs();
+			File cssPreviewDirectory = new File( previewDirectory, CSS_PATH );
+			cssPreviewDirectory.mkdirs();
 			
 			GregorianCalendar gc = new GregorianCalendar();
 			vu.put(CURRENT_YEAR_KEY, gc.get(Calendar.YEAR));
@@ -186,16 +192,16 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if (company != null) {
 				vu.put(COMPANY_KEY, company);
 	
-				addCompanyLogo( company, imagesTemporalDirectory );
+				addCompanyLogo( company, imagesPreviewDirectory );
 				addWebInfoAttributes( company );
-				addCompanyImages( company, imagesTemporalDirectory );
+				addCompanyImages( company, imagesPreviewDirectory );
 
 				addContactData( company );
 				addAddresses( company );
 			}
 
 			this.homepage = getHomepage();
-			LOGGER.info( "Homepage: " + homepage );
+			LOGGER.info( "Homepage: {}", homepage );
 			
 			generateMenu();
 
@@ -213,12 +219,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.generate(MAIL_PHP);
 
 			generatePages();
-			generateCss(previewDirectory, cssTemporalDirectory);
+			generateCss(previewDirectory, cssPreviewDirectory);
 			
 			copyDirectoryToDirectory(new File(templateDirectory, "js"), previewDirectory );
 			File currentTemplateCssDirectory = new File(templateDirectory, CSS_PATH);
-			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, IMAGES_PATH), cssTemporalDirectory );
-			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, CSSIMG_PATH), cssTemporalDirectory );
+			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, IMAGES_PATH), cssPreviewDirectory );
+			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, CSSIMG_PATH), cssPreviewDirectory );
 			copyDirectoryToDirectory(new File(templateDirectory, IMAGES_PATH), previewDirectory );
 
 			AonUtil.addInfoMessage("OK: La web ha sido generada." );
@@ -257,7 +263,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if ( srcFile.exists() ) {
 				FileUtils.copyFile(srcFile, destFile);	
 			} else {
-				LOGGER.warn( "File doesn't exists: " + srcFile );
+				LOGGER.warn( "File doesn't exists: {}", srcFile );
 			}
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e );
@@ -267,10 +273,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private void copyDirectoryToDirectory(File srcDir, File destDir) {
 		try {
 			if ( srcDir.exists() ) {
-				LOGGER.info( "Copy directory: " + srcDir + " -> " + destDir );
+				LOGGER.info( "Copy directory: {} -> {}", srcDir, destDir );
 				FileUtils.copyDirectoryToDirectory(srcDir, destDir );
 			} else {
-				LOGGER.warn( "Directory doesn't exists: " + srcDir );
+				LOGGER.warn( "Directory doesn't exists: {}", srcDir );
 			}
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e );
@@ -278,7 +284,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private void generateGenericPage(WebInfoPage wip) throws ManagerBeanException {
-		LOGGER.debug( "Generating gallery: " + wip );
+		LOGGER.debug( "Generating gallery: {}", wip );
 		IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 		Criteria wipdCriteria = new Criteria();
 		wipdCriteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
@@ -286,15 +292,15 @@ public class GeneratorController extends BasicController implements VelocityCons
 		WebInfoPageDetail wipd = new WebInfoPageDetail();
 		if (wipdList.size() > 0) {
 			wipd = (WebInfoPageDetail)wipdList.get(0);
-		}
-		else {
+		} else {
 			AonUtil.addWarningMessage("WARNING: No existe detalle de la pagina " + wip.getName() + "");
 			return;
 		}
 
-		String template;
-		if (wip.getType() == WebInfoPageType.LOCATION) template = LOCATION_TEMPLATE;
-		else template = "generic" + wipd.getLayout().ordinal() + ".vm";
+		String template = LOCATION_TEMPLATE;
+		if (wip.getType() != WebInfoPageType.LOCATION) {
+			template = "generic" + wipd.getLayout().ordinal() + ".vm";
+		}
 		vu.put(TITLE_KEY, wipd.getTitle());
 		vu.put(TEXT_KEY, wipd.getContent());
 		if (wip.getType() == WebInfoPageType.LOCATION) {
@@ -319,6 +325,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
 		wiprCriteria.addEqualExpression(wiprBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
+		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DATA);
 		List<ITransferObject> wiprList = (List<ITransferObject>)wiprBean.getList(wiprCriteria);
 
 		for (int i = 0; i < wiprList.size(); i++) {
@@ -335,13 +342,13 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private void generateGalleryPage(WebInfoPage wip) throws ManagerBeanException {
-		LOGGER.debug( "Generating gallery: " + wip);
+		LOGGER.debug( "Generating gallery: {}", wip);
 		ArrayList<ImageHandler> images = new ArrayList<ImageHandler>();
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
 		wiprCriteria.addEqualExpression(wiprBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
-		wiprCriteria.addNotNullExpression("WebInfoPageResource.rattach.description");
-		wiprCriteria.addNotNullExpression("WebInfoPageResource.rattach.data");
+		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DESCRIPTION);
+		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DATA);
 		List<ITransferObject> wiprList = (List<ITransferObject>)wiprBean.getList(wiprCriteria);
 		String previous_link = "";
 		String next_link = "";
@@ -587,7 +594,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				ImageHandler ih = new ImageHandler(filename, getImagePageLink(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);
 			} else {
-				LOGGER.warn( "Invalid image: " + ra );
+				LOGGER.warn( "Invalid image: {}", ra );
 			}
 		}
 		vu.put(ALL_IMAGES_KEY, all_images);	
@@ -606,7 +613,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			switch (m.getMediaType()) {
 				case WEB:
 					String domain = getDomain(m.getValue());
-					LOGGER.info( "Domain: " + domain + " from " + m);
+					LOGGER.info( "Domain: {} from {}", domain, m);
 					break;
 				case EMAIL:
 					vu.put(EMAIL_KEY, m.getValue());
@@ -644,7 +651,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.put(ADDRESSES_KEY, addresses);
 		}
 		if (defaultAddress != null) {
-			LOGGER.debug( "Default address: " + defaultAddress );
+			LOGGER.debug( "Default address: {}", defaultAddress );
 			vu.put(ADDRESS_KEY, defaultAddress);		
 		}
 	}
