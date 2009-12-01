@@ -27,7 +27,7 @@ public class FTPUtil implements IInfoWebConstants {
 	private static FTPClient getFTPClient( String destination, Properties properties ) throws IOException {
 		FTPClient ftp = new FTPClient();
 		String server = properties.getProperty(FTP_SERVER, SERVER_DEFAULT);
-		LOGGER.debug("Connecting to: " + server );
+		LOGGER.debug("Connecting to: {}", server );
 		ftp.connect(server);
 		String user = properties.getProperty(FTP_USER, USER_DEFAULT);
 		String password = properties.getProperty(FTP_PASSWORD, PASSWORD_DEFAULT);
@@ -40,14 +40,14 @@ public class FTPUtil implements IInfoWebConstants {
 	public static void uploadFTP(File source, String destination, Properties properties) throws IOException {
 		FTPClient ftp = getFTPClient( destination, properties );
 		LOGGER.debug("Connected.");
-		LOGGER.debug("Reply String: " + ftp.getReplyString());
-		LOGGER.debug("System Name: " + ftp.getSystemName());
-		LOGGER.debug("Working Directory: " + ftp.printWorkingDirectory());
-		LOGGER.debug("File Type: " + ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
+		LOGGER.debug("Reply String: {}", ftp.getReplyString());
+		LOGGER.debug("System Name: {}", ftp.getSystemName());
+		LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
+		LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
 		FTPFile files[] = ftp.listFiles();
 		if (! ArrayUtils.isEmpty(files)) {
 			if (! hasWritePermission(files[0]) ) {
-				LOGGER.error("Write permission denied for " + files[0]);
+				LOGGER.error("Write permission denied for {}", files[0]);
 				AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
 			}
 		}
@@ -67,20 +67,20 @@ public class FTPUtil implements IInfoWebConstants {
 	private static void deleteFile(FTPClient ftp, String pathname) {
 		try {
 			if (! ftp.deleteFile(pathname) ) {
-				LOGGER.error("File no deleted " + pathname);
+				LOGGER.error("File no deleted {}", pathname);
 			}
 		} catch (Throwable th) {
-			LOGGER.error("Error deleting file " + pathname, th);
+			LOGGER.error("Error deleting file {}", pathname, th);
 		}
 	}
 
 	private static void deleteDirectory(FTPClient ftp, String pathname) {
 		try {
 			if (! ftp.removeDirectory(pathname) ) {
-				LOGGER.error("Directory no deleted " + pathname);
+				LOGGER.error("Directory no deleted {}", pathname);
 			}
 		} catch (Throwable th) {
-			LOGGER.error("Error deleting directory " + pathname, th);
+			LOGGER.error("Error deleting directory {}", pathname, th);
 		}
 	}
 	
@@ -101,7 +101,7 @@ public class FTPUtil implements IInfoWebConstants {
 				}
 			}
 		} else {
-			LOGGER.error( "Error in change of working directory: " + destination );
+			LOGGER.error( "Error in change of working directory: {}", destination );
 		}
 	}
 
@@ -111,20 +111,20 @@ public class FTPUtil implements IInfoWebConstants {
 			File f = new File(ftpDir, dirList[i]);
 			if (f.isDirectory()) {
 				String directory = breadCrum + PATH_SEPARATOR + f.getName();
-				LOGGER.debug("Creating directory: " + directory);
+				LOGGER.debug("Creating directory: {}", directory);
 				if ( fc.makeDirectory(directory) ) {
 					ftpDir(f, fc, directory);
 				} else {
 					AonUtil.addErrorMessage("FTP ERROR: No se ha podido crear el directorio " + directory);
-					LOGGER.error("Can not create directory " + directory);
+					LOGGER.error("Can not create directory {}", directory);
 				}
 			} else {
 				FileInputStream fis = new FileInputStream(f);
 				String name = breadCrum + PATH_SEPARATOR + f.getName();
-				LOGGER.debug("Creating file: " + name);
+				LOGGER.debug("Creating file: {}", name);
 				if (!fc.storeFile(name, fis)) {
 					AonUtil.addErrorMessage("FTP ERROR: No se ha podido escribir el fichero " + name);
-					LOGGER.error("Can not write " + name);
+					LOGGER.error("Can not write {}", name);
 				}
 				fis.close();
 			}

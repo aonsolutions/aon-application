@@ -103,7 +103,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			wip.setActive(active);
 			getManagerBean().update(wip);
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> activate " + e.getMessage());
+			LOGGER.error("activate", e);
 			addMessage( "Error cambiando el estado activo de la pagina " + wip.getName() );
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -127,7 +127,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		
 			initializeModel();
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> move " + e.getMessage());
+			LOGGER.error("move", e);
 			addMessage( "Error cambiando la posición de la pagina " + wip.getName() );
 			throw new AbortProcessingException(e.getMessage(), e);
 		}			
@@ -236,7 +236,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
     }
 
     public void onCancelResource(ActionEvent event) {
-		LOGGER.debug(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " CANCELED.");
+		LOGGER.debug("Resource: {} canceled.", resource.getContent());
 		resource = new WebInfoPageResource();
 		resetResource();
     }
