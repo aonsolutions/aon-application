@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>1.0.5</version>
+		<version>1.0.7</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.ebackoffice</artifactId>
-			<version>4.3.0</version>
+			<version>4.3.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -79,7 +79,7 @@
 			<artifactId>poi</artifactId>
 			<version>3.0.1-FINAL</version>
 			<scope>runtime</scope>
-			<exclusions>
+		 <exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
 					<groupId>commons-logging</groupId>
