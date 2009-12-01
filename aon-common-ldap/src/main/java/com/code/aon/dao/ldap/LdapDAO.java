@@ -90,7 +90,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			Name base = getLdapSession().getBaseDN();
 			this.baseDN = NameResolver.getName(baseDN, base);
 		} catch ( LdapException e ) {
-			LOGGER.info( "Error obtaining base DN of the LDAP connection" );
+			LOGGER.warn( "Error obtaining base DN of the LDAP connection", e );
 		} finally {
 			closeSession();
 		}
@@ -155,7 +155,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		try {
 			Name dn = getDN(criteria);
 			String filter = getFilter(criteria);
-			LOGGER.info( "getCount, dn={},filter={}",dn,filter );
+			LOGGER.debug( "getCount, dn={},filter={}", dn, filter );
 			count = getLdapSession().getCount(dn, filter, Scope.ONELEVEL_SCOPE );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + metadata.getMainObjectClass(), e );
@@ -305,7 +305,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 				Order order = orderList.get(i);
 				String attribute = order.getExpression().getName();
 				EntryComparator comparator = new EntryComparator( attribute, order.isAscending() );
-				LOGGER.info( "Sorting {}",order );
+				LOGGER.debug( "Sorting {}", order );
 				Collections.sort( list, comparator );
 			}
 		}
@@ -315,7 +315,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private List<Entry> getSubList( List<Entry> list, int offset, int count ) {
 		if ( offset >= 0 ) {
 			int toIndex = Math.min( offset+count, list.size() );
-			LOGGER.info( "SubList, offset={},toIndex={}",offset,toIndex );
+			LOGGER.debug( "SubList, offset={},toIndex={}", offset, toIndex );
 			return list.subList( offset, toIndex );	
 		}
 		return list;
@@ -384,7 +384,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		try {
 			Name dn = getDN(criteria);
 			String filter = getFilter(criteria);
-			LOGGER.info( "getList, dn={},filter={}",dn,filter );
+			LOGGER.debug( "getList, dn={},filter={}", dn, filter );
 			List<Entry> list = getLdapSession().search(dn, filter, Scope.ONELEVEL_SCOPE );
 			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
@@ -414,7 +414,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
-		LOGGER.info( "Get: {}",pk );
+		LOGGER.debug( "Get: {}", pk );
 		ITransferObject to = null;
 		Name dn = (Name) pk;
 		if ( exists(dn, metadata.getMainObjectClass()) ) {
