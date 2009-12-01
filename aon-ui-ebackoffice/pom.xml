@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.ebackoffice</artifactId>
-	<version>4.3.2</version>
+	<version>4.3.3</version>
 	<description>AON UI EBACKOFFICE</description>
 	<name>AON UI EBACKOFFICE</name>
 	<dependencies>
