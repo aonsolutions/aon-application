@@ -2,8 +2,9 @@ package com.code.aon.ui.audit;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionExecution;
@@ -26,8 +27,7 @@ import com.code.aon.ql.Criteria;
 public class AuditManager implements IAuditAlias {
 	
 	/** Obtiene un logger apropiado. */
-	private static final Logger LOGGER = Logger
-			.getLogger(AuditManager.class.getName());		
+	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
 	
 	public static final String AUDIT = "aon-audit";
 	
@@ -72,7 +72,7 @@ public class AuditManager implements IAuditAlias {
 				actionBean = BeanManager.getManagerBean(Action.class);
 				actionExecutionBean = BeanManager.getManagerBean(ActionExecution.class);
 			} catch (ManagerBeanException e) {
-				LOGGER.log( Level.SEVERE, "Error initalizing Audit Manager Beans", e );
+				LOGGER.error( "Error initalizing Audit Manager Beans", e );
 			}
 		}
 	}

@@ -1,13 +1,12 @@
 package com.code.aon.ui.audit;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.DomainApplication;
@@ -17,8 +16,7 @@ import com.code.aon.audit.enumeration.AuditLevel;
 public class AuditNavigationHandler extends NavigationHandler {
 
 	/** Obtiene un logger apropiado. */
-	private static final Logger LOGGER = Logger
-			.getLogger(AuditNavigationHandler.class.getName());	
+	private final static Logger LOGGER = LoggerFactory.getLogger(AuditNavigationHandler.class);
 	
 	private NavigationHandler _base;
 	
@@ -36,7 +34,7 @@ public class AuditNavigationHandler extends NavigationHandler {
 					manager.createActionExecution(session, action);
 				}
 			} catch ( Throwable th ) {
-				LOGGER.log( Level.SEVERE, "Error in insert action execution", th );
+				LOGGER.error( "Error in insert action execution", th );
 			}
 		}
 	}	

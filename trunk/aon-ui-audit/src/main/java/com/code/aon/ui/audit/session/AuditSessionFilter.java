@@ -3,8 +3,6 @@ package com.code.aon.ui.audit.session;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,6 +12,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Application;
 import com.code.aon.audit.Domain;
@@ -27,8 +28,7 @@ import com.code.aon.ui.audit.AuditManager;
 public class AuditSessionFilter implements Filter {
 	
 	/** Obtiene un logger apropiado. */
-	private static final Logger LOGGER = Logger
-			.getLogger(AuditSessionFilter.class.getName());	
+	private final static Logger LOGGER = LoggerFactory.getLogger(AuditSessionFilter.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -79,7 +79,7 @@ public class AuditSessionFilter implements Filter {
 				httpSession.setAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY, domainApplication );
 			}
 		} catch ( Throwable th ) {
-			LOGGER.log( Level.SEVERE, "Error login audit", th );
+			LOGGER.error( "Error login audit", th );
 		}
 	}
 
