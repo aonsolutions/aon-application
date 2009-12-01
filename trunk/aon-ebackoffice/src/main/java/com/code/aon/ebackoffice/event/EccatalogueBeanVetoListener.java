@@ -13,8 +13,7 @@ import com.code.aon.ebackoffice.enumeration.CatalogueType;
 
 public class EccatalogueBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(EccatalogueBeanVetoListener.class.getName());
+	
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt)
