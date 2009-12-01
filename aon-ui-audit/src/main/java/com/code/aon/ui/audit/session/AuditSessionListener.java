@@ -3,12 +3,12 @@
  */
 package com.code.aon.ui.audit.session;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Session;
 import com.code.aon.ui.audit.AuditManager;
@@ -16,12 +16,11 @@ import com.code.aon.ui.audit.AuditManager;
 public class AuditSessionListener implements HttpSessionListener {
 
 	/** Obtiene un logger apropiado. */
-	private static final Logger LOGGER = Logger
-			.getLogger(AuditSessionListener.class.getName());
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(AuditSessionListener.class);
+	
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-		LOGGER.info( "Session Created: " + session.getId() );
+		LOGGER.info( "Session Created: {}", session.getId() );
 		AuditManager manager = AuditManager.getInstance();
 		if (! manager.isAuditConfigured() ) {
 			manager.configureAudit();
@@ -30,7 +29,7 @@ public class AuditSessionListener implements HttpSessionListener {
 
 	public void sessionDestroyed(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-		LOGGER.info( "Session Destroyed: " + session.getId() );
+		LOGGER.info( "Session Destroyed: {}", session.getId() );
 		closeLoginAudit(session);
 	}
 
@@ -42,7 +41,7 @@ public class AuditSessionListener implements HttpSessionListener {
 				manager.closeLoginAudit(session);	
 			}
 		} catch ( Throwable th ) {
-			LOGGER.log( Level.SEVERE, "Error closing login audit", th );
+			LOGGER.error( "Error closing login audit", th );
 		}
 	}	
 }
