@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+  <!-- =================== Navigation Rules ================= -->
+
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>about</from-outcome>
+		<to-view-id>/facelet/about/content.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+
+  <!-- **************** MENU  *************** -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+        <from-outcome>firstContent</from-outcome>
+        <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>update</from-outcome>
+		<to-view-id>/facelet/update/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>update_result</from-outcome>
+		<to-view-id>/facelet/update/result.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>dump</from-outcome>
+		<to-view-id>/facelet/dump/result.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>recover</from-outcome>
+		<to-view-id>/facelet/dump/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>recover_result</from-outcome>
+		<to-view-id>/facelet/dump/result.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+
+	<!-- *************************
+		HYPERVIEW NAVIGATION RULES
+		**************************  	 -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>hyperview_view</from-outcome>
+			<to-view-id>/facelet/hyperview/run.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>parameters</from-outcome>
+			<to-view-id>/facelet/hyperview/parameters.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+</faces-config>

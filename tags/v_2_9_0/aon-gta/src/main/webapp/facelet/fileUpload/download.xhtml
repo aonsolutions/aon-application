@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+<ui:define name="head">
+	<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Utils.js">
+		// nothing
+	</script>
+</ui:define>
+
+<ui:define name="content">
+
+<h:form id="fileDownload">
+	<t:inputText id="controllerName" value="#{fileDownload.controllerName}" size="18" forceId="#{true}" style="visibility: hidden"/>		
+	
+	<h:commandLink id="accept" value="#{bundle.aon_accept}" forceId="#{true}" actionListener="#{fileDownload.onDownload}" style="visibility: hidden"/>
+</h:form>
+<script type='text/javascript'>
+	function init() {
+		document.getElementById("controllerName").value = getParameter("controllerName");		
+		document.getElementById('fileDownload:accept').onclick();
+	}
+
+	window.onload=init;
+</script>
+
+</ui:define>
+</ui:composition>
+
+</body>
+</html>

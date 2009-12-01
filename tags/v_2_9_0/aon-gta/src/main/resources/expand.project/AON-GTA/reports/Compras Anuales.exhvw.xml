@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Compras Anuales">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYear}" label="Desde"
+            name="iniyear" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="${currentYear}" label="Hasta"
+            name="endyear" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_factura.gif"
+        iconOpen="icons/icon_factura.gif" label="Compras Anuales">
+        <layout type="COLUMN"/>
+        <contents>
+            <viewContent id="view/Ventas/Año Mes Dia.exvw.xml" type="LIST">
+                <parameters>
+                    <parameter name="type"/>
+                    <parameter name="iniyear"/>
+                    <parameter name="endyear"/>
+                </parameters>
+            </viewContent>
+        </contents>
+        <node dynamicViewId="view/Ventas/Año Mes Dia.exvw.xml"
+            iconClose="icons/icon_year_selected.gif"
+            iconOpen="icons/icon_year_selected.gif" label="${DELIVERY_YEAR}">
+            <dynamicParameters>
+                <parameter name="type"/>
+                <parameter name="iniyear"/>
+                <parameter name="endyear"/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent id="view/Ventas/Mes Dia.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="DELIVERY_YEAR"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node dynamicViewId="view/Ventas/Mes Dia.exvw.xml"
+                iconClose="icons/icon_mes.gif"
+                iconOpen="icons/icon_mes.gif" label="${DELIVERY_MONTHNAME}">
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="DELIVERY_YEAR"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent id="view/Ventas/Dia.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="DELIVERY_YEAR"/>
+                            <parameter name="DELIVERY_MONTH"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+                <node dynamicViewId="view/Ventas/Dia.exvw.xml"
+                    iconClose="icons/icon_dia.gif" label="Dia ${DELIVERY_DAY}">
+                    <dynamicParameters>
+                        <parameter name="type"/>
+                        <parameter name="DELIVERY_YEAR"/>
+                        <parameter name="DELIVERY_MONTH"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <viewContent
+                            id="view/Ventas/Factura Dia.exvw.xml" type="LIST">
+                            <parameters>
+                                <parameter name="type"/>
+                                <parameter name="DELIVERY_YEAR"/>
+                                <parameter name="DELIVERY_MONTH"/>
+                                <parameter name="DELIVERY_DAY"/>
+                            </parameters>
+                        </viewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+    </node>
+</workstation>

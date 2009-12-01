@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+			<h:outputText
+				value="#{controller.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+			<t:div style="display:inline;" rendered="#{!controller.new}">
+				<h:commandButton id="first" value=""
+					actionListener="#{controller.onSelectFirst}"
+					disabled="#{controller.inFirst}"
+					styleClass="aon-datascroller-button-first"
+					style="margin-left: 2em;background-color: white;" />
+				<h:commandButton id="previous" value=""
+					actionListener="#{controller.onSelectPrevious}"
+					disabled="#{controller.inFirst}"
+					styleClass="aon-datascroller-button-previous"
+					style="margin-left: 2px; margin-right: 5px;background-color: white;" />
+				<h:outputText
+					value="#{controller.selectedIndex+1} - #{controller.model.rowCount}" />
+				<h:commandButton id="next" value=""
+					actionListener="#{controller.onSelectNext}"
+					disabled="#{controller.inLast}"
+					styleClass="aon-datascroller-button-next"
+					style="margin-left: 5px;background-color: white;" />
+				<h:commandButton id="last" value=""
+					actionListener="#{controller.onSelectLast}"
+					disabled="#{controller.inLast}"
+					styleClass="aon-datascroller-button-last"
+					style="margin-left: 2px;background-color: white;" />
+			</t:div>
+		</t:div>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>
+
