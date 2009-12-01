@@ -21,10 +21,9 @@ import com.code.aon.ldap.NameResolver;
 
 public class SearchTest implements IAonObjectClasses, ILdapConstants {
 
-	private static final String BASE_DN = "o=aondirectory";
+	private static final String LOCALHOST_DOMAIN = "localhost";
 	
-	private static final String USER = "cn=Manager," + BASE_DN;
-	
+	private static final String DESKTOP_APPLICATION = "aon-desktop";
 	
 	private static LdapSession session;
 
@@ -51,7 +50,7 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testSearch() {
 		try {
-			Name name = NameResolver.getDomainDN("code.es");
+			Name name = NameResolver.getDomainDN(LOCALHOST_DOMAIN);
 			List<Entry> list = session.search(name,NameResolver.getObjectClass(ACCESS_POLICY));
 			Assert.assertFalse( list.isEmpty() );
 		} catch (LdapException e) {
@@ -62,7 +61,7 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testExists() {
 		try {
-			Name name = NameResolver.getApplicationDN("aon-desktop");
+			Name name = NameResolver.getApplicationDN(DESKTOP_APPLICATION);
 			boolean value = session.exists(name,NameResolver.getObjectClass(APPLICATION));
 			Assert.assertTrue( value );
 		} catch (LdapException e) {
@@ -89,7 +88,7 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testAttributes() {
 		try {
-			Name name = NameResolver.getUserDN("localhost", "deletable");
+			Name name = NameResolver.getUserDN(LOCALHOST_DOMAIN, "deletable");
 			Entry entry = new Entry(name);
 			entry.addObjectClasses(new String[]{TOP, PERSON, USER, POSIX_ACCOUNT});
 			entry.put( COMMON_NAME_ATTRIBUTE, "Deletable" );
@@ -97,11 +96,12 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 			entry.put( HOME_DIRECTORY_ATTRIBUTE, "/home/deletable" );
 			entry.put( GROUP_ID_NUMBER_ATTRIBUTE, 100 );
 			entry.put( USER_ID_NUMBER_ATTRIBUTE, 100 );
-			entry.put( "description", "Mierda descripcion" );
+			entry.put( DESCRIPTION_ATTRIBUTE, "descripcion" );
+			entry.put( ACTIVE_ATTRIBUTE, "TRUE" );
 			session.add(entry);
-			session.addAttribute(entry.getDN(), "description", "aimar" );
-			session.replaceAttribute(entry.getDN(), "description", "tellitu" );
-			session.removeAttributes(entry.getDN(), "description" );
+			session.addAttribute(entry.getDN(), DESCRIPTION_ATTRIBUTE, "New Description" );
+			session.replaceAttribute(entry.getDN(), DESCRIPTION_ATTRIBUTE, "Final Description" );
+			session.removeAttributes(entry.getDN(), DESCRIPTION_ATTRIBUTE );
 			session.delete( entry.getDN() );
 		} catch (LdapException e) {
 			Assert.fail( e.getMessage() );
