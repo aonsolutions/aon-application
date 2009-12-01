@@ -19,7 +19,7 @@ import com.code.aon.ui.form.IController;
 
 public class CompanyWebInfoController extends BasicController {
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings({"unchecked"})
 	public void onLoadWebInfo(ActionEvent event) throws ManagerBeanException{
 		IController companyController = (IController) FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		Company company = ((Company)companyController.getTo());
