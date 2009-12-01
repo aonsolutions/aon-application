@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +106,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		return StringUtils.substringBefore(name, "?");
 	}
 	
-	public Properties getHibernateProperties() {
+	private Properties getHibernateProperties() {
 		Properties hibernateProperties = new Properties();
 		hibernateProperties.put(Environment.USER, getUid());
 		hibernateProperties.put(Environment.PASS, getPassword());
@@ -113,6 +114,15 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		hibernateProperties.put(Environment.DRIVER, getDriverClassName());
 		hibernateProperties.put(Environment.SHOW_SQL, Boolean.TRUE);
 		return hibernateProperties;
+	}
+	
+	public void configure( Configuration configuration ) {
+   		configuration.configure();
+		configuration.addProperties( getHibernateProperties() );
+   		Properties properties = configuration.getProperties();
+   		properties.remove(Environment.CONNECTION_PROVIDER);
+   		properties.remove(Environment.DATASOURCE);		
+   		properties.remove(Environment.C3P0_MAX_SIZE);
 	}
 	
 	@Override

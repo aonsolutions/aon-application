@@ -204,7 +204,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 				String preffix = StringUtils.substringBeforeLast(ldap.getProperties().getProperty(Context.PROVIDER_URL), "/" );
 				String url = preffix + "/" + session.getFullDN(ref);
 				entry.put( ILdapConstants.REF_ATTRIBUTE, url );
-				LOGGER.info( "Adding referral {} -> {}", dn, url );
+				LOGGER.debug( "Adding referral {} -> {}", dn, url );
 				ldap.getLdapSession().add(entry);
 			} else {
 				LOGGER.error( "Can't make a Referreal, ref doesn't exist: {}", ref );
@@ -319,8 +319,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	private SessionFactory getSessionFactory( DBConnnection dbConnection ) {
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
-		configuration.setProperties( dbConnection.getHibernateProperties() );
-   		configuration.configure();
+		dbConnection.configure(configuration);
 		
 		// Parche para que funciona bien el replicate en mysql
 		String factoryName = HibernateUtil.getSessionFactoryName();
