@@ -28,18 +28,11 @@
 						<aon:outputText value="#{appBundle.aon_user}" />
 					</aon:div>
 
-					<aon:div id="buttonDiv" styleClass="aon-finding-toolbar-item-group">
+					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{domain.acceptUser}"
-							accesskey="#{bundle.aon_key_save}" reRender="buttonDiv" />
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{(!domain.newUser) and domain.userManagement}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{domain.removeUser}"
-							confirmAction="profile_list"/>							
+							accesskey="#{bundle.aon_key_save}" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}"
@@ -54,22 +47,15 @@
 
 				<aon:panelGrid columns="2" dir="true">
 
-					<aon:outputLabel for="userId" rendered="#{!domain.newUser}"
+					<aon:outputLabel for="userId"
 						value="#{securityBundle.aon_security_user}" />
 					<aon:inputText id="userId" disabled="#{true}"
-						required="true" size="20" rendered="#{!domain.newUser}"
+						required="true" size="20"
 						maxlength="16" value="#{domain.domainManager.relation.id}" />
-					<aon:outputLabel for="users" rendered="#{domain.newUser}"
-						value="#{securityBundle.aon_security_user}" />
-					<aon:selectOneMenu id="users" rendered="#{domain.newUser}"
-						value="#{domain.domainManager.relation.id}" required="true">
-						<f:selectItem value="#{null}" itemLabel="    " />						
-						<f:selectItems value="#{domain.availableUsers}" />
-					</aon:selectOneMenu>
 
 					<aon:outputLabel for="profileData"
 						value="#{securityBundle.aon_security_profiles}" />
-					<aon:selectManyCheckbox id="profileData" required="true"
+					<aon:selectManyCheckbox id="profileData"
 						value="#{domain.domainManager.relations}" layout="pageDirection"
 						layoutWidth="5">
 						<f:selectItems value="#{domain.domainManager.availableProfiles}" />

@@ -211,11 +211,32 @@
 		<dispatcher>INCLUDE</dispatcher>
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
-
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>
+			com.code.aon.bridge.session.BackDoorAuthenticationFilter
+		</filter-class>
+	</filter>
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>/auth/*</url-pattern>
+	</filter-mapping>
 	<session-config>
 		<session-timeout>240</session-timeout>
 	</session-config>
-
+	<!-- BackDoorAuthentication Bean Servlet -->
+	<servlet>
+		<servlet-name>BackDoorAuthentication</servlet-name>
+		<servlet-class>
+			com.code.aon.bridge.servlet.BackDoorAuthentication
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BackDoorAuthentication</servlet-name>
+		<url-pattern>*.auth</url-pattern>
+	</servlet-mapping>
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
@@ -247,7 +268,7 @@
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>/index2.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>

@@ -8,9 +8,9 @@ import org.hibernate.Session;
 
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.config.Tax;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.Item;
-import com.code.aon.product.Tax;
-import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.ql.Criteria;
 

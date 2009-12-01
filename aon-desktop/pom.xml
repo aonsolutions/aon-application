@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>1.6.1</version>
+	<version>1.4.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -42,31 +42,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>1.4.0-SNAPSHOT</version>
+			<version>1.2.1</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.rich.components</artifactId>
-			<version>1.4.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>				
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.6.1</version>
+			<version>1.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId> 
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
-			<version>1.5.0</version>
+			<version>1.2.11</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>3.7.1</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

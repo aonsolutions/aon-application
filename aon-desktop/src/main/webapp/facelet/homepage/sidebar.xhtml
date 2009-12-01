@@ -18,8 +18,8 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail"
-					rendered="#{email.sidebarEnabled and email.mailActive}">
+				<aon:outputLink value="/aon-desktop/aon-webmail.auth?aonDesktop=true" target="aonWebMail"
+					rendered="#{email.sidebarEnabled}">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-correo.png']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_webmail}" /></aon:div>
 				</aon:outputLink>

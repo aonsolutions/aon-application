@@ -28,14 +28,9 @@
 
 					<!-- start toolbar navigation -->
 					<aon:div id="profilesToolbar" styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="resetProfile" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="profile_form" rendered="#{domain.currentTab != 'users'}"
 							actionListener="#{domain.onResetProfile}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="resetUser" value="#{bundle.aon_reset}"
-							action="user_profile_form" rendered="#{(domain.currentTab == 'users') and domain.userManagement}"
-							actionListener="#{domain.onResetUser}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_back}"

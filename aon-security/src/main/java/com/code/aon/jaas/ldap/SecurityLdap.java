@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -127,24 +126,6 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 		return entry;
 	}
 
-	public List<IUser> getUsers( String domainName ) {
-		List<IUser> users = new LinkedList<IUser>();
-		try {
-			String objectClass = LdapSession.getObjectClass(USER);
-			DistinguishedName dn = AonDN.getUsersDN( domainName );
-			List<Entry> list = getLdapSession().search( dn.toString(), objectClass, Scope.SUBTREE_SCOPE );
-			for( Entry entry : list ) {
-				IUser user = getUser(entry);
-				users.add(user);
-			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			closeSession();
-		}
-		return users;
-	}
-	
 	public Entry getDomainApplicationUser( String domainName, String application, String user ) {
 		Entry entry = null;
 		try {
@@ -341,67 +322,6 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 				DistinguishedName newDN = AonDN.getUserDN(domainId, user.getId());
 				session.rename(userEntry.getDN().toString(), newDN.toString());
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			closeSession();
-		}
-	}
-	
-	private String getOrganizationName( String domainId ) {
-		String organizationName = null;
-		try {
-			String objectClass = LdapSession.getObjectClass(Domain.OBJECT_CLASS);
-			DistinguishedName dn = Domain.getDN(domainId);
-			Entry entry = getLdapSession().get( dn.toString(), objectClass );
-			if ( (entry != null) && entry.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
-				organizationName = entry.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
-			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			closeSession();
-		}
-		return organizationName;		
-	}
-
-	public void addUser( String algorithm, String domainId, IUser user ) {
-		try {
-			String organizationName = getOrganizationName(domainId);
-			LdapSession session = getLdapSession();
-			DistinguishedName dn = AonDN.getUserDN( domainId, user.getId());
-			Entry entry = new Entry(dn.toString());
-			entry.addObjectClass("amavisAccount");
-			entry.addObjectClass(USER);
-			entry.addObjectClass("inetOrgPerson");
-			entry.addObjectClass("organizationalPerson");
-			entry.addObjectClass("person");
-			entry.addObjectClass("posixAccount");
-			entry.addObjectClass(TOP);
-			entry.put( ACTIVE_ATTRIBUTE, LdapSession.FALSE_VALUE );
-			String cn = StringUtils.trim(user.getName());
-			String sn = StringUtils.trim(user.getName());
-			int pos = cn.indexOf(" ");
-			if ( pos != -1 ) {
-				cn = cn.substring(0, pos);
-				sn = StringUtils.substring(sn, pos+1);
-			}
-			entry.put( COMMON_NAME_ATTRIBUTE, cn );
-			entry.put( "gidNumber", 100 );
-			entry.put( "homeDirectory", "/home/DOMAINS/" + domainId + "/USERS/" + user.getId() );
-			entry.put( SURNAME_ATTRIBUTE, sn );
-			entry.put( USER_ID_ATTRIBUTE, user.getId() );
-			entry.put( "uidNumber", 10 );
-			entry.put( DESCRIPTION_ATTRIBUTE, user.getDescription() );
-			String password = user.getPasswd();
-			if ( algorithm != null ) {
-				password = "{" + algorithm + "}" + password;
-			}
-			entry.put( USER_PASSWORD_ATTRIBUTE, password );
-			if ( organizationName != null ) {
-				entry.put(ORGANIZATION_NAME_ATTRIBUTE, organizationName);
-			}
-			session.add(entry);
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {

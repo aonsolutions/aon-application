@@ -59,19 +59,4 @@ public interface IConstants {
 	/** Hash Charset tag. */
     static final String CHARSET = "hashCharset";
 
-	/** Authentication username note. */
-	static final String AUTH_USERNAME_NOTE = "com.code.aon.jaas.valves.USERNAME";
-	
-	/** Authentication password note. */
-	static final String AUTH_PASSWORD_NOTE = "com.code.aon.jaas.valves.PASSWORD";
-	
-	/** Authentication methods for login configuration. */
-	static final String AUTH_TYPE = "com.code.aon.jaas.valves.PROGRAMMATIC_WEB_LOGIN";
-	
-	/** Default directory for serialized application list. */
-	static final String RESOURCES_DEFAULT_DIR = "/home/COMMON-RESOURCES/ENC/";
-	
-	/** Serialized session identifier name. */
-	static final String SER_SESSION_ID = "serSessionId";
-
 }

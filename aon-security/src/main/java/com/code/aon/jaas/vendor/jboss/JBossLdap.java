@@ -18,7 +18,6 @@ import org.jboss.system.ServiceMBeanSupport;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
-import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
@@ -206,17 +205,6 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
     	}
 		this.ldap.updateUser( algorithm, domainId, user, oldUserId );
 		return user;
-	}
-
-	public void addUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
-		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Adding IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
-		}
-		String algorithm = null;
-		if ( options.get( IConstants.ALGORITHM ) != null ){
-    		algorithm = options.get( IConstants.ALGORITHM ).getValue();
-    	}
-		this.ldap.addUser( algorithm, domainId, user );
 	}
 	
 }

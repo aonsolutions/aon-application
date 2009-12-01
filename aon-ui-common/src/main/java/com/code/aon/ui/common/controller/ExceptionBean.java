@@ -9,9 +9,10 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.faces.application.Application;
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -33,14 +34,15 @@ public class ExceptionBean implements Serializable {
 	 */
 	public ExceptionBean() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		Application app = ctx.getApplication();
-		ValueBinding ex = app.createValueBinding("#{aon_exception}");
+		ELContext elctx = ctx.getELContext();
+		ExpressionFactory ef = ctx.getApplication().getExpressionFactory();
+		ValueExpression ex = ef.createValueExpression("#{aon_exception}",Throwable.class);
 		if (ex != null ) {
-			cause = (Throwable) ex.getValue( ctx );	
+			cause = (Throwable) ex.getValue( elctx );	
 		}
-		ValueBinding er = app.createValueBinding("#{aon_http_error_code}");
+		ValueExpression er = ef.createValueExpression("#{aon_http_error_code}",Integer.class);
 		if (er != null ) {
-			Integer i = (Integer) er.getValue( ctx );
+			Integer i = (Integer) er.getValue( elctx );
 			if (i != null) {
 				errorCode = i.intValue();	
 			}

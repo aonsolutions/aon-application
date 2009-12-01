@@ -2,40 +2,34 @@ package com.code.aon.ui.product.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.product.dao.IProductAlias;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.product.ProductCategory;
+import com.code.aon.ui.form.LinesController;
 
-/**
- * Controller used in the productCategory maintenance.
- */
-public class ProductCategoryController extends GridController {
+public class ProductCategoryController extends LinesController {
 
-	/**
-	 * The empty constructor.
-	 */
-	public ProductCategoryController() {
-		super();
-	}
-	
-    /**
-     * On accept. Sets the current productCategory to null after adding it.
-     * 
-     * @param event the event
-     */
-    @Override
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
-		super.resetTo();
+	private ProductCategory category;
+
+	public ProductCategory getCategory() {
+		return category;
 	}
 
-    /**
-     * On remove. Sets the current productCategory to null after removing it.
-     * 
-     * @param event the event
-     */
-    @Override
-	public void onRemove(ActionEvent event) {
-		remove( event );
-		resetTo();
+	public void setCategory(ProductCategory category) {
+		this.category = category;
+	}
+
+	@Override
+	public void onSelect(ActionEvent arg0) {
+		// TODO Auto-generated method stub		
+		super.onSelect(arg0);
+		ProductCategory p = new ProductCategory();
+		p.setId(((ProductCategory)this.getTo()).getId());
+		p.setName(((ProductCategory)this.getTo()).getName());
+		this.category=p;
+	}
+	@Override
+	public void onReset(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		this.setCategory(null);
+		super.onReset(arg0);
 	}
 }

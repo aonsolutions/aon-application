@@ -49,7 +49,5 @@ public interface JBossLdapMBean extends org.jboss.system.ServiceMBean {
 	IRelation removeRelation(String appId, String domainId, IRelation relation) throws StorageException;
 	
 	IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException;
-
-	void addUser(java.lang.String appId,java.lang.String domainId,com.code.aon.jaas.client.ast.IUser user,java.lang.String oldUserId) throws com.code.aon.jaas.storage.StorageException;
 	
 }

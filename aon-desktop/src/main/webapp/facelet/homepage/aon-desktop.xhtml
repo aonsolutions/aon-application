@@ -25,7 +25,8 @@
 					<aon:div id="desktopDiv1">
 						<aon:div styleClass="aon-portlet" rendered="#{email.infobarEnabled and email.mailActive}">
 							<aon:div styleClass="aon-portlet-title">
-								<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
+							
+								<aon:outputLink value="/aon-desktop/aon-webmail.auth?aonDesktop=true" target="aonWebMail">
 									<aon:outputText value="#{appBundle.aon_desktop_mails}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
 								</aon:outputLink>
 							</aon:div>
@@ -60,7 +61,7 @@
 						<aon:div styleClass="aon-portlet" rendered="#{task.infobarEnabled}">
 							<aon:div styleClass="aon-portlet-title">
 							
-								<aon:outputLink value="/aon-task?aonDesktop=true" target="aonTask">
+								<aon:outputLink value="/aon-desktop/aon-task.auth?aonDesktop=true" target="aonTask">
 									<aon:outputText value="#{appBundle.aon_desktop_tasks}" styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
 								</aon:outputLink>
 							</aon:div>

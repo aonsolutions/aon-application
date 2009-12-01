@@ -197,6 +197,10 @@ color:#000;
 	}
 .aon-icon-big-info{
 	background:transparent url(images/aon-icon-big/aon-icon-big-info.png) center  center no-repeat;
+	padding-top:1px;
+	padding-bottom:1px;
+		line-height:34px;
+	height:34px;
 	}
 .aon-icon-big-commandButton-disabled{
 	}
@@ -818,6 +822,13 @@ color:#000;
 }
 .aon-outputLabel{
 }
+.aon-form-date-label{
+	font-style:italic;
+	font-size:0.9em;
+	padding-left:5px;
+	position:relative;
+	top:-3px;
+	}
 .aon-form-input-text{
 	border:#ccc 1px dotted;
 	background-color:#f6f5e3;
@@ -825,12 +836,12 @@ color:#000;
 .aon-commandButton{
 	border:#808080 1px solid;
 	font-weight:bold;
-	margin:0 5px 0 0;
-	cursor:pointer;
+	margin:0 0px 0 5px;
 	cursor:pointer;
 	padding:0 1em !important;
 	width:auto;
 	overflow:visible;
+	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x;
 }
 .aon-commandLink{
 }
@@ -876,6 +887,7 @@ color:#000;
 /*****************************************/
 /******  PANELGRID  MANTENIMIENTOS  ******/
 /*****************************************/
+
 .aon-panelGrid{
 	border-collapse:collapse;
 }
@@ -901,6 +913,9 @@ color:#000;
 	padding:5px;
 	background-color:#f6f5e3;
 	}
+.aon-panelGrid-search table{
+	border:0;
+	}
 .aon-panelGrid-search .aon-panelGrid-odd{
 	background-color:#f6f5e3; !important;
 	border:0;
@@ -913,10 +928,13 @@ color:#000;
 	}
 .aon-panelGrid-search-info{
 	font-weight:bold;
-	padding:0.3em 0.5em;
-	font-size:1.2em;
+	padding:0.3em 0.5em 0 6px;
+	margin-bottom:1em;
+	font-size:1.1em;
 	color:#000;
-		}	
+	border-bottom:#fff 2px inset;
+	background:transparent url(images/aon-icon/aon-icon-search-title-item.png) scroll left 14px no-repeat;
+		}
 /*********************************************************/
 /******  PANELGRID SIN BORDES, SOLO PARA MAQUETACIÓN ******/
 /*********************************************************/
@@ -1239,7 +1257,7 @@ color:#000;
 	border:#666 1px solid;
 	}
 
-.aon-dataScroller table{}
+.aon-dataScroller table{border:0 !important;}
 .aon-dataScroller table, .aon-dataScroller table td{	
 	border:0;
 	background-color:transparent !important;
@@ -1590,27 +1608,6 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	font-size:0.9em;	
 	display:inline;
 	}
-	
-.aon-spin-button{
-	border:0;
-	width:15px;
-	height:15px;
-	margin:0 2px 0 0;
-	}
-
-.aon-spin-button-first{
-	background:transparent url(images/aon-icon/aon-spin/aon-spin-first.gif) center center no-repeat;
-	}
-.aon-spin-button-previous{
-	background:transparent url(images/aon-icon/aon-spin/aon-spin-previous.gif) center center no-repeat;
-	}
-.aon-spin-button-next{
-	background:transparent url(images/aon-icon/aon-spin/aon-spin-next.gif) center center no-repeat;
-	}
-.aon-spin-button-last{
-	background:transparent url(images/aon-icon/aon-spin/aon-spin-last.gif) center center no-repeat;
-	}
-		
 /***************************/
 /*    aon-dataScroller2    */
 /**************************/
@@ -1633,7 +1630,6 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-dataScroller2-inactive{
 	color:#2a84d1;
 	text-decoration:underline;
-	font-size:0.9em;
 	margin:0 4px;
 	
 	}

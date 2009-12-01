@@ -4,15 +4,19 @@
  */
 package com.code.aon.ui.common.listener;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Logger;
+import java.net.URL;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.bean.BeanConfigParser;
+import com.code.aon.common.util.Classpath;
 
 /**
  * BeanRegisterContextListener is used to parse the configuration file bean-config.xml. 
@@ -37,28 +41,44 @@ import com.code.aon.common.bean.BeanConfigParser;
 public class BeanRegisterContextListener implements ServletContextListener {
 
 	/** Gets a suitable <code>Logger</code>. */
-	private static Logger LOGGER = Logger.getLogger(BeanRegisterContextListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BeanRegisterContextListener.class);
 	
 	/** The Constant CONFIG_FILE_PARAM. */
-	private static final String CONFIG_FILE_PARAM = "config-file";
+	private static final String CONFIG_FILE = "bean-config.xml";
 
+	private void addBeanConfig( URL resource ) throws IOException {
+		try {
+			InputStream is = resource.openStream();
+			
+			BeanConfigParser parser = BeanConfigParser.getInstance();
+			parser.parse( is );
+			
+			is.close();
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}		
+	}
+	
 	/**
 	 * Parses the config file.
 	 * 
 	 * @param sce the ServletContextEvent
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
-		try {
-			ServletContext ctx = sce.getServletContext();
-			String configFile = ctx.getInitParameter(CONFIG_FILE_PARAM);
-			InputStream is = ctx.getResourceAsStream(configFile);
-			
-			BeanConfigParser parser = BeanConfigParser.getInstance();
-			parser.parse( is );
-			
-		} catch (ManagerBeanException e) {
-			LOGGER.severe( e.getMessage() );
-		}
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        try {
+	        URL[] urls = Classpath.search(cl, "META-INF/", CONFIG_FILE);
+	        for (int i = 0; i < urls.length; i++) {
+	            try {
+	            	addBeanConfig( urls[i] );
+	            	LOGGER.info("Added Bean Config from: " + urls[i]);
+	            } catch (Exception e) {
+	                LOGGER.error( "Error Loading Library: " + urls[i], e);
+	            }
+	        }
+		} catch (IOException e) {
+        	LOGGER.error( "Error searching files: " + CONFIG_FILE, e);
+        }		
 	}
 
 	/**

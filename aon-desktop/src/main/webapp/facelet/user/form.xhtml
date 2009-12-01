@@ -30,36 +30,59 @@
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{user.accept}"	action="user_form"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
-							rendered="#{user.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{user.onCancel}"
-							confirmAction="user"
-							accesskey="#{bundle.aon_key_cancel}" />							
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							immediate="true" action="user_search" rendered="#{!user.new}"
+							immediate="true" action="user_search"
 							actionListener="#{user.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true" rendered="#{!user.new}"
+							immediate="true"
 							actionListener="#{user.onCancel}" action="user"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="changePassword" value="#{appBundle.aon_change_password}"
-							action="changepassword_form" actionListener="#{currentUser.onLoadUser}" rendered="#{!user.new}"
+							action="changepassword_form" actionListener="#{currentUser.onLoadUser}"
 							styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
 						<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
-							action="work_group" actionListener="#{workGroup.onSearch}" rendered="#{!user.new}"
+							action="work_group" actionListener="#{workGroup.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-group" />
 						<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
-							action="scope" actionListener="#{scope.onSearch}" rendered="#{!user.new}"
+							action="scope" actionListener="#{scope.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-ambito" />
 					
-						<aon:spin controller="#{user}" action="user_form" rendered="#{!user.new}" />
-
+						<aon:div styleClass="aon-spin-control">
+							<aon:div styleClass="aon-spin-control-element"> 
+								<aon:commandButton id="first_user" disabled="#{user.inFirst}"
+									action="user_form" actionListener="#{user.onSelectFirst}"
+									styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
+								</aon:commandButton>
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element"> 
+								<aon:commandButton id="previous_user" disabled="#{user.inFirst}"
+									action="user_form" actionListener="#{user.onSelectPrevious}"
+									styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
+								</aon:commandButton>
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
+								<aon:outputFormat value="#{appBundle.aon_spin_result}">
+									<f:param value="#{user.selectedIndex + 1}" />
+									<f:param value="#{user.model.rowCount}" />
+								</aon:outputFormat>	
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element"> 				
+								<aon:commandButton id="next_user" disabled="#{user.inLast}"
+									action="user_form" actionListener="#{user.onSelectNext}"
+									styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
+								</aon:commandButton>
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element"> 
+								<aon:commandButton id="last_user" disabled="#{user.inLast}"
+									action="user_form" actionListener="#{user.onSelectLast}"
+									styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
+								</aon:commandButton>
+							</aon:div>
+						</aon:div>
+		
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
@@ -76,7 +99,7 @@
 
 					<aon:outputLabel for="User_login"
 						value="#{configBundle.user_login}" />
-					<aon:inputText id="User_login" disabled="#{!user.new}"
+					<aon:inputText id="User_login" disabled="true"
 						required="true" size="20"
 						maxlength="16" value="#{user.to.login}" />
 

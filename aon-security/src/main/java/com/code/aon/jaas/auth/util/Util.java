@@ -1,30 +1,12 @@
 package com.code.aon.jaas.auth.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.code.aon.jaas.auth.IConstants;
 
 /**
  * Various security related utilities like MessageDigest factories, SecureRandom access, 
@@ -169,129 +151,4 @@ public class Util {
         }
         return base64;
     }
-
-    /**
-     * Find server IP adddress where the web application is deployed.
-     * 
-     * @param thisIp
-     * @param contextPath
-     * @return
-     * @throws UnknownHostException
-     */
-    public static final String findStoredApplicationIp(String thisIp, String contextPath) 
-    			throws UnknownHostException {
-		String ip = null;
-		File[] files = new File( IConstants.RESOURCES_DEFAULT_DIR ).listFiles();
-		for (int i = 0; i < files.length; i++) {
-			ip = files[i].getName(); 
-			if ( !ip.equals( thisIp ) ) {
-				Iterator<String> it = deserialize( ip ).iterator();
-				while (it.hasNext()) {
-					String elem = it.next();
-					if ( elem.indexOf( contextPath ) > -1 )
-						return ip;
-				}
-			}
-		}
-		return thisIp;
-	}
-
-	/**
-	 * Serialize deployed applications.
-	 * 
-	 * @param l
-	 * @throws IOException
-	 */
-	public static void serialize(List<String> l) throws IOException {
-		FileOutputStream ostream = null;
-		try {
-			String thisIp = InetAddress.getLocalHost().getHostAddress();
-			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( "Serializing deployed applications:" + l + " on " + thisIp );
-			ostream = new FileOutputStream( path );
-			/* Create the output stream */
-			ObjectOutputStream oopstream = new ObjectOutputStream( ostream );
-			oopstream.writeObject( l );
-			oopstream.flush();
-		} catch (UnknownHostException e) {
-			LOGGER.fatal( e );
-		} catch(IOException e) {
-			LOGGER.fatal( e.getMessage() );
-			throw e;
-		} finally {
-			if ( ostream != null ) 
-				ostream.close();
-		}
-	}
-
-	/**
-	 * Deserialize deployed applications.
-	 * 
-	 * @param thisIp
-	 * @throws IOException
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<String> deserialize(String thisIp) {
-		FileInputStream istream = null;
-		try {
-			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( "Deserializing deployed applications from " + thisIp );
-			istream = new FileInputStream( path );
-			/* Create the output stream */
-			ObjectInputStream p = new ObjectInputStream( istream );
-			return (List) p.readObject();
-		} catch(IOException e) {
-			LOGGER.fatal( e.getMessage() );
-		} catch (ClassNotFoundException e) {
-			LOGGER.fatal( e.getMessage() );
-		} finally {
-			if ( istream != null )
-				try {
-					istream.close();
-				} catch(IOException e) {
-				}
-		}
-		return null;
-	}
-
-	/**
-	 * Return <code>AonGenericPrincipal</code> in the application server AonSessionManager MBean.
-	 * 
-	 * @param mserver
-	 * @param on
-	 * @param sessionId
-	 * 
-	 * @return
-	 * @throws NullPointerException 
-	 * @throws MalformedObjectNameException 
-	 * @throws ReflectionException 
-	 * @throws MBeanException 
-	 * @throws InstanceNotFoundException 
-	 */
-	public static final Object getSSOPrincipal(MBeanServer mserver, ObjectName on, String sessionId) 
-				throws MalformedObjectNameException, NullPointerException, InstanceNotFoundException
-				, MBeanException, ReflectionException {
-		Object[] params = { sessionId };
-		String[] sig = { String.class.getName() };
-		return mserver.invoke( on, "getSSOPrincipal", params, sig );
-	}
-
-	/**
-	 * Remove SSO principal from the application server AonSessionManager MBean.
-	 * 
-	 * @param mserver
-	 * @param on
-	 * @param sessionId
-	 * 
-	 * @return
-	 */
-	public static final void removeSSOPrincipal(MBeanServer mserver, ObjectName on, String sessionId)
-				throws MalformedObjectNameException, NullPointerException, InstanceNotFoundException
-				, MBeanException, ReflectionException {
-		Object[] params = { sessionId };
-		String[] sig = { String.class.getName() };
-		mserver.invoke( on, "removeSSOPrincipal", params, sig );
-	}
 }

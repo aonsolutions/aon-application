@@ -8,6 +8,4 @@ public interface ILdapSecurityConstants {
 	
 	String ACTIVE_ATTRIBUTE = "active";
 	
-	String ORGANIZATION_NAME_ATTRIBUTE = "o";
-	
 }

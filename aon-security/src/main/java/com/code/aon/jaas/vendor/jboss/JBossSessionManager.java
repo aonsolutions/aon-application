@@ -5,9 +5,7 @@ package com.code.aon.jaas.vendor.jboss;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -21,7 +19,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.mx.util.MBeanServerLocator;
 import org.jboss.system.ServiceMBeanSupport;
 
-import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.session.AuthenticationManager;
@@ -49,48 +46,6 @@ public class JBossSessionManager extends ServiceMBeanSupport
 	/** AuthenticationManager instance. */
 	AuthenticationManager authenticationManager = new AuthenticationManager();
 
-	/** List of princials accessing indirectly from another web application, for example aon-desktop. */
-	private Map ssoPrincipals = new HashMap();
-
-	/**
-	 * Return the Single Sign On principal. The object may an instance of <code>BackDoorPrincipal</code> or
-	 * <code>AonGenericPrincipal</code>, depending on remote or local access.
-	 * 
-	 * @param sessionId
-	 * 
-	 * @jmx:managed-operation
-	 */
-	public Object getSSOPrincipal(String sessionId) {
-		return ssoPrincipals.get( sessionId );
-	}
-
-	/**
-	 * Flush the Single Sign On principal. The object may an instance of <code>BackDoorPrincipal</code> or
-	 * <code>AonGenericPrincipal</code>, depending on remote or local access.
-	 * 
-	 * @param sessionId
-	 * @param principal
-	 * 
-	 * @jmx:managed-operation
-	 */
-	public void flushSSOPrincipal(String sessionId, Object principal) {
-		ssoPrincipals.put( sessionId, principal );
-	}
-
-	/**
-	 * Remove the Single Sign On principal.
-	 * 
-	 * @param sessionId
-	 * 
-	 * @jmx:managed-operation
-	 */
-	public void removeSSOPrincipal(String sessionId) {
-		Object obj = ssoPrincipals.get( sessionId );
-		if ( obj instanceof AonGenericPrincipal )
-			( (AonGenericPrincipal) obj).request.set( null );
-		ssoPrincipals.remove( sessionId );
-	}
-
 	/**
 	 * Authenticate principal checking the number of times the application has been accessed. If
 	 * the concurrent sessions per user is enabled, checks it too.
@@ -115,20 +70,6 @@ public class JBossSessionManager extends ServiceMBeanSupport
 	 */
 	public void enableConcurrentSessions4User(Boolean enable) {
 		this.authenticationManager.setEnableConcurrentSessions4User( enable );
-	}
-
-	/**
-	 * Get <code>SessionInfo</code> as <code>String</code> instance.
-	 *   
-	 * @param sessionId
-	 * @return
-	 * @throws LoginException
-     * 
-	 * @jmx:managed-operation
-	 */
-	public String getSessionInfoAsString(String sessionId) {
-		SessionInfo info = this.authenticationManager.getSessionInformation( sessionId );
-		return (info==null)? "SessionInfo[]": info.toString();
 	}
 
 	/**
@@ -226,7 +167,7 @@ public class JBossSessionManager extends ServiceMBeanSupport
 											principal  ) 
 							);
 					}
-					LOGGER.debug( "Active Session:" + sessions[i].getId() );
+					LOGGER.debug( "Active Sessions:" + sessions[i].getId() );
 				}
 			}
 		} catch (Exception e) {

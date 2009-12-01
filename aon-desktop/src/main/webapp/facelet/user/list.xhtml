@@ -30,11 +30,6 @@
 							action="user_search" actionListener="#{user.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="user_form" actionListener="#{user.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							rendered="#{domain.userManagement}"
-							accesskey="#{bundle.aon_key_new}" />							
 						<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
 							action="work_group" actionListener="#{workGroup.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-group"/>

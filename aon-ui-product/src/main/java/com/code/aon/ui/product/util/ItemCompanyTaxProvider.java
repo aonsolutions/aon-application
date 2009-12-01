@@ -4,16 +4,17 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.config.Tax;
 import com.code.aon.product.Item;
-import com.code.aon.product.Tax;
 
 /**
  * Provider to obtain tax related info.
@@ -21,7 +22,7 @@ import com.code.aon.product.Tax;
 public class ItemCompanyTaxProvider {
 
     /** The LOGGER. */
-    private static final Logger LOGGER = Logger.getLogger(ItemCompanyTaxProvider.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemCompanyTaxProvider.class.getName());
 
     /**
      * Gets the tax list of an item.
@@ -30,6 +31,7 @@ public class ItemCompanyTaxProvider {
      * 
      * @return the tax list
      */
+    @SuppressWarnings("unchecked")
     public List getTaxList(ITransferObject to) {
         Item item = (Item)to;
         List<Tax> l = new LinkedList<Tax>();
@@ -43,6 +45,7 @@ public class ItemCompanyTaxProvider {
      * 
      * @return true, if a surcharge has to be applied to the company.
      */
+    @SuppressWarnings("unchecked")
     public boolean isSurcharge() {
         IManagerBean companyBean;
         try {
@@ -54,7 +57,7 @@ public class ItemCompanyTaxProvider {
                 return ((Company) iter.next()).isSurcharge();
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error obtaining is surcharged", e);
+            LOGGER.error("Error obtaining is surcharged", e);
         }
         return false;
     }
@@ -67,7 +70,7 @@ public class ItemCompanyTaxProvider {
      * 
      * @return the tax list
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unchecked")
 	public List getTaxList(ITransferObject to, Date date) {
 		return getTaxList(to);
 	}

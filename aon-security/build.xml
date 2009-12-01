@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.6.1" />
+	<property name="version" value="1.4.0" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
     <property name="src.dir" value="src/main/java" />
@@ -55,7 +55,6 @@
 		<pathelement path="${jboss.server.home}/lib/ojdbc14.jar"/>
         <pathelement path="${jboss.server.home}/lib/servlet-api.jar"/>
 		<pathelement path="${jboss.server.home}/lib/jsp-api.jar"/>
-		<pathelement path="${jboss.server.home}/lib/jmx-adaptor-plugin.jar"/>
     </path>
 
     <!-- JBoss Tomcat Container -->
@@ -154,8 +153,6 @@
 	<target name="copy.ldap" description="Copy all aditional files." depends="prepare">
 		<copy file="${resources.dir}/com/code/aon/jaas/client/ast/core/applications_digester.xml"
 			tofile="${build.dir}/com/code/aon/jaas/client/ast/core/applications_digester.xml"/>
-		<copy file="${resources.dir}/com/code/aon/jaas/vendor/jboss/deployment/vendor_digester.xml"
-			tofile="${build.dir}/com/code/aon/jaas/vendor/jboss/deployment/vendor_digester.xml"/>
 	</target>
 	
     <!-- COMPILE-VALVE -->
@@ -247,7 +244,6 @@
 	    	<include name="com/code/aon/jaas/vendor/jboss/JBossSessionManager.java"/>
 	    	<include name="com/code/aon/jaas/vendor/jboss/JBossMainDeployer.java"/>
 	    	<include name="com/code/aon/jaas/vendor/jboss/JBossLdap.java"/>
-	    	<include name="com/code/aon/jaas/vendor/jboss/deployment/**"/>
 	    	<include name="com/code/aon/jaas/valves/**"/>
 	    </javac>
 	</target>
@@ -313,7 +309,6 @@
 			<fileset dir="${build.dir}">
 				<include name="com/code/aon/jaas/auth/AuthGroup.class"/>
 				<include name="com/code/aon/jaas/auth/AuthPrincipal.class"/>
-				<include name="com/code/aon/jaas/auth/AonGenericPrincipal.class"/>
 				<include name="com/code/aon/jaas/auth/IConstants.class"/>
 				<include name="com/code/aon/jaas/auth/session/**"/>
 				<include name="com/code/aon/jaas/auth/util/**"/>
