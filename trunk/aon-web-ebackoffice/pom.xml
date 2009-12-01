@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.ebackoffice</artifactId>
 	<packaging>war</packaging>
-	<version>4.4.2</version>
+	<version>4.4.3</version>
 	<description>AON WEB EBACKOFFICE</description>
 	<name>AON WEB EBACKOFFICE</name>
 	<build>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.ebackoffice</artifactId>
-			<version>4.3.2</version>
+			<version>4.3.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
