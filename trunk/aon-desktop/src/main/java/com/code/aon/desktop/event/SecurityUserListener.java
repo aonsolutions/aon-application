@@ -1,11 +1,10 @@
 package com.code.aon.desktop.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.naming.Name;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.config.User;
@@ -35,7 +34,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SecurityUserListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses, IDesktopConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(SecurityUserListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityUserListener.class);
 
 	private boolean showUserNotExistsWindow = false;
 	
@@ -156,7 +155,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			} else {
 				this.showUserNotExistsWindow = true;
 				//AonUtil.addErrorMessage("El usuario no existe en el sistema.\nPongase en contacto con el Administrador.");
-				LOGGER.severe( "No existe en LDAP el usuario " + user.getLogin() + " para el dominio " + domain );
+				LOGGER.error( "No existe en LDAP el usuario {} para el dominio {}", user.getLogin(), domain );
 			}
 		}
 	}
@@ -186,20 +185,20 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 				session.updateAttribute(userDN, MOBILE_ATTRIBUTE, old_mobile, cellular);
 			} catch (LdapException e) {
 				String message = "Error estableciendo las propiedades del usuario " + user.getLogin();
-				LOGGER.log(Level.SEVERE, message, e);
+				LOGGER.error(message, e);
 				AonUtil.addErrorMessage( message );
 			} finally {
 				ldap.closeSession();
 			}
 		} else {
 			AonUtil.addErrorMessage("El usuario no existe en el sistema.\nPongase en contacto con su administrador.");
-			LOGGER.severe( "No existe en LDAP el usuario " + user.getLogin() + " para el dominio " + domain );
+			LOGGER.error( "No existe en LDAP el usuario {} para el dominio {}", user.getLogin(), domain );
 		}			
 		try {
 			AonDomainController domainController = (AonDomainController) FormUtil.getController(CURRENT_DOMAIN_CONTROLLER_NAME);
 			domainController.flushAuthenticationCache( user.getLogin() );
 		} catch (DeploymentException e) {
-			LOGGER.severe( "Error refrescando la cache de autentificacion" );			
+			LOGGER.error( "Error refrescando la cache de autentificacion", e );			
 		}
 	}
 	

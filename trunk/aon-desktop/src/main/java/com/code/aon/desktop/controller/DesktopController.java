@@ -2,7 +2,6 @@ package com.code.aon.desktop.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
@@ -15,8 +14,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -28,6 +25,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -58,7 +57,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DesktopController extends BasicController implements IDesktopConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(DesktopController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 	
 	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
 	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
@@ -217,7 +216,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
         return select;
     }
 
-    @SuppressWarnings("unused")
     public void onSelectNote(ActionEvent event) throws ManagerBeanException{
         NoteController noteController = (NoteController)FormUtil.getController(NOTE_CONTROLLER_NAME);
         Note note = (Note)recentNoteModel.getRowData();
@@ -239,22 +237,18 @@ public class DesktopController extends BasicController implements IDesktopConsta
         return formatter.format(date);
     }
     
-    @SuppressWarnings("unused")
     public void onSelectNextAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(nextAlarmModel);
     }
 
-    @SuppressWarnings("unused")
     public void onSelectTodayAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(todayAlarmModel);
     }
 
-    @SuppressWarnings("unused")
     public void onSelectRecentAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(recentAlarmModel);
     }
 
-    @SuppressWarnings("unused")
     public void onSelectAncientAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(ancientAlarmModel);
     }
@@ -354,7 +348,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
 			try {
 				server = InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e1) {
-				LOGGER.log( Level.SEVERE, "Error getting server address. " + e1.getMessage(), e1);
+				LOGGER.error( "Error getting server address", e1);
 			}
 		}
     	return "http://" + server + ":7654";		
@@ -371,7 +365,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
 				available = (result == '1');
 			} catch (Throwable e) {
 				checkUpdateURL = false;
-				LOGGER.log( Level.INFO, "Error getting updates available. " + e.getMessage(), e);
+				LOGGER.info( "Error getting updates available", e);
 			}
     	}
     	return available;
@@ -390,7 +384,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
 				BufferedImage image = ImageIO.read(in);
 				return (image.getWidth() > 200);
 			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, "Error reading logo. " + th.getMessage(), th);
+				LOGGER.error( "Error reading logo", th);
 			}
 		}
 		return true;
