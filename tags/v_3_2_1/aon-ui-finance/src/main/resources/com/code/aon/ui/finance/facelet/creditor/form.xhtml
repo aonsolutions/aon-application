@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="creditorForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{financeBundle.finance_creditor_module}" />
+				<ui:param name="controller" value="#{creditor}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+						<ui:param name="controller" value="#{creditor}" />
+					</ui:include>
+
+					<aon:outputLabel for="Creditor_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Creditor_scope_id"
+						value="#{creditor.to.scope}">
+						<f:selectItems value="#{configCollections.scopes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Creditor_status" value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Creditor_status"
+						value="#{creditor.to.status}">
+						<f:selectItems value="#{financeCollections.creditorStatuses}" />
+					</aon:selectOneMenu>
+					
+					<c:if test="#{creditor.showAccount}">
+						<aon:outputLabel for="Creditor_account"
+							value="#{accountingBundle.accounting_account}" />
+						<aon:inputText id="Creditor_account" 
+							rendered="#{creditorAccount.account != null}"
+							value="#{creditorAccount.account.id} - #{creditorAccount.account.description}"
+							disabled="true" size="60" />
+						<aon:inputText rendered="#{creditorAccount.account == null}"
+							value="" disabled="true" size="60" />
+					</c:if>										
+				</aon:panelGrid>
+			</aon:div>
+			<c:if test="#{!creditor.new}">
+				<aon:panelTabSet selectedTab="#{creditor.selectedTab}">
+
+					<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
+						<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+							<ui:param name="controller" value="#{creditorAddress}" />
+						</ui:include>
+					</aon:panelTab>
+
+					<aon:panelTab id="medias" label="#{registryBundle.registry_media_module}">
+						<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+							<ui:param name="controller" value="#{creditorMedia}" />
+						</ui:include>
+					</aon:panelTab>
+
+					<c:if test="#{customer.showFinanceData}">
+						<aon:panelTab id="finance" label="#{registryBundle.registry_banks_module}">
+							<ui:include	src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+								<ui:param name="controller" value="#{creditorRbank}" />
+							</ui:include>
+						</aon:panelTab>
+					</c:if>
+				</aon:panelTabSet>
+			</c:if>
+		</aon:form>
+		<c:if test="#{customer.showFinanceData}">
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
+	</ui:define>
+</ui:composition>
+

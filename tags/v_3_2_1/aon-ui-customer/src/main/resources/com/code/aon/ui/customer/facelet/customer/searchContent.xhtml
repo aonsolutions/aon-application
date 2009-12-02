@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="Customer_id" value="#{bundle.aon_id}" />
+	<aon:inputText id="Customer_id" size="10"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_document"
+		value="#{bundle.aon_company_document}" />
+	<aon:inputText id="Customer_registry_document" size="20"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_name"
+		value="#{bundle.aon_company_name}" />
+	<aon:inputText id="Customer_registry_name" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_surname"
+		value="#{registryBundle.registry_surname}" />
+	<aon:inputText id="Customer_registry_surname" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="Customer_registry_alias" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+</ui:composition>
