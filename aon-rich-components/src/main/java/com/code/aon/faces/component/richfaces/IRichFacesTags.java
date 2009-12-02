@@ -12,6 +12,4 @@ public interface IRichFacesTags {
 	
 	String AJAX_SINGLE = "ajaxSingle";
 	
-	String FOCUS = "focus";
-	
 }

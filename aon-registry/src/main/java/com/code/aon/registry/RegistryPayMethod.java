@@ -13,10 +13,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.PayMethod;
-import com.code.aon.registry.Registry;
 
 /**
  * Transfer Object that represents the payMethod of a Registry.
@@ -83,6 +87,8 @@ public class RegistryPayMethod implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
+    @ForeignKey(name = "FK_RPAYMETHOD_REGISTRY")
+    @Index(name = "IDX_RPAYMETHOD_REGISTRY")
     public Registry getRegistry() {
         return registry;
     }
@@ -141,6 +147,8 @@ public class RegistryPayMethod implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="pay_method", nullable = false)
+    @ForeignKey(name = "FK_RPAYMETHOD_PAY_METHOD")
+    @Index(name = "IDX_RPAYMETHOD_PAY_METHOD")
     public PayMethod getPayment() {
         return payment;
     }
@@ -161,6 +169,8 @@ public class RegistryPayMethod implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="rbank")
+    @ForeignKey(name = "FK_RPAYMETHOD_RBANK")
+    @Index(name = "IDX_RPAYMETHOD_RBANK")
     public RegistryBank getRegistryBank() {
         return rBank;
     }
@@ -228,24 +238,41 @@ public class RegistryPayMethod implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryPayMethod o = (RegistryPayMethod) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.daysBetweenPayments, o.daysBetweenPayments)
+				.append(this.daysToFirstPayment, o.daysToFirstPayment)				
+				.append(this.numberOfPayments, o.numberOfPayments)
+				.append(this.payment, o.payment)
+				.append(this.paymentDays, o.paymentDays)
+				.append(this.rBank, o.rBank)
+				.append(this.registry, o.registry)
+				.isEquals();
 		}
-		if (obj instanceof RegistryPayMethod) {
-			RegistryPayMethod o = (RegistryPayMethod) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(daysBetweenPayments)
+			.append(daysToFirstPayment)
+			.append(id)
+			.append(numberOfPayments)
+			.append(payment)	
+			.append(paymentDays)
+			.append(rBank)
+			.append(registry)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	} 
     
 }

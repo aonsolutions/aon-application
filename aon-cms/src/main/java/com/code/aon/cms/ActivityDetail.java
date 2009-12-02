@@ -9,11 +9,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="activity_i18n")
 public class ActivityDetail implements ITransferObject {
+
+	private static final long serialVersionUID = 4056357920126813844L;
 
 	private Integer id;
 	
@@ -63,4 +71,40 @@ public class ActivityDetail implements ITransferObject {
 		this.description = description;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ActivityDetail o = (ActivityDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.activity, o.activity)				
+				.append(this.description, o.description)
+				.append(this.language, o.language)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(activity)
+			.append(description)
+			.append(id)	
+			.append(language)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("activity", activity.getId()).
+			append("description", StringUtils.abbreviate(description, 32)).
+			append("id", id).
+			append("language", language.getId()).
+			toString();
+	}	
+	
 }

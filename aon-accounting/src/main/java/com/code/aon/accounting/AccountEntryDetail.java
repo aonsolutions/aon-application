@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.util.CommonUtil;
 
 /**
  * TransferObject that represents an AccountEntryDetail.
@@ -179,6 +180,14 @@ public class AccountEntryDetail implements ITransferObject {
 	 * @param debit the debit
 	 */
 	public void setDebit(double debit) {
+		if (debit != 0) {
+			if (debit < 0) {
+				setCredit(CommonUtil.round(0-debit));
+				debit = 0;
+			} else {
+				setCredit(0);
+			}
+		}
 		this.debit = debit;
 	}
 
@@ -197,6 +206,14 @@ public class AccountEntryDetail implements ITransferObject {
 	 * @param credit the credit
 	 */
 	public void setCredit(double credit) {
+		if (credit != 0) {
+			if (credit < 0) {
+				setDebit(CommonUtil.round(0-credit));
+				credit = 0;
+			} else {
+				setDebit(0);
+			}
+		}
 		this.credit = credit;
 	}
 
@@ -204,7 +221,7 @@ public class AccountEntryDetail implements ITransferObject {
 	@Transient
 	public double getUnpaidBalance() {
 		if (getDebit() > getCredit()) {
-			return round(getDebit() - getCredit());
+			return CommonUtil.round(getDebit() - getCredit());
 		}
 		return 0;
 	}
@@ -212,14 +229,9 @@ public class AccountEntryDetail implements ITransferObject {
 	@Transient
 	public double getCreditBalance() {
 		if (getCredit() > getDebit()) {
-			return round(getCredit() - getDebit());
+			return CommonUtil.round(getCredit() - getDebit());
 		}
 		return 0;
 	}
 
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
-	}
-	
 }

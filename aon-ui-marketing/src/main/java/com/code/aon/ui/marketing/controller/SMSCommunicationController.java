@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.commercial.Target;
@@ -30,6 +30,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.messaging.controller.IMessagingConstants;
 import com.code.aon.ui.messaging.controller.SMSController;
@@ -37,7 +38,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SMSCommunicationController implements IMarketingConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(SurveyResponseController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyResponseController.class.getName());
 	
 	private boolean executable;
 	
@@ -63,7 +64,7 @@ public class SMSCommunicationController implements IMarketingConstants {
 				}
 			}
 		} catch (DeploymentException e) {
-			LOGGER.log(Level.SEVERE, "Error checking authorization for sending sms", e);
+			LOGGER.error("Error checking authorization for sending sms", e);
 		}
 		return false;
 	}
@@ -105,7 +106,7 @@ public class SMSCommunicationController implements IMarketingConstants {
 			message.add(phone);
 			sms.sendMessage(message);
 		} catch ( Throwable th ) {
-			LOGGER.log(Level.SEVERE, "Error sending sms to " + phone, th );
+			LOGGER.error("Error sending sms to " + phone, th );
 			result = false;
 		}
 		return result;
@@ -129,7 +130,7 @@ public class SMSCommunicationController implements IMarketingConstants {
     			updateActionTarget(actionTarget);
     		}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error sending sms", e);
+			LOGGER.error("Error sending sms", e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -158,7 +159,7 @@ public class SMSCommunicationController implements IMarketingConstants {
     	SMSController sms = getSMSController();
 		String username = UserUtils.getInstance().getLoggedUser().getLogin();
 		sms.setUsername(username);
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(CompanyController.COMPANY_NAME);
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		sms.setOrganization(companyController.obtainCompany().getAlias());
 		String domainName = UserUtils.getInstance().getPrincipal().getDomain();
 		sms.setDomainName(domainName);
@@ -166,7 +167,7 @@ public class SMSCommunicationController implements IMarketingConstants {
 		try {
 			fillRecipients(sms);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error retrieving cellular phones", e);
+			LOGGER.error("Error retrieving cellular phones", e);
 		}
     }
     

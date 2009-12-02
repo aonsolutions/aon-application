@@ -9,9 +9,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.cms.enumeration.LanguageMenuType;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +27,8 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name = "header")
 public class Header implements ITransferObject {
+
+	private static final long serialVersionUID = -6351272554880977663L;
 
 	private Integer id;
 
@@ -98,6 +108,8 @@ public class Header implements ITransferObject {
 		this.language_menu_type = language_menu_type;
 	}
 
+	@Lob
+	@Type(type="stringClob")   
 	@Column(name = "css")
 	public String getCss() {
 		return css;
@@ -107,6 +119,8 @@ public class Header implements ITransferObject {
 		this.css = css;
 	}
 
+	@Lob
+	@Type(type="stringClob")   
 	@Column(name = "javascript")
 	public String getJavascript() {
 		return javascript;
@@ -134,5 +148,55 @@ public class Header implements ITransferObject {
 		this.default_ = default_;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Header o = (Header) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alias, o.alias)
+				.append(this.bannerCategory, o.bannerCategory)
+				.append(this.css, o.css)
+				.append(this.default_, o.default_)
+				.append(this.javascript, o.javascript)
+				.append(this.language_menu, o.language_menu)
+				.append(this.language_menu_type, o.language_menu_type)
+				.append(this.menu, o.menu)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(alias)
+			.append(bannerCategory)
+			.append(css)
+			.append(default_)
+			.append(id)	
+			.append(javascript)			
+			.append(language_menu)
+			.append(language_menu_type)
+			.append(menu)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+		append("alias", alias).
+		append("bannerCategory", bannerCategory).
+		append("css", StringUtils.abbreviate(css, 32)).		
+		append("default_", default_).
+		append("id", id).
+		append("javascript", StringUtils.abbreviate(javascript, 32)).
+		append("language_menu", language_menu).
+		append("language_menu_type", language_menu_type).
+		append("menu", menu.getId()).
+		toString();
+	}	
 
 }

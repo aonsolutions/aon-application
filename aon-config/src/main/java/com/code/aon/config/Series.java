@@ -6,6 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -42,7 +45,7 @@ public class Series implements ITransferObject {
 		this.description = description;
 	}
 
-	@Column(name="security_level")
+	@Column(name="security_level", nullable = false)
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -61,24 +64,33 @@ public class Series implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Series o = (Series) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)			
+				.append(this.description, o.description)
+				.append(this.securityLevel, o.securityLevel)				
+				.isEquals();
 		}
-		if (obj instanceof Series) {
-			Series o = (Series) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(description)		
+			.append(id)
+			.append(securityLevel)
+			.toHashCode();
+	}	
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }

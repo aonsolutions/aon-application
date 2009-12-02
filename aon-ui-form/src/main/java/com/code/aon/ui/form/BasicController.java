@@ -67,6 +67,8 @@ public class BasicController extends AbstractPojoController implements IControll
 	private int selectedIndex;
 
 	private List<IControllerListener> listenerClasses;
+	
+	private List<IControllerListener> optionalListenerClasses;
 
 	private List<DataModelListener> dataModelListeners;
 
@@ -143,9 +145,28 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public void setListenerClasses(List<IControllerListener> listenerClasses) {
 		this.listenerClasses = listenerClasses;
-		addListeners();
+		addListeners( this.listenerClasses );
 	}
 
+	/**
+	 * Return a list containing the optional listeners associated to controller.
+	 * 
+	 * @return List<IControllerListener>
+	 */
+	public List<IControllerListener> getOptionalListenerClasses() {
+		return optionalListenerClasses;
+	}
+
+	/**
+	 * Set a list containing the optional listeners associated to controller.
+	 * 
+	 * @param listenerClasses
+	 */
+	public void setOptionalListenerClasses(List<IControllerListener> listenerClasses) {
+		this.optionalListenerClasses = listenerClasses;
+		addListeners( this.optionalListenerClasses );
+	}
+	
 	/**
 	 * Gets the list of <code>javax.faces.model.DataModelListener</code>
 	 * registered to the implicit Model.
@@ -270,7 +291,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public void accept(ActionEvent event) {
 		try {
-			restoreNullSubPOJOs(getTo());
+			getManagerBean().restoreNullSubPOJOs(getTo());
 			accept();
 			if (isNew()) {
 				initializeModel();
@@ -584,23 +605,6 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}	
 	
-	/**
-	 * Resolves the alias.
-	 * 
-	 * @param alias
-	 * @return Field path.
-	 */
-	protected String resolveAlias( String alias ) {
-		String fieldName = null;
-		try {
-			fieldName = getFieldName(alias);
-		} catch (ManagerBeanException e) {
-			fieldName = alias.replace('_', '.');
-			fieldName = StringUtils.substringBefore(fieldName, "-");
-		}
-		return fieldName;
-	}
-	
 	@Override
 	public void clearCriteria() throws ManagerBeanException {
 		this.criteria = new Criteria();
@@ -754,7 +758,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * Add all listeners from variable listenerClasses to controller.
 	 * 
 	 */
-	private void addListeners() {
+	private void addListeners( List<IControllerListener> listenerClasses ) {
 		Iterator<IControllerListener> iter = listenerClasses.iterator();
 		while (iter.hasNext()) {
 			IControllerListener listener = iter.next();

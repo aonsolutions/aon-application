@@ -205,40 +205,64 @@ public interface ICMSAlias {
 	String  CONFIG_ONLINE = CONFIG_ENTRY.getAliasNames()[9];
 
 	/** 
+	* Alias value: Config_preview_ftp_password
+	* Hibernate value: Config.preview_ftp_password
+	*/
+	String  CONFIG_PREVIEW_FTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Config_preview_ftp_path
+	* Hibernate value: Config.preview_ftp_path
+	*/
+	String  CONFIG_PREVIEW_FTP_PATH = CONFIG_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Config_preview_ftp_server
+	* Hibernate value: Config.preview_ftp_server
+	*/
+	String  CONFIG_PREVIEW_FTP_SERVER = CONFIG_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Config_preview_ftp_user
+	* Hibernate value: Config.preview_ftp_user
+	*/
+	String  CONFIG_PREVIEW_FTP_USER = CONFIG_ENTRY.getAliasNames()[13];
+
+	/** 
 	* Alias value: Config_preview_host
 	* Hibernate value: Config.preview_host
 	*/
-	String  CONFIG_PREVIEW_HOST = CONFIG_ENTRY.getAliasNames()[10];
+	String  CONFIG_PREVIEW_HOST = CONFIG_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Config_smtp_auth
 	* Hibernate value: Config.smtp_auth
 	*/
-	String  CONFIG_SMTP_AUTH = CONFIG_ENTRY.getAliasNames()[11];
+	String  CONFIG_SMTP_AUTH = CONFIG_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Config_smtp_password
 	* Hibernate value: Config.smtp_password
 	*/
-	String  CONFIG_SMTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[12];
+	String  CONFIG_SMTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Config_smtp_server
 	* Hibernate value: Config.smtp_server
 	*/
-	String  CONFIG_SMTP_SERVER = CONFIG_ENTRY.getAliasNames()[13];
+	String  CONFIG_SMTP_SERVER = CONFIG_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Config_smtp_user
 	* Hibernate value: Config.smtp_user
 	*/
-	String  CONFIG_SMTP_USER = CONFIG_ENTRY.getAliasNames()[14];
+	String  CONFIG_SMTP_USER = CONFIG_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Config_template
 	* Hibernate value: Config.template
 	*/
-	String  CONFIG_TEMPLATE = CONFIG_ENTRY.getAliasNames()[15];
+	String  CONFIG_TEMPLATE = CONFIG_ENTRY.getAliasNames()[19];
 
 
 
@@ -2885,6 +2909,12 @@ public interface ICMSAlias {
 	* Hibernate value: CompanyActivity.id
 	*/
 	String  COMPANY_ACTIVITY_ID = COMPANY_ACTIVITY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CompanyActivity_company_name
+	* Hibernate value: CompanyActivity.company.name
+	*/
+	String  COMPANY_ACTIVITY_COMPANY_NAME = COMPANY_ACTIVITY_ENTRY.getAliasNames()[3];
 
 
 

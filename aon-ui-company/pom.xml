@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.company</artifactId>
-	<version>3.6.0</version>
+	<version>3.5.1</version>
 	<description>AON UI COMPANY</description>
 	<name>AON UI COMPANY</name>
 	<dependencies>
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>3.6.0</version>
+			<version>3.4.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -50,32 +50,5 @@
 			<version>1.2_02</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-    		<groupId>jmimemagic</groupId>
-    		<artifactId>jmimemagic</artifactId>
-    		<version>0.1.2</version>
-			<exclusions>
-				<exclusion>
-				      <groupId>xerces</groupId>
-				      <artifactId>xerces</artifactId>
-				</exclusion>
-				<exclusion>
-				      <groupId>xerces</groupId>
-				      <artifactId>xercesImpl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xmlParserAPIs</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>		
  	</dependencies>
 </project>

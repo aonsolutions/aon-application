@@ -9,10 +9,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Transfer Object that represents tax detail
@@ -85,6 +92,8 @@ public class TaxDetail implements ITransferObject {
      */
 	@ManyToOne
     @JoinColumn(name="tax", nullable=false)
+    @ForeignKey(name = "FK_TAX_DETAIL_TAX")
+    @Index(name = "IDX_TAX_DETAIL_TAX")    
 	public Tax getTax() {
 		return tax;
 	}
@@ -105,6 +114,7 @@ public class TaxDetail implements ITransferObject {
      * @return startDate.
      */
 	@Column(name="start_date")
+	@Temporal(TemporalType.DATE)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -125,6 +135,7 @@ public class TaxDetail implements ITransferObject {
      * @return endDate.
      */
 	@Column(name="end_date")
+	@Temporal(TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -144,7 +155,7 @@ public class TaxDetail implements ITransferObject {
      * 
      * @return value.
      */
-	@Column(name="value")
+	@Column(name="value",precision = 15, scale = 3)
 	public double getValue() {
 		return value;
 	}
@@ -164,7 +175,7 @@ public class TaxDetail implements ITransferObject {
      * 
      * @return surcharge.
      */
-	@Column(name="surcharge")
+	@Column(name="surcharge",precision = 15, scale = 3)
 	public double getSurcharge() {
 		return surcharge;
 	}
@@ -181,24 +192,37 @@ public class TaxDetail implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final TaxDetail o = (TaxDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.endDate, o.endDate)			
+				.append(this.startDate, o.startDate)
+				.append(this.surcharge, o.surcharge)				
+				.append(this.tax, o.tax)			
+				.append(this.value, o.value)
+				.isEquals();
 		}
-		if (obj instanceof TaxDetail) {
-			TaxDetail o = (TaxDetail) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(endDate)		
+			.append(id)		
+			.append(startDate)		
+			.append(surcharge)		
+			.append(tax)
+			.append(value)			
+			.toHashCode();
+	}	
 
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }

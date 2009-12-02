@@ -12,13 +12,17 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.IBankAccountContainer;
-import com.code.aon.registry.Registry;
 
 /**
  * Transfer Object that represents a union between a Registry and a Bank.
@@ -72,7 +76,7 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
      * 
      * @return the bank account
      */
-    @Column(name = "bank_account")
+    @Column(name = "bank_account", length = 30)
     @Type(type="com.code.aon.config.hibernate.BankAccountType")
     public BankAccount getBankAccount() {
         return bankAccount;
@@ -94,6 +98,8 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="bank", nullable = false)
+    @ForeignKey(name = "FK_RBANK_BANK")
+    @Index(name = "IDX_RBANK_BANK")
     public Bank getBank() {
         return bank;
     }
@@ -114,6 +120,8 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
+    @ForeignKey(name = "FK_RBANK_REGISTRY")
+    @Index(name = "IDX_RBANK_REGISTRY")
     public Registry getRegistry() {
         return registry;
     }
@@ -163,24 +171,35 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryBank o = (RegistryBank) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.bank, o.bank)
+				.append(this.bankAccount, o.bankAccount)				
+				.append(this.registry, o.registry)
+				.append(this.sufix, o.sufix)
+				.isEquals();
 		}
-		if (obj instanceof RegistryBank) {
-			RegistryBank o = (RegistryBank) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(bank)
+			.append(bankAccount)
+			.append(id)	
+			.append(registry)
+			.append(sufix)				
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-    
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}    
+	
 }

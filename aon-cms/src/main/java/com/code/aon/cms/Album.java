@@ -14,11 +14,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="album")
 public class Album implements ITransferObject, IPositionObject {
+
+	private static final long serialVersionUID = -3501150445896926462L;
 
 	private Integer id;
 	
@@ -121,4 +128,44 @@ public class Album implements ITransferObject, IPositionObject {
 	public void setDetails(Set<AlbumDetail> details) {
 		this.details = details;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Album o = (Album) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.albumCategory, o.albumCategory)				
+				.append(this.alias, o.alias)
+				.append(this.image, o.image)				
+				.append(this.itemsPerPage, o.itemsPerPage)
+				.append(this.position, o.position)
+				.append(this.publishDate, o.publishDate)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(albumCategory)
+			.append(alias)
+			.append(id)	
+			.append(image)
+			.append(itemsPerPage)			
+			.append(position)
+			.append(publishDate)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }

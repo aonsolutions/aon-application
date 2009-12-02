@@ -7,9 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.enumeration.TaxType;
 
@@ -55,6 +62,16 @@ public class Tax implements ITransferObject{
      * Last date for this tax to be applied.
      */
     private Date startDate;
+
+    /**
+     * Sales account. 
+     */
+    private Account salesAccount;
+
+    /**
+     * Purchase account. 
+     */
+    private Account purchaseAccount;
 
     /**
      * Void constructor.
@@ -116,65 +133,6 @@ public class Tax implements ITransferObject{
     }
 
     /**
-     * Returns the percentage to be applied in this tax.
-     * 
-     * @return percentage.
-     */
-    public double getPercentage() {
-        return percentage;
-    }
-
-    /**
-     * Assigns the percentage to be applied in this tax.
-     * 
-     * @param percentage
-     *            the percentage to be applied in this tax.
-     */
-    public void setPercentage(double percentage) {
-        this.percentage = percentage;
-    }
-
-    /**
-     * Returns the top date for this tax to be applied.
-     * 
-     * @return  the top date for this tax to be applied.
-     */
-    @Column(name="start_date")
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * Assigns the top date for this tax to be applied.
-     * 
-     * @param startDate
-     *             the top date for this tax to be applied.
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * Returns the surcharge to be applied.
-     * 
-     * @return the surcharge.
-     * @hibernate.property 
-     */
-    public double getSurcharge() {
-        return surcharge;
-    }
-
-    /**
-     * Assigns the surcharge to be applied.
-     * 
-     * @param surcharge
-     *            the surcharge to be applied.
-     */
-    public void setSurcharge(double surcharge) {
-        this.surcharge = surcharge;
-    }
-
-    /**
      * Returns the tax type.
      * 
      * @return tax type.
@@ -194,26 +152,149 @@ public class Tax implements ITransferObject{
         this.type = type;
     }
  
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
-		}
-		if (obj instanceof Tax) {
-			Tax o = (Tax) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+    /**
+     * Returns the percentage to be applied in this tax.
+     * 
+     * @return percentage.
+     */
+    @Column(nullable = false, precision = 15, scale = 3)
+    public double getPercentage() {
+        return percentage;
+    }
+
+    /**
+     * Assigns the percentage to be applied in this tax.
+     * 
+     * @param percentage
+     *            the percentage to be applied in this tax.
+     */
+    public void setPercentage(double percentage) {
+        this.percentage = percentage;
+    }
+
+    /**
+     * Returns the surcharge to be applied.
+     * 
+     * @return the surcharge.
+     * @hibernate.property 
+     */
+    @Column(precision = 15, scale = 3)
+    public double getSurcharge() {
+        return surcharge;
+    }
+
+    /**
+     * Assigns the surcharge to be applied.
+     * 
+     * @param surcharge
+     *            the surcharge to be applied.
+     */
+    public void setSurcharge(double surcharge) {
+        this.surcharge = surcharge;
+    }
+
+    /**
+     * Returns the top date for this tax to be applied.
+     * 
+     * @return  the top date for this tax to be applied.
+     */
+    @Column(name="start_date")
+    @Temporal(TemporalType.DATE)
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Assigns the top date for this tax to be applied.
+     * 
+     * @param startDate
+     *             the top date for this tax to be applied.
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+	 * Returns the sales account
+	 * 
+     * @return String the sales account.
+     * 
+     */
+	@Transient
+	public Account getSalesAccount() {
+		return salesAccount;
+	}
+
+    /**
+     * Assigns the sales account.
+     * 
+     * @param salesAccount
+     *            the sales account.
+     */
+	@Transient
+	public void setSalesAccount(Account salesAccount) {
+		this.salesAccount = salesAccount;
+	}
+
+    /**
+	 * Returns the purchase account
+	 * 
+     * @return String the purchase account.
+     * 
+     */
+	@Transient
+	public Account getPurchaseAccount() {
+		return purchaseAccount;
+	}
+
+    /**
+     * Assigns the purchase account.
+     * 
+     * @param purchaseAccount
+     *            the purchase account.
+     */
+	@Transient
+	public void setPurchaseAccount(Account purchaseAccount) {
+		this.purchaseAccount = purchaseAccount;
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Tax o = (Tax) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.name, o.name)			
+				.append(this.percentage, o.percentage)
+				.append(this.purchaseAccount, o.purchaseAccount)				
+				.append(this.salesAccount, o.salesAccount)			
+				.append(this.startDate, o.startDate)
+				.append(this.surcharge, o.surcharge)				
+				.append(this.type, o.type)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
 
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(name)
+			.append(percentage)		
+			.append(purchaseAccount)
+			.append(salesAccount)		
+			.append(startDate)
+			.append(surcharge)		
+			.append(type)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }

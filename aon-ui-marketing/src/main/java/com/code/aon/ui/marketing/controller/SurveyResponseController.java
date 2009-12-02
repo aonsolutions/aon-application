@@ -1,7 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import java.util.logging.Logger;
-
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
@@ -15,8 +13,6 @@ import com.code.aon.ui.form.BasicController;
  */
 public class SurveyResponseController extends BasicController implements IMarketingConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(SurveyResponseController.class.getName());
-
 	public void onSelectSurveyResponse( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
         FacesContext context = FacesContext.getCurrentInstance();
 		String id = context.getExternalContext().getRequestParameterMap().get("surveyResponseId");		
