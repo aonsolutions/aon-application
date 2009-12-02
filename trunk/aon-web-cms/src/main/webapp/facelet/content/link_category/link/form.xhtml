@@ -43,6 +43,12 @@
 						value="#{link.to.alias}">
 						<f:validator validatorId="AliasValidator" />
 					</aon:inputText>
+					
+					<aon:outputLabel for="Link_url" style="width:100px"
+						value="#{appBundle.link_url}" />
+					<aon:inputText id="Link_url"
+						required="true" size="80" maxlength="255"
+						value="#{link.to.url}" />
 
 					<aon:outputLabel for="Link_category"
 						value="#{appBundle.link_category}"/>
@@ -61,6 +67,13 @@
 						<f:validateLength maximum="255" />
 					</aon:inputTextarea>						
 
+					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+						<ui:param name="labelValue" value="#{bundle.aon_description}" />
+						<ui:param name="inputTextId" value="Link_description" />
+						<ui:param name="inputTextValue" value="#{link.toI18n.description}" />
+						<ui:param name="richTextEnabled" value="#{link.richTextEnabled}" />
+					</ui:include>
+
 					<aon:outputLabel for="Link_position"
 						value="#{appBundle.link_position}"/>
 					<aon:inputText id="Link_position"
@@ -71,19 +84,6 @@
 						value="#{appBundle.link_active}"/>
 					<aon:selectBooleanCheckbox id="Link_active" 
 						value="#{link.to.active}" />
-					
-					<aon:outputLabel for="Link_url" style="width:100px"
-						value="#{appBundle.link_url}" />
-					<aon:inputText id="Link_url"
-						required="true" size="80" maxlength="255"
-						value="#{link.to.url}" />
-
-					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
-						<ui:param name="labelValue" value="#{bundle.aon_description}" />
-						<ui:param name="inputTextId" value="Link_description" />
-						<ui:param name="inputTextValue" value="#{link.toI18n.description}" />
-						<ui:param name="richTextEnabled" value="#{link.richTextEnabled}" />
-					</ui:include>
 
 				</aon:panelGrid>
 			</aon:div>
