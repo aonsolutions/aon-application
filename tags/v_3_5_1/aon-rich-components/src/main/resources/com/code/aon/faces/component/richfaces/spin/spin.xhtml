@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition>
+	
+	<aon:div styleClass="aon-spin-control" rendered="#{controller.selectedIndex != -1}">
+		<aon:div styleClass="aon-spin-control-element"> 
+			<aon:commandButton id="#{spinId}-first" disabled="#{controller.inFirst}" immediate="true"
+				action="#{action}" actionListener="#{controller.onSelectFirst}" ajaxSingle="true"
+				styleClass="aon-dataScroller-button #{controller.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
+			</aon:commandButton>
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element"> 
+			<aon:commandButton id="#{spinId}-previous" disabled="#{controller.inFirst}" immediate="true"
+				action="#{action}" actionListener="#{controller.onSelectPrevious}" ajaxSingle="true"
+				styleClass="aon-dataScroller-button #{controller.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
+			</aon:commandButton>
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
+			<aon:outputFormat value="#{bundle.aon_spin_result}">
+				<f:param value="#{controller.selectedIndex + 1}" />
+				<f:param value="#{controller.model.rowCount}" />
+			</aon:outputFormat>	
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element"> 				
+			<aon:commandButton id="#{spinId}-next" disabled="#{controller.inLast}" immediate="true"
+				action="#{action}" actionListener="#{controller.onSelectNext}" ajaxSingle="true"
+				styleClass="aon-dataScroller-button #{controller.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
+			</aon:commandButton>
+		</aon:div>
+		<aon:div styleClass="aon-spin-control-element"> 
+			<aon:commandButton id="#{spinId}-last" disabled="#{controller.inLast}" immediate="true"
+				action="#{action}" actionListener="#{controller.onSelectLast}" ajaxSingle="true"
+				styleClass="aon-dataScroller-button #{controller.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
+			</aon:commandButton>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>
+
+</body>
+</html>
