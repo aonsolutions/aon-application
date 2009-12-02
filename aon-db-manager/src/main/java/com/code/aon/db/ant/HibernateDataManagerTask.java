@@ -55,6 +55,10 @@ public class HibernateDataManagerTask extends Task {
 	public void setDirectory(File directory) {
 		this.hdm.setDirectory(directory);		
 	}
+
+	public void setFile(File file) {
+		this.hdm.setFile(file);		
+	}
 	
 	public void setIgnoreDependencies(boolean ignoreDependencies) {
 		this.hdm.setIgnoreDependencies( ignoreDependencies );
@@ -98,8 +102,21 @@ public class HibernateDataManagerTask extends Task {
     	if (! (hdm.isExportData() || hdm.isImportData() || hdm.isOnTheFly()) ) {
     		throw new BuildException( "One of exportData, importData or onTheFly attributes must be set" );
     	}
-    	if ( hdm.isExportData() || hdm.isImportData() ) {
-    		checkFile( hdm.getDirectory(), "directory" );
+    	if ( hdm.isExportData() ) {
+    		if ( hdm.getDirectory() != null ) {
+    			checkFile( hdm.getDirectory(), "directory" );
+    		} else if ( hdm.getFile() == null ) {
+    			throw new BuildException( "file or directory must be set for exportData" );
+    		}
+    	}
+    	if ( hdm.isImportData() ) {
+    		if ( hdm.getDirectory() != null ) {
+    			checkFile( hdm.getDirectory(), "directory" );
+    		} else if ( hdm.getFile() != null ) {
+    			checkFile( hdm.getFile(), "file" );
+    		} else {
+    			throw new BuildException( "file or directory must be set for importData" );
+    		}
     	}
     	checkFile( hdm.getConfigurationFile(), "configurationFile" );
     	if ( hdm.isExportData() || hdm.isOnTheFly() ) {

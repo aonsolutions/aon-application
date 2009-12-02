@@ -10,26 +10,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.marketing</artifactId>
-	<version>0.8.1</version>
+	<version>1.1.1</version>
 	<description>AON MARKETING</description>
 	<name>AON-MARKETING</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>2.1.0</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>2.2.5</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>		
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.config</artifactId>
-			<version>2.1.2</version>
-		</dependency>
+		</dependency> 
 	</dependencies>
 </project>

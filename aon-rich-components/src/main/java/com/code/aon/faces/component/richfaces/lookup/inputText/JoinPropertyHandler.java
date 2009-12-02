@@ -60,6 +60,8 @@ public class JoinPropertyHandler extends TagHandler {
 	                throw new TagAttributeException( this.tag, valueTag, "Tag " + this.tagId + " attribute value must be a value reference, was " + value);
 	            }
             }
+		} else {
+			throw new TagException( this.tag, "Component " + parent.getId() + " is no HtmlLookupInputText");
 		}
 		this.nextHandler.apply(ctx, parent);
 	}

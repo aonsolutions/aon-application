@@ -16,15 +16,12 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
-import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ql.Criteria;
@@ -43,8 +40,6 @@ public class RichLookupBean {
 	private static final String FORM_ID = "form";
 
 	private static final String SEARCH_ID = "search";
-	
-	private static final String DEFAULT_WINDOW_TITLE = "Select Window";
 
 	private static final Logger LOGGER = Logger.getLogger(RichLookupBean.class.getName());
 
@@ -75,15 +70,6 @@ public class RichLookupBean {
 
 	/** The selected panel. */
 	private String selectedPanel;
-	
-	/** The window title. */
-	private String windowTitle;
-	
-	/** The minimum width. */
-	private String minWidth;
-	
-	/** The minimum height. */
-	private String minHeight;
 
 	/**
 	 * The Constructor.
@@ -237,26 +223,6 @@ public class RichLookupBean {
 	}
 
 	/**
-	 * Sets the init expressions.
-	 * 
-	 * @param expressions
-	 *            the expressions
-	 */
-	public void setDefaultExpressions(Map<String, Object> expressions) {
-		getController().setDefaultExpressions(expressions);
-	}
-	
-	/**
-	 * Sets the order list.
-	 * 
-	 * @param value
-	 *            the new order list
-	 */
-	public void setDefaultOrder(String value) {
-		getController().setDefaultOrder(value);
-	}
-	
-	/**
 	 * Return the model associated to controller. The model represents a list of
 	 * <code>ITransferObject</code> with which we will be able to interact.
 	 * 
@@ -320,18 +286,6 @@ public class RichLookupBean {
 		getController().addDirectExpression(event);
 	}
 
-	/**
-	 * Add a new expression to the criteria to condition the following searches.
-	 * The id component is managed as an alias to resolve the real property
-	 * path.
-	 * 
-	 * @param event
-	 * @throws ManagerBeanException
-	 */
-	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addEqualExpression(event);
-	}
-	
 	/**
 	 * Execute cancel action.
 	 * 
@@ -603,7 +557,6 @@ public class RichLookupBean {
 	 */
 	public void onShowListWindow(ActionEvent event) throws ManagerBeanException {
 		setBindings(event.getComponent());
-		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(LIST_ID);
 		getController().clearCriteria();
@@ -619,7 +572,6 @@ public class RichLookupBean {
 	 */
 	public void onShowSearchWindow(ActionEvent event) {
 		setBindings(event.getComponent());
-		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(SEARCH_ID);
 		onEditSearch(null);
@@ -634,7 +586,6 @@ public class RichLookupBean {
 	 */
 	public void onShowNewWindow(ActionEvent event) {
 		setBindings(event.getComponent());
-		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(FORM_ID);
 		onReset(null);
@@ -739,30 +690,6 @@ public class RichLookupBean {
 
 	public ILookupComponent getComponent() {
 		return component;
-	}
-
-	public String getWindowTitle() {
-		return windowTitle;
-	}
-	
-	public String getMinWidth() {
-		return minWidth;
-	}
-
-	public String getMinHeight() {
-		return minHeight;
-	}
-
-	public void updateWindowProperties() {
-		if ( (this.component != null) && (this.component instanceof HtmlLookupButton) ) {
-			HtmlLookupButton lookupButton = (HtmlLookupButton) this.component;
-			this.windowTitle = lookupButton.getWindowTitle();
-			this.minWidth = lookupButton.getMinWidth();
-			this.minHeight = lookupButton.getMinHeight();
-		}
-		if ( StringUtils.isEmpty(this.windowTitle) ) {
-			this.windowTitle = DEFAULT_WINDOW_TITLE;	
-		}
 	}
 	
 }

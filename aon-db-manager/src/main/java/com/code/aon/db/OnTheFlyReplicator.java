@@ -1,14 +1,14 @@
 package com.code.aon.db;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
+
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class OnTheFlyReplicator implements IEntityManager {
 
-	private static Log LOGGER = LogFactory.getLog(OnTheFlyReplicator.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OnTheFlyReplicator.class.getName());
 	
 	private HibernateDataManager hdm;
 	
@@ -50,7 +50,7 @@ public class OnTheFlyReplicator implements IEntityManager {
         	} else {
         		session.replicate( entityName, element, ReplicationMode.EXCEPTION );        		
         	}
-        	if ( ++imported == hdm.getMaxImport() ) {
+        	if ( (hdm.getMaxImport() != 0) && (++imported == hdm.getMaxImport()) ) {
         		LOGGER.info( "Imported " + counter + " elements of " + entityName );
 				endTransaction();
         		initTransaction();

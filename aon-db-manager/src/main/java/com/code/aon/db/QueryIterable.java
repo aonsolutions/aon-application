@@ -1,16 +1,22 @@
 package com.code.aon.db;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.transform.ResultTransformer;
+import org.hibernate.type.AssociationType;
+import org.hibernate.type.Type;
 
 public class QueryIterable<E> implements Iterable<E> {
 
@@ -112,6 +118,8 @@ public class QueryIterable<E> implements Iterable<E> {
 		} else {
 			criteria = getSession().createCriteria( getEntity() );
 		}
+		ResultTransformer ert = new ExportResultTransformer(getEntity());
+		criteria.setResultTransformer(ert);
 		return criteria;
 	}
 	

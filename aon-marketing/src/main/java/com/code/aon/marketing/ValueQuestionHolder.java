@@ -5,6 +5,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 
 /**
  * Transfer Object that represents a Value Holder.
@@ -17,7 +20,9 @@ import javax.persistence.MappedSuperclass;
 public abstract class ValueQuestionHolder extends ValueHolder {
 
 	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="question", nullable = false, updatable = false )	
+    @JoinColumn( name="question", nullable = false, updatable = false )
+    @ForeignKey( name="FK_QUESTION" )
+    @Index( name="IDX_QUESTION" )
 	private Question question;
 
 	/**

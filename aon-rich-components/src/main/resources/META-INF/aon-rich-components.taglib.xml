@@ -315,7 +315,7 @@
 				com.code.aon.faces.DataTable
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.dataTable.DataTableHandler
+				com.code.aon.faces.component.AonComponentHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -357,18 +357,6 @@
 		<tag-name>dataScroller</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.dataScroller.DataScrollerHandler
-		</handler-class>
-	</tag>
-	<tag>
-		<tag-name>dataScroller2</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.richfaces.dataScroller2.DataScroller2Handler
-		</handler-class>
-	</tag>
-	<tag>
-		<tag-name>spin</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.richfaces.spin.SpinHandler
 		</handler-class>
 	</tag>
 	<tag>
@@ -509,51 +497,4 @@
 			</handler-class>
 		</component>
 	</tag>
-	<tag>
-		<tag-name>panel</tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.Panel
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>fileUpload</tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.FileUpload
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.richfaces.fileUpload.FileUploadHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>outputFormat</tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.OutputFormat
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>methodParam</tag-name>
-		<handler-class>com.code.aon.faces.component.methodParam.MethodParamHandler</handler-class>
-	</tag>
-	<tag>
-		<tag-name>valueParam</tag-name>
-		<handler-class>com.code.aon.faces.component.param.ParamHandler</handler-class>
-	</tag>
-   <tag>
-      <tag-name>abbreviateConverter</tag-name>
-      <converter>
-         <converter-id>com.code.aon.faces.AbbreviateConverter</converter-id>
-      </converter>
-   </tag>	
 </facelet-taglib>

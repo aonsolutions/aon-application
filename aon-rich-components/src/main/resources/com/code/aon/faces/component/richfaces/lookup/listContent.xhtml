@@ -11,32 +11,34 @@
 <ui:composition>
 
 	<!-- start toolbar navigation -->
-	<aon:div>
-		<aon:div styleClass="aon-toolbar" rendered="#{lookup.showSearchButtons}">
+	<aon:div style="width:100%;">
+		<aon:div rendered="#{lookup.showSearchButtons}"
+			styleClass="aon-toolbar">
 			<aon:commandButton value="#{bundle.aon_search}"
-				actionListener="#{lookup.onListCancel}" reRender="#{lookupId}LookupContent"
+				actionListener="#{lookup.onListCancel}" reRender="lookupContent"
 				styleClass="aon-finding-toolbar-item aon-icon-accept"
 				accesskey="#{bundle.aon_key_search}" />
-			<aon:commandButton value="#{bundle.aon_back}"
-				actionListener="#{lookup.onCloseWindow}" immediate="true"
+			<aon:commandButton value="#{bundle.aon_cancel}"
+				actionListener="#{lookup.onCloseWindow}"
 				styleClass="aon-finding-toolbar-item aon-icon-cancel"
 				accesskey="#{bundle.aon_key_cancel}">
 				<rich:componentControl for="#{lookupId}" event="onclick"
 					disableDefault="true" operation="hide" />
 			</aon:commandButton>
 		</aon:div>
+
 		<!-- end toolbar navigation -->
-		<aon:div style="width:98%;">
+		<aon:div style="width:100%;">
 			<aon:dataTable id="#{lookup.beanName}Data" var="to"
-				value="#{lookup.model}" rows="15">
+				value="#{lookup.model}" rows="20">
 				<aon:rowSelector actionListener="#{lookup.onListSelect}"
 					reRender="#{lookup.component.selectReRender}"
 					oncomplete="Richfaces.hideModalPanel('#{lookupId}')" />
 				<ui:include src="#{lookup.listPagePath}" />
 			</aon:dataTable>
 
-			<aon:dataScroller2 for="#{lookup.beanName}Data" showNote="true" />
-
+			<aon:dataScroller dataTable="#{lookup.beanName}Data"
+				model="#{lookup.model}" showNote="true" />
 		</aon:div>
 	</aon:div>
 </ui:composition>

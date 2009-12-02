@@ -12,8 +12,4 @@ public interface ILookupTags {
 	
 	String SELECT_RE_RENDER = "selectReRender";
 	
-	String MIN_WIDTH = "minWidth";
-	
-	String MIN_HEIGHT = "minHeight";
-	
 }

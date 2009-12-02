@@ -240,7 +240,7 @@
 		<tag-name>rowSelector</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.RowSelector</component-type>
-			<handler-class>com.code.aon.faces.component.icefaces.rowSelector.RowSelectorHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.icefaces.AonIceComponentHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
