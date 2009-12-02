@@ -15,5 +15,6 @@ public interface IAssetConstants {
 	int START_TIME=8;
 	int END_TIME=23;
 	int FRACTION_TIME=15;
+	int WEEK_DAYS=7;
 
 }

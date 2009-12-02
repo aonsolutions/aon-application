@@ -19,6 +19,9 @@
 					style="display: none" />
 				<aon:outputText value="#{appBundle.aon_application_title}"
 					styleClass="aon-applicationName" />
+				<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
+					styleClass="aon-applicationName" style="font-size:0.9em;margin-top:0.3em;"
+					rendered="#{aonConfiguration.applicationVersion != null}" />
 			</aon:div>
 
 			<aon:div>

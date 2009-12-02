@@ -20,12 +20,16 @@
 					action="asset_list"
 					renderedOnUserRole="DocumentsVisible" />
 			</aon:div>
-			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+			<aon:div styleClass="aon-sidebarIcons-icon">
 				<h:commandLink value="#{assetBundle.asset_activity_main}"
 					styleClass="aon-top-menu-item" immediate="true" 
-					action="activityDialog_form" 
-					actionListener="#{activityDialog.onInitialize}"
-					renderedOnUserRole="DocumentsVisible" />
+					action="activityDialog_grid" 
+					renderedOnUserRole="DocumentsVisible" >
+<!--  
+-->
+					<aon:actionListener method="#{activityDialog.onInitialize}" />
+					<aon:actionListener method="#{activityBasic.initializePendingList}" />
+				</h:commandLink>
 			</aon:div>
 			<!--  
 			<h:commandLink value="#{assetBundle.asset_request_main}"
@@ -38,6 +42,14 @@
 					actionListener="#{assetCollections.onInitialize}"
 					action="stat_form" />
 			</aon:div>
+			
+<!--  
+			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+				<h:commandLink value="#{assetBundle.asset_admin_main}"
+					styleClass="aon-top-menu-item" immediate="true" 
+					action="admin_form" />
+			</aon:div>
+-->			
 			
 <!--
 			<aon:dropDownMenu value="#{assetBundle.asset_asset_main}"

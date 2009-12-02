@@ -74,18 +74,48 @@
 				value="#{assetBundle.asset_minutes}" />
 		</aon:div>
 
-		<aon:outputLabel for="tivityDialog_who"
+		<aon:outputLabel for="ActivityDialog_weekDays"
+			value="#{assetBundle.asset_activity_days}" />
+		<aon:div>
+			<aon:outputLabel for="ActivityDialog_weekDays_monday"
+				value="#{assetBundle.asset_activity_monday}" />
+			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_monday"
+				value="#{activityDialog.monday}" style="margin-right: 10px;"/>
+			<aon:outputLabel for="ActivityDialog_weekDays_tuesday"
+				value="#{assetBundle.asset_activity_tuesday}" />
+			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_tuesday"
+				value="#{activityDialog.tuesday}" style="margin-right: 10px;"/>
+			<aon:outputLabel for="ActivityDialog_weekDays_wednesday"
+				value="#{assetBundle.asset_activity_wednesday}" />
+			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_wednesday"
+				value="#{activityDialog.wednesday}" style="margin-right: 10px;"/>
+			<aon:outputLabel for="ActivityDialog_weekDays_thursday"
+				value="#{assetBundle.asset_activity_thursday}" />
+			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_thursday"
+				value="#{activityDialog.thursday}" style="margin-right: 10px;"/>
+			<aon:outputLabel for="ActivityDialog_weekDays_friday"
+				value="#{assetBundle.asset_activity_friday}" />
+			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_friday"
+				value="#{activityDialog.friday}" style="margin-right: 10px;"/>
+			<aon:outputLabel for="ActivityDialog_weekDays_saturday"
+				value="#{assetBundle.asset_activity_saturday}" />
+			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_saturday"
+				value="#{activityDialog.saturday}" style="margin-right: 10px;"/>
+			<aon:outputLabel for="ActivityDialog_weekDays_sunday"
+				value="#{assetBundle.asset_activity_sunday}" />
+			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_sunday"
+				value="#{activityDialog.sunday}" style="margin-right: 10px;"/>
+		</aon:div>
+
+		<aon:outputLabel for="ActivityDialog_who"
 			value="#{assetBundle.asset_activity_who}" />
 		<aon:div>
-			<aon:inputText id="ActivityDialog_who" value="#{activityDialog.who}"
-				
+			<aon:inputText id="ActivityDialog_who" value="#{activityDialog.login}"
 				required="#{true}" size="20" disabled="#{(!activityDialog.new) or activityDialog.request}">
 				<f:validateLength maximum="20" />
 			</aon:inputText>
-			
 			<aon:outputText id="ActivityDialog_who_request" value="#{activityDialog.who}"
 				size="20" />
-				
 		</aon:div>
 		
 		<aon:outputLabel for="ActivityDialog_why"
@@ -101,16 +131,19 @@
 			<h:commandButton id="activityDialog-reset"
 				value="#{bundle.aon_reset}" reRender="activityDialogTable"
 				rendered="#{!activityDialog.new and activityDialog.request}" 
-				actionListener="#{activityDialog.onInitializeRequest}"
 				styleClass="aon-icon-new"
-				accesskey="#{bundle.aon_key_new}" />
+				accesskey="#{bundle.aon_key_new}" >
+				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
+			</h:commandButton>
 			<h:commandButton id="activityDialog-email"
 				value="#{assetBundle.asset_activity_send_request}" reRender="activityDialogTable"
 				rendered="#{activityDialog.new and activityDialog.request}"
-				actionListener="#{activityDialog.onEmail}"
 				styleClass="aon-icon-webmail2"
-				accesskey="#{bundle.aon_key_new}" />
+				accesskey="#{bundle.aon_key_new}" >
+				<aon:actionListener method="#{activityDialog.onAccept}" />
+				<aon:actionListener method="#{activityDialog.onEmail}" />
+			</h:commandButton>
 		</aon:div>
 	</aon:panelGrid>
-
+		
 </ui:composition>

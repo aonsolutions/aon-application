@@ -169,6 +169,12 @@
       <param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
       <param-value>8640000</param-value>
    </context-param>
+   
+   <!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
+	<context-param>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+    </context-param>
    <!-- 
 	<context-param>
       <param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
@@ -223,11 +229,17 @@
        </listener-class>
     </listener>
     
+    <!-- Listener, that does all the startup work (configuration, init). -->
+	<listener>
+		<listener-class>
+			com.sun.faces.config.ConfigureListener
+		</listener-class>
+	</listener>
+    
     <context-param>
        <param-name>config-file</param-name>
        <param-value>/WEB-INF/conf/bean_config.xml</param-value>
     </context-param> 
-
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -238,6 +250,14 @@
 		<web-resource-collection>
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>account</web-resource-name>
+			<url-pattern>/_account/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>finance</web-resource-name>
+			<url-pattern>/finance/*</url-pattern>
 		</web-resource-collection>
  		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>

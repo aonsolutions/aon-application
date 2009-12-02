@@ -3,10 +3,13 @@ package com.code.aon.asset.event;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.dao.IAssetAlias;
+import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,7 +21,7 @@ import com.code.aon.ql.Criteria;
 
 public class AssetBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final Logger LOGGER = Logger
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AssetBeanVetoListener.class.getName());
 
 	@Override
@@ -66,15 +69,20 @@ public class AssetBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 			while (iter.hasNext() && !overlapped) {
 				AssetActivity aa = (AssetActivity) iter.next();
-				if(aa.getId().equals(id)) {
+				if(aa.getId().equals(id) || !aa.getStatus().equals(ActivityStatus.ACCEPTED)) {
 					overlapped = false;
-				} else if ((aa.getFromTime().before(toTime) || aa.getFromTime().equals(toTime))
-						&& (aa.getToTime().after(fromTime) || aa.getToTime().equals(fromTime))) {
+//				} else if ((aa.getFromTime().before(toTime) || aa.getFromTime().equals(toTime))
+//						|| (aa.getToTime().after(fromTime) || aa.getToTime().equals(fromTime))) {
+				} else if (aa.getFromTime().before(toTime) && aa.getFromTime().after(fromTime)) {
+					overlapped = true;
+				} else if (aa.getToTime().after(fromTime) && aa.getToTime().before(toTime)) {
+					overlapped = true;
+				} else if (aa.getToTime().equals(toTime) && aa.getFromTime().equals(fromTime)) {
 					overlapped = true;
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> hasOverlap " + e.getMessage());
+			LOGGER.error(">>>> hasOverlap " + e.getMessage());
 		}
 		return overlapped;
 	}

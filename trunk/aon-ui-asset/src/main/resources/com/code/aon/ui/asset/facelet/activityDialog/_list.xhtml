@@ -97,14 +97,14 @@
 						
 						<aon:commandButton
 								id="activity-accept" title="#{bundle.aon_accept}"
-								actionListener="#{activityBasic.acceptPendingAsset}"
+								actionListener="#{activityBasic.acceptAsset}"
 								reRender="assetListData"
 								styleClass="aon-editDataTable-button aon-icon-accept"
 								rendered="#{to==activityBasic.to}"
 								/>
 						<aon:commandButton
 								id="activity-cancel" title="#{bundle.aon_cancel}"
-								actionListener="#{activityBasic.cancelPendingAsset}"
+								actionListener="#{activityBasic.cancelAsset}"
 								reRender="assetListData"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
 								rendered="#{to==activityBasic.to}"

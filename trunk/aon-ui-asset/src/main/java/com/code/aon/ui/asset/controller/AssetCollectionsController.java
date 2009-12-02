@@ -8,12 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetStat;
@@ -41,7 +42,7 @@ public class AssetCollectionsController {
 	private IManagerBean assetActivityBean;
 	Criteria criteria;
 	Locale locale = AonUtil.getCurrentLocale();
-	private static final Logger LOGGER = Logger.getLogger(AssetCollectionsController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AssetCollectionsController.class.getName());
 	
 	/**
 	 * Devuelve la fecha
@@ -201,7 +202,7 @@ public class AssetCollectionsController {
 			else if(getDateRange().equals("DAY"))
 				buildStatsByDay();
 		} catch (ManagerBeanException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			LOGGER.error(e.getMessage(), e );
 		}
 	}
 	
@@ -225,8 +226,17 @@ public class AssetCollectionsController {
 		if(getDateRange().equals("YEAR")){
 			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
 			criteria.addBetweenExpression(identifier, fromDate, toDate);
+			if(getStatType().equals("ASSET")){
 			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID);
 			criteria.addOrder(identifier);
+			
+				
+			}
+			if(getStatType().equals("USER")){
+				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
+				criteria.addOrder(identifier);
+				
+			}
 		} else if(getDateRange().equals("MONTH")){
 			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
 			criteria.addBetweenExpression(identifier, fromDate, toDate);
@@ -258,7 +268,6 @@ public class AssetCollectionsController {
 		stats = new LinkedList<AssetStat>();
 		buildCriteria();
 		Iterator<ITransferObject> iter = assetActivityBean.getList(criteria).iterator();
-		
 		AssetStat stat = null;
 		AssetActivity activity;
 		AssetActivity previous = null;
