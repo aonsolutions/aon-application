@@ -38,12 +38,19 @@
 	</customer:config>
 
 	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:catalogue
+			showEcommerceData="false"
+		/>	
 		<product:product
+			showBarcode="true"
+			showType="false"
+			showBrand="true"
 			showStock="false"
+			showSuppliers="false"
 			showAccount="false"
 			showAttachment="true"
-			showEcommerceDataTab="false"
-		/>
+			showEcommerceData="false"
+		/>		
 	</product:config>
 
 	<marketing:config version="1.1" xmlns:marketing="http://www.esferalia.com/marketing">
