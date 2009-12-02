@@ -15,24 +15,26 @@
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{notice}" />
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{notice.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="notice_list" />		
 						
-					<aon:outputLabel for="Notice_date-From"
-						value="#{groupwareBundle.aon_date_from}" />
-					<aon:selectInputDate id="Notice_date-From" value="#{notice.fromDate}"
-						popupDateFormat="#{bundle.aon_date_pattern}"
-						renderAsPopup="true">
-					</aon:selectInputDate>
+					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputLabel for="Notice_date-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Notice_date-From"
+							valueChangeListener="#{notice.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-					<aon:outputLabel for="Notice_date-To"
-						value="#{groupwareBundle.aon_date_to}" />
-					<aon:selectInputDate id="Notice_date-To" value="#{notice.toDate}"
-						popupDateFormat="#{bundle.aon_date_pattern}"
-						renderAsPopup="true">
-					</aon:selectInputDate>
-				
+						<aon:outputLabel for="Notice_date-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Notice_date-To"
+							valueChangeListener="#{notice.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+									
 					<aon:outputLabel for="Notice_source"
 						value="#{groupwareBundle.notice_source}" />
 					<aon:inputText id="Notice_source" size="60"

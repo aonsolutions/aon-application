@@ -9,7 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="activity_type")
@@ -45,6 +52,8 @@ public class ActivityType implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="dossier_type")
+	@ForeignKey(name = "FK_ACTIVITY_TYPE_DOSSIER_TYPE")
+	@Index(name = "IDX_ACTIVITY_TYPE_DOSSIER_TYPE")					
 	public DossierType getDossierType() {
 		return dossierType;
 	}
@@ -52,4 +61,32 @@ public class ActivityType implements ITransferObject {
 	public void setDossierType(DossierType dossierType) {
 		this.dossierType = dossierType;
 	}
+
+	@Override	
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ActivityType o = (ActivityType) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.append(this.dossierType, o.dossierType)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(description).append(dossierType).
+			append(id).toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }

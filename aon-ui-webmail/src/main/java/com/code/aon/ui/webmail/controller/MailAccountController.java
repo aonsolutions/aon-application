@@ -26,7 +26,7 @@ import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
@@ -62,7 +62,7 @@ public class MailAccountController extends BasicController {
 	
 	private void addMessageExpression( String messageId ) {
 		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);
+		ResourceBundle bundle = ResourceBundle.getBundle(AonConstants.RESOURCE_BUNDLE, locale);
 		addMessage( bundle.getString(messageId) );
 	}
 	
@@ -102,7 +102,7 @@ public class MailAccountController extends BasicController {
 	
 	@SuppressWarnings("unused")
 	public void onChangeServer(ActionEvent event){
-		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_FOLDER);
+		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
 		if (folderController.getFolder()!=null){
 			try {
 				folderController.getFolder().getFolder().expunge();
@@ -113,7 +113,7 @@ public class MailAccountController extends BasicController {
 			}
 		}
 		super.onSelect(event);
-		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
+		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		webmail.getServer().disconnect();
 		MailAccount previous = webmail.getServer().getAccount();
 		try{
@@ -122,8 +122,8 @@ public class MailAccountController extends BasicController {
 			webmail.initFull((MailAccount)previous);
 			AonUtil.addErrorMessage( e.getMessage() );
 		}
-    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
-    	treeBean.initTree();
+    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+    	treeBean.loadTree();
 	}
 
 	public boolean isToDefaultAccount(){

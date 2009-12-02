@@ -49,8 +49,7 @@
   </xs:element>
   <xs:element name="criteria">
     <xs:complexType>
-    	<xs:attribute name="provider" use="required" type="xs:string"/>
-    	<xs:attribute name="forceRefresh" type="xs:boolean"></xs:attribute>
+      <xs:attribute name="provider" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="nested-report">

@@ -15,11 +15,32 @@
 
 		<aon:form id="list">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_webmail_mailAccount}" />
-				<ui:param name="controller" value="#{mailAccount}" />
-				<ui:param name="skipSearchButton" value="true" />
-			</ui:include>			
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_webmail_mailAccount}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="mailAccount_form" actionListener="#{mailAccount.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back"
+							value="#{bundle.aon_back}" action="folder"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -80,13 +101,13 @@
 							title="#{appBundle.aon_webmail_mailAccountChange}"
 							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
 							value="#{appBundle.aon_webmail_mailAccountChange}"
-							styleClass="aon-icon-commandButton aon-icon-predetermine">
+							styleClass="aon-icon-commandButton aon-icon-mailAccountChange">
 						</aon:commandButton>
 					</aon:column>
 
 				</aon:editDataTable>
 
-				<aon:dataScroller2 for="dataTable" showNote="true" />
+				<aon:dataScroller for="dataTable" rowCount="#{mailAccount.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>

@@ -3,10 +3,10 @@ package com.code.aon.ui.webmail.controller;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 
-public class LoginController implements WebMailConstants {
+public class LoginController implements AonConstants {
 
 	private static final String LOGIN_SUCCESS = NAVIGATION_FOLDER;
 	

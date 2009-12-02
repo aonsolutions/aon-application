@@ -24,83 +24,95 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 
 public class GroupWareCollectionsController {
+	
+	private List<SelectItem> alarmStatuses;
+	
+	private List<SelectItem> alarmSources;
+	
+	private List<SelectItem> noticeStatuses;
+	
+	private List<SelectItem> noticeTypes;
+	
+	private List<SelectItem> priorities;
+	
+	private List<SelectItem> delayTimes;
 
 	public List<SelectItem> getAlarmStatus() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> alarmStatusList = new LinkedList<SelectItem>();
-		AlarmStatus[] alarmStatuses = AlarmStatus.values();
-		for (int i = 0; i < alarmStatuses.length; i++) {
-			AlarmStatus alarmStatus = alarmStatuses[i];
-			String name = alarmStatus.getName(locale);
-			SelectItem item = new SelectItem(alarmStatus, name);
-			alarmStatusList.add(item);
+		if ( alarmStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			alarmStatuses = new LinkedList<SelectItem>();
+			for( AlarmStatus alarmStatus : AlarmStatus.values() ) {
+				String name = alarmStatus.getName(locale);
+				SelectItem item = new SelectItem(alarmStatus, name);
+				alarmStatuses.add(item);				
+			}
 		}
-		return alarmStatusList;
+		return alarmStatuses;
 	}
 
 	public List<SelectItem> getAlarmSources() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> alarmSourcesList = new LinkedList<SelectItem>();
-		AlarmSource[] alarmSources = AlarmSource.values();
-		for (int i = 0; i < alarmSources.length; i++) {
-			AlarmSource alarmSource = alarmSources[i];
-			String name = alarmSource.getName(locale);
-			SelectItem item = new SelectItem(alarmSource, name);
-			alarmSourcesList.add(item);
+		if ( alarmSources == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			alarmSources = new LinkedList<SelectItem>();
+			for( AlarmSource alarmSource : AlarmSource.values() ) {
+				String name = alarmSource.getName(locale);
+				SelectItem item = new SelectItem(alarmSource, name);
+				alarmSources.add(item);				
+			}
 		}
-		return alarmSourcesList;
+		return alarmSources;
 	}
 
 	public List<SelectItem> getNoticeStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> noticeStatusList = new LinkedList<SelectItem>();
-		NoticeStatus[] noticeStatuses = NoticeStatus.values();
-		for (int i = 0; i < noticeStatuses.length; i++) {
-			NoticeStatus noticeStatus = noticeStatuses[i];
-			String name = noticeStatus.getName(locale);
-			SelectItem item = new SelectItem(noticeStatus, name);
-			noticeStatusList.add(item);
+		if ( noticeStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			noticeStatuses = new LinkedList<SelectItem>();
+			for( NoticeStatus noticeStatus : NoticeStatus.values() ) {
+				String name = noticeStatus.getName(locale);
+				SelectItem item = new SelectItem(noticeStatus, name);
+				noticeStatuses.add(item);
+			}
 		}
-		return noticeStatusList;
+		return noticeStatuses;
 	}
 
 	public List<SelectItem> getNoticeTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> noticeTypesList = new LinkedList<SelectItem>();
-		NoticeType[] noticeTypes = NoticeType.values();
-		for (int i = 0; i < noticeTypes.length; i++) {
-			NoticeType noticeType = noticeTypes[i];
-			String name = noticeType.getName(locale);
-			SelectItem item = new SelectItem(noticeType, name);
-			noticeTypesList.add(item);
+		if ( noticeTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			noticeTypes = new LinkedList<SelectItem>();
+			for( NoticeType noticeType : NoticeType.values() ) {
+				String name = noticeType.getName(locale);
+				SelectItem item = new SelectItem(noticeType, name);
+				noticeTypes.add(item);
+			}
 		}
-		return noticeTypesList;
+		return noticeTypes;
 	}
 	
 	public List<SelectItem> getPriorities() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> prioritiesList = new LinkedList<SelectItem>();
-		Priority[] priorities = Priority.values();
-		for (int i = 0; i < priorities.length; i++) {
-			Priority priority = priorities[i];
-			String name = priority.getName(locale);
-			SelectItem item = new SelectItem(priority, name);
-			prioritiesList.add(item);
+		if ( priorities == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			priorities = new LinkedList<SelectItem>();
+			for( Priority priority : Priority.values() ) {
+				String name = priority.getName(locale);
+				SelectItem item = new SelectItem(priority, name);
+				priorities.add(item);
+			}
 		}
-		return prioritiesList;
+		return priorities;
 	}
 	
 	public List<SelectItem> getDelayTimes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> delayTimesList = new LinkedList<SelectItem>();
-		DelayTime[] delayTimes = DelayTime.values();
-		for (int i = 0; i < delayTimes.length; i++) {
-			DelayTime delay = delayTimes[i];
-			String name = delay.getName(locale);
-			SelectItem item = new SelectItem(delay, name);
-			delayTimesList.add(item);
+		if ( delayTimes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			delayTimes = new LinkedList<SelectItem>();
+			for( DelayTime delay : DelayTime.values() ) {
+				String name = delay.getName(locale);
+				SelectItem item = new SelectItem(delay, name);
+				delayTimes.add(item);
+			}
 		}
-		return delayTimesList;
+		return delayTimes;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -119,4 +131,5 @@ public class GroupWareCollectionsController {
 		}
 		return favoriteCategoriesList;
 	}
+
 }

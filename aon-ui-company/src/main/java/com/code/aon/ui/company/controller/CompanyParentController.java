@@ -30,8 +30,8 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the company maintenance.
@@ -397,7 +397,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		try {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			IController master = this;
-			IController detail = FormUtil.getController(getChildBean());
+			IController detail = AonUtil.getController(getChildBean());
 			ITransferObject to = master.getTo();
 			String reg = detail.getFieldName(getMasterFieldName());
 			Criteria criteria = new Criteria();

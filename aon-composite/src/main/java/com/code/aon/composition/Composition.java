@@ -1,9 +1,7 @@
 package com.code.aon.composition;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,8 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -40,9 +39,11 @@ import com.code.aon.ql.Criteria;
  */
 @Entity
 @Table(name="composition")
-public class Composition implements ITransferObject, ILookupObject {
+public class Composition implements ITransferObject {
 
-    private static final Logger LOGGER = Logger.getLogger(Composition.class.getName());
+	private static final long serialVersionUID = 3620812340370625862L;
+
+	private static final Logger LOGGER = Logger.getLogger(Composition.class.getName());
     
     /**
      * Unique key.
@@ -98,13 +99,6 @@ public class Composition implements ITransferObject, ILookupObject {
 	 * Set of composition expenses.
 	 */
 	private Set<CompositionExpense> expenses = new HashSet<CompositionExpense>();
-
-    /**
-     * Constructor.
-     * 
-     */
-    public Composition() {
-    }
 
     /**
      * Returns the unique key.
@@ -334,6 +328,7 @@ public class Composition implements ITransferObject, ILookupObject {
      * @return List
      */
 	@Transient
+	@SuppressWarnings("unchecked")
 	public List getDetailList() {
 		try {
 			IManagerBean compositionDetailBean = BeanManager.getManagerBean(CompositionDetail.class);
@@ -352,6 +347,7 @@ public class Composition implements ITransferObject, ILookupObject {
      * @return List
      */
 	@Transient
+	@SuppressWarnings("unchecked")
 	public List getExpensesList() {
 		try {
 			IManagerBean compositionDetailBean = BeanManager.getManagerBean(CompositionExpense.class);
@@ -364,18 +360,26 @@ public class Composition implements ITransferObject, ILookupObject {
 		return null;
 	}
 
-    /**
-     * Returns a Map containing some attributes to use as lookups.
-     *
-     * @return Map<String,Object>
-     */
-    @Transient
-    public Map<String,Object> getLookups() {
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put(ICompositionAlias.COMPOSITION_ID, getId());
-        map.put(ICompositionAlias.COMPOSITION_DESCRIPTION, getDescription());
-        map.put(ICompositionAlias.COMPOSITION_ITEM, getItem().getId());
-        return map;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Composition) {
+			Composition o = (Composition) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
 
 }

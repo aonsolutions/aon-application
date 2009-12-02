@@ -393,7 +393,7 @@ public class ReportManager {
 					Object c = vb.getValue(ctx);
 					if (c instanceof ICollectionProvider) {
 						ICollectionProvider crpr = (ICollectionProvider) c;
-						return crpr.getCollection(config.isForceRefresh());
+						return crpr.getCollection();
 					} else {
 						if (c instanceof Collection) {
 							return (Collection) c;
@@ -405,7 +405,7 @@ public class ReportManager {
 				Class collectionProviderClass = Class.forName(provider);
 				ICollectionProvider collectionProvider = (ICollectionProvider) collectionProviderClass
 						.newInstance();
-				return collectionProvider.getCollection(config.isForceRefresh());
+				return collectionProvider.getCollection();
 
 			}
 			return null;
@@ -420,8 +420,6 @@ public class ReportManager {
 		} catch (InstantiationException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (ManagerBeanException e) {
 			throw new ReportException(e.getMessage(), e);
 		}
 	}

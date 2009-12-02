@@ -16,14 +16,13 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-			<div>
-				<div style="margin-bottom:1.5em;">
+				<aon:div styleClass="aon-margin-bottom aon-margin-top">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputText value="#{groupwareBundle.aon_contact_data}"/>
 						</aon:div>
 					</aon:div>
-					<aon:panelGrid id="contactGrid" columns="2" dir="true" style="width:500px;">
+					<aon:panelGrid columns="2" dir="true" styleClass="aon-width-500">
 						<aon:outputLabel for="Contact_displayName"
 							value="#{groupwareBundle.contact_displayName}" />
 						<aon:inputText id="Contact_displayName"
@@ -55,13 +54,13 @@
 							<aon:inputText id="Contact_postal_code"
 								maxlength="16" size="11"
 								value="#{contact.to.postalCode}" />
-
+	
 							<aon:outputLabel for="Contact_city"
 								value="#{groupwareBundle.contact_city}" />
 							<aon:inputText id="Contact_city"
 								maxlength="64" size="22"
 								value="#{contact.to.city}" />
-
+	
 							<aon:outputLabel for="Contact_state"
 								value="#{groupwareBundle.contact_state}" />
 							<aon:inputText id="Contact_state"
@@ -89,7 +88,7 @@
 								value="#{contact.to.fax}" />
 	
 						</aon:panelGrid>
-
+	
 						<aon:outputLabel for="Contact_email"
 							value="#{groupwareBundle.contact_email}" />
 						<aon:inputText id="Contact_email"
@@ -101,14 +100,15 @@
 						<aon:inputTextarea id="Contact_note"
 							value="#{contact.to.note}" cols="98" rows="7" />
 					</aon:panelGrid>
-				</div>
-				<div style="margin-bottom:1.5em;">
+				</aon:div>
+
+				<aon:div styleClass="aon-margin-top">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputText value="#{groupwareBundle.aon_organization_data}"/>
 						</aon:div>
 					</aon:div>
-					<aon:panelGrid id="organizationGrid" columns="2" dir="true" style="width:500px;">
+					<aon:panelGrid columns="2" dir="true" styleClass="aon-width-500">
 						<aon:outputLabel for="Contact_organization"
 							value="#{groupwareBundle.contact_organization}" />
 						<aon:inputText id="Contact_organization"
@@ -170,8 +170,7 @@
 						</aon:panelGrid>
 
 					</aon:panelGrid>
-				</div>
-			</div>
+				</aon:div>
 			</aon:div>
 		</aon:form>
 	</ui:define>

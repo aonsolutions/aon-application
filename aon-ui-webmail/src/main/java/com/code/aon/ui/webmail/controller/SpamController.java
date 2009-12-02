@@ -29,14 +29,14 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonListEmail;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
-public class SpamController extends BasicLdap implements WebMailConstants {
+public class SpamController extends BasicLdap implements AonConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(SpamController.class.getName());
 	
@@ -185,14 +185,14 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 		if ( entry != null ) {
 			try {
 				LdapSession session = getLdapSession();
-				session.updateAttribute( entry, SUBJECT_TAG, StringUtils.trimToNull(this.rewrite_1) );
+				session.updateAttribute(session, entry, SUBJECT_TAG, StringUtils.trimToNull(this.rewrite_1) );
 				String spamLevelValue = String.valueOf( getSpamScoreType().getValue() );
-				session.updateAttribute( entry, SPAM_LEVEL, spamLevelValue);
+				session.updateAttribute(session, entry, SPAM_LEVEL, spamLevelValue);
 				if ( isAddContactsToWhite() ) {
 					addContactsToWhiteList();
 				}
-				session.updateAttribute( entry, WHITE_LIST, getSaveList(this.whiteLst) );
-				session.updateAttribute( entry, BLACK_LIST, getSaveList(this.blackLst) );
+				session.updateAttribute(session, entry, WHITE_LIST, getSaveList(this.whiteLst) );
+				session.updateAttribute(session, entry, BLACK_LIST, getSaveList(this.blackLst) );
 			} catch ( LdapException e ) {
 				AonUtil.addErrorMessage( "Error updating spam information" );
 				throw new AbortProcessingException( e.getMessage(), e );

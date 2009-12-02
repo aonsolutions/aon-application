@@ -6,6 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -14,6 +19,8 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name="customer_segment")
 public class CustomerSegment implements ITransferObject {
+
+	private static final long serialVersionUID = 7033076582842421725L;
 
 	/** The id. */
 	private Integer id;
@@ -47,7 +54,7 @@ public class CustomerSegment implements ITransferObject {
 	 * 
 	 * @return the description
 	 */
-	@Column(length=64, name="description")
+	@Column(length=64, name="description", nullable = false)
 	public String getDescription() {
 		return description;
 	}
@@ -60,4 +67,32 @@ public class CustomerSegment implements ITransferObject {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final CustomerSegment o = (CustomerSegment) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(description)
+			.append(id)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+
 }

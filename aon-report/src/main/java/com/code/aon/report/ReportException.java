@@ -8,9 +8,6 @@ import com.code.aon.common.AonException;
  * @author Consulting & Development. ecastellano - 14-nov-2005
  */
 public class ReportException extends AonException {
-
-	private static final long serialVersionUID = 5089919483233108679L;
-
 	/**
 	 * Constructs a <code>ReportException</code> with the specified detail message.
 	 * 

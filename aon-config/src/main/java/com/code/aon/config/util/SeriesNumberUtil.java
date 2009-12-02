@@ -1,17 +1,10 @@
 package com.code.aon.config.util;
 
-import java.util.Iterator;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 
 /**
@@ -22,23 +15,6 @@ import com.code.aon.ql.Criteria;
  * 
  */
 public class SeriesNumberUtil {
-
-	/**
-	 * Devuelve la serie correspondiente al id pasado por parámetro.
-	 * 
-	 * @param seriesId Id de la serie hay que devolver.
-	 * @return la Serie.
-	 */
-	public static Series obtainSeries(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			return (Series)iter.next();
-		}
-		return null;
-	}
 
 	/**
 	 * Devuelve el siguiente número de la tabla pasada por parámetro.
@@ -59,18 +35,18 @@ public class SeriesNumberUtil {
 	 * @param criteria Restricciones sobre la consulta.
 	 * @return El siguiente número.
 	 */
-	public static int obtainNumber(String series, String table,	Criteria criteria) {
+	public static int obtainNumber(String series, String table,
+			Criteria criteria) {
 		Session session = HibernateUtil.getSession();
-		String hqlQuery = 
-			"SELECT MAX(" + table.toLowerCase() + ".number) "
+		String hqlQuery = "SELECT MAX(" + table.toLowerCase() + ".number) "
 				+ "FROM " + table + " " + table.toLowerCase() + " WHERE "
 				+ table.toLowerCase() + ".series = :series";
 		if (criteria != null) {
 			hqlQuery = CriteriaUtilities.toSQLString(criteria, hqlQuery);
 		}
-		Query query = session.createQuery(hqlQuery);
-		query.setString("series", series);
-		Integer results = (Integer)query.list().iterator().next();
+		Query q = session.createQuery(hqlQuery);
+		q.setString("series", series);
+		Integer results = (Integer) q.list().iterator().next();
 		if (results != null) {
 			return (results.intValue() + 1);
 		}

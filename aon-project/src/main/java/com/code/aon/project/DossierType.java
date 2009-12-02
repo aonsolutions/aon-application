@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 
@@ -41,19 +44,30 @@ public class DossierType implements ITransferObject {
 		this.description = description;
 	}
 
-	@Override
+	@Override	
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DossierType o = (DossierType) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.isEquals();
 		}
-		if (obj instanceof DossierType) {
-			DossierType dt = (DossierType) obj;
-			if (!ObjectUtils.equals(getId(), dt.getId())) {
-				return false;
-			}
-			return true;
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(description).append(id).
+			toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }

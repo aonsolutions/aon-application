@@ -37,7 +37,6 @@
 							valueChangeListener="#{notice.workGroupChange}" > 
 							<f:selectItem value="#{desktop.allValue}" />
 							<f:selectItems value="#{notice.workgroups}" />
-							<a4j:support event="onchange" reRender="Notice_recipient_area, Notice_sendEmail, Notice_sendSMS"></a4j:support>
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="Notice_recipient_area" 
@@ -48,7 +47,6 @@
 								valueChangeListener="#{notice.recipientChange}">
 								<f:selectItem value="#{desktop.allValue}" />
 								<f:selectItems value="#{notice.users}" />
-								<a4j:support event="onchange" reRender="Notice_sendEmail, Notice_sendSMS"></a4j:support>
 							</aon:selectOneMenu>
 						</aon:div>
 

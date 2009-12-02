@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.model.ArrayDataModel;
-import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -31,7 +31,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
     
     public static String DATE_COLUMN = "date";
 	
-    private DataModel model;
+    private ArrayDataModel model;
     
     private AonMessage[] messageList;
 
@@ -73,10 +73,10 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 */
 	public void setMessageList(AonMessage[] messageList) {
 		this.messageList = messageList;
-		this.model = new ArrayDataModel(this.messageList);
+		this.model = new ArrayDataModel( this.messageList );
 	}
 	
-	public DataModel getModel() {
+	public ArrayDataModel getModel() {
 		return model;
 	}
 
@@ -105,12 +105,8 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 */
 	protected void sort(final String column, final boolean ascending) {
 		if (messageList != null) {
-			try {
-				Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
-				Arrays.sort(messageList, comparator);
-			} catch ( Throwable th ) {
-				LOGGER.log(Level.SEVERE, "Error sorting message list", th);
-			}
+			Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
+			Arrays.sort(messageList, comparator);
 		}
 	}
     
@@ -178,7 +174,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
                     try {
                         foundMessage.setMessageFlag(changedMessage.getFlags());
                     } catch (MessagingException e) {
-            			LOGGER.log(Level.SEVERE,"Error getting message flags",e);
+            			LOGGER.log(Level.ALL,"Error getting message flags",e);
                     }
                 }
             }

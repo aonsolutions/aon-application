@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.WhereJoinTable;
 
 import com.code.aon.common.ITransferObject;
@@ -29,6 +30,8 @@ import com.code.aon.registry.RegistryAddress;
 @Entity
 @Table(name="workplace")
 public class WorkPlace implements ITransferObject, IEntity {
+
+	private static final long serialVersionUID = 5078033612665053464L;
 
 	/** Working place identifier */
 	private Integer id;
@@ -242,12 +245,24 @@ public class WorkPlace implements ITransferObject, IEntity {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (id == null) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof WorkPlace) {
-			return (this.id.equals(((WorkPlace) obj).getId()));
+			WorkPlace o = (WorkPlace) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
 		}
 		return false;
 	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

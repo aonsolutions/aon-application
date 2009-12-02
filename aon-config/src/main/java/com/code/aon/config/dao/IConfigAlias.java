@@ -3,15 +3,14 @@ package com.code.aon.config.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.PayMethod;
-import com.code.aon.config.Scope;
-import com.code.aon.config.Series;
 import com.code.aon.config.User;
+import com.code.aon.config.Scope;
 import com.code.aon.config.UserScope;
+import com.code.aon.config.Series;
+import com.code.aon.config.WorkGroup;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
-import com.code.aon.config.WorkGroup;
 
 /** 
 * Interface for holding entity properties constants.
@@ -36,87 +35,6 @@ public interface IConfigAlias {
 	* Hibernate value: ApplicationParameter.value
 	*/
 	String  APPLICATION_PARAMETER_VALUE = APPLICATION_PARAMETER_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for PayMethod entity.
-	*/ 
-	DAOConstantsEntry PAY_METHOD_ENTRY = DAOConstants.getDAOConstant(PayMethod.class);
-
-	/** 
-	* Alias value: PayMethod_id
-	* Hibernate value: PayMethod.id
-	*/
-	String  PAY_METHOD_ID = PAY_METHOD_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: PayMethod_name
-	* Hibernate value: PayMethod.name
-	*/
-	String  PAY_METHOD_NAME = PAY_METHOD_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: PayMethod_type
-	* Hibernate value: PayMethod.type
-	*/
-	String  PAY_METHOD_TYPE = PAY_METHOD_ENTRY.getAliasNames()[2];
-
-
-
-	/** 
-	* DAOConstantsEntry for Scope entity.
-	*/ 
-	DAOConstantsEntry SCOPE_ENTRY = DAOConstants.getDAOConstant(Scope.class);
-
-	/** 
-	* Alias value: Scope_description
-	* Hibernate value: Scope.description
-	*/
-	String  SCOPE_DESCRIPTION = SCOPE_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Scope_id
-	* Hibernate value: Scope.id
-	*/
-	String  SCOPE_ID = SCOPE_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for Series entity.
-	*/ 
-	DAOConstantsEntry SERIES_ENTRY = DAOConstants.getDAOConstant(Series.class);
-
-	/** 
-	* Alias value: Series_active
-	* Hibernate value: Series.active
-	*/
-	String  SERIES_ACTIVE = SERIES_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Series_description
-	* Hibernate value: Series.description
-	*/
-	String  SERIES_DESCRIPTION = SERIES_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Series_id
-	* Hibernate value: Series.id
-	*/
-	String  SERIES_ID = SERIES_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Series_securityLevel
-	* Hibernate value: Series.securityLevel
-	*/
-	String  SERIES_SECURITY_LEVEL = SERIES_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Series_workPlace_id
-	* Hibernate value: Series.workPlace.id
-	*/
-	String  SERIES_WORK_PLACE_ID = SERIES_ENTRY.getAliasNames()[4];
 
 
 
@@ -170,6 +88,25 @@ public interface IConfigAlias {
 
 
 	/** 
+	* DAOConstantsEntry for Scope entity.
+	*/ 
+	DAOConstantsEntry SCOPE_ENTRY = DAOConstants.getDAOConstant(Scope.class);
+
+	/** 
+	* Alias value: Scope_description
+	* Hibernate value: Scope.description
+	*/
+	String  SCOPE_DESCRIPTION = SCOPE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Scope_id
+	* Hibernate value: Scope.id
+	*/
+	String  SCOPE_ID = SCOPE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
 	* DAOConstantsEntry for UserScope entity.
 	*/ 
 	DAOConstantsEntry USER_SCOPE_ENTRY = DAOConstants.getDAOConstant(UserScope.class);
@@ -197,6 +134,68 @@ public interface IConfigAlias {
 	* Hibernate value: UserScope.scope.description
 	*/
 	String  USER_SCOPE_SCOPE_DESCRIPTION = USER_SCOPE_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Series entity.
+	*/ 
+	DAOConstantsEntry SERIES_ENTRY = DAOConstants.getDAOConstant(Series.class);
+
+	/** 
+	* Alias value: Series_active
+	* Hibernate value: Series.active
+	*/
+	String  SERIES_ACTIVE = SERIES_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Series_description
+	* Hibernate value: Series.description
+	*/
+	String  SERIES_DESCRIPTION = SERIES_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Series_id
+	* Hibernate value: Series.id
+	*/
+	String  SERIES_ID = SERIES_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Series_securityLevel
+	* Hibernate value: Series.securityLevel
+	*/
+	String  SERIES_SECURITY_LEVEL = SERIES_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Series_workPlace_id
+	* Hibernate value: Series.workPlace.id
+	*/
+	String  SERIES_WORK_PLACE_ID = SERIES_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for WorkGroup entity.
+	*/ 
+	DAOConstantsEntry WORK_GROUP_ENTRY = DAOConstants.getDAOConstant(WorkGroup.class);
+
+	/** 
+	* Alias value: WorkGroup_description
+	* Hibernate value: WorkGroup.description
+	*/
+	String  WORK_GROUP_DESCRIPTION = WORK_GROUP_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: WorkGroup_id
+	* Hibernate value: WorkGroup.id
+	*/
+	String  WORK_GROUP_ID = WORK_GROUP_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: WorkGroup_status
+	* Hibernate value: WorkGroup.status
+	*/
+	String  WORK_GROUP_STATUS = WORK_GROUP_ENTRY.getAliasNames()[2];
 
 
 
@@ -320,31 +319,6 @@ public interface IConfigAlias {
 	* Hibernate value: TaxDetail.value
 	*/
 	String  TAX_DETAIL_VALUE = TAX_DETAIL_ENTRY.getAliasNames()[5];
-
-
-
-	/** 
-	* DAOConstantsEntry for WorkGroup entity.
-	*/ 
-	DAOConstantsEntry WORK_GROUP_ENTRY = DAOConstants.getDAOConstant(WorkGroup.class);
-
-	/** 
-	* Alias value: WorkGroup_description
-	* Hibernate value: WorkGroup.description
-	*/
-	String  WORK_GROUP_DESCRIPTION = WORK_GROUP_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: WorkGroup_id
-	* Hibernate value: WorkGroup.id
-	*/
-	String  WORK_GROUP_ID = WORK_GROUP_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: WorkGroup_status
-	* Hibernate value: WorkGroup.status
-	*/
-	String  WORK_GROUP_STATUS = WORK_GROUP_ENTRY.getAliasNames()[2];
 
 
 }
