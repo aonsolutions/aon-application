@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+		
+		<aon:form id="userForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
+				<ui:param name="controller" value="#{user}" />
+				<ui:param name="skipRemoveButton" value="true" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="changePassword" value="#{appBundle.aon_change_password}"
+						action="changepassword_form" actionListener="#{currentUser.onLoadUser}" rendered="#{!user.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
+					<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
+						action="work_group" actionListener="#{workGroup.onSearch}" rendered="#{!user.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-group" />
+					<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
+						action="scope" actionListener="#{scope.onSearch}" rendered="#{!user.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-ambito" />
+				</ui:define>				
+			</ui:decorate>		
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2" dir="true">
+
+					<aon:outputLabel for="User_name"
+						value="#{configBundle.user_name}" />
+					<aon:inputText id="User_name"
+						required="true" size="80"
+						maxlength="64" value="#{user.to.name}" />
+
+					<aon:outputLabel for="User_login"
+						value="#{configBundle.user_login}" />
+					<aon:inputText id="User_login" disabled="#{!user.new}"
+						required="true" size="20"
+						maxlength="16" value="#{user.to.login}" />
+
+					<aon:outputLabel for="User_active"
+						value="#{configBundle.series_active}" />
+					<aon:selectBooleanCheckbox id="User_active" disabled="#{securityUser.disabled}" 
+							value="#{securityUser.active}">
+					</aon:selectBooleanCheckbox>
+
+					<!--aon:outputLabel for="userData"
+						value="#{securityBundle.aon_security_profiles}"
+						styleClass="aon-form-input-text-label" />
+					<aon:selectManyCheckbox id="userData"
+						value="#{user.userManager.relations}" layout="pageDirection"
+						layoutWidth="5" styleClass="selectManyCheckbox">
+						<f:selectItems value="#{user.userManager.profiles}" />
+					</aon:selectManyCheckbox -->
+
+				</aon:panelGrid>
+					
+				<ui:include src="/facelet/user/userWorkGroup/grid.xhtml" />
+							
+				<ui:include src="/facelet/user/userScope/grid.xhtml" />
+
+			</aon:div>
+
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="scopeList">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />
+					<ui:param name="toolbarDescription" value="#{appBundle.aon_scopes}" />					
+					<ui:param name="controller" value="#{scope}" />
+					
+					<ui:define name="additionalToolbarContent">
+						<aon:commandButton
+							value="#{bundle.aon_back}" rendered="#{scope.to==null}"
+							action="user" actionListener="#{user.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"/>					 
+					</ui:define>				
+				</ui:decorate>		
+
+				<!--  aon-region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+					
+					<aon:editDataTable id="scopeData" var="to" rows="0"
+						rendered="#{(scope.model.rowCount > 0) or (scope.new)}" value="#{scope.model}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+								
+						<aon:rowSelector toggleOnClick="#{scope.to == null}"
+							actionListener="#{scope.onSelect}" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{scope.onReset}" value=""
+										rendered="#{!scope.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{configBundle.scope_scope}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" rendered="#{to!=scope.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==scope.to}" size="60"
+								value="#{scope.to.description}" maxlength="45" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{scope.new}" size="60"
+									value="#{scope.to.description}" maxlength="45" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=scope.to}">&#160;</f:verbatim>
+								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
+									rendered="#{to==scope.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{scope.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==scope.to}"
+									actionListener="#{scope.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==scope.to}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{scope.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />								
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!scope.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]" 
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{scope.new}"
+										actionListener="#{scope.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{scope.new}"
+										confirmTitle="#{bundle.aon_confirm_title}" 
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{scope.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						
+					</aon:editDataTable>
+					<aon:dataScroller for="scopeData" rowCount="#{scope.model.rowCount}" showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
