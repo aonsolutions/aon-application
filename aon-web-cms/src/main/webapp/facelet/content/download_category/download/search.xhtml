@@ -27,17 +27,17 @@
 					<aon:outputLabel for="Download_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="Download_alias" size="50"
-						valueChangeListener="#{download.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 
-					<aon:outputLabel for="Download_title"
+					<aon:outputLabel for="Download_details_title"
 						value="#{appBundle.download_title}" />
-					<aon:inputText id="Download_title" size="50"
-						value="#{download.title}" />
+					<aon:inputText id="Download_details_title" size="50"
+						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Download_downloadCategory_id"
 						value="#{appBundle.download_category}"/>
 					<aon:selectOneMenu id="Download_downloadCategory_id"  
-						valueChangeListener="#{download.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{collections.downloadCategoryList}" />
 					</aon:selectOneMenu>
@@ -45,7 +45,16 @@
 					<aon:outputLabel for="Download_position"
 						value="#{appBundle.download_position}" />
 					<aon:inputText id="Download_position" size="10"
-						valueChangeListener="#{download.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
+						
+					<aon:outputLabel for="Download_active"
+						value="#{appBundle.cms_active}" />
+					<aon:selectOneMenu id="Download_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>																		
 	
 				</ui:define>
 			</ui:decorate>

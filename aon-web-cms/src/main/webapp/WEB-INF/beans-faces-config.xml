@@ -307,7 +307,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>faq</value>
-		</managed-property>												
+		</managed-property>					
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Faq_alias</value>
+		</managed-property>										
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>FaqDetail_faq_id</value>
@@ -316,19 +320,6 @@
 			<property-name>languageAlias</property-name>
 			<value>FaqDetail_language_id</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{faqListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>faqListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.FaqControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** BRAND ************** -->
@@ -533,7 +524,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>article</value>
-		</managed-property>																		
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Article_alias</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ArticleDetail_article_id</value>
@@ -646,7 +641,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>AlbumCategory_alias</value>
+			<value>DownloadCategory_alias</value>
 		</managed-property>								
 	</managed-bean>
 
@@ -666,7 +661,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>download</value>
-		</managed-property>								
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Download_alias</value>
+		</managed-property>										
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>DownloadDetail_download_id</value>

@@ -28,11 +28,34 @@
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="DownloadCategory_alias" size="50"
 						valueChangeListener="#{download_category.addExpression}" />
+
+					<aon:outputLabel for="DownloadCategory_details_label"
+						value="#{appBundle.banner_label}" />
+					<aon:inputText id="DownloadCategory_details_label" size="50"
+						valueChangeListener="#{controller.addExpression}" />
 	
+					<aon:outputLabel for="DownloadCategory_section_id"
+						value="#{appBundle.cms_section}" />
+					<aon:selectOneMenu id="DownloadCategory_section_id"
+						valueChangeListener="#{controller.addIdEqualExpression}"
+						value="#{collections.section}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+						
 					<aon:outputLabel for="DownloadCategory_position"
 						value="#{appBundle.download_category_position}" />
 					<aon:inputText id="DownloadCategory_position" size="10"
 						valueChangeListener="#{download_category.addExpression}" />
+						
+					<aon:outputLabel for="DownloadCategory_active"
+						value="#{appBundle.cms_active}" />
+					<aon:selectOneMenu id="DownloadCategory_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>												
 	
 				</ui:define>
 			</ui:decorate>

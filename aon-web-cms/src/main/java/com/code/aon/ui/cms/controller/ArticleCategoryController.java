@@ -12,22 +12,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ArticleCategoryController extends BasicI18nController implements ICMSConstants, Constants {
 
-	private int page;
-	
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
-
 	public void onInit(ActionEvent event){
 		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(ArticleConfig.class);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
 		super.onSelect(event);
 		loadCurrentLanguage();
