@@ -4,74 +4,76 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.7</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.asset</artifactId>
 	<packaging>war</packaging>
-	<version>3.2.0</version>
+	<version>4.2.1</version>
 	<description>AON WEB ASSET</description>
 	<name>AON WEB ASSET</name>
 	<build>
 		<finalName>aon-asset</finalName>
 	</build>
 	<properties>
-		<dbVersion>3.1.0</dbVersion>
+		<dbVersion>4.6.2</dbVersion>
 	</properties>
 	<dependencies>
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.5.1</version>
+			<version>4.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.1.0</version>
+			<version>3.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.asset</artifactId>
-			<version>3.2.0</version>
+			<version>3.2.1</version>
 			<scope>compile</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.5.1</version>
+			<version>4.5.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.3.4</version>
+			<version>4.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.resources</artifactId>
-			<version>3.5.0</version>
+			<artifactId>aon.ui.form</artifactId>
+			<version>4.2.0</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>velocity</groupId>
-					<artifactId>velocity</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>velocity-tools</groupId>
-					<artifactId>velocity-tools</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.resources</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.1</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>4.2.0</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.facelets</groupId>
@@ -83,12 +85,6 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.1</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.report</artifactId>
-			<version>3.4.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
