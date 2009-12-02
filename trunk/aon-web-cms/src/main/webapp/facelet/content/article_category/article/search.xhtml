@@ -27,44 +27,48 @@
 					<aon:outputLabel for="Article_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="Article_alias" size="50"
-						valueChangeListener="#{article.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 
-					<aon:outputLabel for="ArticleDetail_title"
+					<aon:outputLabel for="Article_details_title"
 						value="#{appBundle.article_title}" />
-					<aon:inputText id="ArticleDetail_title" size="50"
-						value="#{article.title}" />
+					<aon:inputText id="Article_details_title" size="50"
+						valueChangeListener="#{controller.addExpression}" />
 
-					<aon:outputLabel for="ArticleDetail_subtitle"
+					<aon:outputLabel for="Article_details_subtitle"
 						value="#{appBundle.article_subtitle}" />
-					<aon:inputText id="ArticleDetail_subtitle" size="50"
-						value="#{article.subtitle}" />
+					<aon:inputText id="Article_details_subtitle" size="50"
+						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Article_articleCategory_id"
 						value="#{appBundle.article_category}"/>
 					<aon:selectOneMenu id="Article_articleCategory_id"  
 						valueChangeListener="#{article.addExpression}">
-						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
 						<f:selectItems value="#{collections.articleCategoryList}" />
 					</aon:selectOneMenu>
-	
-					<aon:outputLabel for="Article_position"
-						value="#{appBundle.article_position}" />
-					<aon:inputText id="Article_position" size="10"
-						valueChangeListener="#{article.addExpression}" />
+					
+					<aon:outputLabel for="Article_articleType"
+						value="#{appBundle.article_type_}"/>
+					<aon:selectOneMenu id="Article_articleType"   
+						valueChangeListener="#{controller.addEqualExpression}">
+						<aon:enumConverter enum="com.code.aon.cms.enumeration.ArticleType" />
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItems value="#{collections.articleTypes}" />
+					</aon:selectOneMenu>					
 
 					<aon:outputLabel value="#{appBundle.article_publishDate}" />
 					<aon:div>
 						<aon:outputLabel for="Article_publishDate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Article_publishDate-From"
-							valueChangeListener="#{article.addGreaterThanOrEqualExpression}"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 						<aon:outputLabel for="Article_publishDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Article_publishDate-To"
-							valueChangeListener="#{article.addLessThanOrEqualExpression}"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
@@ -74,22 +78,27 @@
 						<aon:outputLabel for="Article_expireDate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Article_expireDate-From"
-							valueChangeListener="#{article.addGreaterThanOrEqualExpression}"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 						<aon:outputLabel for="Article_expireDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Article_expireDate-To"
-							valueChangeListener="#{article.addLessThanOrEqualExpression}"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
+	
+					<aon:outputLabel for="Article_position"
+						value="#{appBundle.article_position}" />
+					<aon:inputText id="Article_position" size="10"
+						valueChangeListener="#{article.addExpression}" />
 					
 					<aon:outputLabel for="Article_active"
 						value="#{appBundle.article_active}" />
 					<aon:selectOneMenu id="Article_active"
-						valueChangeListener="#{article.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-"	itemValue="#{null}" />
 						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
