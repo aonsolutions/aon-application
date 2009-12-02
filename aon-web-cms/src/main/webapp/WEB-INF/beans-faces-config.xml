@@ -245,7 +245,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>link</value>
-		</managed-property>																				
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Link_alias</value>
+		</managed-property>																											
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>LinkDetail_link_id</value>
@@ -254,19 +258,6 @@
 			<property-name>languageAlias</property-name>
 			<value>LinkDetail_language_id</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{linkListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>linkListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.LinkControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** FAQ CATEGORY ************** -->
@@ -613,7 +604,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>banner</value>
-		</managed-property>																						
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Banner_alias</value>
+		</managed-property>										
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>BannerDetail_banner_id</value>
@@ -622,19 +617,6 @@
 			<property-name>languageAlias</property-name>
 			<value>BannerDetail_language_id</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{bannerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>bannerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.BannerControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** DOWNLOAD CATEGORY ************** -->
@@ -1143,7 +1125,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>direct_access</value>
-		</managed-property>				
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>DirectAccess_alias</value>
+		</managed-property>														
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>DirectAccessDetail_directAccess_id</value>
@@ -1152,19 +1138,6 @@
 			<property-name>languageAlias</property-name>
 			<value>DirectAccessDetail_language_id</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{directAccessControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>directAccessControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.DirectAccessControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** TEMPLATES ************** -->

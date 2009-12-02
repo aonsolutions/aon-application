@@ -27,22 +27,31 @@
 					<aon:outputLabel for="DirectAccess_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="DirectAccess_alias" size="50"
-						valueChangeListener="#{direct_access.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 
-					<aon:outputLabel for="DirectAccessDetail_label"
+					<aon:outputLabel for="DirectAccess_details_label"
 						value="#{appBundle.direct_access_label}" />
-					<aon:inputText id="DirectAccessDetail_label" size="50"
-						value="#{direct_access.label}" />
+					<aon:inputText id="DirectAccess_details_label" size="50"
+						valueChangeListener="#{controller.addExpression}" />
 
-					<aon:outputLabel for="DirectAccessDetail_description"
+					<aon:outputLabel for="DirectAccess_details_description"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="DirectAccessDetail_description" size="50"
-						value="#{direct_access.description}" />
+					<aon:inputText id="DirectAccess_details_description" size="50"
+						valueChangeListener="#{controller.addExpression}" />
 
+					<aon:outputLabel for="DirectAccess_type"
+						value="#{appBundle.direct_access_type}" />
+					<aon:selectOneMenu id="DirectAccess_type" 
+						valueChangeListener="#{controller.addEqualExpression}">
+						<aon:enumConverter enum="com.code.aon.cms.enumeration.PageType" />
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{collections.pageTypes}" />
+					</aon:selectOneMenu> 
+					
 					<aon:outputLabel for="DirectAccess_directAccessGroup_id"
 						value="#{appBundle.direct_access_group}"/>
 					<aon:selectOneMenu id="DirectAccess_directAccessGroup_id"  
-						valueChangeListener="#{direct_access.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{collections.directAccessGroupList}" />
 					</aon:selectOneMenu>
@@ -50,12 +59,12 @@
 					<aon:outputLabel for="DirectAccess_position"
 						value="#{appBundle.direct_access_position}" />
 					<aon:inputText id="DirectAccess_position" size="10"
-						valueChangeListener="#{direct_access.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 	
 					<aon:outputLabel for="DirectAccess_active"
 						value="#{appBundle.cms_active}" />
 					<aon:selectOneMenu id="DirectAccess_active"
-						valueChangeListener="#{direct_access.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-"	itemValue="#{null}" />
 						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
