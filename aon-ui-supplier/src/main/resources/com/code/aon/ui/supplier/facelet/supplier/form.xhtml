@@ -43,17 +43,6 @@
 						value="#{supplier.to.status}">
 						<f:selectItems value="#{supplierCollections.supplierStatuses}" />
 					</aon:selectOneMenu>
-					
-					<c:if test="#{supplier.showAccount}">
-						<aon:outputLabel for="Supplier_account"
-							value="#{accountingBundle.accounting_account}" />
-						<aon:inputText id="Supplier_account" 
-							rendered="#{supplierAccount.account != null}"
-							value="#{supplierAccount.account.id} - #{supplierAccount.account.description}"
-							disabled="true" size="60" />
-						<aon:inputText rendered="#{supplierAccount.account == null}"
-							value="" disabled="true" size="60" />
-					</c:if>					
 				</aon:panelGrid>
 				
 				<c:if test="#{!supplier.new}">

@@ -2,15 +2,14 @@ package com.code.aon.report.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.xmlrules.DigesterLoader;
 import org.xml.sax.SAXException;
 
-import com.code.aon.common.util.Classpath;
 import com.code.aon.report.IReportConstants;
 import com.code.aon.report.ReportException;
 
@@ -68,8 +67,13 @@ public class ReportConfigurationParser {
 	/**
 	 * Path of the report config file.
 	 */
-    private static final String REPORT_CONFIGURATION_FILE = "report-config.xml";	
+    public static final String REPORT_CONFIGURATION_FILE_PROPERTY = "com.code.aon.report.config.xml";	
 
+	/**
+	 * Default path of the report config file.
+	 */
+    public static final String DEFAULT_REPORT_CONFIGURATION_FILE_PROPERTY = "/report-config.xml";	
+    
 	/**
 	 * Singleton instance.
 	 */
@@ -136,33 +140,75 @@ public class ReportConfigurationParser {
 
 	/**
 	 * Returns the <code>ReportConfigurationManager</code> for the
-	 * configuration file specified in the URL <code>reportConfigFile</code>.
+	 * configuration file specified in the InputStream
+	 * <code>reportConfigFile</code>.
 	 * 
+	 * 
+	 * @param reportConfigFile
+	 *            An InputStream pointing to a configuration file.
 	 * @return the <code>ReportConfigurationManager</code>.
 	 * @throws ReportException
 	 *             When an IOException or a SAXException ocurred.
 	 */
-	public ReportConfigurationManager getConfigurationManager() throws ReportException {
-		if (configurationManager == null) {
-	        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-	        try {
-		        URL[] urls = Classpath.search(cl, "META-INF/", REPORT_CONFIGURATION_FILE);
-		        configurationManager = new ReportConfigurationManager();
-		        for (int i = 0; i < urls.length; i++) {
-		            try {
-		            	LOGGER.info("Report config URL ..: " + urls[i]);
-		            	InputStream is = urls[i].openStream();
-		            	parse( is );
-		            	is.close();
-		            } catch (Exception e) {
-		                LOGGER.log(Level.SEVERE, "Error Loading Report Config: " + urls[i], e);
-		            }
-		        }
-			} catch (IOException e) {
-	        	LOGGER.log(Level.SEVERE, "Error searching report config files", e);
-	        }
+	public ReportConfigurationManager getConfiguration(
+			InputStream reportConfigFile) throws ReportException {
+		if (configurationManager != null) {
+			return configurationManager;
+		} 
+		return parse(reportConfigFile);
+	}
+
+	/**
+	 * Returns the <code>ReportConfigurationManager</code> for the
+	 * configuration file specified in the context parameter
+	 * <code>IReportConstants.CONFIG_FILE</code>.
+	 * 
+	 * @return the <code>ReportConfigurationManager</code>.
+	 * @throws ReportException
+	 *             When an MalformedURLException ocurred.
+	 * @see com.code.aon.report.IReportConstants
+	 */
+	public ReportConfigurationManager getConfigurationManager()
+			throws ReportException {
+		if (configurationManager != null) {
+			return configurationManager;
+		} 
+		try {
+			String reportCfg = System.getProperty(REPORT_CONFIGURATION_FILE_PROPERTY);
+			if ( reportCfg == null ) {
+				reportCfg = DEFAULT_REPORT_CONFIGURATION_FILE_PROPERTY;
+			}
+			LOGGER.info("Report config file ..: " + reportCfg);
+			return getConfigurationManager( new URL(reportCfg) );
+		} catch (MalformedURLException e) {
+			throw new ReportException(e.getMessage(), e);
 		}
-		return configurationManager;
+	}
+
+	/**
+	 * Returns the <code>ReportConfigurationManager</code> for the
+	 * configuration file specified in the URL <code>reportConfigFile</code>.
+	 * 
+	 * @param reportConfigFile
+	 *            An URL pointing to a configuration file.
+	 * @return the <code>ReportConfigurationManager</code>.
+	 * @throws ReportException
+	 *             When an IOException or a SAXException ocurred.
+	 */
+	public ReportConfigurationManager getConfigurationManager(
+			URL reportConfigFile) throws ReportException {
+		if (configurationManager != null) {
+			return configurationManager;
+		} 
+		try {
+			LOGGER.info("Report config URL ..: " + reportConfigFile);
+			InputStream in = reportConfigFile.openStream();
+			return parse(in);
+		} catch (MalformedURLException e) {
+			throw new ReportException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new ReportException(e.getMessage(), e);
+		}
 	}
 
 	/**
@@ -170,14 +216,17 @@ public class ReportConfigurationParser {
 	 * 
 	 * @param in
 	 *            The InputStream of the configuration file.
+	 * @return the <code>ReportConfigurationManager</code>.
 	 * @throws ReportException
 	 *             When an IOException or a SAXException ocurred.
 	 */
-	private void parse(InputStream in) throws ReportException {
+	private ReportConfigurationManager parse(InputStream in)
+			throws ReportException {
 		try {
 			Digester digester = getDigester();
-			digester.push(configurationManager);
-			digester.parse(in);
+			configurationManager = (ReportConfigurationManager) digester
+					.parse(in);
+			return configurationManager;
 		} catch (IOException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (SAXException e) {

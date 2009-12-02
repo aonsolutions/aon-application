@@ -25,5 +25,12 @@
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ***************** DOMAIN RESOLVER ******************** --> 
+	<managed-bean>
+		<managed-bean-name>domainResolver</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.DomainResolver</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
 	
 </faces-config>

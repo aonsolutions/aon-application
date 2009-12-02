@@ -30,9 +30,9 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 		Finance finance = (Finance) event.getController().getTo();
 		Invoice invoice = (Invoice)FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME).getTo();
 		finance.setInvoice(invoice);
-		if (invoice.getType().equals(InvoiceType.SALES)) {
+		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
-		} else {
+		}else{
 			finance.setPayment(true);
 		}
 		finance.setFinanceStatus(FinanceStatus.PENDING);
@@ -60,5 +60,5 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 		}
 		return null;
 	}
-
+	
 }

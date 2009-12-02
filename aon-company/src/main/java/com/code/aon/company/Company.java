@@ -32,7 +32,10 @@ public class Company extends Registry implements ITaxInfo{
 
 	/** Indicates if a surcharge has to be applied to the company. */
     private boolean surcharge;
-    
+
+	/** Indicates if a holding has to be applied to the company. */
+    private boolean withholding;
+
     /** Indicates the company calendar identifier. */
     private Integer calendar;
 
@@ -73,6 +76,24 @@ public class Company extends Registry implements ITaxInfo{
 	}
 	
 	/**
+	 * Checks if a surcharge has to be applied to the company. 
+	 * 
+	 * @return true, if is surcharge
+	 */
+	public boolean isWithholding() {
+		return withholding;
+	}
+
+	/**
+	 * Sets if a surcharge has to be applied to the company. 
+	 * 
+	 * @param surcharge the surcharge
+	 */
+	public void setWithholding(boolean withholding) {
+		this.withholding = withholding;
+	}
+
+	/**
 	 * @return the calendar
 	 */
 	public Integer getCalendar() {
@@ -88,11 +109,6 @@ public class Company extends Registry implements ITaxInfo{
 
 	@Transient
 	public boolean isTaxFree() {
-		return false;
-	}
-
-	@Transient
-	public boolean isWithholding() {
 		return false;
 	}
 

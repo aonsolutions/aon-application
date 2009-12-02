@@ -18,33 +18,24 @@ import com.code.aon.ql.Criteria;
 
 public class CustomerCollectionsController {
 
-	private List<SelectItem> customerStatuses;
-	
 	/**
 	 * Gets the customer statuses.
 	 * 
 	 * @return the customer statuses
 	 */
 	public List<SelectItem> getCustomerStatuses() {
-		if ( customerStatuses == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			customerStatuses = new LinkedList<SelectItem>();
-			for( CustomerStatus status : CustomerStatus.values() ) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				customerStatuses.add(item);
-			}			
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		CustomerStatus[] cStatuses = CustomerStatus.values();
+		for (int i = 0; i < cStatuses.length; i++) {
+			CustomerStatus status = cStatuses[i];
+			String name = status.getName(locale);
+			SelectItem item = new SelectItem(status, name);
+			types.add(item);
 		}
-		return customerStatuses;
+		return types;
 	}
 
-    public CustomerSegment getCustomerSegment() {
-    	return null;
-    }
-    
-    public void setCustomerSegment( CustomerSegment customerSegment ) {
-    }
-	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getCustomerSegments() throws ManagerBeanException {
 		List<SelectItem>customerSegments = new LinkedList<SelectItem>();
@@ -54,7 +45,7 @@ public class CustomerCollectionsController {
 		Iterator iter = customerSegmentBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			CustomerSegment segment = (CustomerSegment)iter.next();
-			SelectItem item = new SelectItem(segment, segment.getDescription());
+			SelectItem item = new SelectItem(segment.getId(), segment.getDescription());
 			customerSegments.add(item);
 		}
 		return customerSegments;

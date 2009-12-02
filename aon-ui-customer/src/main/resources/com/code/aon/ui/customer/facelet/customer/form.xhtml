@@ -17,127 +17,93 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto">
+				<aon:panelGrid id="dataTable" columns="2">
 
-					<ui:include
-						src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
-						<ui:param name="controller" value="#{customer}" />
-					</ui:include>
+					<aon:outputLabel for="Customer_id" value="#{bundle.aon_id}" />
+					<aon:inputText id="Customer_id" value="#{customer.to.id}"
+						required="#{true}" size="15" disabled="#{true}" />
 
-					<aon:outputLabel for="Customer_tariff_id"
-						value="#{productBundle.product_tariff}" />
-					<aon:selectOneMenu id="Customer_tariff_id"
-						value="#{customer.to.tariff}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{productCollections.tariffs}" />
-					</aon:selectOneMenu>
+					<aon:outputLabel for="Customer_document"
+						value="#{bundle.aon_company_document}" />
+					<aon:inputText id="Customer_document"
+						value="#{customer.to.registry.document}" size="16">
+						<f:validateLength minimum="1" maximum="16" />
+					</aon:inputText>
 
-					<aon:outputLabel for="Customer_customerSegment_id"
-						value="#{bundle.aon_segment}" />
-					<aon:selectOneMenu id="Customer_customerSegment_id"
-						value="#{customer.to.customerSegment}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{customerCollections.customerSegments}" />
-					</aon:selectOneMenu>
+					<aon:outputLabel for="Customer_name" value="#{bundle.aon_company_name}" />
+					<aon:inputText id="Customer_name"
+						value="#{customer.to.registry.name}" size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</aon:inputText>
 
-					<aon:outputLabel for="Customer_scope_id"
+					<aon:outputLabel for="Customer_surname"
+						value="#{registryBundle.registry_surname}" />
+					<aon:inputText id="Customer_surname"
+						value="#{customer.to.registry.surname}" size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Customer_alias"
+						value="#{bundle.aon_company_alias}" />
+					<aon:inputText id="Customer_alias"
+						value="#{customer.to.registry.alias}" size="32">
+						<f:validateLength minimum="1" maximum="32" />
+					</aon:inputText>
+
+					<h:outputLabel for="Customer_scope_id"
 						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Customer_scope_id"
+					<h:selectOneMenu id="Customer_scope_id"
 						value="#{customer.to.scope}">
 						<f:selectItems value="#{configCollections.scopes}" />
-					</aon:selectOneMenu>
+					</h:selectOneMenu>
 
-					<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Customer_status"
-						value="#{customer.to.status}">
+					<h:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
+					<h:selectOneMenu id="Customer_status" value="#{customer.to.status}">
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
-					</aon:selectOneMenu>
+					</h:selectOneMenu>
 
 					<aon:outputLabel for="Customer_surcharge"
 						value="#{customerBundle.customer_surcharge}" />
 					<aon:selectBooleanCheckbox id="Customer_surcharge"
 						value="#{customer.to.surcharge}" />
 
-					<c:if test="#{customer.showAccount}">
-						<aon:outputLabel for="Customer_account"
-							value="#{accountingBundle.accounting_account}" />
-						<aon:inputText id="Customer_account" 
-							rendered="#{customerAccount.account != null}"
-							value="#{customerAccount.account.id} - #{customerAccount.account.description}"
-							disabled="true" size="60" />
-						<aon:inputText rendered="#{customerAccount.account == null}"
-							value="" disabled="true" size="60" />
-					</c:if>
-
-				</aon:panelGrid>
-
-				<aon:panelGrid id="observationDataTable" styleClass="aon-margin-top"
-					columns="2" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
-
 					<aon:outputLabel for="Observation"
 						value="#{customerBundle.customer_observation}" />
-					<aon:inputTextarea id="Observation" cols="120" rows="3"
+					<aon:inputTextarea id="Observation" cols="51" rows="5"
 						value="#{customerObservation.observation.comments}" />
 				</aon:panelGrid>
 
 				<c:if test="#{!customer.new}">
-					<aon:panelTabSet selectedTab="#{customer.selectedTab}">
-						<aon:panelTab id="adddress"
+					<aon:panelTabSet id="customerTab">
+
+						<aon:panelTab id="customer_address"
 							label="#{registryBundle.registry_address_module}">
 							<ui:include
 								src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
-								<ui:param name="controller" value="#{customerAddress}" />
+								<ui:param name="controllerAlias" value="#{customerAddress}" />
+								<ui:param name="dataTableId" value="customerAddressDataList" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab id="media"
-							label="#{registryBundle.registry_media_module}">
+
+						<aon:panelTab id="medias" label="#{registryBundle.registry_media_module}">
 							<ui:include
 								src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-								<ui:param name="controller" value="#{customerMedia}" />
+								<ui:param name="controllerAlias" value="#{customerMedia}" />
+								<ui:param name="dataTableId" value="customerMediaDataList" />
 							</ui:include>
 						</aon:panelTab>
-						<c:if test="#{customer.showFinanceData}">
-							<aon:panelTab id="finance"
-								label="#{registryBundle.registry_finance_data_module}">
-								<aon:panel>
-									<f:facet name="header">
-										<aon:outputText
-											value="#{registryBundle.registry_banks_module}" />
-									</f:facet>
-									<ui:include
-										src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
-										<ui:param name="controller" value="#{customerRbank}" />
-									</ui:include>
-								</aon:panel>
-								<aon:panel>
-									<f:facet name="header">
-										<aon:outputText value="#{configBundle.config_pay_methods}" />
-									</f:facet>
-									<ui:include
-										src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
-										<ui:param name="controller" value="#{customerRPayMethod}" />
-									</ui:include>
-								</aon:panel>
-							</aon:panelTab>
-							<aon:panelTab id="fee"
-								label="#{financeBundle.finance_fees_module}">
-								<ui:include
-									src="/com/code/aon/ui/finance/facelet/fee/tab_grid.xhtml">
-								</ui:include>
-							</aon:panelTab>
-						</c:if>
+
+						<aon:panelTab id="customer_finance"
+							label="#{financeBundle.finance_data_module}">
+							<ui:include
+								src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+								<ui:param name="controllerAlias" value="#{customerRbank}" />
+								<ui:param name="dataTableId" value="customerRbankData" />
+							</ui:include>
+						</aon:panelTab>
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{customer.showFinanceData}">
-			<aon:lookupButtonPopup lookup="#{bankLookup}" />
-			<aon:lookupButtonPopup lookup="#{itemLookup}" />
-		</c:if>
 	</ui:define>
 </ui:composition>

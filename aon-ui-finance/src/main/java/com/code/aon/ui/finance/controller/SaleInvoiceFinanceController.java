@@ -41,7 +41,7 @@ public class SaleInvoiceFinanceController extends LinesController {
 	private Company company;
 
 	public boolean isModelToEditable() throws ManagerBeanException{
-		if (this.getModel().getRowCount() > 0) {  
+		if ( this.getModel().getRowCount() > 0) {  
 			Finance finance = (Finance)this.getModel().getRowData(); 
 			return (finance.getFinanceStatus().equals(FinanceStatus.PENDING) || finance.getFinanceStatus().equals(FinanceStatus.RETURNED));
 		}
