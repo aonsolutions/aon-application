@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{productBundle.item_code}" />
+		</f:facet>
+		<aon:outputText value="#{to.product.code}"/>
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{productBundle.item_description}" />
+		</f:facet>
+		<aon:outputText value="#{to.product.name} #{to.detail}"/>
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{productBundle.item_service}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.product.composition ? 'X' : ''}"/>
+		</aon:div>
+	</aon:column>
+
+</ui:composition>
+
+</body>
+</html>

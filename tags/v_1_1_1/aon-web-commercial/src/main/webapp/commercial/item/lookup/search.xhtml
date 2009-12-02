@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<aon:outputLabel for="Item_product_code"
+		value="#{productBundle.item_code}" />
+	<aon:inputText id="Item_product_code"
+		size="10" valueChangeListener="#{lookup.addExpression}" />
+	
+	<aon:outputLabel for="Item_product_name"
+		value="#{productBundle.item_description}" />
+	<aon:inputText id="Item_product_name"
+		size="50" valueChangeListener="#{lookup.addExpression}" />
+	 
+	<aon:outputLabel for="Item_product_category_id"
+		value="#{productBundle.item_category}" />
+	<aon:selectOneMenu id="Item_product_category_id"
+		valueChangeListener="#{lookup.addExpression}">
+		<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+		<f:selectItems value="#{productCollections.categories}" />
+	</aon:selectOneMenu>
+	
+	<aon:outputLabel for="Item_status"
+		value="#{productBundle.item_status}" />
+	<aon:selectOneMenu id="Item_status"
+		converter="aonProductStatusConverter"
+		valueChangeListener="#{lookup.addEqualExpression}">
+		<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+		<f:selectItems value="#{productCollections.productStatuses}" />
+	</aon:selectOneMenu>
+	
+</ui:composition>
+
+</body>
+</html>

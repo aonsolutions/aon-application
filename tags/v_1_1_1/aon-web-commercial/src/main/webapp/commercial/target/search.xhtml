@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="targetSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.aon_targets}" />
+				<ui:param name="controller" value="#{target}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{target.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="target_list" />
+					<aon:outputText value="" />
+					<aon:div style="width:510px;">
+						<aon:panelCollapsible expanded="true" label="#{appBundle.aon_commercial_tracking_target}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+								<ui:include src="/commercial/target/searchContent.xhtml">
+									<ui:param name="controller" value="#{target}"/>
+								</ui:include>
+							</aon:panelGrid>
+						</aon:panelCollapsible>					
+					
+						<aon:panelCollapsible expanded="false" label="#{registryBundle.aon_address}" >
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+								<aon:outputLabel for="Target_registry_addresses_address"
+									value="#{registryBundle.aon_address}" />
+								<aon:inputText id="Target_registry_addresses_address" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+								<aon:outputLabel for="Target_registry_addresses_zip"
+									value="#{registryBundle.aon_zip}" />
+								<aon:inputText id="Target_registry_addresses_zip" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+								<aon:outputLabel for="Target_registry_addresses_city"
+									value="#{registryBundle.aon_city}" />
+								<aon:inputText id="Target_registry_addresses_city" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+								<aon:outputLabel for="Target_registry_addresses_geozone_id"
+									value="#{registryBundle.aon_geozone}" />
+								<aon:selectOneMenu id="Target_registry_addresses_geozone_id" 
+									valueChangeListener="#{target.addDirectExpression}">
+									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItems value="#{geozoneCollections.geoTrees}" />
+								</aon:selectOneMenu>			
+							</aon:panelGrid>
+						</aon:panelCollapsible>
+								
+						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_segment}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" style="width:460px;">					
+								<aon:outputLabel for="Target_segments_segment_id"
+									value="#{bundle.aon_name}" />
+								<aon:selectOneMenu id="Target_segments_segment_id"
+									valueChangeListener="#{target.addDirectExpression}">
+									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItems value="#{target.segments}" />
+								</aon:selectOneMenu>
+							</aon:panelGrid>		
+						</aon:panelCollapsible>
+						
+						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_item}" >					
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
+								<aon:outputLabel for="Target_items_item_product_code"
+									value="#{productBundle.item_code}" />
+								<aon:inputText id="Target_items_item_product_code"
+									size="20" valueChangeListener="#{target.addDirectExpression}" />
+								
+								<aon:outputLabel for="Target_items_item_product_name"
+									value="#{productBundle.item_description}" />
+								<aon:inputText id="Target_items_item_product_name"
+									size="60" valueChangeListener="#{target.addDirectExpression}" />
+								 
+								<aon:outputLabel for="Target_items_item_product_category_id"
+									value="#{productBundle.item_category}" />
+								<aon:selectOneMenu id="Target_items_item_product_category_id"
+									valueChangeListener="#{target.addDirectExpression}">
+									<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+									<f:selectItems value="#{productCollections.categories}" />
+								</aon:selectOneMenu>
+								
+								<aon:outputLabel for="Target_items_item_status"
+									value="#{productBundle.item_status}" />
+								<aon:selectOneMenu id="Target_items_item_status"
+									converter="aonProductStatusConverter"
+									valueChangeListener="#{target.addDirectExpression}">
+									<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+									<f:selectItems value="#{productCollections.productStatuses}" />
+								</aon:selectOneMenu>
+							</aon:panelGrid>
+						</aon:panelCollapsible>
+						
+						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_seller}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
+								<aon:outputLabel for="Target_sellers_seller_id"
+									value="#{registryBundle.aon_id}" />
+								<aon:inputText id="Target_sellers_seller_id" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+							
+								<aon:outputLabel for="Target_sellers_seller_registry_document"
+									value="#{registryBundle.aon_nif}" />
+								<aon:inputText id="Target_sellers_seller_registry_document" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+							
+								<aon:outputLabel for="Target_sellers_seller_registry_name"
+									value="#{registryBundle.aon_name}" />
+								<aon:inputText id="Target_sellers_seller_registry_name" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+							
+								<aon:outputLabel for="Target_sellers_seller_registry_surname"
+									value="#{registryBundle.aon_surname}" />
+								<aon:inputText id="Target_sellers_seller_registry_surname" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+							
+								<aon:outputLabel for="Target_sellers_seller_registry_alias"
+									value="#{registryBundle.aon_alias}" />
+								<aon:inputText id="Target_sellers_seller_registry_alias" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+							</aon:panelGrid>
+						</aon:panelCollapsible>
+						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_tracking}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+								<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
+								<aon:div>
+									<aon:outputLabel for="Target_trackings_date-From" styleClass="aon-form-date-label"
+										value="#{bundle.aon_date_from}:" />
+									<aon:selectInputDate id="Target_trackings_date-From"
+										value="#{targetSearch.dateFrom}"
+										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+									</aon:selectInputDate>
+						
+									<aon:outputLabel for="Target_trackings_date-To" styleClass="aon-form-date-label"
+										value="#{bundle.aon_date_to}:" />
+									<aon:selectInputDate id="Target_trackings_date-To"
+										value="#{targetSearch.dateTo}"
+										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+									</aon:selectInputDate>
+								</aon:div>
+						
+								<aon:outputLabel for="Target_trackings_seller_id"
+									value="#{appBundle.aon_commercial_tracking_seller}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Target_trackings_seller_id"
+										lookup="#{sellerLookup}"
+										reRender="Target_trackings_seller_name"
+										value="#{targetSearch.seller.id}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Target_trackings_seller_lookup"
+										windowTitle="#{appBundle.aon_lookup_seller}"
+										selectReRender="Target_trackings_seller_id,Target_trackings_seller_name"
+										lookup="#{sellerLookup}" minHeight="440"
+										property="#{targetSearch.seller}">
+									</aon:lookupButton>
+									<aon:inputText id="Target_trackings_seller_name"
+										value="#{(targetSearch.seller.registry.name!=null)?(targetSearch.seller.registry.fullName):('')}"
+										size="60" disabled="true" />
+								</aon:div>		
+								
+								<aon:outputLabel for="Target_trackings_activity_id"
+									value="#{appBundle.aon_commercial_tracking_activity}" />
+								<aon:selectOneMenu id="Target_trackings_activity_id" 
+									value="#{targetSearch.activity}">
+									<f:converter converterId="toConverter" />
+									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItems value="#{commecialCollections.activities}" />
+								</aon:selectOneMenu>
+
+								<aon:outputText value="#{bundle.aon_status}"/>
+								<aon:selectManyCheckbox value="#{targetSearch.trackingStatuses}">
+									<f:selectItems value="#{commecialCollections.commercialTrackingStatuses}"/>
+								</aon:selectManyCheckbox>							
+
+								<aon:outputLabel for="Target_trackings_comments"
+									value="#{appBundle.aon_commercial_tracking_comments}" />
+								<aon:inputText id="Target_trackings_comments" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />													
+							</aon:panelGrid>
+						</aon:panelCollapsible>						
+					</aon:div>
+					
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />				
+	</ui:define>
+</ui:composition>
