@@ -36,7 +36,8 @@
 					</f:facet>
 
 					<aon:div styleClass="#{list.fractions[idx].reserved?'reserved-cell':'available-cell'}">
-						<aon:outputText  value="&#160;&#160;&#160;" styleClass="#{list.fractions[idx].first?'aon-icon-info':'none'}" />
+						<aon:outputText  value="&#160;&#160;&#160;" 
+							styleClass="#{list.fractions[idx].first?'aon-icon-info':'none'}" />
 						<rich:toolTip followMouse="true" direction="top-right" showDelay="250" 
 						 	rendered="#{list.fractions[idx].first}" >
 				            <span style="white-space:nowrap">

@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -15,6 +16,7 @@ import javax.faces.model.ListDataModel;
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.dao.IAssetAlias;
+import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -97,6 +99,7 @@ public class AssetCalendarController extends BasicController{
 		this.clearCriteria();
 		criteria = this.getCriteria();
 		criteria.addEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getCalendarDay());
+		criteria.addEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.ACCEPTED);
 	}
 	
 	public List<Integer> getTimeFractionList() {
@@ -211,14 +214,17 @@ public class AssetCalendarController extends BasicController{
 		int hours, minutes;
 		Calendar c = new GregorianCalendar();
 		c.setTime(time);
-		
 		hours = c.get(Calendar.HOUR_OF_DAY);
 		minutes = c.get(Calendar.MINUTE);
-		if(timeFractionList.indexOf(hours)+(minutes/IAssetConstants.FRACTION_TIME) >= 0)
-			return timeFractionList.indexOf(hours)+(minutes/IAssetConstants.FRACTION_TIME);
-		else
-			throw new ManagerBeanException("Fraction start time out of bound");
-			// buscar la excepcion adecuada
+		int hourFractions = hoursList.indexOf(hours) * 60
+				/ IAssetConstants.FRACTION_TIME;
+		int minuteFractions = minutes / IAssetConstants.FRACTION_TIME;
+		if ((hourFractions + minuteFractions) >= 0) {
+			return hourFractions + minuteFractions;
+		} else {
+			throw new AbortProcessingException(
+					"Fraction start time out of bound");
+		}
 	}
 	
 	private int fractionIterations(Date fromTime, Date toTime){

@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="activitySearch">
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+						value="#{assetBundle.asset_activity_module}" />
+				<ui:param name="toolbarDescription"
+						value="#{bundle.aon_search}" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="activityDialog_grid" 
+						actionListener="#{activityBasic.onSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}" />
+					<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						action="activityDialog_grid" inmediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+				
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{activityBasic}" />
+<!--  
+				<aon:methodParam name="searchActionListener" value="#{activityBasic.onSearch}" type="actionListener" />
+				<aon:methodParam name="skipSearchButton" value="#{true}" />				
+-->				
+				<aon:methodParam name="searchAction" value="activityDialog_grid" />				
+				<ui:define name="searchContent">
+				
+					<aon:outputLabel for="AssetActivity_asset" value="#{assetBundle.asset_asset}" />
+					<aon:div styleClass="aon-lookup" id="AssetActivity_asset">
+						<aon:lookupInputText id="Asset_name" lookup="#{assetLookup}"
+							reRender="Asset_description" value="#{activityBasic.asset.name}"
+							size="10">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Asset_lookup"
+							windowTitle="#{assetBundle.asset_asset}"
+							selectReRender="Asset_name,Asset_description"
+							lookup="#{assetLookup}" minHeight="440"
+							property="#{activityBasic.asset}">
+						</aon:lookupButton>
+						<aon:inputText id="Asset_description"
+							value="#{(activityBasic.asset.description!=null)?(activityBasic.asset.description):('')}"
+							size="70" disabled="true" />
+					</aon:div>
+					
+					<aon:outputLabel for="AssetActivity_startDate" value="#{assetBundle.asset_date}" />
+					<aon:selectInputDate renderAsPopup="true" id="AssetActivity_startDate"
+						popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+						value="#{activityBasicSearchListener.fromDate}" enableManualInput="true"/>
+						
+					<aon:outputLabel for="AssetActivity_endDate" value="#{assetBundle.asset_endDate}" />
+					<aon:selectInputDate renderAsPopup="true" id="AssetActivity_endDate"
+						popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+						value="#{activityBasicSearchListener.toDate}" enableManualInput="true"/>
+				
+					<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+						<aon:outputLabel for="AssetActivity_who" value="#{assetBundle.asset_activity_who}" />
+					</aon:div>
+<!--  
+						<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Invitado">
+							<aon:outputText id="User_ActivityDialog_who" value="#{activityDialog.who}"
+								size="20" 
+								valueChangeListener="#{activityBasic.addExpression}">
+								<f:validateLength maximum="20" />
+							</aon:outputText>
+						</aon:div>
+-->						
+						<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+							<aon:selectOneMenu id="AssetActivity_who"
+								value="#{activityBasic.who}">
+								<f:selectItem itemLabel="-" itemValue="none"  />
+								<f:selectItems value="#{activityBasic.whoList}" />
+							</aon:selectOneMenu>
+							
+						</aon:div>
+				
+					<aon:outputLabel for="AssetActivity_status" value="#{assetBundle.asset_activity_status}" />
+	<!--  
+					<aon:selectOneMenu id="Offer_series-New" converte="aon.EnumConverter"
+						valueChangeListener="#{activityBasic.addEqualExpression}">
+						<f:selectItems value="#{activityBasic.statusList}" />
+					</aon:selectOneMenu>
+	-->
+					<aon:selectManyCheckbox id="AssetActivity_status" 
+						value="#{activityBasicSearchListener.activityStatuses}">
+						<f:selectItems value="#{activityBasic.statusList}" />
+					</aon:selectManyCheckbox>	
+				
+				</ui:define>
+			</ui:decorate>				
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{assetLookup}" />
+	</ui:define>
+</ui:composition>

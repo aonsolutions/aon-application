@@ -94,7 +94,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -104,12 +104,24 @@
 			<property-name>defaultOrder</property-name>
 			<value>AssetActivity_date, AssetActivity_fromTime</value>
 		</managed-property>
+		<!--  
 		<managed-property> 
-				<property-name>listenerClasses</property-name>
-				<value>#{activityBasicControllerListeners}</value> 
-			</managed-property>
-		</managed-bean>
-		
+			<property-name>listenerClasses</property-name>
+			<value>#{activityBasicControllerListeners}</value> 
+		</managed-property>
+		-->
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{activityBasicControllerListener}</value>
+				<value>#{activityBasicSearchListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<!--  
 		<managed-bean>
 			<managed-bean-name>activityBasicControllerListeners</managed-bean-name>
 			<managed-bean-class>java.util.LinkedList</managed-bean-class>
@@ -119,11 +131,17 @@
 				<value>#{activityBasicControllerListener}</value>
 			</list-entries>
 		</managed-bean>
+	-->
 		
 		<managed-bean>
 			<managed-bean-name>activityBasicControllerListener</managed-bean-name>
 			<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicControllerListener</managed-bean-class>
-			<managed-bean-scope>none</managed-bean-scope>
+			<managed-bean-scope>session</managed-bean-scope>
+		</managed-bean>
+		<managed-bean>
+			<managed-bean-name>activityBasicSearchListener</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicSearchListener</managed-bean-class>
+			<managed-bean-scope>session</managed-bean-scope>
 		</managed-bean>
 	
 	<!-- ********** ASSET ACTIVITY LINES ********** -->
@@ -277,6 +295,14 @@
 			<from-outcome>activityDialog_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/asset/facelet/activityDialog/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>activityDialog_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/activityDialog/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>activityDialog_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/activityDialog/grid_pending.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 	<!-- ****************** ASSET ACTIVITY Reservations **************** -->
@@ -304,6 +330,14 @@
 		<navigation-case>
 			<from-outcome>day_stat_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/asset/facelet/stat/day/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ****************** ADMINISTRATION **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>admin_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/admin/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
