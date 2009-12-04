@@ -8,8 +8,16 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
+
+	<aon:div>
+		<form method=post action="https://www.paypal.com/cgi-bin/webscr">
+			<input type="hidden" name="cmd" value="_notify-synch" />
+			<input type="hidden" name="tx" value="TransactionID" />
+			<input type="hidden" name="at" value="YourIdentityToken" />
+			<input type="submit" value="PDT" />
+		</form> 
+	</aon:div>
 	<div>
-	<form id="paypalForm">
 		<!--  
 		<div>
 			<h:graphicImage style="width:120px; height: 70px;"
@@ -80,8 +88,8 @@
 				value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
 			<aon:actionListener method="#{shop.paypalIpn}" />
 		</aon:commandButton>
-		
 	-->
+		
 		
 		<aon:outputText value="" />
 		
@@ -128,13 +136,7 @@
 		<!--  
 									<f:param name="tx" value="1"/>
 									<f:param name="at" value="1"/>
-								<form method=post action="https://www.paypal.com/cgi-bin/webscr">
-									<input type="hidden" name="cmd" value="_notify-synch">
-									<input type="hidden" name="tx" value="TransactionID">
-									<input type="hidden" name="at" value="YourIdentityToken">
-									<input type="submit" value="PDT">
-								</form> 
 		-->
-	</form>
+								
 	</div>
 </ui:composition>

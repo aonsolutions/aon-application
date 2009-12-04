@@ -9,6 +9,19 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<div>
-	Bank Transfer
+		<aon:outputText value="Transferencia" />
+		
+		<aon:panelGrid columns="2" style="width:100%">
+			
+			<aon:outputLabel value="El pago debera hacerse en la siguiente cuenta bancaria" />
+			<aon:outputText value="no. cuenta" />
+			
+			<!--  
+			<aon:outputLabel value="#{bundle.aon_name}" />
+			<aon:outputText value="#{shopItem.item.product.name}" />
+			-->
+		
+		</aon:panelGrid>
+		
 	</div>
 </ui:composition>
