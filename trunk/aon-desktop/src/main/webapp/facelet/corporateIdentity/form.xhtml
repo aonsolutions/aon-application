@@ -23,7 +23,7 @@
 					<ui:param name="skipResetButton" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
 					<ui:param name="skipSearchButton" value="false" />
 					<ui:define name="additionalToolbarContent">
-						<aon:commandButton id="category" value="#{registryBundle.category_module}"
+						<aon:commandButton id="category" value="#{registryBundle.registry_category_module}"
 							renderedOnUserRole="CorporativeDocumentsManager"
 							action="corporate_identity_category" actionListener="#{category.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-category" />
