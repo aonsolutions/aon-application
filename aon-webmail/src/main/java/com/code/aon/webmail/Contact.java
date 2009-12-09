@@ -340,7 +340,7 @@ public class Contact implements ILdapTransferObject {
 			if (! StringUtils.isAsciiPrintable(name) ) {
 				name = "\"" + name + "\"";
 			}
-			return name + " &lt;" + email + "&gt;";			
+			return name + " <" + email + ">";			
 		}
 		return null;
 	}
