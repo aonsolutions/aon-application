@@ -77,8 +77,7 @@ public class EcPaymethod implements ITransferObject {
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}
-	
-		
+			
 }
 	
 	
