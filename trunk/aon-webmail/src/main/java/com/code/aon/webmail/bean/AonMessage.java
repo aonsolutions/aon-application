@@ -43,7 +43,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 
 	private static final DateFormat TODAY_FORMAT = new SimpleDateFormat("hh:mm a");
 	
-	private static final DateFormat THIS_YEAR_FORMAT = new SimpleDateFormat("MMM d");
+	private static final DateFormat THIS_YEAR_FORMAT = new SimpleDateFormat("MMM d, EEE");
 	
 	private static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.SHORT);
 	
