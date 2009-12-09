@@ -70,7 +70,7 @@ public class EcPaymethod implements ITransferObject {
 		this.password = password;
 	}
 	
-	@Column(length=64)
+	@Column(length=128)
 	public String getSignature() {
 		return signature;
 	}
