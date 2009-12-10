@@ -10,14 +10,17 @@
 
 
 	<aon:div>
-		<form method=post action="https://www.paypal.com/cgi-bin/webscr">
+<!-- 
+		<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" >
 			<input type="hidden" name="cmd" value="_notify-synch" />
 			<input type="hidden" name="tx" value="TransactionID" />
 			<input type="hidden" name="at" value="YourIdentityToken" />
 			<input type="submit" value="PDT" />
-		</form> 
-	</aon:div>
-	<div>
+ -->
+		<aon:form>
+		 
+	
+	
 		<!--  
 		<div>
 			<h:graphicImage style="width:120px; height: 70px;"
@@ -51,7 +54,7 @@
 		
 		
 		
-		<aon:div>
+		
 		
 			<!--  
 		<h:outputLink
@@ -91,19 +94,15 @@
 	-->
 		
 		
+		<!--  
 		<aon:outputText value="" />
 		
-			<h:commandButton value="&#160;" >
-				<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
-				<aon:actionListener method="#{paypal.initialize}" />
-			</h:commandButton>
+		<h:commandButton value="&#160;" >
+			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
+			<aon:actionListener method="#{paypal.initialize}" />
+		</h:commandButton>
+		-->
 		
-		
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
 		
 		
 		<aon:commandLink>
@@ -118,7 +117,7 @@
 			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif"  />
 		</h:outputLink> 
 		-->
-		
+			</aon:form>
 		</aon:div>
 		
 		
@@ -138,5 +137,5 @@
 									<f:param name="at" value="1"/>
 		-->
 								
-	</div>
+	
 </ui:composition>

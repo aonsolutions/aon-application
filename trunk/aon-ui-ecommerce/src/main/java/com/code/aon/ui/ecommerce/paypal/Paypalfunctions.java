@@ -19,6 +19,16 @@ import javax.faces.event.AbortProcessingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.record.formula.functions.Critbinom;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ebackoffice.EcPaymethod;
+import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.ecommerce.controller.ConfigController;
+import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class Paypalfunctions {
@@ -51,11 +61,25 @@ public class Paypalfunctions {
 //		gv_APIPassword = "<API_PASSWORD>";
 //		gv_APISignature = "<API_SIGNATURE>";
 			
-		gv_APIUserName = "prueba_1255511730_biz_api1.esferalia.com";
-		gv_APIPassword = "1255511739";
-		gv_APISignature = "AiPC9BjkCyDFQXbSkoZcgqH3hpacAZa3zOITxD2n9C.JM5ji-BNZB2UK";
+//		gv_APIUserName = "prueba_1255511730_biz_api1.esferalia.com";
+//		gv_APIPassword = "1255511739";
+//		gv_APISignature = "AiPC9BjkCyDFQXbSkoZcgqH3hpacAZa3zOITxD2n9C.JM5ji-BNZB2UK";
 		
+		Integer paypalId = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getActiveConfig().getPaypal().getId();
+		Criteria criteria = new Criteria();
+		EcPaymethod ecp = null;
+		try {
+			criteria.addEqualExpression(BeanManager.getManagerBean(EcPaymethod.class).getFieldName(IEbackofficeAlias.EC_PAYMETHOD_PAYMETHOD_ID), paypalId);
+			ecp = (EcPaymethod)BeanManager.getManagerBean(EcPaymethod.class).getList(criteria).get(0);
+		} catch (ManagerBeanException e) {
+			String message = "Hubo un error de comunicacion con el servidor de Paypal";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException();
+		}
 		
+		gv_APIUserName = ecp.getUserName();
+		gv_APIPassword = ecp.getPassword();
+		gv_APISignature = ecp.getSignature();
 
 		boolean bSandbox = true;
 
