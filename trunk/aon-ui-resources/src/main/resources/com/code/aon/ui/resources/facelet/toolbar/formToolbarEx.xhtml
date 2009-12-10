@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
@@ -70,6 +71,12 @@
 			<c:if test="#{(!skipSpin) and (controller != null)}">
 				<aon:spin id="#{controller.beanName}Spin" controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
 			</c:if>
+			
+			<c:if test="#{!skipFocusFirst}">
+				<rich:jQuery timing="onload"
+					selector=":input:visible:enabled:not(:button):first"
+					query="focus()" />
+			</c:if>								
 		</ui:define>
 	</ui:decorate>
 	
