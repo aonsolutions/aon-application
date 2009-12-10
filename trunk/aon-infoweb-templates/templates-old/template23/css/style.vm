@@ -1,0 +1,115 @@
+body {
+  scrollbar-arrow-color: #40552D;
+  scrollbar-shadow-color: #B5C2D5;
+  scrollbar-face-color: #B5C2D5;
+  scrollbar-highlight-color: #40552D;
+  scrollbar-darkshadow-color: #40552D; 
+  border-bottom: ${color_color_borde} ${border_bordes} solid; 
+  border-top: ${color_color_borde} ${border_bordes} solid;
+ }
+.canvas {
+ 	margin:0 auto;
+	width:750px; 
+	leftmargin:0px; 
+	
+ }
+.content {
+	font-size:${size_tamano_de_fuente};
+	color:${color_color_de_texto};
+	text-indent:0px; 
+	font-family:${font_fuente};
+	text-align:default;
+	background:url(images/pozadina.gif);
+}
+.sidebar {
+       font-size:${size_tamano_de_fuente_menu};
+	   color:${color_color_de_texto_cabecera};
+	   text-indent:0px; 
+	   font-family:${font_fuente};
+	   text-align:right;
+}
+.menu a:link {
+	font-size:${size_tamano_de_fuente_menu};
+	color:${color_color_de_texto_link};
+	font-family:${font_fuente};
+	text-decoration:none;
+}
+.menu a:visited {
+	font-size:${size_tamano_de_fuente_menu};
+	color:${color_color_de_texto_link};
+	font-family:${font_fuente};
+	text-decoration:none;
+}
+.menu a:hover {
+	font-size:${size_tamano_de_fuente_menu};
+	color:${color_color_de_texto_link};
+	font-family:${font_fuente};
+	text-decoration:underline;
+}
+.foot {
+	font-size:${size_tamano_de_fuente_pie};
+}
+
+
+.box{
+	text-align:center; 
+	padding-top:10px;
+}
+.texto{
+	text-align:right;
+}
+.infoHelp{
+	width:450px; 
+	padding:5px;
+	background-color:#dddddd;
+	text-align:justify;
+	font-size:9px;
+}
+.gallery-navigation{
+	text-align:center;
+	color:${color_color_de_texto_contenido};
+}
+.gallery-navigation a{
+	color:${color_color_de_texto_contenido};
+	text-decoration:none;
+	text-align:center;
+}
+.album-block{ 
+	text-align:center;
+}
+.formulario{
+	float: left;
+	line-height:15px;
+}
+.copiesferalia {
+	font-family: ${font_fuente} ;
+	font-size:9px;
+	color:${color_texto};
+	text-decoration:none;
+	}
+.copiesferalia a{
+	font-family: ${font_fuente} ;
+	font-size:9px;
+	color:${color_texto};
+	text-decoration:none;
+	}
+.copiesferalia a:hover{
+	font-family: ${font_fuente} ;
+	font-size: 9px;
+	color:${color_texto};
+	text-decoration:underline;
+	}
+
+.album {
+	height:400px;
+	text-align:center;
+	margin-left:50px;
+}
+.objeto {
+	float:left;
+	padding:10px;
+}
+.objeto a{
+	text-decoration:none;
+	color:${color_color_de_texto_contenido};
+}
