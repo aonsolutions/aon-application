@@ -81,7 +81,7 @@ public class CartOfferController extends EmailParentController {
 		try {
 			offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 			ShoppingCartController sc = (ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER);
-			List<CartItem> list = sc.getCart().getList();
+			List<CartItem> list = (List)sc.getModel().getWrappedData();//Cart().getList();
 			Iterator<CartItem> it = list.iterator();
 			while(it.hasNext()){
 				CartItem ci = it.next();
@@ -111,6 +111,23 @@ public class CartOfferController extends EmailParentController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		PaypalController paypalBean = (PaypalController) AonUtil
+				.getRegisteredBean(IECommerceConstants.PAYPAL_CONTROLLER);
+		CreditCardController qbBean = (CreditCardController) AonUtil
+				.getRegisteredBean(IECommerceConstants.CREDIT_CARD_CONTROLLER);
+		
+		if(paypalBean.isPayment()){
+			paypalBean.confirmPaymentFromPayPal(null);
+			paypalBean.setPayment(false);
+			getOffer().setStatus(OfferStatus.INVOICED);
+		}
+		if(qbBean.isPayment()){
+//			paypal.confirmPaymentFromPayPal(null);
+			qbBean.setPayment(false);
+			getOffer().setStatus(OfferStatus.INVOICED);
+		}
+		
 		insertOffer();
 		insertOfferDetail();
 		((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).setModel(null);

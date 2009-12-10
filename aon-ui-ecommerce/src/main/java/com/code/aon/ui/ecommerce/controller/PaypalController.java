@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import com.code.aon.ui.ecommerce.paypal.Paypalfunctions;
 
+import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.util.AonUtil;
 
@@ -18,6 +19,7 @@ public class PaypalController {
 	
 	private String payerId;
 	private String token;
+	private boolean payment;
 	
 	public String getPayerId() {
 		return payerId;
@@ -36,6 +38,14 @@ public class PaypalController {
 		this.token = token;
 	}
 
+	public boolean isPayment() {
+		return payment;
+	}
+
+	public void setPayment(boolean payment) {
+		this.payment = payment;
+	}
+
 	
 	
 	
@@ -45,28 +55,8 @@ public class PaypalController {
 	public void initialize(ActionEvent event){
 
 		String paymentAmount = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCart().getTotal().toString();
-
-
-        /*
-        '------------------------------------
-        ' The returnURL is the location where buyers return to when a
-        ' payment has been succesfully authorized.
-        '
-        ' This is set to the value entered on the Integration Assistant
-        '------------------------------------
-        */
-
-        String returnURL = "http://localhost:8080/aon-ecommerce/";
-
-        /*
-        '------------------------------------
-        ' The cancelURL is the location buyers are sent to when they hit the
-        ' cancel button during authorization of payment during the PayPal flow
-        '
-        ' This is set to the value entered on the Integration Assistant
-        '------------------------------------
-        */
-        String cancelURL = "http://localhost:8080/aon-ecommerce/";
+        String returnURL = ECommerceUtil.getUrl();
+        String cancelURL = ECommerceUtil.getUrl();
 
         /*
         '------------------------------------
@@ -371,31 +361,14 @@ public class PaypalController {
 	 * 
 	 */
 	public void confirmPaymentFromPayPal(ActionEvent event){
-		//String token = HttpServlet.this.ssion.this.getAttribute("token");
-//		Map<String, String> session = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-		 
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
 		HttpSession session2 = request.getSession(true);
 		
-		 
-//		String token = session.get("token");
-//		String token = (String) session2.getAttribute("token");
-		String token = getToken();
+		String token = request.getParameter("token");
 		
 		if ( token != null)
 		{
-
-		//IMPORTANT NOTE: Please import Class paypalfunctions if not in the same package level.
-		// import paypalfunctions;
-
-		    /*
-			'------------------------------------
-			' Get the token parameter value stored in the session 
-			' from the previous SetExpressCheckout call
-			'------------------------------------
-			*/
-			//String token =  session.getAttribute("TOKEN");
 
 			/*
 			'------------------------------------
@@ -405,38 +378,10 @@ public class PaypalController {
 			' by the shopping cart page
 			'------------------------------------
 			*/
-			
-//			ServletRequest request = (ServletRequest) FacesContext
-//					.getCurrentInstance().getExternalContext().getRequest();
-//
-//			if (request instanceof HttpServletRequest) {
-//				HttpServletRequest httpRequest = (HttpServletRequest) request;
-//
-//				//String serverName = httpRequest.getServerName();
-//				//int serverPort = httpRequest.getServerPort();
-//			}
 
-			
-			
-//			request.getRemoteAddr();
-//			request.getAttribute("token");
-//			request.getAttribute("PayerID");
-//			request.getAttributeNames();
-			
-			//String serverName =  request.getServerName();
 			String serverName =  request.getRemoteAddr();
-			
-			//String payerId = (String) session2.getAttribute("payerId");
-//			String payerId =  session.get("PayerID");
-			String payerId;
-//			FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("PayerID");
-//			FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("token");
-			//String token =  session.getAttribute("token");
-//			payerId = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getPayerID();
-			payerId = getPayerId();
-//			String finalPaymentAmount =  session.get("Payment_Amount");
-			String finalPaymentAmount;
-			finalPaymentAmount = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCart().getTotal().toString();
+			String payerId = getPayerId();
+			String finalPaymentAmount = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCart().getTotal().toString();
 			/*
 			'------------------------------------
 			' Calls the DoExpressCheckoutPayment API call
@@ -507,7 +452,7 @@ public class PaypalController {
 				String reasonCode		= nvp.get("REASONCODE").toString();   
 				
 								
-				AonUtil.addErrorMessage(transactionId +	transactionType + paymentType + orderTime + amt + currencyCode + feeAmt + taxAmt + paymentStatus + pendingReason + reasonCode);
+				AonUtil.addInfoMessage(transactionId +	transactionType + paymentType + orderTime + amt + currencyCode + feeAmt + taxAmt + paymentStatus + pendingReason + reasonCode);
 			}
 			else
 			{  
@@ -524,139 +469,5 @@ public class PaypalController {
 			}
 		}		
 	}
-	
-	
-//	import com.paypal.sdk.services.NVPCallerServices;
-//	import com.paypal.sdk.util.*;
-//	import com.paypal.sdk.core.nvp.NVPEncoder;
-//
-//	import com.paypal.sdk.core.nvp.NVPDecoder;
-	
-	
-//	static final String testEnv = "sandbox";
-//	static final String devCentral = "developer";
-//	static final String DEFAULT_USER_NAME = "sdk-three_api1.sdk.com";
-//	static final String DEFAULT_PASSWORD = "QFZCWN5HZM8VBG7Q";
-//	static final String DEFAULT_SIGNATURE = "A.d9eRKfd1yVkRrtmMfCFLTqa6M9AyodL0SJkhYztxUi8W9pCXF6.4NI";
-//	
-//	public void a(){
-//		FacesContext context = FacesContext.getCurrentInstance();
-//		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-//
-//		
-//		
-//		//NVPCallerServiced object is taken from the session
-////		NVPCallerServices caller = (NVPCallerServices) session.getValue("caller");
-//	    
-//		StringBuffer url = new StringBuffer();
-//		url.append("http://");
-//		url.append(request.getServerName());
-//		url.append(":");
-//		url.append(request.getServerPort());
-//		url.append(request.getContextPath());
-//		
-//		String returnURL = url.toString() + "/nvp/GetExpressCheckoutDetails.jsp?=" + "&currencyCodeType=" + request.getParameter("currencyCodeType");
-//		String cancelURL = url.toString() + "/nvp/SetExpressCheckout.jsp?"+"paymentType=" + request.getParameter("paymentType") ;
-//		
-//		String strNVPRequest = "";
-//		StringBuffer sbErrorMessages= new StringBuffer("");
-//
-//		//NVPEncoder object is created and all the name value pairs are loaded into it.
-//		NVPEncoder encoder = new NVPEncoder();
-//
-////		encoder.add("METHOD","SetExpressCheckout");
-//		encoder.add("RETURNURL",returnURL + "?paymentAmount=" + request.getParameter("paymentAmount") + "&currencyCodeType=" + request.getParameter("currencyCodeType"));
-//		encoder.add("CANCELURL",cancelURL);
-//		
-//		//encoder.add("AMT",request.getParameter("paymentAmount"));
-//		encoder.add("PAYMENTACTION",request.getParameter("paymentType"));
-//		encoder.add("CURRENCYCODE",request.getParameter("currencyCodeType"));	
-//		
-//		
-//		encoder.add("NAME",request.getParameter("NAME"));
-//		encoder.add("SHIPTOSTREET",request.getParameter("SHIPTOSTREET"));
-//		encoder.add("SHIPTOCITY",request.getParameter("SHIPTOCITY"));
-//		encoder.add("SHIPTOSTATE",request.getParameter("SHIPTOSTATE"));
-//		encoder.add("SHIPTOCOUNTRYCODE",request.getParameter("SHIPTOCOUNTRYCODE"));
-//		encoder.add("SHIPTOZIP",request.getParameter("SHIPTOZIP"));
-//		encoder.add("L_NAME0",request.getParameter("L_NAME0"));
-//		encoder.add("L_NUMBER0","1000");
-//		encoder.add("L_DESC0","Size: 8.8-oz");
-//		encoder.add("L_AMT0",request.getParameter("L_AMT0"));
-//		encoder.add("L_QTY0",request.getParameter("L_QTY0"));
-//		encoder.add("L_NAME1",request.getParameter("L_NAME1"));
-//		encoder.add("L_NUMBER1","10001");
-//		encoder.add("L_DESC1","Size: Two 24-piece boxes");
-//		encoder.add("L_AMT1",request.getParameter("L_AMT1"));
-//		encoder.add("L_QTY1",request.getParameter("L_QTY1"));
-//		encoder.add("L_ITEMWEIGHTVALUE1","0.5");
-//		encoder.add("L_ITEMWEIGHTUNIT1","lbs");
-//		// add up all line amount, L_AMTns 
-//		float ft = Float.valueOf(request.getParameter("L_QTY0").trim()).floatValue()*Float.valueOf(request.getParameter("L_AMT0").trim()).floatValue()+Float.valueOf(request.getParameter("L_QTY1").trim()).floatValue()*Float.valueOf(request.getParameter("L_AMT1").trim()).floatValue();
-//		
-//		encoder.add("ITEMAMT",String.valueOf(ft));
-//		encoder.add("TAXAMT","2.59");
-//		//amount = itemamount+ shippingamt+shippingdisc+taxamt+insuranceamount;
-////		float amt = Util.round(ft + 5.00f+ 2.59f+1.00f,2);	
-//		float amt = Math.round(ft + 5.00f+ 2.59f+1.00f);	
-////		float maxamt = Util.round(amt+25.00f,2);
-//		float maxamt = Math.round(amt+25.00f);
-//		encoder.add("SHIPDISCAMT","-3.00");
-//		encoder.add("AMT",String.valueOf(amt));
-//		encoder.add("SHIPPINGAMT","8.00");
-//		encoder.add("MAXAMT",String.valueOf(maxamt));
-//		encoder.add("CALLBACK","https://www.ppcallback.com/callback.pl");
-//		encoder.add("INSURANCEOPTIONOFFERED","true");
-//		encoder.add("INSURANCEAMT","1.00");
-//		encoder.add("L_SHIPPINGOPTIONISDEFAULT0","false");
-//		encoder.add("L_SHIPPINGOPTIONNAME0","Ground");
-//		encoder.add("L_SHIPPINGOPTIONLABEL0","UPS Ground 7 Days");
-//		encoder.add("L_SHIPPINGOPTIONAMOUNT0","3.50");
-//		encoder.add("L_SHIPPINGOPTIONISDEFAULT1","true");
-//		encoder.add("L_SHIPPINGOPTIONNAME1","UPS Air");
-//		encoder.add("L_SHIPPINGOPTIONlABEL1","UPS Next Day Air");
-//		encoder.add("L_SHIPPINGOPTIONAMOUNT1","8.00");
-//		encoder.add("CALLBACKTIMEOUT","4");
-//		
-////		session.setAttribute("paymentType", request.getParameter("paymentType"));
-////		session.setAttribute("currencyCodeType", request.getParameter("currencyCodeType"));
-////		String testEnv = (String)session.getAttribute("environment");
-//		Paypalfunctions ppf = new Paypalfunctions();
-//		try {
-//			//encode method will encode the name and value and form NVP string for the request	
-//			strNVPRequest = encoder.encode(); 
-//
-//			//call method will send the request to the server and return the response NVPString
-////			String ppresponse =
-////				(String) caller.call( strNVPRequest);
-//			HashMap nvp = ppf.httpcall("SetExpressCheckout", strNVPRequest);
-//			String ppresponse = nvp.toString();
-//
-//			//NVPDecoder object is created
-//			NVPDecoder resultValues = new NVPDecoder();
-//			
-//			//decode method of NVPDecoder will parse the request and decode the name and value pair			
-//			resultValues.decode(ppresponse);
-//			
-//				//checks for Acknowledgement and redirects accordingly to display error messages		
-//			String strAck = resultValues.get("ACK"); 
-//			if(strAck !=null && !(strAck.equals("Success") || strAck.equals("SuccessWithWarning")))
-//			{
-////				session.setAttribute("response",resultValues);
-////				response.sendRedirect("APIError.jsp");
-//				return;
-//			}else {
-//				
-//				
-//				ppf.RedirectURL(null,resultValues.get("TOKEN"));
-////				response.sendRedirect("https://www."+testEnv+".paypal.com/cgi-bin/webscr?cmd=_express-checkout&token="+resultValues.get("TOKEN"));
-//						
-//			}
-//		} catch (Exception e) {
-////			session.setAttribute("exception", e);
-////			response.sendRedirect("Error.jsp");
-//			return;
-//		}
-//	}
 	
 }
