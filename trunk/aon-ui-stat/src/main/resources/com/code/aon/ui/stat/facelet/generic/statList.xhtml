@@ -56,9 +56,9 @@
 
 				<f:facet name="header">
 					<aon:div>
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="2" style="align:center" >
 							<aon:div>
-								<aon:outputText value="#{windowTitle} " />
+								<aon:outputText value="#{windowTitle}" />
 							</aon:div>
 							<ui:insert name="extendedHeader" />
 						</h:panelGrid>
@@ -144,7 +144,7 @@
 						<aon:outputText value="#{lastColumnName}" />
 					</f:facet>
 					<h:commandLink styleClass="aon-dataTable-link-noicon"
-						actionListener="#{stat.onCustomerStats}"
+						actionListener="#{lastColumnAction}"
 						action="#{customerFacelet}" value="#{lastColumnName}">
 						<f:param name="#{paramName}" value="#{to.key}" />
 						<!-- <f:param name="yearmonth" value="#{to.extra}" /> -->

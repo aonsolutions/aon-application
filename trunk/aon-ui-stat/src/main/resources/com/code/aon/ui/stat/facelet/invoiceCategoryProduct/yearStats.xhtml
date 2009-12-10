@@ -15,16 +15,23 @@
 				<ui:param name="statModel" value="#{stat.yearStatModel}" />
 				<ui:param name="categoryLabel" value="#{statBundle.stat_category}" />
 				<ui:param name="clickable" value="#{true}" />
-				<aon:methodParam name="backAction" value="category_stats_search"/>
 				<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}"/>
-				<aon:methodParam name="goAction" value="category_product_stats"/>
-				<aon:methodParam name="goMethod" value="#{stat.onCategorySelect}" type="actionListener" />
 				<ui:param name="paramName" value="category" />
-				<aon:methodParam name="showCustomerAction" value="#{stat.onCategoryCustomerStats}" type="actionListener" />
-				<ui:param name="showLastColumn" value="false" />
+				<ui:param name="showLastColumn" value="true" />
 				<ui:param name="reportKeyParam" value="yearStatsList" />
 				<ui:param name="reportGraphKeyParam" value="yearStatsGraph" />
-				<aon:methodParam name="backMethod" value="" type="actionListener" />
+				<aon:methodParam name="backAction" value="category_stats_search"/>	
+				<aon:methodParam name="backMethod" value="" type="actionListener" />			
+				<aon:methodParam name="goAction" value="category_product_stats"/>
+				<aon:methodParam name="goMethod" value="#{stat.onCategorySelect}" type="actionListener" />
+				<aon:methodParam name="lastColumnAction" value="#{stat.onCategoryRegistryStats}" type="actionListener" />
+				<aon:methodParam  name="customerFacelet" value="category_customer_list" />				
+				<c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
+				</c:if>		   
 			</ui:include>			
 	  </ui:define>
   </ui:composition>

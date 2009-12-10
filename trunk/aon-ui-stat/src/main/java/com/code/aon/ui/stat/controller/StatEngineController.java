@@ -6,14 +6,12 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -62,12 +60,24 @@ public class StatEngineController {
 	private List<Invoice> invoices;
 	private IPriceStrategy priceStrategy;
 	private String backAction;
+	private String invoiceBackAction;
 	private Integer invoiceType;
 	private InvoiceType iType;
 	private Integer daysYear;
 	private Integer dayMonth;
 	private StatParams paramsBackUp;
 	private Integer summaryMonth;
+	private Integer checkLevel;
+	
+	
+
+	public Integer getCheckLevel() {
+		return checkLevel;
+	}
+
+	public void setCheckLevel(Integer checkLevel) {
+		this.checkLevel = checkLevel;
+	}
 
 	public Integer getSummaryMonth() {
 		return summaryMonth;
@@ -123,6 +133,14 @@ public class StatEngineController {
 
 	public void setBackAction(String backAction) {
 		this.backAction = backAction;
+	}
+	
+	public String getInvoiceBackAction() {
+		return invoiceBackAction;
+	}
+
+	public void setInvoiceBackAction(String invoiceBackAction) {
+		this.invoiceBackAction = invoiceBackAction;
 	}
 
 	public IPriceStrategy getPriceStrategy() {
@@ -425,8 +443,7 @@ public class StatEngineController {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
 			} else {
-				setReportName(AonUtil
-						.getMessage(bundle, "stat_menu_acumulado2"));
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado2"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
 			}
 			yearStatModel = null;
@@ -440,8 +457,7 @@ public class StatEngineController {
 
 	public void onYearSelect(ActionEvent event) {
 		try {
-			ExternalContext ec = FacesContext.getCurrentInstance()
-					.getExternalContext();
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			Map<String, String> params = ec.getRequestParameterMap();
 			String year = params.get("year");
 			currentYear = Integer.parseInt(year);
@@ -462,7 +478,8 @@ public class StatEngineController {
 		init.setTime(params.getFromDate());
 		fin.setTime(params.getToDate());
 
-		if (init.get(Calendar.YEAR) == currentYear.intValue() && fin.get(Calendar.YEAR) == currentYear.intValue()) {
+		if (init.get(Calendar.YEAR) == currentYear.intValue()
+				&& fin.get(Calendar.YEAR) == currentYear.intValue()) {
 			params.setInvoiceType(invoiceType);
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
@@ -480,35 +497,32 @@ public class StatEngineController {
 			monthStatModel = null;
 		}
 
-		/*if (init.get(Calendar.YEAR) != currentYear.intValue() && fin.get(Calendar.YEAR) ==currentYear.intValue()) {
-			Calendar fecini = new GregorianCalendar(currentYear, 0, 1);
-			params.setFromDate(fecini.getTime());
-			params.setInvoiceType(invoiceType);
-			List<Stat> list = new LinkedList<Stat>();
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
-			list.addAll(se.getMonthsStats(params));
-			setMonthStats(list);
-			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
-			monthStatModel = null;
-		}
-
-		if (init.get(Calendar.YEAR) == currentYear.intValue()	&& fin.get(Calendar.YEAR) != currentYear.intValue()) {
-			Calendar fecfin = new GregorianCalendar(currentYear, 11, 31);
-			params.setToDate(fecfin.getTime());
-			List<Stat> list = new LinkedList<Stat>();
-			System.out.println(params.getFromDate());
-			System.out.println(params.getToDate());
-			list.addAll(se.getMonthsStats(params));
-			setMonthStats(list);
-			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
-			monthStatModel = null;
-		}*/
-		if (init.get(Calendar.YEAR) != currentYear.intValue() && fin.get(Calendar.YEAR) != currentYear.intValue()) {
+		/*
+		 * if (init.get(Calendar.YEAR) != currentYear.intValue() &&
+		 * fin.get(Calendar.YEAR) ==currentYear.intValue()) { Calendar fecini =
+		 * new GregorianCalendar(currentYear, 0, 1);
+		 * params.setFromDate(fecini.getTime());
+		 * params.setInvoiceType(invoiceType); List<Stat> list = new
+		 * LinkedList<Stat>(); System.out.println(params.getFromDate());
+		 * System.out.println(params.getToDate());
+		 * list.addAll(se.getMonthsStats(params)); setMonthStats(list);
+		 * calculateTotals(list); setReportName(AonUtil.getMessage(bundle,
+		 * "stat_menu_acumulado")); setItemTitle(AonUtil.getMessage(bundle,
+		 * "stat_month")); monthStatModel = null; }
+		 * 
+		 * if (init.get(Calendar.YEAR) == currentYear.intValue() &&
+		 * fin.get(Calendar.YEAR) != currentYear.intValue()) { Calendar fecfin =
+		 * new GregorianCalendar(currentYear, 11, 31);
+		 * params.setToDate(fecfin.getTime()); List<Stat> list = new
+		 * LinkedList<Stat>(); System.out.println(params.getFromDate());
+		 * System.out.println(params.getToDate());
+		 * list.addAll(se.getMonthsStats(params)); setMonthStats(list);
+		 * calculateTotals(list); setReportName(AonUtil.getMessage(bundle,
+		 * "stat_menu_acumulado")); setItemTitle(AonUtil.getMessage(bundle,
+		 * "stat_month")); monthStatModel = null; }
+		 */
+		if (init.get(Calendar.YEAR) != currentYear.intValue()
+				&& fin.get(Calendar.YEAR) != currentYear.intValue()) {
 			Calendar fec = new GregorianCalendar(currentYear, 0, 1);
 			Calendar fecfin = new GregorianCalendar(currentYear, 11, 31);
 			params.setFromDate(fec.getTime());
@@ -616,7 +630,7 @@ public class StatEngineController {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_suppliers"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_supplier"));
 			}
-
+			
 			customerStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -635,12 +649,12 @@ public class StatEngineController {
 			Integer customer = Integer.parseInt(cus);
 			Calendar fecini = null;
 			Calendar fecfin = null;
-			// StatParams parameters = new StatParams();
-			// refreshControllerDates(parameters);
+		
 			if (currentYear != null && currentMonth == null) {
 
 				fecini = new GregorianCalendar(currentYear, 0, 1);
 				fecfin = new GregorianCalendar(currentYear, 11, 31);
+				setInvoiceBackAction("customer_stat_list_year");
 
 			} else if (currentMonth != null && currentDay == null) {
 
@@ -649,6 +663,7 @@ public class StatEngineController {
 						31);
 				fecfin.set(Calendar.DAY_OF_MONTH, fecfin
 						.getActualMaximum(Calendar.DAY_OF_MONTH));
+				setInvoiceBackAction("customer_stat_list_month");
 
 			} else if (currentYear != null && currentMonth != null
 					&& currentDay != null) {
@@ -657,6 +672,7 @@ public class StatEngineController {
 						currentDay);
 				fecfin = new GregorianCalendar(currentYear, currentMonth - 1,
 						currentDay);
+				setInvoiceBackAction("customer_stat_list_day");
 
 			}
 
@@ -686,7 +702,75 @@ public class StatEngineController {
 			throw new AbortProcessingException(e);
 		}
 	}
+	
+	public void onRegistryInvoiceList(ActionEvent event) {
+		try {
+			invoices = new LinkedList<Invoice>();
+			ExternalContext ec = FacesContext.getCurrentInstance()
+					.getExternalContext();
+			Map<String, String> paramss = ec.getRequestParameterMap();
+			String cus = paramss.get("customer");
+			Integer customer = Integer.parseInt(cus);
+			
+			IManagerBean invoiceBean = BeanManager
+					.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceBean
+					.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), customer);
+			criteria.addBetweenExpression(invoiceBean
+					.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
+			criteria.addEqualExpression(invoiceBean
+					.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
 
+			List<ITransferObject> list;
+			list = invoiceBean.getList(criteria);
+			for (ITransferObject to : list) {
+				Invoice inv = (Invoice) to;
+				invoices.add(inv);
+			}
+			setInvoiceBackAction("abc_customer_stats");
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+	
+	public void onCategoryInvoiceList(ActionEvent event) {
+		try {
+			invoices = new LinkedList<Invoice>();
+			ExternalContext ec = FacesContext.getCurrentInstance()
+			.getExternalContext();
+			Map<String, String> paramss = ec.getRequestParameterMap();
+			String cus = paramss.get("customer");
+			Integer customer = Integer.parseInt(cus);
+			
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), customer);
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
+			if(checkLevel==0){
+				criteria.addEqualExpression("Invoice.lines.item.product.category.id",this.params.getCategory());
+				setBackAction("category_stats_year");
+				setInvoiceBackAction("category_customer_list");
+			}else{
+				criteria.addEqualExpression("Invoice.lines.item.product.id",this.params.getProduct());
+				setBackAction("category_product_stats");
+				setInvoiceBackAction("category_customer_list");
+			}			
+			List<ITransferObject> list;
+			list = invoiceBean.getList(criteria);
+			for (ITransferObject to : list) {
+				Invoice inv = (Invoice) to;
+				invoices.add(inv);
+			}
+			
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice) this.invoicesModel.getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
@@ -703,6 +787,7 @@ public class StatEngineController {
 			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
 			setItemTitle(AonUtil.getMessage(bundle, "stat_category"));
 			yearStatModel = null;
+			
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -718,6 +803,7 @@ public class StatEngineController {
 			String category = params.get("category");
 			setCategory(Integer.parseInt(category));
 			getCategoryProductStatistics();
+			
 
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -725,21 +811,72 @@ public class StatEngineController {
 		}
 	}
 
+	public void onCategoryRegistryStats(ActionEvent event) {
+		try {
+			ExternalContext ec = FacesContext.getCurrentInstance()
+					.getExternalContext();
+			Map<String, String> params = ec.getRequestParameterMap();
+			this.params.setCategory(Integer.parseInt(params.get("category")));
+			StatEngine se = new StatEngine();
+			List<Stat> list = new LinkedList<Stat>();
+			list.addAll(se.getCategoryCustomerStats(this.params));
+			setCustomerStats(list);
+			calculateTotals(list);
+			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			customerStatModel = null;
+			setBackAction("category_stats_year");
+			setCheckLevel(0);
+			invoicesModel=null;
+		}
+
+		catch (ManagerBeanException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+	}
+	
+	public void onProductRegistryStats(ActionEvent event) {
+		try {
+			ExternalContext ec = FacesContext.getCurrentInstance()
+					.getExternalContext();
+			Map<String, String> params = ec.getRequestParameterMap();
+			this.params.setProduct(Integer.parseInt(params.get("product")));
+			StatEngine se = new StatEngine();
+			List<Stat> list = new LinkedList<Stat>();
+			list.addAll(se.getProductRegistryStats(this.params));
+			setCustomerStats(list);
+			calculateTotals(list);
+			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			customerStatModel = null;
+			setBackAction("category_product_stats");
+			setCheckLevel(1);
+			invoicesModel=null;
+		}
+
+		catch (ManagerBeanException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+	}
+
 	public void onSummaryStats(ActionEvent event) {
 		try {
-
 			summaryMonth--;
 			Calendar c = new GregorianCalendar(1970, 0, 1);
 			c.setTime(new Date());
-
 			c.set(Calendar.DAY_OF_MONTH, 1);
 			c.set(Calendar.MONTH, summaryMonth);
 			c.set(Calendar.YEAR, currentYear - 1);
 			params.setFromDate(c.getTime());
 			c.set(Calendar.MONTH, summaryMonth);
 			c.set(Calendar.YEAR, currentYear);
-			c.set(Calendar.DAY_OF_MONTH, c
-					.getActualMaximum(Calendar.DAY_OF_MONTH));
+			c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 			params.setToDate(c.getTime());
 			params.setInvoiceType(invoiceType);
 			StatEngine se = new StatEngine();
@@ -793,6 +930,7 @@ public class StatEngineController {
 			setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
 			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
 			abcStatModel = null;
+			setCheckLevel(1);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -971,6 +1109,25 @@ public class StatEngineController {
 		getDayStatititics();
 	}
 
+	public void onProductBackAction(ActionEvent event)
+			throws ManagerBeanException {
+		try {
+			StatEngine se = new StatEngine();
+			List<Stat> list = new LinkedList<Stat>();
+			params.setInvoiceType(invoiceType);
+			list.addAll(se.getCategoryStats(params));
+			setYearStats(list);
+			calculateTotals(list);
+			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_category"));
+			yearStatModel = null;
+		} catch (ManagerBeanException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
 	public void onRegistryYearBackAction(ActionEvent event)
 			throws ManagerBeanException {
 		setParams(paramsBackUp);
@@ -1008,7 +1165,7 @@ public class StatEngineController {
 	 * AbortProcessingException(e); } }
 	 * 
 	 * 
-	 * // TODO falta por hacer public void onSegmentMonthSelect(ActionEvent
+	 *  public void onSegmentMonthSelect(ActionEvent
 	 * event) { try { ExternalContext ec = FacesContext.getCurrentInstance()
 	 * .getExternalContext(); Map<String, String> params =
 	 * ec.getRequestParameterMap(); String month = params.get("month"); String
@@ -1019,7 +1176,7 @@ public class StatEngineController {
 	 * AonUtil.addErrorMessage(e.getMessage()); throw new
 	 * AbortProcessingException(e); } }
 	 * 
-	 * // TODO falta por hacer public void onCategoryMonthSelect(ActionEvent
+	 * 
 	 * event) { try { ExternalContext ec = FacesContext.getCurrentInstance()
 	 * .getExternalContext(); Map<String, String> params =
 	 * ec.getRequestParameterMap(); String category = params.get("category");

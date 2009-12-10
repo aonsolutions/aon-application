@@ -15,8 +15,8 @@
 		<aon:methodParam name="goMethod" value="#{stat.onMonthSelect}"
 			type="actionListener" />
 		<aon:methodParam name="backMethod" value="#{stat.onRegistryYearBackAction}" type="actionListener" />
-		<aon:methodParam name="customerFacelet"
-			value="customer_stat_list_month" />
+		<aon:methodParam name="customerFacelet"	value="customer_stat_list_month" />
+		<aon:methodParam name="lastColumnAction" value="#{stat.onCustomerStats}" type="actionListener" />
 		<c:if test="#{stat.invoiceType==1}">
 			<ui:param name="lastColumnName"
 				value="#{statBundle.stat_show_clients}" />

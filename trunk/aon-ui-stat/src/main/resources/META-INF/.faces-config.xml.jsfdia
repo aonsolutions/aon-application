@@ -100,6 +100,12 @@
     PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/search.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#search.xhtml"
     TITLE="category_stats_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="category_customer_list::#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#customerList.xhtml"
+    NAME="output3"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/customerList.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#customerList.xhtml"
+    TITLE="category_customer_list" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules::3" SHAPE="32,1841,0,0" model-entity="JSFProcessGroup">
@@ -194,6 +200,12 @@
     PATH="/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#generic#invoiceList.xhtml"
     TITLE="invoice_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="customer_stat_list::#com#code#aon#ui#stat#facelet#generic#customerList.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/stat/facelet/generic/customerList.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#generic#customerList.xhtml"
+    TITLE="customer_stat_list" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM
@@ -304,4 +316,12 @@
   NAME="rules:#com#code#aon#ui#stat#facelet#invoiceSummary#search.xhtml"
   PATH="/com/code/aon/ui/stat/facelet/invoiceSummary/search.xhtml"
   SHAPE="256,1249,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#generic#customerList.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/generic/customerList.xhtml"
+  SHAPE="256,4177,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#customerList.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/customerList.xhtml"
+  SHAPE="288,2865,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

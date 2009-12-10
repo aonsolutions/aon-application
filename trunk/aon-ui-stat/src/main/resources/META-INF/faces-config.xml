@@ -119,7 +119,15 @@
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/search.xhtml</to-view-id>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>category_customer_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/customerList.xhtml</to-view-id>
+		</navigation-case>
+		
 
+	
 	</navigation-rule>
 
 	
@@ -219,12 +227,16 @@
 	</navigation-rule>
 	
 		<!-- *************Invoice Stats***************** -->
-	<navigation-rule>
-	
+	<navigation-rule>	
 		<navigation-case>
 			<from-outcome>invoice_list</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_stat_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/generic/customerList.xhtml</to-view-id>
 		</navigation-case>
 		
 	</navigation-rule>
