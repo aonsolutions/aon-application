@@ -25,7 +25,15 @@
 				<ui:param name="reportKeyParam" value="abcStatsList" />
 				<ui:param name="reportGraphKeyParam" value="productStatsGraph" />
 				<aon:methodParam name="backMethod" value="#{stat.onCategoryAbcStats}" type="actionListener" />
-				
+				<ui:param name="showLastColumn" value="true" />
+			    <aon:methodParam name="lastColumnAction" value="#{stat.onProductRegistryStats}" type="actionListener" />
+				<aon:methodParam  name="customerFacelet" value="customer_stat_list" />				
+				<c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
+				</c:if>		   
 			</ui:include>		
        	
 		

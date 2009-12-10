@@ -15,6 +15,7 @@
 		    <aon:methodParam name="goAction" value="sales_stats_day"/>
 		    <aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
 			<aon:methodParam  name="customerFacelet" value="customer_stat_list_day" />
+			<aon:methodParam name="lastColumnAction" value="#{stat.onCustomerStats}" type="actionListener" />
 				<c:if  test="#{stat.invoiceType==1}">
 				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />

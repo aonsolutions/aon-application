@@ -21,6 +21,15 @@
 				<aon:methodParam name="backMethod" value="" type="actionListener" />
 				<aon:methodParam name="goAction" value="product_stats"/>
 				<aon:methodParam name="goMethod" value="#{stat.onCategorySelect}" type="actionListener" />
+				<ui:param name="showLastColumn" value="false" />
+			    <aon:methodParam name="lastColumnAction" value="#{stat.onCategoryRegistryStats}" type="actionListener" />
+				<aon:methodParam  name="customerFacelet" value="customer_stat_list" />				
+				<c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
+				</c:if>		   
 				<ui:param name="paramName" value="category" />
 				<ui:param name="reportKeyParam" value="abcStatsList" />
 				<ui:param name="reportGraphKeyParam" value="productStatsGraph" />

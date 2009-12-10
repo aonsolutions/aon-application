@@ -30,7 +30,7 @@ public class StatEngine {
 			stmt.append(" SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
-		
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -46,7 +46,7 @@ public class StatEngine {
 			ps = HibernateUtil.getSQLConnection().prepareStatement(
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
-			
+
 			if (params.getFromDate() != null) {
 				ps
 						.setDate(1, new java.sql.Date(params.getFromDate()
@@ -91,7 +91,7 @@ public class StatEngine {
 			}
 		}
 	}
-	
+
 	public Collection<Stat> getMonthsStats(StatParams params)
 			throws ManagerBeanException {
 		List<Stat> stats = new LinkedList<Stat>();
@@ -99,7 +99,8 @@ public class StatEngine {
 		for (int i = 0; i < 12; i++) {
 			stats.add(i, new Stat());
 			stats.get(i).setKey(i);
-			stats.get(i).setName(Month.getMonthByValue(i).getName(params.getLocale()));
+			stats.get(i).setName(
+					Month.getMonthByValue(i).getName(params.getLocale()));
 		}
 
 		PreparedStatement ps = null;
@@ -111,7 +112,7 @@ public class StatEngine {
 			stmt.append(" SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -142,7 +143,6 @@ public class StatEngine {
 
 			while (rs.next()) {
 
-			
 				Stat stat = stats.get((Month.getMonthByValue(rs.getInt(1) - 1))
 						.getValue());
 				stat.setKey(rs.getInt(1));
@@ -176,7 +176,7 @@ public class StatEngine {
 			}
 		}
 	}
-	
+
 	public Collection<Stat> getDaysStats(StatParams params)
 			throws ManagerBeanException {
 
@@ -190,7 +190,7 @@ public class StatEngine {
 					.append("SELECT i.issue_date DAY,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -351,7 +351,8 @@ public class StatEngine {
 			}
 
 			stmt.append(" GROUP BY MONTH(i.issue_date),cs.id,cs.description");
-			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date),cs.description, cs.id");
+			stmt
+					.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date),cs.description, cs.id");
 
 			ps = HibernateUtil.getSQLConnection().prepareStatement(
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
@@ -420,7 +421,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -494,7 +495,6 @@ public class StatEngine {
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
-			
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -508,7 +508,7 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
-			
+
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
 
@@ -516,7 +516,8 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps.setDate(1, new java.sql.Date(params.getFromDate()
+				ps
+						.setDate(1, new java.sql.Date(params.getFromDate()
 								.getTime()));
 			}
 			if (params.getToDate() != null) {
@@ -657,11 +658,12 @@ public class StatEngine {
 		ResultSet rs = null;
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
+			stmt
+					.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base), YEAR(i.issue_date)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -678,7 +680,8 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps.setDate(1, new java.sql.Date(params.getFromDate()
+				ps
+						.setDate(1, new java.sql.Date(params.getFromDate()
 								.getTime()));
 			}
 			if (params.getToDate() != null) {
@@ -722,7 +725,7 @@ public class StatEngine {
 			}
 		}
 	}
-	
+
 	public Collection<Stat> getAbcCustomerStats(StatParams params)
 			throws ManagerBeanException {
 
@@ -732,11 +735,12 @@ public class StatEngine {
 
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),SUM(id.taxable_base),YEAR(i.issue_date) YEAR");
+			stmt
+					.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),SUM(id.taxable_base),YEAR(i.issue_date) YEAR");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -756,7 +760,9 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
+				ps
+						.setDate(1, new java.sql.Date(params.getFromDate()
+								.getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -775,7 +781,7 @@ public class StatEngine {
 						params.getLocale())
 						+ " " + rs.getInt(4));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);				
+				double amount = rs.getInt(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -814,7 +820,6 @@ public class StatEngine {
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
-			
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -882,7 +887,8 @@ public class StatEngine {
 
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
+			stmt
+					.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
 			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
@@ -960,14 +966,15 @@ public class StatEngine {
 
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
+			stmt
+					.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
 			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -1031,6 +1038,84 @@ public class StatEngine {
 		}
 	}
 
+	public Collection<Stat> getProductRegistryStats(StatParams params)
+			throws ManagerBeanException {
+
+		List<Stat> stats = new LinkedList<Stat>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			StringWriter stmt = new StringWriter();
+			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
+			stmt.append("FROM invoice_detail id  ");
+			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
+			stmt.append(" INNER JOIN item ON (item.id = id.item)");
+			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
+			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+
+			if (params.getFromDate() != null) {
+				stmt.append(" AND i.issue_date >= ?");
+			}
+			if (params.getToDate() != null) {
+				stmt.append(" AND i.issue_date <= ?");
+			}
+			if (params.getProduct() != null) {
+				stmt.append(" AND p.id = ?");
+			}
+			if (params.getInvoiceType() != null) {
+				stmt.append(" AND i.type = ?");
+			}
+			stmt.append(" GROUP BY c.id,c.name");
+			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
+
+			ps = HibernateUtil.getSQLConnection().prepareStatement(
+					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+			if (params.getFromDate() != null) {
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
+			}
+			if (params.getToDate() != null) {
+				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
+			}
+			if (params.getProduct() != null) {
+				ps.setInt(3, params.getProduct());
+			}
+			if (params.getInvoiceType() != null) {
+				ps.setInt(4, new Integer(params.getInvoiceType()));
+			}
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				Stat stat = new Stat();
+				stat.setKey(rs.getInt(1));
+				stat.setName(rs.getString(2));
+				int count = rs.getInt(3);
+				double amount = rs.getInt(4);
+				stat.setNumInvoice(count);
+				stat.setAmount(amount);
+				stat.setAverageAmount(CommonUtil.round(amount / count));
+				stats.add(stat);
+			}
+			return stats;
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
 	public Collection<Stat> getABCStatsByCustomer(StatParams params)
 			throws ManagerBeanException {
 		PreparedStatement ps = null;
@@ -1042,7 +1127,7 @@ public class StatEngine {
 			stmt.append(" FROM invoice_detail id ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -1116,7 +1201,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -1127,7 +1212,7 @@ public class StatEngine {
 			if (params.getCategory() != null) {
 				stmt.append(" AND p.category = ?");
 			}
-			
+
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
@@ -1198,7 +1283,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
-			
+
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -1273,7 +1358,6 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
-			
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
