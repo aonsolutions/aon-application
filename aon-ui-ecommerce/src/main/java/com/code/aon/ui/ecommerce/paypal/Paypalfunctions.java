@@ -8,18 +8,21 @@ package com.code.aon.ui.ecommerce.paypal;
  * To change this template use File | Settings | File Templates.
  */
 
-import java.net.URLDecoder.*;
-import java.util.*;
-import java.util.StringTokenizer.*;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.hssf.record.formula.functions.Critbinom;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
@@ -28,7 +31,6 @@ import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.controller.ConfigController;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class Paypalfunctions {
