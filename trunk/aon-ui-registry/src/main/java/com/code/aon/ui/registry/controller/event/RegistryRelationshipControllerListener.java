@@ -15,7 +15,7 @@ public class RegistryRelationshipControllerListener extends ControllerAdapter {
 		refreshRegistry(event);
 	}
 	
-	private void refreshRegistry(ControllerEvent event) throws ControllerListenerException {
+	private void refreshRegistry(ControllerEvent event) {
 		IController controller = ((LinesController)getController()).getMasterController();
 		IRegistry to = (IRegistry)controller.getTo();
 		((RegistryRelationship)event.getController().getTo()).setRegistry(to.getRegistry());
