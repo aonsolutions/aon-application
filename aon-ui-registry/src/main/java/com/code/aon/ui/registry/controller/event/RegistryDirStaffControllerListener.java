@@ -11,9 +11,19 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class RegistryDirStaffControllerListener extends ControllerAdapter {
 
 	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		RegistryDirStaff rdirStaff = (RegistryDirStaff) event.getController().getTo();
+		initializeData(rdirStaff);
+	}
+
+	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		RegistryDirStaff rdirStaff = (RegistryDirStaff) event.getController().getTo();
+		initializeData(rdirStaff);
+	}
+
+	private void initializeData(RegistryDirStaff rdirStaff) throws ControllerListenerException {
 		try {
-			RegistryDirStaff rdirStaff = (RegistryDirStaff) event.getController().getTo();
 			IManagerBean rdirStaffBean = BeanManager.getManagerBean(RegistryDirStaff.class);
 			if (!rdirStaff.isShareHolder()) {
 				rdirStaff.setPercentShare(0.0);

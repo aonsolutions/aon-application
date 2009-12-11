@@ -203,6 +203,17 @@
 								</aon:div>
 							</aon:panelTab>
 						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.customer.showDirStaff}">
+							<aon:panelTab id="dirStaff"
+								label="#{registryBundle.registry_dir_staff}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
+										<ui:param name="controller" value="#{customerDirStaff}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
