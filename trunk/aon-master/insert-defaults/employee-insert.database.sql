@@ -1,6 +1,5 @@
-SET FOREIGN_KEY_CHECKS=0;
 
-USE `aon_master`;
+SET FOREIGN_KEY_CHECKS=0;
 
 #
 # Data for the `expenditures_items` table  (LIMIT 0,500)
