@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">	
+
+
+<style>
+.bodyPanel {
+	width:780px;
+    height:500px;
+    overflow:auto;
+}
+</style>
+
+		<a href="javascript:Richfaces.showModalPanel('#{modalPanelName}',{width:820, top:100})">
+			<aon:graphicImage url="/images/cms/select.png" alt="#{appBundle.image_modal_open}"/>
+		</a>
+        <rich:modalPanel id="#{modalPanelName}"  
+            height="560" width="810" zindex="2000">
+            <f:facet name="header">
+                <h:outputText value="#{appBundle.image_modal_title}" />
+            </f:facet>
+            <f:facet name="controls">
+                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('#{modalPanelName}')" />
+            </f:facet>
+			<rich:panel bodyClass="bodyPanel">
+				<h:panelGrid id="#{modalPanelName}_treeGrid" columns="2" columnClasses="aon-width-200 aon-vertical-align-top aon-border, aon-width-auto aon-vertical-align-top">
+				    <rich:tree style="width:300px"
+				    	switchType="server" 
+				    	stateAdvisor="#{treeStateAdvisor}">
+				        <rich:recursiveTreeNodesAdaptor roots="#{roots}" 
+				        	var="item" 
+				        	nodes="#{item.nodes}">
+							<rich:treeNode>
+				                <aon:commandLink
+				                	action="#{item.onSelectFolder}" 
+				                	value="#{item}"
+				                	immediate="#{true}"
+				                	reRender="#{modalPanelName}_treeGrid" />
+							</rich:treeNode>
+				        </rich:recursiveTreeNodesAdaptor>
+				    </rich:tree>
+		            <aon:div styleClass="aon-padding">
+           				<aon:div styleClass="aon-header">
+							<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
+								<aon:div>
+									<aon:outputLabel value="#{galleryBean.currentRelativePath}" styleClass="aon-applicationName"/>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:div>
+						<rich:dataGrid var="item" value="#{gallery.model}" columns="3">
+							<aon:div style="with:125px;text-align:center">
+				                <aon:commandLink rendered="#{thumbnail}"
+				                	immediate="#{true}" reRender="#{reRender}"
+				                    actionListener="#{listenerBean.onSelectThumbnail}">
+					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-border aon-padding"/>
+					            		<aon:div style="width:112px;overflow:hidden;">
+					            			<aon:outputText value="#{item.name}"/>
+					            		</aon:div>
+				        		</aon:commandLink>
+				                <aon:commandLink rendered="#{image}"
+				                	immediate="#{true}" reRender="#{reRender}"
+				                    actionListener="#{listenerBean.onSelectImage}">
+					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-border aon-padding"/>
+					            		<aon:div style="width:112px;overflow:hidden;">
+					            			<aon:outputText value="#{item.name}"/>
+					            		</aon:div>
+				        		</aon:commandLink>
+							</aon:div>
+						</rich:dataGrid>
+					</aon:div>
+				</h:panelGrid>
+			</rich:panel>
+        </rich:modalPanel>													
+
+</ui:composition>

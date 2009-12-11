@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:div styleClass="aon-scroll-area">
+		<aon:panelGrid id="itemDetail" columns="2"
+			columnClasses="detailImageColumn, detailInfoColumn">
+			<aon:div id="item-detail-image" styleClass="item-detail-image">
+				<h:graphicImage style="width:70px; height: 70px;"
+					rendered="#{!shopItem.item.thumbnailPresent}"
+					value="/css/images/nophoto.gif" />
+				<a4j:mediaOutput element="img" cacheable="false"
+					rendered="#{shopItem.item.thumbnailPresent}"
+					value="#{shopItem.item.id}" style="width:70px; height: 70px;"
+					createContent="#{shopItem.paintThumbnail}" />
+			</aon:div>
+			<aon:panelGrid columns="2">
+				<aon:outputLabel value="#{bundle.aon_name}" />
+				<aon:outputText value="#{shopItem.item.product.name}" />
+
+				<aon:outputLabel value="#{bundle.aon_id}" />
+				<aon:outputText value="#{shopItem.item.product.code}" />
+
+				<aon:outputLabel value="#{productBundle.product_brand}" />
+				<aon:outputText value="#{shopItem.item.product.brand.name}" />
+
+				<aon:outputLabel value="#{productBundle.product_category}" />
+				<aon:outputText value="#{shopItem.item.product.category.name}" />
+
+				<aon:outputLabel value="#{bundle.aon_price}" />
+<!-- 
+				<aon:outputText value="#{shopItem.item.price}">
+					<f:convertNumber pattern="#,##0.00"/>
+				</aon:outputText>
+ -->
+				<aon:div>
+					<c:if test="#{ecConfig.taxIncluded}">
+						<aon:outputText value="#{shopItem.item.total}"
+							style="font-size: 1.4em;">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</c:if>
+					<c:if test="#{!ecConfig.taxIncluded}">
+						<aon:outputText value="#{shopItem.item.price}"
+							style="font-size: 1.4em;">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</c:if>
+					<aon:outputText value="&#8364;&#160;" style="font-size: 1.4em;" />
+
+					<c:if test="#{!ecConfig.taxIncluded}">
+						<aon:outputText
+							value="#{ecommerceBundle.aon_ecommerce_vat_not_included}" />
+					</c:if>
+					<c:if test="#{ecConfig.taxIncluded}">
+						<aon:outputText
+							value="#{ecommerceBundle.aon_ecommerce_vat_included}" />
+					</c:if>
+
+					<aon:panelGroup rendered="#{!shopItem.item.samePrice}"
+						style="margin-left:20px;">
+						<c:if test="#{ecConfig.showOriginalPrice}">
+							<c:if test="#{ecConfig.showPriceCrossOut}">
+								<c:if test="#{ecConfig.taxIncluded}">
+									<aon:outputText value="#{shopItem.item.originalTotalPrice}"
+										style="text-decoration: line-through;">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</c:if>
+								<c:if test="#{!ecConfig.taxIncluded}">
+									<aon:outputText value="#{shopItem.item.originalPrice}"
+										style="text-decoration: line-through;">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</c:if>
+								<aon:outputText value="&#8364;" />
+							</c:if>
+
+							<c:if test="#{ecConfig.showDiscount}">
+								<c:if test="#{ecConfig.taxIncluded}">
+									<aon:outputText value="#{shopItem.item.totalDiscount}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</c:if>
+								<c:if test="#{!ecConfig.taxIncluded}">
+									<aon:outputText value="#{shopItem.item.discount}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</c:if>
+								<aon:outputText value="&#8364;" />
+							</c:if>
+
+							<c:if test="#{ecConfig.showDiscountPercent}">
+								<c:if test="#{ecConfig.taxIncluded}">
+									<aon:outputText value="#{shopItem.item.totalDiscountPercent}">
+										<f:convertNumber pattern="#,##0" />
+									</aon:outputText>
+								</c:if>
+								<c:if test="#{!ecConfig.taxIncluded}">
+									<aon:outputText value="#{shopItem.item.discountPercent}">
+										<f:convertNumber pattern="#,##0" />
+									</aon:outputText>
+								</c:if>
+								<aon:outputText value="% Dto." />
+							</c:if>
+
+						</c:if>
+					</aon:panelGroup>
+				</aon:div>
+
+				<aon:outputLabel value="#{bundle.aon_description}" />
+				<aon:outputText value="#{shopItem.item.description}" />
+			</aon:panelGrid>
+		</aon:panelGrid>
+
+<!-- 
+-->
+		<c:if test="#{shopItem.imageModel.rowCount>0}">
+			<aon:div styleClass="itemDetailGallery">
+				<aon:div styleClass="itemDetailGallery-header">
+					<aon:outputText
+						value="#{ecommerceBundle.aon_ecommerce_image_galery}"></aon:outputText>
+				</aon:div>
+				<rich:dataGrid id="imageAttachmentGrid"
+					value="#{shopItem.imageModel}" var="to" columns="3" elements="9"
+					style="width:600px">
+					<aon:outputLink value="#" id="image-attachment"
+						styleClass="aon-gallery-image">
+						<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
+							style="width:100px" createContent="#{shopItem.paintImage}">
+						</a4j:mediaOutput>
+						<rich:componentControl for="image-attachment-process"
+							attachTo="image-attachment" operation="show" event="onclick" />
+					</aon:outputLink>
+				</rich:dataGrid>
+			</aon:div>
+		</c:if>
+
+		<c:if test="#{shopItem.documentModel.rowCount>0}">
+			<aon:div styleClass="itemDetailDocument">
+				<aon:div styleClass="itemDetailGallery-header">
+					<aon:outputText
+						value="#{ecommerceBundle.aon_ecommerce_document_list}"></aon:outputText>
+				</aon:div>
+				<aon:dataTable id="documentAttachmentGrid"
+					value="#{shopItem.documentModel}" rows="20" var="to"
+					style="width:600px" 
+					columnClasses="document-attach-icon, document-attach-description">
+					<aon:column>
+						<h:graphicImage value="/css/icons/#{to.mimeType.extension}.png" />
+					</aon:column>
+					<aon:column>
+						<aon:div id="attachFile">
+							<h:commandLink id="download" target="_blank"
+								onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();"
+								actionListener="#{shopItem.downloadAttachment}"
+								style="line-height:16px;margin-right:0;color:#000;"
+								title="#{bundle.aon_fileupload_download}">
+								<f:param name="index" value="#{to.id}" />
+								<aon:outputText value="#{to.description}" />
+							</h:commandLink>
+						</aon:div>
+					</aon:column>
+				</aon:dataTable>
+			</aon:div>
+		</c:if>
+	</aon:div>
+
+	<rich:modalPanel id="image-attachment-process" height="490" width="570"
+		zindex="2000" style="top: 0px; left:0px;">
+		<rich:effect event="onshow" type="Highlight" params="duration:0.8" />
+		<f:facet name="header">
+			<aon:div styleClass="aon-popupWindow-title">
+				<aon:outputText value="POLITICA DE PRIVACIDAD" />
+			</aon:div>
+		</f:facet>
+		<aon:div styleClass="aon-popupWindow-content">
+			<aon:div styleClass="aon-popupWindow-content-internal">
+				<h:graphicImage id="image-attachment-hidelink"
+					value="/css/images/nophoto.gif">
+					<rich:componentControl for="image-attachment-process"
+						attachTo="image-attachment-hidelink" operation="hide"
+						event="onclick" />
+				</h:graphicImage>
+
+				<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
+					createContent="#{shopItem.paintImage}">
+					<rich:componentControl for="image-attachment-process"
+						attachTo="image-attachment-hidelink" operation="hide"
+						event="onclick" />
+				</a4j:mediaOutput>
+			</aon:div>
+		</aon:div>
+	</rich:modalPanel>
+</ui:composition>

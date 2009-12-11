@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="campaignList">
+
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarID" value="toolbar" />
+				<ui:param name="toolbarTitle"
+					value="#{campaignBundle.aon_process_monitor}" />
+				<ui:param name="controller" value="#{campaign}" />
+			</ui:decorate>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+
+				<ui:param name="controller" value="#{campaign}" />
+
+				<ui:define name="searchContent">
+
+					<aon:outputLabel for="Campaign_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Campaign_description" size="60"
+						valueChangeListener="#{campaign.addExpression}" />
+
+					<aon:outputLabel for="Campaign_process_id"
+						value="#{campaignBundle.process_process}" />
+					<aon:selectOneMenu id="Campaign_process_id"
+						valueChangeListener="#{controller.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{campaignCollections.processes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Campaign_activityType_id"
+						value="#{projectBundle.activity_activity_type}" />
+					<aon:selectOneMenu id="Campaign_activityType_id"
+						valueChangeListener="#{controller.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{projectCollections.activityTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Campaign_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Campaign_status"
+						valueChangeListener="#{campaign.addExpression}"
+						converter="aon.EnumConverter">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{campaignCollections.campaignStatus}" />
+					</aon:selectOneMenu>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>
