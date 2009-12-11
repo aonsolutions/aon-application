@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.product.Item" sqlName="item">
-		<alias names="id,barcode,alternativeItem_id,internet,product_id,detail,price,status,expenses_percent,expenses_fixed,profit_percent,purchase_price,product_name,product_code,product_brand_id,product_brand_name,product_category_id,product_category_name,product_inventoriable,product_composition" />
-		<sql names="id,barcode,alternativeItem_id,internet,product.id,detail,price,status,expenses_percent,expenses_fixed,profit_percent,purchase_price,product.name,product.code,product.brand.id,product.brand.name,product.category.id,product.category.name,product.inventoriable,product.composition" />
-		<hibernate names="id,barcode,alternativeItem.id,internet,product.id,detail,price,status,expensesPercent,expensesFixed,profitPercent,purchasePrice,product.name,product.code,product.brand.id,product.brand.name,product.category.id,product.category.name,product.inventoriable,product.composition" />
+		<alias names="id,barcode,internet,product_id,detail,price,status,expenses_percent,expenses_fixed,profit_percent,purchase_price,product_name,product_code,product_brand_id,product_brand_name,product_category_id,product_category_name,product_inventoriable,product_composition" />
+		<sql names="id,barcode,internet,product.id,detail,price,status,expenses_percent,expenses_fixed,profit_percent,purchase_price,product.name,product.code,product.brand.id,product.brand.name,product.category.id,product.category.name,product.inventoriable,product.composition" />
+		<hibernate names="id,barcode,internet,product.id,detail,price,status,expensesPercent,expensesFixed,profitPercent,purchasePrice,product.name,product.code,product.brand.id,product.brand.name,product.category.id,product.category.name,product.inventoriable,product.composition" />
 	</bean>
 
 	<bean class="com.code.aon.product.CatalogueCategory" sqlName="catalogue_category">
