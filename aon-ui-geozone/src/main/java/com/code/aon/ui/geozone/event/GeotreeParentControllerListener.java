@@ -4,16 +4,16 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.geozone.controller.GeoTreeParentController;
 
 public class GeotreeParentControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		IController geotreeParentController = event.getController();
+		GeoTreeParentController geotreeParentController = (GeoTreeParentController)event.getController();
 		try {
 			Criteria criteria = geotreeParentController.getCriteria();
 			criteria.addNullExpression(geotreeParentController.getManagerBean().getFieldName(IGeoZoneAlias.GEO_TREE_PARENT));

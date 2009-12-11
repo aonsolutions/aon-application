@@ -5,13 +5,13 @@
 
 	<parent>
 		<groupId>com.code.aon</groupId>
-		<artifactId>aon.parent</artifactId>
-		<version>1.0.1</version>
+		<artifactId>aon.ui.parent</artifactId>
+		<version>1.0.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.parent</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.3</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos WEB de AON</description>
 	<name>AON WEB ENTITY PARENT</name>
@@ -26,7 +26,6 @@
 					<archive>
 						<manifestEntries>
 							<manifest_entry>true</manifest_entry>
-							<dbVersion>${project.dbVersion}</dbVersion>
 						</manifestEntries>
 					</archive>
 				</configuration>

@@ -29,7 +29,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.4.0</value>
+			<value>/aonResource/4.1.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -60,6 +60,14 @@
 			<from-outcome>logout</from-outcome>
 			<to-view-id>/home.jsf</to-view-id>
 			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/home.jsf</to-view-id> 
+			<redirect/>
 		</navigation-case>
 	</navigation-rule>
 
