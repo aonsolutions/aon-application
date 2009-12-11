@@ -1,0 +1,124 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{targetSeller}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+			
+			<ui:define name="columns">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_commercial_tracking_seller}" />
+					</f:facet>
+					<aon:outputText value="#{to.seller.registry.fullName}"
+						rendered="#{to!=controller.to}" />
+					<aon:div styleClass="aon-lookup" rendered="#{to==controller.to}">
+						<aon:lookupInputText id="TargetSeller_seller_id"
+							lookup="#{sellerLookup}" required="true"
+							reRender="TargetSeller_seller_detail"
+							value="#{targetSeller.to.seller.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{appBundle.aon_lookup_item}"
+							selectReRender="TargetSeller_seller_id,TargetSeller_seller_detail"
+							lookup="#{sellerLookup}" minHeight="440"
+							property="#{targetSeller.to.seller}">
+						</aon:lookupButton>
+						<aon:inputText id="TargetSeller_seller_detail"
+							value="#{(to.seller.registry.name!=null)?(to.seller.registry.fullName):('')}"
+							size="60" disabled="true" />
+					</aon:div>
+					<f:facet name="footer">
+						<aon:div styleClass="aon-lookup" rendered="#{controller.new}">
+							<aon:lookupInputText id="TargetSeller_seller_id-New"
+								lookup="#{sellerLookup}" required="true"
+								reRender="TargetSeller_seller_detail-New"
+								value="#{targetSeller.to.seller.id}" size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton
+								windowTitle="#{appBundle.aon_lookup_item}"
+								selectReRender="TargetSeller_seller_id-New,TargetSeller_seller_detail-New"
+								lookup="#{sellerLookup}" minHeight="440"
+								property="#{targetSeller.to.seller}">
+							</aon:lookupButton>
+							<aon:inputText id="TargetSeller_seller_detail-New"
+								value="#{(controller.to.seller.registry.name!=null)?(controller.to.seller.registry.fullName):('')}"
+								size="60" disabled="true" />
+						</aon:div>
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_target_seller_start_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.startDate}"	rendered="#{to!=controller.to}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate rendered="#{to==controller.to}"
+						value="#{controller.to.startDate}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					<f:facet name="footer">
+						<aon:selectInputDate rendered="#{controller.new}"
+							value="#{controller.to.startDate}" required="true"
+							timeZone="#{timeZoneController.timeZone}"
+							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_target_seller_end_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.endDate}" rendered="#{to!=controller.to}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate rendered="#{to==controller.to}"
+						value="#{controller.to.endDate}" timeZone="#{timeZoneController.timeZone}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					<f:facet name="footer">
+						<aon:selectInputDate rendered="#{controller.new}"
+							value="#{controller.to.endDate}" timeZone="#{timeZoneController.timeZone}"
+							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+					</f:facet>
+				</aon:column>
+						
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_status}" />
+					</f:facet>
+					<aon:outputText value="#{to.status}"
+						rendered="#{to!=controller.to}" />
+					<aon:selectOneMenu rendered="#{to==controller.to}"
+						required="true" value="#{controller.to.status}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{commecialCollections.targetSellerStatuses}" />
+					</aon:selectOneMenu>								
+					<f:facet name="footer">
+						<aon:selectOneMenu rendered="#{controller.new}"
+							required="true" value="#{controller.to.status}">
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{commecialCollections.targetSellerStatuses}" />
+						</aon:selectOneMenu>								
+					</f:facet>
+				</aon:column>
+				
+			</ui:define>
+		</ui:decorate>
+		
+	</aon:div>
+</ui:composition>

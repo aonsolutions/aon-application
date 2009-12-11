@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+									
+	<aon:outputLabel for="Target_id"
+		value="#{registryBundle.aon_id}" />
+	<aon:inputText id="Target_id" size="60"
+		valueChangeListener="#{controller.addDirectExpression}" />
+
+	<aon:outputLabel for="Target_registry_document"
+		value="#{registryBundle.aon_nif}" />
+	<aon:inputText id="Target_registry_document" size="60"
+		valueChangeListener="#{controller.addDirectExpression}" onblur="toUpperCase(this);" />
+
+	<aon:outputLabel for="Target_registry_name"
+		value="#{registryBundle.aon_name}" />
+	<aon:inputText id="Target_registry_name" size="60"
+		valueChangeListener="#{controller.addDirectExpression}" />
+
+	<aon:outputLabel for="Target_registry_surname"
+		value="#{registryBundle.aon_surname}" />
+	<aon:inputText id="Target_registry_surname" size="60"
+		valueChangeListener="#{controller.addDirectExpression}" />
+
+	<aon:outputLabel for="Target_registry_alias"
+		value="#{registryBundle.aon_alias}" />
+	<aon:inputText id="Target_registry_alias" size="60"
+		valueChangeListener="#{controller.addDirectExpression}" onblur="toUpperCase(this);" />
+		
+	<aon:outputLabel for="Target_advertising"
+		value="#{appBundle.aon_target_advertising}" />
+	<aon:selectOneMenu id="Target_advertising"
+		converter="aonAdvertisingConverter"
+		valueChangeListener="#{target.addDirectExpression}">
+		<f:selectItems value="#{commecialCollections.advertisings}" />
+		<f:selectItem value="#{null}" itemLabel="    " />		
+	</aon:selectOneMenu>	
+	
+</ui:composition>
