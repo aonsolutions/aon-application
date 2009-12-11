@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="noteList">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_note}" />
+				<ui:param name="controller" value="#{note}" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:dataTable id="noteDataList" value="#{note.model}"
+					var="to" rows="20" rendered="#{note.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn"
+					columnsWidth="150,auto">
+
+					<aon:rowSelector action="note_form" actionListener="#{note.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.date}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.note_subject}" />
+						</f:facet>
+						<aon:outputText value="#{to.subject}" />
+					</aon:column>
+
+				</aon:dataTable>
+
+				<aon:dataScroller for="noteDataList" rowCount="#{note.model.rowCount}" showNote="true" />
+
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
