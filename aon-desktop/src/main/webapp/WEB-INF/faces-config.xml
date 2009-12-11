@@ -35,7 +35,7 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.5</value>
+			<value>/aonResource/1.6.4</value>
 		</managed-property>		
 	</managed-bean>
 
