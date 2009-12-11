@@ -15,7 +15,6 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.util.StringUtil;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -39,7 +38,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.sun.xml.internal.ws.util.StringUtils;
 
 public class EcconfigController extends BasicController {
 
