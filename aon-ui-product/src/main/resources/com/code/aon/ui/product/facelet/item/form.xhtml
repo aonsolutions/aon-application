@@ -24,42 +24,6 @@
 					<ui:param name="controller" value="#{item}" />
 				</ui:include>
 
-				<c:if
-					test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showEcommerceData}">
-					<aon:panelGrid columns="2" style="width: 100%;"
-						styleClass="aon-margin-top"
-						columnClasses="aon-panelGrid-odd aon-width-150,
-							aon-panelGrid-even aon-width-auto">
-
-						<aon:outputLabel for="Item_alternative_item_product_code"
-							value="#{productBundle.product_alternative_code}" />
-						<aon:div id="alternativeItemDiv" styleClass="aon-lookup">
-							<a4j:region>
-								<aon:lookupInputText id="Item_alternative_item_product_code"
-									value="#{item.to.alternativeItem.product.code}"
-									lookup="#{itemLookup}"
-									lookupChangeListener="#{item.onAlternativeItemChanged}"
-									reRender="alternativeItemDiv" ajaxSingle="false" size="10"
-									onblur="toUpperCase(this);">
-									<aon:joinProperty alias="Item_product_code"
-										value="#{item.to.alternativeItem.product.code}" />
-								</aon:lookupInputText>
-								<aon:lookupButton
-									windowTitle="#{productBundle.product_item_selection}"
-									minHeight="460" minWidth="650"
-									property="#{item.to.alternativeItem}" lookup="#{itemLookup}"
-									lookupChangeListener="#{item.onAlternativeItemChanged}"
-									selectReRender="alternativeItemDiv" actionType="search">
-								</aon:lookupButton>
-								<aon:inputText id="Item_alternative_item_product_name"
-									value="#{item.to.alternativeItem.product.name}" disabled="true"
-									size="100" />
-							</a4j:region>
-						</aon:div>
-
-					</aon:panelGrid>
-				</c:if>
-
 				<c:if test="#{aonConfiguration.bean.product.showAccount}">
 					<aon:panelGrid styleClass="aon-margin-top" columns="2"
 						style="width: 100%;"
@@ -110,8 +74,9 @@
 				</c:if>
 
 				<c:if test="#{!item.new}">
-					<c:if
-						test="#{aonConfiguration.bean.product.showAttachment or aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showSuppliers}">
+					<c:if test="#{aonConfiguration.bean.product.showAttachment or 
+									aonConfiguration.bean.product.showSuppliers or
+									(aonConfiguration.bean.product.showStock and item.to.product.inventoriable)}">
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
 							<c:if test="#{aonConfiguration.bean.product.showAttachment}">
 								<aon:panelTab id="itemAttachPanelTab"
@@ -131,13 +96,20 @@
 										src="/com/code/aon/ui/warehouse/facelet/itemwarehouse/tab_grid.xhtml">
 									</ui:include>
 								</aon:panelTab>
+
+								<aon:panelTab id="itemAlternativePanelTab"
+									label="#{productBundle.product_alternative_items}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/alternative/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
 							</c:if>
 
 							<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
 								<aon:panelTab id="itemSupplierPanelTab"
-									label="#{purchaseBundle.purchase_item_supplier_module}">
+									label="#{supplierBundle.supplier_item_supplier_module}">
 									<ui:include
-										src="/com/code/aon/ui/purchase/facelet/itemsupplier/tab_grid.xhtml">
+										src="/com/code/aon/ui/supplier/facelet/item/tab_grid.xhtml">
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
@@ -147,13 +119,13 @@
 
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 
 		<c:if test="#{aonConfiguration.bean.product.showStock}">
 			<c:if test="#{!item.new and item.to.product.inventoriable}">
 				<ui:include
 					src="/com/code/aon/ui/warehouse/facelet/item/itemStockPanel.xhtml" />
 			</c:if>
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>
 
 		<c:if test="#{!item.new and aonConfiguration.bean.product.showSuppliers}">
