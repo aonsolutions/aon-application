@@ -38,8 +38,6 @@ public class DataScrollerHandler extends TagHandler {
    	
    	private static final String PAGE = "page";
    	
-   	private static final String ACTION = "action";
-   	
 	private TagAttribute forTag;
 	
    	private TagAttribute rowCount;	
@@ -69,12 +67,6 @@ public class DataScrollerHandler extends TagHandler {
 		return rows;
 	}
 	
-	private ValueExpression getMethodExpression(FaceletContext ctx, String name,
-			Class type, Class[] paramTypes) {
-		return FaceletUtil.getMethodExpression(ctx, getAttribute(name), type,
-				paramTypes);
-	}
-	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		newMapper.setVariable(DATA_TABLE, forTag.getValueExpression(ctx, String.class));		
@@ -93,12 +85,6 @@ public class DataScrollerHandler extends TagHandler {
 			newMapper.setVariable(PAGE_SIZE, ctx.getExpressionFactory()
 					.createValueExpression(ctx, String.valueOf(rows), Integer.class));
 		}
-		ValueExpression action = getMethodExpression(ctx, ACTION, String.class, FaceletUtil.ACTION_SIG);
-		if (action == null) {
-			action = FaceletUtil.getMethodEmptyExpression(ctx, ACTION,
-					String.class, FaceletUtil.ACTION_SIG);
-		}
-		newMapper.setVariable(ACTION, action);		
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 

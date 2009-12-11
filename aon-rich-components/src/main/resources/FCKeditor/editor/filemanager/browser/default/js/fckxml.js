@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2008 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -31,8 +31,8 @@ var FCKXml = function()
 FCKXml.prototype.GetHttpRequest = function()
 {
 	// Gecko / IE7
-	try { return new XMLHttpRequest(); }
-	catch(e) {}
+	if ( typeof(XMLHttpRequest) != 'undefined' )
+		return new XMLHttpRequest() ;
 
 	// IE6
 	try { return new ActiveXObject( 'Msxml2.XMLHTTP' ) ; }

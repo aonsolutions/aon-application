@@ -7,8 +7,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.marketing.enumeration.Operator;
 
 
@@ -30,16 +35,19 @@ public class SurveyWorkflow extends ValueHolder {
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="questionValue", updatable = false )	
 	@ForeignKey(name = "FK_SURVERY_WORKFLOW_QUESTION_VALUE")
+	@Index(name = "IDX_SURVERY_WORKFLOW_QUESTION_VALUE")
 	private QuestionValue questionValue;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="surveyQuestion", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_SURVERY_WORKFLOW_SURVERY_QUESTION")
+	@Index(name = "IDX_SURVERY_WORKFLOW_SURVERY_QUESTION")
 	private SurveyQuestion surveyQuestion;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="nextSurveyQuestion", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_SURVERY_WORKFLOW_NEXT_SURVERY_QUESTION")
+	@Index(name = "IDX_SURVERY_WORKFLOW_NEXT_SURVERY_QUESTION")
 	private SurveyQuestion nextSurveyQuestion;
 	
 	/**
@@ -104,6 +112,45 @@ public class SurveyWorkflow extends ValueHolder {
 	@Transient
 	public Question getQuestion() {
 		return (surveyQuestion != null) ? surveyQuestion.getQuestion() : null;
+	}	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final SurveyWorkflow o = (SurveyWorkflow) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(getDate(), o.getDate())
+				.append(getNumber(), o.getNumber())				
+				.append(getText(), o.getText())			
+				.append(this.nextSurveyQuestion, o.nextSurveyQuestion)
+				.append(this.operator, o.operator)				
+				.append(this.questionValue, o.questionValue)
+				.append(this.surveyQuestion, o.surveyQuestion)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(getDate())
+			.append(getNumber())
+			.append(getId())				
+			.append(getText())		
+			.append(nextSurveyQuestion)
+			.append(operator)
+			.append(questionValue)
+			.append(surveyQuestion)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}	
 	
 }

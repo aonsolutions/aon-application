@@ -11,7 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.marketing.enumeration.QuestionType;
 
 
@@ -175,6 +180,39 @@ public class Question implements ITransferObject {
 	 */
 	public void setValues( List<QuestionValue> values ) {
 		this.values = values;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Question o = (Question) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.argument, o.argument)				
+				.append(this.text, o.text)
+				.append(this.type, o.type)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(argument)
+			.append(id)	
+			.append(text)			
+			.append(type)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 	
 }

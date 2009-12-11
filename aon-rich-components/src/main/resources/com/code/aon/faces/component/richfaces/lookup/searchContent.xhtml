@@ -8,29 +8,27 @@
 
 <ui:composition>
 
+	<!-- start toolbar navigation -->
 	<aon:div styleClass="aon-toolbar">
-		<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-			type="reset" ajaxSingle="true"
-			styleClass="aon-finding-toolbar-item aon-icon-rubber" />			
-		<aon:commandButton id="back" value="#{bundle.aon_back}"
-			actionListener="#{lookup.onCloseWindow}" immediate="true"
-			styleClass="aon-finding-toolbar-item aon-icon-cancel"
-			accesskey="#{bundle.aon_key_cancel}" >
+		<aon:commandButton id="search" value="#{bundle.aon_search}"
+			accesskey="#{bundle.aon_key_search}"
+			actionListener="#{lookup.onFilterSearch}" reRender="lookupContent"
+			styleClass="aon-finding-toolbar-item aon-icon-accept" />
+		<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+			accesskey="#{bundle.aon_key_cancel}"
+			actionListener="#{lookup.onCloseWindow}"
+			styleClass="aon-finding-toolbar-item aon-icon-cancel">
 			<rich:componentControl for="#{lookupId}" event="onclick"
 				disableDefault="true" operation="hide" />
 		</aon:commandButton>
+		<aon:commandButton id="clear" type="reset"
+			value="#{bundle.aon_clear}"
+			styleClass="aon-finding-toolbar-item aon-icon-new" />
 	</aon:div>
+
 	<!-- end toolbar navigation -->
 
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-		<ui:define name="searchContent">
-			<ui:param name="searchReRender" value="#{lookupId}LookupContent" />
-			<aon:methodParam name="searchActionListener" value="#{lookup.onFilterSearch}" type="actionListener" />
-			<aon:methodParam name="searchAction" />
-	
-			<ui:include src="#{lookup.searchPagePath}" />
-		</ui:define>
-	</ui:decorate>
+	<ui:include src="#{lookup.searchPagePath}" />
 
 </ui:composition>
 

@@ -183,19 +183,7 @@
         <component-type>com.code.aon.faces.PanelCollapsible</component-type>
         <component-class>org.richfaces.component.html.HtmlSimpleTogglePanel</component-class>
     </component>
-    <component>
-        <component-type>com.code.aon.faces.Panel</component-type>
-        <component-class>org.richfaces.component.html.HtmlPanel</component-class>
-    </component>
-    <component>
-        <component-type>com.code.aon.faces.FileUpload</component-type>
-        <component-class>org.richfaces.component.html.HtmlFileUpload</component-class>
-    </component>
-    <component>
-        <component-type>com.code.aon.faces.OutputFormat</component-type>
-        <component-class>javax.faces.component.html.HtmlOutputFormat</component-class>
-    </component>
-	<render-kit>
+    <render-kit>
         <renderer>
             <component-family>org.apache.myfaces.SubForm</component-family>
             <renderer-type>org.apache.myfaces.SubForm</renderer-type>
@@ -217,12 +205,4 @@
             <renderer-class>com.code.aon.faces.component.richfaces.inputRichText.InputRichtTextRenderer</renderer-class>
         </renderer>
     </render-kit>
-	<converter>
-		<converter-id>com.code.aon.faces.AbbreviateConverter</converter-id>
-		<converter-class>com.code.aon.faces.component.converter.AbbreviateConverter</converter-class>
-		<property>
-			<property-name>maxWidth</property-name>
-			<property-class>java.lang.Integer</property-class>
-		</property>
-	</converter>    
 </faces-config>
