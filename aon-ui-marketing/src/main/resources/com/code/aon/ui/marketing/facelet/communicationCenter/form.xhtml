@@ -20,7 +20,7 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
 					<c:if test="#{(communicationCenter.actionSelected) and (communicationCenter.pendingTargets &gt; 0)}" >
-						<c:if test="#{campaign.showPhoneActionMediaType}" >
+						<c:if test="#{aonConfiguration.bean.campaign.showPhoneActionMediaType}" >
 							<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
 								<aon:commandButton id="accept" value="#{bundle.aon_accept}"
 									action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
@@ -50,11 +50,9 @@
 						<c:if test="#{communicationCenter.action.mediaType  == 'EMAIL'}" >
 							<aon:commandButton id="email"
 								action="communicationCenter_email"
-								actionListener="#{webmailMessage.createNewMessage}"
+								actionListener="#{webmailMessage.onNewMessage}"
 								value="#{webmailBundle.webmail_newmail}"
 								styleClass="aon-finding-toolbar-item aon-icon-newMail">
-								<f:setPropertyActionListener target="#{webmailMessage.showToolbar}" value="#{false}" />
-								<f:setPropertyActionListener target="#{webmailMessage.showRecipients}" value="#{false}" />
 							</aon:commandButton>								
 						</c:if>
 						<c:if test="#{communicationCenter.action.mediaType  == 'SMS'}" >
@@ -116,7 +114,7 @@
 						</aon:div>
 					</aon:div>
 					
-					<c:if test="#{campaign.showSurvey}" >
+					<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 						<aon:outputLabel for="CommunicationCenter_survey_id" 
 							value="#{marketingBundle.marketing_survey}" />
 						<aon:div styleClass="aon-lookup" id="CommunicationCenter_survey">
@@ -141,7 +139,7 @@
 						</aon:div>
 					</c:if>
 
-					<c:if test="#{communicationCenter.showTarget}" >
+					<c:if test="#{aonConfiguration.bean.communicationCenter.showTarget}" >
 						<aon:outputLabel for="CommunicationCenter_target_id"
 							value="#{target.bundle.commercial_target}" />
 						<aon:div id="CommunicationCenter_target">
@@ -157,7 +155,7 @@
 									windowTitle="#{target.bundle.commercial_target_selection}" actionType="search"
 									selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
 									disabled="#{communicationCenter.actionSelected}"
-									lookup="#{targetLookup}" minHeight="460" minWidth="650"
+									lookup="#{targetLookup}" minHeight="510" minWidth="650"
 									lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
 									property="#{communicationCenter.target}">
 								</aon:lookupButton>
@@ -194,10 +192,10 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
-		<c:if test="#{communicationCenter.showTarget}" >
+		<c:if test="#{aonConfiguration.bean.communicationCenter.showTarget}" >
 			<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		</c:if>
-		<c:if test="#{campaign.showSurvey}" >
+		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 	</ui:define>

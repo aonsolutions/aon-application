@@ -3,13 +3,13 @@ package com.code.aon.ui.marketing.controller;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
@@ -32,7 +32,7 @@ import com.code.aon.webmail.bean.AonServer;
 
 public class EmailCommunicationController implements IMarketingConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(SurveyResponseController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyResponseController.class.getName());
 	
 	private CommunicationCenterController getCommunicationController() {
 		return (CommunicationCenterController) AonUtil.getRegisteredBean(COMMUNICATION_CENTER_CONTROLLER_NAME);
@@ -65,7 +65,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 				if ( AonMessageUtils.isValidEmail(email) ) {
 					emails.add(email);
 				} else {
-					LOGGER.warning("Target " + target.getId() + " has invalid email: " + email );
+					LOGGER.warn("Target " + target.getId() + " has invalid email: " + email );
 				}
 			}
 			return emails;
@@ -84,7 +84,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 	    	AonServer server = webMailController.getServer();
 	   		server.sendMessage(aonMessage);
 		} catch ( Throwable th ) {
-			LOGGER.log(Level.SEVERE, "Error sending email to " + emails, th );
+			LOGGER.error("Error sending email to " + emails, th );
 			result = false;
 		}
 		return result;
@@ -113,7 +113,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 				actionTarget = getNextActionTarget();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error retrieving next ActionTarget", e);
+			LOGGER.error("Error retrieving next ActionTarget", e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}

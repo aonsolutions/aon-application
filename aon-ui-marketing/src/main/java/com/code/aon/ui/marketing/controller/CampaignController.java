@@ -13,31 +13,15 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CampaignController extends BasicController implements IMarketingConstants {
 	
-	private boolean showSurvey;
-	
-	private boolean showPhoneActionMediaType;
-
 	private ResourceBundle bundle;
 	
 	public CampaignController() {
-		this.showSurvey = true;
-		setBeanName(BUNDLE_NAME);
+		setBundleName(BUNDLE_NAME);
 	}
 
-	public boolean isShowSurvey() {
-		return showSurvey;
-	}
-
-	public void setShowSurvey(boolean showSurvey) {
-		this.showSurvey = showSurvey;
-	}		
-	
-	public boolean isShowPhoneActionMediaType() {
-		return showPhoneActionMediaType;
-	}
-
-	public void setShowPhoneActionMediaType(boolean showPhoneActionMediaType) {
-		this.showPhoneActionMediaType = showPhoneActionMediaType;
+	private boolean isShowPhoneActionMediaType() {
+		Boolean value = (Boolean) AonUtil.getRegisteredBean("aonConfiguration.bean.campaign.showPhoneActionMediaType");
+		return value.booleanValue();
 	}
 
 	/**
@@ -48,7 +32,7 @@ public class CampaignController extends BasicController implements IMarketingCon
 	public List<SelectItem> getActionMediaTypes() {
 		MarketingCollectionsController mcc = (MarketingCollectionsController) AonUtil.getRegisteredBean(MARKETING_COLLECTIONS_CONTROLLER_NAME);
 		List<SelectItem> actionMediaTypes = mcc.getActionMediaTypes();
-		if ( showPhoneActionMediaType ) {
+		if ( isShowPhoneActionMediaType() ) {
 			return actionMediaTypes;
 		} else {
 			List<SelectItem> list = new LinkedList<SelectItem>();

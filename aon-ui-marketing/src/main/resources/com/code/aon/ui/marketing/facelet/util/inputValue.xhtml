@@ -7,7 +7,11 @@
 	<aon:valueParam name="inputId" default="#{controller.pojoShortName}_value" />
 
 	<c:if test="#{valueHolder.question.type == 'TEXT'}" >
-		<aon:inputText id="#{inputId}" value="#{valueHolder.text}" required="true" size="45" maxlength="64" />
+		<aon:inputTextarea id="#{inputId}"
+			value="#{valueHolder.text}"
+			required="true" cols="60" rows="4" >
+			<f:validateLength maximum="1024"/>
+		</aon:inputTextarea>												
 	</c:if>
 	<c:if test="#{valueHolder.question.type == 'NUMBER'}" >		
 		<aon:inputText id="#{inputId}" value="#{valueHolder.number}" required="true" size="45" maxlength="64" />

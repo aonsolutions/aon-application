@@ -92,9 +92,11 @@
 							</c:if>
 							<c:if test="#{empty communicationCenter.questionValues}" >
 								<c:if test="#{communicationCenter.question.type == 'TEXT'}" >
-									<aon:inputText id="CommunicationCenter_response_value"
+									<aon:inputTextarea id="CommunicationCenter_response_value"
 										value="#{communicationCenter.response.text}"
-										required="true" size="45" maxlength="64" />
+										required="true" cols="60" rows="4" >
+										<f:validateLength maximum="1024"/>
+									</aon:inputTextarea>										
 								</c:if>
 								<c:if test="#{communicationCenter.question.type == 'NUMBER'}" >
 									<aon:inputText id="CommunicationCenter_response_value"
