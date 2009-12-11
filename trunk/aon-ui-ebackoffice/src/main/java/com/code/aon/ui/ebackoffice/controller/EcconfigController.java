@@ -15,6 +15,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.util.StringUtil;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -22,6 +23,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.dao.IConfigAlias;
@@ -37,6 +39,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.sun.xml.internal.ws.util.StringUtils;
 
 public class EcconfigController extends BasicController {
 
@@ -59,7 +62,24 @@ public class EcconfigController extends BasicController {
 	private boolean showPrice;
 	public boolean richTextEnabled;
 	private String selectedTab;
+	private boolean ecParam;
+		
 	
+	public boolean isEcParam() {
+		try {
+			ecParam=getEcommerceParam();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ecParam;
+	}
+
+	public void setEcParam(boolean ecParam) {
+		this.ecParam = ecParam;
+	}
+
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -549,5 +569,13 @@ public class EcconfigController extends BasicController {
 		url.append( "/aon-ecommerce" );
 		url.append( "?aonEbackoffice=true" );
 		return url.toString();	
+	}
+	
+	public boolean getEcommerceParam() throws ManagerBeanException {
+		IManagerBean param= BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(param.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME),"EC_SALES_ALLOWED");
+		return Boolean.parseBoolean(((ApplicationParameter)param.getList(criteria).get(0)).getValue());
+		
 	}
 }
