@@ -10,6 +10,7 @@ import com.code.aon.product.Catalogue;
 import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
+import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.ItemPos;
 import com.code.aon.product.Product;
@@ -30,19 +31,20 @@ public class ProductAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-product/src/main/java/com/code/aon/product/dao/IProductAlias.java");
-		String[] classes = new String[12]; 
+		String[] classes = new String[13]; 
 		classes[0] = Brand.class.getName();
 		classes[1] = Catalogue.class.getName();
 		classes[2] = CatalogueCategory.class.getName();
 		classes[3] = CatalogueItem.class.getName();
 		classes[4] = Item.class.getName();
-		classes[5] = ItemAttachment.class.getName();
-		classes[6] = ItemPos.class.getName();
-		classes[7] = Product.class.getName();
-		classes[8] = ProductCategory.class.getName();
-		classes[9] = ProductCategoryGroup.class.getName();
-		classes[10] = ProductCategoryTree.class.getName();
-		classes[11] = TariffCatalogue.class.getName();
+		classes[5] = ItemAlternative.class.getName();
+		classes[6] = ItemAttachment.class.getName();
+		classes[7] = ItemPos.class.getName();
+		classes[8] = Product.class.getName();
+		classes[9] = ProductCategory.class.getName();
+		classes[10] = ProductCategoryGroup.class.getName();
+		classes[11] = ProductCategoryTree.class.getName();
+		classes[12] = TariffCatalogue.class.getName();
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.product.dao");
 		writer.write(classes, file);
