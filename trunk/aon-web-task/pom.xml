@@ -10,11 +10,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.task</artifactId>
 	<packaging>war</packaging>
-	<version>4.3.1</version>
+	<version>4.4.0</version>
 	<description>AON TASK</description>
 	<name>AON TASK</name>
 	<properties>
-		<dbVersion>4.7.0</dbVersion>
+		<dbVersion>4.8.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-task</finalName>
@@ -29,31 +29,31 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.project</artifactId>
-			<version>4.3.1</version>
+			<version>4.3.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.6.2</version>
+			<version>4.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.5.0</version>
+			<version>4.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.campaign</artifactId>
-			<version>4.3.1</version>
+			<version>4.3.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
