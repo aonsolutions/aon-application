@@ -26,6 +26,7 @@
 			showRecordData="false"
 			showTaxInfoData="true"
 			showAddInfo="false"
+			showDirStaff="false"
 		/>
 	</customer:config>
 
