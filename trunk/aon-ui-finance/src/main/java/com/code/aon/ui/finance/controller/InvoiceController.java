@@ -12,7 +12,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -40,7 +39,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.report.ReportException;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.form.BasicController;
@@ -400,7 +398,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
-	public IAttachment getInvoiceData( Invoice invoice ) throws ReportException, ManagerBeanException {
+	public IAttachment getInvoiceData( Invoice invoice ) throws ManagerBeanException {
 		SignerController signer = getSignerController();
 		IAttachment attach = null;
 		if ( invoice.isSigned() ) {
@@ -411,11 +409,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return attach;		
 	}
 	
-	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, IOException {
 		sendInvoiceByEmail( null, true );
 	}
 
-	private void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, ReportException, IOException, SAXException {
+	private void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, IOException {
 		Invoice invoice = getInvoice();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();

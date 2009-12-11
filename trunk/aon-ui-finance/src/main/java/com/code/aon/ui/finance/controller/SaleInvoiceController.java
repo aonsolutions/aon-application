@@ -69,7 +69,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		}
 	}
 
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+	private int obtainMaxNumber(String seriesId)  {
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
     	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
