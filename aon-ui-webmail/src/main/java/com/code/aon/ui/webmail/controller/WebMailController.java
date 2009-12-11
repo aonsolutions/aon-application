@@ -5,16 +5,17 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.mail.MessagingException;
 import javax.mail.Quota;
 import javax.naming.Name;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.bridge.session.LoggedUser;
@@ -37,13 +38,14 @@ import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class WebMailController implements WebMailConstants, BundleConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(WebMailController.class);
+	private static final Logger LOGGER = Logger.getLogger(WebMailController.class.getName());
 	
 	private AonServer server;
 	
@@ -67,7 +69,7 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 	    		initConfig(mailUser);
 	    	}
 		} catch (Throwable e) {
-			LOGGER.error( "Error connecting to the Server", e);
+			LOGGER.log(Level.SEVERE, "Error connecting to the Server", e);
 			initErrorMessage = e.getMessage();	
 		}
     }
@@ -143,7 +145,7 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 				mailAccount.setSignature(signature);
 				mailAccountBean.update(mailAccount);
     		} catch (ManagerBeanException e) {
-    			LOGGER.error( e.getMessage(), e );
+    			LOGGER.severe( e.getMessage() );
         	}    		
     	}
     }
@@ -203,7 +205,7 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 		if ( (maxAttachmentSize == -1) || rejectedExtensions.isEmpty() ) {
 			Name domainDN = NameResolver.getDomainDN(principal.getDomain());			
 			Entry domain = ldap.get( domainDN, IAonObjectClasses.DOMAIN, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
-			if ( (domain != null) && domain.hasObjectClass(WEBMAIL_CONFIG) ) {
+			if ( (domain != null) && user.hasObjectClass(WEBMAIL_CONFIG) ) {
 				if ( rejectedExtensions.isEmpty() && domain.containsKey(REJECTED_EXTENSIONS) ) {
 					this.rejectedExtensions = (List) domain.get(REJECTED_EXTENSIONS);
 				}
@@ -212,14 +214,11 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 				}
 			}
 		}
-		for( int i = 0; i < rejectedExtensions.size(); i++ ) {
-			rejectedExtensions.set(i, rejectedExtensions.get(i).toLowerCase());
-		}
 	}
 
 	public String isValidFile( AonFile file ) {
 		String extension = FilenameUtils.getExtension( file.getFileName() );
-		if ( ! StringUtils.isEmpty(extension) && this.rejectedExtensions.contains(extension.toLowerCase()) ) {
+		if ( ! StringUtils.isEmpty(extension) && this.rejectedExtensions.contains(extension) ) {
 			return "La extension del fichero " + file.getFileName() + " no esta permitida";
 		}
 		int size = (int) file.getFile().length();

@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -44,11 +46,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.AonException;
@@ -91,7 +92,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	
 	private static final String PRINT_TEMPLATE = "print.html.vm";
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
+	private static final Logger LOGGER = Logger.getLogger(MessageController.class.getName());
 	
 	private AonMessage message;
 
@@ -398,7 +399,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			    	parentMessage.getParent().getFolder().expunge();
 		    	}
 	    	} catch ( WebmailException e ) {
-	    		LOGGER.error( e.getMessage(), e);
+	    		LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		    	dest = server.getAonFolder(server.getDraftFolderName());
 	    	}
 	    	Message[] messages = new Message[1];
@@ -706,7 +707,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		StringBuffer emails = new StringBuffer();
         for (int i = 0, max = lst.size(); i < max; i++) {
         	Contact e = lst.get(i);
-        	emails.append( e.getEmailLarge() );
+        	emails.append( StringEscapeUtils.unescapeHtml(e.getEmailLarge()) );
         	if (i+1 < max) {
         		emails.append(AonMessageUtils.EMAIL_SEPARATOR).append(" ");
         	}
@@ -806,11 +807,11 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			response.flushBuffer();
 			out.close();
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 	}
 	
@@ -989,7 +990,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 				}
 			}
 		} catch (WebmailException e) {
-			LOGGER.error( "Error setting contactName", e );
+			LOGGER.severe( "Error setting contactName" );
 		}
     }
 
@@ -1045,7 +1046,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			try {
 				this.velocityHelper.init( VM_PATH_DEFAULT );
 			} catch (Exception e) {
-				LOGGER.error( "Velocity engine could not be initialized", e );
+				LOGGER.log(Level.SEVERE, "Velocity engine could not be initialized", e );
 			}
 		}
 		return this.velocityHelper;
@@ -1083,11 +1084,11 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			response.flushBuffer();
 			out.close();
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (AonException e) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e);			
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );			
 		}		
 	}
 	
@@ -1125,7 +1126,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 					criteria.addOrder(displayName);
 					return bean.getList(criteria);
 		    	} catch (ManagerBeanException e) {
-		    		LOGGER.error( "Error getting suggestion emails", e );
+		    		LOGGER.log( Level.SEVERE, "Error getting suggestion emails", e );
 				}				
 			}
 		}
