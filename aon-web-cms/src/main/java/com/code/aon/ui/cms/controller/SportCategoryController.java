@@ -13,10 +13,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.Constants;
 
 
-public class SportCategoryController extends BasicI18nController implements Constants {
+public class SportCategoryController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
@@ -25,7 +24,7 @@ public class SportCategoryController extends BasicI18nController implements Cons
 	}
 
 	public String getI18nDescription() throws ManagerBeanException {
-		String description = NO_VALUE_LABEL;
+		String description = "- NO VALUE -";
 		SportCategoryDetail detail = (SportCategoryDetail)getModelRowdataI18n();
 		if (detail != null) description = detail.getDescription();
 		return description;

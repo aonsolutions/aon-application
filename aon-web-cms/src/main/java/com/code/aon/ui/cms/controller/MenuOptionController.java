@@ -1,8 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -14,16 +12,13 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
 
 
-public class MenuOptionController extends BasicI18nController implements IOrderedControllerListener, Constants {
+public class MenuOptionController extends BasicI18nController implements IOrderedControllerListener{
 
-	private static final Logger LOGGER = Logger.getLogger(MenuOptionController.class.getName());
-	
 	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.MENU_OPTION_POSITION);
 
 	private Menu currentMenu;
@@ -72,14 +67,14 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
 
 
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		MenuOptionDetail mod = (MenuOptionDetail)getModelRowdataI18n();
 		if (mod != null) label = mod.getLabel();
 		return label;
 	}
 
 	public String getI18nUrl() throws ManagerBeanException {
-		String url = NO_VALUE_LABEL;
+		String url = "- NO VALUE -";
 		MenuOptionDetail mod = (MenuOptionDetail)getModelRowdataI18n();
 		if (mod != null) url = mod.getUrl();
 		return url;
@@ -131,7 +126,7 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
 		try {
 			orderedControllerSupport.reorderObjects(this);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 
@@ -139,9 +134,7 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
 		try {
 			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), "" + getCurrentMenu().getId());
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 

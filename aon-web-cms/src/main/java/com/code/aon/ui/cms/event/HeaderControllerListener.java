@@ -1,8 +1,6 @@
 package com.code.aon.ui.cms.event;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.code.aon.cms.Header;
 import com.code.aon.cms.Section;
@@ -19,8 +17,6 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class HeaderControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(HeaderControllerListener.class.getName());
-	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
@@ -37,18 +33,18 @@ public class HeaderControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		try {
-			Header header = (Header)event.getController().getTo();
-			IManagerBean bean = BeanManager.getManagerBean(Header.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DEFAULT_), true);
-			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
-			if (list.size() == 0) {
-				header.setDefault_(true);
+			try {
+				Header header = (Header)event.getController().getTo();
+				IManagerBean bean = BeanManager.getManagerBean(Header.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DEFAULT_), true);
+				List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+				if (list.size() == 0) {
+					header.setDefault_(true);
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
 	}
 	
 	@Override

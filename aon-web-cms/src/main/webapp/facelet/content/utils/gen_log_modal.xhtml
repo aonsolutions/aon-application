@@ -7,28 +7,28 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
+<style>
+.bodyPanel {
+	width:920px;
+    height:178px;
+    overflow:auto;
+}
+</style>
+
     <a4j:region>
         <h:form>
             <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid"/>
         </h:form>
     </a4j:region>
-	<aon:form>
-        <rich:modalPanel id="showGeneratorLogModalPanel"
-			minHeight="550" height="550" minWidth="1000" width="1000">
-			<f:facet name="header">
-				<aon:div styleClass="aon-popupWindow-title">
-					<aon:outputText value="Generator" />
-				</aon:div>
-			</f:facet>
-	        <f:facet name="controls">
-				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-					actionListener="#{generator_status.onReset}"
-					immediate="true" reRender="aonStatus">
-					<rich:componentControl for="showGeneratorLogModalPanel"
-						operation="hide" event="onclick" />
-				</aon:commandButton>
-	        </f:facet>
-			<rich:panel id="grid">
+	<h:form>
+        <rich:modalPanel id="#{modalPanelName}" minHeight="550" height="550"  minWidth="1000" width="1000">
+            <f:facet name="header">
+                <h:outputText value="Generator" />
+            </f:facet>
+            <f:facet name="controls">
+                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('#{modalPanelName}')" />
+            </f:facet>
+			<rich:panel bodyClass="inpanelBody" id="grid">
          		<aon:div styleClass="aon-header">
 					<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
 						<aon:div>
@@ -36,24 +36,25 @@
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>
-				<rich:panel bodyClass="generator-log-panel">
-			        <rich:dataList id="dataList_Log" var="msg" value="#{generator_status.status}">
-						<aon:outputText value="#{msg}"/>
+				<rich:panel bodyClass="bodyPanel">
+			        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}">
+						<h:outputText value="#{msg}"/>
 					</rich:dataList>
 				</rich:panel>
-         		<aon:div styleClass="aon-header aon-margin-top">
+				<br/><rich:separator height="2" lineType="dashed"/><br/>
+         		<aon:div styleClass="aon-header">
 					<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
 						<aon:div>
 							<aon:outputLabel value="Errores" styleClass="aon-applicationName"/>
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>
-				<rich:panel bodyClass="generator-log-panel">
+				<rich:panel bodyClass="bodyPanel">
 			        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}">
-						<aon:outputText style="color:red;" value="#{msg}"/>
+						<h:outputText style="color:red;" value="#{msg}"/>
 					</rich:dataList>
 				</rich:panel>
 			</rich:panel>
         </rich:modalPanel>
-	</aon:form>
+	</h:form>
 </ui:composition>

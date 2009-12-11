@@ -21,16 +21,6 @@ public class HiruCourseController extends BasicI18nController {
 
 	private String activeTo = "true";
 	
-	private boolean richTextEnabled;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);

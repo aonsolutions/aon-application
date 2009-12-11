@@ -1,19 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
 
-<ui:composition>
-
-	<ui:include src="/facelet/homepage/messages.xhtml" />
-	
 	<ui:include src="/facelet/homepage/menu.xhtml" />
-	
-	<ui:insert name="content" />
-
+	<ui:include src="/facelet/homepage/messages.xhtml" />
+	<aon:div id="aon-content-refresh">
+		<ui:insert name="content" />
+	</aon:div>			
+	  
 </ui:composition>
-
-</body>
-</html>

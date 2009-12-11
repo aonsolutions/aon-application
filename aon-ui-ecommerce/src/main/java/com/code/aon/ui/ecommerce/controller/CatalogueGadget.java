@@ -1,0 +1,127 @@
+package com.code.aon.ui.ecommerce.controller;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ebackoffice.Eccatalogue;
+import com.code.aon.product.CatalogueItem;
+import com.code.aon.product.Item;
+import com.code.aon.product.dao.IProductAlias;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.ecommerce.util.ECommerceUtil;
+import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.util.AonUtil;
+
+public class CatalogueGadget {
+
+	private List<ITransferObject> list;
+	private DataModel model;
+
+	public DataModel getModel() {
+		if (model == null) {
+			model = new ListDataModel(getList());
+		}
+		setList(null);
+		return model;
+	}
+
+	public void setModel(DataModel model) {
+		this.model = model;
+	}
+
+	public List<ITransferObject> getList() {
+		try {
+			if (list == null) {
+				IManagerBean bean = BeanManager.getManagerBean(Eccatalogue.class);
+				list = bean.getList(null);
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			String msg = "La búsqueda falló";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+		return list;
+	}
+
+	public void setList(List<ITransferObject> list) {
+		this.list = list;
+	}
+
+	public void onSelect(ActionEvent event) {
+		ShopItemsController shop = ECommerceUtil.getShopItems();
+		shop.resetCriteria(buildItemCriteria());
+		shop.onSearch(null);
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView( sc.getContentView() );
+		sc.setContentView( ViewEnum.ITEM_LIST );
+	}
+
+	private Criteria buildItemCriteria() {
+		try {
+			Eccatalogue ecCat = (Eccatalogue) getModel().getRowData();
+			String identifier = BeanManager.getManagerBean(Item.class)
+					.getFieldName(IECommerceConstants.ITEM_ALIAS);
+			Criteria criteria = null;
+			IManagerBean bean = BeanManager.getManagerBean(CatalogueItem.class);
+			Criteria crit = new Criteria();
+			crit.addEqualExpression(bean.getFieldName(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID) , ecCat.getCatalogue().getId());
+			List<ITransferObject> cata = bean.getList(crit); 
+			for (ITransferObject to : cata) {
+				CatalogueItem c = (CatalogueItem) to;
+				if (criteria == null) {
+					criteria = new Criteria();
+					criteria.addEqualExpression(identifier, c.getItem()
+							.getId());
+				} else {
+					try {
+						criteria.addOrExpression(identifier, c.getItem()
+								.getId().toString());
+					} catch (ExpressionException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			if (criteria == null) {
+				criteria = new Criteria();
+				criteria.addEqualExpression(identifier, null);
+			}
+			return criteria;
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void paint(OutputStream out, Object data) throws IOException {
+		out.write(((Eccatalogue)getList().get(0)).getCatalogueImg());
+	}
+	
+	public void paintIcon(OutputStream out, Object data) {
+		Integer id = (Integer) data;
+		for (ITransferObject to : getList()) {
+			Eccatalogue ecCatalogue = (Eccatalogue)to;  
+			if (id.equals(ecCatalogue.getId())) {
+				try {
+					out.write(ecCatalogue.getCatalogueIcon());
+				} catch (IOException e) {
+					// Nada. La foto no se ve y punto.
+				}
+			}
+		}
+	}
+	
+	
+
+}

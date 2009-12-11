@@ -32,21 +32,21 @@
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!sport_season.new and cms.roleEditor}"
-							reRender="dataTableDiv,gridToolbar"
+							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{sport_season.onReset}" />
 						</aon:commandButton>
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{sport_season.to!=null}"
-							reRender="dataTableDiv, gridToolbar"
+							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{sport_season.onAccept}" />
 						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{sport_season.to!=null}"
-							reRender="dataTableDiv, gridToolbar"
+							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}"
 							accesskey="#{bundle.aon_key_cancel}">
@@ -56,13 +56,20 @@
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div id="dataTableDiv" styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area">
 
 				<aon:dataTable id="dataTable"
 					value="#{sport_season.model}" var="to" 
 					rows="#{sport_season.pageLimit}"
-					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-							   aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+					styleClass="dr-table rich-table aon-editDataTable"
+					headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+					footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+					rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+					cellpadding="0" cellspacing="0"
+					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
 
 					<aon:column>
 						<f:facet name="header">
@@ -77,7 +84,7 @@
 									title="[#{bundle.aon_reset}]"
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									value="" immediate="true"
-									reRender="dataTableDiv,gridToolbar"
+									reRender="dataTable,gridToolbar"
 									rendered="#{!sport_season.new and cms.roleEditor}"
 									actionListener="#{sport_season.onReset}"
 									accesskey="#{bundle.aon_key_new_line}">
@@ -94,7 +101,7 @@
 							rendered="#{to!=sport_season.to}" 
 							styleClass="aon-editDataTable-button">
 							<a4j:support 
-								reRender="dataTableDiv,gridToolbar"
+								reRender="dataTable,gridToolbar"
 								actionListener="#{sport_season.onSelect}"
 								event="onclick" />
 						</aon:outputText>	
@@ -117,19 +124,16 @@
 							<aon:outputText for="sport_season_default" 
 								value="#{appBundle.sport_season_default}" />
 						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																										
-							<aon:selectBooleanCheckbox id="sport_season_default" 
-									value="#{to.default_}" 
-									rendered="#{!to.default_}">
-									<a4j:support 
-										actionListener="#{sport_season.defaultChanged}"
-										event="onclick"  
-										reRender="dataTableDiv" />
-							</aon:selectBooleanCheckbox>
-							<aon:graphicImage id="default_blocked" rendered="#{to.default_}"
-								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" />
-						</aon:div>
+						<aon:selectBooleanCheckbox id="sport_season_default" 
+								value="#{to.default_}" 
+								rendered="#{!to.default_}">
+								<a4j:support 
+									actionListener="#{sport_season.defaultChanged}"
+									event="onclick"  
+									reRender="dataTable" />
+						</aon:selectBooleanCheckbox>
+						<aon:graphicImage id="default_blocked" rendered="#{to.default_}"
+							url="/images/cms/selected.gif" />
 					</aon:column>
 
 					<aon:column>
@@ -141,20 +145,20 @@
 							<aon:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
-								reRender="dataTableDiv,gridToolbar">
+								reRender="dataTable,gridToolbar">
 								<aon:actionListener method="#{sport_season.onAccept}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
-								reRender="dataTableDiv,gridToolbar" immediate="true">
+								reRender="dataTable,gridToolbar" immediate="true">
 								<aon:actionListener method="#{sport_season.onCancel}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineRemove"
 								title="[#{bundle.aon_remove}]"
 								rendered="#{cms.roleEditor}"
 								styleClass="aon-editDataTable-button aon-icon-delete"
-								reRender="dataTableDiv,gridToolbar" immediate="true"
+								reRender="dataTable,gridToolbar" immediate="true"
 								actionListener="#{sport_season.onRemove}" />
 						</aon:div>
 						<f:facet name="footer">
@@ -163,13 +167,13 @@
 								<aon:commandButton id="newAccept"
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									reRender="dataTableDiv,gridToolbar">
+									reRender="dataTable,gridToolbar">
 									<aon:actionListener method="#{sport_season.onAccept}" />
 								</aon:commandButton>
 								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									reRender="dataTableDiv,gridToolbar" immediate="true">
+									reRender="dataTable,gridToolbar" immediate="true">
 									<aon:actionListener method="#{sport_season.onCancel}" />
 								</aon:commandButton>
 							</aon:div>
@@ -177,7 +181,9 @@
 					</aon:column>
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="dataTable" />					
+				<aon:dataScroller for="dataTable"
+					rowCount="#{sport_season.model.rowCount}" 
+					showNote="true" />					
 			
 			</aon:div>
 			

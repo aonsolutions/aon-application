@@ -1,8 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core" 
+	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
@@ -12,7 +11,7 @@
 			<a4j:outputPanel styleClass="aon-float-right" ajaxRendered="true">
 				<aon:panelGrid id="aon_language_panelGrid">
 					<a4j:repeat id="languageSelection" value="#{i18n.languageList}" var="column">
-						<aon:commandButton id="changeLanguage" 
+						<aon:commandButton id="changeLanguage" reRender="aon-content-refresh" 
 							actionListener="#{i18n.onChangeLanguage}" styleClass="aon-noborder"
 							rendered="#{i18n.currentLanguage.id != column.id}" style="padding:3px"
 							image="/images/flags/#{column.language.locale.language}_off.gif"/>
@@ -32,16 +31,17 @@
 					actionListener="#{config.onInit}" action="config_form"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="structure"
-				value="#{menuBundle.cms_structure}"
-				rendered="#{cms.roleDesigner or cms.roleEditor}">
+				rendered="#{cms.roleDesigner or cms.roleEditor}"
+				value="#{menuBundle.cms_structure}" submitMode="ajax"
+				event="onclick">
 				<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
 					rendered="#{cms.roleDesigner or cms.roleEditor}"
 					action="menu_list"
 					actionListener="#{menu.onSearch}"/>
 				<aon:menuItem id="header" value="#{menuBundle.cms_header}"
 					rendered="#{cms.roleDesigner}"
-					action="cmsHeader_list"
-					actionListener="#{cmsHeader.onSearch}"/>
+					action="header_list"
+					actionListener="#{headers.onSearch}"/>
 				<aon:menuItem id="footer" value="#{menuBundle.cms_footer}"
 					rendered="#{cms.roleDesigner}"
 					action="footer_list"
@@ -56,8 +56,9 @@
 					actionListener="#{section.onSearch}"/>							
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="galleries"
-			value="#{menuBundle.cms_galleries}"
-				rendered="#{cms.roleEditor}">
+				rendered="#{cms.roleEditor}"
+				value="#{menuBundle.cms_galleries}" submitMode="ajax"
+				event="onclick">
 				<aon:menuItem id="image_gallery" 
 					rendered="#{cms.roleEditor}"
 					value="#{menuBundle.cms_image_gallery}"
@@ -68,33 +69,9 @@
 					action="document_list"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="content"
-				value="#{menuBundle.cms_content}"
-				rendered="#{cms.roleEditor or cms.roleRevisor}" >
-				<aon:menuItem id="direct_access" 
-					value="#{menuBundle.cms_direct_access}"
-					rendered="#{domainUtils.directAccessMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					actionListener="#{direct_access.onSearch}" 
-					action="direct_access_list"/>
-				<aon:menuItem id="article" 
-					value="#{menuBundle.cms_article}"
-					rendered="#{domainUtils.articleMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					actionListener="#{article.onSearch}" 
-					action="article_list"/>
-				<aon:menuItem id="banner" 
-					value="#{menuBundle.cms_banner}"
-					rendered="#{domainUtils.bannerMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					actionListener="#{banner.onSearch}" 
-					action="banner_list"/>
-				<aon:menuItem id="company" 
-					rendered="#{domainUtils.activityMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					value="#{menuBundle.cms_company}"
-					actionListener="#{company.onSearch}" 
-					action="company_list"/>					
-				<aon:menuItem id="download" 
-					value="#{menuBundle.cms_download}"
-					rendered="#{domainUtils.downloadMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="download_list"
-					actionListener="#{download.onSearch}" />
+				rendered="#{cms.roleEditor or cms.roleRevisor}"
+				value="#{menuBundle.cms_content}" submitMode="ajax"
+				event="onclick">
 				<aon:menuItem id="link" value="#{menuBundle.cms_link}"
 					rendered="#{domainUtils.linkMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					action="link_list"
@@ -103,23 +80,11 @@
 					rendered="#{domainUtils.faqMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					actionListener="#{faq.onSearch}" 
 					action="faq_list"/>
-				<aon:menuItem id="modular_page" 
-					value="#{menuBundle.cms_modular_page}"
-					rendered="#{domainUtils.modularMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="modular_page_list"
-					actionListener="#{modular_page.onSearch}"/>
-				<aon:menuItem id="generic_page" 
-					value="#{menuBundle.cms_generic_page}"
-					rendered="#{domainUtils.genericPageMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					actionListener="#{generic_page.onSearch}" 
-					action="generic_page_list"/>
-				<aon:menuItem id="product" 
-					value="#{menuBundle.cms_product}"
-					rendered="#{domainUtils.productMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					actionListener="#{product.onSearch}" 
-					action="product_list"/>
-				<aon:menuSeparator
-					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}" />
+				<aon:menuItem id="download" 
+					value="#{menuBundle.cms_download}"
+					rendered="#{domainUtils.downloadMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					action="download_list"
+					actionListener="#{download.onSearch}" />
 				<aon:menuItem id="album" 
 					value="#{menuBundle.cms_album}"
 					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
@@ -130,10 +95,46 @@
 					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					action="album_image_form"
 					actionListener="#{albumImage.onReset}" />
+				<aon:menuItem id="banner" 
+					value="#{menuBundle.cms_banner}"
+					rendered="#{domainUtils.bannerMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					actionListener="#{banner.onSearch}" 
+					action="banner_list"/>
+				<aon:menuItem id="direct_access" 
+					value="#{menuBundle.cms_direct_access}"
+					rendered="#{domainUtils.directAccessMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					actionListener="#{direct_access.onSearch}" 
+					action="direct_access_list"/>
+				<aon:menuItem id="article" 
+					value="#{menuBundle.cms_article}"
+					rendered="#{domainUtils.articleMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					actionListener="#{article.onSearch}" 
+					action="article_list"/>
+				<aon:menuItem id="modular_page" 
+					value="#{menuBundle.cms_modular_page}"
+					rendered="#{domainUtils.modularMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					action="modular_page_list"
+					actionListener="#{modular_page.onSearch}"/>
+				<aon:menuItem id="generic_page" 
+					value="#{menuBundle.cms_generic_page}"
+					rendered="#{domainUtils.genericPageMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					actionListener="#{generic_page.onSearch}" 
+					action="generic_page_list"/>
+				<aon:menuItem id="company" 
+					rendered="#{domainUtils.activityMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					value="#{menuBundle.cms_company}"
+					actionListener="#{company.onSearch}" 
+					action="company_list"/>
+				<aon:menuItem id="product" 
+					value="#{menuBundle.cms_product}"
+					rendered="#{domainUtils.productMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					actionListener="#{product.onSearch}" 
+					action="product_list"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="hiru"
-				value="#{menuBundle.cms_hiru}"
-				rendered="#{domainUtils.hiruMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}">
+				value="#{menuBundle.cms_hiru}" submitMode="ajax"
+				rendered="#{domainUtils.hiruMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}"
+				event="onclick">
 				<aon:menuItem id="hiru_organizer_centre" value="#{menuBundle.cms_hiru_organizer_centre}"
 					rendered="#{cms.roleEditor or cms.roleRevisor}"
 					action="hiru_organizer_centre_list"
@@ -148,8 +149,9 @@
 					actionListener="#{hiru_generator.onInit}"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="bulletins"
-				value="#{menuBundle.cms_bulletins}"
-				rendered="#{domainUtils.bulletinMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}">
+				value="#{menuBundle.cms_bulletins}" submitMode="ajax"
+				rendered="#{domainUtils.bulletinMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}"
+				event="onclick">
 				<aon:menuItem id="bulletin" 
 					rendered="#{cms.roleEditor or cms.roleRevisor}"
 					value="#{menuBundle.cms_bulletin}"
@@ -167,8 +169,9 @@
 					actionListener="#{bulletin.onInit}" />
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="sport"
-				value="#{menuBundle.cms_sport}"
-				rendered="#{domainUtils.sportMenu and ( cms.roleEditor or cms.roleRevisor )}" >
+				value="#{menuBundle.cms_sport}" submitMode="ajax"
+				rendered="#{domainUtils.sportMenu and ( cms.roleEditor or cms.roleRevisor )}"
+				event="onclick">
 				<aon:menuItem id="sport_category" value="#{menuBundle.cms_sport_category}"
 					action="sport_category_list"
 					actionListener="#{sport_category.onSearch}"/>
@@ -192,8 +195,9 @@
 					actionListener="#{sport_config.onInit}"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="production"
-				value="#{menuBundle.cms_production}"
-				rendered="#{cms.roleEditor or cms.rolePublisher or cms.roleDesigner}">
+				value="#{menuBundle.cms_production}" submitMode="ajax"
+				rendered="#{cms.roleEditor or cms.rolePublisher or cms.roleDesigner}"
+				event="onclick">
 				<aon:menuItem id="template" value="#{menuBundle.cms_template}"
 					rendered="#{cms.roleDesigner}"
 					action="template_list" actionListener="#{template.onInit}" />
@@ -202,10 +206,10 @@
 					action="generator_form"
 					actionListener="#{generator_status.onInit}"/>
 			</aon:dropDownMenu>
-			<a4j:outputPanel styleClass="aon-float-right" rendered="#{!cms.administrator}">
-				<aon:commandLink 
-					value="| #{appBundle.aon_advanced_mode}" immediate="true"
-					style="border-right:0;" action="admin_form" />
+			<a4j:outputPanel styleClass="aon-float-right" ajaxRendered="true">
+				<aon:commandLink style="border-right:0;" action="admin_form">
+					<aon:outputText value="| #{appBundle.aon_advanced_mode}" />
+				</aon:commandLink>
 			</a4j:outputPanel>
 		</aon:menuBar>
 

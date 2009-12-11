@@ -4,10 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.apache.commons.io.IOUtils;
 
 import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.cms.enumeration.PageType;
@@ -15,10 +11,10 @@ import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class DomainUtilities {
-	
-	private static final Logger LOGGER = Logger.getLogger(DomainUtilities.class.getName());
 
 	private boolean adminProfile = false;
+	
+	public static String NAME = "domainUtils";
 	
 	public DomainUtilities(){
 		initPageType();
@@ -41,22 +37,19 @@ public class DomainUtilities {
 	private void initPageType(){
 		try {
 			propDefPageType.load(PageType.class.getResourceAsStream(PAGETYPE));
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		File file = new File( ControllerUtil.getConfigPath(), PAGETYPE );
-		if ( file.exists() ) {
-			InputStream stream = null;
-			try{
-				stream = new FileInputStream(file);
-				propDomainPageType.load(stream);
-			}catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			}finally{
-				IOUtils.closeQuietly(stream);
-				stream= null;
-			}
+		String file = ControllerUtil.getConfigPath()+File.separator+PAGETYPE;
+		InputStream stream = null;
+		try{
+			stream = new FileInputStream(file);
+			propDomainPageType.load(stream);
+		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 
@@ -70,8 +63,7 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefPageType.get(type.toString())))
 					return true;
 			}
-		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}catch (Exception e) {
 		}
 		return false;
 	}
@@ -88,22 +80,19 @@ public class DomainUtilities {
 	private void initSidebarType(){
 		try {
 			propDefSidebarType.load(PageType.class.getResourceAsStream(SIDEBARTYPE));
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		File file = new File( ControllerUtil.getConfigPath(), SIDEBARTYPE );
-		if ( file.exists() ) {
-			InputStream stream = null;
-			try{
-				stream = new FileInputStream(file);
-				propDomainSidebarType.load(stream);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			}finally{
-				IOUtils.closeQuietly(stream);
-				stream= null;
-			}
+		String file = ControllerUtil.getConfigPath()+File.separator+SIDEBARTYPE;
+		InputStream stream = null;
+		try{
+			stream = new FileInputStream(file);
+			propDomainSidebarType.load(stream);
+		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 	
@@ -117,8 +106,7 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefSidebarType.get(type.toString())))
 					return true;
 			}
-		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}catch (Exception e) {
 		}
 		return false;
 	}
@@ -135,22 +123,19 @@ public class DomainUtilities {
 	private void initModularPageOptionType(){
 		try {
 			propDefModularPageOptionType.load(PageType.class.getResourceAsStream(MODULARPAGEOPTIONTYPE));
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		File file = new File( ControllerUtil.getConfigPath(), MODULARPAGEOPTIONTYPE );
-		if ( file.exists() ) {
-			InputStream stream = null;
-			try {
-				stream = new FileInputStream(file);
-				propDomainModularPageOptionType.load(stream);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			} finally {
-				IOUtils.closeQuietly(stream);
-				stream= null;
-			}			
+		String file = ControllerUtil.getConfigPath()+File.separator+MODULARPAGEOPTIONTYPE;
+		InputStream stream = null;
+		try{
+			stream = new FileInputStream(file);
+			propDomainModularPageOptionType.load(stream);
+		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 	
@@ -164,8 +149,7 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefModularPageOptionType.get(type.toString())))
 					return true;
 			}
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}catch (Exception e) {
 		}
 		return false;
 	}
@@ -182,22 +166,19 @@ public class DomainUtilities {
 	private void initMenu(){
 		try {
 			propDefMenu.load(PageType.class.getResourceAsStream(MENU));
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		File file = new File( ControllerUtil.getConfigPath(), MENU );
-		if ( file.exists() ) {
-			InputStream stream = null;
-			try {
-				stream = new FileInputStream(file);
-				propDomainMenu.load(stream);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			} finally {
-				IOUtils.closeQuietly(stream);
-				stream= null;
-			}
+		String file = ControllerUtil.getConfigPath()+File.separator+MENU;
+		InputStream stream = null;
+		try{
+			stream = new FileInputStream(file);
+			propDomainMenu.load(stream);
+		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 	
@@ -211,8 +192,7 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefMenu.get(option)))
 					return true;
 			}
-		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}catch (Exception e) {
 		}
 		return false;
 	}

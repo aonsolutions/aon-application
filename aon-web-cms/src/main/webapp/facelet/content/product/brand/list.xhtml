@@ -66,12 +66,16 @@
 
 				<aon:dataTable id="dataTable"
 					value="#{brand.model}" var="to" rows="#{brand.pageLimit}"
-					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-							   aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
-							   aon-editDataTable-buttonsColumn">
-
-					<aon:rowSelector immediate="true" reRender="dataTable,gridToolbar"
-						 actionListener="#{brand.onSelect}" />																		
+					styleClass="dr-table rich-table aon-editDataTable"
+					headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+					footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+					rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+					cellpadding="0" cellspacing="0"
+					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
 
 					<aon:column>
 						<f:facet name="header">
@@ -97,11 +101,15 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
+							<aon:outputText value="#{appBundle.brand_alias}" />
 						</f:facet>
 						<aon:outputText value="#{to.alias}"
 							rendered="#{to!=brand.to}" 
 							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								reRender="dataTable,gridToolbar"
+								actionListener="#{brand.onSelect}"
+								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{to.alias}"
 							id="#{to.id}_alias"
@@ -128,6 +136,10 @@
 						<aon:outputText value="#{brand.i18nLabel}"
 							rendered="#{to!=brand.to}" 
 							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								reRender="dataTable,gridToolbar"
+								actionListener="#{brand.onSelect}"
+								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{brand.toI18n.label}"
 							id="#{to.id}_label"
@@ -147,23 +159,20 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.brand_active}" />
 						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																																					
-							<aon:commandLink title="#{appBundle.brand_activate}" 
-								reRender="dataTable"
-								actionListener="#{brand.onActivate}" 
-								rendered="#{!to.active}">
-								<aon:graphicImage id="Brand_active" alt="#{appBundle.brand_activate}"
-									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-							</aon:commandLink>
-							<aon:commandLink title="#{appBundle.brand_deactivate}" 
-								reRender="dataTable"
-								actionListener="#{brand.onDeactivate}" 
-								rendered="#{to.active}">
-								<aon:graphicImage id="Brand_deactive" alt="#{appBundle.brand_deactivate}"
-									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-							</aon:commandLink>
-						</aon:div>
+						<aon:commandLink title="#{appBundle.brand_activate}" 
+							reRender="dataTable"
+							actionListener="#{brand.onActivate}" 
+							rendered="#{!to.active}">
+							<aon:graphicImage id="Brand_active" alt="#{appBundle.brand_activate}"
+								url="/images/cms/inactive.png" />
+						</aon:commandLink>
+						<aon:commandLink title="#{appBundle.brand_deactivate}" 
+							reRender="dataTable"
+							actionListener="#{brand.onDeactivate}" 
+							rendered="#{to.active}">
+							<aon:graphicImage id="Brand_deactive" alt="#{appBundle.brand_deactivate}"
+								url="/images/cms/active.png" />
+						</aon:commandLink>
 					</aon:column>
 						
 					<aon:column>
@@ -211,7 +220,10 @@
 					</aon:column>
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="dataTable" showNote="true" />					
+				<aon:dataScroller for="dataTable"
+					rowCount="#{brand.model.rowCount}" 
+					page="#{brand.page}"
+					showNote="true" />					
 			
 			</aon:div>
 			

@@ -23,21 +23,11 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class ProductController extends BasicI18nController implements ICMSConstants {
+public class ProductController extends BasicI18nController {
 
 	private String shortDesc;
 	
 	private int page;
-	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}	
 	
 	public int getPage() {
 		return page;
@@ -133,7 +123,7 @@ public class ProductController extends BasicI18nController implements ICMSConsta
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Product current = (Product)getTo();
 		current.setImage(image);

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="webmailForm" styleClass="aon-form">
+			<aon:div styleClass="aon-scroll-area">
+	        <aon:panelGroup>
+					<aon:div styleClass="aon-section-title">
+		           		 <aon:outputText value="#{folder.folder.name}"/>
+		           	</aon:div>
+					<aon:div styleClass="aon-toolbar">						
+						<aon:commandButton
+							id="search"
+							title="#{appBundle.aon_webmail_search}"
+							reRender="webmailForm"
+							actionListener="#{search.searchMessagesCurrentFolder}"
+							value="#{appBundle.aon_webmail_search}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+						</aon:commandButton>								
+						<aon:commandButton
+							id="back"
+							title="#{appBundle.aon_webmail_cancel}"
+							action="folder"
+							actionListener="#{search.onExit}"
+							value="#{appBundle.aon_webmail_cancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel">
+						</aon:commandButton>										
+					</aon:div>
+					
+					<aon:panelGrid columns="2" border="0" style="width:100%"
+						columnClasses="aon-width-80 aon-panelGrid-odd,aon-width-auto aon-panelGrid-even">
+						<aon:outputLabel for="SearchMail_from" styleClass="aon-text-bold"
+							value="#{appBundle.aon_webmail_from}: " />
+						<aon:inputText id="SearchMail_from"
+							size="80"
+							value="#{search.address_from}"/>
+
+						<aon:outputLabel for="SearchMail_to" styleClass="aon-text-bold"
+							value="#{appBundle.aon_webmail_to}: " />
+						<aon:inputText id="SearchMail_to"
+							size="80"
+							value="#{search.address_cc}"/>
+
+						<aon:outputLabel for="SearchMail_subject" styleClass="aon-text-bold"
+							value="#{appBundle.aon_webmail_subject}: " />
+						<aon:inputText id="SearchMail_subject"
+							size="80"
+							value="#{search.subject}"/>
+
+						<aon:outputLabel for="SearchMail_bodyText" styleClass="aon-text-bold"
+							value="#{appBundle.aon_webmail_content}: " />
+						<aon:inputText id="SearchMail_bodyText"
+							size="80"
+							value="#{search.bodyText}"/>
+					</aon:panelGrid>
+					
+					<aon:div rendered="#{search.resultSelected}">
+						<aon:div rendered="#{!search.resultFound}" styleClass="aon-box aon-box-outstanding2">
+							<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
+								<aon:outputText value="#{appBundle.aon_webmail_search_none}"/>
+							</aon:div>
+						</aon:div>
+						<aon:div rendered="#{search.resultFound}">
+						
+							<aon:dataTable id="messageDataTable" 
+								value="#{search.sortableList.model}" var="to" rows="10" 
+								cellpadding="0" cellspacing="0"
+								columnClasses="aon-editDataTable-textColumn,
+										aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+										
+								<aon:rowSelector action="message"
+									actionListener="#{search.changeSelectedMessage}" />							
+																				
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_webmail_from}"/>
+									</f:facet>
+									<aon:outputText escape="false" converter="longString" value="#{to.sender}"/>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_webmail_subject}"/>
+									</f:facet>
+									<aon:outputText value="#{to.subject}" />
+								</aon:column>
+										  
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_webmail_date}"/>
+									</f:facet>
+									<aon:outputText value="#{to.sentDate}"/>
+								</aon:column>		  
+							</aon:dataTable>
+							
+							<aon:dataScroller2 for="messageDataTable" />
+	
+						</aon:div>
+					</aon:div>
+	        	</aon:panelGroup>
+		    </aon:div>		
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

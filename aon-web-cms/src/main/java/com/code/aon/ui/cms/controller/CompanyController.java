@@ -22,7 +22,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class CompanyController extends BasicController implements ICMSConstants {
+public class CompanyController extends BasicController {
 	
 	private int page;
 	
@@ -125,7 +125,7 @@ public class CompanyController extends BasicController implements ICMSConstants 
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Company current = (Company)getTo();
 		current.setLogo(image);

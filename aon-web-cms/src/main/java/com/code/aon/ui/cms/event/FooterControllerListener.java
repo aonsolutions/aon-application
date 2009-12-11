@@ -1,8 +1,6 @@
 package com.code.aon.ui.cms.event;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.Section;
@@ -20,8 +18,6 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class FooterControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(FooterControllerListener.class.getName());
-	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
@@ -48,7 +44,7 @@ public class FooterControllerListener extends ControllerAdapter {
 				footer.setDefault_(true);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -59,9 +55,9 @@ public class FooterControllerListener extends ControllerAdapter {
 		try {
 			c.onSelectBannerCategories(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 
@@ -72,9 +68,9 @@ public class FooterControllerListener extends ControllerAdapter {
 		try {
 			c.onSelectBannerCategories(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 

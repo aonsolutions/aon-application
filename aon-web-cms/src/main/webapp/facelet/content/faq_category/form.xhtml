@@ -77,16 +77,17 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{faq_category.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="partial_generate" reRender="aonStatus"
+						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{faq_category.to!=null and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentFaqCategory}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -98,7 +99,7 @@
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="faqCategory_alias" style="width:100px"
-						value="#{appBundle.cms_alias}" />
+						value="#{appBundle.faq_category_alias}" />
 					<aon:inputText id="faqCategory_alias"
 						required="true" size="32" maxlength="32"
 						value="#{faq_category.to.alias}">
@@ -134,8 +135,9 @@
 			</aon:div>
 		
 		</aon:form>
-		
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 	</ui:define>
 
 </ui:composition>

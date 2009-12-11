@@ -29,14 +29,11 @@
 						columnClasses="aon-header-name">
 						<aon:div>
 							<aon:outputText value="#{appBundle.aon_cms_current_path}: " styleClass="aon-applicationName"/>
-							<aon:outputText value="#{gallery.currentRelativePath}" styleClass="aon-applicationName"/>
-							<aon:confirmButton id="removeFolder"
-								value="#{appBundle.aon_cms_remove_folder}"
-								immediate="true" style="margin-left:2em;"
-								confirmTitle="#{bundle.aon_confirm_title}"
-								confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{gallery.deleteFolder}"
-								accesskey="#{bundle.aon_key_remove}" />								  						
+							<aon:outputText value="#{gallery.currentRelativePath}" styleClass="aon-applicationName"/>	  						
+							<aon:commandButton value="#{appBundle.aon_cms_remove_folder}"
+								rendered="#{gallery.emptyDir}"
+								action="gallery_list"
+								actionListener="#{gallery.deleteFolder}"/>
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>
@@ -52,7 +49,7 @@
 							action="gallery_list"
 							actionListener="#{gallery.createFolder}"/>
 					</aon:div>
-					<aon:div id="GalleryFileUpload" style="width:400px" styleClass="aon-padding">
+					<aon:div style="width:400px" styleClass="aon-padding">
 						<aon:outputText value="#{appBundle.aon_cms_gallery_image}: " styleClass="aon-float-left"/>
 						<aon:fileUpload id="attach_file"
 							addControlLabel="#{bundle.aon_fileUpload_add}"
@@ -65,7 +62,7 @@
 							<f:facet name="label">
 								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 							</f:facet>
-							<a4j:support event="onuploadcomplete" reRender="GalleryFileUpload,GalleryList,GalleryFolderTree" />
+							<a4j:support event="onuploadcomplete" reRender="GalleryList, GalleryFolderTree" />
 						</aon:fileUpload>
 					</aon:div>
 				</aon:panelGrid>
@@ -73,8 +70,8 @@
 				    <rich:tree switchType="server" stateAdvisor="#{treeStateAdvisor}">
 				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
 				        	var="item" nodes="#{item.nodes}">
-							<rich:treeNode icon="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}"
-										iconLeaf="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}">
+							<rich:treeNode icon="/images/cms/tree/folderopen.gif"
+										iconLeaf="/images/cms/tree/folderopen.gif">
 				                <aon:commandLink action="#{item.onSelectFolder}" 
 				                	value="#{item}" immediate="#{true}"
 				                	reRender="main_form" />
@@ -94,12 +91,12 @@
 			            		</aon:div>
 			            		<aon:div styleClass="aon-padding aon-text-center">
 									<aon:commandButton styleClass="aon-noborder aon-padding"
-										image="#{aonResource.resolveLocal['/images/cms/icons/settings.png']}"
+										image="/images/cms/icons/settings.png"
 					                	action="resizer_form" value="#{appBundle.aon_cms_resize}"
 					                    actionListener="#{resizer.onResizeFile}">
 									</aon:commandButton> 
 									<aon:commandButton styleClass="aon-noborder aon-padding"
-										image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}"
+										image="/images/cms/icons/delete.png"
 					                	action="gallery_list" value="#{bundle.aon_remove}"
 					                    actionListener="#{gallery.onDeleteFile}"> 
 									</aon:commandButton> 

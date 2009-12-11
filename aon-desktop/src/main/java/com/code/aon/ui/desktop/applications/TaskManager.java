@@ -2,22 +2,15 @@ package com.code.aon.ui.desktop.applications;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.desktop.IDesktopConstants;
-import com.code.aon.project.Task;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.TaskStatus;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
@@ -25,6 +18,19 @@ public class TaskManager implements IServices, IDesktopConstants {
 
 	private ApplicationsManager.App app;
 	
+	private String InProgressSelect = "SELECT count(id) as total FROM task" +
+			" WHERE status = " + TaskStatus.IN_PROGRESS.ordinal() +
+			" AND user = :userId";
+	private String PendingSelect = "SELECT count(id) as total FROM task" +
+			" WHERE status = " + TaskStatus.PENDING.ordinal() +
+			" AND user = :userId";
+	private String UserWorkgroupSelect = "SELECT count(task.id) as total FROM task, user_workgroup" +
+			" WHERE task.user is null AND task.workgroup = user_workgroup.workgroup" +
+			" AND user_workgroup.user = :userId";
+	private String expiredSelect = "SELECT count(id) as total FROM task" +
+		" WHERE status IN (" + TaskStatus.IN_PROGRESS.ordinal() + "," + TaskStatus.PENDING.ordinal() + ")" +
+		" AND user = :userId" +
+		" AND due_date < :dueDate";
 	private Integer userId;
 
 	public TaskManager() {
@@ -34,74 +40,25 @@ public class TaskManager implements IServices, IDesktopConstants {
 		userId = UserUtils.getInstance().getLoggedUser().getId();
 	}
 
-	private List<Integer> getUserWorkgroups() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(UserWorkGroup.class);
-		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_ID);
-		criteria.addEqualExpression(user, userId);
-		List<Integer> result = new LinkedList<Integer>();
-		for( ITransferObject to : bean.getList(criteria) ) {
-			UserWorkGroup uwg = (UserWorkGroup) to;
-			result.add( uwg.getUser().getId() );
-		}
-		return result;
-	}
-	
-	private int getUserWorkgroupCount() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Task.class);
-		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IProjectAlias.TASK_USER_ID);
-		criteria.addNullExpression(user);
-		String workGroup = bean.getFieldName(IProjectAlias.TASK_WORK_GROUP_ID);
-		Expression expression = null;
-		for( Integer id : getUserWorkgroups() ) {
-			if ( expression == null ) {
-				expression = ExpressionUtilities.getEqualExpression(workGroup, id);				
-			} else {
-				Expression exp  = ExpressionUtilities.getEqualExpression(workGroup, id);
-				expression = ExpressionUtilities.getOrExpression(expression, exp);
-			}
-		}
-		if ( expression != null ) {
-			criteria.addExpression(expression);
-		}
-		return bean.getCount(criteria);
-	}
-	
-	private int getExpiredCount() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Task.class);
-		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IProjectAlias.TASK_USER_ID);
-		criteria.addEqualExpression(user, userId);
-		String statusAlias = bean.getFieldName(IProjectAlias.TASK_STATUS);
-		Expression exp1  = ExpressionUtilities.getEqualExpression(statusAlias, TaskStatus.IN_PROGRESS);
-		Expression exp2  = ExpressionUtilities.getEqualExpression(statusAlias, TaskStatus.PENDING);
-		criteria.addExpression( ExpressionUtilities.getOrExpression(exp1, exp2) );
-		String dueDate = bean.getFieldName(IProjectAlias.TASK_DUE_DATE);
-		criteria.addLessThanExpression(dueDate, new Date());
-		return bean.getCount(criteria);
-	}
-
-	private int getTaskCount( TaskStatus status ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Task.class);
-		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IProjectAlias.TASK_USER_ID);
-		criteria.addEqualExpression(user, userId);
-		String statusAlias = bean.getFieldName(IProjectAlias.TASK_STATUS);
-		criteria.addEqualExpression(statusAlias, status);
-		return bean.getCount(criteria);
-	}
-	
-	public List<TaskInfo> getTaskSummaryModel() throws ManagerBeanException {
+	public List<TaskInfo> getTaskSummaryModel() {
 		ArrayList<TaskInfo> l = new ArrayList<TaskInfo>();
-		int inprogress = getTaskCount( TaskStatus.IN_PROGRESS );
-		int pending = getTaskCount( TaskStatus.PENDING );
-		int group = getUserWorkgroupCount();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionFactoryName);
+		Query query = session.createSQLQuery( InProgressSelect )
+			.addScalar( "total", Hibernate.INTEGER ).setParameter( "userId", userId );
 		String desc = TaskStatus.IN_PROGRESS.getName( AonUtil.getCurrentLocale() );
+		Integer inprogress = (Integer) query.uniqueResult();
+		query = session.createSQLQuery( PendingSelect )
+			.addScalar( "total", Hibernate.INTEGER ).setParameter( "userId", userId );
+		Integer pending = (Integer) query.uniqueResult();
+		query = session.createSQLQuery( UserWorkgroupSelect )
+			.addScalar( "total", Hibernate.INTEGER ).setParameter( "userId", userId );
+		Integer group = (Integer) query.uniqueResult();
 		l.add( new TaskInfo( desc, inprogress + "/" + (inprogress + pending + group) ) );
 
-		String dues = AonUtil.getMessage( "appBundle", "desktop_task_dues" );
-		l.add( new TaskInfo( dues, "" + getExpiredCount() ) );
+		query = session.createSQLQuery( expiredSelect )
+			.addScalar( "total", Hibernate.INTEGER ).setParameter( "userId", userId ).setParameter( "dueDate", new Date() );
+		l.add( new TaskInfo( "Vencidas", "" + query.uniqueResult() ) );
 		return l;
 	}
 

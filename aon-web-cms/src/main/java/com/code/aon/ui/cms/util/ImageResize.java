@@ -5,10 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
+import javax.swing.ImageIcon;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.sun.jimi.core.Jimi;
@@ -20,84 +19,115 @@ public class ImageResize {
 	private static final Logger LOGGER = Logger.getLogger(ImageResize.class
 			.getName());
 
-	public static File resize(File file, int width, int height) {
-		if (file.isFile()){
+	public static String resize(String file,
+			int width,
+			int height) {
+		File f = new File(file);
+		if (f.isFile()){
+			String name = null;
+			String name2 = null;
 			OutputStream os = null;
-			File file2 = null;
 			try {
-				Image image = ImageUtil.getImage(file);
-				file2 = new File( file.getParentFile(), "resize_" + file.getName() );
+				name = f.getParentFile().getPath();
+				name += File.separator + f.getName();
+				name = name.replace('\\', '/');
+				name2 = f.getParentFile().getPath();
+				name2 += File.separator + "resize_" + f.getName();
+				name2 = name2.replace('\\', '/');
+				Image image = new ImageIcon(name).getImage();
 				
 				try {
-					Image newImage = image.getScaledInstance(width,height,Image.SCALE_SMOOTH);
-					JimiRasterImage raster = Jimi.createRasterImage(newImage.getSource());
-					os = new FileOutputStream(file2);
+					image = image.getScaledInstance(width,height,Image.SCALE_SMOOTH);
+					JimiRasterImage raster = Jimi.createRasterImage(image.getSource());
+					os = new FileOutputStream(name2);
 					Jimi.putImage(MimeType.MIME_JPEG.getName(), raster, os);
 					os.flush();
 				} catch (JimiException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					e.printStackTrace();
 				} catch (IOException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					e.printStackTrace();
 				}
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			} finally {
-				IOUtils.closeQuietly(os);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try{os.close();}catch (Exception e) {}
+				f = null;
 			}
-			return file2;
+			return name;
 		}
 		return null;
 	}
 
-	public static int getMaxWidth(File file){
-		if (file.isFile()){
+	public static int getMaxWidth(String file){
+		File f = new File(file);
+		if (f.isFile()){
+			String name = null;
 			try {
-				Image image = ImageUtil.getImage(file);
+				name = f.getParentFile().getPath();
+				name += File.separator + f.getName();
+				name = name.replace('\\', '/');
+				Image image = new ImageIcon(name).getImage();
 				return  image.getWidth(null);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return 0;
 	}
 	
-	public static int getMaxHeight(File file){
-		if (file.isFile()){
+	public static int getMaxHeight(String file){
+		File f = new File(file);
+		if (f.isFile()){
+			String name = null;
 			try {
-				Image image = ImageUtil.getImage(file);
+				name = f.getParentFile().getPath();
+				name += File.separator + f.getName();
+				name = name.replace('\\', '/');
+				Image image = new ImageIcon(name).getImage();
 				return  image.getHeight(null);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return 0;
 	}
 	
-	public static int getWidth(File file, int height){
-		if (file.isFile()){
+	public static int getWidth(String file, int height){
+		File f = new File(file);
+		if (f.isFile()){
+			String name = null;
 			try {
-				Image image = ImageUtil.getImage(file);
+				name = f.getParentFile().getPath();
+				name += File.separator + f.getName();
+				name = name.replace('\\', '/');
+				Image image = new ImageIcon(name).getImage();
 				int image_width = image.getWidth(null);
 				int image_height = image.getHeight(null);
 				double scale = (double)image_height / (double)height;
 				return (int)((double)image_width / scale);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return 0;
 	}
 
-	public static int getHeight(File file, int width){
-		if (file.isFile()){
+	public static int getHeight(String file, int width){
+		File f = new File(file);
+		if (f.isFile()){
+			String name = null;
 			try {
-				Image image = ImageUtil.getImage(file);
+				name = f.getParentFile().getPath();
+				name += File.separator + f.getName();
+				name = name.replace('\\', '/');
+				Image image = new ImageIcon(name).getImage();
 				int image_width = image.getWidth(null);
 				int image_height = image.getHeight(null);
 				double scale = (double)image_width / (double)width;
 				return (int)((double)image_height / scale);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return 0;

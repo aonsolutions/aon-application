@@ -9,22 +9,11 @@ import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.util.AonUtil;
 
-public class AlbumImageController extends BasicI18nController implements ICMSConstants, Constants {
+public class AlbumImageController extends BasicI18nController {
 
 	private int page;
-	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
 	
 	public int getPage() {
 		return page;
@@ -55,7 +44,7 @@ public class AlbumImageController extends BasicI18nController implements ICMSCon
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = NO_VALUE_LABEL;
+		String title = "- NO VALUE -";
 		AlbumImageDetail aid = (AlbumImageDetail)getModelRowdataI18n();
 		if (aid != null) title = aid.getTitle();
 		return title;
@@ -72,21 +61,21 @@ public class AlbumImageController extends BasicI18nController implements ICMSCon
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		AlbumImage current = (AlbumImage)getTo();
 		current.setImage(image);
 	}
 	
 	public void onSelectThumbnail(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		AlbumImage current = (AlbumImage)getTo();
 		current.setThumbnail(image);
 	}
 
 	public void onAlbumCriteria(ActionEvent event) throws ManagerBeanException {
-		AlbumController albumController = (AlbumController)AonUtil.getRegisteredBean(ALBUM);
+		AlbumController albumController = (AlbumController)AonUtil.getRegisteredBean("album");
 		Album albumTo = (Album)albumController.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(this.getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID),albumTo.getId());

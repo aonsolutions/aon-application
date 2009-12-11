@@ -17,7 +17,7 @@ public class ArticleCategoryHandler {
 	public ArticleCategoryHandler (ArticleCategoryDetail detail, ArticleType art_type, ArrayList<ArticleHandler> list) {
 		this.label = detail.getLabel();
 		this.list = list;
-		String url = ArticleGenerator.getTemplate(art_type).getHtmlName();
+		String url = ArticleGenerator.getTemplate(art_type.ordinal()).getHtmlName();
 		url = url.replaceAll("%NAME%", art_type.getName()+"_"+detail.getArticleCategory().getAlias());
 		this.url = url;
 	}

@@ -1,8 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -21,17 +19,13 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class ConfigController extends BasicI18nController{
 
-	private static final Logger LOGGER = Logger.getLogger(ConfigController.class.getName());
-	
 	private Config currentConfig;
-
-	private boolean richTextEnabled;
 	
 	public ConfigController() {
 		try {
 			init();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 
@@ -40,14 +34,19 @@ public class ConfigController extends BasicI18nController{
 	}
 	
 	private void init() throws ManagerBeanException {
-		LOGGER.info( "CARGANDO CONFIGURACION...");
+		System.out.println(">>>>>> ----------------------------------------");
+		System.out.println(">>>>>> CARGANDO CONFIGURACION...");
+		System.out.println(">>>>>> ----------------------------------------");
 		IManagerBean configBean = BeanManager.getManagerBean(Config.class);
 		List<ITransferObject> list = configBean.getList(null);
-		LOGGER.info( "Number of Config: " + list.size());
+		System.out.println(">>>>>>>>>>>>>>>>> CONFIGS: " + list.size());
 		if (list.size() > 0) {
 			setCurrentConfig((Config)list.get(0));
 		}
-		LOGGER.info( "CurrentConfig: " + currentConfig);
+		System.out.println(">>>>>> DOMINIO: " + currentConfig.getDomain());
+		System.out.println(">>>>>> TEMPLATE: " + currentConfig.getTemplate());
+		System.out.println(">>>>>> PREVIEW: " + currentConfig.getPreview_host());
+		System.out.println(">>>>>> HOST: " + currentConfig.getHost());
 	}
 
 	public Config getCurrentConfig() {
@@ -66,7 +65,7 @@ public class ConfigController extends BasicI18nController{
 				return cd;
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -77,12 +76,4 @@ public class ConfigController extends BasicI18nController{
 		session.setAttribute(Constants.SESSION_CONFIG, currentConfig);
 	}
 
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
 }

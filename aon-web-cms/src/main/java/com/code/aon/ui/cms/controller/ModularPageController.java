@@ -17,10 +17,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 
-public class ModularPageController extends BasicI18nController implements ICMSConstants, Constants {
+public class ModularPageController extends BasicI18nController {
 
 	private String title;
 	
@@ -35,7 +34,7 @@ public class ModularPageController extends BasicI18nController implements ICMSCo
 	}
 
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ModularPageOptionController mpc = (ModularPageOptionController)FormUtil.getController(MODULAR_PAGE_OPTION);
+		ModularPageOptionController mpc = (ModularPageOptionController)FormUtil.getController("modular_page_option");
 		IManagerBean mpBean = BeanManager.getManagerBean(ModularPageOption.class);
 		ModularPage modularPage = (ModularPage) this.getTo();
 		Criteria criteria = new Criteria();
@@ -81,7 +80,7 @@ public class ModularPageController extends BasicI18nController implements ICMSCo
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		ModularPageDetail mpd = (ModularPageDetail)getModelRowdataI18n();
 		if (mpd != null) label = mpd.getLabel();
 		return label;

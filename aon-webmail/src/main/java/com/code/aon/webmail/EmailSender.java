@@ -48,20 +48,24 @@ public class EmailSender {
 		server.connect();
 	}
 	
-	public void sendMessage( Address to, String subject, String content ) throws WebmailException, MessagingException {
+	public void sendMessage( Address[] to, String subject, String content ) throws WebmailException {
 		sendMessage(to, subject, content, null);
 	}
+	
+	public void sendMessage( Address[] to, String subject, String content, MimeType mimeType, AonFile ... attachemnts  ) throws WebmailException {
+		sendMessage(to, subject, content, mimeType, null, attachemnts);
+	}
 
-	public void sendMessage( Address to, String subject, String content, MimeType mimeType, AonFile ... attachemnts  ) throws WebmailException {
+	public void sendMessage( Address[] to, String subject, String content, MimeType mimeType, SecurityInfo si, AonFile ... attachemnts  ) throws WebmailException {
 		AonMessage aonMessage = server.createAonMessage(from);
-		aonMessage.setRecipientsTo( new Address[]{to} );
+		aonMessage.setRecipientsTo( to );
 		aonMessage.setSubject(subject);
 		if (! ArrayUtils.isEmpty(attachemnts) ) {
 	       	MimeMultipart multipart =new MimeMultipart(IMimeType.RELATED);
 	       	MimeBodyPart mainPart = new MimeBodyPart();
 	       	String type = (mimeType != null) ? mimeType.getName() : MimeType.MIME_TXT.getName();
 	       	try {
-		       	mainPart.setContent( content, type);
+		       	mainPart.setContent( content, type );
 		       	multipart.addBodyPart(mainPart);
 				for ( AonFile file : attachemnts ) {
 					MimeBodyPart bodyPart = new MimeBodyPart();
@@ -72,6 +76,9 @@ public class EmailSender {
 				}
 	       	} catch ( MessagingException e ) {
 	       		throw new WebmailException( e.getMessage(), e );
+	       	}
+	       	if ( si != null ) {
+	       		multipart = EmailSecurity.sign( multipart, si );
 	       	}
 			aonMessage.setContent(multipart);				
 		} else {

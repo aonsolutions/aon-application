@@ -4,10 +4,9 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.SportPositionDetail;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.Constants;
 
 
-public class SportPositionController extends BasicI18nController implements Constants {
+public class SportPositionController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
@@ -16,7 +15,7 @@ public class SportPositionController extends BasicI18nController implements Cons
 	}
 
 	public String getI18nDescription() throws ManagerBeanException {
-		String description = NO_VALUE_LABEL;
+		String description = "- NO VALUE -";
 		SportPositionDetail detail = (SportPositionDetail)getModelRowdataI18n();
 		if (detail != null) description = detail.getDescription();
 		return description;

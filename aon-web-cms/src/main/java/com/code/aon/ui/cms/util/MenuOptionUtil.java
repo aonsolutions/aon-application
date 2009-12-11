@@ -3,8 +3,6 @@ package com.code.aon.ui.cms.util;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -37,7 +35,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.controller.CollectionsController;
-import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
@@ -48,26 +45,22 @@ import com.code.aon.ui.cms.velocity.ProductGenerator;
 import com.code.aon.ui.cms.velocity.SportGenerator;
 import com.code.aon.ui.util.AonUtil;
 
-public class MenuOptionUtil implements ICMSConstants {
+public class MenuOptionUtil {
 
-	private static final Logger LOGGER = Logger.getLogger(MenuOptionUtil.class.getName());
-	
+
 	public static boolean isVisibleLevel(PageType type) {
 		if (type != null) {
-			switch ( type ) {
-				case ALBUM_IMAGES:
-				case ARTICLE_EVENTS:
-				case ARTICLE_NEWS:
-				case ARTICLE_OTHER:
-				case ARTICLE_SERVICES:
-				case BRANDS:
-				case DOWNLOAD:
-				case FAQ:
-				case LINK:
-				case PRODUCT_CATEGORIES:
-				case SPORT:
-					return true;
-			}
+			if (type.equals(PageType.LINK)) return true;
+			if (type.equals(PageType.FAQ)) return true;
+			if (type.equals(PageType.ALBUM_IMAGES)) return true;
+			if (type.equals(PageType.ARTICLE_NEWS)) return true;
+			if (type.equals(PageType.ARTICLE_EVENTS)) return true;
+			if (type.equals(PageType.ARTICLE_SERVICES)) return true;
+			if (type.equals(PageType.ARTICLE_OTHER)) return true;
+			if (type.equals(PageType.DOWNLOAD)) return true;
+			if (type.equals(PageType.SPORT)) return true;
+			if (type.equals(PageType.PRODUCT_CATEGORIES)) return true;
+			if (type.equals(PageType.BRANDS)) return true;
 		}
 		return false;
 	}
@@ -178,123 +171,148 @@ public class MenuOptionUtil implements ICMSConstants {
 
 	public static List<SelectItem> getIdents(PageType type, ContentLevel level) throws ManagerBeanException {
 		List<SelectItem> idents = new LinkedList<SelectItem>();
-		if (type.equals(PageType.GENERIC)) {
-			idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getGenericPageList();
-		} else if (type.equals(PageType.MODULAR)) {
-			idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getModularPageList();
-		} else if (type.equals(PageType.DIRECT_ACCESS)) {
-			idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessGroupList();
-		} else if (type.equals(PageType.MENU)) {
-			idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getMenuList();
-		} else if (type.equals(PageType.FAQ)) {
+		if (type.equals(PageType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
+		else if (type.equals(PageType.MODULAR)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getModularPageList();
+		else if (type.equals(PageType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessGroupList();
+		else if (type.equals(PageType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
+		else if (type.equals(PageType.FAQ)){
 			if (ContentLevel.SECTION.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getSectionList();
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getFaqCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSectionList();
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getFaqCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
 			}
-		} else if (type.equals(PageType.LINK)) {
+		}else if (type.equals(PageType.LINK)){
 			if (ContentLevel.SECTION.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getSectionList();
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getLinkCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSectionList();
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
 			}
 		}else if (type.equals(PageType.ALBUM_IMAGES)){
 			if (ContentLevel.SECTION.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getAlbumCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getAlbumList();
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumList();
 			}
 		}else if (type.equals(PageType.ARTICLE_NEWS)){
 			if (ContentLevel.TOP.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.SECTION.equals(level)){
+			}
+			if (ContentLevel.SECTION.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleByTypeList(ArticleType.NEWS);
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.NEWS);
 			}
 		}else if (type.equals(PageType.ARTICLE_EVENTS)){
 			if (ContentLevel.TOP.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.SECTION.equals(level)){
+			}
+			if (ContentLevel.SECTION.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleByTypeList(ArticleType.EVENTS);
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.EVENTS);
 			}
 		}else if (type.equals(PageType.ARTICLE_SERVICES)){
 			if (ContentLevel.TOP.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.SECTION.equals(level)){
+			}
+			if (ContentLevel.SECTION.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleByTypeList(ArticleType.SERVICES);
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.SERVICES);
 			}
 		}else if (type.equals(PageType.ARTICLE_OTHER)){
 			if (ContentLevel.TOP.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.SECTION.equals(level)){
+			}
+			if (ContentLevel.SECTION.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleByTypeList(ArticleType.OTHER);
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.OTHER);
 			}
 		}else if (type.equals(PageType.DOWNLOAD)){
 			if (ContentLevel.TOP.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.SECTION.equals(level)){
-				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDownloadCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDownloadList();
 			}
-		} else if (type.equals(PageType.SPORT)){
 			if (ContentLevel.SECTION.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
-			} else if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getSportCategoryList();
-			} else if (ContentLevel.ELEMENT.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getSportClubList();
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadList();
+			}
+		}else if (type.equals(PageType.SPORT)){
+			if (ContentLevel.SECTION.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSportCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSportClubList();
 			}
 		}else if (type.equals(PageType.PRODUCT_CATEGORIES)){
 			try {
 				if (ContentLevel.TOP.equals(level)){
 					idents.add(new SelectItem(null,"NO VALID"));
-				} else if (ContentLevel.SECTION.equals(level)){
+				}
+				if (ContentLevel.SECTION.equals(level)){
 					idents.add(new SelectItem(null,"NO VALID"));
-				} else if (ContentLevel.CATEGORY.equals(level)){
-					idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getParentCategories();
-				} else if (ContentLevel.ELEMENT.equals(level)){
-					idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getCategories();
+				}
+				if (ContentLevel.CATEGORY.equals(level)){
+					idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getParentCategories();
+				}
+				if (ContentLevel.ELEMENT.equals(level)){
+						idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getCategories();
 				}
 			} catch (ExpressionException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 		}else if (type.equals(PageType.BRANDS)){
 			try {
 				if (ContentLevel.TOP.equals(level)){
 					idents.add(new SelectItem(null,"NO VALID"));
-				} else if (ContentLevel.SECTION.equals(level)){
+				}
+				if (ContentLevel.SECTION.equals(level)){
 					idents.add(new SelectItem(null,"NO VALID"));
-				} else if (ContentLevel.CATEGORY.equals(level)){
-					idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getParentCategories();
-				} else if (ContentLevel.ELEMENT.equals(level)){
-					idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBrands();
+				}
+				if (ContentLevel.CATEGORY.equals(level)){
+					idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getParentCategories();
+				}
+				if (ContentLevel.ELEMENT.equals(level)){
+					idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBrands();
 				}
 			} catch (ExpressionException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 		}
 		return idents;
@@ -319,7 +337,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					return link;
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -337,7 +355,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					return link;
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -355,21 +373,21 @@ public class MenuOptionUtil implements ICMSConstants {
 					return link;
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
 		if (pageType == PageType.LINK) {
 			try {
-				if (ContentLevel.TOP.equals(level)){
+				if (level.equals(ContentLevel.TOP)){
 					String linkCategory = Templates.LINK.getHtmlName();
 					linkCategory = linkCategory.replaceAll("%NAME%", LinkGenerator.LINK_CATEGORY_LIST_PAGE);
 					return linkCategory;
-				} else if (ContentLevel.SECTION.equals(level)){
+				}else if (level.equals(ContentLevel.SECTION)){
 					String linkCategory = Templates.LINK.getHtmlName();
 					linkCategory = linkCategory.replaceAll("%NAME%", LinkGenerator.LINK_CATEGORY_BY_SECTION_PAGE + ident);
 					return linkCategory;
-				} else if (ContentLevel.CATEGORY.equals(level)){
+				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(LinkCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_ID), ident);
@@ -383,21 +401,21 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
 		if (pageType == PageType.FAQ) {
 			try {
-				if (ContentLevel.TOP.equals(level)){
+				if (level.equals(ContentLevel.TOP)){
 					String faqCategory = Templates.FAQ.getHtmlName();
 					faqCategory = faqCategory.replaceAll("%NAME%", FaqGenerator.FAQ_CATEGORY_LIST_PAGE);
 					return faqCategory;
-				}else if (ContentLevel.SECTION.equals(level)){
+				}else if (level.equals(ContentLevel.SECTION)){
 					String faqCategory = Templates.FAQ.getHtmlName();
 					faqCategory = faqCategory.replaceAll("%NAME%", FaqGenerator.FAQ_CATEGORY_BY_SECTION_PAGE + ident);
 					return faqCategory;
-				}else if (ContentLevel.CATEGORY.equals(level)){
+				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(FaqCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_ID), ident);
@@ -411,7 +429,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -433,17 +451,17 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
 		if (pageType == PageType.ALBUM_IMAGES) {
 			try {
-				if (ContentLevel.TOP.equals(level)){
+				if (level.equals(ContentLevel.TOP)){
 					String category = Templates.ALBUM_CATEGORY.getHtmlName();
 					category = category.replaceAll("%NAME%", AlbumGenerator.ALBUM_LIST_PAGE);
 					return category;
-				} else if (ContentLevel.CATEGORY.equals(level)){
+				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), ident);
@@ -455,7 +473,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						album = album.replaceAll("%NAME%", ac.getAlias());
 						return album;
 					}
-				} else if (ContentLevel.ELEMENT.equals(level)){
+				}else if (level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(Album.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ID), ident);
@@ -469,7 +487,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -478,7 +496,7 @@ public class MenuOptionUtil implements ICMSConstants {
 				pageType == PageType.ARTICLE_SERVICES ||
 				pageType == PageType.ARTICLE_OTHER ) {
 			try {
-				if (ContentLevel.CATEGORY.equals(level)){
+				if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ID), ident);
@@ -502,7 +520,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						}
 						return article;
 					}
-				}else if (ContentLevel.ELEMENT.equals(level)){
+				}else if (level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(Article.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ID), ident);
@@ -524,17 +542,17 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
 		if (pageType == PageType.DOWNLOAD) {
 			try {
-				if (ContentLevel.TOP.equals(level)){
+				if (level.equals(ContentLevel.TOP)){
 					String downloadCategory = Templates.DOWNLOADS.getHtmlName();
 					downloadCategory = downloadCategory.replaceAll("%NAME%", DownloadsGenerator.DOWNLOAD_CATEGORY_LIST_PAGE);
 					return downloadCategory;
-				}else if (ContentLevel.CATEGORY.equals(level)){
+				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), ident);
@@ -546,7 +564,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						link = link.replaceAll("%NAME%", dc.getAlias());
 						return link;
 					}
-				}else if (ContentLevel.ELEMENT.equals(level)){
+				}else if (level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(DownloadDetail.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_DOWNLOAD_ID), ident);
@@ -558,7 +576,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -569,11 +587,11 @@ public class MenuOptionUtil implements ICMSConstants {
 		}
 		if (pageType == PageType.PRODUCT_CATEGORIES) {
 			try {
-				if (ContentLevel.TOP.equals(level)){
+				if (level.equals(ContentLevel.TOP)){
 					String link = Templates.PRODUCT_CATEGORY.getHtmlName();
 					link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 					return link;
-				} else if (ContentLevel.CATEGORY.equals(level) || ContentLevel.ELEMENT.equals(level)){
+				}else if (level.equals(ContentLevel.CATEGORY) || level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(ProductCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ID), ident);
@@ -587,17 +605,17 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
 		if (pageType == PageType.BRANDS) {
 			try {
-				if (ContentLevel.TOP.equals(level)){
+				if (level.equals(ContentLevel.TOP)){
 					String link = Templates.BRAND.getHtmlName();
 					link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 					return link;
-				}else if (ContentLevel.CATEGORY.equals(level) || ContentLevel.ELEMENT.equals(level)){
+				}else if (level.equals(ContentLevel.CATEGORY) || level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(Brand.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BRAND_ID), ident);
@@ -611,7 +629,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -622,11 +640,11 @@ public class MenuOptionUtil implements ICMSConstants {
 		}
 		if (pageType == PageType.SPORT) {
 			try {
-				if (ContentLevel.TOP.equals(level)){
+				if (level.equals(ContentLevel.TOP)){
 					String page = Templates.SPORT.getHtmlName();
 					page = page.replaceAll("%NAME%", SportGenerator.MAIN_PAGE);
 					return page;
-				}else if (ContentLevel.CATEGORY.equals(level)){
+				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(SportCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SPORT_CATEGORY_ID), ident);
@@ -637,7 +655,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						link = link.replaceAll("%NAME%", SportGenerator.CATEGORY + sc.getAlias());
 						return link;
 					}
-				}else if (ContentLevel.ELEMENT.equals(level)){
+				}else if (level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(SportClub.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SPORT_CLUB_ID), ident);
@@ -650,7 +668,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 			return null;
 		}		

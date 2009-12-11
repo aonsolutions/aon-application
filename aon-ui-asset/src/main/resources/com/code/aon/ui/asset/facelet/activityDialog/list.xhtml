@@ -3,59 +3,122 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:define name="content">
-		<aon:form id="activityList">
+		<aon:div id="assetListData" styleClass="aon-scroll-area">
+			<aon:dataTable id="assetDataList" value="#{activityBasic.model}" rows="20"
+				var="to" rendered="#{activityBasic.model.rowCount > 0}"
+				styleClasses=" aon-editDataTable-dateColumn,
+				aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn 
+				">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{assetBundle.asset_activity_module}" />
-				<ui:param name="controller" value="#{asset}" />
-			</ui:include>
- 
-			<aon:div id="assetData" styleClass="aon-scroll-area">
-				<aon:dataTable id="assetDataList" value="#{asset.model}"
-					rows="20" var="to" rendered="#{asset.model.rowCount > 0}">
 
-					<aon:rowSelector action="activity_form" 
-						actionListener="#{asset.onSelect}" />
- 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}" />
-					</aon:column>
-<!-- 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.description}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.alias}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_entryEnabled}" />
-						</f:facet>
-						<aon:div styleClass="#{to.entryEnabled?'aon-icon-checked':'aon-icon-check'}">
-							<f:verbatim>&#160;</f:verbatim>
-						</aon:div>
-					</aon:column>
+				<aon:rowSelector action="activity_form"
+					actionListener="#{asset.onSelect}" />
+<!--  
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_id}" />
+					</f:facet>
+					<aon:outputText value="#{to.id}" />
+				</aon:column>
 -->
+				
+ 			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{assetBundle.asset_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.date}" rendered="#{to!=activityBasic.to}"
+						 	size="8" >
+						 	<f:convertDateTime pattern="#{assetBundle.aon_date_pattern}" 
+								timeZone="#{timeZoneController.timeZoneId}"  />
+						</aon:outputText>
+						
+					</aon:column>
+ 				
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{assetBundle.asset_fromTime}" />
+						</f:facet>
+						<aon:outputText value="#{to.fromTime}" rendered="#{to!=activityBasic.to}"
+							size="5" >
+							<f:convertDateTime pattern="#{assetBundle.aon_time_pattern}" 
+								timeZone="#{timeZoneController.timeZoneId}" type="time" />
+						</aon:outputText>
+						
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{assetBundle.asset_toTime}" />
+						</f:facet>
+						<aon:outputText value="#{to.toTime}" rendered="#{to!=activityBasic.to}"
+							size="5" >
+							<f:convertDateTime pattern="#{assetBundle.aon_time_pattern}" 
+								timeZone="#{timeZoneController.timeZoneId}" type="time" />
+						</aon:outputText>
+						
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{assetBundle.asset_activity_who}" />
+						</f:facet>
+						<aon:outputText value="#{to.who}" rendered="#{to!=activityBasic.to}"
+							size="15" />
+						
+					</aon:column>
+ 					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{assetBundle.asset_activity_why}" />
+						</f:facet>
+						<aon:outputText value="#{to.why}" rendered="#{to!=activityBasic.to}"
+							size="25" />
+						
+					</aon:column>		
+				
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{assetBundle.asset_activity_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" rendered="#{to!=activityBasic.to}"
+							size="25" />
+						
+					</aon:column>
+				
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						
+						<aon:commandButton
+								id="activity-accept" title="#{bundle.aon_accept}"
+								actionListener="#{activityBasic.acceptPendingAsset}"
+								reRender="assetListData"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								rendered="#{to==activityBasic.to}"
+								/>
+						<aon:commandButton
+								id="activity-cancel" title="#{bundle.aon_cancel}"
+								actionListener="#{activityBasic.cancelPendingAsset}"
+								reRender="assetListData"
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								rendered="#{to==activityBasic.to}"
+								/>
+								
+								
+					</aon:column>
+				
 
-				</aon:dataTable>
 
-				<aon:dataScroller2 for="assetDataList" showNote="true" />
-			</aon:div>
-		</aon:form>
-	</ui:define>
+			</aon:dataTable>
+
+			<aon:dataScroller2 for="assetDataList" showNote="true" />
+<!-- 
+-->
+		</aon:div>
 </ui:composition>

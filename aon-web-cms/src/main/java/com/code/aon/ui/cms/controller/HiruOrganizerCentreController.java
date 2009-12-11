@@ -9,10 +9,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class HiruOrganizerCentreController extends BasicController implements ICMSConstants {
+public class HiruOrganizerCentreController extends BasicController {
 
 	public void onInit(ActionEvent event) {
-		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(HiruConfig.class);
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(HiruConfig.class);
 		super.onSearch(event);
 	}
 

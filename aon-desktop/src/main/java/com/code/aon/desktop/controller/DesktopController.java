@@ -1,12 +1,5 @@
 package com.code.aon.desktop.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -15,17 +8,13 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -46,8 +35,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -58,8 +45,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DesktopController extends BasicController implements IDesktopConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(DesktopController.class.getName());
-	
 	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
 	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
     
@@ -68,8 +53,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
-    
-    private boolean checkUpdateURL = true;
 
 	public SelectItem getNullValue() {
 		return NULL_SELECT_ITEM;
@@ -118,8 +101,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
 
     @SuppressWarnings("unchecked")
     private List createQuery(String select) {
-    	String name = HibernateUtil.getSessionFactoryName();
-        Session session = HibernateUtil.getSession(name);
+        Session session = HibernateUtil.getSession();
         Query query = session.createQuery(select);
         return query.list();
     }
@@ -345,55 +327,8 @@ public class DesktopController extends BasicController implements IDesktopConsta
 		if (session.getAttribute("AON_KEY_VALIDATOR_OK") != null) return true;
 		return false;
     }
-
-	public String getUpdateURL() {
-    	String server = null;
-		try {
-			server = InetAddress.getLocalHost().getCanonicalHostName();
-		} catch (UnknownHostException e) {
-			try {
-				server = InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e1) {
-				LOGGER.log( Level.SEVERE, "Error getting server address. " + e1.getMessage(), e1);
-			}
-		}
-    	return "http://" + server + ":7654";		
-	}
-	    
-    public boolean isUpdatesAvailable() {
-    	boolean available = false;
-    	if ( checkUpdateURL ) {
-	    	try {
-				URL url = new URL( getUpdateURL() + "/hasupdate.rpy" );
-				InputStream in = url.openStream();
-				char result = (char) in.read();
-				in.close();
-				available = (result == '1');
-			} catch (Throwable e) {
-				checkUpdateURL = false;
-				LOGGER.log( Level.INFO, "Error getting updates available. " + e.getMessage(), e);
-			}
-    	}
-    	return available;
-    }
     
-	public String getUpdateApplicationURL() {
-		return getUpdateURL() + "/update.rpy";
-	}
-
-	public boolean isBigLogo() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		RegistryAttachment attach = companyController.getAttach();
-		if ( (attach != null) && (!ArrayUtils.isEmpty(attach.getData())) ) {
-			InputStream in = new ByteArrayInputStream(attach.getData());
-			try {
-				BufferedImage image = ImageIO.read(in);
-				return (image.getWidth() > 200);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, "Error reading logo. " + e.getMessage(), e);
-			}
-		}
-		return false;
-	}
-	
+    public boolean isRoleManager() {
+    	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole("Manager");
+    }
 }

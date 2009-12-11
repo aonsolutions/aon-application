@@ -19,7 +19,6 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.product.enumeration.AttachmentType;
 
 /**
  * Transfer Object that represents the attachment 
@@ -63,12 +62,6 @@ public class ItemAttachment implements IAttachment, Cloneable {
      * Attachment byte size.
      */
     private Integer size;
-    
-    /**
-     * Item type.
-     */
-    private AttachmentType type;
-
     
     /**
      * Returns the unique key of the item attachment.
@@ -193,27 +186,6 @@ public class ItemAttachment implements IAttachment, Cloneable {
      */
 	public void setSize(Integer size) {
 		this.size = size;
-	}
-	
-	 /**
-	 * Returns item tipo
-	 * 
-	 * @return
-	 * 		the item type
-	 */
-	@Column(name="type")
-	public AttachmentType getType() {
-		return type;
-	}
-
-	/**
-	 * Assigns item type
-	 * 
-	 * @param type
-	 * 	 the item type
-	 */
-	public void setType(AttachmentType type) {
-		this.type = type;
 	}
 
     /**

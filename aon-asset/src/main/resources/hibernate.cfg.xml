@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-asesor?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.40:3306/aon-aonpayroll-com?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -16,7 +16,7 @@
 		<!-- AON-ASSET Mapping files --> 
 		<mapping class="com.code.aon.asset.Asset"/>
 		<mapping class="com.code.aon.asset.AssetActivity"/>
-
+		
 	</session-factory>
 
 </hibernate-configuration>

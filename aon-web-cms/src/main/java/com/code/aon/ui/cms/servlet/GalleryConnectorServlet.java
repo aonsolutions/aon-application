@@ -22,10 +22,10 @@ package com.code.aon.ui.cms.servlet;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -41,7 +41,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -85,7 +84,11 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	
 	private static final String GENERIC = "CMSGP";
 
+	private static final String ROOT_FOLDER = "/";
+
 	private static HttpSession session;
+
+	private HttpServletRequest request;
 	
 	// private Locale locale;
 
@@ -111,7 +114,8 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		LOGGER.fine("--- BEGIN DOGET ---");
-		LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GET");
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GET");
+		this.request = request;
 		this.session = request.getSession();
 		
 		response.setContentType("text/xml; charset=UTF-8");
@@ -131,8 +135,8 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			document = builder.newDocument();
-		} catch (ParserConfigurationException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		} catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
 		}
 
 		Node root = CreateCommonXml(document, commandStr, typeStr, currentFolderStr, currentPath);
@@ -162,10 +166,10 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 			transformer.transform(source, result);
 			out.flush();
 			
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		} finally {
-			IOUtils.closeQuietly(out);
+			try{out.close();}catch (Exception e){}
 			out = null;
 		}
 
@@ -200,7 +204,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	}
 
 	private void getImageFiles(String currentFolderStr, Element files, Document doc) throws ManagerBeanException {
-		LOGGER.info(">>>>>>>>>>>> Images currentFolderStr " + currentFolderStr );
+		System.out.println(">>>>>>>>>>>> Images currentFolderStr " + currentFolderStr );
 		String basePath = getImagesPath();
 		String currentPath = basePath + "" + currentFolderStr;
 
@@ -222,7 +226,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	}
 
 	private void getResourceFiles(String currentFolderStr, Element files, Document doc) throws ManagerBeanException {
-		LOGGER.info(">>>>>>>>>>>> Documents currentFolderStr " + currentFolderStr );
+		System.out.println(">>>>>>>>>>>> Documents currentFolderStr " + currentFolderStr );
 		String basePath = getResourcesPath();
 		String currentPath = basePath + "" + currentFolderStr;
 
@@ -242,7 +246,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	}
 
 	private void getGenericPageFiles(Element files, Document doc) throws ManagerBeanException {
-		LOGGER.info(">>>>>>>>>>>> GenericPage currentFolderStr /");
+		System.out.println(">>>>>>>>>>>> GenericPage currentFolderStr /");
 		List<String> list = getCurrentGenericPagesAliases();
 		for (int i=0; i < list.size(); i++) {
 			String temp = list.get(i);
@@ -286,7 +290,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 				Config config = (Config)list.get(0);
 				session.setAttribute(SESSION_CONFIG, config);
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 		}
 		Config config = (Config)session.getAttribute(SESSION_CONFIG);
@@ -305,7 +309,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 				Config config = (Config)list.get(0);
 				session.setAttribute(SESSION_CONFIG, config);
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 		}
 		Config config = (Config)session.getAttribute(SESSION_CONFIG);
@@ -320,7 +324,9 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	public static List<String> getCurrentGenericPagesAliases() {
 		List<String> list = new ArrayList<String>();
 		if (session.getAttribute(SESSION_CURRENT_LANGUAGE) == null) {
-			LOGGER.info(">>>>>>>>>>>>> ERROR");
+			System.out.println(">>>>>>>>>>>>> ERROR");
+			System.out.println(">>>>>>>>>>>>> ERROR");
+			System.out.println(">>>>>>>>>>>>> ERROR");
 		}
 		Language currentLanguage = (Language)session.getAttribute(SESSION_CURRENT_LANGUAGE);
 		try {
@@ -337,7 +343,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 		return list;
 	}

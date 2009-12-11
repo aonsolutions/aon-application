@@ -81,7 +81,7 @@
 					<aon:panelGrid id="generalGrid" columns="2" dir="true">
 					
 						<aon:outputLabel for="Alias"
-							value="#{appBundle.cms_alias}(*)" />
+							value="#{appBundle.hiru_course_alias}(*)" />
 						<aon:inputText id="Alias"
 							required="true" size="32" maxlength="32"
 							value="#{hiru_course.to.alias}">
@@ -133,12 +133,11 @@
 							required="true" size="100" maxlength="64"
 							value="#{hiru_course.toI18n.name}" />
 
-						<ui:include src="/facelet/content/utils/contentInput.xhtml" >
-							<ui:param name="labelValue" value="#{bundle.aon_description}" />
-							<ui:param name="inputTextId" value="info" />
-							<ui:param name="inputTextValue" value="#{hiru_course.toI18n.info}" />
-							<ui:param name="richTextEnabled" value="#{hiru_course.richTextEnabled}" />
-						</ui:include>							
+						<aon:outputLabel for="info"
+							value="#{appBundle.hiru_course_info}" />
+						<aon:inputTextarea id="info"
+							cols="60" rows="20" 
+							value="#{hiru_course.toI18n.info}"/>
 
 						<aon:outputLabel for="url"
 							value="#{appBundle.hiru_course_url}" />

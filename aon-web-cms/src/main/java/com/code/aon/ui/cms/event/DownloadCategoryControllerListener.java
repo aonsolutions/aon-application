@@ -1,23 +1,17 @@
 package com.code.aon.ui.cms.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class DownloadCategoryControllerListener extends ControllerAdapter implements ICMSConstants {
+public class DownloadCategoryControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(DownloadCategoryControllerListener.class.getName());
-	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
@@ -26,8 +20,7 @@ public class DownloadCategoryControllerListener extends ControllerAdapter implem
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_POSITION));
 			event.getController().setCriteria(criteria);
-		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}catch (Exception e) {
 		}
 	}
 
@@ -52,6 +45,6 @@ public class DownloadCategoryControllerListener extends ControllerAdapter implem
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		FormUtil.getController(DOWNLOAD).onSearch(null);
+		FormUtil.getController("download").onSearch(null);
 	}
 }

@@ -101,13 +101,98 @@
 						</aon:div>
 					</aon:div>
 					
-					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 						<ui:param name="controller" value="#{corporateIdentityAttach}" />
 						<ui:param name="rows" value="10" />
 						<ui:param name="skipLineEdition" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
 						<ui:param name="skipResetButton" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
-					</ui:include>
+						<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-width-150 aon-editDataTable-textColumn" />
+						<ui:define name="columns">
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="RegistryAttach_description" value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.description}" rendered="#{formList}" />
+								<aon:inputText id="RegistryAttach_description" required="true"
+									value="#{corporateIdentityAttach.to.description}"
+									rendered="#{formEdit}" size="40" />
+								<f:facet name="footer">
+									<aon:inputText id="RegistryAttach_description-New" required="true"
+										value="#{corporateIdentityAttach.to.description}"
+										rendered="#{formNew}" size="40" />
+								</f:facet>
+							</aon:column>
 
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="RegistryAttach_category" value="#{registryBundle.registry_category}" />
+								</f:facet>
+								<aon:outputText value="#{to.category.name}" rendered="#{formList}" />
+								<aon:selectOneMenu id="RegistryAttach_category" rendered="#{formEdit}"
+									value="#{corporateIdentityAttach.to.category}">
+									<f:selectItem itemLabel="-" value="#{null}"/>
+									<f:selectItems value="#{registryCollections.categories}" />
+								</aon:selectOneMenu>									
+								<f:facet name="footer">
+									<aon:selectOneMenu id="RegistryAttach_category-New" rendered="#{formNew}"
+										value="#{corporateIdentityAttach.to.category}">
+										<f:selectItem itemLabel="-" value="#{null}"/>
+										<f:selectItems value="#{registryCollections.categories}" />
+									</aon:selectOneMenu>									
+								</f:facet>
+							</aon:column>
+							 
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_fileupload_element}" />
+								</f:facet>
+								<aon:div id="attachFile">
+									<aon:commandLink rendered="#{formList and (to.data != null)}"
+										onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+										onclick="window.open('#{to.id}.cidocument','','width=20px,height=50px,resizable=false');">
+										<aon:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon/aon-icon-file-download.png']}"
+											style="border:0px;margin:2px;" alt="Download"/>
+									</aon:commandLink>
+									<a4j:region>
+										<aon:fileUpload rendered="#{formEdit}"
+											addControlLabel="#{bundle.aon_fileUpload_add}"
+											stopControlLabel="#{bundle.aon_fileUpload_stop}"
+											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+											fileUploadListener="#{corporateIdentityAttach.fileUploaded}"
+											listHeight="0px" immediateUpload="true" autoclear="true">
+											<f:facet name="label">
+												<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+											</f:facet>														
+											<a4j:support event="onuploadcomplete"
+												reRender="attachFile,RegistryAttach_description" />
+										</aon:fileUpload>
+									</a4j:region>	
+								</aon:div>
+								<f:facet name="footer">
+									<aon:div id="attachFileNew">
+										<a4j:region>
+											<aon:fileUpload rendered="#{formNew}"
+												addControlLabel="#{bundle.aon_fileUpload_add}"
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												fileUploadListener="#{corporateIdentityAttach.fileUploaded}"
+												listHeight="0px" immediateUpload="true" autoclear="true">
+												<f:facet name="label">
+													<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+												</f:facet>																										
+												<a4j:support event="onuploadcomplete"
+													reRender="attachFileNew,RegistryAttach_description-New" />
+											</aon:fileUpload>
+										</a4j:region>
+									</aon:div>
+								</f:facet>														
+							</aon:column>
+							
+						</ui:define>
+					</ui:decorate>
 				</aon:div>
 				
 			</aon:div>

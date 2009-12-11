@@ -14,7 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
 
-public class SubCategoryController extends BasicI18nController implements ICMSConstants {
+public class SubCategoryController extends BasicI18nController {
 
 	private ProductCategory parent;
 	
@@ -24,7 +24,7 @@ public class SubCategoryController extends BasicI18nController implements ICMSCo
 	public void onSelect(ActionEvent event) {
 		if (!cancelOnSelect) {
 			super.onSelect(event);
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, SUB_CATEGORY_FORM);
+			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "subcategory_form");
 			loadCurrentLanguage();
 		}
 		cancelOnSelect = false;

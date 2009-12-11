@@ -33,19 +33,20 @@
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator_config.onSaveSportConfig}" />
 						</aon:commandButton>
-						<aon:commandButton id="generate" reRender="aonStatus"
+						<aon:commandButton id="generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateSports}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>	
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -59,18 +60,20 @@
 		
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:outputLabel for="Sport_section"
-					value="#{appBundle.section}"/>
-				<aon:selectOneMenu id="Sport_section"  
-					value="#{generator_config.sectionId}">
-					<f:selectItem itemLabel="-" itemValue="-1" />
-					<f:selectItems value="#{collections.sectionList}" />
-				</aon:selectOneMenu>
+					<aon:outputLabel for="Sport_section"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="Sport_section"  
+						value="#{generator_config.sectionId}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
 					
 			</aon:div>
 		</aon:form>
 
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 		
 	</ui:define>
 

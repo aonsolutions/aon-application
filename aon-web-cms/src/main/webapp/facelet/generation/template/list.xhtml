@@ -42,8 +42,8 @@
 						confirmActionListener="#{template.onRemoveSelected}"
 						confirmAction="template_list"
 						accesskey="#{bundle.aon_key_remove}"/>
-					<aon:commandButton id="home"
-						value="#{bundle.aon_home}"
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
 						action="home" 
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -58,81 +58,87 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">
 
-			<aon:dataTable id="dataTable" value="#{template.templates}" var="to"
-				rows="#{template.pageLimit}" 
-				columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn aon-width-70,
-						aon-editDataTable-textColumn aon-width-70">
-		
-				<aon:column>
-					<f:facet name="header">
-						<aon:div>
-							<aon:outputText value="#{bundle.aon_check}" />
-						</aon:div>	
-					</f:facet>
-					<aon:selectBooleanCheckbox id="Row_checked"
-							rendered="#{!to.defaultTemplate}"
-							value="#{template.rowChecked}">
-							<a4j:support 
-								event="onclick"  
-								reRender="dataTable,buttonsGrid" />
-					</aon:selectBooleanCheckbox>
-					<aon:graphicImage id="Template_selected_blocked" 
-						rendered="#{to.defaultTemplate}"
-						url="#{aonResource.resolveLocal['/images/cms/blocked.gif']}" 
-						alt="#{appBundle.template_blocked}"/>
-				</aon:column>
+					<aon:dataTable id="dataTable" value="#{template.templates}" var="to"
+						rows="#{template.pageLimit}" 
+						styleClass="dr-table rich-table aon-editDataTable"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 				
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText for="Template_name" value="#{appBundle.template_name}" />
-					</f:facet>
-					<aon:outputText id="Template_name" value="#{to.name}"/>
-				</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:div>
+									<aon:outputText value="#{bundle.aon_check}" />
+								</aon:div>	
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Row_checked"
+									rendered="#{!to.defaultTemplate}"
+									value="#{template.rowChecked}">
+									<a4j:support 
+										event="onclick"  
+										reRender="dataTable,buttonsGrid" />
+							</aon:selectBooleanCheckbox>
+							<aon:graphicImage id="Template_selected_blocked" 
+								rendered="#{to.defaultTemplate}"
+								url="/images/cms/blocked.gif" 
+								alt="#{appBundle.template_blocked}"/>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Template_name" value="#{appBundle.template_name}" />
+							</f:facet>
+							<aon:outputText id="Template_name" value="#{to.name}"/>
+						</aon:column>
 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText for="Template_defaultMenu" value="#{appBundle.template_defaultTemplate}" />
-					</f:facet>
-					<aon:selectBooleanCheckbox 
-							value="#{to.defaultTemplate}"
-							rendered="#{!to.defaultTemplate}">
-						<a4j:support 
-							actionListener="#{template.defaultTemplateChanged}"
-							event="onclick"  
-							reRender="dataTable" />
-					</aon:selectBooleanCheckbox>
-					<aon:graphicImage id="Template_default_blocked" rendered="#{to.defaultTemplate}"
-						url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.template_blocked}"/>
-				</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Template_defaultMenu" value="#{appBundle.template_defaultTemplate}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox 
+									value="#{to.defaultTemplate}"
+									rendered="#{!to.defaultTemplate}">
+								<a4j:support 
+									actionListener="#{template.defaultTemplateChanged}"
+									event="onclick"  
+									reRender="dataTable" />
+							</aon:selectBooleanCheckbox>
+							<aon:graphicImage id="Template_default_blocked" rendered="#{to.defaultTemplate}"
+								url="/images/cms/selected.gif" alt="#{appBundle.template_blocked}"/>
+						</aon:column>
 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText for="Template_author" value="#{appBundle.template_author}" />
-					</f:facet>
-					<aon:outputText id="Template_author" value="#{to.author}"/>
-				</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Template_author" value="#{appBundle.template_author}" />
+							</f:facet>
+							<aon:outputText id="Template_author" value="#{to.author}"/>
+						</aon:column>
 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText for="Template_version" value="#{appBundle.template_version}" />
-					</f:facet>
-					<aon:outputText id="Template_version" value="#{to.version}"/>
-				</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Template_version" value="#{appBundle.template_version}" />
+							</f:facet>
+							<aon:outputText id="Template_version" value="#{to.version}"/>
+						</aon:column>
 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText for="Template_creationDate" value="#{appBundle.template_creationDate}" />
-					</f:facet>
-					<aon:outputText id="Template_creationDate" value="#{to.creationDate}"/>
-				</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Template_creationDate" value="#{appBundle.template_creationDate}" />
+							</f:facet>
+							<aon:outputText id="Template_creationDate" value="#{to.creationDate}"/>
+						</aon:column>
 
-			</aon:dataTable>
-		
-			<aon:dataScroller2 for="dataTable" />
+					</aon:dataTable>
+				
+					<rich:datascroller align="left"  for="dataTable" maxPages="20" />
 
-		</aon:div>
+			</aon:div>
 		</aon:form>
 		
 	</ui:define>

@@ -42,19 +42,20 @@
 							accesskey="#{bundle.aon_key_search}">
 							<aon:actionListener method="#{product.onEditSearch}" />
 						</aon:commandButton>
-						<aon:commandButton id="generate" reRender="aonStatus"
+						<aon:commandButton id="generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateProducts}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>	
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -64,14 +65,14 @@
 							value="#{appBundle.product_category}"
 							action="product_category_list"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
+							styleClass="aon-finding-toolbar-item">
 							<aon:actionListener method="#{productCategory.onSearch}" />
 						</aon:commandButton>
 						<aon:commandButton id="brands"
 							value="#{appBundle.brand}"
 							action="brand_list"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
+							styleClass="aon-finding-toolbar-item">
 							<aon:actionListener method="#{brand.onSearch}" />
 						</aon:commandButton>
 					</aon:div>
@@ -82,78 +83,100 @@
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="dataTable" value="#{product.model}" var="to"
-					rows="#{product.pageLimit}" rendered="#{product.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
-							
-					<aon:rowSelector
-						action="product_form" actionListener="#{product.onSelect}" />							
-							
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.alias}"
-							styleClass="aon-editDataTable-button" />
-					</aon:column>
+					<aon:dataTable id="dataTable" value="#{product.model}" var="to"
+						styleClass="dr-table rich-table aon-editDataTable"
+						rows="#{product.pageLimit}"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+								
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_alias}" />
+								</f:facet>
+								<aon:outputText value="#{to.alias}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.product_label}" />
-						</f:facet>
-						<aon:outputText value="#{product.i18nShortLabel}"
-							styleClass="aon-editDataTable-button" />
-					</aon:column>
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_label}" />
+								</f:facet>
+								<aon:outputText value="#{product.i18nShortLabel}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.product_category}" />
-						</f:facet>
-						<aon:outputText value="#{product.i18nCategory}"
-							styleClass="aon-editDataTable-button" />
-					</aon:column>
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_category}" />
+								</f:facet>
+								<aon:outputText value="#{product.i18nCategory}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.brand}" />
-						</f:facet>
-						<aon:outputText value="#{product.i18nBrand}"
-							styleClass="aon-editDataTable-button" />
-					</aon:column>
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.brand}" />
+								</f:facet>
+								<aon:outputText value="#{product.i18nBrand}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.product_active}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																															
-							<aon:commandLink title="#{appBundle.product_activate}" 
-								action="product_list"
-								actionListener="#{product.onActivate}" 
-								rendered="#{!to.active}">
-								<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
-									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-							</aon:commandLink>
-							<aon:commandLink title="#{appBundle.product_deactivate}" 
-								action="product_list"
-								actionListener="#{product.onDeactivate}" 
-								rendered="#{to.active}">
-								<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
-									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-							</aon:commandLink>
-						</aon:div>
-					</aon:column>
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_active}" />
+								</f:facet>
+								<aon:commandLink title="#{appBundle.product_activate}" 
+									action="product_list"
+									actionListener="#{product.onActivate}" 
+									rendered="#{!to.active}">
+									<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
+										url="/images/cms/inactive.png" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.product_deactivate}" 
+									action="product_list"
+									actionListener="#{product.onDeactivate}" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
+										url="/images/cms/active.png" />
+								</aon:commandLink>
+							</aon:column>
 
-				</aon:dataTable>
+						</aon:dataTable>
+						
+						<aon:dataScroller for="dataTable"
+							rowCount="#{product.model.rowCount}" 
+							page="#{product.page}"
+							showNote="true" />					
 					
-				<aon:dataScroller2 for="dataTable" showNote="true" />					
-					
-			</aon:div>
+				</aon:div>
 		</aon:form>
 
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 		
 	</ui:define>
 

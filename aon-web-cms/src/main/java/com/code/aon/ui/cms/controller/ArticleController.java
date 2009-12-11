@@ -21,11 +21,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class ArticleController extends BasicI18nController implements ICMSConstants, Constants {
+public class ArticleController extends BasicI18nController {
 
 	private String title;
 
@@ -39,17 +38,7 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 	
 	private Date dateToExpire;
 
-	private String selectedTab;
-	
 	private int page;
-	
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
 	
 	public int getPage() {
 		return page;
@@ -90,21 +79,21 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getTitle();
 		return label;
 	}
 
 	public String getI18nSubtitle() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getSubtitle();
 		return label;
 	}
 
 	public String getI18nContent() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getContent();
 		return label;
@@ -121,21 +110,21 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Article current = (Article)getTo();
 		current.setImage(image);
 	}
 
 	public void onSelectThumbnail(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Article current = (Article)getTo();
 		current.setThumbnail(image);
 	}
 
 	public void onSelectRelatedArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ArticleRelatedController c = (ArticleRelatedController)FormUtil.getController(ARTICLE_RELATED);
+		ArticleRelatedController c = (ArticleRelatedController)FormUtil.getController("articleRelated");
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleRelated.class);
 		Article article = (Article) this.getTo();
 		Criteria criteria = new Criteria();
@@ -146,7 +135,7 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 	}
 
 	public void onSelectArticleDocuments(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ArticleDocumentController c = (ArticleDocumentController)FormUtil.getController(ARTICLE_DOCUMENT);
+		ArticleDocumentController c = (ArticleDocumentController)FormUtil.getController("articleDocument");
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleDocument.class);
 		Article article = (Article) this.getTo();
 		Criteria criteria = new Criteria();
@@ -159,7 +148,7 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 	public boolean isDiary() {
 		try{
 			return (((Article)this.getTo()).getArticleType() == ArticleType.EVENTS)?true:false;
-		}catch (Throwable th) {
+		}catch (Exception e) {
 			return false;
 		}
 	}

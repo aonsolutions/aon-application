@@ -308,12 +308,6 @@ public interface IProductAlias {
 	*/
 	String  ITEM_ATTACHMENT_SIZE = ITEM_ATTACHMENT_ENTRY.getAliasNames()[5];
 
-	/** 
-	* Alias value: ItemAttachment_type
-	* Hibernate value: ItemAttachment.type
-	*/
-	String  ITEM_ATTACHMENT_TYPE = ITEM_ATTACHMENT_ENTRY.getAliasNames()[6];
-
 
 
 	/** 

@@ -7,16 +7,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.io.IOUtils;
 
 import com.code.aon.cms.Config;
 import com.code.aon.ui.cms.Constants;
@@ -28,8 +29,6 @@ import com.code.aon.ui.cms.Constants;
  */
 public class EditorAreaImgCssProviderServlet extends HttpServlet implements Constants{
 
-	private static final Logger LOGGER = Logger.getLogger(EditorAreaImgCssProviderServlet.class.getName());
-	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		doGet(req, res);
 	}
@@ -37,7 +36,7 @@ public class EditorAreaImgCssProviderServlet extends HttpServlet implements Cons
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession();
         String uri = req.getRequestURI();
-        LOGGER.info(">>>>>>>>>>> Reading IMG CSS file: " + uri);
+        System.out.println(">>>>>>>>>>> Reading IMG CSS file: " + uri);
 		InputStream is = null;
 		BufferedInputStream bis = null;
         OutputStream os = null;
@@ -45,7 +44,7 @@ public class EditorAreaImgCssProviderServlet extends HttpServlet implements Cons
 		try {
 			String path = getCurrentImgCssPath(session);
 			String img = path + "/imagen.jpg";
-			LOGGER.info(">>>>>>>>>>> Reading IMG CSS file: " + img);
+			System.out.println(">>>>>>>>>>> Reading IMG CSS file: " + img);
 			File f = new File(img);
 	        if (uri.endsWith(".gif")) res.setContentType("image/gif;");
 	        if (uri.endsWith(".jpg")) res.setContentType("image/jpeg;");
@@ -75,13 +74,13 @@ public class EditorAreaImgCssProviderServlet extends HttpServlet implements Cons
             res.flushBuffer();
         } 
 		catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+            th.printStackTrace();
             throw new ServletException(th.getMessage(), th);
         }finally{
-        	IOUtils.closeQuietly(bis);
-        	IOUtils.closeQuietly(is);
-        	IOUtils.closeQuietly(bos);
-        	IOUtils.closeQuietly(os);
+    		try{bis.close();}catch(Exception e){}
+    		try{is.close();}catch(Exception e){}
+    		try{bos.close();}catch(Exception e){}
+    		try{os.close();}catch(Exception e){}
     		bis = null;
     		is = null;
     		bos = null;

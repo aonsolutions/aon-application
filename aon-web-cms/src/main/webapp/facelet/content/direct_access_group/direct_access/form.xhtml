@@ -69,8 +69,8 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{direct_access.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -81,7 +81,7 @@
 							value="#{appBundle.direct_access_group}"
 							action="direct_access_group_list"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
+							styleClass="aon-finding-toolbar-item">
 							<aon:actionListener method="#{direct_access_group.onSearch}" />
 						</aon:commandButton>
 				    </aon:div>
@@ -94,7 +94,7 @@
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="DirectAccess_alias" style="width:100px"
-						value="#{appBundle.cms_alias}" />
+						value="#{appBundle.direct_access_alias}" />
 					<aon:inputText id="DirectAccess_alias"
 						required="true" size="32" maxlength="32"
 						value="#{direct_access.to.alias}">
@@ -161,7 +161,7 @@
 						value="#{direct_access.toI18n.label}" />
 
 					<aon:outputLabel for="DirectAccessDetail_description"
-						value="#{bundle.aon_description}" />
+						value="#{appBundle.direct_access_description}" />
 					<aon:inputText id="DirectAccessDetail_description"
 						size="80" maxlength="255"
 						value="#{direct_access.toI18n.description}" />
@@ -176,13 +176,15 @@
 		                	immediate="#{true}"
 		                	reRender="thumbnail_preview"
 		                    actionListener="#{direct_access.onDelImage}">
-							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							<aon:graphicImage url="/images/cms/inactive.png" />
 		        		</aon:commandLink>
 						<ui:include src="/facelet/content/utils/image_modal.xhtml">
 							<ui:param name="modalPanelName" value="mp2" />
 							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="galleryBean" value="#{gallery}" />
 							<ui:param name="listenerBean" value="#{direct_access}" />
 							<ui:param name="reRender" value="thumbnail_preview" />
+							<ui:param name="image" value="#{true}" />
 							<ui:param name="thumbnail" value="#{false}" />
 						</ui:include>
 		        	</aon:panelGroup>

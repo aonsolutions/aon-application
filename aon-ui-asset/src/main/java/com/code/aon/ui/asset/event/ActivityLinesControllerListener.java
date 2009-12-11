@@ -2,7 +2,9 @@ package com.code.aon.ui.asset.event;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.dao.IAssetAlias;
@@ -17,7 +19,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class ActivityLinesControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(ActivityLinesControllerListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLinesControllerListener.class.getName());
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -59,7 +61,7 @@ public class ActivityLinesControllerListener extends ControllerAdapter {
 			}
 			this.getController().setCriteria(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>>>> addActivityDateFitlerCriteria" + e.getMessage());
+			LOGGER.error(">>>>>> addActivityDateFitlerCriteria" + e.getMessage());
 		}
 	}
 

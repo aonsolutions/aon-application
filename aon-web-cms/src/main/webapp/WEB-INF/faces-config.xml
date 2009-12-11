@@ -18,24 +18,24 @@
 		</resource-bundle>
 	</application>
 
-   <!-- *************** RESOURCE RESOLVER ***************** -->
+   <!-- *************** RESOURCE RESOLVER ***************** --> 
    <managed-bean>
-   	<managed-bean-name>aonResource</managed-bean-name>
-   	<managed-bean-class>
-   		com.code.aon.ui.resources.bean.ResourceResolver
-   	</managed-bean-class>
-   	<managed-bean-scope>session</managed-bean-scope>
-   	<managed-property>
-   		<property-name>resourceContextPath</property-name>
-   		<value>aon-cms</value>
-   	</managed-property>
-   	<managed-property>
-   		<property-name>resourceURIPreffix</property-name>
-   		<value>/aonResource/3.6.1</value>
-   	</managed-property>
+      <managed-bean-name>aonResource</managed-bean-name>
+      <managed-bean-class>
+         com.code.aon.ui.resources.bean.ResourceResolver
+      </managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>resourceContextPath</property-name>
+			<value>aon-cms</value>
+		</managed-property>		
+      <managed-property>
+         <property-name>resourceURIPreffix</property-name>
+         <value>/aonResource/3.5.0</value>
+      </managed-property>      
    </managed-bean>
 
-   <!--  *************** 
+	<!--  *************** 
 		AON CONFIGURATION
 		***************** -->
    <managed-bean>
@@ -47,8 +47,7 @@
 		<managed-property>
 		   <property-name>styleSheets</property-name>
 		   <list-entries>
-			  <value>#{aonResource.resolve['/aon-richCss.css']}</value>
-			  <value>#{aonResource.resolveLocal['/css/cms.css']}</value>
+			  <value>#{aonResource.resolveLocal['/aon-richCss.css']}</value>
 		   </list-entries>
 		</managed-property>
 	</managed-bean>

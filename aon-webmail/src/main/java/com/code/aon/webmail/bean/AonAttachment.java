@@ -1,15 +1,15 @@
 package com.code.aon.webmail.bean;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.MimeUtility;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AonAttachment {
 	
-	private static final Logger LOGGER = Logger.getLogger(AonAttachment.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AonAttachment.class);
 	
 	private int position;
 	
@@ -62,7 +62,7 @@ public class AonAttachment {
 			size = size * 75 /100 / 1000;
 			return String.valueOf(size)+" Kb";
 		} catch (MessagingException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			LOGGER.error(e.getMessage(), e );
 		}
 		return "";
 	}

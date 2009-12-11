@@ -1,7 +1,5 @@
 package com.code.aon.ui.cms.controller;
 
-import java.io.File;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Image;
@@ -10,7 +8,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageResize;
 import com.code.aon.ui.util.AonUtil;
 
-public class ResizeController implements ICMSConstants {
+public class ResizeController {
 
 	private Image resizeImage = null;
 
@@ -70,16 +68,15 @@ public class ResizeController implements ICMSConstants {
 	}
 
 	private void onInit(){
-		File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-		width = ImageResize.getMaxWidth(file);
-		maxWidth = width;
-		height = ImageResize.getMaxHeight(file);
-		maxHeight = height;
+		width = ImageResize.getMaxWidth(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
+		maxWidth = ImageResize.getMaxWidth(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
+		height = ImageResize.getMaxHeight(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
+		maxHeight = ImageResize.getMaxHeight(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
 		ratio = true;
 	}
 	
 	public void onResizeFile(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		resizeImage = (Image)controller.getModel().getRowData();
 		onInit();
 	}
@@ -89,27 +86,21 @@ public class ResizeController implements ICMSConstants {
 	}
 	
 	public void onAccept(ActionEvent event) {
-		File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-		File newFile = ImageResize.resize(file, width, height);
-		if ( file.delete() ) {
-			newFile.renameTo(file);
-		}
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		ImageResize.resize(ControllerUtil.getImagesPath()+resizeImage.getRelativePath(), width, height);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		controller.chargeImageList();
 		resizeImage = null;
 	}
 
 	public void onChangeWidth(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-			height = ImageResize.getHeight(file, width);
+			height = ImageResize.getHeight(ControllerUtil.getImagesPath()+resizeImage.getRelativePath(), width);
 		}
 	}
 
 	public void onChangeHeight(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-			width = ImageResize.getWidth(file, height);
+			width = ImageResize.getWidth(ControllerUtil.getImagesPath()+resizeImage.getRelativePath(), height);
 		}
 	}
 	

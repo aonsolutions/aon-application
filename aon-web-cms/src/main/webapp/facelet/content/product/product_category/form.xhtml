@@ -78,16 +78,17 @@
 							<aon:actionListener method="#{productCategory.onCancel}" />
 						</aon:commandButton>
 						<!-- 
-						<aon:commandButton id="partial_generate" reRender="aonStatus"
+						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{productCategory.to!=null}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentProductCategory}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>
 						 -->
 				    </aon:div>
@@ -99,7 +100,7 @@
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="ProductCategory_alias" style="width:100px"
-						value="#{appBundle.cms_alias}" />
+						value="#{appBundle.product_category_alias}" />
 					<aon:inputText id="ProductCategory_alias"
 						required="true" size="32" maxlength="32"
 						value="#{productCategory.to.alias}">
@@ -154,21 +155,34 @@
 						
 						<aon:dataTable id="dataTable" value="#{subCategory.model}" var="to"
 							rows="#{subCategory.pageLimit}"
-							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-									aon-editDataTable-iconColumn">
-									
-							<aon:rowSelector immediate="true" reRender="detail_panel"
-								 actionListener="#{subCategory.onSelect}" />																		
+							styleClass="dr-table rich-table aon-editDataTable"
+							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+							footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+							rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+							cellpadding="0" cellspacing="0"
+							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+									dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 									
 							<aon:column>
+								<a4j:support 
+									immediate="#{true}"
+									reRender="detail_panel"
+									actionListener="#{subCategory.onSelect}"
+									event="onclick" />
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.cms_alias}"/>
+									<aon:outputText value="#{appBundle.product_category_alias}"/>
 								</f:facet>
 								<aon:outputText value="#{to.alias}" 
 									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 
 							<aon:column>
+								<a4j:support 
+									immediate="#{true}"
+									reRender="detail_panel"
+									actionListener="#{subCategory.onSelect}"
+									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.product_category_label}"/>
 								</f:facet>
@@ -180,28 +194,27 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.product_category_active}" />
 								</f:facet>
-								<aon:div onmouseover="disableRowSelector();"
-									onmouseout="enableRowSelector();" >																																							
-									<aon:commandLink title="#{appBundle.product_category_activate}" 
-										actionListener="#{subCategory.onActivate}"
-										reRender="dataTable"
-										rendered="#{!to.active}">
-										<aon:graphicImage id="subCategory_active" alt="#{appBundle.product_category_activate}"
-											url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-									</aon:commandLink>
-									<aon:commandLink title="#{appBundle.product_category_deactivate}" 
-										reRender="dataTable"
-										actionListener="#{subCategory.onDeactivate}" 
-										rendered="#{to.active}">
-										<aon:graphicImage id="subCategory_deactive" alt="#{appBundle.link_deactivate}"
-											url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-									</aon:commandLink>
-								</aon:div>
+								<aon:commandLink title="#{appBundle.product_category_activate}" 
+									actionListener="#{subCategory.onActivate}"
+									reRender="dataTable"
+									rendered="#{!to.active}">
+									<aon:graphicImage id="subCategory_active" alt="#{appBundle.product_category_activate}"
+										url="/images/cms/inactive.png" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.product_category_deactivate}" 
+									reRender="dataTable"
+									actionListener="#{subCategory.onDeactivate}" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="subCategory_deactive" alt="#{appBundle.link_deactivate}"
+										url="/images/cms/active.png" />
+								</aon:commandLink>
 							</aon:column>
 
 						</aon:dataTable>
 
-						<aon:dataScroller2 for="dataTable" showNote="true" />					
+						<aon:dataScroller for="dataTable"
+							rowCount="#{subCategory.model.rowCount}" 
+							showNote="true" />					
 							
 					</rich:panel>
 					
@@ -255,7 +268,7 @@
 							<aon:panelGrid id="optionGrid" columns="2" dir="true">
 
 								<aon:outputLabel for="ProductSubCategory_alias" style="width:100px"
-									value="#{appBundle.cms_alias}" />
+									value="#{appBundle.product_category_alias}" />
 								<aon:inputText id="ProductSubCategory_alias"
 									required="true" size="32" maxlength="32"
 									value="#{subCategory.to.alias}">

@@ -68,8 +68,8 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{sport_player.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -176,13 +176,15 @@
 				                	immediate="#{true}"
 				                	reRender="photo_preview"
 				                    actionListener="#{sport_player.onDelImage}">
-									<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+									<aon:graphicImage url="/images/cms/inactive.png" />
 				        		</aon:commandLink>
 								<ui:include src="/facelet/content/utils/image_modal.xhtml">
 									<ui:param name="modalPanelName" value="mp" />
 									<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+									<ui:param name="galleryBean" value="#{gallery}" />
 									<ui:param name="listenerBean" value="#{sport_player}" />
 									<ui:param name="reRender" value="photo_preview" />
+									<ui:param name="image" value="#{true}" />
 									<ui:param name="thumbnail" value="#{false}" />
 								</ui:include>
 				        	</aon:panelGroup>
@@ -230,9 +232,16 @@
 							<aon:dataTable id="dataTable"
 								value="#{sport_career_path.model}" var="to" 
 								rows="#{sport_career_path.pageLimit}"
-								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-										   aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-										   aon-editDataTable-buttonsColumn">
+								styleClass="dr-table rich-table aon-editDataTable"
+								headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+								footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+								rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+								cellpadding="0" cellspacing="0"
+								columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+										   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+										   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+										   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+										   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
 			
 								<aon:column>
 									<f:facet name="header">
@@ -401,7 +410,9 @@
 								</aon:column>
 							</aon:dataTable>
 			
-							<aon:dataScroller2 for="dataTable" showNote="true" />					
+							<aon:dataScroller for="dataTable"
+								rowCount="#{sport_career_path.model.rowCount}" 
+								showNote="true" />					
 						
 						</aon:div>
 						

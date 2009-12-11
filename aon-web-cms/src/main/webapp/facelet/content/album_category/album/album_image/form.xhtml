@@ -69,8 +69,8 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{albumImage.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -81,7 +81,7 @@
 							value="#{appBundle.album}"
 							action="album_list"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
+							styleClass="aon-finding-toolbar-item">
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -106,7 +106,7 @@
 							value="#{appBundle.album}"
 							action="album_form"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
+							styleClass="aon-finding-toolbar-item">
 							<aon:actionListener method="#{album.onReset}" />
 						</aon:commandButton>
 						<aon:commandButton id="categories_edit"
@@ -114,25 +114,25 @@
 							value="#{appBundle.album}"
 							action="album_form"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
+							styleClass="aon-finding-toolbar-item">
 							<aon:actionListener method="#{album.onAlbumImageCriteria}" />
 							<aon:actionListener method="#{album.onSearch}" />
 							<aon:actionListener method="#{album.onSelectFirst}" />
 						</aon:commandButton>
 					</aon:div>
-
+	
 					<aon:outputLabel for="AlbumImageDetail_title"
 						value="#{appBundle.albumImage_title}" />
 					<aon:inputText id="AlbumImageDetail_title"
 						required="true" size="64" maxlength="128"
 						value="#{albumImage.toI18n.title}" />
 					
-					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
-						<ui:param name="inputTextId" value="AlbumImageDetail_description" />
-						<ui:param name="inputTextValue" value="#{albumImage.toI18n.description}" />
-						<ui:param name="richTextEnabled" value="#{albumImage.richTextEnabled}" />
-					</ui:include>
-						
+					<aon:outputLabel for="AlbumImageDetail_description"
+						value="#{appBundle.albumImage_description}" />
+					<aon:inputTextarea id="AlbumImageDetail_description" 
+						style="width:300px;height:60px"
+						value="#{albumImage.toI18n.description}" />
+
 					<aon:outputLabel for="AlbumImageDetail_alt"
 						value="#{appBundle.albumImage_alt}" />
 					<aon:inputText id="AlbumImageDetail_alt"
@@ -147,51 +147,47 @@
 
 					<aon:outputLabel 
 						value="#{appBundle.albumImage_image}" />
-					<h:panelGrid columns="2" id="thumbnail_preview_line1">
-						<aon:panel styleClass="aon-margin-top" style="height:120;width:170" >
-							<f:facet name="header">
-								<aon:outputLabel value="#{appBundle.cms_source_size}" />
-							</f:facet>
-							<aon:graphicImage 
-								url="#{albumImage.to.image}.thumbnail" 
-								alt="#{albumImage.to.image}"/>
-			                <aon:commandLink
-			                	immediate="#{true}"
-			                	reRender="thumbnail_preview_line1"
-			                    actionListener="#{albumImage.onDelImage}">
-								<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-			        		</aon:commandLink>
-							<ui:include src="/facelet/content/utils/image_modal.xhtml">
-								<ui:param name="modalPanelName" value="mp_line1" />
-								<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
-								<ui:param name="listenerBean" value="#{albumImage}" />
-								<ui:param name="reRender" value="thumbnail_preview_line1" />
-								<ui:param name="thumbnail" value="#{false}" />
-							</ui:include>
-						</aon:panel>
-
-						<aon:panel styleClass="aon-margin-top" style="height:120;width:170" >
-							<f:facet name="header">
-								<aon:outputLabel value="#{appBundle.cms_thumbnail}" />
-							</f:facet>
-	   						<aon:graphicImage
-								url="#{albumImage.to.thumbnail}.thumbnail" 
-								alt="#{albumImage.to.thumbnail}"/>
-			                <aon:commandLink
-			                	immediate="#{true}"
-			                	reRender="thumbnail_preview_line1"
-			                    actionListener="#{albumImage.onDelThumbnail}">
-								<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-			        		</aon:commandLink>
-							<ui:include src="/facelet/content/utils/image_modal.xhtml">
-								<ui:param name="modalPanelName" value="mp_thumbnail" />
-								<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
-								<ui:param name="listenerBean" value="#{albumImage}" />
-								<ui:param name="reRender" value="thumbnail_preview_line1" />
-								<ui:param name="thumbnail" value="#{true}" />
-							</ui:include>
-						</aon:panel>
-					</h:panelGrid>
+					<aon:panelGroup id="thumbnail_preview_line1">
+						<aon:graphicImage 
+							url="#{albumImage.to.image}.thumbnail" 
+							alt="#{albumImage.to.image}"/>
+		                <aon:commandLink
+		                	immediate="#{true}"
+		                	reRender="thumbnail_preview_line1"
+		                    actionListener="#{albumImage.onDelImage}">
+							<aon:graphicImage url="/images/cms/inactive.png" />
+		        		</aon:commandLink>
+						<ui:include src="/facelet/content/utils/image_modal.xhtml">
+							<ui:param name="modalPanelName" value="mp_line1" />
+							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="galleryBean" value="#{gallery}" />
+							<ui:param name="listenerBean" value="#{albumImage}" />
+							<ui:param name="reRender" value="thumbnail_preview_line1" />
+							<ui:param name="image" value="#{true}" />
+							<ui:param name="thumbnail" value="#{false}" />
+						</ui:include>
+   
+						<aon:outputLabel 
+							value="#{appBundle.article_thumbnail}" />
+						<aon:graphicImage
+							url="#{albumImage.to.thumbnail}.thumbnail" 
+							alt="#{albumImage.to.thumbnail}"/>
+		                <aon:commandLink
+		                	immediate="#{true}"
+		                	reRender="thumbnail_preview_line1"
+		                    actionListener="#{albumImage.onDelThumbnail}">
+							<aon:graphicImage url="/images/cms/inactive.png" />
+		        		</aon:commandLink>
+						<ui:include src="/facelet/content/utils/image_modal.xhtml">
+							<ui:param name="modalPanelName" value="mp_thumbnail" />
+							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="galleryBean" value="#{gallery}" />
+							<ui:param name="listenerBean" value="#{albumImage}" />
+							<ui:param name="reRender" value="thumbnail_preview_line1" />
+							<ui:param name="image" value="#{false}" />
+							<ui:param name="thumbnail" value="#{true}" />
+						</ui:include>
+					</aon:panelGroup>
 
 					<aon:outputLabel for="AlbumImage_position"
 						value="#{appBundle.albumImage_position}"/>

@@ -5,13 +5,12 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class AlbumCategoryControllerListener extends ControllerAdapter implements ICMSConstants {
+public class AlbumCategoryControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -21,8 +20,8 @@ public class AlbumCategoryControllerListener extends ControllerAdapter implement
 			IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_POSITION));
 			event.getController().setCriteria(criteria);
-		}catch (Throwable th) {
-			throw new ControllerListenerException(th);
+		}catch (Exception e) {
+			throw new ControllerListenerException(e);
 		}
 	}
 	
@@ -46,7 +45,7 @@ public class AlbumCategoryControllerListener extends ControllerAdapter implement
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		FormUtil.getController(ALBUM).onSearch(null);
-		FormUtil.getController(ALBUM_IMAGE).onSearch(null);
+		FormUtil.getController("album").onSearch(null);
+		FormUtil.getController("albumImage").onSearch(null);
 	}
 }

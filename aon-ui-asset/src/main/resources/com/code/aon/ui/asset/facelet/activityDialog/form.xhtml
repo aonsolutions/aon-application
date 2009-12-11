@@ -19,6 +19,13 @@
 						value="#{activityDialog.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
+					<aon:commandButton id="activityDialog-back"
+						value="#{bundle.aon_back}" reRender="#{backButtonReRender}"
+						rendered="#{!formNew}" immediate="true"
+						actionListener="#{activityBasic.initializePendingList}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="activityDialog_grid"
+						accesskey="#{bundle.aon_key_cancel}" />
 					<aon:commandButton id="activityDialog-save"
 						value="#{bundle.aon_save}" reRender="activityDialogForm"
 						rendered="#{activityDialog.new and !activityDialog.request}" 
@@ -39,7 +46,6 @@
 						action="activityDialog_form" 
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2"
 						accesskey="#{bundle.aon_key_new}" />
-						
 				</ui:define>
 			</ui:decorate>
 
@@ -113,6 +119,39 @@
 						<aon:outputLabel
 							value="#{assetBundle.asset_minutes}" />
 					</aon:div>
+					
+					<aon:outputLabel for="ActivityDialog_weekDays"
+						value="#{assetBundle.asset_activity_days}" />
+					<aon:div>
+						<aon:outputLabel for="ActivityDialog_weekDays_monday"
+							value="#{assetBundle.asset_activity_monday}" />
+						<h:selectBooleanCheckbox id="ActivityDialog_weekDays_monday"
+							value="#{activityDialog.monday}" style="margin-right: 10px;"/>
+						<aon:outputLabel for="ActivityDialog_weekDays_tuesday"
+							value="#{assetBundle.asset_activity_tuesday}" />
+						<h:selectBooleanCheckbox id="ActivityDialog_weekDays_tuesday"
+							value="#{activityDialog.tuesday}" style="margin-right: 10px;"/>
+						<aon:outputLabel for="ActivityDialog_weekDays_wednesday"
+							value="#{assetBundle.asset_activity_wednesday}" />
+						<h:selectBooleanCheckbox id="ActivityDialog_weekDays_wednesday"
+							value="#{activityDialog.wednesday}" style="margin-right: 10px;"/>
+						<aon:outputLabel for="ActivityDialog_weekDays_thursday"
+							value="#{assetBundle.asset_activity_thursday}" />
+						<h:selectBooleanCheckbox id="ActivityDialog_weekDays_thursday"
+							value="#{activityDialog.thursday}" style="margin-right: 10px;"/>
+						<aon:outputLabel for="ActivityDialog_weekDays_friday"
+							value="#{assetBundle.asset_activity_friday}" />
+						<h:selectBooleanCheckbox id="ActivityDialog_weekDays_friday"
+							value="#{activityDialog.friday}" style="margin-right: 10px;"/>
+						<aon:outputLabel for="ActivityDialog_weekDays_saturday"
+							value="#{assetBundle.asset_activity_saturday}" />
+						<h:selectBooleanCheckbox id="ActivityDialog_weekDays_saturday"
+							value="#{activityDialog.saturday}" style="margin-right: 10px;"/>
+						<aon:outputLabel for="ActivityDialog_weekDays_sunday"
+							value="#{assetBundle.asset_activity_sunday}" />
+						<h:selectBooleanCheckbox id="ActivityDialog_weekDays_sunday"
+							value="#{activityDialog.sunday}" style="margin-right: 10px;"/>
+					</aon:div>
 
 					<aon:outputLabel for="ActivityDialog_who"
 						value="#{assetBundle.asset_activity_who}" />
@@ -140,6 +179,19 @@
 				</aon:div>
 				
 			</aon:div>
+			
+			<!--  
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputLabel value="LINEAS DE RESERVAS PENDIENTES DE SUPERVISION" />
+					</f:facet>
+	
+					<ui:include src="list.xhtml" />
+				</aon:panel>
+			</aon:div>
+			-->
+
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{assetLookup}" />
 	</ui:define>

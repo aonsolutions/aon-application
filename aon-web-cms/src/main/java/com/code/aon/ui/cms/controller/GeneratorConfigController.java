@@ -1,8 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
@@ -28,8 +26,6 @@ import com.code.aon.ql.Criteria;
  *
  */
 public class GeneratorConfigController {
-	
-	private static final Logger LOGGER = Logger.getLogger(GeneratorConfigController.class.getName());
 
 	private Integer sectionId;
 	
@@ -69,7 +65,7 @@ public class GeneratorConfigController {
 		try {
 			config = (ISectionContainer)GeneratorConfigController.currentConfig(c);
 			sectionId = config.getSection().getId();
-		} catch (Throwable th) {
+		} catch (Exception e) {
 			sectionId = -1;
 		}
 	}
@@ -89,9 +85,9 @@ public class GeneratorConfigController {
 			IManagerBean bean = BeanManager.getManagerBean(c);
 			bean.insertOrUpdate(config);
 		} catch (InstantiationException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 

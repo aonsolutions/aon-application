@@ -143,6 +143,11 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_CITY = "Contact_city";
 	
+	/**
+	* Alias value: Contact_contacts
+	* Hibernate value: Contact.member
+	*/
+	String CONTACT_CONTACTS = "Contact_contacts";
 	
 	/**
 	* Alias value: Contact_displayName
@@ -234,7 +239,18 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_ORGANIZATION_STATE = "Contact_organizationState";
 	
-	
+	/**
+	* Alias value: Contact_outlookCity
+	* Hibernate value: Contact.outlookCity
+	*/
+	String CONTACT_OUTLOOK_CITY = "Contact_outlookCity";
+
+	/**
+	* Alias value: Contact_outlookName
+	* Hibernate value: Contact.outlookName
+	*/
+	String CONTACT_OUTLOOK_NAME = "Contact_outlookName";
+
 	/**
 	* Alias value: Contact_phone
 	* Hibernate value: Contact.phone
@@ -269,4 +285,24 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_WEB = "Contact_web";
 	
+
+	/**
+	* Alias value: GroupContact_displayName
+	* Hibernate value: GroupContact.displayName
+	*/
+	String GROUP_CONTACT_DISPLAY_NAME = "GroupContact_displayName";
+	
+	
+	/**
+	* Alias value: GroupContact_email
+	* Hibernate value: GroupContact.email
+	*/
+	String GROUP_CONTACT_EMAIL = "GroupContact_email";
+
+	/**
+	* Alias value: GroupContact_id
+	* Hibernate value: GroupContact.id
+	*/
+	String GROUP_CONTACT_ID = "GroupContact_id";
+
 }

@@ -35,16 +35,17 @@
 									accesskey="#{bundle.aon_key_save}">
 									<aon:actionListener method="#{diary.accept}" />
 								</aon:commandButton>
-								<aon:commandButton id="generate" reRender="aonStatus"
+								<aon:commandButton id="generate"
 									value="#{appBundle.aon_generate}" 
 									rendered="#{cms.roleEditor}"
 									styleClass="aon-finding-toolbar-item aon-icon-accept"
 									accesskey="#{bundle.aon_key_save}">
 									<aon:actionListener method="#{generator.onGenerateDiary}" />
 									<a4j:support 
-										event="onclick" reRender="poll,grid" 
+										event="onclick" 
 										actionListener="#{generator_status.onActivePoll}"  
-										onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+										reRender="poll,grid" 
+										onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 								</aon:commandButton>	
 								<aon:commandButton id="exit"
 									value="#{bundle.aon_close}"
@@ -80,12 +81,14 @@
 										value="#{diary.to.pastEvents}" />
 								</aon:div>
 
-								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
-									<ui:param name="inputTextId" value="content" />
-									<ui:param name="inputTextValue" value="#{diary.toI18n.content}" />
-									<ui:param name="richTextEnabled" value="#{diary.richTextEnabled}" />
-								</ui:include>																	
-																
+								<aon:outputLabel for="content"
+									value="#{appBundle.diary_content}" />
+								<aon:div style="width:600px">
+									<aon:inputRichText style="width:100%" 
+										id="content" 
+										value="#{diary.toI18n.content}" />
+								</aon:div>
+								
 							</aon:panelGrid>
 						</aon:div>
 		
@@ -94,7 +97,9 @@
 
 		</aon:form>
 		
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 
 	</ui:define>
 </ui:composition>

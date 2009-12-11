@@ -16,24 +16,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.Constants;
 
 
-public class LinkController extends BasicI18nController implements Constants {
+public class LinkController extends BasicI18nController {
 
 	private String label;
 	
 	private int page;
-	
-	private boolean richTextEnabled;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
 	
 	public int getPage() {
 		return page;
@@ -64,7 +53,7 @@ public class LinkController extends BasicI18nController implements Constants {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		LinkDetail ld = (LinkDetail)getModelRowdataI18n();
 		if (ld != null) label = ld.getLabel();
 		return label;

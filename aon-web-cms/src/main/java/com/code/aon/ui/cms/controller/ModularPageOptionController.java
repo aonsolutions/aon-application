@@ -2,8 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -16,16 +14,13 @@ import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
 import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class ModularPageOptionController extends BasicI18nController implements IOrderedControllerListener, ICMSConstants, Constants {
+public class ModularPageOptionController extends BasicI18nController implements IOrderedControllerListener {
 
-	private static final Logger LOGGER = Logger.getLogger(ModularPageOptionController.class.getName());	
-	
 	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.MODULAR_PAGE_OPTION_POSITION);
 
 	private ModularPage currentModularPage;
@@ -53,7 +48,7 @@ public class ModularPageOptionController extends BasicI18nController implements 
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		ModularPageOptionDetail mpd = (ModularPageOptionDetail)getModelRowdataI18n();
 		if (mpd != null) label = mpd.getLabel();
 		return label;
@@ -74,20 +69,20 @@ public class ModularPageOptionController extends BasicI18nController implements 
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
 		ModularPageOption mo = (ModularPageOption)getTo();
 		List<SelectItem> idents = new LinkedList<SelectItem>();
-		if (mo.getType().equals(ModularPageOptionType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getGenericPageList();
-		else if (mo.getType().equals(ModularPageOptionType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerList();
-		else if (mo.getType().equals(ModularPageOptionType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerGroupList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_NEWS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_SERVICES)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_OTHER)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessGroupList();
-		else if (mo.getType().equals(ModularPageOptionType.DOWNLOADS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDownloadCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessList();
-		else if (mo.getType().equals(ModularPageOptionType.LINK_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getLinkCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ACTIVITY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getActivityList();
-		else if (mo.getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getAlbumCategoryList();
+		if (mo.getType().equals(ModularPageOptionType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerGroupList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_NEWS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_SERVICES)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_OTHER)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessGroupList();
+		else if (mo.getType().equals(ModularPageOptionType.DOWNLOADS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessList();
+		else if (mo.getType().equals(ModularPageOptionType.LINK_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ACTIVITY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getActivityList();
+		else if (mo.getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
 		return idents;
 	}
 
@@ -103,7 +98,6 @@ public class ModularPageOptionController extends BasicI18nController implements 
 		try {
 			criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID),currentModularPage.getId());
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -111,7 +105,7 @@ public class ModularPageOptionController extends BasicI18nController implements 
 		try {
 			orderedControllerSupport.reorderObjects(this);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 

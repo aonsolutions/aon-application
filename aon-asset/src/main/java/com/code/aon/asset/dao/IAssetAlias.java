@@ -73,22 +73,28 @@ public interface IAssetAlias {
 	String  ASSET_ACTIVITY_ID = ASSET_ACTIVITY_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: AssetActivity_status
+	* Hibernate value: AssetActivity.status
+	*/
+	String  ASSET_ACTIVITY_STATUS = ASSET_ACTIVITY_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: AssetActivity_toTime
 	* Hibernate value: AssetActivity.toTime
 	*/
-	String  ASSET_ACTIVITY_TO_TIME = ASSET_ACTIVITY_ENTRY.getAliasNames()[5];
+	String  ASSET_ACTIVITY_TO_TIME = ASSET_ACTIVITY_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: AssetActivity_who
 	* Hibernate value: AssetActivity.who
 	*/
-	String  ASSET_ACTIVITY_WHO = ASSET_ACTIVITY_ENTRY.getAliasNames()[6];
+	String  ASSET_ACTIVITY_WHO = ASSET_ACTIVITY_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: AssetActivity_why
 	* Hibernate value: AssetActivity.why
 	*/
-	String  ASSET_ACTIVITY_WHY = ASSET_ACTIVITY_ENTRY.getAliasNames()[7];
+	String  ASSET_ACTIVITY_WHY = ASSET_ACTIVITY_ENTRY.getAliasNames()[8];
 
 
 }
