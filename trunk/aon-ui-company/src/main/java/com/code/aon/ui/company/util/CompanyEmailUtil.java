@@ -109,7 +109,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		return null;
 	}	
 
-	protected void initMessageController( MessageController messageController, String[] emails, String body  ) throws ManagerBeanException {
+	protected void initMessageController( MessageController messageController, String[] emails, String body  )  {
 		if (! ArrayUtils.isEmpty(emails) ) {
 			messageController.setRecipientsTo( emails[0] );
 			if ( emails.length > 1 ) { 
