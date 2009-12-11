@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resource-config>
-	<resource>
-		<name>rowSelector/rowSelector.js</name>
-		<path>com/code/aon/faces/component/richfaces/rowSelector/rowSelector.js</path>
-	</resource>
-</resource-config>
