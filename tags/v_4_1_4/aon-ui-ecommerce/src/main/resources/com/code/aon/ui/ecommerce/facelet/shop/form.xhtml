@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="shopForm">
+			<c:if test="#{shop.paymethodView}">
+				<ui:include
+					src="/com/code/aon/ui/ecommerce/facelet/offer/form.xhtml" />
+			</c:if>
+
+			<c:if test="#{!shop.paymethodView}">
+				<aon:div styleClass="aon-scroll-area">
+					<aon:div styleClass="menu">
+						<rich:dataGrid id="cataloguesGadget"
+							value="#{catalogueGadget.model}" var="to"
+							columns="#{catalogueGadget.model.rowCount}" elements="9"
+							styleClass="menu">
+							<aon:div styleClass="aon-table-row">
+								<a4j:mediaOutput element="img" cacheable="false"
+									value="#{to.id}" style="width:17px; height: 17px;"
+									rendered="#{to.catalogueIcon!=null}"
+									createContent="#{catalogueGadget.paintIcon}" />
+								<aon:outputText value="#{to.capitalLetter}"
+									rendered="#{to.catalogueIcon==null}" />
+								<aon:outputText value="#{to.catalogue.name}"
+									styleClass="aon-commandLink" />
+								<a4j:support event="onclick" reRender="itemContent">
+									<aon:actionListener method="#{catalogueGadget.onSelect}" />
+								</a4j:support>
+							</aon:div>
+						</rich:dataGrid>
+					</aon:div>
+
+					<aon:panelGrid id="productPanel" columns="3" style="width: 100%"
+						columnClasses="aon-panelGrid-odd,
+						aon-vertical-align-top,
+						aon-vertical-align-top-right">
+
+						<aon:div id="left-panel" styleClass="left-panel">
+							<ui:include src="leftColumn.xhtml" />
+						</aon:div>
+
+						<aon:div id="itemContent" style="width: 100%;">
+
+							<aon:div>
+								<aon:commandButton id="aonToolbar-back"
+									rendered="#{(!shop.itemsView) and (!shop.welcomeView)}"
+									value="#{bundle.aon_back}" action="shop_from"
+									styleClass="aon-finding-toolbar-item aon-icon-cancel"
+									immediate="true" accesskey="#{bundle.aon_key_cancel}">
+									<aon:actionListener method="#{shop.refreshView}" />
+								</aon:commandButton>
+
+								<aon:commandButton id="aonToolbar-addToCart"
+									rendered="#{shop.detailView}"
+									value="#{ecommerceBundle.aon_ecommerce_addToCart}"
+									action="shop_from"
+									styleClass="aon-finding-toolbar-item aon-icon-new">
+									<aon:actionListener method="#{shopItem.addToCart}" />
+								</aon:commandButton>
+  
+								<aon:commandButton id="aonToolbar-offer-request"
+									rendered="#{shop.cartView and !(ecConfig.neverLogin) and ecConfig.activeConfig.commerce}"
+									value="#{ecommerceBundle.aon_ecommerce_offer_request}"
+									action="#{shoppingCart.budgetRequest}"
+									styleClass="aon-finding-toolbar-item aon-icon-predetermine">
+									<aon:actionListener method="#{shoppingCart.budgetRequest}" />
+								</aon:commandButton>
+
+							</aon:div>
+
+							<c:if test="#{shop.welcomeView}">
+								<ui:include src="homepage.xhtml" />
+							</c:if>
+
+							<c:if test="#{shop.itemsView}">
+								<ui:include src="items/list.xhtml" />
+							</c:if>
+
+							<c:if test="#{shop.detailView}">
+								<ui:include src="detail/grid.xhtml" />
+							</c:if>
+
+							<c:if test="#{shop.cartView}">
+								<ui:include src="cart/list.xhtml" />
+							</c:if>
+						</aon:div>
+
+						<aon:div id="right-panel" styleClass="right-panel">
+							<ui:include src="rightColumn.xhtml" />
+						</aon:div>
+
+					</aon:panelGrid>
+				</aon:div>
+
+			</c:if>
+		</aon:form>
+	</ui:define>
+</ui:composition>
