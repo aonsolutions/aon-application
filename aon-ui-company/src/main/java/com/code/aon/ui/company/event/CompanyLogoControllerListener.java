@@ -1,11 +1,12 @@
 package com.code.aon.ui.company.event;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -30,7 +31,8 @@ import com.sun.faces.util.MessageFactory;
 public class CompanyLogoControllerListener extends ControllerAdapter implements ICompanyConstants {
 
 	/** The LOGGER. */
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyLogoControllerListener.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CompanyLogoControllerListener.class
+			.getName());
 
 	private void checkAonFile( CompanyController companyController ) throws ControllerListenerException {
 		AonFile aonFile = companyController.getAonFile();
@@ -69,7 +71,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
 			} catch (ManagerBeanException e) {
-				LOGGER.error("Error updating logo", e);
+				LOGGER.log(Level.SEVERE, "Error updating logo", e);
 			}
 		}
 	}
@@ -108,7 +110,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 					companyController.setAttach((RegistryAttachment) attachBean.update(attach));
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.error("Error updating logo", e);
+				LOGGER.log(Level.SEVERE, "Error updating logo", e);
 			}
 		}
 	}

@@ -388,7 +388,6 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{registryAttachControllerListener}</value>
-				<value>#{companyCertificateScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -400,16 +399,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>companyCertificateScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>RegistryAttachment_scope_id</value>
-		</managed-property>
-	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>companyCertificateChildListener</managed-bean-name>
@@ -522,15 +511,6 @@
 			com.code.aon.ui.company.event.CompanyImagesControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<!-- **** COMPANY DISPLAY **** -->
-	<managed-bean>
-		<managed-bean-name>companyDisplay</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.company.controller.CompanyDisplay
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- =================== Company ========================== -->

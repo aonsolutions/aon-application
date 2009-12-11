@@ -11,9 +11,26 @@
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>
 
+	<aon:outputText value="#{customerBundle.customer_taxes}" />
+	<aon:div>
+		<aon:selectBooleanCheckbox id="Customer_surcharge" styleClass="aon-margin-left"
+			value="#{controller.to.surcharge}" />
+		<aon:outputLabel for="Customer_surcharge" styleClass="aon-italic"
+			value="#{customerBundle.customer_surcharge}" />
+		<aon:selectBooleanCheckbox id="Customer_withholding" styleClass="aon-margin-left"
+			value="#{controller.to.withholding}" />
+		<aon:outputLabel for="Customer_withholding" styleClass="aon-italic"
+			value="#{bundle.aon_retention}" />
+		<aon:selectBooleanCheckbox id="Customer_taxFree" styleClass="aon-margin-left"
+			value="#{controller.to.taxFree}" />
+		<aon:outputLabel for="Customer_taxFree" styleClass="aon-italic"
+			value="#{customerBundle.customer_taxFree}" />
+	</aon:div>
+
 	<aon:outputLabel for="Customer_scope_id" value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="Customer_scope_id" value="#{controller.to.scope}">
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
+	<aon:selectOneMenu id="Customer_scope_id"
+		value="#{controller.to.scope}">
+		<f:selectItems value="#{configCollections.scopes}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
@@ -21,22 +38,31 @@
 		<f:selectItems value="#{customerCollections.customerStatuses}" />
 	</aon:selectOneRadio>
 
-	<c:if test="#{aonConfiguration.bean.customer.showTaxInfoData}">
-		<aon:outputText value="#{customerBundle.customer_taxes}" />
-		<aon:div>
-			<aon:selectBooleanCheckbox id="Customer_surcharge" styleClass="aon-margin-left"
-				value="#{controller.to.surcharge}" />
-			<aon:outputLabel for="Customer_surcharge" styleClass="aon-italic"
-				value="#{bundle.aon_surcharge}" />
-			<aon:selectBooleanCheckbox id="Customer_withholding" styleClass="aon-margin-left"
-				value="#{controller.to.withholding}" />
-			<aon:outputLabel for="Customer_withholding" styleClass="aon-italic"
-				value="#{bundle.aon_retention}" />
-		</aon:div>
-
-		<aon:outputLabel for="Customer_transaction" value="#{customerBundle.customer_transaction_type}" />
-		<aon:selectOneRadio id="Customer_transaction" value="#{controller.to.transaction}">
-			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
-		</aon:selectOneRadio>
+	<c:if test="#{aonConfiguration.bean.customer.showTariff}">
+		<aon:outputLabel for="Customer_tariff_id"
+			value="#{productBundle.product_tariff}" />
+		<aon:selectOneMenu id="Customer_tariff_id"
+			value="#{controller.to.tariff}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{configCollections.tariffs}" />
+		</aon:selectOneMenu>
 	</c:if>
+
+	<c:if test="#{aonConfiguration.bean.customer.showSegment}">
+		<aon:outputLabel for="Customer_customerSegment_id"
+			value="#{bundle.aon_segment}" />
+		<aon:selectOneMenu id="Customer_customerSegment_id"
+			value="#{controller.to.customerSegment}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{customerCollections.customerSegments}" />
+		</aon:selectOneMenu>
+	</c:if>
+
+	<c:if test="#{company.EInvoice}">
+		<aon:outputLabel for="Customer_eInvoice"
+			value="#{customerBundle.customer_receive_eInvoice}" />
+		<aon:selectBooleanCheckbox id="Customer_eInvoice"
+			value="#{controller.to.EInvoice}" />
+	</c:if>
+
 </ui:composition>

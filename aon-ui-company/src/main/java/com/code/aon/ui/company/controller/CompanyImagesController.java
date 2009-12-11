@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -22,8 +24,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -40,7 +40,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CompanyImagesController extends LinesController implements ICompanyConstants {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyImagesController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CompanyImagesController.class.getName());
 	
 	private static final RegistryAttachmentType[] DEFAULT_DISPLAYED_TYPES = new RegistryAttachmentType[] {RegistryAttachmentType.ADDITIONAL_IMAGE};
 
@@ -175,7 +175,7 @@ public class CompanyImagesController extends LinesController implements ICompany
 					result = MimeType.get(match.getMimeType());
 				}
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th );
+				LOGGER.log(Level.SEVERE, th.getMessage(), th );
 			}
 		}
 		return result;

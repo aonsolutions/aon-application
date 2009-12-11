@@ -1,6 +1,0 @@
-<!--generic0.vm--><div id="body-content">
-<h1 >$!title</h1>
-	
-	$!text
-</div>
-
