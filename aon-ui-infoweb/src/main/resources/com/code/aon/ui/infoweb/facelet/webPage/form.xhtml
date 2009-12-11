@@ -36,15 +36,15 @@
 								<aon:outputLabel for="WebInfoPage_name" value="#{bundle.aon_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.name}" rendered="#{formList}" />
-							<aon:inputText id="WebInfoPage_name" maxlength="64"
+							<aon:inputText id="WebInfoPage_name" maxlength="15"
 								validator="#{webPage.pageNameCheck}" rendered="#{formEdit}"
-								value="#{webPage.to.name}" required="true" size="40" />
+								value="#{webPage.to.name}" required="true" size="20" />
 							<f:facet name="footer">
 								<aon:div>				
-									<aon:inputText id="WebInfoPage_name-New" maxlength="64"
+									<aon:inputText id="WebInfoPage_name-New" maxlength="15"
 										validator="#{webPage.pageNameCheck}"
 										value="#{webPage.to.name}" rendered="#{formNew}"
-										required="true" size="40" />
+										required="true" size="20" />
 									<aon:outputText value="#{infowebBundle.infoweb_max_number_pages}" rendered="#{!formNew and webPage.model.rowCount &lt; 8}"/>
 									<aon:outputText value="#{infowebBundle.infoweb_max_pages_exceeded}" rendered="#{!formNew and webPage.model.rowCount &gt; 7}"/>
 								</aon:div>
