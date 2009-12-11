@@ -10,11 +10,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.consultant</artifactId>
 	<packaging>war</packaging>
-	<version>4.3.3</version>
+	<version>4.4.0</version>
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
-		<dbVersion>4.7.0</dbVersion>
+		<dbVersion>4.8.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-consultant</finalName>
@@ -35,25 +35,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>4.2.7</version>
+			<version>4.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.11.1</version>
+			<version>4.12.0</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.campaign</artifactId>
-			<version>4.3.1</version>
+			<version>4.3.2</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.5.0</version>
+			<version>4.6.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -65,25 +65,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.6.2</version>
+			<version>4.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>4.14.1</version>
+			<version>4.15.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.7.1</version>
+			<version>4.8.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.project</artifactId>
-			<version>4.3.1</version>
+			<version>4.3.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -95,19 +95,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.stat</artifactId>
 			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.stat</artifactId>
+			<version>4.2.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.3.2</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
