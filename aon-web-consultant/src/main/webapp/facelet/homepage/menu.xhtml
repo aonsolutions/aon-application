@@ -11,8 +11,8 @@
 
 				<aon:commandLink value="#{customerBundle.customer_module}"
 					actionListener="#{customer.onEditSearch}"
-					style="text-transform: uppercase;" action="customer_search"
-					rendered="#{aonRole.admin}">
+					style="text-transform: uppercase;" 
+					action="customer_consultant_search">
 				</aon:commandLink>
 
 				<aon:dropDownMenu id="taskDropDownMenu"
@@ -41,6 +41,10 @@
 
 				<aon:dropDownMenu value="#{bundle.aon_sales}"
 					rendered="#{aonRole.invoicing}">
+					<aon:menuItem action="customer_search"
+						actionListener="#{customer.onEditSearch}"
+						value="#{customerBundle.customer_module}" />
+					<aon:menuSeparator />
 					<aon:menuItem action="item_search"
 						actionListener="#{item.onEditSearch}"
 						value="#{productBundle.product_module}" />
