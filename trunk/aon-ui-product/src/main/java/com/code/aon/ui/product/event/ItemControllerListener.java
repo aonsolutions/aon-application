@@ -49,15 +49,6 @@ public class ItemControllerListener extends ControllerAdapter {
         }
         item.getProduct().setInventoriable(true);
         item.getProduct().setComposition(false);
-    	item.getAlternativeItem().setProduct(new Product());
-    }
-
-    @Override
-    public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-    	Item item = (Item)event.getController().getTo();
-    	if (item.getAlternativeItem().getProduct() == null) {
-        	item.getAlternativeItem().setProduct(new Product());
-    	}
     }
 
 	@Override
@@ -73,25 +64,6 @@ public class ItemControllerListener extends ControllerAdapter {
                 throw new ControllerListenerException(e.getMessage(), e);
 			}
 		}
-	}
-
-    @Override
-    public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-    	Item item = (Item)event.getController().getTo();
-    	initializeAlternativeItem(item);
-    }
-
-    @Override
-    public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-    	Item item = (Item)event.getController().getTo();
-    	initializeAlternativeItem(item);
-    }
-    
-	private void initializeAlternativeItem(Item item) {
-    	if (item.getAlternativeItem() == null) {
-    		item.setAlternativeItem(new Item());
-        	item.getAlternativeItem().setProduct(new Product());
-    	}
 	}
 
     @Override
