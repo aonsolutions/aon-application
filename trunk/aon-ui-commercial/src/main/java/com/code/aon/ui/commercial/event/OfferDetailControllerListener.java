@@ -32,8 +32,7 @@ public class OfferDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		OfferDetailController controller = (OfferDetailController)event.getController();
-		controller.initializeModel();
+		event.getController().initializeModel();
 	}
 
 	@Override
