@@ -13,16 +13,32 @@
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>		
 
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.supplier.Supplier"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tax"/>
+
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemPos"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Segment"/>
 		
-		<mapping class="com.code.aon.geozone.GeoZone"/>
+		<mapping class="com.code.aon.supplier.ItemSupplier"/>
+		<mapping class="com.code.aon.supplier.Supplier"/>
 		
-		<mapping class="com.code.aon.config.Scope"/>
 	</session-factory>
 
 </hibernate-configuration>

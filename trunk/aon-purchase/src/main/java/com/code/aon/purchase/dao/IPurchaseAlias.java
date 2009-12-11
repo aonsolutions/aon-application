@@ -2,7 +2,6 @@ package com.code.aon.purchase.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
-import com.code.aon.purchase.ItemSupplier;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.Purchase;
 
@@ -10,43 +9,6 @@ import com.code.aon.purchase.Purchase;
 * Interface for holding entity properties constants.
 */ 
 public interface IPurchaseAlias {
-
-
-
-	/** 
-	* DAOConstantsEntry for ItemSupplier entity.
-	*/ 
-	DAOConstantsEntry ITEM_SUPPLIER_ENTRY = DAOConstants.getDAOConstant(ItemSupplier.class);
-
-	/** 
-	* Alias value: ItemSupplier_code
-	* Hibernate value: ItemSupplier.code
-	*/
-	String  ITEM_SUPPLIER_CODE = ITEM_SUPPLIER_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: ItemSupplier_id
-	* Hibernate value: ItemSupplier.id
-	*/
-	String  ITEM_SUPPLIER_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: ItemSupplier_item_id
-	* Hibernate value: ItemSupplier.item.id
-	*/
-	String  ITEM_SUPPLIER_ITEM_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: ItemSupplier_priority
-	* Hibernate value: ItemSupplier.priority
-	*/
-	String  ITEM_SUPPLIER_PRIORITY = ITEM_SUPPLIER_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: ItemSupplier_supplier_id
-	* Hibernate value: ItemSupplier.supplier.id
-	*/
-	String  ITEM_SUPPLIER_SUPPLIER_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[4];
 
 
 
