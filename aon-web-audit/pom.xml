@@ -13,7 +13,7 @@
 	<artifactId>aon.web.audit</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB AUDIT</name>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<description>AON WEB AUDIT</description>
 	<build>
 		<finalName>aon-audit</finalName>
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
