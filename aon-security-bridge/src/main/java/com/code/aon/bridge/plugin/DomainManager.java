@@ -313,13 +313,6 @@ public class DomainManager implements Serializable {
     }
 
 	/**
-	 * @return Returns the domain.
-	 */
-	public IDomain getDomain() {
-		return domain;
-	}
-    
-	/**
 	 * @return Returns the application.
 	 */
 	public IApplication getApplication() {

@@ -7,15 +7,6 @@
 		<session-timeout>33</session-timeout>
 	</session-config>
 	<context-param>
-		<param-name>javax.faces.CONFIG_FILES</param-name>
-		<param-value>
-			/WEB-INF/faces-config.xml,
-			/WEB-INF/beans-faces-config.xml,
-			/WEB-INF/lookup-beans-faces-config.xml,
-			/WEB-INF/navigation-faces-config.xml
-		</param-value>
-	</context-param>
-	<context-param>
 		<description>
 			State saving method: "client" or "server" (= default) See
 			JSF Specification 2.5.2
@@ -104,9 +95,14 @@
 		<param-value>8640000</param-value>
 	</context-param>
 	<context-param>
-		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-		<param-value>../aon-desktop/richFaces3.2.1/</param-value>
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.3.0/</param-value>
 	</context-param>
+	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
+	<context-param>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+    </context-param>	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
@@ -177,7 +173,6 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
-		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 	<!-- Resource Servlet -->
 	<servlet>

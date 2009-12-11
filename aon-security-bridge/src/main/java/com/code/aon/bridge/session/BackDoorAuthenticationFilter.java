@@ -12,6 +12,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Session;
@@ -19,18 +20,15 @@ import org.apache.catalina.connector.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
-import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 05/11/2007
  *
  */
-public class BackDoorAuthenticationFilter implements Filter, IConstants {
+public class BackDoorAuthenticationFilter implements Filter {
 
 	/** AuthenticationValve Logger */
 	private static final Log LOGGER = LogFactory.getLog( BackDoorAuthenticationFilter.class.getName() );
@@ -46,30 +44,69 @@ public class BackDoorAuthenticationFilter implements Filter, IConstants {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
+//		LOGGER.fatal( "doFilter in other server" );
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		String sso = httpRequest.getParameter( BackDoorAuthenticationValve.BACKDOOR_PARAM );
+		String sso = httpRequest.getParameter( "aonDesktop" );
+//		LOGGER.fatal( "doFilter in other server:"  + sso );
 		if ( sso != null && Boolean.valueOf( sso ) ) {
-			AonGenericPrincipal agp = null;
+			//Get the active request
+			String serSessionId = null;
 			try {
-				agp = Utils.getSSOPrincipal( httpRequest.getSession().getId() );
-			} catch (DeploymentException e) {
-				LOGGER.error( e );
+				serSessionId = getCookie( httpRequest, BackDoorAuthenticationValve.SER_SESSION_ID ).getValue();
+			} catch (RuntimeException e) {
+				LOGGER.warn( "Accesing directly. Cookie does no exits." + e.getMessage() );
+				serSessionId = httpRequest.getSession().getId();
 			}
-			if ( agp != null && httpRequest.getAuthType().equals( AUTH_TYPE ) ) {
-				AuthPrincipal principal = (AuthPrincipal) agp.getUserPrincipal();
+			String requestId = serSessionId + httpRequest.getContextPath();
+			Request activeRequest = BackDoorAuthenticationValve.getActiveRequest( requestId );
+			if ( activeRequest != null && httpRequest.getAuthType().equals( BackDoorAuthenticationValve.AUTH_TYPE ) ) {
+				AuthPrincipal principal = 
+					(AuthPrincipal) activeRequest.getNote( BackDoorAuthenticationValve.AUTH_USERNAME_NOTE );
+				String password = (String) activeRequest.getNote( BackDoorAuthenticationValve.AUTH_PASSWORD_NOTE );
 				if ( principal != null ) {
 					String username = principal.getShortName() + IConstants.IDENTITY_SEPARATOR 
-										+ principal.getDomain() + httpRequest.getContextPath();
-					Principal p = agp.getRealm().authenticate( username, (String) agp.getCredentials() ); 
+										+ principal.getDomain() + activeRequest.getContextPath();
+					Principal p = activeRequest.getContext().getRealm().authenticate( username, password ); 
 					if( p != null ) {
-						register( agp.getRequest(), p, AUTH_TYPE );
+						register( activeRequest, p, BackDoorAuthenticationValve.AUTH_TYPE );
 					} else {
-						unregister( agp.getRequest() );
+						unregister( activeRequest );
+//						//Forward to Login Page.
+//						String targetUrl = activeRequest.getContext().getLoginConfig().getLoginPage();
+//						RequestDispatcher disp = activeRequest.getRequestDispatcher( targetUrl );
+//						disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
+//						activeRequest.getResponse().finishResponse();
+//						return;
 					}
 				}
 			}
 		}
 		chain.doFilter( request, response );
+	}
+
+	/**
+	 * Gets cookie.
+	 * 
+	 * @param request
+	 * @param name
+	 * @return
+	 */
+	private Cookie getCookie(HttpServletRequest request, String name) {
+	    boolean found = false;
+	    Cookie result = null;
+	    Cookie[] cookies = request.getCookies();
+	    if (cookies!=null) {
+	        int i = 0;
+	        while (!found && i < cookies.length) {
+	            if (cookies[i].getName().equals(name)) {
+	                found=true;
+	                result = cookies[i];
+	            }
+	            i++;
+	    	  }
+	    }
+
+	    return (result);
 	}
 
 	/**

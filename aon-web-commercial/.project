@@ -12,6 +12,8 @@
 		<project>aon-common-ldap</project>
 		<project>aon-ui-commercial</project>
 		<project>aon-commercial</project>
+		<project>aon-ui-marketing</project>
+		<project>aon-marketing</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

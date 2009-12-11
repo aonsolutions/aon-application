@@ -4,19 +4,61 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-resources/aon-ui-resources">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-commercial/aon-ui-commercial">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-commercial/aon-commercial">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-security-bridge/aon-security-bridge">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-resources/aon-ui-resources">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-rich-components/aon-rich-components">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="aon-commercial"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-company/aon-ui-company">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-product/aon-ui-product">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-config/aon-ui-config">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-account/aon-ui-account">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-registry/aon-ui-registry">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-marketing/aon-ui-marketing">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-common/aon-ui-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-marketing/aon-marketing">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-accounting/aon-accounting">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-sales/aon-ui-sales">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-account-bridge/aon-account-bridge">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-customer/aon-ui-customer">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-seller/aon-seller">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ldap/aon-ldap">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>                        
         <property name="java-output-path" value="build/classes"/>
+        <property name="context-root" value="aon-finance"/>
     </wb-module>
 </project-modules>
