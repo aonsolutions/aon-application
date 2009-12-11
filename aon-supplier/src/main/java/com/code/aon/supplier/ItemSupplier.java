@@ -1,4 +1,4 @@
-package com.code.aon.purchase;
+package com.code.aon.supplier;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -41,6 +43,8 @@ public class ItemSupplier implements ITransferObject{
 	
 	@ManyToOne
 	@JoinColumn(name="item",nullable=false)
+    @ForeignKey(name = "FK_ITEM_SUPPLIER_ITEM")
+    @Index(name = "IDX_ITEM_SUPPLIER_ITEM")
 	public Item getItem() {
 		return item;
 	}
@@ -50,11 +54,20 @@ public class ItemSupplier implements ITransferObject{
 	
 	@ManyToOne
 	@JoinColumn( name="supplier",nullable=false )
+    @ForeignKey(name = "FK_ITEM_SUPPLIER_SUPPLIER")
+    @Index(name = "IDX_ITEM_SUPPLIER_SUPPLIER")
 	public Supplier getSupplier() {
 		return supplier;
 	}
 	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
+	}
+
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public Integer getPriority() {
@@ -64,13 +77,6 @@ public class ItemSupplier implements ITransferObject{
 		this.priority = priority;
 	}
 	
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
