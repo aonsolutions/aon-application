@@ -15,7 +15,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
@@ -36,7 +35,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceEmailUtil.class.getName());
 	
-	private Address[] getEmailAddresses( String[] emails, String name ) throws ManagerBeanException, UnsupportedEncodingException, AddressException {
+	private Address[] getEmailAddresses( String[] emails, String name ) throws UnsupportedEncodingException, AddressException {
 		Address[] addresses = new Address[emails.length];
 		for( int i = 0; i < emails.length; i++ ) {
 			if ( i == 0 ) {
@@ -48,7 +47,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		return addresses;
 	}		
 	
-	public void initMessageController( MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae ) throws ManagerBeanException, IOException, ReportException, SAXException {
+	public void initMessageController( MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae ) throws ManagerBeanException, IOException{
 		String[] emails = getEmails(invoice.getRegistry());
 		initMessageController(messageController, emails, getEmailBody(invoice));
 		messageController.setSubject( getEmailSubject(invoice) );
@@ -64,7 +63,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		return MessageFormat.format(message, invoice.getReferenceCode() );
 	}
 
-	public String getEmailBody( Invoice invoice ) throws UnsupportedEncodingException {
+	public String getEmailBody( Invoice invoice )  {
 		String bodyMessage = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
 		return MessageFormat.format(bodyMessage, invoice.getReferenceCode(), invoice.getIssueDate());
 	}
@@ -75,7 +74,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		return getInvoiceFile(attach, invoice);
 	}
 	
-	public AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
+	public AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException {
 		String fileName = attach.getDescription();
 		if ( StringUtils.isEmpty(fileName) ) {
 			InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
@@ -89,7 +88,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		return aonFile;
 	}
 
-	public AonFile getInvoiceXml( Invoice invoice ) throws IOException, SAXException {
+	public AonFile getInvoiceXml( Invoice invoice ) throws IOException {
 		File file = File.createTempFile( "facturae", ".xsig" );
 		FacturaeWriter fw = new FacturaeWriter( getCompany() );
 		String filePath = file.getAbsolutePath();
