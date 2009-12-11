@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.cms</artifactId>
 	<packaging>war</packaging>
-	<version>4.8.0</version>
+	<version>4.8.1</version>
 	<description>WEB CMS</description>
 	<name>WEB CMS</name>
 	<build>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
