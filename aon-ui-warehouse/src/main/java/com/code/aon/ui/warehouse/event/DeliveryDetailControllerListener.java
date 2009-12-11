@@ -49,8 +49,7 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
-		controller.initializeModel();
+		event.getController().initializeModel();
 	}
 
 	@Override

@@ -49,8 +49,7 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		IncomeDetailController controller = (IncomeDetailController)event.getController();
-		controller.initializeModel();
+		event.getController().initializeModel();
 	}
 
 	@Override
