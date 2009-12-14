@@ -3,6 +3,7 @@
 	<name>aon-web-ebackoffice</name>
 	<comment></comment>
 	<projects>
+		<project>aon-config</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
