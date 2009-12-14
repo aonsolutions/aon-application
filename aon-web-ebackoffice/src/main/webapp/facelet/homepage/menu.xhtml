@@ -50,15 +50,15 @@
 				<aon:menuItem id="company" action="company"
 					actionListener="#{company.onLoad}"
 					value="#{companyBundle.company_data_module}" />
-				<aon:menuSeparator />
-				<aon:menuItem id="paymethod" value="formas de pago"
+				<aon:menuSeparator rendered="#{ecconfig.ecParam}" />
+				<aon:menuItem id="paymethod" value="formas de pago" rendered="#{ecconfig.ecParam}"
 					action="paymethod_list" immediate="true">
 					<aon:actionListener method="#{paymethod.onEditSearch}" />
 					<aon:actionListener method="#{paymethod.onSearch}" />
 
 				</aon:menuItem>
-				<aon:menuSeparator />
-				<aon:menuItem id="series" value="series" action="series"
+				<aon:menuSeparator rendered="#{ecconfig.ecParam}" />
+				<aon:menuItem id="series" value="series" action="series" rendered="#{ecconfig.ecParam}"
 					immediate="true" />
 				<aon:menuSeparator />
 				<aon:menuItem id="EC-CONFIG"
