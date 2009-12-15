@@ -49,13 +49,13 @@
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="RegistryPayMethod_bank"
 					rendered="#{formEdit}" value="#{controller.to.registryBank}">
-					<f:selectItem value="#{nullItem.value}" />
+					<f:selectItem value="#{null}" />
 					<f:selectItems value="#{controller.banks}" />
 				</aon:selectOneMenu>					
 				<f:facet name="footer">
 					<aon:selectOneMenu id="RegistryPayMethod_bank-New"
 						rendered="#{formNew}" value="#{controller.to.registryBank}">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem value="#{null}" />
 						<f:selectItems value="#{controller.banks}" />
 					</aon:selectOneMenu>					
 				</f:facet>
