@@ -3,7 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:f="http://java.sun.com/jsf/core"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:define name="content">
 		<aon:form id="categoryList">
@@ -40,7 +41,7 @@
 								</f:facet>
 							</aon:column>
 
-<!-- 
+							<c:if test="#{aonConfiguration.bean.productCategory.showCategoryGroup}">
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="#{productBundle.product_category_group}" />
@@ -63,7 +64,7 @@
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
- -->
+							</c:if>
  
 						</ui:define>
 					</ui:decorate>

@@ -5,7 +5,7 @@
 	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
 		<product:catalogue
 			showEcommerceData="true"
-		/>
+		/>		
 		<product:product
 			showBarcode="true"
 			showType="false"
@@ -15,6 +15,9 @@
 			showAccount="false"
 			showAttachment="true"
 			showEcommerceData="true"
+		/>
+		<product:productCategory
+			showCategoryGroup="false"
 		/>
 	</product:config>
 	
