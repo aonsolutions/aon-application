@@ -66,11 +66,16 @@ public class EcconfigController extends BasicController {
 	public boolean isEcParam() {
 		try {
 			ecParam=getEcommerceParam();
+			if (ecParam==false){
+				IManagerBean bean =BeanManager.getManagerBean(Ecconfig.class);
+				Ecconfig c=(Ecconfig)bean.getList(null).get(0);
+				c.setCommerce(false);
+				bean.update(c);				
+			}
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}		
 		return ecParam;
 	}
 
@@ -573,7 +578,10 @@ public class EcconfigController extends BasicController {
 		IManagerBean param= BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(param.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME),"EC_SALES_ALLOWED");
-		return Boolean.parseBoolean(((ApplicationParameter)param.getList(criteria).get(0)).getValue());
-		
+		if (param.getList(criteria).isEmpty() || ((ApplicationParameter)param.getList(criteria).get(0)).getValue()=="false" ){
+			  return false;
+		}else{
+			return true;
+		}		
 	}
 }
