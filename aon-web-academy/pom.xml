@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.academy</artifactId>
 	<packaging>war</packaging>
-	<version>2.10.0</version>
+	<version>2.10.1</version>
 	<description>APLICACION WEB DE ACADEMIAS</description>
 	<name>APLICACION WEB DE ACADEMIAS</name>
 	<properties>
-		<dbVersion>4.7.0</dbVersion>
+		<dbVersion>4.8.0</dbVersion>
 	</properties>
 	<dependencies>
 		<!-- ESTAS DEPENDENCIAS SE METEN AQUI POR NO VERSIONAR TODOS LOS PROYECTOS UI PARA INCLUIRLAS -->
