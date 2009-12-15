@@ -106,6 +106,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private DataModel finances;
 	private InvoiceEntryDetail currentDetail;
 	private Finance currentFinance;
+	private RegistryBank currentBank;
+	private SelectItem emptyBank;
 	private Company company;
 	private String onGenerateKey;
 	private AccountingUtil accountingUtil;
@@ -240,6 +242,48 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.currentFinance = currentFinance;
 	}
 
+	public RegistryBank getCurrentBank() {
+		return currentBank;
+	}
+
+	public void setCurrentBank(RegistryBank currentBank) {
+		if (currentBank == null) {
+			currentBank = new RegistryBank();
+			currentBank.setBank(new Bank());
+			currentBank.setBankAccount(new BankAccount());
+		}
+		this.currentBank = currentBank;
+	}
+	private void initializeCurrentBank(Finance currentFinance) {
+		try {
+			if (currentFinance == null) {
+				setCurrentBank(null);
+			} else if (currentFinance.getBank() == null || currentFinance.getBank().getId() == null) {
+				setCurrentBank(null);
+			} else {
+				String ccc1 = currentFinance.getBankAccount().getValue();
+				List<SelectItem> banks = getBanks();
+				boolean found = false;
+				for (SelectItem item : banks) {
+					RegistryBank rBank = (RegistryBank) item.getValue();
+					BankAccount ba = rBank.getBankAccount();
+					if (ba != null) {
+						String ccc2 = ba.getValue();
+						if (StringUtils.equals(ccc1, ccc2)) {
+							setCurrentBank(rBank);
+							found = true;
+							break;
+						}
+					}
+				}
+				if (!found) {
+					setCurrentBank(null);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			setCurrentBank(null);
+		}
+	}
 
 	public List<SelectItem> getRelatedAccounts() {
 		if (relatedAccounts == null) {
@@ -309,6 +353,38 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
 		String series = (header != null && !StringUtils.isEmpty(getHeader().getSeries())) ? getHeader().getSeries() : (param != null) ? param.getValue() : null;
+		ApplicationParameter taxParam = c.getParameter(DefaultAccounts.DEFAULT_VAT_PERCENT);
+		Double taxPercent = null;
+		Double surPercent = null;
+		if (header != null) {
+			taxPercent = getHeader().getTaxPercent();
+		} else {
+			if (taxParam != null) {
+				String value = taxParam.getValue();
+				Integer id = Integer.parseInt(value);
+				IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+				Tax tax = (Tax) taxBean.get(id);
+				if (tax != null) {
+					taxPercent = tax.getPercentage();
+					surPercent = tax.getSurcharge();
+				} 
+			}
+		}
+		ApplicationParameter retParam = c.getParameter(DefaultAccounts.DEFAULT_RETENTION_PERCENT);
+		Double retPercent = null;
+		if (header != null) {
+			retPercent = getHeader().getRetPercent();
+		} else {
+			if (retParam != null) {
+				String value = retParam.getValue();
+				Integer id = Integer.parseInt(value);
+				IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+				Tax tax = (Tax) taxBean.get(id);
+				if (tax != null) {
+					retPercent = tax.getPercentage();						
+				} 
+			}
+		}
 
 		setHeader( new InvoiceEntryHeader() );
 		getHeader().setAccount(null);
@@ -318,6 +394,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setPeriod(period);
 		getHeader().setDate(date);
 		getHeader().setTaxDate(taxDate);
+		getHeader().setTaxPercent(taxPercent);
+		getHeader().setSurchargePercent(surPercent);
+		getHeader().setRetPercent(retPercent);
 		getHeader().setSecurityLevel(securityLevel);
 		getHeader().setRegistry(new Registry());
 		getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
@@ -325,7 +404,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setTaxFree(false);
 		getHeader().setWithholding(false);
 		getHeader().setSurcharge(false);
-
+		
 		setRelatedAccounts( null );
 	}
 
@@ -353,37 +432,46 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public void onAdjustTaxableBase(ActionEvent event) {
 		if (getHeader().getTaxableBase() != null) {
 			try {
-				AccountAppParamsController c = (AccountAppParamsController) AonUtil
-				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
-				ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_VAT_PERCENT);
-				if (param != null) {
-					String value = param.getValue();
-					Integer id = Integer.parseInt(value);
-					IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
-					Tax tax = (Tax) taxBean.get(id);
-					if (tax != null) {
-						getHeader().setTaxableBase(CommonUtil.round(getHeader().getTaxableBase() / (1 + (tax.getPercentage()/100))));						
-					} 
+				double total = getHeader().getTaxableBase();
+				double coef = (1 + (getHeader().getTaxPercent()/100));
+				if (getHeader().isSurcharge()) {
+					coef = coef + (getHeader().getSurchargePercent()/100);
 				}
+				if (getHeader().isWithholding()) {
+					coef = coef - (getHeader().getRetPercent()/100);	
+				}
+				double tb = CommonUtil.round(total / coef ); 
+				getHeader().setTaxableBase(tb);
 				onTaxableBaseWizard(event);
 			} catch (Exception e) {
-				LOGGER.warn("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
+				String msg = "No se puede realizar el cálculo. Revise los datos introducidos.";
+				LOGGER.warn(msg);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
 			}
 		} else {
 			String msg="La Base Imponible es un dato requerido para esta utilidad.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		
 	}
+	
 	public void onTaxableBaseWizard(ActionEvent event) {
 		if (getHeader().getAccount() != null) {
 			if (getHeader().getTaxableBase() != null) {
 				onNewDetail(event);
 				getCurrentDetail().setTaxableBase( getHeader().getTaxableBase()==null?0.0:getHeader().getTaxableBase());
+				getCurrentDetail().setVatPercent( getHeader().getTaxPercent()==null?0.0:getHeader().getTaxPercent());
+				if (getHeader().isSurcharge()) {
+					getCurrentDetail().setSurchargePercent( getHeader().getSurchargePercent()==null?0.0:getHeader().getSurchargePercent());
+				}
+				if (getHeader().isWithholding()) {
+					getCurrentDetail().setRetentionPercent( getHeader().getRetPercent()==null?0.0:getHeader().getRetPercent());
+				}
 				taxableBaseChanged(getHeader().getTaxableBase());
 				onAddDetail(event);
 				onCancelDetail(event);
+				getHeader().setTaxableBase( 0.0 ); 
 			} else {
 				String msg="La Base Imponible es un dato requerido para esta utilidad.";
 				AonUtil.addErrorMessage(msg);
@@ -469,7 +557,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				Tax tax = (Tax) taxBean.get(id);
 				if (tax != null) {
 					getCurrentDetail().setVatPercent(tax.getPercentage());
-					if (isWithSurcharge()) {
+					if (getHeader().isSurcharge()) {
 						getCurrentDetail().setSurchargePercent(tax.getSurcharge());
 					}
 				} else {
@@ -480,7 +568,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			LOGGER.warn("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
 		}
 
-		if (isWithHolding()) {
+		if (getHeader().isWithholding()) {
 			try {
 				ApplicationParameter param = c
 						.getParameter(DefaultAccounts.DEFAULT_RETENTION_PERCENT);
@@ -581,6 +669,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (getCurrentFinance().getBank() == null) {
 				getCurrentFinance().setBank(new Bank());
 			}
+			if (getCurrentFinance().getBankAccount() == null) {
+				getCurrentFinance().setBankAccount(new BankAccount());
+			}
+			initializeCurrentBank(getCurrentFinance());
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error al inicializar el vencimiento");
 		}
@@ -597,6 +689,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			throw new AbortProcessingException(msg);
 		}
 		setCurrentFinance( (Finance) finances.getRowData() );
+		initializeCurrentBank(getCurrentFinance());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -940,6 +1033,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			invoice = (Invoice) invoiceBean.insert(invoice);
 		} else {
 			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
+			invoice.setDefaultTaxInfo(false);
 			invoice = (Invoice) invoiceBean.update(invoice);
 		}
 		// Al convertir el proceso en transaccional, el update
@@ -973,7 +1067,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		invoice.setWithholding(getHeader().isWithholding());
 		invoice.setTaxFree(getHeader().isTaxFree());
 		invoice.setSurcharge(getHeader().isSurcharge());
-		invoice.setDefaultTaxInfo(false);
 		return invoice;
 	}
 
@@ -1218,7 +1311,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					Creditor creditor = (Creditor) event.getNewValue();
 					getHeader().setRegistry(creditor.getRegistry());
 					getHeader().setWithholding(creditor.isWithholding());
-					getHeader().setSurcharge(company.isSurcharge());
+					getHeader().setSurcharge(false);
 					getHeader().setTaxFree(creditor.isTaxFree());
 				}
 				getHeader().setDocument( getHeader().getRegistry().getDocument());
@@ -1256,7 +1349,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			LOGGER.error(m, e);
 		}
 	}
-
+/*
 	public boolean isWithHolding() {
 		return getHeader().isWithholding();
 	}
@@ -1264,7 +1357,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public boolean isWithSurcharge() {
 		return ((isSales() || isPurchase()) && getHeader().isSurcharge());
 	}
-
+*/
 	public void onPayMethodChanged(ValueChangeEvent event) {
 		PayMethod oldPay = (PayMethod) event.getOldValue();
 		PayMethod newPay = (PayMethod) event.getNewValue();
@@ -1283,7 +1376,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onRBankChanged(ValueChangeEvent event) {
-		currentFinance.setBank(null);
+		currentFinance.setBank(new Bank());
 		currentFinance.setBankAccount(new BankAccount());
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			RegistryBank rbank = (RegistryBank) event.getNewValue();
@@ -1295,7 +1388,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public List<SelectItem> getBanks() throws ManagerBeanException {
 		if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
 			PayMethod pm = getCurrentFinance().getPayMethod();
-			if ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
+//			if ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
+			if (useRegistryBanks(pm) ) {
 				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
 				return c.getRegistryBanks(getCurrentFinance().getRegistry());
 			} 
@@ -1591,6 +1685,75 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			retList.add(new SelectItem(null,"---------------","---------------",true) );
 		}
 		return retList;
+	}
+
+	private boolean useRegistryBanks(PayMethod pm) {
+		return ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER));	
+	}
+
+	 
+	
+	public boolean isBankCreationEnabled() {
+		try {
+			Finance f = getCurrentFinance();
+			if (f == null)
+				return false;
+			PayMethod pm = f.getPayMethod();
+			if (pm == null)
+				return false;
+			if (!useRegistryBanks(pm))
+				return false;
+			if (f.getBank() == null)
+				return false;
+			if (f.getBankAccount() == null)
+				return false;
+			if (!f.getBankAccount().isValid())
+				return false;
+			String ccc1 = f.getBankAccount().getValue(); 
+			List<SelectItem> banks = getBanks();
+			for (SelectItem item: banks) {
+				RegistryBank rBank = (RegistryBank) item.getValue();
+				BankAccount ba = rBank.getBankAccount();
+				if (ba != null) {
+					String ccc2 = ba.getValue(); 
+					if (StringUtils.equals(ccc1, ccc2)) {
+						return false;
+					}
+				}
+			}
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public SelectItem getEmptyBank() {
+		if (emptyBank == null ) {
+			RegistryBank e = new RegistryBank();
+			e.setBank(new Bank());
+			e.setBankAccount(new BankAccount());
+			emptyBank = new SelectItem(e,"--" );
+		}
+		return emptyBank;
+	}
+	
+	public void onAddRBank(ActionEvent event) {
+		try {
+			IManagerBean rbankBean = BeanManager.getManagerBean(RegistryBank.class);
+			RegistryBank rbank = new RegistryBank();
+			rbank.setRegistry(getHeader().getRegistry());
+			rbank.setBank(getCurrentFinance().getBank());
+			rbank.setBankAccount(getCurrentFinance().getBankAccount());
+			rbank = (RegistryBank) rbankBean.insert(rbank);
+			setCurrentBank(rbank);
+			AonUtil.addInfoMessage("Banco añadido correctamente.");
+		} catch (ManagerBeanException e) {
+			String msg = "Se produjo un error inesperado al intentar agregar el banco.";
+			LOGGER.warn(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+		
 	}
 	
 }
