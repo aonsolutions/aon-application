@@ -1162,7 +1162,7 @@ color:#000;
 /******  TABLE HOVER  ******/
 /*************************/
 .aon-table-row-hover{
-	background-color:#e2f1f5;	
+	background-color:#e2f1f5 !important;	
 	cursor:pointer;	
 	}	
 .aon-table-row-hover td{
@@ -1514,6 +1514,7 @@ color:#000;
 	width:14px;
 	height:14px;
 	margin:0 2px 0 0;
+	vertical-align:middle;
 	}
 .aon-dataScroller-button-first{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-first.png) center center no-repeat;
@@ -1912,6 +1913,7 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	height:16px;
 	margin:0 2px 0 2px;
 	cursor:pointer;
+	vertical-align:middle;	
 	}
 .aon-dataScroller2-button-first{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-first.png) center center no-repeat;
@@ -2003,4 +2005,10 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-list-icon {
  	display:block;
  	padding:2px 5px 1px 18px; 	
+}
+
+.aon-table-row-link {
+	background:transparent url(images/aon-icon/aon-icon-rowSelector.png) no-repeat scroll center left;
+	margin: 0;
+	padding: 0 0 0 14px;
 }
