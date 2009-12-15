@@ -185,6 +185,12 @@
 							</h:column>
 						</t:dataTable>
 
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="courseMarkData" />
+							<ui:param name="model" value="#{courseMark.result}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+
 					</t:div>
 				</t:div>
 			</t:div>
