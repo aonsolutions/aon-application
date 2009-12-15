@@ -17,7 +17,7 @@
 			showEcommerceData="true"
 		/>
 		<product:productCategory
-			showCategoryGroup="false"
+			showCategoryGroup="true"
 		/>
 	</product:config>
 	
