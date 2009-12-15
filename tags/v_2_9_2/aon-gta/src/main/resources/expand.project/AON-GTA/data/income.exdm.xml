@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="income">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="3" name="series" sqlType="char" type="string"/>
+        <column label="" name="number" sqlType="integer" type="integer"/>
+        <column label="" name="supplier" sqlType="integer" type="integer"/>
+        <column label="" name="address" sqlType="integer" type="integer"/>
+        <column label="" name="issue_time" sqlType="date" type="date"/>
+        <column label="" length="4" name="security_level"
+            sqlType="tinyint" type="string"/>
+        <column label="" length="4" name="status" sqlType="tinyint" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="income_ibfk_1" foreignPath="data/supplier.exdm.xml">
+            <sourceColumns>
+                <column name="supplier"/>
+            </sourceColumns>
+        </join>
+        <join description="income_ibfk_2" foreignPath="data/raddress.exdm.xml">
+            <sourceColumns>
+                <column name="address"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

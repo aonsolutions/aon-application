@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Compras">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYearFirstDay}"
+            label="Desde" name="inidate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="${currentYearLastDay}"
+            label="Hasta" name="enddate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_albaran_compra.gif"
+        iconOpen="icons/icon_albaran_compra.gif" label="Compras">
+        <layout type="COLUMN"/>
+        <contents/>
+        <node iconClose="icons/icon_users_group.gif"
+            iconOpen="icons/icon_users_group.gif" label="Proveedor">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Compras/Proveedor.exvw.xml">
+                    <sentence>SELECT registry.id, document, name, alias, SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM registry, invoice, invoice_detail&#xd;
+ WHERE invoice.registry = registry.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY 1,2,3,4&#xd;
+ ORDER BY 5 DESC</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="SUPPLIER_ID" type="INTEGER"/>
+                        <attribute label="CIF / NIF" name="document" type="STRING"/>
+                        <attribute label="Nombre" name="SUPPLIER_NAME" type="STRING"/>
+                        <attribute label="Alias" name="alias" type="STRING"/>
+                        <attribute label="Total" name="total" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node dynamicViewId="view/Compras/Proveedor.exvw.xml"
+                iconClose="icons/icon_usuario.gif" label="${SUPPLIER_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT registry.id, document, name, alias, SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM registry, invoice, invoice_detail&#xd;
+ WHERE invoice.registry = registry.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY 1,2,3,4&#xd;
+ ORDER BY 5 DESC</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="SUPPLIER_ID" type="INTEGER"/>
+                        <attribute label="CIF / NIF" name="document" type="STRING"/>
+                        <attribute label="Nombre" name="SUPPLIER_NAME" type="STRING"/>
+                        <attribute label="Alias" name="alias" type="STRING"/>
+                        <attribute label="Total" name="total" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Compras/Productos por proveedor.exvw.xml">
+                        <sentence>SELECT invoice_detail.item, product.name description, &#xd;
+ SUM(invoice_detail.quantity), SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM invoice_detail, invoice, registry, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND invoice.registry = registry.id &#xd;
+   AND invoice.type = ?&#xd;
+   AND registry.id = ? &#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY invoice_detail.item</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="item" type="INTEGER"/>
+                            <attribute label="Articulo" name="name" type="STRING"/>
+                            <attribute label="Cantidad" name="quantity" type="DOUBLE"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="SUPPLIER_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+            </node>
+        </node>
+        <node iconClose="icons/icon_familia.gif"
+            iconOpen="icons/icon_familia.gif" label="Familias">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Compras/Familias.exvw.xml">
+                    <sentence>SELECT pcategory.id, pcategory.name, SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM pcategory, product, item, invoice_detail, invoice&#xd;
+ WHERE pcategory.id = product.category &#xd;
+   AND product.id = item.product&#xd;
+   AND item.id = invoice_detail.item&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = 0&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY 1,2&#xd;
+   </sentence>
+                    <metadata>
+                        <attribute label="Familia" name="CATEGORY_ID" type="INTEGER"/>
+                        <attribute label="Nombre" name="CATEGORY_NAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base, 2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node dynamicViewId="view/Compras/Familias.exvw.xml"
+                iconClose="icons/icon_categoria.gif"
+                iconOpen="icons/icon_categoria.gif" label="${CATEGORY_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT pcategory.id, pcategory.name, SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM pcategory, product, item, invoice_detail, invoice&#xd;
+ WHERE pcategory.id = product.category &#xd;
+   AND product.id = item.product&#xd;
+   AND item.id = invoice_detail.item&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = 0&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY 1,2&#xd;
+   </sentence>
+                    <metadata>
+                        <attribute label="Familia" name="CATEGORY_ID" type="INTEGER"/>
+                        <attribute label="Nombre" name="CATEGORY_NAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base, 2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <contentComposite label="Articulos y Proveedores">
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <listViewContent id="view/Compras/Productos por familia.exvw.xml">
+                                <sentence>SELECT invoice_detail.item, product.name description, &#xd;
+ SUM(invoice_detail.quantity), SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM invoice_detail, invoice, pcategory, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND invoice.type = 0&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND pcategory.id = ? AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY invoice_detail.item</sentence>
+                                <metadata>
+                                    <attribute label="Codigo"
+                                    name="item" type="INTEGER"/>
+                                    <attribute label="Articulo"
+                                    name="name" type="STRING"/>
+                                    <attribute label="Cantidad"
+                                    name="quantity" type="DOUBLE"/>
+                                    <attribute label="Total"
+                                    name="total" type="DOUBLE"/>
+                                </metadata>
+                                <parameters>
+                                    <parameter name="CATEGORY_ID"/>
+                                    <parameter name="inidate"/>
+                                    <parameter name="enddate"/>
+                                </parameters>
+                            </listViewContent>
+                            <listViewContent id="view/Compras/Proveedor por familia.exvw.xml">
+                                <sentence>SELECT registry.id, registry.document, registry.name, registry.alias, &#xd;
+ SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+ FROM registry, invoice, invoice_detail, item, product&#xd;
+ WHERE invoice.registry = registry.id&#xd;
+   AND invoice.id = invoice_detail.invoice&#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ? &#xd;
+   AND product.category = ?&#xd;
+ GROUP BY 1,2,3,4</sentence>
+                                <metadata>
+                                    <attribute label="Codigo"
+                                    name="SUPPLIER_ID" type="INTEGER"/>
+                                    <attribute label="CIF"
+                                    name="document" type="STRING"/>
+                                    <attribute label="Nombre"
+                                    name="REGISTRY_NAME" type="STRING"/>
+                                    <attribute label="Alias"
+                                    name="alias" type="STRING"/>
+                                    <attribute label="Total"
+                                    name="SUM(TRUNCATE(invoice_detail.taxable_base, 2))" type="DOUBLE"/>
+                                </metadata>
+                                <parameters>
+                                    <parameter name="type"/>
+                                    <parameter name="inidate"/>
+                                    <parameter name="enddate"/>
+                                    <parameter name="CATEGORY_ID"/>
+                                </parameters>
+                            </listViewContent>
+                        </contents>
+                    </contentComposite>
+                </contents>
+                <node
+                    dynamicViewId="view/Compras/Proveedor por familia.exvw.xml"
+                    iconClose="icons/icon_usuario.gif" label="${REGISTRY_NAME}">
+                    <dynamicSentence>
+                        <sentence>SELECT registry.id, registry.document, registry.name, registry.alias, &#xd;
+ SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+ FROM registry, invoice, invoice_detail, item, product&#xd;
+ WHERE invoice.registry = registry.id&#xd;
+   AND invoice.id = invoice_detail.invoice&#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ? &#xd;
+   AND product.category = ?&#xd;
+ GROUP BY 1,2,3,4</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="SUPPLIER_ID" type="INTEGER"/>
+                            <attribute label="CIF" name="document" type="STRING"/>
+                            <attribute label="Nombre"
+                                name="REGISTRY_NAME" type="STRING"/>
+                            <attribute label="Alias" name="alias" type="STRING"/>
+                            <attribute label="Total"
+                                name="SUM(TRUNCATE(invoice_detail.taxable_base, 2))" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="CATEGORY_ID"/>
+                        </parameters>
+                    </dynamicSentence>
+                    <dynamicParameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="CATEGORY_ID"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <listViewContent id="view/Compras/Productos por familia y proveedor.exvw.xml">
+                            <sentence>SELECT invoice_detail.item, product.name description, &#xd;
+ SUM(invoice_detail.quantity), SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM invoice_detail, invoice, pcategory, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice.type = ?&#xd;
+   AND pcategory.id = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ? AND invoice.registry = ?&#xd;
+ GROUP BY invoice_detail.item</sentence>
+                            <metadata>
+                                <attribute label="Codigo" name="item" type="INTEGER"/>
+                                <attribute label="Articulo" name="name" type="STRING"/>
+                                <attribute label="Cantidad"
+                                    name="quantity" type="DOUBLE"/>
+                                <attribute label="Total" name="total" type="DOUBLE"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="type"/>
+                                <parameter name="CATEGORY_ID"/>
+                                <parameter name="inidate"/>
+                                <parameter name="enddate"/>
+                                <parameter name="SUPPLIER_ID"/>
+                            </parameters>
+                        </listViewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+        <node iconClose="icons/icon_comparativa.gif"
+            iconOpen="icons/icon_comparativa.gif" label="Articulos">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Ventas/Productos.exvw.xml">
+                    <sentence>SELECT invoice_detail.item, product.name description, &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY 1,2&#xd;
+ ORDER BY 3 DESC</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                        <attribute label="Producto" name="ITEM_NAME" type="STRING"/>
+                        <attribute label="Total" name="total" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node dynamicViewId="view/Ventas/Productos.exvw.xml"
+                iconClose="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT invoice_detail.item, product.name description, &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY 1,2&#xd;
+ ORDER BY 3 DESC</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                        <attribute label="Producto" name="ITEM_NAME" type="STRING"/>
+                        <attribute label="Total" name="total" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Compras/Proveedor por articulo.exvw.xml">
+                        <sentence>SELECT registry.id, registry.document, registry.name, registry.alias, &#xd;
+ SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+ FROM registry, invoice, invoice_detail, item, product&#xd;
+ WHERE invoice.registry = registry.id&#xd;
+   AND invoice.id = invoice_detail.invoice&#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ? &#xd;
+   AND item.id = ?&#xd;
+ GROUP BY 1,2,3,4</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="REGISTRY_ID" type="INTEGER"/>
+                            <attribute label="Documento" name="document" type="STRING"/>
+                            <attribute label="Nombre"
+                                name="REGISTRY_NAME" type="STRING"/>
+                            <attribute label="Alias" name="alias" type="STRING"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="ITEM_ID"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+            </node>
+        </node>
+    </node>
+</workstation>
