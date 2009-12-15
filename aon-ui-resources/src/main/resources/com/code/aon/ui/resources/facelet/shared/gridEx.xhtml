@@ -8,7 +8,7 @@
 
 		<aon:editDataTable id="#{dataTableId}" var="to"
 			value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
-			columnClasses="none, #{columnClasses}, none">
+			columnClasses=", #{columnClasses},">
 	
 			<aon:rowSelector id="#{dataTableId}-select" 
 				toggleOnClick="#{controller.to == null and !skipLineEdition}"
