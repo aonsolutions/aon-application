@@ -364,6 +364,10 @@
 			<url-pattern>/_finance/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
+			<web-resource-name>account</web-resource-name>
+			<url-pattern>/_account/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
