@@ -20,6 +20,7 @@
 		<option key="aon_geozone" descriptionKey="aon_geozone_desc" ref="geozone">
 			<actionListener action="#{geotreeParent.onSearch}" />
 		</option>
+		<option ref="accPeriod" key="aon_accPeriod" descriptionKey="aon_accPeriod_desc" />
 	</menu>
 	<option key="aon_appParams" descriptionKey="aon_appParams_desc" ref="appParams" />
 </root>

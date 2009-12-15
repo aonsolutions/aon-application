@@ -119,5 +119,6 @@
 		<option key="aon_geozone" descriptionKey="aon_geozone_desc" ref="geozone" role="ConfiguracionProvincias">
 			<actionListener action="#{geotreeParent.onSearch}" />
 		</option>
+		<option ref="accPeriod" key="aon_accPeriod" descriptionKey="aon_accPeriod_desc" role="MenuContabilidad"/>
 	</menu>
 </root>
