@@ -61,6 +61,7 @@ public class AccountJournalManager {
 		        int i = 0;
 		        int journal = 2;
 		        for (ITransferObject to : list ) {
+		        	boolean mustAdd = false;
 		        	AccountEntry entry = (AccountEntry) to;
 		        	if (opening && entry.getType() == AccountEntryType.OPENING ) {
 		        		entry.setJournal(1);
@@ -70,12 +71,15 @@ public class AccountJournalManager {
 		        		entry.setJournal(count);
 		        	} else {
 		        		entry.setJournal(journal);	
+		        		mustAdd = true;
 		        	}
 		        	entry.setDateDirty(false);
 			        bean.update(entry);    	
 		        	progressionBean.setProgressionCurrentValue((long) ( i * 100 / count));
 		        	i++;
-		        	journal++;
+		        	if (mustAdd) {
+		        		journal++;
+		        	}
 		        }
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
