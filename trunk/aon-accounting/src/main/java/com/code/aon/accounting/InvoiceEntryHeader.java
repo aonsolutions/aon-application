@@ -36,7 +36,10 @@ public class InvoiceEntryHeader implements ITransferObject {
 	private Integer accountEntryId;
 
 	private Double taxableBase;
-
+	private Double taxPercent;
+	private Double surchargePercent;
+	private Double retPercent;
+	
 	public InvoiceType getType() {
 		return type;
 	}
@@ -162,6 +165,27 @@ public class InvoiceEntryHeader implements ITransferObject {
 	}
 	public void setTaxableBase(Double taxableBase) {
 		this.taxableBase = taxableBase;
+	}
+
+	public Double getTaxPercent() {
+		return taxPercent;
+	}
+	public void setTaxPercent(Double taxPercent) {
+		this.taxPercent = taxPercent;
+	}
+
+	public Double getSurchargePercent() {
+		return surchargePercent;
+	}
+	public void setSurchargePercent(Double surchargePercent) {
+		this.surchargePercent = surchargePercent;
+	}
+
+	public Double getRetPercent() {
+		return retPercent;
+	}
+	public void setRetPercent(Double retPercent) {
+		this.retPercent = retPercent;
 	}
 
 	public boolean isTaxFree() {
