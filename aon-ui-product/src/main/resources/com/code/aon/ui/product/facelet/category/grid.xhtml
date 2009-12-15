@@ -42,28 +42,28 @@
 							</aon:column>
 
 							<c:if test="#{aonConfiguration.bean.productCategory.showCategoryGroup}">
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{productBundle.product_category_group}" />
-								</f:facet>
-
-								<aon:outputText value="#{to.group.name}"
-									rendered="#{formList}" />
-								<aon:selectOneMenu rendered="#{formEdit}"
-									value="#{productCategory.to.group}">
-									<f:selectItem itemLabel="-"  itemValue="{null}" />
-									<f:selectItems
-										value="#{productCollections.categoryGroups}" />
-								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu value="#{productCategory.to.group}"
-										rendered="#{formNew}">
-										<f:selectItem itemLabel="-" itemValue="{null}" />
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{productBundle.product_category_group}" />
+									</f:facet>
+	
+									<aon:outputText value="#{to.group.name}"
+										rendered="#{formList}" />
+									<aon:selectOneMenu rendered="#{formEdit}"
+										value="#{productCategory.to.group}">
+										<f:selectItem itemLabel="-"  itemValue="{null}" />
 										<f:selectItems
 											value="#{productCollections.categoryGroups}" />
 									</aon:selectOneMenu>
-								</f:facet>
-							</aon:column>
+									<f:facet name="footer">
+										<aon:selectOneMenu value="#{productCategory.to.group}"
+											rendered="#{formNew}">
+											<f:selectItem itemLabel="-" itemValue="{null}" />
+											<f:selectItems
+												value="#{productCollections.categoryGroups}" />
+										</aon:selectOneMenu>
+									</f:facet>
+								</aon:column>
 							</c:if>
  
 						</ui:define>
