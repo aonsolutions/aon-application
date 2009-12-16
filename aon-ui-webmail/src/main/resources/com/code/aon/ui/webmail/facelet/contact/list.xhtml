@@ -23,48 +23,42 @@
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="contactDataList" value="#{contact.model}"
-					var="to" rows="20" rendered="#{contact.model.rowCount > 0}"
-					columnClasses="aon-width-180 aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn,
-						aon-width-100 aon-editDataTable-textColumn,
-						aon-width-100 aon-editDataTable-textColumn">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{contact}" />
+					<ui:define name="columns">
 
-					<aon:rowSelector action="contact_form" actionListener="#{contact.onSelect}" />
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
-						</f:facet>
-						<aon:outputText value="#{to.displayName}"
-							styleClass="aon-list-icon #{to.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{webmailBundle.webmail_contact_email}" />
-						</f:facet>
-						<aon:outputText value="#{to.emails}"/>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{webmailBundle.webmail_contact_phone}" />
-						</f:facet>
-						<aon:outputText value="#{to.phone}"/>
-					</aon:column>
-
-					<aon:column>
+						<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
+							</f:facet>
+							<aon:outputText value="#{to.displayName}"
+								styleClass="aon-list-icon #{to.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_email}" />
+							</f:facet>
+							<aon:outputText value="#{to.emails}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-100 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_phone}" />
+							</f:facet>
+							<aon:outputText value="#{to.phone}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-100 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_cellular_phone}" />
+							</f:facet>
+							<aon:outputText value="#{to.cellularPhone}"/>
+						</aon:column>
+					</ui:define>
 					
-						<f:facet name="header">
-							<aon:outputText value="#{webmailBundle.webmail_contact_cellular_phone}" />
-						</f:facet>
-						<aon:outputText value="#{to.cellularPhone}"/>
-					</aon:column>
-
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="contactDataList" showNote="true" />
+				</ui:decorate>
 
 			</aon:div>
 
