@@ -35,7 +35,7 @@
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-first':'aon-dataScroller2-button-first-disabled'}">
 						<c:if test="#{!disableHotKeys and model.previousNeeded}" >
-							<aon:actionHotKey key="home" />
+							<aon:actionHotKey key="home" disableInInput="true" />
 						</c:if>
 					</aon:commandButton>
 	
@@ -79,7 +79,7 @@
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-last':'aon-dataScroller2-button-last-disabled'}">
 						<c:if test="#{!disableHotKeys and model.nextNeeded}" >
-							<aon:actionHotKey key="end" />
+							<aon:actionHotKey key="end" disableInInput="true" />
 						</c:if>
 					</aon:commandButton>
 					
