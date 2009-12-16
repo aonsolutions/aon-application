@@ -105,9 +105,15 @@ color:#000;
 .aon-noborder{border:0;}
 .aon-border{border:#ccc 1px solid;}
 
+.aon-height-all{
+	height:100%;
+}
+.aon-width-all{
+	width:100%;
+}
 .aon-width-auto{
 	width:auto;
-	}
+}
 .aon-width-20{
 	width:20px;
 }
@@ -158,6 +164,9 @@ color:#000;
 }	
 .aon-width-200{
 	width:200px;
+}	
+.aon-width-250{
+	width:250px;
 }	
 .aon-width-300{
 	width:300px;
