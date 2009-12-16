@@ -224,7 +224,7 @@ public class Purchase implements ITransferObject, IHeaderObject{
 	 * 
 	 * @return the discount expression
 	 */
-	@Column(name="discount_expression")
+	@Column(name="discount_expr")
 	@Type(type="com.code.aon.product.util.DiscountExpressionUserType")
 	public DiscountExpression getDiscountExpression() {
 		return discountExpression;
