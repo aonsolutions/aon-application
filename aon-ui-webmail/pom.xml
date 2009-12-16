@@ -11,19 +11,19 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.webmail</artifactId>
 	<name>AON UI WEBMAIL</name>
-	<version>4.18.0</version>
+	<version>4.19.0</version>
 	<description>AON UI WEBMAIL</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.5.0</version>
+			<version>4.6.0</version>
 			<scope>compile</scope>
 		</dependency>					
 	    <dependency>
 	      <groupId>com.code.aon</groupId>
 	      <artifactId>aon.ui.resources</artifactId>
-	      <version>4.1.0</version>
+	      <version>4.2.0</version>
 	      <scope>compile</scope>
 	    </dependency>		
 		<dependency>
