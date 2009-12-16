@@ -28,7 +28,7 @@ public class DBManager {
 	
 	public static final String AON_MASTER = "aon_master";
 	
-	private static final String CREATE_SQL = "create.database.4.7.0.sql";
+	private static final String CREATE_SQL = "create.database.4.8.0.sql";
 	
 	private static final String INSERT_SQL = "default-insert.database.sql";
 	

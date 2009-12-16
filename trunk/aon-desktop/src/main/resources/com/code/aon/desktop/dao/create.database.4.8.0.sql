@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 4.7.0
+# Version: 4.8.0
 # Created by: girazu
-# Creation Date: 23/11/2009 18:37
+# Creation Date: 11/12/2009 15:13
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1113,11 +1113,8 @@ CREATE TABLE `item` (
   `purchase_price` double default '0' COMMENT 'Precio de compra del Articulo',
   `internet` tinyint(1) default '0' COMMENT 'Visible en internet',
   `barcode` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de barras del Articulo',
-  `alternative_item` int(4) default NULL COMMENT 'Identificador del Articulo alternativo',
   PRIMARY KEY  (`id`),
   KEY `idx_item_prdt` (`product`),
-  KEY `IDX_ALTERNATIVE_ITEM` (`alternative_item`),
-  CONSTRAINT `FK_ALTERNATIVE_ITEM` FOREIGN KEY (`alternative_item`) REFERENCES `item` (`id`),
   CONSTRAINT `item_ibfk_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
 
@@ -2015,9 +2012,9 @@ CREATE TABLE `ec_offer_pay_info` (
 CREATE TABLE `ec_paymethod` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `pay_method` int(4) NOT NULL COMMENT 'Identificador de la Forma de Pago',
-  `user_name` varchar(32) collate latin1_spanish_ci default 'Null' COMMENT 'Nombre de Usuario',
+  `user_name` varchar(64) collate latin1_spanish_ci default 'Null' COMMENT 'Nombre de Usuario',
   `password` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Contraseña para la pasarela de pago',
-  `signature` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Identificador unico de la empresa para pasarela',
+  `signature` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Identificador unico de la empresa para pasarela',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_ECPAYMETHOD_PAYMETHOD` (`pay_method`),
   CONSTRAINT `FK_ECPAYMETHOD_PAYMETHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`)
@@ -2575,6 +2572,23 @@ CREATE TABLE `invoicing_group_detail` (
   CONSTRAINT `invoicing_group_detail_fk` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`),
   CONSTRAINT `invoicing_group_detail_fk1` FOREIGN KEY (`child`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de los Grupos de Facturacion';
+
+#
+# Structure for the `item_alternative` table : 
+#
+
+CREATE TABLE `item_alternative` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
+  `alternative_item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo Alternativo',
+  `priority` tinyint(2) default '0' COMMENT 'Prioridad del Articulo Alternativo',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_UNQ_ITEM_ALTERNATIVE` (`item`,`alternative_item`),
+  KEY `IDX_ITEM_ALTERNATIVE_ITEM` (`item`),
+  KEY `IDX_ITEM_ALTERNATIVE_ALTERNATIVE` (`alternative_item`),
+  CONSTRAINT `FK_ITEM_ALTERNATIVE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_ITEM_ALTERNATIVE_ALTERNATIVE` FOREIGN KEY (`alternative_item`) REFERENCES `item` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo Alternativos';
 
 #
 # Structure for the `item_pos` table : 
@@ -3394,8 +3408,8 @@ CREATE TABLE `rsegment` (
   PRIMARY KEY  (`id`),
   KEY `IDX_REGISTRY_SEGMENT_REGISTRY` (`registry`),
   KEY `IDX_REGISTRY_SEGMENT_SEGMENT` (`segment`),
-  CONSTRAINT `FK_REGISTRY_SEGMENT_SEGMENT` FOREIGN KEY (`segment`) REFERENCES `segment` (`id`),
-  CONSTRAINT `FK_REGISTRY_SEGMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_REGISTRY_SEGMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_REGISTRY_SEGMENT_SEGMENT` FOREIGN KEY (`segment`) REFERENCES `segment` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos de Personas o Empresas';
 
 #
@@ -3833,8 +3847,8 @@ CREATE TABLE `web_info_page_detail` (
 
 CREATE TABLE `web_info_page_resource` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo del Recurso de la Pagina',
-  `web_info_page` int(4) default NULL COMMENT 'Codigo de la Pagina',
-  `rattach` int(4) default NULL COMMENT 'Identificador del Archivo Adjunto calificado como Recurso',
+  `web_info_page` int(4) NOT NULL COMMENT 'Codigo de la Pagina',
+  `rattach` int(4) NOT NULL COMMENT 'Identificador del Archivo Adjunto calificado como Recurso',
   `content` varchar(255) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Texto del Recurso',
   PRIMARY KEY  (`id`),
   KEY `web_info_page` (`web_info_page`),
@@ -3930,7 +3944,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('4.7.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('4.8.0');
 
 COMMIT;
 
