@@ -22,40 +22,35 @@
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-
-				<aon:dataTable id="domainData" value="#{domain.model}"
-					var="to" rows="20" rendered="#{domain.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-iconColumn">
-
-					<aon:rowSelector action="domain_form" actionListener="#{domain.onSelect}" />
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{domain}" />
+					<ui:define name="columns">
 					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{auditBundle.audit_domain_enable_audit}" />
-						</f:facet>
-						<aon:outputText
-							styleClass="#{(to.enableAudit)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
-							value="&#160;" />
-					</aon:column>
-
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="domainData" showNote="true" />
+						<aon:column styleClass="aon-width-80 aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{auditBundle.audit_domain_enable_audit}" />
+							</f:facet>
+							<aon:outputText
+								styleClass="#{(to.enableAudit)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								value="&#160;" />
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 
 			</aon:div>
 		</aon:form>
