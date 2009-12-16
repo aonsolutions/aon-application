@@ -10,7 +10,8 @@
 		columnClasses=", #{columnClasses}">
 
 		<aon:rowSelector id="#{dataTableId}-select" reRender="#{rowSelectorReRender}"
-			actionListener="#{controller.onSelect}" action="#{rowSelectorAction}"
+			actionListener="#{rowSelectorActionListener}" action="#{rowSelectorAction}"
+			toggleOnClick="#{rowSelectorToggleOnClick}"
 			focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
 
 		<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -25,6 +26,9 @@
 				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"
 				reRender="#{rowSelectorReRender}" >
 			</aon:commandLink>
+			<f:facet name="footer">
+				<ui:insert name="selectFooterContent"/>
+			</f:facet>
 		</aon:column>
 
 		<ui:insert name="columns"/>
