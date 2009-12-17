@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.gta</artifactId>
 	<packaging>war</packaging>
-	<version>2.9.1</version>
+	<version>2.9.3</version>
 	<description>AON GTA</description>
 	<name>AON GTA</name>
 	<properties>
@@ -53,7 +53,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>2.12.0</version>
+			<version>2.13.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.purchase</artifactId>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -278,12 +278,12 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/_finance/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>account</web-resource-name>
 			<url-pattern>/_account/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>finance</web-resource-name>
+			<url-pattern>/_finance/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
@@ -387,7 +387,6 @@
 	<security-role><role-name>CentrosFormacion</role-name></security-role>
 	<security-role><role-name>ChecksTesoreria</role-name></security-role>
 	<security-role><role-name>CierreGrupos</role-name></security-role>
-	<security-role><role-name>ConfiguracionEjercicios</role-name></security-role>
 	<security-role><role-name>ConfiguracionImpuestos</role-name></security-role>
 	<security-role><role-name>ConfiguracionProvincias</role-name></security-role>
 	<security-role><role-name>ConfiguracionSeries</role-name></security-role>
