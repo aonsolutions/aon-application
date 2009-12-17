@@ -6,5 +6,6 @@ public interface IInvoicingFeedBack {
 
 	public void addMessage(String message);
 	
+	@SuppressWarnings("unchecked")
 	public List getMessages();
 }

@@ -56,7 +56,6 @@ import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.finance.csb.CSB19Writer;
 import com.code.aon.ui.finance.csb.CSB32Writer;
@@ -445,7 +444,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	        response.setContentType(MimeType.MIME_TXT.getName());
 	        response.setContentLength(data.length);
-	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
+	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\"");
 	        faces.responseComplete();
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
@@ -630,7 +629,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
-			return new Integer (fBatchDetailBean.getList(criteria).size());
+			return new Integer (fBatchDetailBean.getCount(criteria));
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total details", e);
 		}

@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.BeanManager;
@@ -39,7 +40,9 @@ import com.code.aon.ql.Criteria;
 @Table(name = "invoice_detail")
 public class InvoiceDetail implements ITransferObject, ICalculable {
 
-    /** The id. */
+	private static final long serialVersionUID = -4734071580890529329L;
+
+	/** The id. */
     private Integer id;
 
     /** The invoice. */
@@ -67,7 +70,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
     private InvoiceSource source;
     
     /** A reference to a DeliveryDetail or an IncomeDetail. */
-    private Integer deliveryDetail;
+    private Integer sourceId;
     
     /** The taxable base. */
     private double taxableBase;
@@ -249,22 +252,22 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
     }
 
     /**
-     * Gets the delivery detail.
+     * Gets the source id.
      * 
-     * @return the delivery detail
+     * @return the sourceId
      */
-    @Column(name="delivery_detail")
-    public Integer getDeliveryDetail() {
-        return deliveryDetail;
+    @Column(name="source_id")
+    public Integer getSourceId() {
+        return sourceId;
     }
 
     /**
-     * Sets the delivery detail.
+     * Sets the source id.
      * 
-     * @param deliveryDetail the delivery detail
+     * @param sourceId the sourceId
      */
-    public void setDeliveryDetail(Integer deliveryDetail) {
-        this.deliveryDetail = deliveryDetail;
+    public void setSourceId(Integer sourceId) {
+        this.sourceId = sourceId;
     }
     
     /**
@@ -338,4 +341,24 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		}
 		return taxBreakDowns;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof InvoiceDetail) {
+			InvoiceDetail o = (InvoiceDetail) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+	
 }

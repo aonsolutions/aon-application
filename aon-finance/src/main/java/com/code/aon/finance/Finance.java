@@ -10,7 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -26,6 +30,8 @@ import com.code.aon.registry.Registry;
 @Table(name = "finance")
 public class Finance implements ITransferObject{
 	
+	private static final long serialVersionUID = 8289553641190577845L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -193,6 +199,7 @@ public class Finance implements ITransferObject{
 	 * @return the due date
 	 */
 	@Column(name="due_date")
+	@Temporal(TemporalType.DATE)
 	public Date getDueDate() {
 		return dueDate;
 	}
@@ -344,14 +351,22 @@ public class Finance implements ITransferObject{
     	return getBankAccount();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-    	if(id == null){
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
     		return super.equals(obj);
-    	}
-        if (obj instanceof Finance) {
-            return (this.id.equals(((Finance)obj).getId()));
-        }
-        return false;
-    }
+		}
+		if (obj instanceof Finance) {
+			Finance o = (Finance) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }
