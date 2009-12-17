@@ -30,30 +30,25 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="userDataList" value="#{user.model}"
-					var="to" rows="20" rendered="#{user.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{user}" />
+					<ui:define name="columns">
 
-					<aon:rowSelector action="user_form" actionListener="#{user.onSelect}"/>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_user_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_user_login}" />
-						</f:facet>
-						<aon:outputText value="#{to.login}"/>
-					</aon:column>
- 
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="userDataList" showNote="true" />
-
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{configBundle.config_user_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{configBundle.config_user_login}" />
+							</f:facet>
+							<aon:outputText value="#{to.login}"/>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
  
 		</aon:form>
