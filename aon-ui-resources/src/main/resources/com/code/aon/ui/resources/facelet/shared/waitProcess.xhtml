@@ -7,8 +7,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<rich:modalPanel id="waitProccess" height="190" width="370"
-		zindex="2000">
+	<rich:modalPanel id="waitProccess" height="200" width="300"
+		zindex="2000" resizeable="false">
 
 		<f:facet name="header">
 			<aon:div styleClass="aon-popupWindow-title">
@@ -16,17 +16,11 @@
 			</aon:div>
 		</f:facet>
 
-		<aon:div styleClass="aon-popupWindow-content">
-			<aon:div styleClass="aon-popupWindow-content-internal">
-
-	       		<aon:div styleClass="aon-timer" >
-	       			<aon:div styleClass="aon-timer-internal">
-	       				<aon:outputText value="#{bundle.aon_in_progress}" />
-	       			</aon:div> 
-	       		</aon:div>
-
-			</aon:div>
-		</aon:div>
+		<h:panelGrid columns="2" styleClass="aon-width-all" columnClasses=",aon-text-center" >
+			<aon:div styleClass="aon-timer" />
+			<aon:outputText styleClass="aon-timer-internal"
+				value="#{bundle.aon_in_progress}" />
+		</h:panelGrid>
 			
 	</rich:modalPanel>
 	
