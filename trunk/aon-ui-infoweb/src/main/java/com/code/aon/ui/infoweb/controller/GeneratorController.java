@@ -1,6 +1,7 @@
 package com.code.aon.ui.infoweb.controller;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -65,6 +66,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DATA = "WebInfoPageResource.rattach.data";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorController.class.getName());
+	
+	private static final FileFilter CVS_FILTER = new CVSFilter();
 	
 	private VelocityUtil vu;
 	
@@ -274,7 +277,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 		try {
 			if ( srcDir.exists() ) {
 				LOGGER.info( "Copy directory: {} -> {}", srcDir, destDir );
-				FileUtils.copyDirectoryToDirectory(srcDir, destDir );
+				File realDestDir = new File(destDir, srcDir.getName());
+				FileUtils.copyDirectory(srcDir, realDestDir, CVS_FILTER );
 			} else {
 				LOGGER.warn( "Directory doesn't exists: {}", srcDir );
 			}
@@ -744,6 +748,18 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private boolean isGenerateDefaultPage() {
 		return this.homepage == 0;
+	}
+	
+	private static class CVSFilter implements FileFilter {
+
+		@Override
+		public boolean accept(File pathname) {
+			if ( pathname.isDirectory() && pathname.getName().equalsIgnoreCase("CVS") ) {
+				return false;
+			}
+			return true;
+		}
+		
 	}
 	
 }
