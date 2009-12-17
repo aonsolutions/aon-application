@@ -76,7 +76,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	private DBManager manager = new DBManager();
+	private DBManager manager;
 	
 	private ApplicationsManager.App selectedApplication;
 
