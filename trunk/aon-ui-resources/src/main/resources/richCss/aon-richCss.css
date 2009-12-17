@@ -1660,13 +1660,12 @@ color:#000;
 .aon-timer{
 	background:transparent url(images/aon-content/aon-timer.gif) left center no-repeat;
 	height: 141px;
-	padding-left: 145px;
+	padding-left: 120px;
 }
 .aon-timer-internal {
-	margin-top: 65px;
-	text-align: center;
 	text-transform:uppercase;
 	font-weight:bold;
+	vertical-align:middle;
 }	
 
 /**********************************************/
