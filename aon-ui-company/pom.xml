@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.company</artifactId>
-	<version>4.6.1</version>
+	<version>4.7.0</version>
 	<description>AON UI COMPANY</description>
 	<name>AON UI COMPANY</name>
 	<dependencies>
@@ -28,6 +28,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.common.ldap</artifactId>
+			<version>1.3.0</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
 			<version>4.2.1</version>
 			<scope>compile</scope>
@@ -41,7 +47,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>4.8.0</version>
+			<version>4.8.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
