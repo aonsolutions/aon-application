@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Albaran de Venta" label="Albaran de Venta" sqlSentence="SELECT series, number, issue_time &#xd;&#xa;FROM delivery, tas_delivery &#xd;&#xa;WHERE tas_delivery.delivery = delivery.id &#xd;&#xa;  AND tas_delivery.support_order = ?">
+    <parameters>
+        <parameter name="support_order" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="DELVRY_SERIES" columnId="series"
+            export="true" label="SERIE" tableId="delivery" type="STRING"/>
+        <result accessName="DELVRY_NUMBER" columnId="number"
+            export="true" label="NUMERO" tableId="delivery" type="INTEGER"/>
+        <result accessName="DELVRY_DATE" columnId="issue_time"
+            export="true" label="FECHA" tableId="delivery" type="DATE"/>
+    </results>
+    <dataModelReferences/>
+</view>

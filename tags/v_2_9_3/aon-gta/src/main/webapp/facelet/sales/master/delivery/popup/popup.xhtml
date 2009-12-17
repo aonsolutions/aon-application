@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jstl="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div id="popup" forceId="#{true}" styleClass="aon-popup-window"
+		style="position: absolute;left: 290px;_left:110px; top: 230px;display:none;">
+		<t:div styleClass="aon-popup-window-title">
+			<t:commandButton id="popupClose" value=" "
+				onclick="document.getElementById('Item_product_code-New').disabled = true;"
+				actionListener="#{salesPurchase.onClose}"
+				styleClass="aon-popup-window-close"
+				accesskey="#{bundle.aon_key_close}" />
+
+			<t:outputLabel value="#{purchaseBundle.aon_purchase}" />
+
+		</t:div>
+		<t:div styleClass="aon-popup-window-body">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:commandButton id="popupUpdate" value="#{bundle.aon_accept}"
+						actionListener="#{salesPurchase.onSave}"
+						onclick="document.getElementById('Item_product_code-New').disabled = true;return validate('false');"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+						accesskey="#{bundle.aon_key_accept}" />
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-popup-window-scroll-area">
+				<h:panelGrid columns="2" styleClass="aon-form-table"
+					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+					<t:outputLabel for="Income_series"
+						styleClass="aon-form-input-text-label"
+						value="#{purchaseBundle.aon_inc_num}" />
+					<t:div>
+						<t:inputText id="Income_series"
+							styleClass="aon-form-input-text" forceId="#{true}" size="4"
+							maxlength="5" onblur="toUpperCase(this);"
+							value="#{salesPurchase.income.series}">
+							<f:validateLength maximum="5" />
+						</t:inputText>
+						<t:inputText id="Income_number"
+							styleClass="aon-form-input-text" forceId="#{true}" size="7"
+							value="#{salesPurchase.income.number}" />
+						<t:outputText id="Number_required" forceId="#{true}"
+							value="#{purchaseBundle.aon_income_number_required}"
+							style="display:none;color:#cc3333" />
+					</t:div>
+
+					<t:outputLabel for="Supplier_Lookup_id"
+						styleClass="aon-form-input-text-label"
+						value="#{supplierBundle.aon_supplier}" />
+					<t:div>
+						<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
+							styleClass="aon-form-input-text"
+							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');"
+							value="#{salesPurchase.income.supplier.id}" />
+						<h:commandButton id="find_Supplier_Lookup_id"
+							styleClass="aon-form-lookup-button" value="" immediate="true"
+							onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+						<h:commandButton id="new_Supplier_Lookup_id"
+							styleClass="aon-form-new-button" value="" immediate="true"
+							onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+						<t:inputText id="Supplier_full_name" forceId="#{true}"
+							styleClass="aon-form-input-text-disabled"
+							size="40" disabled="true"
+							value="#{salesPurchase.income.supplier.registry.name} #{salesPurchase.income.supplier.registry.surname==null?' ':(salesPurchase.income.supplier.registry.surname)}" />
+						<t:outputText id="Supplier_required" forceId="#{true}"
+							value="#{purchaseBundle.aon_income_supplier_required}"
+							style="display:none;color:#cc3333" />
+					</t:div>
+
+					<t:outputLabel for="Income_issueTime"
+						styleClass="aon-form-input-text-label"
+						value="#{purchaseBundle.aon_date}" />
+					<t:div styleClass="aon-form-nowrap">
+						<t:inputText styleClass="aon-form-input-text"
+							id="Income_issueTime" forceId="#{true}" size="10"
+							maxlength="12"
+							value="#{salesPurchase.income.issueTime}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</t:inputText>
+						<t:commandButton styleClass="aon-form-calendar-button"
+							id="Income_issueTime_button" forceId="#{true}" value=""
+							immediate="true" />
+						<t:outputText id="Date_required" forceId="#{true}"
+							value="#{purchaseBundle.aon_income_date_required}"
+							style="display:none;color:#cc3333" />
+						<script type="text/javascript">
+						  Calendar.setup( {
+							inputField  : "Income_issueTime", button : "Income_issueTime_button",
+							ifFormat    : "%d/%m/%Y" } );
+						</script>
+					</t:div>
+
+					<t:outputLabel for="IncomeDetail_warehouse_id"
+						styleClass="aon-form-selectOneMenu-label"
+						value="#{warehouseBundle.aon_warehouse}" />
+					<t:selectOneMenu id="IncomeDetail_warehouse_id"
+						styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+						value="#{salesPurchase.incomeDetail.warehouse.id}">
+						<f:selectItems value="#{warehouseCollections.warehouses}" />
+					</t:selectOneMenu>
+
+					<t:outputLabel for="Item_id-Popup"
+						styleClass="aon-form-input-text-label"
+						value="#{productBundle.item_item}" />
+					<t:div styleClass="aon-form-nowrap">
+						<t:inputHidden id="Item_id-Popup" forceId="#{true}"
+							value="#{salesPurchase.incomeDetail.item.id}" />
+						<t:inputHidden id="Item_product_id-Popup" forceId="#{true}"
+							value="#{salesPurchase.incomeDetail.item.product.id}" />
+						<t:inputHidden id="Item_price-Popup" forceId="#{true}"
+							value="#{salesPurchase.incomeDetail.item.price}" />
+						<t:inputText size="10" id="Item_product_code-Popup"
+							forceId="#{true}"
+							value="#{salesPurchase.incomeDetail.item.product.code}"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+							onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_price-Popup');" />
+						<h:commandButton id="findPopup_Item"
+							onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_price-Popup'); return false;"
+							action="showPlace" value="" immediate="true"
+							styleClass="aon-form-lookup-button" />
+						<h:commandButton id="addPopup_Item"
+							onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_price-Popup'); return false;"
+							action="showPlace" value="" immediate="true"
+							styleClass="aon-form-new-button" />
+						<t:inputText id="Item_full_name-Popup" size="36"
+							forceId="#{true}" styleClass="aon-form-input-text"
+							value="#{salesPurchase.incomeDetail.description}" />
+						<t:outputText id="Product_code_required" forceId="#{true}"
+							value="#{productBundle.aon_product_code_required}"
+							style="display:none;color:#cc3333" />
+						<t:outputText id="Product_name_required" forceId="#{true}"
+							value="#{productBundle.aon_product_name_required}"
+							style="display:none;color:#cc3333" />
+					</t:div>
+
+					<t:outputLabel for="Item_product_category_id-Popup"
+						styleClass="aon-form-input-text-label"
+						value="#{productBundle.item_category}" />
+					<t:div styleClass="aon-form-nowrap">
+						<t:selectOneMenu id="Item_product_category_id-Popup"
+							forceId="#{true}" styleClass="aon-form-selectOneMenu-field"
+							value="#{salesPurchase.incomeDetail.item.product.category.id}">
+							<f:selectItems value="#{productCollections.categories}" />
+						</t:selectOneMenu>
+						<t:outputText id="Item_product_category_required"
+							forceId="#{true}"
+							value="#{productBundle.aon_category_required}"
+							style="display:none;color:#cc3333" />
+					</t:div>
+
+					<t:outputLabel for="Item_purchase_price-Popup"
+						styleClass="aon-form-input-text-label"
+						value="#{productBundle.item_initialPrice}" />
+					<t:div styleClass="aon-form-nowrap">
+						<t:inputText id="Item_purchase_price-Popup"
+							styleClass="aon-form-input-text"
+							forceId="#{true}" size="20" maxlength="20"
+							value="#{salesPurchase.incomeDetail.price}" />
+						<t:outputText id="Item_purchase_price_required"
+							forceId="#{true}"
+							value="#{productBundle.aon_purchase_price_required}"
+							style="display:none;color:#cc3333" />
+					</t:div>
+
+					<t:outputLabel for="Item_quantity-Popup"
+						styleClass="aon-form-input-text-label"
+						value="#{warehouseBundle.aon_quantity}" />
+					<t:div styleClass="aon-form-nowrap">
+						<t:inputText id="Item_quantity-Popup"
+							styleClass="aon-form-input-text"
+							forceId="#{true}" size="20" maxlength="20"
+							value="#{salesPurchase.incomeDetail.quantity}" />
+						<t:outputText id="Item_quantity_required"
+							forceId="#{true}"
+							value="#{productBundle.aon_quantity_required}"
+							style="display:none;color:#cc3333" />
+					</t:div>
+				</h:panelGrid>
+			</t:div>
+		</t:div>
+	</t:div>
+	<script>
+		function hidePopup(){
+			document.getElementById( "IncomeDetail_warehouse_id" ).disabled = false;
+			document.getElementById( "popup" ).style.display='none';
+			document.getElementById( "Number_required" ).style.display = 'none';
+			document.getElementById( "Supplier_required" ).style.display = 'none';
+			document.getElementById( "Date_required" ).style.display = 'none';
+			document.getElementById( "Product_code_required" ).style.display = 'none';
+			document.getElementById( "Product_name_required" ).style.display = 'none';
+			document.getElementById( "Item_product_category_required" ).style.display = 'none';
+			document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+			document.getElementById( "Item_quantity_required" ).style.display = 'none';
+		}
+		function validate(isNew){ 
+			if(document.getElementById( "Income_number" ).value == ""){
+				document.getElementById( "Number_required" ).style.display = 'block';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Income_number" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Supplier_Lookup_id" ).value == ""){
+				document.getElementById( "Supplier_required" ).style.display = 'block';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';					
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Supplier_Lookup_id" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Income_issueTime" ).value == ""){
+				document.getElementById( "Date_required" ).style.display = 'block';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Income_issueTime" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Item_product_code-Popup" ).value == ""){
+				document.getElementById( "Product_code_required" ).style.display = 'block';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Item_product_code-Popup" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Item_full_name-Popup" ).value == ""){
+				document.getElementById( "Product_name_required" ).style.display = 'block';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Item_full_name-Popup" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Item_product_category_id-Popup" ).value == ""){
+				document.getElementById( "Item_product_category_required" ).style.display = 'block';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_id-Popup" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Item_purchase_price-Popup" ).value == ""){
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'block';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Item_purchase_price-Popup" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Item_quantity-Popup" ).value == ""){
+				document.getElementById( "Item_quantity_required" ).style.display = 'block';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';
+				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+				document.getElementById( "Item_quantity-Popup" ).focus();
+				return false;
+			}
+			document.getElementById( "Number_required" ).style.display = 'none';
+			document.getElementById( "Supplier_required" ).style.display = 'none';
+			document.getElementById( "Date_required" ).style.display = 'none';
+			document.getElementById( "Product_code_required" ).style.display = 'none';
+			document.getElementById( "Product_name_required" ).style.display = 'none';
+			document.getElementById( "Item_product_category_required" ).style.display = 'none';
+			document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
+			document.getElementById( "Item_quantity_required" ).style.display = 'none';
+			if(isNew){
+				document.getElementById( "Item_product_code-New" ).disabled = true;
+			}
+			return true;
+		}
+		function isUnsignedInteger(number) {
+			var Template = /^\d+$/ 
+			res = (Template.test(number)) ? true : false
+			return res;
+		}
+	</script>
+</ui:composition>
+
+</body>
+</html>
