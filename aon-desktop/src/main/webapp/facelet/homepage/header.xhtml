@@ -31,14 +31,14 @@
 
 			<aon:div styleClass="aon-nowrap">
 				<aon:div>					
-					<aon:div styleClass="aon-nowrap" rendered="#{loggedUser.logged}">
-						<aon:outputText value="#{loggedUser.companyName}" />						
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText value="#{desktop.companyName}" />						
 						<aon:outputText value="/" styleClass="padding-left"/>																				
 						<aon:form>
 							<h:commandLink title="#{appBundle.aon_change_password}"
 								actionListener="#{currentUser.onLoadCurrentUser}" styleClass="aon-icon aon-icon-user-change-password"
 								action="user_changepassword_form">								
-								<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold"/>											
+								<aon:outputText value="#{desktop.loggedUserName}" styleClass="aon-bold"/>											
 							</h:commandLink>
 						</aon:form>		
 					</aon:div>					
@@ -46,23 +46,21 @@
 			</aon:div>
 		</aon:panelGrid>
 
-		<aon:form>
-			<aon:div styleClass="aon-header-additionalInfo">
-				<aon:div styleClass="aon-float-right">
-					<aon:div styleClass="aon-header-menu-item">
-						<h:outputLink target="_top"
-							value="${facesContext.externalContext.requestContextPath}">
-							<h:outputText value="#{bundle.aon_home}" />
-						</h:outputLink>
-						<aon:commandLink style="border-right:0;" action="logout"
-							actionListener="#{aonConfiguration.logout}">
-							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-						</aon:commandLink>
-					</aon:div>
+		<aon:div styleClass="aon-header-additionalInfo">
+			<aon:div styleClass="aon-float-right">
+				<aon:div styleClass="aon-header-menu-item">
+					<h:outputLink target="_top"
+						value="${facesContext.externalContext.requestContextPath}">
+						<h:outputText value="#{bundle.aon_home}" />
+					</h:outputLink>
+					<aon:commandLink style="border-right:0;"
+						onclick="parent.window.close();" target="_top">
+						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+					</aon:commandLink>
 				</aon:div>
-				<aon:outputText value="#{aonConfiguration.currentDate}" />
 			</aon:div>
-		</aon:form>
+			<aon:outputText value="#{webmail.currentDate}" />
+		</aon:div>
 	</aon:div>
 
 </ui:composition>

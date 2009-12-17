@@ -72,17 +72,17 @@
 							<aon:outputLabel for="attach_file" value="#{appBundle.aon_messaging_document}: " />
 							<aon:div id="attachDiv" >
 								<aon:fileUpload id="attach_file" disabled="#{!fax.enabled}"
-									addControlLabel="#{bundle.aon_fileUpload_add}" 
-									stopControlLabel="#{bundle.aon_fileUpload_stop}" 
-									stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-									uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+									addControlLabel="#{appBundle.aon_fileUpload_add}" 
+									stopControlLabel="#{appBundle.aon_fileUpload_stop}" 
+									stopEntryControlLabel="#{appBundle.aon_fileUpload_stop}"
+									uploadControlLabel="#{appBundle.aon_fileUpload_upload}"
 									fileUploadListener="#{fax.fileUploaded}"
 									listHeight="0px" listWidth="90%"
 									immediateUpload="true" autoclear="true"
 									onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();"
 									>
 									<f:facet name="label">
-										<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+										<h:outputText value="#{appBundle.aon_fileUpload_upload_label}" />
 									</f:facet>								
 									<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
 								</aon:fileUpload>	
@@ -94,7 +94,7 @@
 												<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
 												<aon:commandLink
 													reRender="attachDiv" style="font-size:0.9em;margin-left:20px;"
-													value="#{bundle.aon_fileUpload_remove}"
+													value="#{appBundle.aon_fileUpload_remove}"
 													styleClass="aon-icon-commandButton aon-icon-delete"
 													actionListener="#{attachment.fileDeleted}">
 												</aon:commandLink>

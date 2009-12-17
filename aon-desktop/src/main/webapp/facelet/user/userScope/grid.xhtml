@@ -6,9 +6,9 @@
 
 	<aon:div styleClass="aon-form-group" rendered="#{!user.new}">
 		<aon:div styleClass="aon-form-group-title">
-			<aon:div styleClass="aon-form-group-title-internal">
-				<aon:outputLabel for="userScopeDataList" value="#{configBundle.scope_scopes}" />
-			</aon:div>
+			<aon:outputLabel for="userScopeDataList"
+				value="#{configBundle.scope_scopes}" />
+
 		</aon:div>
 
 		<aon:editDataTable id="userScopeDataList" var="to"

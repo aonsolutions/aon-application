@@ -6,9 +6,8 @@
 
 	<aon:div styleClass="aon-form-group" rendered="#{!user.new}">
 		<aon:div styleClass="aon-form-group-title">
-			<aon:div styleClass="aon-form-group-title-internal">
-				<aon:outputLabel for="userWorkGroupDataList" value="#{configBundle.workgroup_workgroups}" />
-			</aon:div>
+			<aon:outputLabel for="userWorkGroupDataList"
+				value="#{configBundle.workgroup_workgroups}" />
 		</aon:div>
 
 		<aon:editDataTable id="userWorkGroupDataList" var="to"

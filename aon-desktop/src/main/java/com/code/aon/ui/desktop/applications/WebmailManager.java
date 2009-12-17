@@ -7,9 +7,9 @@ import java.util.List;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonServer;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.WebMailController;
 
 public class WebmailManager implements IServices {
@@ -24,7 +24,7 @@ public class WebmailManager implements IServices {
 		if ( app != null && isExecutable() ) {
 			//Connect to mail server.
 			try {
-				WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean( WebMailConstants.BEAN_WEBMAIL );
+				WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean( AonConstants.BEAN_WEBMAIL );
 				webmail.initDesktop( Utils.getAuthPrincipal() );
 				mail_server = webmail.getServer();
 			}

@@ -263,8 +263,8 @@
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jspx</form-login-page>
-			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
 	<security-role>
