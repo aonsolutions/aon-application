@@ -1,18 +1,24 @@
 package com.code.aon.desktop.dao;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,18 +32,72 @@ public class DBManager {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DBManager.class);
 	
+	private static final String SQL_PATH = "/usr/share/aon-master";
+	
 	public static final String AON_MASTER = "aon_master";
 	
-	private static final String CREATE_SQL = "create.database.4.8.0.sql";
+	private static final String CREATE_SQL_PREFIX = "create.database.";
+	
+	private static final String CREATE_SQL = CREATE_SQL_PREFIX + "4.8.0.sql";
 	
 	private static final String INSERT_SQL = "default-insert.database.sql";
 	
+	private URL createSql;
+	
+	private URL defaultInsertSql;
+	
+	public DBManager() {
+		init();
+	}
+	
+	private File getCreateSqlFile( File path ) {
+		FilenameFilter filter = new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return StringUtils.startsWithIgnoreCase(name, CREATE_SQL_PREFIX);
+			}
+			
+		};
+		File[] files = path.listFiles(filter);
+		if (! ArrayUtils.isEmpty(files) ) {
+			Arrays.sort( files );
+			return files[files.length-1];
+		}
+		return null;
+	}
+	
+	private URL toURL( File file ) {
+		if ( file.exists() && file.isFile() && file.canRead() ) {
+			try {
+				return file.toURI().toURL();
+			} catch (MalformedURLException e) {
+				LOGGER.error( "Error calculating path of " + file, e );
+			}
+		}		
+		return null;
+	}
+	
+	private void init() {
+		File path = new File( SQL_PATH );
+		if ( path.exists() && path.isDirectory() && path.canRead() ) {
+			createSql = toURL( getCreateSqlFile(path) );
+			defaultInsertSql = toURL( new File(path, INSERT_SQL) );
+		}
+		if ( createSql == null ) {
+			createSql = DBManager.class.getResource(CREATE_SQL);	
+		} 
+		if ( defaultInsertSql == null ) {
+			defaultInsertSql = DBManager.class.getResource(INSERT_SQL);	
+		}
+	}
+	
 	private URL getCreateSqlURL() {
-		return DBManager.class.getResource(CREATE_SQL);
+		return createSql;
 	}
 
 	private URL getInsertSqlURL() {
-		return DBManager.class.getResource(INSERT_SQL);
+		return defaultInsertSql;
 	}
 	
 	@SuppressWarnings("unchecked")
