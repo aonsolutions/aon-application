@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.infoweb</artifactId>
-	<version>1.5.0</version>
+	<version>1.6.0</version>
 	<description>AON UI INFOWEB</description>
 	<name>AON UI INFOWEB</name>
 	<dependencies>
@@ -35,12 +35,16 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.6.0</version>
+			<version>4.7.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 		            <groupId>com.code.aon</groupId>
 		            <artifactId>aon.ui.webmail</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.code.aon</groupId>
+		            <artifactId>aon.ui.report</artifactId>
 				</exclusion>
 			</exclusions>			
 		</dependency>
