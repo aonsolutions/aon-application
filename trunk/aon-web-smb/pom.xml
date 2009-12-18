@@ -10,7 +10,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.smb</artifactId>
 	<packaging>war</packaging>
-	<version>4.8.0</version>
+	<version>4.8.1</version>
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.stat</artifactId>
-			<version>4.2.1</version>
+			<version>4.2.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
