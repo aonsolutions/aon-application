@@ -330,14 +330,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="70" y="112" width="79" height="23"/>
+				<reportElement key="textField-118" x="70" y="112" width="102" height="23"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_workplace}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-119" x="149" y="112" width="121" height="23"/>
+				<reportElement key="textField-119" x="172" y="112" width="121" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -398,7 +398,7 @@
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("deliveryVatBreakDown")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-134" x="173" y="87" width="169" height="25"/>
+				<reportElement key="textField-134" x="85" y="87" width="343" height="25"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
