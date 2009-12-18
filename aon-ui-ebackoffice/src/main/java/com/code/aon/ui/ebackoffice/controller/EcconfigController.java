@@ -22,6 +22,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.dao.IConfigAlias;
@@ -59,7 +60,29 @@ public class EcconfigController extends BasicController {
 	private boolean showPrice;
 	public boolean richTextEnabled;
 	private String selectedTab;
+	private boolean ecParam;
+		
 	
+	public boolean isEcParam() {
+		try {
+			ecParam=getEcommerceParam();
+			if (ecParam==false){
+				IManagerBean bean =BeanManager.getManagerBean(Ecconfig.class);
+				Ecconfig c=(Ecconfig)bean.getList(null).get(0);
+				c.setCommerce(false);
+				bean.update(c);				
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return ecParam;
+	}
+
+	public void setEcParam(boolean ecParam) {
+		this.ecParam = ecParam;
+	}
+
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -549,5 +572,16 @@ public class EcconfigController extends BasicController {
 		url.append( "/aon-ecommerce" );
 		url.append( "?aonEbackoffice=true" );
 		return url.toString();	
+	}
+	
+	public boolean getEcommerceParam() throws ManagerBeanException {
+		IManagerBean param= BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(param.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME),"EC_SALES_ALLOWED");
+		if (param.getList(criteria).isEmpty() || ((ApplicationParameter)param.getList(criteria).get(0)).getValue()=="false" ){
+			  return false;
+		}else{
+			return true;
+		}		
 	}
 }
