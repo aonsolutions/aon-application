@@ -8,15 +8,7 @@ public class Stat {
 	private double amount;
 	private double numInvoice;
 	private double averageAmount;
-	private Integer extra;
-
-	public Integer getExtra() {
-		return extra;
-	}
-
-	public void setExtra(Integer extra) {
-		this.extra = extra;
-	}
+	
 
 	public Integer getKey() {
 		return key;
