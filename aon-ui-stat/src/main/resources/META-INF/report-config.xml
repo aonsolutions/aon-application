@@ -153,5 +153,18 @@
 
 		</params>
 	</report>
+	
+		<report id="invoiceList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/invoiceList.jasper" />
+		<collection provider="#{stat.invoices}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 
+		</params>
+	</report>
+	
 </report-config>

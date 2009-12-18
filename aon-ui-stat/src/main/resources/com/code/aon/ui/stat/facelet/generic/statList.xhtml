@@ -56,9 +56,22 @@
 
 				<f:facet name="header">
 					<aon:div>
-						<h:panelGrid columns="2" style="align:center" >
+						<h:panelGrid columns="3" style="align:center">
 							<aon:div>
 								<aon:outputText value="#{windowTitle}" />
+							</aon:div>
+							<aon:div>
+								<aon:outputText value="("/>
+								<aon:outputText value="#{stat.params.fromDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:outputText value="-"/>
+								<aon:outputText value="#{stat.params.toDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:outputText value=")"/>
 							</aon:div>
 							<ui:insert name="extendedHeader" />
 						</h:panelGrid>
@@ -96,7 +109,7 @@
 						</c:if>
 						<c:if test="#{stat.invoiceType==0}">
 							<aon:outputText value="#{statBundle.stat_purchases_amount}" />
-						</c:if>				
+						</c:if>
 					</f:facet>
 					<aon:outputText value="#{to.amount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -144,8 +157,8 @@
 						<aon:outputText value="#{lastColumnName}" />
 					</f:facet>
 					<h:commandLink styleClass="aon-dataTable-link-noicon"
-						actionListener="#{lastColumnAction}"
-						action="#{customerFacelet}" value="#{lastColumnName}">
+						actionListener="#{lastColumnAction}" action="#{customerFacelet}"
+						value="#{lastColumnName}">
 						<f:param name="#{paramName}" value="#{to.key}" />
 						<!-- <f:param name="yearmonth" value="#{to.extra}" /> -->
 					</h:commandLink>

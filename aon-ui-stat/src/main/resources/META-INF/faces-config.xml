@@ -62,42 +62,6 @@
 
 	</navigation-rule>
 
-	<!-- *************Invoice Registry Segment Stats***************** -->
-	<navigation-rule>
-
-	    <navigation-case>
-			<from-outcome>segment_stats_day</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/dayStats.xhtml</to-view-id>
-		</navigation-case>
-
-		<navigation-case>
-			<from-outcome>segment_stats_month</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/monthStats.xhtml</to-view-id>
-		</navigation-case>
-
-		<navigation-case>
-			<from-outcome>segment_stats_year</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/yearStats.xhtml</to-view-id>
-		</navigation-case>
-
-		<navigation-case>
-			<from-outcome>segment_stats_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/search.xhtml</to-view-id>
-		</navigation-case>
-		
-		<navigation-case>
-			<from-outcome>segmentcustomer_stat_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/customerStats.xhtml</to-view-id>
-		</navigation-case>
-
-	</navigation-rule>
-
-
 	<!-- *************Invocie Category Sales Stats***************** -->
 	<navigation-rule>
 
