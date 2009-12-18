@@ -23,17 +23,7 @@ public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt)
 			throws ManagerBeanVetoListenerException {
-		
-		if(((Ecconfig)evt.getTo()).isActive()){
-			try {
-				checkActiveConfiguration((Ecconfig)evt.getTo());
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-    		
-		}		
-		
+					
 		if(!EmailUtils.validateEmailAddress(((Ecconfig)evt.getTo()).getEmail())){
     		throw new ManagerBeanVetoListenerException(
 			"El email es incorrecto.");
@@ -45,16 +35,6 @@ public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanUpdated(ManagerBeanEvent evt)
 			throws ManagerBeanVetoListenerException {
 		
-		if(((Ecconfig)evt.getTo()).isActive()){
-			try {
-				checkActiveConfiguration((Ecconfig)evt.getTo());
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-    		
-		}
-		
 		if(!EmailUtils.validateEmailAddress(((Ecconfig)evt.getTo()).getEmail())){
     		throw new ManagerBeanVetoListenerException(
 			"El email es incorrecto.");
@@ -62,7 +42,7 @@ public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		
 	}
 
-	public static void checkActiveConfiguration(ITransferObject to)
+	/*public static void checkActiveConfiguration(ITransferObject to)
 			throws ManagerBeanException {
 
 		IManagerBean ecconfigBean = BeanManager.getManagerBean(Ecconfig.class);
@@ -81,6 +61,6 @@ public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 
 		}
-	}
+	}*/
 
 }
