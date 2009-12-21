@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.gta</artifactId>
 	<packaging>war</packaging>
-	<version>2.9.3</version>
+	<version>2.9.4</version>
 	<description>AON GTA</description>
 	<name>AON GTA</name>
 	<properties>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.csb</artifactId>
-			<version>4.2.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
