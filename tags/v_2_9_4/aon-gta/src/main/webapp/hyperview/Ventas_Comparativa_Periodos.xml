@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="Ventas Comparativa Periodos" label="Ventas Comparativa Periodos">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYearFirstDay}"
+            label="Desde" name="inidate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="${currentYearLastDay}"
+            label="Hasta" name="enddate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="1" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_comparativa.gif"
+        iconOpen="icons/icon_comparativa.gif" label="Comparativa Periodos">
+        <layout type="COLUMN"/>
+        <contents/>
+        <node iconClose="icons/icon_users_group.gif"
+            iconOpen="icons/icon_users_group.gif" label="Clientes">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Comparativa Ventas/Cliente.exvw.xml">
+                    <sentence>SELECT registry.id, document, name, alias, &#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM registry, invoice, invoice_detail&#xd;
+ WHERE invoice.registry = registry.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2,3,4</sentence>
+                    <metadata>
+                        <attribute label="Codigo Cliente"
+                            name="CUSTOMER_ID" type="INTEGER"/>
+                        <attribute label="CIF / NIF" name="document" type="STRING"/>
+                        <attribute label="Cliente" name="CUSTOMER_NAME" type="STRING"/>
+                        <attribute label="Alias" name="alias" type="STRING"/>
+                        <attribute label="Periodo"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))" type="DOUBLE"/>
+                        <attribute label="Mismo periodo Año Anterior"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Cliente.exvw.xml"
+                iconClose="icons/icon_usuario.gif" label="${CUSTOMER_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT registry.id, document, name, alias, &#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM registry, invoice, invoice_detail&#xd;
+ WHERE invoice.registry = registry.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2,3,4</sentence>
+                    <metadata>
+                        <attribute label="Codigo Cliente"
+                            name="CUSTOMER_ID" type="INTEGER"/>
+                        <attribute label="CIF / NIF" name="document" type="STRING"/>
+                        <attribute label="Cliente" name="CUSTOMER_NAME" type="STRING"/>
+                        <attribute label="Alias" name="alias" type="STRING"/>
+                        <attribute label="Periodo"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))" type="DOUBLE"/>
+                        <attribute label="Mismo periodo Año Anterior"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Comparativa Ventas/Productos por cliente.exvw.xml">
+                        <sentence>SELECT invoice_detail.item, product.name description,&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM invoice_detail, invoice, registry, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.registry = registry.id&#xd;
+   AND registry.id = ?&#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY invoice_detail.item</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="item" type="INTEGER"/>
+                            <attribute label="Articulo" name="name" type="STRING"/>
+                            <attribute label="Periodo" name="periodo" type="DOUBLE"/>
+                            <attribute
+                                label="Mismo periodo Año Anterior"
+                                name="periodo2" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="CUSTOMER_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+            </node>
+        </node>
+        <node iconClose="icons/icon_familia.gif"
+            iconOpen="icons/icon_familia.gif" label="Familias">
+            <dynamicParameters>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Comparativa Ventas/Familias Periodo.exvw.xml">
+                    <sentence>SELECT pcategory.id, pcategory.name, &#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM pcategory, invoice_detail, invoice, item, product&#xd;
+ WHERE invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="CATEGORY_ID" type="INTEGER"/>
+                        <attribute label="Categoria"
+                            name="CATEGORY_NAME" type="STRING"/>
+                        <attribute label="Periodo"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))" type="DOUBLE"/>
+                        <attribute label="Mismo periodo Año Anterior"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Familias Periodo.exvw.xml"
+                iconClose="icons/icon_categoria.gif"
+                iconOpen="icons/icon_categoria.gif" label="${CATEGORY_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT pcategory.id, pcategory.name, &#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM pcategory, invoice_detail, invoice, item, product&#xd;
+ WHERE invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="CATEGORY_ID" type="INTEGER"/>
+                        <attribute label="Categoria"
+                            name="CATEGORY_NAME" type="STRING"/>
+                        <attribute label="Periodo"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))" type="DOUBLE"/>
+                        <attribute label="Mismo periodo Año Anterior"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Comparativa Ventas/Productos por familia Periodo.exvw.xml">
+                        <sentence>SELECT invoice_detail.item, product.name description,&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM invoice_detail, invoice, pcategory, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND product.category = pcategory.id &#xd;
+   AND pcategory.id = ? &#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY invoice_detail.item</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="item" type="INTEGER"/>
+                            <attribute label="Articulo" name="name" type="STRING"/>
+                            <attribute label="Periodo" name="period" type="DOUBLE"/>
+                            <attribute
+                                label="Mismo periodo Año Anterior"
+                                name="period2" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="CATEGORY_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+            </node>
+        </node>
+        <node iconClose="icons/icon_comparativa.gif"
+            iconOpen="icons/icon_comparativa.gif" label="Articulos">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Comparativa Ventas/Productos Periodo.exvw.xml">
+                    <sentence>SELECT invoice_detail.item, product.name description,&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM invoice_detail, invoice, item, product &#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                        <attribute label="Articulo" name="ITEM_NAME" type="STRING"/>
+                        <attribute label="Periodo"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))" type="DOUBLE"/>
+                        <attribute label="Mismo periodo Año Anterior"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Productos Periodo.exvw.xml"
+                iconClose="icons/icon_articulo.gif"
+                iconOpen="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT invoice_detail.item, product.name description,&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM invoice_detail, invoice, item, product &#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                        <attribute label="Articulo" name="ITEM_NAME" type="STRING"/>
+                        <attribute label="Periodo"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))" type="DOUBLE"/>
+                        <attribute label="Mismo periodo Año Anterior"
+                            name="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Comparativa Ventas/Clientes por producto Periodo.exvw.xml">
+                        <sentence>SELECT registry.id, document, registry.name, registry.alias, &#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;
+   	SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;
+  FROM registry, invoice, invoice_detail, item, product &#xd;
+ WHERE invoice.registry = registry.id&#xd;
+   AND invoice.id = invoice_detail.invoice&#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND item.id = ?&#xd;
+   AND (&#xd;
+       invoice.issue_date BETWEEN ? AND ?&#xd;
+       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;
+       )&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2,3,4</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="id" type="INTEGER"/>
+                            <attribute label="Documento" name="document" type="STRING"/>
+                            <attribute label="Nombre" name="name" type="STRING"/>
+                            <attribute label="Alias" name="alias" type="STRING"/>
+                            <attribute label="Periodo" name="period" type="DOUBLE"/>
+                            <attribute
+                                label="Mismo periodo Año Anterior"
+                                name="period2" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="ITEM_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+            </node>
+        </node>
+    </node>
+</workstation>

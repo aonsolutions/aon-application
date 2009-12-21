@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Datos del cliente" label="Datos del cliente" sqlSentence="SELECT document, name, surname FROM registry WHERE id = ?">
+    <parameters>
+        <parameter name="registry_id" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="document" columnId="document"
+            label="NIF / CIF" tableId="registry" type="STRING"/>
+        <result accessName="name" columnId="name" label="NOMBRE"
+            tableId="registry" type="STRING"/>
+        <result accessName="surname" columnId="surname"
+            label="APELLIDOS" tableId="registry" type="STRING"/>
+    </results>
+    <dataModelReferences/>
+</view>

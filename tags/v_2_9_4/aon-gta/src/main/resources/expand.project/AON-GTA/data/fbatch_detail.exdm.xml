@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="fbatch_detail">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="fbatch" sqlType="integer" type="integer"/>
+        <column label="" name="finance" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="fbatch_detail_ibfk_1" foreignPath="data/finance.exdm.xml">
+            <sourceColumns>
+                <column name="finance"/>
+            </sourceColumns>
+        </join>
+        <join description="fbatch_detail_ibfk_2" foreignPath="data/fbatch.exdm.xml">
+            <sourceColumns>
+                <column name="fbatch"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

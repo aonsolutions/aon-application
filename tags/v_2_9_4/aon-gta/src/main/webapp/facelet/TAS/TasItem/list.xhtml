@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="TASItemList">
+			<!--  toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+						actionListener="#{TASItem.onReset}" action="TasItem_form" 
+						accesskey="#{bundle.aon_key_new}"/>
+					<h:commandButton id="search" value="#{bundle.aon_search}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						actionListener="#{TASItem.onEditSearch}" action="TasItem_search" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="TASItem" value="#{bundle.aon_listing}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-list"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-list'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-list'"
+						forceId="#{true}" rendered="#{TASItem.model.rowCount > 0}"
+						onclick="reportWindow(this, 'placeList', '#{facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;" 
+						accesskey="#{bundle.aon_key_print}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<!--  aon-region-body -->
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="TASItemDataList" value="#{TASItem.model}" rows="20"
+							var="to" rowOnMouseOver="selectRow( this )"
+							rendered="#{TASItem.model.rowCount > 0}"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							styleClass="aon-table" headerClass="aon-table-header"
+							rowClasses="aon-table-row-odd,aon-table-row-even"
+							columnClasses="aon-table-body aon-table-body-number,aon-table-body ,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{tasBundle.tasItem_id}" />
+								</f:facet>
+								<t:commandLink styleClass="aon-table-row-selected"
+									actionListener="#{TASItem.onSelect}" action="TasItem_form" />
+								<h:outputText value="#{to.id}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{tasBundle.tasItem_make}" />
+								</f:facet>
+								<h:outputText
+									value="#{to.model.make.name} " />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{tasBundle.tasItem_model}" />
+								</f:facet>
+								<h:outputText
+									value="#{to.model.name} " />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{tasBundle.tasItem_publicCode}" />
+								</f:facet>
+								<h:outputText value="#{to.publicCode}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{tasBundle.tasItem_privateCode}" />
+								</f:facet>
+								<h:outputText value="#{to.privateCode}" />
+							</h:column>
+						</t:dataTable>
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="TASItemDataList" />
+						<ui:param name="model" value="#{TASItem.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+					
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

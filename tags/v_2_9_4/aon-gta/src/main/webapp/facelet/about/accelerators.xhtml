@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/formHead.xhtml" />
+	</ui:define>
+	<!--<ui:define name="head">
+		<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Window.js">
+			// nothing
+		</script>
+	</ui:define>-->
+
+	<ui:define name="content">
+		<f:loadBundle basename="#{facesContext.application.messageBundle}" var="bundle" />
+		
+			<t:div styleClass="aon-content-title" forceId="#{true}"
+			id="aon-window-popup-title">
+				<h:outputText value="#{bundle.aon_help}" />
+			</t:div>
+			
+		
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+				
+				<t:div styleClass="aon-tabpanel">
+				<t:panelTabbedPane width="97%"
+					activeTabStyleClass="aon-tabpanel-active"
+					inactiveTabStyleClass="aon-tabpanel-inactive" serverSideTabSwitch="#{true}"
+				>
+				<t:panelTab styleClass="aon-tabpanel-body"
+				label="#{bundle.aon_accelerators}">
+						
+
+						<h:panelGrid columns="2" dir="true" styleClass="aon-form-table" style="width:100%"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even"
+						>
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_accept}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_key_accept_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_cancel}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_cancel_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_new}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_new_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_remove}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_remove_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_save}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_save_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_search}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_search_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_new_line}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_new_line_description}" />	
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_save_line}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_save_line_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_remove_line}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_remove_line_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_cancel_line}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_cancel_line_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_print}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_print_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_close}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_close_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_invoice}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_invoice_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_accelerators_alt}" />
+									<h:outputText value="#{bundle.aon_key_menu}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_menu_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_key_flecha_sup}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_flecha_sup_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_key_flecha_down}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_flecha_down_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_key_av_pag}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_av_pag_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_key_re_pag}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_re_pag_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_key_esc}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_esc_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dt">			
+									<h:outputText value="#{bundle.aon_key_f1}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">		
+									<h:outputText value="#{bundle.aon_key_f1_description}" />
+								</t:div>
+							</h:panelGroup>
+						</h:panelGrid>
+				</t:panelTab>
+				<t:panelTab
+					styleClass="aon-tabpanel-body"
+					label="#{bundle.aon_meta_characters}"
+				>	
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table" style="width:100%"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even"
+						>
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_mayor}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_mayor_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_menor}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_menor_description}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_mayor_igual}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_mayor_igual_description}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_menor_igual}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_menor_igual_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_diferente}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_diferente_description}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_entre}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_entre_description}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_o}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_o_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_y}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_y_description}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_asterisco}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_asterisco_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_interrogacion}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_interrogacion_description}" />
+								</t:div>
+							</h:panelGroup>
+							
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_null}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_null_description}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>	
+								<t:div styleClass="aon-dt">					
+									<h:outputText value="#{bundle.aon_meta_notnull}" />
+								</t:div>
+							</h:panelGroup>
+							<h:panelGroup>
+								<t:div styleClass="aon-dd">			
+									<h:outputText value="#{bundle.aon_meta_notnull_description}" />
+								</t:div>
+							</h:panelGroup>
+							
+						</h:panelGrid>
+				</t:panelTab>
+				<t:panelTab
+					styleClass="aon-tabpanel-body"
+					label="#{appBundle.aon_manual}"
+				>	
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-body">
+							<h:outputLink styleClass="aon-navigation-link"
+								target="_blank" 
+								value="${facesContext.externalContext.requestContextPath}/help.pdf"
+								>
+								<h:outputText value="#{appBundle.aon_manual_download}" />
+							</h:outputLink >
+							<t:div>
+								<f:verbatim>&#160;</f:verbatim>
+							</t:div>
+							<h:outputText value="#{appBundle.aon_manual_pdf}" />
+							<t:div>
+								<f:verbatim>&#160;</f:verbatim>
+							</t:div>
+							<t:div>
+								<h:outputLink styleClass="aon-navigation-link"
+								target="_blank" 
+								value="http://www.adobe.com/es/products/acrobat/readstep2.html"
+								>
+									<h:outputText value="#{appBundle.aon_manual_pdf_download}" />
+									
+								</h:outputLink >
+							</t:div>
+						</t:div>
+					</t:div>
+				</t:panelTab>
+			</t:panelTabbedPane>
+			</t:div>	
+			</t:div>				
+		</t:div>
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>
