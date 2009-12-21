@@ -1,0 +1,858 @@
+package com.code.aon.ui.cms.controller;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
+
+import com.code.aon.cms.Activity;
+import com.code.aon.cms.Album;
+import com.code.aon.cms.AlbumCategory;
+import com.code.aon.cms.Article;
+import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.Banner;
+import com.code.aon.cms.BannerCategory;
+import com.code.aon.cms.Brand;
+import com.code.aon.cms.DirectAccess;
+import com.code.aon.cms.DirectAccessGroup;
+import com.code.aon.cms.Download;
+import com.code.aon.cms.DownloadCategory;
+import com.code.aon.cms.FaqCategory;
+import com.code.aon.cms.Footer;
+import com.code.aon.cms.GenericPage;
+import com.code.aon.cms.Header;
+import com.code.aon.cms.HiruOrganizerCentre;
+import com.code.aon.cms.Language;
+import com.code.aon.cms.LinkCategory;
+import com.code.aon.cms.Menu;
+import com.code.aon.cms.ModularPage;
+import com.code.aon.cms.ProductCategory;
+import com.code.aon.cms.Section;
+import com.code.aon.cms.Sidebar;
+import com.code.aon.cms.SportCategory;
+import com.code.aon.cms.SportClub;
+import com.code.aon.cms.SportNationality;
+import com.code.aon.cms.SportPlayer;
+import com.code.aon.cms.SportPosition;
+import com.code.aon.cms.SportSeason;
+import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ArticleType;
+import com.code.aon.cms.enumeration.ContentLevel;
+import com.code.aon.cms.enumeration.HiruCourseSubject;
+import com.code.aon.cms.enumeration.LanguageMenuType;
+import com.code.aon.cms.enumeration.MenuType;
+import com.code.aon.cms.enumeration.ModularPageOptionType;
+import com.code.aon.cms.enumeration.ModularType;
+import com.code.aon.cms.enumeration.PageType;
+import com.code.aon.cms.enumeration.SidebarSide;
+import com.code.aon.cms.enumeration.SidebarType;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.util.AonUtil;
+
+public class CollectionsController implements ICMSConstants {
+
+	private List<SelectItem> modularTypes;
+	
+	private List<SelectItem> languageTypes;
+
+	private List<SelectItem> articleTypes;
+	
+	private List<SelectItem> menuTypes;
+	
+	private List<SelectItem> sidebarSides;
+	
+	private List<SelectItem> contentLevels;
+	
+	private List<SelectItem> hiruCourseSubjects;
+	
+	public List<SelectItem> getLanguageTypes() throws ManagerBeanException {
+		if ( languageTypes == null ) {
+			languageTypes = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (LanguageMenuType type : LanguageMenuType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				languageTypes.add(item);
+			}
+			sort( languageTypes );
+		}
+		return languageTypes;
+	}
+
+	public List<SelectItem> getArticleTypes() throws ManagerBeanException {
+		if ( articleTypes == null ) {
+			this.articleTypes = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (ArticleType articleType : ArticleType.values()) {
+				String name = articleType.getName(locale);
+				SelectItem item = new SelectItem(articleType, name);
+				articleTypes.add(item);
+			}
+			sort(articleTypes);
+		}
+		return articleTypes;
+	}
+
+	public List<SelectItem> getMenuTypes() throws ManagerBeanException {
+		if ( menuTypes == null ) {
+			List<SelectItem> menuTypes = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			SelectItem item = new SelectItem("", "");
+			menuTypes.add(item);
+			for (MenuType menuType : MenuType.values()) {
+				String name = menuType.getName(locale);
+				item = new SelectItem(menuType, name);
+				menuTypes.add(item);
+			}
+			sort( menuTypes );
+		}
+		return menuTypes;
+	}
+
+
+	public List<SelectItem> getSidebarSides() throws ManagerBeanException, ExpressionException {
+		if ( sidebarSides == null ) {
+			this.sidebarSides = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (SidebarSide sidebarSide : SidebarSide.values()) {
+				String name = sidebarSide.getName(locale);
+				SelectItem item = new SelectItem(sidebarSide, name);
+				this.sidebarSides.add(item);
+			}
+		}
+		return sidebarSides;
+	}
+
+	public List<SelectItem> getContentLevels() throws ManagerBeanException, ExpressionException {
+		if ( contentLevels == null ) {
+			contentLevels = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (ContentLevel contentLevel : ContentLevel.values()) {
+				String name = contentLevel.getName(locale);
+				SelectItem item = new SelectItem(contentLevel, name);
+				contentLevels.add(item);
+			}
+			sort( contentLevels );
+		}
+		return contentLevels;
+	}
+	
+	public List<SelectItem> getHiruCourseSubjects() throws ManagerBeanException {
+		if ( hiruCourseSubjects == null ) {
+			this.hiruCourseSubjects = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (HiruCourseSubject hiruCourseSubject : HiruCourseSubject.values()) {
+				String name = hiruCourseSubject.getName(locale);
+				SelectItem item = new SelectItem(hiruCourseSubject, name);
+				hiruCourseSubjects.add(item);
+			}
+			sort( hiruCourseSubjects );
+		}
+		return hiruCourseSubjects;
+	}
+	
+	public List<SelectItem> getModularTypes() throws ManagerBeanException, ExpressionException {
+		if ( modularTypes == null ) {
+			this.modularTypes = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			SelectItem item = new SelectItem("", "");
+			this.modularTypes.add(item);
+			for (ModularType modularType : ModularType.values()) {
+				String name = modularType.getName(locale);
+				item = new SelectItem(modularType, name);
+				this.modularTypes.add(item);
+			}
+			sort( modularTypes );
+		}
+		return modularTypes;
+	}
+	
+	public List<SelectItem> getLanguages() throws ManagerBeanException {
+		List<SelectItem> languajes = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Language.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.LANGUAGE_POSITION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Language object = (Language)list.get(i);
+			int id = object.getId();
+			String name = object.getDescription();
+			SelectItem item = new SelectItem(id, name);
+			languajes.add(item);
+		}
+		return languajes;
+	}
+	
+	public Brand getBrand() {
+		return null;
+	}
+
+	public void setBrand(Brand brand) {
+	}
+	
+	public List<SelectItem> getBrandList() throws ManagerBeanException {
+		return getBrandList(false);
+	}
+	
+	public List<SelectItem> getBrandList( boolean onlyId ) throws ManagerBeanException {
+		List<SelectItem> brands = new LinkedList<SelectItem>();
+		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(brandBean.getFieldName(ICMSAlias.BRAND_ACTIVE), true);
+		criteria.addOrder(brandBean.getFieldName(ICMSAlias.BRAND_ALIAS));
+		List<ITransferObject> list = brandBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Brand brand = (Brand)list.get(i);
+			String name = brand.getAlias();
+			SelectItem item = new SelectItem( onlyId ? brand.getId() : brand, name);
+			brands.add(item);
+		}
+		return brands;
+	}
+
+	public List<SelectItem> getFaqCategoryList() throws ManagerBeanException {
+		List<SelectItem> faqCategory = new LinkedList<SelectItem>();
+		IManagerBean faqCategoryBean = BeanManager.getManagerBean(FaqCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(faqCategoryBean.getFieldName(ICMSAlias.FAQ_CATEGORY_ACTIVE), true);
+		criteria.addOrder(faqCategoryBean.getFieldName(ICMSAlias.FAQ_CATEGORY_ALIAS));
+		List<ITransferObject> list = faqCategoryBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			FaqCategory gp = (FaqCategory)list.get(i);
+			int id = gp.getId();
+			String name = gp.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			faqCategory.add(item);
+		}
+		return faqCategory;
+	}
+
+	public List<SelectItem> getGenericPageList() throws ManagerBeanException {
+		List<SelectItem> generics = new LinkedList<SelectItem>();
+		IManagerBean genericBean = BeanManager.getManagerBean(GenericPage.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(genericBean.getFieldName(ICMSAlias.GENERIC_PAGE_ACTIVE), true);
+		criteria.addOrder(genericBean.getFieldName(ICMSAlias.GENERIC_PAGE_ALIAS));
+		List<ITransferObject> list = genericBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			GenericPage gp = (GenericPage)list.get(i);
+			int id = gp.getId();
+			String name = gp.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			generics.add(item);
+		}
+		return generics;
+	}
+
+	public List<SelectItem> getLinkCategoryList() throws ManagerBeanException {
+		List<SelectItem> linkCategory = new LinkedList<SelectItem>();
+		IManagerBean linkCategoryBean = BeanManager.getManagerBean(LinkCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(linkCategoryBean.getFieldName(ICMSAlias.LINK_CATEGORY_ACTIVE), true);
+		criteria.addOrder(linkCategoryBean.getFieldName(ICMSAlias.LINK_CATEGORY_ALIAS));
+		List<ITransferObject> list = linkCategoryBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			LinkCategory lc = (LinkCategory)list.get(i);
+			int id = lc.getId();
+			String name = lc.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			linkCategory.add(item);
+		}
+		return linkCategory;
+	}
+
+	public List<SelectItem> getMenuList() throws ManagerBeanException {
+		List<SelectItem> menus = new LinkedList<SelectItem>();
+		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(menuBean.getFieldName(ICMSAlias.MENU_ALIAS));
+		List<ITransferObject> list = menuBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Menu menu = (Menu)list.get(i);
+			int id = menu.getId();
+			String name = menu.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			menus.add(item);
+		}
+		return menus;
+	}
+
+	public List<SelectItem> getMenuSideList() throws ManagerBeanException {
+		return getMenuList(MenuType.SIDEBAR);
+	}
+
+	public List<SelectItem> getMenuTopList() throws ManagerBeanException {
+		return getMenuList(MenuType.TOP);
+	}
+
+	public List<SelectItem> getMenuFootList() throws ManagerBeanException {
+		return getMenuList(MenuType.FOOT);
+	}
+
+	public List<SelectItem> getMenuInnerList() throws ManagerBeanException {
+		return getMenuList(MenuType.INNER);
+	}
+
+	public List<SelectItem> getMenuList(MenuType type) throws ManagerBeanException {
+		List<SelectItem> menus = new LinkedList<SelectItem>();
+		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), type);
+		criteria.addOrder(menuBean.getFieldName(ICMSAlias.MENU_ALIAS));
+		List<ITransferObject> list = menuBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Menu menu = (Menu)list.get(i);
+			int id = menu.getId();
+			String name = menu.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			menus.add(item);
+		}
+		return menus;
+	}
+
+	public List<SelectItem> getSidebarList() throws ManagerBeanException {
+		List<SelectItem> menus = new LinkedList<SelectItem>();
+		IManagerBean sidebarBean = BeanManager.getManagerBean(Sidebar.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(sidebarBean.getFieldName(ICMSAlias.SIDEBAR_ALIAS));
+		List<ITransferObject> list = sidebarBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Sidebar sidebar = (Sidebar)list.get(i);
+			int id = sidebar.getId();
+			String name = sidebar.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			menus.add(item);
+		}
+		return menus;
+	}
+
+	public List<SelectItem> getSidebarTypes() throws ManagerBeanException, ExpressionException {
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
+		List<SelectItem> types = new LinkedList<SelectItem>();
+		Locale locale = AonUtil.getCurrentLocale();
+		for (SidebarType sidebarType : SidebarType.values()) {
+			if (domainUtilities.hasSidebarType(sidebarType)){
+				String name = sidebarType.getName(locale);
+				SelectItem item = new SelectItem(sidebarType, name);
+				types.add(item);
+			}
+		}
+		sort( types );
+		types.add( 0, new SelectItem("", "") );
+		return types;
+	}
+	
+	public List<SelectItem> getPageTypes() throws ManagerBeanException, ExpressionException {
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
+		List<SelectItem> types = new LinkedList<SelectItem>();
+		Locale locale = AonUtil.getCurrentLocale();
+		for (PageType pageType : PageType.values()) {
+			if (domainUtilities.hasPageType(pageType)){
+				String name = pageType.getName(locale);
+				SelectItem item = new SelectItem(pageType, name);
+				types.add(item);
+			}
+		}
+		sort( types );
+		types.add( 0, new SelectItem("", "") );
+		return types;
+	}
+
+	public List<SelectItem> getHeaderList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Header.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.HEADER_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Header header = (Header)list.get(i);
+			int id = header.getId();
+			String name = header.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+
+	public List<SelectItem> getFooterList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Footer.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.FOOTER_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Footer footer = (Footer)list.get(i);
+			int id = footer.getId();
+			String name = footer.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public Section getSection() {
+		return null;
+	}
+
+	public void setSection(Section section) {
+	}
+
+	public List<SelectItem> getSectionList() throws ManagerBeanException {
+		return getSectionList(false);
+	}
+
+	public List<SelectItem> getSectionList( boolean onlyId ) throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Section.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SECTION_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Section section = (Section)list.get(i);
+			String name = section.getAlias();
+			SelectItem item = new SelectItem( onlyId ? section.getId() : section, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
+		List<SelectItem> types = new LinkedList<SelectItem>();
+		Locale locale = AonUtil.getCurrentLocale();
+		for (ModularPageOptionType pageType : ModularPageOptionType.values()) {
+			if (domainUtilities.hasModularPageOptionType(pageType)){
+				String name = pageType.getName(locale);
+				SelectItem item = new SelectItem(pageType, name);
+				types.add(item);
+			}
+		}
+		sort( types );
+		types.add(0, new SelectItem("", ""));
+		return types;
+	}
+
+	public List<SelectItem> getArticleList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Article.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Article article = (Article)list.get(i);
+			int id = article.getId();
+			String name = article.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+
+	public List<SelectItem> getBannerGroupList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(BannerCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_CATEGORY_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.BANNER_CATEGORY_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			BannerCategory ac = (BannerCategory)list.get(i);
+			int id = ac.getId();
+			String name = ac.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+	
+	public List<SelectItem> getBannerList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Banner.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.BANNER_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Banner banner = (Banner)list.get(i);
+			int id = banner .getId();
+			String name = banner.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getModularPageList() throws ManagerBeanException {
+		List<SelectItem> modular = new LinkedList<SelectItem>();
+		IManagerBean modularBean = BeanManager.getManagerBean(ModularPage.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(modularBean.getFieldName(ICMSAlias.MODULAR_PAGE_ACTIVE), true);
+		criteria.addOrder(modularBean.getFieldName(ICMSAlias.MODULAR_PAGE_ALIAS));
+		List<ITransferObject> list = modularBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			ModularPage mp = (ModularPage)list.get(i);
+			int id = mp.getId();
+			String name = mp.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			modular.add(item);
+		}
+		return modular;
+	}
+
+	public List<SelectItem> getDirectAccessGroupList() throws ManagerBeanException {
+		List<SelectItem> accesses = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			DirectAccessGroup da = (DirectAccessGroup)list.get(i);
+			int id = da.getId();
+			String name = da.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			accesses.add(item);
+		}
+		return accesses;
+	}
+	
+	public List<SelectItem> getDirectAccessList() throws ManagerBeanException {
+		List<SelectItem> accesses = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(DirectAccess.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			DirectAccess da = (DirectAccess)list.get(i);
+			int id = da.getId();
+			String name = da.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			accesses.add(item);
+		}
+		return accesses;
+	}
+	
+	public List<SelectItem> getAlbumCategoryList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			AlbumCategory ac = (AlbumCategory)list.get(i);
+			int id = ac.getId();
+			String name = ac.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+
+	public List<SelectItem> getAlbumList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Album.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ALBUM_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Album a = (Album)list.get(i);
+			int id = a.getId();
+			String name = a.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+
+	public List<SelectItem> getArticleCategoryList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			ArticleCategory ac = (ArticleCategory)list.get(i);
+			int id = ac.getId();
+			String name = ac.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+	
+	public List<SelectItem> getArticleByTypeList(ArticleType type) throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Article.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), type);
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Article article = (Article)list.get(i);
+			int id = article.getId();
+			String name = article.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+
+	public List<SelectItem> getDownloadCategoryList() throws ManagerBeanException {
+		List<SelectItem> accesses = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			DownloadCategory da = (DownloadCategory)list.get(i);
+			int id = da.getId();
+			String name = da.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			accesses.add(item);
+		}
+		return accesses;
+	}
+
+	public List<SelectItem> getDownloadList() throws ManagerBeanException {
+		List<SelectItem> objects = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Download.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Download d = (Download)list.get(i);
+			int id = d.getId();
+			String name = d.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			objects.add(item);
+		}
+		return objects;
+	}
+
+	public List<SelectItem> getAvailableParentSectionList() throws ManagerBeanException {
+		SectionController sectionController = (SectionController)AonUtil.getRegisteredBean(SECTION);
+		Section current = (Section)sectionController.getTo();
+		
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Section.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SECTION_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		Section section;
+		for (int i = 0; i < list.size(); i++) {
+			section = (Section)list.get(i);
+			if (checkParent(current,section)){
+				int id = section.getId();
+				String name = section.getAlias();
+				SelectItem item = new SelectItem(id, name);
+				itemList.add(item);
+			}
+		}
+		return itemList;
+	}
+
+	private boolean checkParent(Section current,Section parent){
+		if (parent.getId().equals(current.getId()))
+			return false;
+		if (parent.getParent_()!=null)
+			return checkParent(current,parent.getParent_());
+		return true;
+	}
+	
+	public List<SelectItem> getActivityList() throws ManagerBeanException {
+		List<SelectItem> activityList = new LinkedList<SelectItem>();
+		IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(activityBean.getFieldName(ICMSAlias.ACTIVITY_ALIAS));
+		List<ITransferObject> list = activityBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Activity a = (Activity)list.get(i);
+			int id = a.getId();
+			String name = a.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			activityList.add(item);
+		}
+		return activityList;
+	}
+
+	public List<SelectItem> getHiruOrganizerCentreList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(HiruOrganizerCentre.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.HIRU_ORGANIZER_CENTRE_NAME));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			HiruOrganizerCentre ac = (HiruOrganizerCentre)list.get(i);
+			int id = ac.getId();
+			String name = ac.getName();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+
+	public List<SelectItem> getParentCategories() throws ManagerBeanException {
+		List<SelectItem> categories = new LinkedList<SelectItem>();
+		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
+		criteria.addNullExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID));
+		List<ITransferObject> list = categoryBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			ProductCategory pcd = (ProductCategory)list.get(i);
+			SelectItem item = new SelectItem(pcd.getId(),pcd.getAlias());
+			categories.add(item);
+		}
+		return categories;
+	}
+	
+	public List<SelectItem> getCategories() throws ManagerBeanException {
+		List<SelectItem> categories = new LinkedList<SelectItem>();
+		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
+		criteria.addNullExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID));
+		List<ITransferObject> list = categoryBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			ProductCategory pcd = (ProductCategory)list.get(i);
+			IManagerBean categorySubCatBean = BeanManager.getManagerBean(ProductCategory.class);
+			Criteria criteriaSubCat = new Criteria();
+			criteriaSubCat.addEqualExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
+			criteriaSubCat.addEqualExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID), pcd.getId());
+			List<ITransferObject> listSubCat = categorySubCatBean.getList(criteriaSubCat);
+			SelectItem[] subList = new SelectItem[listSubCat.size()];
+			for (int j = 0; j < listSubCat.size(); j++) {
+				ProductCategory pcdSubCat = (ProductCategory)listSubCat.get(j);
+				SelectItem subItem = new SelectItem(pcdSubCat.getId(),"-"+pcdSubCat.getAlias());
+				subList[j] = subItem; 
+			}
+			SelectItem item = new SelectItemGroup(pcd.getAlias(),pcd.getAlias(),false,subList);
+			categories.add(item);
+		}
+		return categories;
+	}
+
+	public List<SelectItem> getSportCategoryList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_CATEGORY_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportCategory object = (SportCategory)list.get(i);
+			int id = object.getId();
+			String name = object.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportSeasonList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportSeason.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_SEASON_DESCRIPTION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportSeason object = (SportSeason)list.get(i);
+			int id = object.getId();
+			String name = object.getDescription();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportClubList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportClub.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_CLUB_DESCRIPTION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportClub object = (SportClub)list.get(i);
+			int id = object.getId();
+			String name = object.getDescription();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportPositionList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportPosition.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_POSITION_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportPosition object = (SportPosition)list.get(i);
+			int id = object.getId();
+			String name = object.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportNationalityList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportNationality.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_NATIONALITY_ALIAS));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportNationality object = (SportNationality)list.get(i);
+			int id = object.getId();
+			String name = object.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportPlayerList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportPlayer.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_PLAYER_NAME));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportPlayer object = (SportPlayer)list.get(i);
+			int id = object.getId();
+			String name = object.getName();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	private void sort( List<SelectItem> list ) {
+		Comparator<SelectItem> comparator = new Comparator<SelectItem>() {
+
+			@Override
+			public int compare(SelectItem o1, SelectItem o2) {
+				return o1.getLabel().compareTo(o2.getLabel());
+			}
+			
+		};
+		Collections.sort( list, comparator );
+	}
+
+}

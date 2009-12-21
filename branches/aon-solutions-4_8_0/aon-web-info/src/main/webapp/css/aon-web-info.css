@@ -1,0 +1,25 @@
+/***** FILE CONTROL*********/	
+/* Generic styles of the file control buttons  */
+.aon-fileControl-button{
+	background-color:#E0DDD6;
+	border:0;
+	width:16px;
+	height:16px;
+	margin:0 2px;
+	position:relative;
+	top:0px;
+	_top:-1px;
+	cursor:pointer;
+	}
+/* Image background of the download button  */
+.aon-fileControl-button-download{
+	background:transparent url("images/buttons/aon-fileControl-button-download.gif") left top no-repeat;
+	}
+/* Image background of the fileUpload button  */
+.aon-fileControl-button-fileUpload{
+	background:transparent url("images/buttons/aon-fileControl-button-fileUpload.gif") left top no-repeat;
+	}
+/* Image background of the remove button  */
+.aon-fileControl-button-remove{
+	background:transparent url("images/buttons/aon-fileControl-button-remove.gif") left top no-repeat;
+	}

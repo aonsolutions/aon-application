@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{domainApplication}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+			
+			<ui:define name="columns">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{auditBundle.audit_application}" />
+					</f:facet>
+					<aon:outputText value="#{to.application.name}"
+						rendered="#{formList}" />
+					<aon:selectOneMenu rendered="#{formEdit}"
+						required="true" value="#{domainApplication.to.application.id}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.applications}" />
+					</aon:selectOneMenu>								
+					<f:facet name="footer">
+						<aon:selectOneMenu rendered="#{formNew}"
+							required="true" value="#{domainApplication.to.application.id}">
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{auditCollections.applications}" />
+						</aon:selectOneMenu>								
+					</f:facet>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{auditBundle.audit_domain_audit_level}" />
+					</f:facet>
+					<aon:outputText value="#{to.auditLevel}"
+						rendered="#{formList}" />
+					<aon:selectOneMenu rendered="#{formEdit}"
+						required="true" value="#{domainApplication.to.auditLevel}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.auditLevels}" />
+					</aon:selectOneMenu>					
+					<f:facet name="footer">
+						<aon:selectOneMenu rendered="#{formNew}"
+							required="true" value="#{domainApplication.to.auditLevel}">
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{auditCollections.auditLevels}" />
+						</aon:selectOneMenu>					
+					</f:facet>
+				</aon:column>
+
+			</ui:define>
+		</ui:decorate>			
+
+	</aon:div>
+</ui:composition>

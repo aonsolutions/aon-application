@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="admonGrid">
+	
+			<aon:div ajaxRendered="true" layout="none">
+				
+			<ui:include src="/facelet/templates/gridPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__admon}" />				
+				<ui:param name="controller" value="#{admon}" />
+				<ui:param name="reportKey" value="organismosAdmonList"/>
+				<aon:valueParam name="skipSearchButton" default="false"/>
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
+			</ui:include>
+	
+				<!-- region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+					
+					<aon:editDataTable id="admonData" var="to" rows="20"
+						rendered="#{(admon.model.rowCount > 0) or (admon.new)}" value="#{admon.model}"
+						columnClasses="aon-editDataTable-iconColumn, 
+						aon-width-150, aon-editDataTable-textColumn, 
+						aon-editDataTable-buttonsColumn">
+								
+						<aon:rowSelector toggleOnClick="#{admon.to == null}"
+							actionListener="#{admon.onSelect}" />
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{admon.onReset}" value=""
+										rendered="#{!admon.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+							</f:facet>
+							<aon:outputText value="#{to.cdg}" rendered="#{to!=admon.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==admon.to}" size="5"
+								value="#{admon.to.cdg}" maxlength="5" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{admon.new}" size="5"
+									value="#{admon.to.cdg}" maxlength="5" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" rendered="#{to!=admon.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==admon.to}" size="35"
+								value="#{admon.to.description}" maxlength="35" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{admon.new}" size="35"
+									value="#{admon.to.description}" maxlength="35" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=admon.to}">&#160;</f:verbatim>
+								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
+									rendered="#{to==admon.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{admon.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==admon.to}"
+									actionListener="#{admon.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==admon.to}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{admon.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />								
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!admon.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]" 
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{admon.new}"
+										actionListener="#{admon.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{admon.new}"
+										confirmTitle="#{bundle.aon_confirm_title}" 
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{admon.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						
+					</aon:editDataTable>
+					<aon:dataScroller2 for="admonData" showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

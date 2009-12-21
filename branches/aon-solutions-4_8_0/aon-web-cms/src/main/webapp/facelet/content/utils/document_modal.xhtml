@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">	
+
+	<aon:panelGroup id="showDocumentPanelGroup">
+		<c:if test="#{download.showWindow}">
+			<rich:modalPanel id="showDocumentModalPanel"
+				rendered="#{download.showWindow}" showWhenRendered="true"
+				height="660" width="710">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{appBundle.document_modal_title}" />
+					</aon:div>
+				</f:facet>
+		        <f:facet name="controls">
+					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+						immediate="true" reRender="showDocumentPanelGroup,thumbnail_preview_detail">
+						<f:setPropertyActionListener target="#{download.showWindow}" value="#{false}" />
+						<rich:componentControl for="showDocumentModalPanel"
+							operation="hide" event="onclick" />
+					</aon:commandButton>
+		        </f:facet>
+				<h:panelGrid id="showDocument_treeGrid" columns="2"
+					columnClasses="aon-width-300 aon-border aon-vertical-align-top, aon-width-auto aon-vertical-align-top">
+					<aon:div styleClass="aon-scroll">
+					    <rich:tree 
+					    	switchType="server" 
+					    	stateAdvisor="#{treeStateAdvisor}">
+					        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.documentRoots}" 
+					        	var="item" 
+					        	nodes="#{item.nodes}">
+								<rich:treeNode>
+					                <aon:commandLink
+					                	action="#{item.onSelectFolder}" 
+					                	value="#{item}"
+					                	immediate="#{true}"
+					                	reRender="showDocument_treeGrid" />
+								</rich:treeNode>
+					        </rich:recursiveTreeNodesAdaptor>
+					    </rich:tree>
+					</aon:div>
+					<aon:div> 
+						<aon:div styleClass="aon-header">
+							<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
+								<aon:div>
+									<aon:outputLabel value="#{document.currentRelativePath}" styleClass="aon-applicationName"/>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:div>
+						<aon:div style="height:582;overflow:auto;">
+							<rich:dataGrid var="item" value="#{document.model}" columns="1">
+								<aon:div>
+					                <aon:commandLink immediate="true" value="#{item.name}"
+					                	reRender="showDocumentPanelGroup,thumbnail_preview_detail"
+					                    actionListener="#{download.onSelectImage}">
+					                    <f:setPropertyActionListener target="#{download.showWindow}" value="#{false}" />
+										<rich:componentControl for="showDocumentModalPanel"
+											operation="hide" event="onclick" />
+					        		</aon:commandLink>
+								</aon:div>
+							</rich:dataGrid>
+						</aon:div>
+					</aon:div>
+				</h:panelGrid>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>													
+
+</ui:composition>

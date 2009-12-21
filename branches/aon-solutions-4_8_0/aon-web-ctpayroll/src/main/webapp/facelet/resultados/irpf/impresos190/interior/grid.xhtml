@@ -1,0 +1,191 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div id="linimpresos190InteriorDataDiv">
+	
+	
+
+
+		<aon:editDataTable id="linimpresos190Data" var="to" rows="10"
+			value="#{linimpresos190.model}"
+			columnClasses="aon-editDataTable-iconColumn, 
+			aon-editDataTable-textColumn,aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+			aon-editDataTable-textColumn,aon-editDataTable-textColumn">
+ 
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+
+				<aon:div>
+					<h:commandButton alt="[#{bundle.aon_reset}]"
+						styleClass="aon-editDataTable-button aon-icon-rowSelector "
+						actionListener="#{linimpresos190.onSelect}" action="linimpresos190_form"
+						reRender="formDiv"
+						accesskey="#{bundle.aon_key_new_line}" />
+				</aon:div>
+
+				<f:facet name="footer">
+					<aon:div>
+						<h:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{linimpresos190.onReset}"
+							rendered="#{!linimpresos190.new}"
+							action="linimpresos190_form"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_impresos190_nif_perceptor}" />
+				</f:facet>
+				<aon:outputText value="#{to.numdoc}" rendered="#{to!=linimpresos190.to}" />
+				<aon:inputText id="numdoc_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}"  required="#{true}"
+					value="#{linimpresos190.to.numdoc}" maxlength="10" size="13" />
+				<f:facet name="footer">
+					<aon:inputText id="numdoc_new" styleClass="aon-form-input-text" required="#{true}"
+						rendered="#{linimpresos190.new}" value="#{linimpresos190.to.numdoc}"
+						maxlength="10" size="13" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_resultados_irpf_impresos190_clave}" />
+				</f:facet>
+				<aon:outputText value="#{to.clave}" rendered="#{to!=linimpresos190.to}" />
+				<aon:inputText id="clave_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}" 
+					value="#{linimpresos190.to.clave}" maxlength="1" size="3" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{linimpresos190.new}" 
+						value="#{linimpresos190.to.clave}" maxlength="1" size="3" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_resultados_irpf_impresos190_subclave}" />
+				</f:facet>
+				<aon:outputText value="#{to.subclave}" rendered="#{to!=linimpresos190.to}" />
+				<aon:inputText id="subclave_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}" 
+					value="#{linimpresos190.to.subclave}" maxlength="2" size="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{linimpresos190.new}" 
+						value="#{linimpresos190.to.subclave}" maxlength="2" size="4" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_resultados_irpf_impresos190_perc_din}" />
+				</f:facet>
+				<aon:outputText value="#{to.impPerDin}" rendered="#{to!=linimpresos190.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="impPerDin_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}" 
+					value="#{linimpresos190.to.impPerDin}" maxlength="11" size="14" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{linimpresos190.new}" 
+						value="#{linimpresos190.to.impPerDin}" maxlength="11" size="14" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_resultados_irpf_impresos190_imp_ret_din}" />
+				</f:facet>
+				<aon:outputText value="#{to.impRetDin}" rendered="#{to!=linimpresos190.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="impRetDin_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}" 
+					value="#{linimpresos190.to.impRetDin}" maxlength="11" size="14" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{linimpresos190.new}" 
+						value="#{linimpresos190.to.impRetDin}" maxlength="11" size="14" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_resultados_irpf_impresos190_perc_especie}" />
+				</f:facet>
+				<aon:outputText value="#{to.impPerEsp}" rendered="#{to!=linimpresos190.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="impPerEsp_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}" 
+					value="#{linimpresos190.to.impPerEsp}" maxlength="11" size="14" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{linimpresos190.new}" 
+						value="#{linimpresos190.to.impPerEsp}" maxlength="11" size="14" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_resultados_irpf_impresos190_imp_ingr_cuenta}" />
+				</f:facet>
+				<aon:outputText value="#{to.impIngCta}" rendered="#{to!=linimpresos190.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="impIngCta_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}" 
+					value="#{linimpresos190.to.impIngCta}" maxlength="11" size="14" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{linimpresos190.new}" 
+						value="#{linimpresos190.to.impIngCta}" maxlength="11" size="14" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_resultados_irpf_impresos190_imp_ingr_rep}" />
+				</f:facet>
+				<aon:outputText value="#{to.impIngRep}" rendered="#{to!=linimpresos190.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="impIngRep_edit" styleClass="aon-form-input-text"
+					rendered="#{to==linimpresos190.to}" 
+					value="#{linimpresos190.to.impIngRep}" maxlength="11" size="14" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{linimpresos190.new}" 
+						value="#{linimpresos190.to.impIngRep}" maxlength="11" size="14" />
+				</f:facet>
+			</aon:column>
+
+		</aon:editDataTable>
+ 
+		<aon:dataScroller2 for="linimpresos190Data"  />
+
+	</aon:div>
+
+</ui:composition>

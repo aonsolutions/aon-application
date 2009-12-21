@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="Evolucion de precios de compra" label="Evolucion de precios de compra">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYearFirstDay}"
+            label="Desde" name="inidate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="${currentYearLastDay}"
+            label="Hasta" name="enddate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_albaran_compra.gif"
+        iconOpen="icons/icon_albaran_compra.gif" label="Evolucion de precios de compra">
+        <layout type="COLUMN"/>
+        <contents/>
+        <node dynamicViewId="view/Ventas/Familia.exvw.xml"
+            iconClose="icons/icon_categoria.gif"
+            iconOpen="icons/icon_categoria.gif" label="${CATEGORY_NAME}">
+            <dynamicSentence>
+                <sentence>SELECT pcategory.id, pcategory.name, SUM(TRUNCATE(invoice_detail.quantity, 3)),&#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base * ((invoice_tax.percentage + invoice.surcharge + 100) / 100), 2))&#xd;
+  FROM pcategory, invoice_detail, invoice, item, product, invoice_tax &#xd;
+ WHERE invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND invoice_tax.invoice_detail = invoice_detail.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY 1,2&#xd;
+ ORDER BY 4 DESC</sentence>
+                <metadata>
+                    <attribute label="Codigo" name="CATEGORY_ID" type="INTEGER"/>
+                    <attribute label="Familia" name="CATEGORY_NAME" type="STRING"/>
+                    <attribute label="Cantidad (Kg.)" name="quantity" type="DOUBLE"/>
+                    <attribute label="Total" name="total" type="DOUBLE"/>
+                </metadata>
+                <parameters>
+                    <parameter name="type"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </parameters>
+            </dynamicSentence>
+            <dynamicParameters>
+                <parameter name="type"/>
+                <parameter name="inidate"/>
+                <parameter name="enddate"/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents/>
+            <node
+                dynamicViewId="view/Ventas/Productos por familia.exvw.xml"
+                iconClose="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT invoice_detail.item, product.name description, SUM(invoice_detail.quantity), &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base * ((invoice_tax.percentage + invoice.surcharge + 100) / 100), 2))&#xd;
+  FROM invoice_detail, invoice, pcategory, item, product, invoice_tax&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_tax.invoice_detail = invoice_detail.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND pcategory.id = ? &#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+ GROUP BY invoice_detail.item</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                        <attribute label="Producto" name="ITEM_NAME" type="STRING"/>
+                        <attribute label="Cantidad" name="quantity" type="DOUBLE"/>
+                        <attribute label="Total" name="total" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="CATEGORY_ID"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="CATEGORY_ID"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Compras/Precio fecha.exvw.xml">
+                        <sentence>SELECT DISTINCT invoice.issue_date, invoice_detail.item, product.name, invoice_detail.price&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.item = ?&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.issue_date BETWEEN ? AND ?&#xd;
+   AND invoice.type = ?&#xd;
+ ORDER BY 1, 4 ASC&#xd;
+</sentence>
+                        <metadata>
+                            <attribute label="Fecha" name="issue_date" type="DATE"/>
+                            <attribute label="Codigo" name="item" type="INTEGER"/>
+                            <attribute label="Articulo" name="name" type="STRING"/>
+                            <attribute label="Precio" name="price" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="ITEM_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+            </node>
+        </node>
+    </node>
+</workstation>

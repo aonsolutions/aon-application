@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="productList">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.product}" />
+				<ui:param name="controller" value="#{product}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="generate" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" immediate="true"
+						rendered="#{cms.roleEditor}"
+						actionListener="#{generator.onGenerateProducts}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<a4j:support 
+							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>	
+					<aon:commandButton id="home"
+						value="#{bundle.aon_home}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+					<aon:commandButton id="product_categories"
+						value="#{appBundle.product_category}"
+						action="productCategory_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{productCategory.onSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="brands"
+						value="#{appBundle.brand}"
+						action="brand_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{brand.onSearch}" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>		
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:dataTable id="dataTable" value="#{product.model}" var="to"
+					rows="#{product.pageLimit}" rendered="#{product.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-iconColumn">
+							
+					<aon:rowSelector
+						action="product_form" actionListener="#{product.onSelect}" />							
+							
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.product_shorLabel}" />
+						</f:facet>
+						<aon:outputText value="#{product.i18nShortLabel}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.product_category}" />
+						</f:facet>
+						<aon:outputText value="#{product.i18nCategory}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.brand}" />
+						</f:facet>
+						<aon:outputText value="#{product.i18nBrand}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.product_active}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																															
+							<aon:commandLink title="#{appBundle.product_activate}" 
+								action="product_list" ajaxSingle="true"
+								actionListener="#{product.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.product_deactivate}" 
+								action="product_list" ajaxSingle="true"
+								actionListener="#{product.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:column>
+
+				</aon:dataTable>
+					
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
+					
+			</aon:div>
+		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		
+	</ui:define>
+
+</ui:composition>

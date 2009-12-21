@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="contactList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_contacts}" />
+				<ui:param name="controller" value="#{contact}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="#{toolbarID}-resetGroup"
+						value="#{webmailBundle.webmail_reset_contactGroup}"
+						action="#{resetAction}" actionListener="#{controller.onResetGroup}"
+						styleClass="aon-finding-toolbar-item aon-icon-new" />				
+				</ui:define>
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{contact}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
+							</f:facet>
+							<aon:outputText value="#{to.displayName}"
+								styleClass="aon-list-icon #{to.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_email}" />
+							</f:facet>
+							<aon:outputText value="#{to.emails}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-100 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_phone}" />
+							</f:facet>
+							<aon:outputText value="#{to.phone}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-100 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_cellular_phone}" />
+							</f:facet>
+							<aon:outputText value="#{to.cellularPhone}"/>
+						</aon:column>
+					</ui:define>
+					
+				</ui:decorate>
+
+			</aon:div>
+
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>

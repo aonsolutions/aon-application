@@ -1,0 +1,18 @@
+
+<h1 >$!title</h1>
+
+<div id="maincontent">	
+
+<table>
+  <tr>
+    <td>$!text</td>
+    <td>
+    	#foreach ($image in $images)
+		<img src='$!image.getName()'/>
+		$!image.getDescription();
+    	#end
+    </td>
+  </tr>
+</table>
+
+</div>

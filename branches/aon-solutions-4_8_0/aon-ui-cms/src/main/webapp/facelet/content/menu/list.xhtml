@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="menuList">
+			
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.menu}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="menu_form" actionListener="#{menu.onReset}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!menu.checklistEmpty}" inmediate="true"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{menu.onRemoveSelected}" confirmAction="menu_list"
+							styleClass="aon-content-toolbar-item aon-icon-delete"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_remove}"/>
+					</aon:div>
+				</aon:div>
+			<!-- end toolbar navigation -->
+			</aon:panelGrid> 
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">	
+				
+					<aon:div styleClass="aon-content-subTitle">
+						<aon:div styleClass="aon-content-subTitle-internal">
+							<aon:outputText value="Listado registros" />
+						</aon:div>
+					</aon:div>
+
+					<ice:panelTabSet id="menuTabSet" 
+						selectedIndex="#{menu.currentTab}" 
+                     	tabChangeListener="#{menu.processTabChange}">
+                     	
+						<ice:panelTab id="sidebar" label="#{appBundle.menu_sidebar}"
+							icon="images/cms/sidebarmenu.gif">
+	                    </ice:panelTab>
+						<ice:panelTab id="tab2" label="#{appBundle.menu_top}"
+							icon="images/cms/topmenu.gif">
+	                    </ice:panelTab>
+						<ice:panelTab id="tab3" label="#{appBundle.menu_foot}"
+							icon="images/cms/footmenu.gif">
+	                    </ice:panelTab>
+						<ice:panelTab id="tab4" label="#{appBundle.menu_inner}"
+							icon="images/cms/innermenu.gif">
+	                    </ice:panelTab>
+					</ice:panelTabSet>
+
+					<aon:dataTable id="menuDataList" columnWidths="120,30,*,30,100" 
+						value="#{menu.model}" var="to" rows="20"
+						rowClasses="aon-dataTable-odd, aon-dataTable-even"
+						columnClasses="aon-table-body aon-table-body-icon,
+						 	aon-table-body aon-table-body-number,
+						 	aon-table-body aon-table-body-string,
+						 	aon-table-body aon-table-body-icon,
+						 	aon-table-body aon-table-body-icon">
+
+						<aon:column>
+							<aon:rowSelector selectionListener="#{menu.onSelect}" toggleOnClick="true"/>
+							<f:facet name="header">
+								<aon:div>
+									<aon:outputText value="#{bundle.aon_check}" />
+									<aon:div>
+										<aon:commandLink id="all" value="#{bundle.aon_check_all}" 
+										styleClass="aon-table-header-link-secundary"
+										onclick="selectAll();return false;" />
+										<aon:commandLink id="none" value="#{bundle.aon_uncheck_all}"
+										styleClass="aon-table-header-link-secundary"
+										onclick="unSelectAll();return false;" />
+										<aon:commandLink id="inverse" value="#{bundle.aon_inverse_all}"
+										styleClass="aon-table-header-link-secundary"
+										onclick="inverseAll();return false;" />
+									</aon:div>										
+								</aon:div>	
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
+									value="#{menu.rowChecked}" partialSubmit="true" 
+									rendered="#{!to.defaultMenu}"
+									valueChangeListener="#{menu.onChecked}"/>
+							<aon:graphicImage id="Menu_selected_blocked" rendered="#{to.defaultMenu}"
+								url="/images/cms/blocked.gif" alt="#{appBundle.menu_blocked}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Menu_id" value="#{appBundle.menu_id}" />
+							</f:facet>
+							<aon:outputText id="Menu_id" value="#{to.id}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Menu_alias" value="#{appBundle.menu_alias}" />
+							</f:facet>
+							<aon:outputText id="Menu_alias" value="#{to.alias}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Menu_defaultMenu" value="#{appBundle.menu_defaultMenu}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Menu_defaultMenu" forceId="#{true}"
+									value="#{to.defaultMenu}" partialSubmit="true"
+									rendered="#{!to.defaultMenu}"
+									valueChangeListener="#{menu.defaultMenuChanged}"/>
+							<aon:graphicImage id="Menu_default_blocked" rendered="#{to.defaultMenu}"
+								url="/images/cms/selected.gif" alt="#{appBundle.menu_blocked}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Menu_options" value="#{appBundle.menu_option}" />
+							</f:facet>
+								<aon:commandLink title="#{appBundle.menu_option}" action="menu_option_list"
+									actionListener="#{menu.onSelectOptions}">
+									<aon:graphicImage id="MenuOption_options" alt="#{appBundle.menu_option}"
+										url="/images/cms/content.gif" />
+								</aon:commandLink>
+						</aon:column>
+
+					</aon:dataTable>
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

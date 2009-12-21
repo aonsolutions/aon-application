@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:panelGrid columns="3" style="width:90%; vertical-align: top;"
+		columnClasses="aon-homepage-column,aon-homepage-column,aon-homepage-column">
+
+		<aon:div>
+			<aon:outputText
+				styleClass="aon-homepage-column-header aonSubMenuOptionTriangle"
+				value="#{appBundle.account_pred_entries}" />
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{accountEntry.onReset}" action="accountEntry_form">
+					<aon:outputText value="#{accountingBundle.accounting_entry_module}" />
+				</aon:commandLink>
+				<aon:commandLink immediate="true" styleClass="aonSubMenuExtraLink"
+					actionListener="#{accountEntry.onEditSearch}"
+					action="accountEntry_search">
+					<aon:outputText value="[#{bundle.aon_search}]" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{salaryEntry.onReset}"
+					action="account_salary_entry">
+					<aon:outputText
+						value="#{accountingBundle.accounting_salary_entry_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{invoiceEntry.onReset}"
+					action="account_invoice_entry">
+					<aon:outputText
+						value="#{accountingBundle.accounting_entry_invoice_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{socialInsuranceEntry.onReset}"
+					action="account_social_insurance_entry">
+					<aon:outputText
+						value="#{accountingBundle.accounting_social_insurance_entry_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{expenseEntry.onReset}"
+					action="account_expense_entry">
+					<aon:outputText
+						value="#{accountingBundle.accounting_expense_entry_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{loanFeeEntry.onReset}"
+					action="account_loan_fee_entry">
+					<aon:outputText
+						value="#{accountingBundle.accounting_loan_fee_entry_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{financeEntry.onReset}"
+					action="account_finance_entry">
+					<aon:outputText
+						value="#{accountingBundle.accounting_entry_finance_module}" />
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+
+
+		<aon:div>
+			<aon:outputText
+				styleClass="aon-homepage-column-header aonSubMenuOptionCircle"
+				value="#{appBundle.account_masters}" />
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{account.onReset}" action="account_form">
+					<aon:outputText value="#{accountBundle.account_module}" />
+				</aon:commandLink>
+				<aon:commandLink immediate="true" styleClass="aonSubMenuExtraLink"
+					actionListener="#{account.onEditSearch}" action="account_search">
+					<aon:outputText value="[#{bundle.aon_search}]" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{customer.onReset}" action="customer_form">
+					<aon:outputText value="#{customerBundle.customer_module}" />
+				</aon:commandLink>
+				<aon:commandLink immediate="true" styleClass="aonSubMenuExtraLink"
+					actionListener="#{customer.onEditSearch}" action="customer_search">
+					<aon:outputText value="[#{bundle.aon_search}]" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{autConcept.onSearch}" action="autConcept">
+					<aon:outputText
+						value="#{accountingBundle.accounting_aut_concept_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{supplier.onReset}" action="supplier_form">
+					<aon:outputText value="#{supplierBundle.supplier_module}" />
+				</aon:commandLink>
+				<aon:commandLink immediate="true" styleClass="aonSubMenuExtraLink"
+					actionListener="#{supplier.onEditSearch}" action="supplier_search">
+					<aon:outputText value="[#{bundle.aon_search}]" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{creditor.onReset}" action="creditor_form">
+					<aon:outputText value="#{financeBundle.finance_creditor_module}" />
+				</aon:commandLink>
+				<aon:commandLink immediate="true" styleClass="aonSubMenuExtraLink"
+					actionListener="#{creditor.onEditSearch}" action="creditor_search">
+					<aon:outputText value="[#{bundle.aon_search}]" />
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+
+		<aon:div>
+			<aon:outputText
+				styleClass="aon-homepage-column-header aonSubMenuOptionRectangle"
+				value="#{appBundle.account_reports}" />
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{trialBalance.onReset}"
+					action="account_statement_search">
+					<aon:actionHotKey key="alt+2"/>					
+					<aon:outputText
+						value="#{accountingBundle.accounting_statement_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{trialBalance.onReset}"
+					action="trialBalance_search">
+					<aon:outputText
+						value="#{accountingBundle.accounting_trial_balance_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{journalReport.onReset}" action="journal_search">
+					<aon:outputText
+						value="#{accountingBundle.accounting_journal_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{profitAndLossReport.onEditSearch}"
+					action="profit_and_loss_search">
+					<aon:outputText
+						value="#{accountingBundle.accounting_profit_and_loss_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{ledgerReport.onReset}" action="ledger_search">
+					<aon:outputText
+						value="#{accountingBundle.accounting_ledger_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{vatReport.onReset}" action="vat_report_search">
+					<aon:outputText
+						value="#{appBundle.account_finance_vat_report_module}" />
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+
+		<aon:div>
+			<aon:outputText
+				styleClass="aon-homepage-column-header aonSubMenuOptionPentagon"
+				value="#{appBundle.account_budget}" />
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{accountBudget.onEditSearch}"
+					action="accountBudget_search">
+					<aon:outputText
+						value="#{accountingBundle.accounting_account_budget_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{budgetedProfitAndLossReport.onEditSearch}"
+					action="budgeted_profit_and_loss_search">
+					<aon:outputText
+						value="#{accountingBundle.accounting_budgeted_balance_sheet_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{budgetedProfitAndLossComparison.onEditSearch}"
+					action="compared_budgeted_profit_and_loss_search">
+					<aon:outputText
+						value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}" />
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+
+		<aon:div>
+			<aon:outputText
+				styleClass="aon-homepage-column-header aonSubMenuOptionCylinder"
+				value="#{financeBundle.finance_menu_group}" />
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{finance.onEditSearchCharge}"
+					action="finance_search">
+					<aon:outputText value="#{financeBundle.finance_charge_module}" />
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aonSubMenu aonSubMenuOption">
+				<aon:commandLink immediate="true"
+					actionListener="#{finance.onEditSearchPayment}"
+					action="finance_search">
+					<aon:outputText value="#{financeBundle.finance_payment_module}" />
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+
+	</h:panelGrid>
+
+</ui:composition>

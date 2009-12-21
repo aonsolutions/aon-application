@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="recordForm">
+			<t:div styleClass="aon-content-menu-aux" >
+				<h:outputText value="#{employee.to.registry.name} #{employee.to.registry.surname} #{employee.to.registry.document}" />
+			</t:div>
+			<t:div styleClass="aon-content-menu" rendered="#{!employee.new}" id="aon-content-menu" forceId="#{true}">
+				<t:panelGrid columns="5" cellpadding="0" cellspacing="0" border="0">
+					<t:panelGroup>
+							<t:commandLink id="employee_data" forceId="#{true}" value="#{rBundle.aon_personal_data}"
+								action="employee_form"
+								styleClass="aon-content-menu-item"
+								/>
+					</t:panelGroup>	
+					<t:panelGroup>
+							<t:commandLink id="employee_schedule" forceId="#{true}" value="#{rBundle.aon_calendar_data}"
+								actionListener="#{employee.onSchedule}" action="employee_calendar" 
+								styleClass="aon-content-menu-item"
+								/>
+					</t:panelGroup>	
+					<t:panelGroup>
+
+							<t:commandLink id="employee_record" forceId="#{true}" value="#{appBundle.record_record}"
+								styleClass="aon-content-menu-item-active"
+									/>
+
+					</t:panelGroup>	
+					<t:panelGroup>
+							<t:commandLink id="employee_curriculum" forceId="#{true}" value="#{appBundle.curriculum_curriculum}"
+								actionListener="#{employee.onCurriculum}" action="employee_curriculum" 
+								styleClass="aon-content-menu-item"
+								/>
+					</t:panelGroup>	
+					<t:panelGroup>
+							<t:commandLink id="employee_tracking" forceId="#{true}" value="#{appBundle.aon_employee_tracking}"
+								actionListener="#{employee.onTracking}" action="employee_tracking" 
+								styleClass="aon-content-menu-item" 
+								 />						
+					</t:panelGroup>	
+				</t:panelGrid>
+			</t:div>	
+			<t:div id="aon-content-toolbar" forceId="#{true}" styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							forceId="#{true}" immediate="#{true}" action="employee_list"
+							actionListener="#{employee.onCancel}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+							accesskey="#{bundle.aon_key_cancel}"/>
+					</t:div>
+				</t:div>
+			</t:div>
+
+
+				
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:panelTabbedPane styleClass="aon-tabpanel" style="width:590px;"
+										activeTabStyleClass="aon-tabpanel-active" 
+										inactiveTabStyleClass="aon-tabpanel-inactive" 
+									   	serverSideTabSwitch="true"
+									   	rendered="#{lhcourse.employee.id!=null}" >
+			
+						<t:panelTab id="courses" label="#{appBundle.record_courses}" >
+							<ui:include src="/facelet/record/tabs/course.xhtml" />
+						</t:panelTab>
+						
+						<t:panelTab id="works" label="#{appBundle.record_works}" >
+							<ui:include src="/facelet/record/tabs/work.xhtml" />
+						</t:panelTab>
+
+						<t:panelTab id="position" label="#{appBundle.record_position}" >
+							<ui:include src="/facelet/record/tabs/position.xhtml" />
+						</t:panelTab>
+						
+						<t:panelTab id="contract" label="#{appBundle.record_contracts}" >
+							<ui:include src="/facelet/record/tabs/contract.xhtml" />
+						</t:panelTab>
+					</t:panelTabbedPane>
+				</t:div>
+			</t:div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

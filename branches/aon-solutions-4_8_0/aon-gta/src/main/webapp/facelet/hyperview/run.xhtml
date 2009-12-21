@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/template.xhtml">
+<ui:define name="content">
+		<t:div styleClass="aon-general-title" id="aon-general-title" forceId="#{true}">
+			<h:outputText value="#{runnableTree.hyperViewDescription}" />
+		</t:div>
+		<h:form id="runnableNodeToolbar">
+			<t:div styleClass="aon-general-toolbar" id="aon-general-toolbar" forceId="#{true}">
+				<t:div styleClass="aon-general-toolbar-item-group">
+					<t:commandButton styleClass="aon-general-toolbar-item"
+						onmouseover="this.className='aon-general-toolbar-item aon-general-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-general-toolbar-item aon-content-toolbar-item-new'"
+						value="#{hyperviewBundle.hyperview_download}"
+						onclick="openWindow('exportReport', '${facesContext.externalContext.requestContextPath}/facelet/hyperview/exportOptions.faces');return false;" />
+				</t:div>
+			</t:div>
+		</h:form>
+
+
+		<t:div  id="aon-sidebar-region" forceId="#{true}" styleClass="aon-tree-menu">
+					<t:div>
+				<h:form id="runnableTreeList">
+					<t:tree2 id="runnableTree" value="#{runnableTree.treeModel}"
+						showLines="#{true}" binding="#{runnableTree.treeComponent}"
+						var="node" varNodeToggler="t" clientSideToggle="#{false}">
+
+						<f:facet name="ROOT">
+							<t:div styleClass="aon-tree-menu-root">
+								<t:graphicImage
+									rendered="#{t.nodeExpanded and node.to.iconOpen!=null}"
+									url="/#{node.to.iconOpen}.hyperviewIcon" />
+								<t:graphicImage
+									rendered="#{!t.nodeExpanded and node.to.iconClose!=null}"
+									url="/#{node.to.iconClose}.hyperviewIcon" />
+								<h:commandLink immediate="true" rendered="#{!t.nodeSelected}"
+									actionListener="#{runnableTree.onNodeSelected}"
+									styleClass="aon-tree-menu-root-link">
+									<h:outputText value="#{node.description}" />
+								</h:commandLink>
+								<h:outputText value="#{node.description}"
+									rendered="#{t.nodeSelected}"
+									styleClass="aon-tree-menu-root-link-selected" />
+								<t:div rendered="#{t.nodeSelected}" style="display:inline;">
+									<f:verbatim>
+										<a id="actual_tree_node" name="actual_tree_node">&#160;</a>
+									</f:verbatim>
+								</t:div>
+							</t:div>
+						</f:facet>
+
+						<f:facet name="GROUP">
+							<t:div styleClass="aon-tree-menu-branch">
+								<t:graphicImage
+									rendered="#{t.nodeExpanded and node.to.iconOpen!=null}"
+									url="/#{node.to.iconOpen}.hyperviewIcon" />
+								<t:graphicImage
+									rendered="#{!t.nodeExpanded and node.to.iconClose!=null}"
+									url="/#{node.to.iconClose}.hyperviewIcon" />
+								<h:commandLink immediate="true" rendered="#{!t.nodeSelected}"
+									actionListener="#{runnableTree.onNodeSelected}"
+									styleClass="aon-tree-menu-branch-link">
+									<h:outputText value="#{node.description}" />
+								</h:commandLink>
+								<h:outputText value="#{node.description}"
+									rendered="#{t.nodeSelected}"
+									styleClass="aon-tree-menu-branch-link-selected" />
+								<t:div rendered="#{t.nodeSelected}" style="display:inline;">
+									<f:verbatim>
+										<a id="actual_tree_node" name="actual_tree_node">&#160;</a>
+									</f:verbatim>
+								</t:div>
+							</t:div>
+						</f:facet>
+
+						<f:facet name="LEAF">
+							<t:div styleClass="aon-tree-menu-leaf">
+								<t:graphicImage
+									rendered="#{t.nodeExpanded and node.to.iconOpen!=null}"
+									url="/#{node.to.iconOpen}.hyperviewIcon" />
+								<t:graphicImage
+									rendered="#{!t.nodeExpanded and node.to.iconClose!=null}"
+									url="/#{node.to.iconClose}.hyperviewIcon" />
+								<h:commandLink immediate="true" rendered="#{!t.nodeSelected}"
+									actionListener="#{runnableTree.onNodeSelected}"
+									styleClass="aon-tree-menu-leaf-link">
+									<h:outputText value="#{node.description}" />
+								</h:commandLink>
+								<h:outputText value="#{node.description}"
+									rendered="#{t.nodeSelected}"
+									styleClass="aon-tree-menu-leaf-link-selected" />
+								<t:div rendered="#{t.nodeSelected}" style="display:inline;">
+									<f:verbatim>
+										<a id="actual_tree_node" name="actual_tree_node">&#160;</a>
+									</f:verbatim>
+								</t:div>
+							</t:div>
+						</f:facet>
+					</t:tree2>
+				</h:form>
+			</t:div>
+			
+		</t:div>
+				<!--CONTENT-->
+				<!-- 
+		<t:div
+			styleClass="aon-content-region aon-content-region-#{runnableTree.hidden ? 'expanded' : 'contrated'}">
+			<t:div id="aon-scroll-area" forceId="#{true}"
+				style="text-align:center; padding: 0px; margin: 0px;">
+				<ui:include src="/facelet/hyperview/content.xhtml" />
+			</t:div>
+		</t:div>-->
+		<!--END CONTENT-->
+		
+		<!--CONTENT-->
+				<t:div styleClass="aon-content-region">
+					<t:div id="aon-scroll-area" forceId="#{true}" style="text-align:center; padding: 0px 10px; ">
+						<ui:include src="/facelet/hyperview/content.xhtml" />
+					</t:div>
+				</t:div>
+				<!--END CONTENT-->
+
+		<h:form id="exportReport" target="reportPreferences" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

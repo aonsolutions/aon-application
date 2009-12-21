@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+  <!-- =================== Navigation Rules ================= -->
+ 
+  <!-- ************ COMPANY ************* -->
+	<navigation-rule>
+	    <navigation-case>
+			<from-outcome>company_registered</from-outcome>
+			<to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
+	    </navigation-case>
+		<navigation-case>
+	      	<from-outcome>company_calendar</from-outcome>
+		    <to-view-id>/facelet/configuration/company/schedule/calendar.faces</to-view-id>
+		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>company_event</from-outcome>
+	      <to-view-id>/facelet/configuration/company/schedule/event.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+  <!-- ************ WORKPLACE ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>workplace</from-outcome>
+			<to-view-id>/facelet/configuration/workplace/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>workplace_form</from-outcome>
+			<to-view-id>/facelet/configuration/workplace/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	      	<from-outcome>workplace_calendar</from-outcome>
+		    <to-view-id>/facelet/configuration/workplace/schedule/calendar.faces</to-view-id>
+		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>workplace_event</from-outcome>
+	      <to-view-id>/facelet/configuration/workplace/schedule/event.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>workplace_hoursaday</from-outcome>
+	      <to-view-id>/facelet/configuration/workplace/summary/hoursaday.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>workplace_incidences</from-outcome>
+	      <to-view-id>/facelet/configuration/workplace/summary/incidences.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+  <!-- ************ WORKACTIVITY ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>workactivity_form</from-outcome>
+			<to-view-id>/facelet/configuration/workactivity/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	      	<from-outcome>workactivity_calendar</from-outcome>
+		    <to-view-id>/facelet/configuration/workactivity/schedule/calendar.faces</to-view-id>
+		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>workactivity_event</from-outcome>
+	      <to-view-id>/facelet/configuration/workactivity/schedule/event.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+</faces-config>

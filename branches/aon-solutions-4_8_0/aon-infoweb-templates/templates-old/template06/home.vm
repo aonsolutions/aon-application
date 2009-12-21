@@ -1,0 +1,43 @@
+<div id="body-content">
+<div class="content-text">
+			<table cellpadding="15" cellspacing="15" border="0">
+<tr>
+	<td>
+		<p>$!company.getName() </p>
+		<p>Pintor Vicente Abreu 7 Bajo  </p>
+		<p>01008 Vitoria (ALAVA)</p>
+
+$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName()
+
+
+		<p>Tel: $!phone</p>
+
+	 #if ($fax && !$fax.toString().trim().equals(""))
+		<p>Fax: $!fax</p>
+	 #end
+		<div class="title">
+			$!title
+		</div>
+		<p>
+			$!text
+
+
+		</p>
+#if ($schedule && !$schedule.toString().trim().equals(""))
+		<div class="title">
+			Horario
+		</div>
+		<p>
+			$!schedule
+
+		</p>
+#end
+	</td>
+	<td style="text-align:left;">
+	<p>SLOGAN: $!slogan</p>
+	<p>TEXTO: $!description</p>
+	</td>
+</tr>
+</table>
+		</div>
+	</div>

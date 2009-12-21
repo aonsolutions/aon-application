@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="languageList">
+	
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+				cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.language}" />					
+				</aon:div>
+
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="home" styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_close}"/>
+					</aon:div>
+				</aon:div>
+			</aon:panelGrid> 
+
+			<!--  aon-region-body -->
+			<aon:div forceId="#{true}" id="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<aon:div>
+					<aon:dataTable id="languagesDataList"  columnWidths="60,80,*,50,60" 
+						value="#{language.languages}" var="to" rows="20"
+						columnClasses="aon-table-body aon-table-body-icon,
+						 	aon-table-body aon-table-body-string,
+						 	aon-table-body aon-table-body-string,
+						 	aon-table-body aon-table-body-string,
+						 	aon-table-body aon-table-body-icon">
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_selected" value="#{appBundle.language_active}"/>
+								</f:facet>
+								<aon:selectBooleanCheckbox id="Language_selected" value="#{to.selected}" 
+										partialSubmit="true" rendered="#{!to.defaultLanguage}"
+										valueChangeListener="#{language.selectedLanguageChanged}"/>
+								<aon:graphicImage id="Language_selected_blocked" rendered="#{to.defaultLanguage}"
+									url="/images/cms/blocked.gif" alt="#{appBundle.language_blocked}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_id" value="#{appBundle.language_id}" />
+								</f:facet>
+								<aon:graphicImage id="Language_flag" alt="#{to.language.locale.displayName}"
+									url="/images/flags/#{to.language.locale.language}.gif" />
+								<aon:outputText id="Language_id" value="#{to.language.locale.language}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_description" value="#{appBundle.language_description}" />
+								</f:facet>
+								<aon:inputText id="Language_description" value="#{to.description}" size="64" partialSubmit="true" 
+										valueChangeListener="#{language.textChanged}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_position" value="#{appBundle.language_position}" />
+								</f:facet>
+								<aon:graphicImage rendered="#{to.position == 0}"
+									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
+								<aon:commandButton id="moveUp" 
+									actionListener="#{language.onMoveUp}" 
+									rendered="#{to.position != 0}"
+									image="/images/cms/up.gif" style="margin-left: 4px;"/>
+								<aon:commandButton id="moveDown" 
+									actionListener="#{language.onMoveDown}"
+									rendered="#{to.position &lt; (language.rowCount - 1)}"
+									image="/images/cms/down.gif" style="margin-left: 4px;" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="Language_defaultLanguage" value="#{appBundle.language_defaultLanguage}" />
+								</f:facet>
+								<aon:selectBooleanCheckbox id="Language_defaultLanguage" 
+										value="#{to.defaultLanguage}" partialSubmit="true"
+										disabled="#{to.defaultLanguage}"
+										valueChangeListener="#{language.defaultLanguageChanged}"/>
+							</aon:column>
+
+						</aon:dataTable>
+
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

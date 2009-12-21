@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Beneficios por familia"
+    label="Beneficios por familia" sqlSentence="SELECT pcategory.id as id, pcategory.name as familia,&#xd;&#xa;       @ini:=inventarioCategoriaFecha(?, pcategory.id ) as inicial,&#xd;&#xa;       @com:=facturasCategoriaFecha(?, ?, pcategory.id, 0 ) as compras,&#xd;&#xa;       @ven:=facturasCategoriaFecha(?, ?, pcategory.id, 1 ) as ventas,&#xd;&#xa;       @fin:=inventarioCategoriaFecha(?, pcategory.id) as final,&#xd;&#xa;       @ben:=(@ini + @ven - @fin - @com) AS beneficio,&#xd;&#xa;       ((@ben / @com) * 100) AS sobre_compras,&#xd;&#xa;       ((@ben / @ven) * 100) AS sobre_ventas&#xd;&#xa;&#xd;&#xa;  FROM pcategory;&#xd;&#xa;&#xd;&#xa;&#xd;&#xa;">
+    <parameters>
+        <parameter name="inidate" type="DATE"/>
+        <parameter name="inidate" type="DATE"/>
+        <parameter name="enddate" type="DATE"/>
+        <parameter name="inidate" type="DATE"/>
+        <parameter name="enddate" type="DATE"/>
+        <parameter name="enddate" type="DATE"/>
+    </parameters>
+    <results>
+        <result accessName="CATEGORY_ID" columnId="id" export="true"
+            label="Codigo" tableId="pcategory" type="INTEGER"/>
+        <result accessName="CATEGORY_NAME" columnId="name" export="true"
+            label="Familia" tableId="pcategory" type="STRING"/>
+        <result accessName="inicial" columnId="" label="Inicial" type="DOUBLE"/>
+        <result accessName="compras" columnId="" label="Compras" type="DOUBLE"/>
+        <result accessName="ventas" columnId="" label="Ventas" type="DOUBLE"/>
+        <result accessName="final" columnId="" label="Final" type="DOUBLE"/>
+        <result accessName="beneficio" columnId="" label="Beneficio" type="DOUBLE"/>
+        <result accessName="sobrecompras" columnId="" label="%Compras" type="DOUBLE"/>
+        <result accessName="sobreventas" columnId="" label="%Ventas" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

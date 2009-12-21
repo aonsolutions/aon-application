@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:panelGroup>
+		<!-- main menu declaration  -->
+		<aon:form>
+			<rich:toolBar>
+				<rich:dropDownMenu showDelay="0" id="auxiliary" event="onclick"
+					hideDelay="400" value="#{menuBundle.aon_auxiliary}"
+					rendered="#{role.monitorRole or role.managerRole}">
+					<rich:menuItem id="dossier_type"
+						icon="/css/images/menu_icons/task_dossier_type.gif"
+						value="#{menuBundle.aon_dossier_type}" action="dossier_type_list" />
+					<rich:menuItem id="activity_type"
+						value="#{menuBundle.aon_activity_type}"
+						icon="/css/images/menu_icons/task_activity_types.gif"
+						action="activity_type_standalone" />
+					<rich:menuItem id="job_type" value="#{menuBundle.aon_job_type}"
+						icon="/css/images/menu_icons/task_job_type.gif" action="job_type" />
+				</rich:dropDownMenu>
+				<rich:dropDownMenu id="master" event="onclick" hideDelay="400"
+					showDelay="0" value="#{menuBundle.aon_master}"
+					rendered="#{role.monitorRole}">
+					<rich:menuItem id="customer" value="#{menuBundle.aon_customer}"
+						icon="/css/images/menu_icons/task_customer.gif" action="customer" />
+					<rich:menuSeparator />
+					<rich:menuItem id="task" value="#{menuBundle.aon_task}"
+						icon="/css/images/menu_icons/task_task.gif" action="task" />
+				</rich:dropDownMenu>
+
+				<rich:dropDownMenu id="process" event="onclick" hideDelay="400"
+					showDelay="0" value="#{menuBundle.aon_process}"
+					rendered="#{role.monitorRole}">
+					<rich:menuItem value="#{menuBundle.aon_process}"
+						icon="/css/images/menu_icons/task_process.gif" action="process"
+						rendered="#{role.managerRole}" />
+					<rich:menuSeparator />
+					<rich:menuItem value="#{menuBundle.aon_process_transition_type}"
+						icon="/css/images/menu_icons/aon_process_transition_type.gif" action="process_transition_type"
+						rendered="#{role.managerRole}" />
+					<rich:menuSeparator />
+					<rich:menuItem value="#{menuBundle.aon_process_launcher}"
+						icon="/css/images/icons/aon-launch-process.gif"
+						action="#{processWizard.start}" rendered="#{role.managerRole}" />
+					<rich:menuSeparator />
+					<rich:menuItem value="#{menuBundle.aon_process_monitor}"
+						icon="/css/images/icons/aon-process-monitor.gif"
+						action="campaign_list" rendered="#{role.managerRole}" />
+				</rich:dropDownMenu>
+
+				<rich:dropDownMenu id="timeManagement" showDelay="0"
+					value="#{menuBundle.aon_time_management}" hideDelay="400"
+					rendered="#{role.monitorRole}" event="onclick">
+					<rich:menuItem id="daily_tracking"
+						icon="/css/images/menu_icons/task_daily_tracking.gif"
+						value="#{menuBundle.aon_daily_tracking}" action="daily_tracking"
+						actionListener="#{dailyTracking.onLaunch}" />
+					<rich:menuSeparator />
+					<rich:menuItem id="daily_tracking_report"
+						icon="/css/images/menu_icons/task_report.gif"
+						value="#{menuBundle.aon_daily_tracking_report}"
+						actionListener="#{dailyTrackingReport.onResetReportSearch}"
+						action="daily_tracking_report" />
+				</rich:dropDownMenu>
+				<aon:outputText value="&#160;" />
+			</rich:toolBar>
+		</aon:form>
+	</aon:panelGroup>
+</ui:composition>
+
+</body>
+</html>

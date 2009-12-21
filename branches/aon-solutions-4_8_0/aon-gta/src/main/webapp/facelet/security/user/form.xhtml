@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+<ui:define name="content">
+	<f:loadBundle basename="com.code.aon.ui.security.i18n.messages" var="securityBundle" />
+
+	<h:form id="userForm">
+		<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+			forceId="#{true}">
+			<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{user.onAccept}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle" forceId="#{true}">
+			<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_editing}" />
+			</t:div>
+		</t:div>
+
+		<t:div id="aon-scroll-area" forceId="#{true}">
+			<t:div styleClass="aon-scroll-area-internal">
+				<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+					styleClass="aon-form-table"
+					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="User_id"
+							styleClass="aon-form-input-text-label"
+							value="#{securityBundle.aon_security_id}" />
+						<t:inputText id="User_id" forceId="#{true}" size="8"
+							styleClass="aon-form-input-text-disabled"
+							value="#{user.user.id}"
+							disabledOnClientSide="true" />
+
+						<h:outputLabel for="User_name"
+							styleClass="aon-form-input-text-label"
+							value="#{securityBundle.aon_security_name}" />
+						<t:inputText id="User_name" forceId="#{true}" size="20"
+							styleClass="aon-form-input-text-disabled"
+							value="#{user.user.name}"
+							disabledOnClientSide="true" />
+
+						<h:outputLabel for="User_description"
+							styleClass="aon-form-input-text-label"
+							value="#{securityBundle.aon_security_description}" />
+						<t:inputText id="User_description" forceId="#{true}" size="30"
+							styleClass="aon-form-input-text-disabled"
+							value="#{user.user.description}"
+							disabledOnClientSide="true" />
+
+						<h:outputLabel for="User_password"
+							styleClass="aon-form-input-text-label"
+							value="#{securityBundle.aon_security_current_password}" />
+						<t:inputSecret id="User_password" forceId="#{true}" size="8"
+							styleClass="aon-form-input-text-disabled"
+							value="#{user.password}"
+							/>
+
+						<h:outputLabel for="User_new_password"
+							styleClass="aon-form-input-text-label"
+							value="#{securityBundle.aon_security_new_password}" />
+						<t:inputSecret id="User_new_password" forceId="#{true}" size="8"
+							styleClass="aon-form-input-text-disabled"
+							value="#{user.newPassword}"
+							/>
+
+						<h:outputLabel for="User_confirm_password"
+							styleClass="aon-form-input-text-label"
+							value="#{securityBundle.aon_security_confirm_password}" />
+						<t:inputSecret id="User_confirm_password" forceId="#{true}" size="8"
+							styleClass="aon-form-input-text-disabled"
+							value="#{user.confirmPassword}"
+							/>
+
+					</h:panelGrid>
+
+			</t:div>
+		</t:div>	
+	</h:form>
+</ui:define>
+
+</ui:composition>
+</body>
+</html>

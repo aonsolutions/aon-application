@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+	
+		<aon:form id="directAccessGroupForm">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.direct_access_group}" />
+				<ui:param name="controller" value="#{direct_access_group}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+
+					<aon:outputLabel for="DirectAccessGroup_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="DirectAccessGroup_alias"
+						required="true" size="32" maxlength="32"
+						value="#{direct_access_group.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+
+					<aon:outputLabel for="DirectAccessGroupDetail_label"
+						value="#{appBundle.direct_access_group_label}" />
+					<aon:inputText id="DirectAccessGroupDetail_label"
+						required="true" size="50" maxlength="64"
+						value="#{direct_access_group.toI18n.label}" />
+
+					<aon:outputLabel for="DirectAccessGroup_section"
+						value="#{appBundle.cms_section}"/>
+					<aon:selectOneMenu id="DirectAccessGroup_section"  
+						value="#{direct_access_group.to.section}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="DirectAccessGroup_active"
+						value="#{appBundle.direct_access_group_active}"/>
+					<aon:selectBooleanCheckbox id="DirectAccessGroup_active" 
+						value="#{direct_access_group.to.active}" />
+					
+				</aon:panelGrid>
+			</aon:div>
+		
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

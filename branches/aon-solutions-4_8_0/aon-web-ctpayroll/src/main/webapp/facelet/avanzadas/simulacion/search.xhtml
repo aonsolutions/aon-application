@@ -1,0 +1,570 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="costesSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_avanzadas_simulacion}" />
+				<ui:param name="controller" value="#{costes}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{costes.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="costes_list" />
+
+
+				<aon:div styleClass="aon-scroll-area aon-scroll-area-search">
+				<aon:panelGrid columns="4" dir="true" width="100%"
+					style="margin-bottom=2px;">
+
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_integralTra_trabajador}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Tra_cdg" lookup="#{trabajadorLookup}"
+							value="#{costes.trabajador.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Tra_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_integralTra_trabajador}"
+							selectReRender="Tra_cdg" lookup="#{trabajadorLookup}"
+							minHeight="440" property="#{costes.trabajador}">
+						</aon:lookupButton>
+					</aon:div>
+
+
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_apenom}" />
+							<aon:inputText id="Costes_nombre"
+								valueChangeListener="#{costes.addExpression}" 
+								size="30" maxlength="8" />
+
+							<aon:outputLabel
+						value="#{appBundle.aon_payroll_avanzadas_simulacion_csg}" />
+					<aon:inputText id="Costes_id_numero"
+								valueChangeListener="#{costes.addExpression}" 
+						size="8" maxlength="8" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_avanzadas_simulacion_anio}" />
+					<aon:inputText id="Costes_anionac"
+								valueChangeListener="#{costes.addExpression}" 
+						size="8" maxlength="8" />
+
+
+				</aon:panelGrid>
+
+
+
+
+
+				<rich:tabPanel height="250" switchType="client">
+
+					<rich:tab id="datos"
+						label="#{appBundle.aon_payroll_principales_clientes_datos}">
+
+
+						<aon:panelGrid columns="4" dir="true" width="100%"
+							style="margin-bottom=2px;">
+
+							<aon:outputText
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_sit}" />
+
+							<aon:selectOneMenu layout="pageDirection"
+								id="Costes_sitfam"
+								valueChangeListener="#{costes.addEqualExpression}">
+								<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Sitfami" />
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{costes.listasitus}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_min}" />
+
+							<aon:selectOneMenu layout="pageDirection"
+								id="Costes_xminus"
+								valueChangeListener="#{costes.addEqualExpression}">
+								<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Minusvalia" />
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{costes.listaminus}" />
+							</aon:selectOneMenu>
+
+
+
+							<aon:outputText
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_cot}" />
+
+							<aon:selectOneMenu layout="pageDirection"
+								id="Costes_procot"
+								valueChangeListener="#{costes.addEqualExpression}">
+								<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Prorateo" />
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{costes.listadimes}" />
+							</aon:selectOneMenu>
+
+
+							<aon:outputText
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_ret}" />
+
+							<aon:selectOneMenu layout="pageDirection"
+								id="Costes_proret"
+								valueChangeListener="#{costes.addEqualExpression}">
+								<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Prorateo" />
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{costes.listadimes}" />
+							</aon:selectOneMenu>
+
+
+
+							<aon:outputText
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_tiem}" />
+
+							<aon:selectOneMenu layout="pageDirection"
+								id="Costes_indtp"
+								valueChangeListener="#{costes.addEqualExpression}">
+								<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Timecont" />
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{costes.listajornada}" />
+							</aon:selectOneMenu>
+
+
+						</aon:panelGrid>
+
+
+					</rich:tab>
+
+					<rich:tab id="datos1"
+						label="#{appBundle.aon_payroll_principales_clientes_datos}">
+
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_imp}" />
+							</f:facet>
+
+							<aon:panelGrid columns="4" dir="true" width="100%"
+								style="margin-bottom=2px;">
+
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_pen}" />
+								<aon:inputText id="Costes_impPension"
+								valueChangeListener="#{costes.addExpression}" 
+									size="30" maxlength="8" />
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_anu}" />
+								<aon:inputText  id="Costes_impAnual"
+								valueChangeListener="#{costes.addExpression}"  
+									size="8" maxlength="8" />
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_red}" />
+								<aon:inputText id="Costes_impIrreg"
+								valueChangeListener="#{costes.addExpression}"   
+									size="8" maxlength="8" />
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_cotsss}" />
+								<aon:inputText id="Costes_impSs"
+								valueChangeListener="#{costes.addExpression}"
+									size="8" maxlength="8" />
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_por}" />
+								<aon:inputText id="Costes_solicita"
+								valueChangeListener="#{costes.addExpression}"  
+									size="8" maxlength="8" />
+							</aon:panelGrid>
+						</aon:panel>
+
+
+
+						<aon:panelGrid columns="4" dir="true" width="100%"
+							style="margin-bottom=2px;">
+
+
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_apre}" />
+
+							<aon:selectBooleanCheckbox id="Costes_aprendiz"
+								valueChangeListener="#{costes.addEqualExpression}"   />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_ct}" />
+
+							<aon:selectBooleanCheckbox id="Costes_temporal"
+								valueChangeListener="#{costes.addEqualExpression}" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_alto}" />
+
+							<aon:selectBooleanCheckbox id="Costes_alto"
+								valueChangeListener="#{costes.addEqualExpression}" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_porante}" />
+
+							<aon:selectBooleanCheckbox id="Costes_minimo"
+								valueChangeListener="#{costes.addEqualExpression}" />
+
+
+						</aon:panelGrid>
+
+
+					</rich:tab>
+
+					<rich:tab id="datos2"
+						label="#{appBundle.aon_payroll_principales_clientes_datos}">
+
+						<aon:panelGrid columns="4" dir="true" width="100%"
+							style="margin-bottom=2px;">
+
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_re}" />
+							<aon:inputText id="Costes_semana"
+								valueChangeListener="#{costes.addExpression}" 
+								size="30" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_timpo}" />
+							<aon:inputText id="Costes_semanatp"
+								valueChangeListener="#{costes.addExpression}" 
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_can}" />
+							<aon:inputText id="Costes_cantp"
+								valueChangeListener="#{costes.addExpression}"
+								size="8" maxlength="8" />
+
+
+
+
+							<aon:outputLabel for="Base_cdg"
+								value="#{appBundle.aon_payroll_avanzadas_hojas_gtar}" />
+							<aon:div styleClass="aon-lookup">
+								<aon:lookupInputText id="Base_cdg" lookup="#{baseLookup}"
+									reRender="Base_descripcion" value="#{costes.basecoti.cdg}"
+									size="5">
+								</aon:lookupInputText>
+								<aon:lookupButton id="Base_lookup"
+									windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_gtar}"
+									selectReRender="Base_cdg,Base_descripcion"
+									lookup="#{baseLookup}" minHeight="440"
+									property="#{costes.basecoti}">
+								</aon:lookupButton>
+								<aon:inputText id="Base_descripcion"
+									value="#{(costes.basecoti.description!=null)?(costes.basecoti.description):('')}"
+									size="34" disabled="true" />
+							</aon:div>
+
+							<aon:outputLabel for="Epigrafe_cdg"
+								value="#{appBundle.aon_payroll_avanzadas_hojas_epi}" />
+							<aon:div styleClass="aon-lookup">
+								<aon:lookupInputText id="Epigrafe_cdg"
+									lookup="#{epigrafeLookup}" reRender="Epigrafe_description"
+									value="#{costes.epigrafe.cdg}" size="5">
+								</aon:lookupInputText>
+								<aon:lookupButton id="Epigrafe_lookup"
+									windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_epi}"
+									selectReRender="Epigrafe_cdg,Epigrafe_description"
+									lookup="#{epigrafeLookup}" minHeight="440"
+									property="#{costes.epigrafe}">
+								</aon:lookupButton>
+								<aon:inputText id="Epigrafe_description"
+									value="#{(costes.epigrafe.description!=null)?(costes.epigrafe.description):('')}"
+									size="34" disabled="true" />
+							</aon:div>
+
+							<aon:outputLabel for="Por_cdg"
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_asim}" />
+							<aon:div styleClass="aon-lookup">
+								<aon:lookupInputText id="Por_cdg" lookup="#{porcentajeLookup}"
+									reRender="Epigrafe_description"
+									value="#{costes.porcoti.cdg}" size="5">
+								</aon:lookupInputText>
+								<aon:lookupButton id="Por_lookup"
+									windowTitle="#{appBundle.aon_payroll_avanzadas_simulacion_asim}"
+									selectReRender="Por_cdg,Por_description"
+									lookup="#{porcentajeLookup}" minHeight="440"
+									property="#{costes.porcoti}">
+								</aon:lookupButton>
+								<aon:inputText id="Por_description"
+									value="#{(costes.porcoti.description!=null)?(costes.porcoti.description):('')}"
+									size="34" disabled="true" />
+							</aon:div>
+
+
+
+						</aon:panelGrid>
+
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_plu}" />
+							</f:facet>
+							<aon:panelGrid columns="4" dir="true" width="100%"
+								style="margin-bottom=2px;">
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_numaut}" />
+								<aon:inputText id="Costes_plunumaut"
+								valueChangeListener="#{costes.addExpression}"   
+									size="30" maxlength="8" />
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_poplu}" />
+								<aon:inputText id="Costes_pluprcmin"
+								valueChangeListener="#{costes.addExpression}"   
+									size="8" maxlength="8" />
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_popluu}" />
+								<aon:inputText id="Costes_pluprcmax"
+								valueChangeListener="#{costes.addExpression}"   
+									size="8" maxlength="8" />
+							</aon:panelGrid>
+						</aon:panel>
+
+
+					</rich:tab>
+
+				<!--  	<rich:tab id="datos3"
+						label="#{appBundle.aon_payroll_avanzadas_simulacion_boni}">
+	                     <aon:div id="linDiv">
+
+								<ui:include src="grid.xhtml" />
+							</aon:div>
+
+
+					</rich:tab>
+					
+					<rich:tab id="datos4"
+						label="#{appBundle.aon_payroll_avanzadas_simulacion_comu}">
+	                     <aon:div id="linDiv2">
+
+							 	<ui:include src="grid2.xhtml" />
+							</aon:div>
+
+
+					</rich:tab>
+-->
+
+				</rich:tabPanel>
+
+
+				<h:panelGrid columns="3" dir="true" width="100%"
+					style="margin-bottom=2px;">
+					<aon:div styleClass="aon-scroll-area aon-scroll-area-sim">
+						<aon:panelGrid columns="2" dir="true" width="100%"
+							style="margin-bottom=2px;">
+
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_actu}" />
+							</f:facet>
+
+						<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_but}" />
+							<aon:inputText  id="Costes_impActual"
+								valueChangeListener="#{costes.addExpression}"  
+								size="8" maxlength="8" />
+
+                            <aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_impext}" />
+							<aon:inputText  id="Costes_impExtActual"
+								valueChangeListener="#{costes.addExpression}"  
+								size="8" maxlength="8" />
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_seg}" />
+							<aon:inputText  id="Costes_ssActual"
+								valueChangeListener="#{costes.addExpression}" 
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_rete}" />
+							<aon:inputText  id="Costes_irpfActual"
+								valueChangeListener="#{costes.addExpression}" 
+								size="8" maxlength="8" />
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_net}" />
+							<aon:inputText  id="Costes_netoActual"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_ss}" />
+							<aon:inputText  id="Costes_ssEmpActual"
+								valueChangeListener="#{costes.addExpression}" 
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_coste}" />
+							<aon:inputText  id="Costes_costeActual"
+								valueChangeListener="#{costes.addExpression}" 
+								size="8" maxlength="8" />
+
+						
+
+						</aon:panelGrid>
+					</aon:div>
+
+					<aon:div styleClass="aon-scroll-area aon-scroll-area-sim">
+						<aon:panelGrid columns="2" dir="true" width="100%"
+							style="margin-bottom=2px;">
+
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_sup}" />
+							</f:facet>
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_but}" />
+							<aon:inputText  id="Costes_impSupuesto"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+                            <aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_impext}" />
+							<aon:inputText id="Costes_impExtSupuesto"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_seg}" />
+							<aon:inputText  id="Costes_ssSupuesto"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_rete}" />
+							<aon:inputText id="Costes_irpfSupuesto"
+								valueChangeListener="#{costes.addExpression}"  
+								size="8" maxlength="8" />
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_net}" />
+							<aon:inputText  id="Costes_netoSupuesto"
+								valueChangeListener="#{costes.addExpression}"    
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_ss}" />
+							<aon:inputText id="Costes_ssEmpSupuesto"
+								valueChangeListener="#{costes.addExpression}" 
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_coste}" />
+							<aon:inputText  id="Costes_costeSupuesto"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+				
+
+						</aon:panelGrid>
+					</aon:div>
+
+
+					<aon:div styleClass="aon-scroll-area aon-scroll-area-sim">
+						<aon:panelGrid columns="2" dir="true" width="100%"
+							style="margin-bottom=2px;">
+
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_avanzadas_simulacion_dif}" />
+							</f:facet>
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_but}" />
+							<aon:inputText id="Costes_impDiferencia"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_impext}" />
+							<aon:inputText id="Costes_impExtDiferencia"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_seg}" />
+							<aon:inputText id="Costes_ssDiferencia"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_rete}" />
+							<aon:inputText  id="Costes_irpfDiferencia"
+								valueChangeListener="#{costes.addExpression}"  
+								size="8" maxlength="8" />
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_net}" />
+							<aon:inputText  id="Costes_netoDiferencia"
+								valueChangeListener="#{costes.addExpression}"  
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_ss}" />
+							<aon:inputText id="Costes_ssEmpDiferencia"
+								valueChangeListener="#{costes.addExpression}"    
+								size="8" maxlength="8" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_avanzadas_simulacion_coste}" />
+							<aon:inputText id="Costes_costeDiferenciaa"
+								valueChangeListener="#{costes.addExpression}"   
+								size="8" maxlength="8" />
+
+					
+						</aon:panelGrid>
+					</aon:div>
+				</h:panelGrid>
+
+
+
+
+
+			</aon:div>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	    <aon:lookupButtonPopup lookup="#{trabajadorLookup}" />
+		<aon:lookupButtonPopup lookup="#{baseLookup}" />
+		<aon:lookupButtonPopup lookup="#{epigrafeLookup}" />
+		<aon:lookupButtonPopup lookup="#{porcentajeLookup}" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

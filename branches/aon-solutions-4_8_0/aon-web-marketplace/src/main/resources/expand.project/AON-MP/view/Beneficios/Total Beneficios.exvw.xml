@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Total Beneficios" sqlSentence="SELECT&#xd;&#xa;      @ini:=(SELECT IF (SUM(inventory_detail.cost)&#xd; IS NULL, 0, SUM(inventory_detail.cost * inventory_detail.actual_quantity))&#xd;&#xa;         FROM inventory, inventory_detail&#xd;&#xa;        WHERE inventory.id = inventory_detail.inventory&#xd;&#xa;          AND inventory.inventory_date = ?) AS inicial,&#xd;&#xa;      @com:=(SELECT IF (SUM(invoice_detail.taxable_base)&#xd; IS NULL, 0, &#xd;&#xa;&#x9;&#x9;SUM(TRUNCATE(invoice_detail.taxable_base * &#xd;&#xa;&#x9;&#x9;(IF (invoice.surcharge = 0,1,(invoice_tax.percentage + invoice_tax.surcharge + 100) / 100)), 2)))&#xd;&#xa;         FROM invoice_detail, invoice, invoice_tax&#xd;&#xa;        WHERE invoice_detail.invoice = invoice.id&#xd;&#xa;&#x9;  AND invoice_tax.invoice_detail = invoice_detail.id&#xd;&#xa;&#x9;  AND invoice.type = 0&#xd;&#xa;          AND invoice.issue_date BETWEEN ? AND ?) AS compras,&#xd;&#xa;      @ven:=(SELECT IF (SUM(invoice_detail.taxable_base)&#xd; IS NULL, 0, &#xd;&#xa;&#x9;&#x9;SUM(TRUNCATE(invoice_detail.taxable_base * &#xd;&#xa;&#x9;&#x9;(IF (invoice.surcharge = 0,1,(invoice_tax.percentage + invoice_tax.surcharge + 100) / 100)), 2)))&#xd;&#xa;         FROM invoice_detail, invoice, invoice_tax&#xd;&#xa;        WHERE invoice_detail.invoice = invoice.id&#xd;&#xa;   &#x9; AND invoice_tax.invoice_detail = invoice_detail.id&#xd;&#xa;&#x9;  AND invoice.type = 1&#xd;&#xa;          AND invoice.issue_date BETWEEN ? AND ?) AS ventas,&#xd;&#xa;      @fin:=(SELECT IF (SUM(inventory_detail.cost)&#xd; IS NULL, 0, SUM(inventory_detail.cost  * inventory_detail.actual_quantity))&#xd;&#xa;         FROM inventory, inventory_detail&#xd;&#xa;        WHERE inventory.id = inventory_detail.inventory&#xd;&#xa;          AND inventory.inventory_date = ?) AS final,&#xd;&#xa;      @ben:=(@ini + @ven - @fin - @com) AS beneficio,&#xd;&#xa;      ((@ben / @com) * 100) AS sobre_compras,&#xd;&#xa;      ((@ben / @ven) * 100) AS sobre_ventas&#xd;&#xa;">
+    <parameters>
+        <parameter name="iniDate1" type="DATE"/>
+        <parameter name="iniDate2" type="DATE"/>
+        <parameter name="endDate2" type="DATE"/>
+        <parameter name="iniDate3" type="DATE"/>
+        <parameter name="endDate3" type="DATE"/>
+        <parameter name="endDate4" type="DATE"/>
+    </parameters>
+    <results>
+        <result accessName="inicial" columnId="" label="Inicial" type="DOUBLE"/>
+        <result accessName="compras" columnId="" label="Compras" type="DOUBLE"/>
+        <result accessName="ventas" columnId="" label="Ventas" type="DOUBLE"/>
+        <result accessName="final" columnId="" label="Final" type="DOUBLE"/>
+        <result accessName="beneficio" columnId="" label="Beneficio" type="DOUBLE"/>
+        <result accessName="sobre_compras" columnId="" label="%Compras" type="DOUBLE"/>
+        <result accessName="sobre_ventas" columnId="" label="%Ventas" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

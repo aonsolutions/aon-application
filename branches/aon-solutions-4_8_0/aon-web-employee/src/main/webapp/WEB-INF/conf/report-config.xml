@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<default-config>
+		<fetch-mode paginated="false" />
+		<!-- 
+		<params>
+			<param id="logoImageFile" value="com/code/aon/ui/report/resources/logo.gif" />
+		</params>
+		 -->
+	</default-config>
+
+	<!--  *********  Expenditures  ********* -->
+	<report id="expendituresList" description="Expenditures report">
+		<template path="/com/code/aon/ui/employee/report/templates/expendituresList.jasper" />
+		<bean key="com.code.aon.ui.employee.report.controller.ExpendituresBean" />
+		<collection provider="#{expendituresReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="startDate" value="#{expendituresReport.getStartingDate}" />
+			<param id="endDate" value="#{expendituresReport.getEndingDate}" />
+		</params>
+	</report>
+
+	<!--  *********  Incidences  ********* -->
+	<report id="incidencesList" description="Incidences report">
+		<template path="/com/code/aon/ui/employee/report/templates/incidencesList.jasper" />
+		<bean key="com.code.aon.ui.employee.report.controller.IncidenceBean" />
+		<collection provider="#{incidencesReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="startDate" value="#{incidencesReport.getStartingDate}" />
+			<param id="endDate" value="#{incidencesReport.getEndingDate}" />
+		</params>
+	</report>
+
+	<!--  *********  Resources  ********* -->
+	<report id="resourcesList" description="Resources report">
+		<template path="/com/code/aon/ui/employee/report/templates/resourcesList.jasper" />
+		<bean key="com.code.aon.ui.employee.report.controller.ResourceBean" />
+		<collection provider="#{resourcesReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="startDate" value="#{resourcesReport.getStartingDate}" />
+			<param id="endDate" value="#{resourcesReport.getEndingDate}" />
+		</params>
+	</report>
+
+	<!--  *********  Seniority  ********* -->
+	<report id="seniorityList" description="Seniority report">
+		<template path="/com/code/aon/ui/employee/report/templates/seniorityList.jasper" />
+		<bean key="com.code.aon.ui.employee.report.controller.SeniorityBean" />
+		<collection provider="#{seniorityReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+</report-config>
