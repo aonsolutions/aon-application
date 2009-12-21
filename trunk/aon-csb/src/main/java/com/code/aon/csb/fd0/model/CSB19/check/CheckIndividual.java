@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.code.aon.csb.fd0.model.Fd0Exception;
 import com.code.aon.csb.fd0.model.CSB19.data.Individual;
 
-
 public class CheckIndividual extends Check{
 
 	@SuppressWarnings("unchecked")
@@ -44,7 +43,7 @@ public class CheckIndividual extends Check{
 			exceptions.add( new Fd0Exception( exceptionInfo+": "+getMessage("ERROR_INDIVIDUAL_7") ,individual.toString()) );
 			status = false;
 		}
-		if (individual.getAccountUserPCode().intValue() > 99999) {
+		if (individual.getAccountUserPCode() != null && individual.getAccountUserPCode().toString().length() > 5) {
 			exceptions.add( new Fd0Exception( exceptionInfo+": "+getMessage("ERROR_INDIVIDUAL_8") ,individual.toString()) );
 			status = false;
 		}
