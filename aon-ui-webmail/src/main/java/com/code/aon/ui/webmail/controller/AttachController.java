@@ -26,7 +26,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
@@ -124,20 +123,10 @@ public class AttachController {
         context.responseComplete();    	
     }
     
-    private boolean isMSIE() {
-    	FacesContext context = FacesContext.getCurrentInstance();
-    	String browser = context.getExternalContext().getRequestHeaderMap().get("User-Agent");
-		return StringUtils.containsIgnoreCase(browser, "msie");
-    }
-    
     private void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
         try {
 	        String outFilename = "attachments.zip";
-	        // Unico Content-Type que soporta Firefox para ficheros comprimidos
 	        response.setContentType("application/x-zip-compressed");
-	        if ( isMSIE() ) {
-	        	response.setHeader("Content-Encoding", "deflate");
-	        }
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
 

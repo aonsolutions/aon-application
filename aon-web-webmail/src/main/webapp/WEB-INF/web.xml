@@ -115,7 +115,7 @@
 	
 	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
+		<param-value>../aon-desktop/richFaces3.3.0/</param-value>
 	</context-param>
 	
 	<context-param>
@@ -212,18 +212,6 @@
 	<servlet-mapping>
 		<servlet-name>CidServlet</servlet-name>
 		<url-pattern>*.cid</url-pattern>
-	</servlet-mapping>
-	
-	<!-- Message Content Servlet -->
-	<servlet>
-		<servlet-name>MessageServlet</servlet-name>
-		<servlet-class>
-			com.code.aon.ui.webmail.servlet.MessageServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>MessageServlet</servlet-name>
-		<url-pattern>*.msg</url-pattern>
 	</servlet-mapping>
 	
 	<!-- Resource Servlet -->
