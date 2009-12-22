@@ -42,74 +42,68 @@
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="dataTable" rows="#{generic_page.pageLimit}" var="to"
-					value="#{generic_page.model}" rendered="#{generic_page.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{generic_page}" />
+					<ui:define name="columns">
+								
+						<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.cms_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.generic_page_title}" />
+							</f:facet>
+							<aon:outputText value="#{generic_page.i18nTitle}">
+								<aon:abbreviateConverter maxWidth="60" />
+							</aon:outputText>						
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.cms_section}" />
+							</f:facet>
+							<aon:outputText value="#{to.section.alias}" />
+						</aon:column>
 							
-					<aon:rowSelector
-						action="generic_page_form" actionListener="#{generic_page.onSelect}" />
-							
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.alias}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.generic_page_title}" />
-						</f:facet>
-						<aon:outputText value="#{generic_page.i18nTitle}">
-							<aon:abbreviateConverter maxWidth="60" />
-						</aon:outputText>						
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_section}" />
-						</f:facet>
-						<aon:outputText value="#{to.section.alias}" />
-					</aon:column>
+						<aon:column styleClass="aon-width-70 aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.generic_page_create_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.create_date}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
 						
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.generic_page_create_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.create_date}">
-							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.generic_page_active}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																									
-							<aon:commandLink title="#{appBundle.generic_page_activate}" 
-								action="generic_page_list"
-								actionListener="#{generic_page.onActivate}" 
-								rendered="#{!to.active}">
-								<aon:graphicImage id="GenericPage_active" alt="#{appBundle.generic_page_activate}"
-									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-							</aon:commandLink>
-							<aon:commandLink title="#{appBundle.generic_page_deactivate}" 
-								action="generic_page_list"
-								actionListener="#{generic_page.onDeactivate}" 
-								rendered="#{to.active}">
-								<aon:graphicImage id="GenericPage_deactive" alt="#{appBundle.generic_page_deactivate}"
-									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-							</aon:commandLink>
-						</aon:div>
-					</aon:column>
-
-				</aon:dataTable>
-					
-				<aon:dataScroller2 for="dataTable" showNote="true" />					
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.generic_page_active}" />
+							</f:facet>
+							<aon:div onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();" >																									
+								<aon:commandLink title="#{appBundle.generic_page_activate}" 
+									action="generic_page_list"
+									actionListener="#{generic_page.onActivate}" 
+									rendered="#{!to.active}">
+									<aon:graphicImage id="GenericPage_active" alt="#{appBundle.generic_page_activate}"
+										url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.generic_page_deactivate}" 
+									action="generic_page_list"
+									actionListener="#{generic_page.onDeactivate}" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="GenericPage_deactive" alt="#{appBundle.generic_page_deactivate}"
+										url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+								</aon:commandLink>
+							</aon:div>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 					
 			</aon:div>
 		</aon:form>

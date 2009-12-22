@@ -98,78 +98,75 @@
 		
 							</aon:div>
 						
-							<aon:dataTable id="dataTable" value="#{modular_page_option.model}" var="to"
-								rows="#{modular_page_option.pageLimit}"
-								columnClasses="aon-editDataTable-textColumn aon-width-300, aon-editDataTable-textColumn,
-										aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
-											
-								<aon:rowSelector immediate="true"
-									reRender="detail" actionListener="#{modular_page_option.onSelect}" />							
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+								<ui:param name="controller" value="#{modular_page_option}" />
+								<ui:param name="rowSelectorReRender" value="detail" />
+								<ui:define name="columns">								
 																				
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.cms_alias}"/>
-									</f:facet>
-									<aon:outputText value="#{to.alias}" />
-								</aon:column>
-	
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.cms_label}"/>
-									</f:facet>
-									<aon:outputText value="#{modular_page_option.i18nLabel}" />
-								</aon:column>
-	
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.cms_active}" />
-									</f:facet>
-									<aon:div onmouseover="disableRowSelector();"
-										onmouseout="enableRowSelector();" >																																	
-										<aon:commandLink title="#{appBundle.cms_activate}" 
-											actionListener="#{modular_page_option.onActivate}"
-											reRender="dataTable"
-											rendered="#{!to.active}">
-											<aon:graphicImage id="modular_page_option_active" alt="#{appBundle.sidebar_option_activate}"
-												url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-										</aon:commandLink>
-										<aon:commandLink title="#{appBundle.cms_deactivate}" 
-											actionListener="#{modular_page_option.onDeactivate}" 
-											reRender="dataTable"
-											rendered="#{to.active}">
-											<aon:graphicImage id="modular_page_option_deactive" alt="#{appBundle.modular_page_option_deactivate}"
-												url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-										</aon:commandLink>
-									</aon:div>
-								</aon:column>
-	
-								<aon:column styleClass="aon-width-80">
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.cms_position}" />
-									</f:facet>
-									<aon:div onmouseover="disableRowSelector();"
-										onmouseout="enableRowSelector();" >		
-										<aon:commandLink id="moveUp" reRender="dataTable"
-											title="#{appBundle.cms_move_up}" immediate="true"
-											actionListener="#{modular_page_option.onMoveUp}" 
-											styleClass="aon-margin-right"
-											rendered="#{to.position != 0 and modular_page_option.to==null}">
-											<aon:graphicImage alt="#{appBundle.cms_move_up}"
-												url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
-										</aon:commandLink>
-										<aon:commandLink id="moveDown" reRender="dataTable"
-											title="#{appBundle.cms_move_down}" immediate="true"
-											actionListener="#{modular_page_option.onMoveDown}" 
-											rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)  and modular_page_option.to==null}">
-											<aon:graphicImage alt="#{appBundle.cms_move_down}"
-												url="#{aonResource.resolveLocal['/images/cms/down.gif']}" />
-										</aon:commandLink>
-									</aon:div>
-								</aon:column>
-	
-							</aon:dataTable>
-								
-							<aon:dataScroller2 for="dataTable" showNote="true" />					
+									<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.cms_alias}"/>
+										</f:facet>
+										<aon:outputText value="#{to.alias}" />
+									</aon:column>
+		
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.cms_label}"/>
+										</f:facet>
+										<aon:outputText value="#{modular_page_option.i18nLabel}" >
+											<aon:abbreviateConverter maxWidth="60" />
+										</aon:outputText>									
+									</aon:column>
+		
+									<aon:column styleClass="aon-editDataTable-iconColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.cms_active}" />
+										</f:facet>
+										<aon:div onmouseover="disableRowSelector();"
+											onmouseout="enableRowSelector();" >																																	
+											<aon:commandLink title="#{appBundle.cms_activate}" 
+												actionListener="#{modular_page_option.onActivate}"
+												reRender="dataTable"
+												rendered="#{!to.active}">
+												<aon:graphicImage id="modular_page_option_active" alt="#{appBundle.sidebar_option_activate}"
+													url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+											</aon:commandLink>
+											<aon:commandLink title="#{appBundle.cms_deactivate}" 
+												actionListener="#{modular_page_option.onDeactivate}" 
+												reRender="dataTable"
+												rendered="#{to.active}">
+												<aon:graphicImage id="modular_page_option_deactive" alt="#{appBundle.modular_page_option_deactivate}"
+													url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:column>
+		
+									<aon:column styleClass="aon-width-80 aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.cms_position}" />
+										</f:facet>
+										<aon:div onmouseover="disableRowSelector();"
+											onmouseout="enableRowSelector();" >		
+											<aon:commandLink id="moveUp" reRender="dataTable"
+												title="#{appBundle.cms_move_up}" immediate="true"
+												actionListener="#{modular_page_option.onMoveUp}" 
+												styleClass="aon-margin-right"
+												rendered="#{to.position != 0 and modular_page_option.to==null}">
+												<aon:graphicImage alt="#{appBundle.cms_move_up}"
+													url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
+											</aon:commandLink>
+											<aon:commandLink id="moveDown" reRender="dataTable"
+												title="#{appBundle.cms_move_down}" immediate="true"
+												actionListener="#{modular_page_option.onMoveDown}" 
+												rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)  and modular_page_option.to==null}">
+												<aon:graphicImage alt="#{appBundle.cms_move_down}"
+													url="#{aonResource.resolveLocal['/images/cms/down.gif']}" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:column>
+								</ui:define>
+							</ui:decorate>
 
 						</aon:div>
 						
