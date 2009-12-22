@@ -51,71 +51,64 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 					
-				<aon:dataTable id="dataTable" value="#{link.model}"
-					rows="#{link.pageLimit}" var="to" rendered="#{link.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-iconColumn">
-				
-					<aon:rowSelector
-						action="link_form" actionListener="#{link.onSelect}" />
-				
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.alias}" />
-					</aon:column>
-	
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.link_label}" />
-						</f:facet>
-						<aon:outputText value="#{link.i18nLabel}" >
-							<aon:abbreviateConverter maxWidth="60" />
-						</aon:outputText>
-					</aon:column>
-	
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.link_category}" />
-						</f:facet>
-						<aon:outputText value="#{to.linkCategory.alias}" />
-					</aon:column>
-	
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.link_position}" />
-						</f:facet>
-						<aon:outputText value="#{to.position}" />
-					</aon:column>
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{link}" />
+					<ui:define name="columns">			
 					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.link_active}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >
-							<aon:commandLink title="#{appBundle.link_activate}" 
-								action="link_list"
-								actionListener="#{link.onActivate}" 
-								rendered="#{!to.active}">
-								<aon:graphicImage id="Link_active" alt="#{appBundle.link_activate}"
-									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-							</aon:commandLink>
-							<aon:commandLink title="#{appBundle.link_deactivate}" 
-								action="link_list"
-								actionListener="#{link.onDeactivate}" 
-								rendered="#{to.active}">
-								<aon:graphicImage id="Link_deactive" alt="#{appBundle.link_deactivate}"
-									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-							</aon:commandLink>
-						</aon:div>
-					</aon:column>
-
-				</aon:dataTable>
-			
-				<aon:dataScroller2 for="dataTable" showNote="true" />					
+						<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.cms_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" />
+						</aon:column>
+		
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.link_label}" />
+							</f:facet>
+							<aon:outputText value="#{link.i18nLabel}" >
+								<aon:abbreviateConverter maxWidth="60" />
+							</aon:outputText>
+						</aon:column>
+		
+						<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.link_category}" />
+							</f:facet>
+							<aon:outputText value="#{to.linkCategory.alias}" />
+						</aon:column>
+		
+						<aon:column styleClass="aon-width-70 aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.link_position}" />
+							</f:facet>
+							<aon:outputText value="#{to.position}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.link_active}" />
+							</f:facet>
+							<aon:div onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();" >
+								<aon:commandLink title="#{appBundle.link_activate}" 
+									action="link_list"
+									actionListener="#{link.onActivate}" 
+									rendered="#{!to.active}">
+									<aon:graphicImage id="Link_active" alt="#{appBundle.link_activate}"
+										url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.link_deactivate}" 
+									action="link_list"
+									actionListener="#{link.onDeactivate}" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="Link_deactive" alt="#{appBundle.link_deactivate}"
+										url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+								</aon:commandLink>
+							</aon:div>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 
 			</aon:div>
 		</aon:form>
