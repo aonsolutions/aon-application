@@ -30,44 +30,40 @@
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="dataTable" value="#{footer.model}" var="to"
-					rows="#{footer.pageLimit}" rendered="#{footer.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
-							
-					<aon:rowSelector
-						action="footer_form" actionListener="#{footer.onSelect}" />							
-							
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.alias}" />
-					</aon:column>
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{footer}" />
+					<ui:define name="columns">			
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText for="Footer_defaultMenu" 
-								value="#{appBundle.menu_defaultMenu}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																					
-							<aon:selectBooleanCheckbox id="Footer_defaultMenu" 
-								value="#{to.default_}" rendered="#{!to.default_}">
-								<a4j:support 
-									actionListener="#{footer.defaultChanged}"
-									event="onclick"  
-									reRender="dataTable" />
-							</aon:selectBooleanCheckbox>
-						</aon:div>
-						<aon:graphicImage id="Footer_default_blocked" 
-							rendered="#{to.default_}"
-							url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" 
-							alt="#{appBundle.menu_blocked}"/>
-					</aon:column>
-					
-				</aon:dataTable>
-					
-				<aon:dataScroller2 for="dataTable" showNote="true" />
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.cms_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText for="Footer_defaultMenu" 
+									value="#{appBundle.menu_defaultMenu}" />
+							</f:facet>
+							<aon:div onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();" >																					
+								<aon:selectBooleanCheckbox id="Footer_defaultMenu" 
+									value="#{to.default_}" rendered="#{!to.default_}">
+									<a4j:support 
+										actionListener="#{footer.defaultChanged}"
+										event="onclick"  
+										reRender="#{dataTableId}" />
+								</aon:selectBooleanCheckbox>
+							</aon:div>
+							<aon:graphicImage id="Footer_default_blocked" 
+								rendered="#{to.default_}"
+								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" 
+								alt="#{appBundle.menu_blocked}"/>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>					
 					
 			</aon:div>
 		</aon:form>

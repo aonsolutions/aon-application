@@ -31,44 +31,38 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 					
-				<aon:dataTable id="dataTable" value="#{sidebar.model}" var="to"
-					rows="#{sidebar.pageLimit}" rendered="#{sidebar.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
-			
-					<aon:rowSelector
-						action="sidebar_form" actionListener="#{sidebar.onSelect}" />							
-			
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.alias}" />
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText for="Sidebar_defaultMenu" 
-								value="#{appBundle.menu_defaultMenu}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																				
-							<aon:selectBooleanCheckbox id="Sidebar_defaultMenu" 
-								value="#{to.default_}" 
-								rendered="#{!to.default_}">
-								<a4j:support 
-									actionListener="#{sidebar.defaultChanged}"
-									event="onclick"  
-									reRender="dataTable" />
-							</aon:selectBooleanCheckbox>
-						</aon:div>
-						<aon:graphicImage id="Menu_default_blocked" rendered="#{to.default_}"
-							url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.menu_blocked}"/>
-					</aon:column>
-
-				</aon:dataTable>
-			
-				<aon:dataScroller2 for="dataTable" showNote="true" />
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{sidebar}" />
+					<ui:define name="columns">			
+				
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.cms_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText for="Sidebar_defaultMenu" 
+									value="#{appBundle.menu_defaultMenu}" />
+							</f:facet>
+							<aon:div onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();" >																				
+								<aon:selectBooleanCheckbox id="Sidebar_defaultMenu" 
+									value="#{to.default_}" 
+									rendered="#{!to.default_}">
+									<a4j:support 
+										actionListener="#{sidebar.defaultChanged}"
+										event="onclick"  
+										reRender="#{dataTableId}" />
+								</aon:selectBooleanCheckbox>
+							</aon:div>
+							<aon:graphicImage id="Menu_default_blocked" rendered="#{to.default_}"
+								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.menu_blocked}"/>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 
 			</aon:div>
 		</aon:form>
