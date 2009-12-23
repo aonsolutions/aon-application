@@ -83,9 +83,7 @@
 						<aon:div rendered="#{modular_page_option.to==null}">
 					
 							<aon:div styleClass="aon-toolbar">
-									
-								<!-- start toolbar navigation -->
-								<aon:div id="detailButtonsGrid" styleClass="aon-finding-toolbar-item-group">
+								<aon:div styleClass="aon-finding-toolbar-item-group">							
 									<aon:commandButton id="reset_list"
 										rendered="#{!modular_page_option.new and cms.roleEditor}"
 										reRender="detail"
@@ -94,8 +92,7 @@
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{modular_page_option.onReset}" />
 									</aon:commandButton>
-							    </aon:div>
-		
+								</aon:div>		
 							</aon:div>
 						
 							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -127,14 +124,14 @@
 											onmouseout="enableRowSelector();" >																																	
 											<aon:commandLink title="#{appBundle.cms_activate}" 
 												actionListener="#{modular_page_option.onActivate}"
-												reRender="modular_page_optionData"
+												reRender="#{dataTableId}"
 												rendered="#{!to.active}">
 												<aon:graphicImage id="modular_page_option_active" alt="#{appBundle.sidebar_option_activate}"
 													url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 											</aon:commandLink>
 											<aon:commandLink title="#{appBundle.cms_deactivate}" 
 												actionListener="#{modular_page_option.onDeactivate}" 
-												reRender="modular_page_optionData"
+												reRender="#{dataTableId}"
 												rendered="#{to.active}">
 												<aon:graphicImage id="modular_page_option_deactive" alt="#{appBundle.modular_page_option_deactivate}"
 													url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
@@ -148,7 +145,7 @@
 										</f:facet>
 										<aon:div onmouseover="disableRowSelector();"
 											onmouseout="enableRowSelector();" >		
-											<aon:commandLink id="moveUp" reRender="modular_page_optionData"
+											<aon:commandLink id="moveUp" reRender="#{dataTableId}"
 												title="#{appBundle.cms_move_up}" immediate="true"
 												actionListener="#{modular_page_option.onMoveUp}" 
 												styleClass="aon-margin-right"
@@ -156,7 +153,7 @@
 												<aon:graphicImage alt="#{appBundle.cms_move_up}"
 													url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
 											</aon:commandLink>
-											<aon:commandLink id="moveDown" reRender="modular_page_optionData"
+											<aon:commandLink id="moveDown" reRender="#{dataTableId}"
 												title="#{appBundle.cms_move_down}" immediate="true"
 												actionListener="#{modular_page_option.onMoveDown}" 
 												rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)  and modular_page_option.to==null}">
@@ -173,9 +170,7 @@
 						<aon:div rendered="#{modular_page_option.new or modular_page_option.to != null}">
 
 							<aon:div styleClass="aon-toolbar">
-								
-								<!-- start toolbar navigation -->
-								<aon:div styleClass="aon-finding-toolbar-item-group">
+								<aon:div styleClass="aon-finding-toolbar-item-group">								
 									<aon:commandButton id="reset_list_form"
 										rendered="#{!modular_page_option.new and cms.roleEditor}"
 										reRender="detail"
@@ -210,9 +205,7 @@
 										reRender="detail"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										accesskey="#{bundle.aon_key_remove}"/>
-							    </aon:div>
-									
-								<!-- end toolbar navigation -->
+								</aon:div>
 							</aon:div>
 					
 							<aon:div styleClass="aon-scroll-area">
