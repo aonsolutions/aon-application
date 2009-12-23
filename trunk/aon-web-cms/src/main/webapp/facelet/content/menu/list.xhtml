@@ -77,44 +77,38 @@
 			<!--  aon-region-body -->
 			<aon:div id="menuListDiv" styleClass="aon-scroll-area">
 					
-				<aon:dataTable id="dataTable" value="#{menu.model}" var="to"
-					rows="#{menu.pageLimit}" 
-					columnClasses="aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{menu}" />
+					<ui:define name="columns">			
 			
-					<aon:rowSelector
-						action="menu_form" actionListener="#{menu.onSelect}" />							
-			
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.alias}" />
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText for="Menu_defaultMenu" 
-								value="#{appBundle.menu_defaultMenu}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																				
-							<aon:selectBooleanCheckbox id="Menu_defaultMenu" 
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.cms_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText for="Menu_defaultMenu" 
+									value="#{appBundle.menu_defaultMenu}" />
+							</f:facet>
+							<aon:div onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();" >																				
+								<aon:selectBooleanCheckbox id="Menu_defaultMenu" 
 									value="#{to.defaultMenu}" 
 									rendered="#{!to.defaultMenu}">
 									<a4j:support 
 										actionListener="#{menu.defaultMenuChanged}"
 										event="onclick"  
-										reRender="dataTable,parentGrid" />
-							</aon:selectBooleanCheckbox>
-							<aon:graphicImage id="Menu_default_blocked" rendered="#{to.defaultMenu}"
-								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.menu_blocked}"/>
-						</aon:div>
-					</aon:column>
-
-				</aon:dataTable>
-			
-				<aon:dataScroller2 for="dataTable" />
+										reRender="#{dataTableId}" />
+								</aon:selectBooleanCheckbox>
+								<aon:graphicImage id="Menu_default_blocked" rendered="#{to.defaultMenu}"
+									url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.menu_blocked}"/>
+							</aon:div>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 
 			</aon:div>
 		</aon:form>
