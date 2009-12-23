@@ -81,7 +81,7 @@
 								value="#{to.homepage}" rendered="#{!to.homepage}">
 								<a4j:support 
 									actionListener="#{modular_page.defaultHomepageChanged}"
-									event="onclick" reRender="dataTable" />
+									event="onclick" reRender="#{dataTableId}" />
 							</aon:selectBooleanCheckbox>
 							<aon:graphicImage id="default_blocked" rendered="#{to.homepage}"
 								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" />

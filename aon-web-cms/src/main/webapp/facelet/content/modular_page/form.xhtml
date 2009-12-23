@@ -77,7 +77,7 @@
 						rendered="#{!modular_page.new and modular_page.toI18n.id != null}">
 						<aon:div styleClass="aon-form-group-title">
 							<aon:div styleClass="aon-form-group-title-internal">
-								<aon:outputLabel for="dataTable" value="#{appBundle.modular_page_option}" />
+								<aon:outputLabel for="modular_page_optionData" value="#{appBundle.modular_page_option}" />
 							</aon:div>
 						</aon:div>
 						<aon:div rendered="#{modular_page_option.to==null}">
@@ -127,14 +127,14 @@
 											onmouseout="enableRowSelector();" >																																	
 											<aon:commandLink title="#{appBundle.cms_activate}" 
 												actionListener="#{modular_page_option.onActivate}"
-												reRender="dataTable"
+												reRender="modular_page_optionData"
 												rendered="#{!to.active}">
 												<aon:graphicImage id="modular_page_option_active" alt="#{appBundle.sidebar_option_activate}"
 													url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 											</aon:commandLink>
 											<aon:commandLink title="#{appBundle.cms_deactivate}" 
 												actionListener="#{modular_page_option.onDeactivate}" 
-												reRender="dataTable"
+												reRender="modular_page_optionData"
 												rendered="#{to.active}">
 												<aon:graphicImage id="modular_page_option_deactive" alt="#{appBundle.modular_page_option_deactivate}"
 													url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
@@ -148,7 +148,7 @@
 										</f:facet>
 										<aon:div onmouseover="disableRowSelector();"
 											onmouseout="enableRowSelector();" >		
-											<aon:commandLink id="moveUp" reRender="dataTable"
+											<aon:commandLink id="moveUp" reRender="modular_page_optionData"
 												title="#{appBundle.cms_move_up}" immediate="true"
 												actionListener="#{modular_page_option.onMoveUp}" 
 												styleClass="aon-margin-right"
@@ -156,7 +156,7 @@
 												<aon:graphicImage alt="#{appBundle.cms_move_up}"
 													url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
 											</aon:commandLink>
-											<aon:commandLink id="moveDown" reRender="dataTable"
+											<aon:commandLink id="moveDown" reRender="modular_page_optionData"
 												title="#{appBundle.cms_move_down}" immediate="true"
 												actionListener="#{modular_page_option.onMoveDown}" 
 												rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)  and modular_page_option.to==null}">
