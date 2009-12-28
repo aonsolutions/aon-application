@@ -18,7 +18,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.banner}" />
 				<ui:param name="controller" value="#{banner}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="home"
