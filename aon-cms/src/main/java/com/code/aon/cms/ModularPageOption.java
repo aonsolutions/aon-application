@@ -18,12 +18,13 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.cms.enumeration.ModularPageOptionType;
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
+import com.code.aon.cms.util.IReferenceObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "modular_page_option")
-public class ModularPageOption implements ITransferObject, IPositionObject {
+public class ModularPageOption implements IActivableObject, IPositionObject, IReferenceObject {
 
 	private static final long serialVersionUID = 8111919153303825510L;
 

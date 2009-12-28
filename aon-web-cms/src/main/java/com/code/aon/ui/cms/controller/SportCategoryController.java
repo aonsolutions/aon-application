@@ -18,12 +18,6 @@ import com.code.aon.ui.cms.Constants;
 
 public class SportCategoryController extends BasicI18nController implements Constants {
 
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
 	public String getI18nDescription() throws ManagerBeanException {
 		String description = NO_VALUE_LABEL;
 		SportCategoryDetail detail = (SportCategoryDetail)getModelRowdataI18n();

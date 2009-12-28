@@ -12,12 +12,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SportNationalityController extends BasicI18nController implements ICMSConstants, Constants {
 	
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
 	public String getI18nDescription() throws ManagerBeanException {
 		String description = NO_VALUE_LABEL;
 		SportNationalityDetail detail = (SportNationalityDetail)getModelRowdataI18n();

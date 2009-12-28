@@ -18,12 +18,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "generic_page")
-public class GenericPage implements ITransferObject {
+public class GenericPage implements IActivableObject {
 
 	private static final long serialVersionUID = -1036821695371641953L;
 

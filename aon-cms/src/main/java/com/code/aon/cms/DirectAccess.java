@@ -13,13 +13,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.PageType;
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
+import com.code.aon.cms.util.IReferenceObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "direct_access")
-public class DirectAccess implements ITransferObject, IPositionObject {
+public class DirectAccess implements IActivableObject, IPositionObject, IReferenceObject {
+
+	private static final long serialVersionUID = -2407857395297539362L;
 
 	private Integer id;
 
@@ -134,5 +142,44 @@ public class DirectAccess implements ITransferObject, IPositionObject {
 		this.image = image;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DirectAccess o = (DirectAccess) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.directAccessGroup, o.directAccessGroup)
+				.append(this.ident, o.ident)				
+				.append(this.image, o.image)
+				.append(this.level, o.level)
+				.append(this.position, o.position)
+				.append(this.type, o.type)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(directAccessGroup)
+			.append(id)	
+			.append(ident)
+			.append(image)
+			.append(level)
+			.append(position)
+			.append(type)
+			.toHashCode();
+	}
 
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
 }

@@ -72,7 +72,8 @@
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 						<ui:param name="controller" value="#{activity}" />
 						<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
-						<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />						
+						<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+						<ui:param name="skipRemoveButton" value="#{(controller.to!=null) and activity.used}" />
 						<ui:define name="columns">
 	
 							<aon:column>

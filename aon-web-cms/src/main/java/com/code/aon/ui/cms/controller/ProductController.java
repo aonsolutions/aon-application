@@ -22,35 +22,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ProductController extends BasicI18nController implements ICMSConstants, Constants {
 	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}	
-
-	public void onSelect(ActionEvent event) {
-		super.onSelect(new ActionEvent(event.getComponent()));
-		loadCurrentLanguage();
-	}
-	
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		Product p = (Product)this.model.getRowData();
-		p.setActive(active);
-		getManagerBean().update(p);
-	}
-	
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = NO_VALUE_LABEL;
 		ProductDetail fd = (ProductDetail) getModelRowdataI18n();

@@ -11,11 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 
 @Entity
 @Table(name = "sport_player")
-public class SportPlayer implements ITransferObject {
+public class SportPlayer implements IActivableObject {
 
 	private Integer id;
 	

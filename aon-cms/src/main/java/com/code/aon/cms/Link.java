@@ -17,12 +17,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "link")
-public class Link implements ITransferObject , IPositionObject {
+public class Link implements IActivableObject, IPositionObject {
 
 	private static final long serialVersionUID = -3902178054750217031L;
 

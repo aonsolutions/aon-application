@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkCategoryDetail;
 import com.code.aon.cms.LinkConfig;
 import com.code.aon.common.ManagerBeanException;
@@ -15,25 +14,6 @@ public class LinkCategoryController extends BasicI18nController implements ICMSC
 
 	public void onInit(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(LinkConfig.class);
-	}
-
-	public void onSelect(ActionEvent event)  {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		LinkCategory linkCategory = (LinkCategory)this.model.getRowData();
-		linkCategory.setActive(active);
-		getManagerBean().update(linkCategory);
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {

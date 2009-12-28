@@ -24,16 +24,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CompanyController extends BasicController implements ICMSConstants {
 	
-	private int page;
-	
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
 	private DataModel currentActivitiesModel;
 
 	private DataModel activityModel;
@@ -54,7 +44,7 @@ public class CompanyController extends BasicController implements ICMSConstants 
 		this.activityModel = activityModel;
 	}
 
-	private List avoidable;
+	private List<Integer> avoidable;
 	
 	private void loadAllActivities(){
 		List<Activity> activityList = new LinkedList<Activity>();

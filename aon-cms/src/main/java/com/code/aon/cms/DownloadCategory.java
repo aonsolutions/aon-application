@@ -17,12 +17,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="download_category")
-public class DownloadCategory implements ITransferObject, IPositionObject {
+public class DownloadCategory implements IActivableObject, IPositionObject {
 
 	private static final long serialVersionUID = -4197866947961276581L;
 

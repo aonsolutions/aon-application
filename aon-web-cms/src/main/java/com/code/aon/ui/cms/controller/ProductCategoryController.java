@@ -18,36 +18,6 @@ import com.code.aon.ui.form.FormUtil;
 
 public class ProductCategoryController extends BasicI18nController implements ICMSConstants {
 
-	private int page;
-	
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(new ActionEvent(event.getComponent()));
-		loadCurrentLanguage();
-	}
-	
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		ProductCategory pc = (ProductCategory)this.model.getRowData();
-		pc.setActive(active);
-		getManagerBean().update(pc);
-	}
-	
 	public String getI18nLabel() throws ManagerBeanException {
 		String title = "";
 		ProductCategory pc = (ProductCategory)this.model.getRowData();

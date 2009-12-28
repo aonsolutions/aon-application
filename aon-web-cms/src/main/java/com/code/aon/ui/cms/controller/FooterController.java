@@ -17,22 +17,6 @@ import com.code.aon.ui.form.FormUtil;
 
 public class FooterController extends BasicI18nController implements ICMSConstants {
 
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
 	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Footer footer = (Footer) model.getRowData();
 		footer.setDefault_(true);

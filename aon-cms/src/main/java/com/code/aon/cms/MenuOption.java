@@ -19,12 +19,12 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.PageType;
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "menu_option")
-public class MenuOption implements ITransferObject, IPositionObject {
+public class MenuOption implements IActivableObject, IPositionObject {
 
 	private static final long serialVersionUID = 5319348327075177292L;
 

@@ -14,46 +14,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AlbumImageController extends BasicI18nController implements ICMSConstants, Constants {
 
-	private int page;
-	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-	
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		AlbumImage ai = (AlbumImage)this.model.getRowData();
-		ai.setActive(active);
-		getManagerBean().update(ai);
-	}
-	
 	public String getI18nTitle() throws ManagerBeanException {
 		String title = NO_VALUE_LABEL;
 		AlbumImageDetail aid = (AlbumImageDetail)getModelRowdataI18n();

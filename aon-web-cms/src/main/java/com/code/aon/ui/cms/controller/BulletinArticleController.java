@@ -15,9 +15,4 @@ public class BulletinArticleController extends BasicController{
 		this.currentBulletin = currentBulletin;
 	}
 
-	@Override
-	public void initializeModel() {
-		super.initializeModel();
-	}
-
 }

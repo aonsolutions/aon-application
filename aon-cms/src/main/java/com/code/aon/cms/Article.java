@@ -19,12 +19,13 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.cms.enumeration.ArticleType;
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "article")
-public class Article implements ITransferObject, IPositionObject {
+public class Article implements IActivableObject, IPositionObject {
 
 	private static final long serialVersionUID = -6401510044712437861L;
 

@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.common.ManagerBeanException;
@@ -14,25 +13,6 @@ public class ArticleCategoryController extends BasicI18nController implements IC
 
 	public void onInit(ActionEvent event){
 		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(ArticleConfig.class);
-	}
-	
-	public void onSelect(ActionEvent event){
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		ArticleCategory articleCategory = (ArticleCategory)this.model.getRowData();
-		articleCategory.setActive(active);
-		getManagerBean().update(articleCategory);
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {

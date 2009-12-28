@@ -3,8 +3,6 @@ package com.code.aon.ui.cms.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import javax.faces.event.ActionEvent;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -30,12 +28,6 @@ public class ArticleDocumentController extends BasicI18nController implements Co
 		if (! articleDocumentsDirectory.exists() ) {
 			articleDocumentsDirectory.mkdirs();
 		}
-	}
-
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event){
-		super.onSelect(event);
-		loadCurrentLanguage();
 	}
 
 	public Article getCurrentArticle() {

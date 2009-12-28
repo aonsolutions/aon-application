@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -23,35 +21,6 @@ import com.code.aon.ui.cms.Constants;
 
 public class GenericPageController extends BasicI18nController implements Constants {
 
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-	
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		GenericPage gp = (GenericPage)this.model.getRowData();
-		gp.setActive(active);
-		getManagerBean().update(gp);
-	}
-	
 	public String getI18nTitle() throws ManagerBeanException {
 		String title = NO_VALUE_LABEL;
 		GenericPageDetail gpd = (GenericPageDetail)getModelRowdataI18n();

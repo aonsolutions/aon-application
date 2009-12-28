@@ -52,14 +52,6 @@
 		   </list-entries>
 		</managed-property>
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>nullSelectItem</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.cms.controller.NullSelectItemController
-		</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
-	</managed-bean>
    
 </faces-config>
    

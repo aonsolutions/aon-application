@@ -1,6 +1,5 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
@@ -14,24 +13,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 
 public class ModularPageController extends BasicI18nController implements ICMSConstants, Constants {
 	
-	private int page;
-	
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		ModularPageOptionController mpc = (ModularPageOptionController)FormUtil.getController(MODULAR_PAGE_OPTION);
 		IManagerBean mpBean = BeanManager.getManagerBean(ModularPageOption.class);
@@ -62,20 +49,6 @@ public class ModularPageController extends BasicI18nController implements ICMSCo
 			modularPage.setHomepage(false);
 			bean.update(modularPage);
 		}
-	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		ModularPage mp = (ModularPage)this.model.getRowData();
-		mp.setActive(active);
-		getManagerBean().update(mp);
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
