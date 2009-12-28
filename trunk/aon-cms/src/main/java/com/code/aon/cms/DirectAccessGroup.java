@@ -17,12 +17,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "direct_access_group")
-public class DirectAccessGroup implements ITransferObject {
+public class DirectAccessGroup implements IActivableObject {
 
 	private static final long serialVersionUID = -8987133625137874461L;
 

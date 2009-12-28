@@ -18,7 +18,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
@@ -31,7 +31,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  */
 @Entity
 @Table(name="product")
-public class Product implements ITransferObject{
+public class Product implements IActivableObject {
 
 	private static final long serialVersionUID = 9207032363854912347L;
 

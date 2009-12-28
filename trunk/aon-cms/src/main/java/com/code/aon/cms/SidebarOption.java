@@ -20,12 +20,13 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.SidebarType;
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
+import com.code.aon.cms.util.IReferenceObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "sidebar_option")
-public class SidebarOption implements ITransferObject, IPositionObject {
+public class SidebarOption implements IActivableObject, IPositionObject, IReferenceObject {
 
 	private static final long serialVersionUID = 7985304255268260197L;
 

@@ -9,11 +9,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "direct_access_i18n")
 public class DirectAccessDetail implements ITransferObject {
+
+	private static final long serialVersionUID = 3226755239890903639L;
 
 	private Integer id;
 
@@ -76,7 +84,7 @@ public class DirectAccessDetail implements ITransferObject {
 		this.url = url;
 	}
 
-	@Column(name = "description")
+	@Column(name = "description", length = 255)
 	public String getDescription() {
 		return description;
 	}
@@ -85,5 +93,46 @@ public class DirectAccessDetail implements ITransferObject {
 		this.description = description;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DirectAccessDetail o = (DirectAccessDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.append(this.directAccess, o.directAccess)
+				.append(this.label, o.label)
+				.append(this.language, o.language)
+				.append(this.url, o.url)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(description)
+			.append(directAccess)
+			.append(id)	
+			.append(label)
+			.append(language)
+			.append(url)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("description", StringUtils.abbreviate(description, 32)).
+			append("directAccess", directAccess.getId()).
+			append("id", id).
+			append("label", StringUtils.abbreviate(label, 32)).
+			append("language", language.getId()).
+			append("url", url).
+			toString();
+	}	
 	
 }

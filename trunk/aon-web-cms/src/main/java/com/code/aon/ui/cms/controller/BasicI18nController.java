@@ -11,6 +11,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -41,6 +42,8 @@ public class BasicI18nController extends BasicController implements I18NControll
     private String language_alias = "";
 
     private String join_alias = "";
+    
+	private boolean richTextEnabled;
 
     /**
      * Constructor.
@@ -50,7 +53,12 @@ public class BasicI18nController extends BasicController implements I18NControll
         super();
         ControllerUtil.getI18NController().addListener(this);
 	}
-
+	
+	public void onSelect(ActionEvent event) {
+		super.onSelect(event);
+		loadCurrentLanguage();
+	}
+	
     /* (non-Javadoc)
      * @see com.code.aon.ui.form.IController#onReset(javax.faces.event.ActionEvent)
      */
@@ -71,14 +79,6 @@ public class BasicI18nController extends BasicController implements I18NControll
             addMessage(e.getMessage());
             throw new AbortProcessingException(e.getMessage(), e);
         }
-    }
-
-	/* (non-Javadoc)
-     * @see com.code.aon.ui.form.IController#onAccept(javax.faces.event.ActionEvent)
-     */
-    public void onAccept(ActionEvent event) {
-        accept(event);
-        resetTo();
     }
 
     /**
@@ -342,4 +342,27 @@ public class BasicI18nController extends BasicController implements I18NControll
 	}
 
 
+	public void onActivate(ActionEvent event) throws ManagerBeanException {
+		activate(true);
+	}
+
+	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
+		activate(false);
+	}
+	
+	private void activate(boolean active) throws ManagerBeanException {
+		IActivableObject activableObject = (IActivableObject) this.model.getRowData();
+		activableObject.setActive(active);
+		getManagerBean().update(activableObject);
+	}
+	
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}
+    
+	
 }

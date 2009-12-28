@@ -33,53 +33,12 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 
 	private boolean showAlbumWindow;
 	
-	private int page;
-	
-	private boolean richTextEnabled;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}	
-	
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-	
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event){
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		Album a = (Album)this.model.getRowData();
-		a.setActive(active);
-		getManagerBean().update(a);
-	}
-	
 	public String getI18nTitle() throws ManagerBeanException {
 		String title = NO_VALUE_LABEL;
 		AlbumDetail ad = (AlbumDetail)getModelRowdataI18n();
 		if (ad != null) title = ad.getTitle();
 		return title;
 	}
-
 
 	public void onDelImage(ActionEvent event) {
 		Album current = (Album)getTo();

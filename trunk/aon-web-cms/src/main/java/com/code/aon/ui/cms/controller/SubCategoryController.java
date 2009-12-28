@@ -20,7 +20,6 @@ public class SubCategoryController extends BasicI18nController implements ICMSCo
 	
 	private boolean cancelOnSelect = false;
 
-	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		if (!cancelOnSelect) {
 			super.onSelect(event);

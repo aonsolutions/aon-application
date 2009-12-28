@@ -43,26 +43,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BulletinController extends BasicI18nController implements ICMSConstants, Constants, IVelocityConstants {
 
-	private int page;
-	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
 	private Date publishDate = new Date();
 	
 	private Date expireDate;
@@ -101,12 +81,6 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 			itemList.add(item);
 		}
 		return itemList;
-	}
-
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
 	}
 
 	public void onSelectArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {

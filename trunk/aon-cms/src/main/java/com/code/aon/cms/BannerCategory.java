@@ -17,12 +17,13 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="banner_category")
-public class BannerCategory implements ITransferObject, IPositionObject {
+public class BannerCategory implements IActivableObject, IPositionObject {
 
 	private static final long serialVersionUID = -8287041135780279368L;
 

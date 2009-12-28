@@ -15,26 +15,6 @@ import com.code.aon.ui.cms.util.MenuOptionUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class DirectAccessController extends BasicI18nController implements ICMSConstants, Constants {
-
-
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		DirectAccess da = (DirectAccess)this.model.getRowData();
-		da.setActive(active);
-		getManagerBean().update(da);
-	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = NO_VALUE_LABEL;

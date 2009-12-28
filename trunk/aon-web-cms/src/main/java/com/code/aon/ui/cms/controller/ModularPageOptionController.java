@@ -38,20 +38,6 @@ public class ModularPageOptionController extends BasicI18nController implements 
 	public void setCurrentModularPage(ModularPage currentModularPage) {
 		this.currentModularPage = currentModularPage;
 	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		ModularPageOption mp = (ModularPageOption)this.model.getRowData();
-		mp.setActive(active);
-		getManagerBean().update(mp);
-	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = NO_VALUE_LABEL;

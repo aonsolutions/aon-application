@@ -17,25 +17,6 @@ public class DownloadCategoryController extends BasicI18nController implements I
 		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(DownloadConfig.class);
 	}
 	
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		loadCurrentLanguage();
-	}
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		DownloadCategory downloadCategory = (DownloadCategory)this.model.getRowData();
-		downloadCategory.setActive(active);
-		getManagerBean().update(downloadCategory);
-	}
-	
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = NO_VALUE_LABEL;
 		DownloadCategoryDetail downloadCategoryDetail = (DownloadCategoryDetail)getModelRowdataI18n();

@@ -61,15 +61,6 @@
 		<managed-bean-class>com.code.aon.ui.cms.event.ConfigControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
-	<!-- *****************
-		TIMEZONE CONTROLLER
-		*******************  	 -->
-	<managed-bean>
-		<managed-bean-name>timeZoneController</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.TimeZoneController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 	
 	<!-- ******************
 		COLLECTIONS CONTROLLER
@@ -1421,7 +1412,7 @@
 	<!-- ************** BULLETIN EMAIL ************** -->
 	<managed-bean>
 		<managed-bean-name>bulletin_email</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.BulletinEmailController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
