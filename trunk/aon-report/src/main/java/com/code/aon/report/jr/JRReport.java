@@ -1,5 +1,10 @@
 package com.code.aon.report.jr;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
@@ -7,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -23,6 +29,9 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +62,8 @@ public class JRReport {
 	 * Obtains a suitable <code>Logger</code>.
 	 */
 	private static Logger LOGGER = LoggerFactory.getLogger(JRReport.class);
+	
+	private static String REPORT_PATH = "/home/COMMON-RESOURCES/aon-report";
 
 	/**
 	 * The report configuration of this report.
@@ -122,7 +133,48 @@ public class JRReport {
 				clazz, bean, criteria);
 		return dsp;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private String getCustomTemplate( String reportKey ) {
+		try {
+			String factoryName = HibernateUtil.getSessionFactoryName();
+			Session session = HibernateUtil.getSession(factoryName);
+			String name = "REPORT_" + reportKey;
+	        String select = "select app_param.value from ApplicationParameter as app_param where app_param.name = '" + name + "'";
+			Query query = session.createQuery(select);
+			List list = query.list();
+			if (! list.isEmpty() ) {
+				return (String) list.get(0);
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error retrieving report app param", th );
+		}
+		return null;
+	}
 
+	private InputStream getTemplateInputStream( ReportConfig config ) {
+		InputStream input = null;
+		String customTemplate = getCustomTemplate(config.getId());
+		if (! StringUtils.isEmpty(customTemplate) ) {
+			File file = new File( config.getTemplate() );
+			File customDirectory = new File( REPORT_PATH, customTemplate );
+			if ( customDirectory.exists() && customDirectory.canRead() ) {
+				File customFile = new File( customDirectory, file.getName() );
+				if ( customFile.exists() && customFile.canRead() ) {
+					try {
+						input = new BufferedInputStream( new FileInputStream(customFile) );
+					} catch (FileNotFoundException e) {
+						LOGGER.error( "Custome template not found: " + customFile, e);
+					}
+				}
+			}
+		} 
+		if ( input == null ) {
+			input = JRReport.class.getResourceAsStream(config.getTemplate());
+		}
+		return input;
+	}
+	
 	/**
 	 * Returns the JasperReport object that this object represents.
 	 * 
@@ -131,15 +183,17 @@ public class JRReport {
 	 *             If an error ocurred.
 	 */
 	public JasperReport getJasperReport() throws ReportException {
-		String template = config.getTemplate();
-		InputStream input = JRReport.class.getResourceAsStream(template);
+		InputStream input = getTemplateInputStream( config );
 		if (input == null) {
 			throw new ReportException("Can not load report template!"); //$NON-NLS-1$
 		}
 		try {
 			Object o = JRLoader.loadObject(input);
+			input.close();
 			return (JasperReport) o;
 		} catch (JRException e) {
+			throw new ReportException(e.getMessage(), e);
+		} catch (IOException e) {
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
