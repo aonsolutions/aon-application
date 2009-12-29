@@ -19,7 +19,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.download}" />
 				<ui:param name="controller" value="#{download}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="categories"

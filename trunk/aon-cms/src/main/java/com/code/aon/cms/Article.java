@@ -20,7 +20,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.util.IActivableObject;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity

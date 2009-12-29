@@ -18,7 +18,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.article_category}" />
 				<ui:param name="controller" value="#{article_category}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_articleCategory" reRender="aonStatus"
 						value="#{appBundle.aon_generate}" immediate="true"

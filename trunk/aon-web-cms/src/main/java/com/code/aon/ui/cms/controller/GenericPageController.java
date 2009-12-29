@@ -7,10 +7,14 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.MenuType;
+import com.code.aon.cms.enumeration.ModularPageOptionType;
+import com.code.aon.cms.enumeration.PageType;
+import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,6 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.util.ReferenceChecker;
 
 public class GenericPageController extends BasicI18nController implements Constants {
 
@@ -46,5 +51,12 @@ public class GenericPageController extends BasicI18nController implements Consta
 		}
 		return menus;
 	}
+	
+	public boolean isUsed() throws ManagerBeanException {
+		Integer id = ((GenericPage) getTo()).getId();
+		return ReferenceChecker.isInModulaPage(id, ModularPageOptionType.GENERIC) ||
+			ReferenceChecker.isInSideBar(id, SidebarType.GENERIC) ||
+			ReferenceChecker.isInDirectAccess(id, PageType.GENERIC);
+	}		
 
 }

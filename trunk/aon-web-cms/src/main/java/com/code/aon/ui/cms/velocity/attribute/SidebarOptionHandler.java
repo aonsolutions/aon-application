@@ -50,7 +50,7 @@ public class SidebarOptionHandler {
 			case DIARY_CALENDAR:
 				content = ArticleCalendarGenerator.getDiaryCalendarHandler();
 				break; 
-			case DIRECT_ACCESS:
+			case DIRECT_ACCESS_GROUP:
 				content = DirectAccessGenerator.getDirectAccessGroupHandler(ident, message);
 				break;
 			case DOWNLOAD_CATEGORY:

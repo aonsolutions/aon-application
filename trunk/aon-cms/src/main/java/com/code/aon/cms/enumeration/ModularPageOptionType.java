@@ -53,7 +53,7 @@ public enum ModularPageOptionType implements IResourceable {
 	DIRECT_ACCESS_GROUP,
 	
 	/**
-	 * Direct Access
+	 * Downloads
 	 */
 	DOWNLOADS,
 	

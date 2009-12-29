@@ -20,7 +20,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.generic_page}" />
 				<ui:param name="controller" value="#{generic_page}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_nodular" reRender="aonStatus"
