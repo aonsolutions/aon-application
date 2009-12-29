@@ -2,10 +2,14 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.Image;
+import com.code.aon.cms.enumeration.ContentLevel;
+import com.code.aon.cms.enumeration.PageType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.util.ReferenceChecker;
 import com.code.aon.ui.util.AonUtil;
 
 public class DownloadController extends BasicI18nController implements ICMSConstants, Constants {
@@ -38,5 +42,10 @@ public class DownloadController extends BasicI18nController implements ICMSConst
 		DownloadDetail current = (DownloadDetail)getToI18n();
 		current.setFile(image);
 	}
+
+	public boolean isUsed() throws ManagerBeanException {
+		Integer id = ((Download) getTo()).getId();
+		return ReferenceChecker.isInDirectAccess(id, ContentLevel.ELEMENT, PageType.DOWNLOAD);
+	}	
 	
 }

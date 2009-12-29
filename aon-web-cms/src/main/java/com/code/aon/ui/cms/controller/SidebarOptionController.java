@@ -83,7 +83,7 @@ public class SidebarOptionController extends BasicI18nController implements IOrd
 			case GENERIC:
 				idents = collections.getGenericPageList();
 				break;
-			case DIRECT_ACCESS:
+			case DIRECT_ACCESS_GROUP:
 				idents = collections.getDirectAccessGroupList();
 				break;
 			case DOWNLOAD_CATEGORY:

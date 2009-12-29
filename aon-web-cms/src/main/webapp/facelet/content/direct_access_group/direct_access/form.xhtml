@@ -18,7 +18,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.direct_access}" />
 				<ui:param name="controller" value="#{direct_access}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="categories"

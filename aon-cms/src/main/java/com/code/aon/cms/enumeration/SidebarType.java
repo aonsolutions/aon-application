@@ -40,7 +40,7 @@ public enum SidebarType implements IResourceable {
 	/**
 	 * DirectAccessGroup
 	 */
-	DIRECT_ACCESS,
+	DIRECT_ACCESS_GROUP,
 
 	/**
 	 * Article news Category

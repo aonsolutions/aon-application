@@ -9,12 +9,17 @@ import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
+import com.code.aon.cms.enumeration.ContentLevel;
+import com.code.aon.cms.enumeration.ModularPageOptionType;
+import com.code.aon.cms.enumeration.PageType;
+import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.util.ReferenceChecker;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -104,5 +109,13 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 			return false;
 		}
 	}
+	
+	public boolean isUsed() throws ManagerBeanException {
+		Integer id = ((Article) getTo()).getId();
+		return ReferenceChecker.isInModulaPage(id, ModularPageOptionType.ARTICLE) ||
+			ReferenceChecker.isInSideBar(id, SidebarType.ARTICLE) ||
+			ReferenceChecker.isInDirectAccess(id, ContentLevel.ELEMENT, PageType.ARTICLE_EVENTS,
+				PageType.ARTICLE_NEWS, PageType.ARTICLE_SERVICES, PageType.ARTICLE_OTHER);
+	}	
 	
 }

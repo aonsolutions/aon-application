@@ -18,7 +18,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.direct_access_group}" />
 				<ui:param name="controller" value="#{direct_access_group}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
 			</ui:include>
 			
 			<aon:div styleClass="aon-scroll-area">

@@ -8,10 +8,12 @@ import javax.faces.model.SelectItem;
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessDetail;
 import com.code.aon.cms.Image;
+import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
+import com.code.aon.ui.cms.util.ReferenceChecker;
 import com.code.aon.ui.util.AonUtil;
 
 public class DirectAccessController extends BasicI18nController implements ICMSConstants, Constants {
@@ -76,4 +78,9 @@ public class DirectAccessController extends BasicI18nController implements ICMSC
 		current.setImage(image);
 	}
 
+	public boolean isUsed() throws ManagerBeanException {
+		Integer id = ((DirectAccess) getTo()).getId();
+		return ReferenceChecker.isInModulaPage(id, ModularPageOptionType.DIRECT_ACCESS);
+	}	
+	
 }

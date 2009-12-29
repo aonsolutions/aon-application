@@ -445,6 +445,7 @@ public class CollectionsController implements ICMSConstants {
 		List<SelectItem> itemList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Article.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
 		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_ALIAS));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
