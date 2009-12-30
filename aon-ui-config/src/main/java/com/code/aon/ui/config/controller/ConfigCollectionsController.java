@@ -32,10 +32,12 @@ public class ConfigCollectionsController {
 	
 	private List<SelectItem> payMethodTypes;
 
+	@SuppressWarnings("unchecked")
 	public List<SelectItem> getSeries() throws ManagerBeanException{
 		return getSeries(false);		
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<SelectItem> getSeriesIds() throws ManagerBeanException {
 		return getSeries(true);
 	}	
@@ -189,30 +191,6 @@ public class ConfigCollectionsController {
 		return vatTaxes;
 	}
 	
-	/**
-	 * Gets the vat taxes.
-	 * 
-	 * @return the vat taxes
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getVatTaxesIds() throws ManagerBeanException {
-		if (vatTaxes == null) {
-			vatTaxes = new LinkedList<SelectItem>();
-			IManagerBean managerBean = BeanManager.getManagerBean(Tax.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.VAT);
-			List<ITransferObject> c = managerBean.getList(criteria);  
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax.getId(), tax.getName());
-				vatTaxes.add(item);
-			}
-		}
-		return vatTaxes;
-	}
-
 	/** The retention taxes list. */
 	private List<SelectItem> retentionTaxes;
 	
@@ -234,22 +212,6 @@ public class ConfigCollectionsController {
 			while (iter.hasNext()) {
 				Tax tax = (Tax) iter.next();
 				SelectItem item = new SelectItem(tax, tax.getName());
-				retentionTaxes.add(item);
-			}
-		}
-		return retentionTaxes;
-	}
-	public List<SelectItem> getRetentionTaxesIds() throws ManagerBeanException {
-		if (retentionTaxes == null) {
-			retentionTaxes = new LinkedList<SelectItem>();
-			IManagerBean managerBean = BeanManager.getManagerBean(Tax.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.RETENTION);
-			List<ITransferObject> c = managerBean.getList(criteria);  
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax.getId(), tax.getName());
 				retentionTaxes.add(item);
 			}
 		}

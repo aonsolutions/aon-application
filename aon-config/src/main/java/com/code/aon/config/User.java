@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 
@@ -78,6 +81,7 @@ public class User implements ITransferObject{
 		this.validate = validate;
 	}
 
+	@Column(length = 128)
 	public String getAon_key() {
 		return aon_key;
 	}
@@ -96,24 +100,39 @@ public class User implements ITransferObject{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final User o = (User) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.aon_key, o.aon_key)			
+				.append(this.available, o.available)
+				.append(this.login, o.login)				
+				.append(this.name, o.name)			
+				.append(this.status, o.status)
+				.append(this.validate, o.validate)
+				.isEquals();
 		}
-		if (obj instanceof User) {
-			User o = (User) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(aon_key)		
+			.append(available)			
+			.append(id)		
+			.append(login)		
+			.append(name)		
+			.append(status)
+			.append(validate)			
+			.toHashCode();
+	}	
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }

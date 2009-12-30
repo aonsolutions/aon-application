@@ -35,10 +35,10 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	<context-param>
+	<!-- context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
-	</context-param>
+	</context-param -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -224,7 +224,7 @@
 	</servlet-mapping>
 	<!-- Welcome File List -->
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>index2.jsp</welcome-file>
 	</welcome-file-list>
 	<!-- Security Constraint -->
 	<security-constraint>

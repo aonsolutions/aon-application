@@ -471,7 +471,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			setAction(action);
 			try {				
 				Survey survey = null;
-				if (action.getSurvey().getId() != null) {
+				if ( (action.getSurvey() != null) && (action.getSurvey().getId() != null) ) {
 					IManagerBean bean = BeanManager.getManagerBean(Survey.class);
 					survey = (Survey) bean.get(action.getSurvey().getId());
 				}

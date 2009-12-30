@@ -1,11 +1,6 @@
 package com.code.aon.ui.common.io;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.faces.event.ActionEvent;
-
+import com.code.aon.common.enumeration.MimeType;
 
 /**
  * @author ecastellano
@@ -13,9 +8,13 @@ import javax.faces.event.ActionEvent;
  */
 public class AonFile {
 
-	private List<IAonFileListener> listeners = new ArrayList<IAonFileListener>();
 	private byte[] data;
+
 	private String fileName;
+	
+	private MimeType mimeType;
+	
+	private Object key;
 
 	/**
 	 * @return byte[]
@@ -32,10 +31,11 @@ public class AonFile {
 	}
 
 	/**
-	 * @return int
-	 * @throws IOException 
+	 * Gets the size.
+	 * 
+	 * @return the size
 	 */
-	public int getSize() throws IOException {
+	public int getSize() {
 		byte[] data = getData();
 		if (data != null) {
 			return data.length; 
@@ -64,33 +64,34 @@ public class AonFile {
 	 */
 
 	public String getKey() {
-		return this.toString();
-	}
-
-
-	/**
-	 * @param event
-	 */
-	public void fileDeleted(ActionEvent event){
-		for (IAonFileListener l: listeners) {
-			l.fileDeleted(this);
-		}
+		return (key != null) ? this.key.toString() : this.toString();
 	}
 
 	/**
-	 * @param l
+	 * Sets the key.
+	 * 
+	 * @param key the new key
 	 */
-	public void addAonFileListener(IAonFileListener l){
-		listeners.add(l);
+	public void setKey(Object key) {
+		this.key = key;
 	}
 
 	/**
-	 * @param l
+	 * Gets the mime type.
+	 * 
+	 * @return the mime type
 	 */
-	public void removeAonFileListener(IAonFileListener l){
-		listeners.remove(l);
+	public MimeType getMimeType() {
+		return mimeType;
+	}
+
+	/**
+	 * Sets the mime type.
+	 * 
+	 * @param mimeType the new mime type
+	 */
+	public void setMimeType(MimeType mimeType) {
+		this.mimeType = mimeType;
 	}
 	
 }
-
-

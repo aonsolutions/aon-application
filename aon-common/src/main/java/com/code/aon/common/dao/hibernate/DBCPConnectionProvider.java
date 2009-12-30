@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -18,11 +17,12 @@ import javax.security.auth.Subject;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
-
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Environment;
 import org.hibernate.connection.ConnectionProvider;
 import org.hibernate.util.NamingHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A strategy for obtaining JDBC connections.
@@ -53,7 +53,7 @@ public class DBCPConnectionProvider implements ConnectionProvider {
 	/**
 	 * Logger initialization
 	 */
-	private static final Logger LOG = Logger.getLogger(DBCPConnectionProvider.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(DBCPConnectionProvider.class);
 
 	/** Data source. */
 	private DataSource ds;
@@ -91,14 +91,14 @@ public class DBCPConnectionProvider implements ConnectionProvider {
 		String jndiName = props.getProperty(Environment.DATASOURCE);
 		if (jndiName == null) {
 			String msg = "datasource JNDI name was not specified by property " + Environment.DATASOURCE;
-			LOG.severe(msg);
+			LOGGER.error(msg);
 			throw new HibernateException(msg);
 		}
 		user = props.getProperty(Environment.USER);
 		pass = props.getProperty(Environment.PASS);
 		try {
 			ds = createDataSource(props);
-			LOG.info("Using datasource: " + ds.getClass().getName());
+			LOGGER.info("Using datasource: {}", ds.getClass().getName());
 		} catch (Exception e) {
 			throw new HibernateException("Could not find connection service", e);
 		}

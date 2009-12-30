@@ -13,11 +13,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "faq_category")
 public class FaqCategory implements ITransferObject, IPositionObject {
+
+	private static final long serialVersionUID = -8855781409579441488L;
 
 	private Integer id;
 
@@ -30,8 +37,6 @@ public class FaqCategory implements ITransferObject, IPositionObject {
 	private Section section;
 	
 	private Set<FaqCategoryDetail> details;
-
-	private Set<Faq> faqs;
 
 	@Id
 	@GeneratedValue
@@ -79,15 +84,6 @@ public class FaqCategory implements ITransferObject, IPositionObject {
 	public void setDetails( Set<FaqCategoryDetail> details ) {
 		this.details = details;
 	}
-
-	@OneToMany(mappedBy = "faqCategory", cascade={CascadeType.REMOVE})
-	public Set<Faq> getFaqs() {
-		return this.faqs;
-	}
-
-	public void setFaqs( Set<Faq> faqs) {
-		this.faqs = faqs;
-	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "section")
@@ -99,4 +95,37 @@ public class FaqCategory implements ITransferObject, IPositionObject {
 		this.section = section;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final FaqCategory o = (FaqCategory) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.position, o.position)
+				.append(this.section, o.section)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(id)	
+			.append(position)
+			.append(section)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
+	
 }

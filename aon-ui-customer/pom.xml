@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.ui.customer</artifactId>
-  <version>3.6.0</version>
+  <version>3.5.0</version>
   <description>AON UI CUSTOMER</description>
   <name>AON UI CUSTOMER</name>
 	<dependencies>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>3.0.6</version>
+			<version>3.0.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -33,19 +33,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>3.3.0</version>
+			<version>3.2.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>3.7.0</version>
+			<version>3.4.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>3.1.6</version> 
+			<version>3.1.4</version> 
 			<scope>compile</scope>
 		</dependency>
  		<dependency>

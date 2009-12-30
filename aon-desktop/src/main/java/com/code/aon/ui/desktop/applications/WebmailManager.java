@@ -3,45 +3,41 @@ package com.code.aon.ui.desktop.applications;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.desktop.IDesktopConstants;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.AonFolder;
-import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.bean.AonServer;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.WebMailController;
 
-public class WebmailManager implements IServices, IDesktopConstants {
-	
-	private static final Logger LOGGER = Logger.getLogger( WebmailManager.class.getName() );
+public class WebmailManager implements IServices {
 
 	private ApplicationsManager.App app;
 
-    private AonServer webmailServer;
+    private AonServer mail_server;
 
 	public WebmailManager() throws DeploymentException, IOException {
-		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( APPLICATIONS_CONTROLLER_NAME );
+		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
 		app = apps.getApplication( "aon-webmail" );
 		if ( app != null && isExecutable() ) {
+			//Connect to mail server.
 			try {
-				AuthPrincipal user = Utils.getAuthPrincipal();
-				MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
-				this.webmailServer = new AonServer(mailAccount);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, "Error on Webmail init", th);
+				WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean( WebMailConstants.BEAN_WEBMAIL );
+				webmail.initDesktop( Utils.getAuthPrincipal() );
+				mail_server = webmail.getServer();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
 
     public List<AonFolder> getMailSummaryModel() {
     	List<AonFolder> result = new ArrayList<AonFolder>();
-		if ( webmailServer != null ) {
-			AonFolder folder = webmailServer.getAonFolder( AonFolder.INBOX_FOLDER_NAME );
+		if ( mail_server != null ) {
+			AonFolder folder = mail_server.getAonFolder( AonFolder.INBOX_FOLDER_NAME );
 			result.add(folder);
 			return result;
 		}
@@ -50,14 +46,12 @@ public class WebmailManager implements IServices, IDesktopConstants {
 
     public boolean isMailActive() {
     	try {
-	    	if ( (webmailServer != null) && (webmailServer.isConnected()) ) {
-				AonFolder folder = webmailServer.getAonFolder( AonFolder.INBOX_FOLDER_NAME );
-				if ( folder != null ) {
-					return true;
-				}
+	    	if ( mail_server != null ) {
+				AonFolder folder = mail_server.getAonFolder( AonFolder.INBOX_FOLDER_NAME );
+				if ( folder != null ) return true;
 			}
-		} catch (Throwable th) {
-    		LOGGER.log(Level.SEVERE, "Error on Webmail init", th);
+    	} catch (Exception e) {
+    		e.printStackTrace();
     	}
 		return false;
     }

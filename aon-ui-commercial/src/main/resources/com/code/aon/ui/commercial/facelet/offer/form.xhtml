@@ -73,7 +73,7 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-					<aon:outputLabel for="Offer_target_id" value="#{commercialBundle.commercial_target}" />
+					<aon:outputLabel for="Offer_target_id" value="#{target.bundle.commercial_target}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Offer_target_id" value="#{offer.to.target.registry.id}"
 							lookup="#{targetLookup}" ajaxSingle="true" reRender="Offer_target_full_name,Offer_target_registry_document,OfferAddress"
@@ -158,7 +158,7 @@
 					<aon:selectOneMenu id="Offer_tariff" value="#{offer.to.tariff}"
 						disabled="#{offer.processed}">
 						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{productCollections.tariffs}" />
+						<f:selectItems value="#{configCollections.tariffs}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_total" value="#{bundle.aon_total}" />

@@ -9,10 +9,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="rdir_staff")
@@ -55,6 +62,8 @@ public class RegistryDirStaff implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="registry", nullable=false)
+	@ForeignKey(name = "FK_RDIR_STAFF_REGISTRY")
+	@Index(name = "IDX_RDIR_STAFF_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -126,7 +135,7 @@ public class RegistryDirStaff implements ITransferObject {
 		this.shareNumber = shareNumber;
 	}
 
-	@Column(name="nominal_value")
+	@Column(name="nominal_value", precision = 15, scale = 3)
 	public double getNominalValue() {
 		return nominalValue;
 	}
@@ -136,6 +145,7 @@ public class RegistryDirStaff implements ITransferObject {
 	}
 
 	@Column(name="due_date")
+	@Temporal(TemporalType.DATE)
 	public Date getDueDate() {
 		return dueDate;
 	}
@@ -146,24 +156,47 @@ public class RegistryDirStaff implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryDirStaff o = (RegistryDirStaff) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.director, o.director)
+				.append(this.document, o.document)				
+				.append(this.dueDate, o.dueDate)
+				.append(this.name, o.name)
+				.append(this.nominalValue, o.nominalValue)
+				.append(this.percentShare, o.percentShare)				
+				.append(this.registry, o.registry)
+				.append(this.representative, o.representative)
+				.append(this.shareHolder, o.shareHolder)
+				.append(this.shareNumber, o.shareNumber)				
+				.isEquals();
 		}
-		if (obj instanceof RegistryDirStaff) {
-			RegistryDirStaff o = (RegistryDirStaff) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(director)
+			.append(document)
+			.append(dueDate)
+			.append(id)	
+			.append(name)
+			.append(nominalValue)				
+			.append(percentShare)
+			.append(registry)
+			.append(representative)	
+			.append(shareHolder)
+			.append(shareNumber)				
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}    
 
 }

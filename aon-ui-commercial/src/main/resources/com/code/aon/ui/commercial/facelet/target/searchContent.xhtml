@@ -9,7 +9,7 @@
 
 	<aon:outputText value="" />
 	<aon:div style="width:510px;">
-		<aon:panelCollapsible expanded="true" label="#{commercialBundle.commercial_target}">
+		<aon:panelCollapsible expanded="true" label="#{commercialBundle.commercial_search_general}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/commercial/facelet/target/searchBasicContent.xhtml">
 					<ui:param name="controller" value="#{target}"/>
@@ -91,75 +91,94 @@
 		<aon:panelCollapsible expanded="false" label="#{commercialBundle.commercial_target_segment_module}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" style="width:460px;">					
 				<aon:outputLabel for="Target_segments_segment_id"
-					value="#{bundle.aon_name}" />
-				<aon:selectOneMenu id="Target_segments_segment_id"
-					valueChangeListener="#{controller.addExpression}">
-					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{controller.segments}" />
-				</aon:selectOneMenu>
+					value="#{bundle.aon_name}" />				
+				<aon:div id="segmentDiv">
+					<a4j:repeat value="#{targetSearch.segments}" rowKeyVar="index" var="segment">
+						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+							<aon:selectOneMenu id="Target_segments_segment_id"
+								value="#{targetSearch.segments[index]}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{controller.segments}" />
+								<a4j:support event="onchange" reRender="segmentDiv"/>
+							</aon:selectOneMenu>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+								actionListener="#{targetSearch.onRemoveSegment}" reRender="segmentDiv"
+								rendered="#{segment != null}">
+								<f:param name="index" value="#{index}" />
+							</aon:commandButton>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+								actionListener="#{targetSearch.onAddSegment}" reRender="segmentDiv"
+								rendered="#{(segment != null) and (index == (targetSearch.segmentsSize-1))}"/>					
+						</aon:div>						
+					</a4j:repeat>
+				</aon:div>						
 			</aon:panelGrid>		
 		</aon:panelCollapsible>
 						
-		<aon:panelCollapsible expanded="false" label="#{productBundle.product_module}" >					
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
-				<aon:outputLabel for="Target_items_item_product_code"
-					value="#{bundle.aon_id}" />
-				<aon:inputText id="Target_items_item_product_code"
-					size="20" valueChangeListener="#{controller.addExpression}" />
-				
-				<aon:outputLabel for="Target_items_item_product_name"
-					value="#{bundle.aon_description}" />
-				<aon:inputText id="Target_items_item_product_name"
-					size="60" valueChangeListener="#{controller.addExpression}" />
-				 
-				<aon:outputLabel for="Target_items_item_product_category_id"
-					value="#{productBundle.product_category}" />
-				<aon:selectOneMenu id="Target_items_item_product_category_id"
-					value="#{productCollections.category}"
-					valueChangeListener="#{controller.addIdEqualExpression}">
-					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{productCollections.categories}" />
-				</aon:selectOneMenu>
-				
-				<aon:outputLabel for="Target_items_item_status"
-					value="#{bundle.aon_status}" />
-				<aon:selectOneMenu id="Target_items_item_status"
-					converter="aon.EnumConverter"
-					valueChangeListener="#{controller.addExpression}">
-					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{productCollections.productStatuses}" />
-				</aon:selectOneMenu>
-			</aon:panelGrid>
-		</aon:panelCollapsible>
+		<c:if test="#{target.showProduct}">						
+			<aon:panelCollapsible expanded="false" label="#{productBundle.product_module}" >					
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
+					<aon:outputLabel for="Target_items_item_product_code"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="Target_items_item_product_code"
+						size="20" valueChangeListener="#{controller.addExpression}" />
+					
+					<aon:outputLabel for="Target_items_item_product_name"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Target_items_item_product_name"
+						size="60" valueChangeListener="#{controller.addExpression}" />
+					 
+					<aon:outputLabel for="Target_items_item_product_category_id"
+						value="#{productBundle.product_category}" />
+					<aon:selectOneMenu id="Target_items_item_product_category_id"
+						value="#{productCollections.category}"
+						valueChangeListener="#{controller.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{productCollections.categories}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Target_items_item_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Target_items_item_status"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{productCollections.productStatuses}" />
+					</aon:selectOneMenu>
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</c:if>
 						
-		<aon:panelCollapsible expanded="false" label="#{salesBundle.sales_seller}">
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
-				<aon:outputLabel for="Target_sellers_seller_id"
-					value="#{bundle.aon_id}" />
-				<aon:inputText id="Target_sellers_seller_id" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-			
-				<aon:outputLabel for="Target_sellers_seller_registry_document"
-					value="#{bundle.aon_company_document}" />
-				<aon:inputText id="Target_sellers_seller_registry_document" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-			
-				<aon:outputLabel for="Target_sellers_seller_registry_name"
-					value="#{bundle.aon_company_name}" />
-				<aon:inputText id="Target_sellers_seller_registry_name" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-			
-				<aon:outputLabel for="Target_sellers_seller_registry_surname"
-					value="#{registryBundle.registry_surname}" />
-				<aon:inputText id="Target_sellers_seller_registry_surname" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-			
-				<aon:outputLabel for="Target_sellers_seller_registry_alias"
-					value="#{bundle.aon_company_alias}" />
-				<aon:inputText id="Target_sellers_seller_registry_alias" size="60"
-					valueChangeListener="#{controller.addExpression}" />
-			</aon:panelGrid>
-		</aon:panelCollapsible>
+		<c:if test="#{target.showSeller}">						
+			<aon:panelCollapsible expanded="false" label="#{salesBundle.sales_seller}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
+					<aon:outputLabel for="Target_sellers_seller_id"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="Target_sellers_seller_id" size="60"
+						valueChangeListener="#{controller.addExpression}" />
+				
+					<aon:outputLabel for="Target_sellers_seller_registry_document"
+						value="#{bundle.aon_company_document}" />
+					<aon:inputText id="Target_sellers_seller_registry_document" size="60"
+						valueChangeListener="#{controller.addExpression}" />
+				
+					<aon:outputLabel for="Target_sellers_seller_registry_name"
+						value="#{bundle.aon_company_name}" />
+					<aon:inputText id="Target_sellers_seller_registry_name" size="60"
+						valueChangeListener="#{controller.addExpression}" />
+				
+					<aon:outputLabel for="Target_sellers_seller_registry_surname"
+						value="#{registryBundle.registry_surname}" />
+					<aon:inputText id="Target_sellers_seller_registry_surname" size="60"
+						valueChangeListener="#{controller.addExpression}" />
+				
+					<aon:outputLabel for="Target_sellers_seller_registry_alias"
+						value="#{bundle.aon_company_alias}" />
+					<aon:inputText id="Target_sellers_seller_registry_alias" size="60"
+						valueChangeListener="#{controller.addExpression}" />
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</c:if>
 
 		<c:if test="#{target.showCommercialTracking}">
 			<aon:panelCollapsible expanded="false" label="#{commercialBundle.commercial_target_tracking_module}">

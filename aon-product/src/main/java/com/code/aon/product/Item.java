@@ -5,13 +5,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.enumeration.ProductStatus;
 
 /**
@@ -125,7 +132,8 @@ public class Item implements ITransferObject {
      * 
      * @return item's description.
      */
-    @Column(length=65535)
+    @Lob
+    @Type(type="stringClob")
     public String getDescription() {
         return description;
     }
@@ -145,6 +153,7 @@ public class Item implements ITransferObject {
      * 
      * @return item's price.
      */
+    @Column(nullable=true)
     public double getPrice() {
         return price;
     }
@@ -169,6 +178,8 @@ public class Item implements ITransferObject {
     @JoinColumn(name="product", nullable=false)
     @org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @AonPOJOInitializationInvalidateRestoreNull
+    @ForeignKey(name = "FK_ITEM_PRODUCT")
+    @Index(name = "IDX_ITEM_PRODUCT")
     public Product getProduct() {
         return product;
     }
@@ -280,24 +291,45 @@ public class Item implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Item o = (Item) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)				
+				.append(this.detail, o.detail)				
+				.append(this.expensesFixed, o.expensesFixed)				
+				.append(this.expensesPercent, o.expensesPercent)								
+				.append(this.price, o.price)				
+				.append(this.product, o.product)				
+				.append(this.profitPercent, o.profitPercent)				
+				.append(this.purchasePrice, o.purchasePrice)				
+				.append(this.status, o.status)												
+				.isEquals();
 		}
-		if (obj instanceof Item) {
-			Item o = (Item) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(description)
+			.append(detail)
+			.append(expensesFixed)			
+			.append(expensesPercent)						
+			.append(id)						
+			.append(price)						
+			.append(product)			
+			.append(profitPercent)						
+			.append(purchasePrice)						
+			.append(status)						
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

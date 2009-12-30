@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.infoweb</artifactId>
 	<packaging>war</packaging>
-	<version>3.5.1</version>
+	<version>3.5.0</version>
 	<description>AON WEB INFOWEB</description>
 	<name>AON WEB INFOWEB</name>
 	<properties>
@@ -104,6 +104,18 @@
 			<artifactId>commons-net</artifactId>
 			<version>1.4.1</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId> 
+			<artifactId>velocity</artifactId> 
+			<version>1.5</version> 
+			<scope>compile</scope> 
+			<exclusions>
+				<exclusion>
+				<groupId>velocity</groupId> 
+				<artifactId>velocity-dep</artifactId> 
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.rich.components</artifactId>
-	<version>3.6.0</version>
+	<version>3.5.0</version>
 	<description>AON RICH COMPONENTS</description>
 	<name>AON RICH COMPONENTS</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.4.1</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -92,6 +92,10 @@
 			<to-view-id>/facelet/profile/user/form.xhtml</to-view-id>
 		</navigation-case>
 	    <navigation-case>
+	        <from-outcome>sms</from-outcome>
+	        <to-view-id>/facelet/messaging/sms/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
 	        <from-outcome>fax</from-outcome>
 	        <to-view-id>/facelet/messaging/fax/form.xhtml</to-view-id>
 	    </navigation-case>
@@ -142,22 +146,6 @@
 		<navigation-case>
 			<from-outcome>corporate_identity_abonare</from-outcome>
 			<to-view-id>/facelet/corporateIdentity/abonare/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Domain ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>domain_list</from-outcome>
-			<to-view-id>/facelet/domain/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_form</from-outcome>
-			<to-view-id>/facelet/domain/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_search</from-outcome>
-			<to-view-id>/facelet/domain/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

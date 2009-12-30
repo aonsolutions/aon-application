@@ -11,7 +11,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.AttributeInfo;
@@ -43,23 +42,19 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	
 	private TagAttribute reRender;
 	
-	private TagAttribute ajaxSingle;
-	
 	private boolean ajaxNeeded;
 	
 	public AonAjaxInputHandler(ComponentConfig config) {
 		super(config);
 		partialSubmit = getAttribute(PARTIAL_SUBMIT);
 		reRender = getAttribute(RERENDER);
-		ajaxSingle = getAttribute(AJAX_SINGLE);
-		ajaxNeeded = (partialSubmit != null) || (reRender != null) || (ajaxSingle != null);
+		ajaxNeeded = (partialSubmit != null) || (reRender != null);
 	}
 	
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);
 		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT);
-		set.ignore(AJAX_SINGLE).ignore(FOCUS);
 		return set;
 	}
 
@@ -74,8 +69,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
 		Map map = (Map) root.getAttributes().get(OutputLabelHandler.LABELS_MAP);
 		if (map != null) {
-			String id = StringUtils.substringBefore(getId(ctx), "-");
-			Object value = map.get(id);
+			Object value = map.get(getId(ctx));
 			if ( value != null ) {
 				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, LABEL_ATTR, value.toString());				
 			}
@@ -120,19 +114,10 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 					}
 				}
 				attributes.add( BasicComponentConfig.newAttribute(tag, EVENT, event) );
-				String ajaxSingleValue = "true";
-				if ( ajaxSingle != null ) {
-					ajaxSingleValue = ajaxSingle.getValue(ctx);
-				}
-				attributes.add( BasicComponentConfig.newAttribute(tag, AJAX_SINGLE, ajaxSingleValue) );
+				attributes.add( BasicComponentConfig.newAttribute(tag, AJAX_SINGLE, "true") );
 				if ( reRender != null ) {
 					String value = reRender.getValue(ctx);
 					attributes.add( BasicComponentConfig.newAttribute(tag, RERENDER, value) );
-				}
-				TagAttribute focus = getAttribute(FOCUS);
-				if ( focus != null ) {
-					String value = focus.getValue(ctx);
-					attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
 				}
 				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
 				config.setComponentType(SUPPORT_COMPONENT_TYPE);

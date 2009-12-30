@@ -9,8 +9,6 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
@@ -29,6 +27,8 @@ import org.hibernate.type.NullableType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimeType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -57,7 +57,7 @@ public class HibernateRenderer implements CriterionVisitor {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-	private static final Logger LOGGER = Logger.getLogger(HibernateRenderer.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(HibernateRenderer.class);
 	
 	private static final char INNER_JOIN_SEPARATOR = '.';
 	
@@ -582,12 +582,12 @@ public class HibernateRenderer implements CriterionVisitor {
 			try {
 				result = stringToObject(type, value);				
 			} catch (Exception e) {
-				LOGGER.log(Level.SEVERE, "Error en el formato de la propiedad " + property + " con valor " + value
+				LOGGER.error("Error en el formato de la propiedad " + property + " con valor " + value
 						+ " con tipo " + type, e);
 				this.exception = new Exception("Error en el formato del campo de la busqueda", e);
 			}
 		} else {
-			LOGGER.warning("No se ha encontrado el type para la propiedad " + property);
+			LOGGER.warn("No se ha encontrado el type para la propiedad {}", property);
 		}
 		return result;
 	}
@@ -658,7 +658,7 @@ public class HibernateRenderer implements CriterionVisitor {
                 }
             }
         } catch (HibernateException he) {
-            LOGGER.severe("Error obteniendo el Type de la propiedad " + property);
+            LOGGER.error("Error obteniendo el Type de la propiedad " + property, he);
         }
         return type;
     }    

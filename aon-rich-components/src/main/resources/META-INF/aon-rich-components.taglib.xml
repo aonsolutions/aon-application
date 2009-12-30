@@ -335,7 +335,7 @@
 		<component>
 			<component-type>com.code.aon.faces.Column</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.column.ColumnHandler
+				com.code.aon.faces.component.AonComponentHandler
 			</handler-class>
 		</component>
 	</tag>

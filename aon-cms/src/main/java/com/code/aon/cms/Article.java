@@ -14,12 +14,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "article")
 public class Article implements ITransferObject, IPositionObject {
+
+	private static final long serialVersionUID = -6401510044712437861L;
 
 	private Integer id;
 
@@ -168,5 +175,51 @@ public class Article implements ITransferObject, IPositionObject {
 		this.endDate = endDate;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Article o = (Article) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.articleCategory, o.articleCategory)
+				.append(this.articleType, o.articleType)
+				.append(this.endDate, o.endDate)
+				.append(this.expireDate, o.expireDate)				
+				.append(this.image, o.image)
+				.append(this.initDate, o.initDate)
+				.append(this.position, o.position)
+				.append(this.publishDate, o.publishDate)				
+				.append(this.thumbnail, o.thumbnail)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(articleCategory)
+			.append(articleType)
+			.append(endDate)
+			.append(expireDate)
+			.append(id)	
+			.append(image)			
+			.append(initDate)
+			.append(position)
+			.append(publishDate)
+			.append(thumbnail)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
 
 }

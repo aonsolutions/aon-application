@@ -34,13 +34,13 @@
 
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 								<f:facet name="header">
-									<aon:outputLabel for="WorkPlace" value="#{bundle.aon_description}" />
+									<aon:outputText value="#{bundle.aon_description}" />
 								</f:facet>
-								<aon:outputText rendered="#{formList}"
+								<aon:outputText rendered="#{to.id!=workplace.to.id}"
 									value="#{to.description}" />
-								<aon:inputText id="WorkPlace" rendered="#{formEdit}" size="40"
+								<aon:inputText rendered="#{to.id==workplace.to.id}" size="40"
 									maxlength="32" value="#{workplace.to.description}"
-									required="true" />
+									required="#{true}" />
 							</aon:column>
 
 							<aon:column styleClass="aon-editDataTable-textColumn">

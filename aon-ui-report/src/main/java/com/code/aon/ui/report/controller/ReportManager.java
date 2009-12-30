@@ -1,8 +1,10 @@
 package com.code.aon.ui.report.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,17 +12,16 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.application.Application;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.el.EvaluationException;
-import javax.faces.el.PropertyNotFoundException;
-import javax.faces.el.ReferenceSyntaxException;
-import javax.faces.el.ValueBinding;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ICriteriaProvider;
@@ -34,6 +35,7 @@ import com.code.aon.report.ReportException;
 import com.code.aon.report.config.ReportConfig;
 import com.code.aon.report.jr.JRReport;
 import com.code.aon.report.jr.JRReportFactory;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Bean Manager for running reports.
@@ -47,8 +49,7 @@ public class ReportManager {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(ReportManager.class
-			.getName());
+	private static Logger LOGGER = Logger.getLogger(ReportManager.class.getName());
 
 	/**
 	 * Output format of the report.
@@ -59,6 +60,8 @@ public class ReportManager {
 	 * Report idetifier.
 	 */
 	private String reportKey;
+	
+	private ICollectionProvider collectionProvider;
 
 	/**
 	 * Returns the report identifier.
@@ -97,6 +100,24 @@ public class ReportManager {
 	public void setOutputFormat(OutputFormat outputFormat) {
 		this.outputFormat = outputFormat;
 	}
+	
+	/**
+	 * Gets the collection provider.
+	 * 
+	 * @return the collection provider
+	 */
+	public ICollectionProvider getCollectionProvider() {
+		return collectionProvider;
+	}
+
+	/**
+	 * Sets the collection provider.
+	 * 
+	 * @param collectionProvider the new collection provider
+	 */
+	public void setCollectionProvider(ICollectionProvider collectionProvider) {
+		this.collectionProvider = collectionProvider;
+	}
 
 	/**
 	 * Returns an array of <code>javax.faces.model.SelectItem</code> of
@@ -115,6 +136,26 @@ public class ReportManager {
 				new SelectItem(OutputFormat.TXT, OutputFormat.TXT.getType()) };
 		return items;
 	}
+	
+	/**
+	 * Runs the report. Obtains a
+	 * <code>com.code.aon.ui.report.jr.JRReport</code> calling the
+	 * <code>JRReportFactory.getJRReport(getReportKey())</code> method. Also,
+	 * finalizes the reponse calling the
+	 * <code>FacesContext.getCurrentInstance().responseComplete()</code>.
+	 * 
+	 * @return The outcome (- null - because this method finalizes the reponse).
+	 * @throws ReportException
+	 *             If an error ocurred.
+	 * @throws DAOException
+	 */
+	public String onExecute() throws ReportException {
+		ensureParams();
+		String out = execute(getOutputStream(), getReportKey());
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ctx.responseComplete();
+		return out;
+	}
 
 	/**
 	 * Runs the report. Obtains a
@@ -128,47 +169,76 @@ public class ReportManager {
 	 *             If an error ocurred.
 	 * @throws DAOException
 	 */
-	public String onExecute() throws ReportException, DAOException {
+	public String execute( File file, String reportKey ) throws ReportException {
+		OutputStream out = null;
+		try {
+			out = new BufferedOutputStream(new FileOutputStream(file));
+			return execute(out, reportKey);
+		} catch ( IOException e ) {
+			throw new ReportException(e.getMessage(), e);	
+		} finally {
+			if ( out != null ) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					throw new ReportException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Runs the report. Obtains a
+	 * <code>com.code.aon.ui.report.jr.JRReport</code> calling the
+	 * <code>JRReportFactory.getJRReport(getReportKey())</code> method. Also,
+	 * finalizes the reponse calling the
+	 * <code>FacesContext.getCurrentInstance().responseComplete()</code>.
+	 * 
+	 * @return The outcome (- null - because this method finalizes the reponse).
+	 * @throws ReportException
+	 *             If an error ocurred.
+	 * @throws DAOException
+	 */
+	public String execute( OutputStream os, String reportKey ) throws ReportException {
 
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
-		// if(initTransState){
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
 		HibernateUtil.setCloseSession(false);
-		// }
-		// if(initSessionState){
 		HibernateUtil.setBeginTransaction(false);
-		// }
 		try {
-			ensureParams();
-			JRReport report = JRReportFactory.getJRReport(getReportKey());
+			ensureOutputFormat();
+			JRReport report = JRReportFactory.getJRReport(reportKey);
 			resolveCustomParameters(report);
 			Criteria criteria = getCriteria(report);
 			Collection collection = getCollection(report);
 
-			HibernateUtil.startSession();
-			HibernateUtil.beginTransaction();
+			HibernateUtil.startSession(sessionFactoryName);
+			HibernateUtil.beginTransaction(sessionFactoryName);
 
 			String dp = report.getReportConfig().getDynamicParamsProvider();
 			LOGGER.info(dp);
-			FacesContext ctx = FacesContext.getCurrentInstance();
 			if (dp != null) {
-				ValueBinding vb = ctx.getApplication().createValueBinding(
-						"#{" + dp + "}");
-				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) vb
-						.getValue(ctx);
+				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) AonUtil.getRegisteredBean(dp);
 				Map<String, Object> dynParams = dpp.getDynamicParamsMap();
 				LOGGER.info("" + dynParams.size());
 				report.setDynamicParams(dynParams);
 				LOGGER.info("Dynamic params set!");
 			}
 
-			String out = report.run(outputFormat, getOutputStrem(),
-					getBundle(), criteria, collection);
-			ctx.responseComplete();
+			String out = report.run(outputFormat, os, getBundle(), criteria, collection);
 			report.setCustomParams(null);
-			HibernateUtil.commitTransaction();
-			HibernateUtil.closeSession();
+			HibernateUtil.commitTransaction(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName);
 			return out;
+		} catch (Throwable t ){
+		    try {
+				HibernateUtil.rollbackTransaction(sessionFactoryName);
+			} catch (DAOException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
+		    AonUtil.addFatalMessage("Report Error:" + t.getMessage());
+		    return null;
 		} finally {
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);
@@ -178,7 +248,7 @@ public class ReportManager {
 			}
 		}
 	}
-
+	
 	private void ensureParams() throws ReportException{
 		ensureReportKey();
 		ensureOutputFormat();
@@ -213,7 +283,6 @@ public class ReportManager {
 		}
 	}
 
-
 	/**
 	 * Obtains the OutputStream where the report will be writen. <br>
 	 * <code>
@@ -227,7 +296,7 @@ public class ReportManager {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	private OutputStream getOutputStrem() throws ReportException {
+	private OutputStream getOutputStream() throws ReportException {
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ExternalContext ec = ctx.getExternalContext();
@@ -240,7 +309,7 @@ public class ReportManager {
 			}
 			return res.getOutputStream();
 		} catch (IOException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
@@ -304,28 +373,18 @@ public class ReportManager {
 			if (provider != null) { // Criteria provider is EL expression ina a
 				// faces context.
 				if (provider.startsWith("#")) {
-					FacesContext ctx = FacesContext.getCurrentInstance();
-					ValueBinding vb = ctx.getApplication().createValueBinding(
-							provider);
-					ICriteriaProvider crpr = (ICriteriaProvider) vb
-							.getValue(ctx);
-
+					String providerName = strip(provider);
+					ICriteriaProvider crpr = (ICriteriaProvider) AonUtil.getRegisteredBean(providerName);
 					return crpr.getCriteria();
 				}
 				// Criteria provider is a class.
-				Class criteriaProviderClass = Class.forName(provider);
+				Class<?> criteriaProviderClass = Class.forName(provider);
 				ICriteriaProvider criteriaProvider = (ICriteriaProvider) criteriaProviderClass
 						.newInstance();
 				return criteriaProvider.getCriteria();
 
 			}
 			return null;
-		} catch (ReferenceSyntaxException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (PropertyNotFoundException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (EvaluationException e) {
-			throw new ReportException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
@@ -355,47 +414,33 @@ public class ReportManager {
 	private Collection getCollection(JRReport report) throws ReportException {
 		ReportConfig config = report.getReportConfig();
 		String provider = config.getCollectionProvider();
-		try {
-			if (provider != null) { // Criteria provider is EL expression ina a
-				// faces context.
-				if (provider.startsWith("#")) {
-					FacesContext ctx = FacesContext.getCurrentInstance();
-					ValueBinding vb = ctx.getApplication().createValueBinding(
-							provider);
-					Object c = vb.getValue(ctx);
-					if (c instanceof ICollectionProvider) {
-						ICollectionProvider crpr = (ICollectionProvider) c;
-						return crpr.getCollection(config.isForceRefresh());
-					} else {
-						if (c instanceof Collection) {
-							return (Collection) c;
-						}
-						return null;
-					}
+		ICollectionProvider collectionProvider = getCollectionProvider();
+		if ( (collectionProvider == null) && (provider != null) ) {		
+			if (provider.startsWith("#")) {
+				String providerName = strip(provider);
+				Object c = AonUtil.getRegisteredBean(providerName);
+				if (c instanceof ICollectionProvider) {
+					collectionProvider = (ICollectionProvider) c;
+				} else if (c instanceof Collection) {
+					return (Collection) c;
 				}
-				// Collection provider is a class.
-				Class collectionProviderClass = Class.forName(provider);
-				ICollectionProvider collectionProvider = (ICollectionProvider) collectionProviderClass
-						.newInstance();
-				return collectionProvider.getCollection(config.isForceRefresh());
-
+			} else {
+				try {
+					Class<?> collectionProviderClass = Class.forName(provider);
+					collectionProvider = (ICollectionProvider) collectionProviderClass.newInstance();
+				} catch ( Throwable th ) {
+					throw new ReportException(th.getMessage(), th);		
+				}					
 			}
-			return null;
-		} catch (ReferenceSyntaxException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (PropertyNotFoundException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (EvaluationException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (InstantiationException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (ManagerBeanException e) {
-			throw new ReportException(e.getMessage(), e);
 		}
+		if ( collectionProvider != null ) {
+			try {
+				return collectionProvider.getCollection(config.isForceRefresh());
+			} catch (ManagerBeanException e) {
+				throw new ReportException(e.getMessage(), e);
+			}				
+		}		
+		return null;
 	}
 
 	private void resolveCustomParameters(JRReport report)
@@ -413,29 +458,27 @@ public class ReportManager {
 							value.indexOf("{") + 1, value.indexOf("."));
 					String methodName = value.substring(value.indexOf(".") + 1,
 							value.indexOf("}"));
-					FacesContext ctx = FacesContext.getCurrentInstance();
-					ValueBinding vb = ctx.getApplication().createValueBinding(
-							"#{" + controllerName + "}");
-					Object o = vb.getValue(ctx);
+					Object o = AonUtil.getRegisteredBean( controllerName );
 					try {
-						Method m;
-						m = o.getClass().getMethod(methodName, new Class[0]);
+						Method m = o.getClass().getMethod(methodName, new Class[0]);
 						Object obj = m.invoke(o, new Object[0]);
 						map.put(key, obj);
-					} catch (SecurityException e) {
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
+					} catch (Throwable th) {
+						LOGGER.log(Level.SEVERE, "Error resolving expression " + value + ". " + th.getMessage(), th);
 					}
 				}
 			}
 			report.setCustomParams(map);
 		}
 	}
+	
+	private String strip( String expression ) {
+		int start = StringUtils.indexOf(expression, "#{" );
+		int end = StringUtils.lastIndexOf(expression, '}' );
+		if ( (start != -1) && (end != -1) ) {
+			return StringUtils.substring( expression, start+2, end);
+		}
+		return expression;
+	}
+	
 }

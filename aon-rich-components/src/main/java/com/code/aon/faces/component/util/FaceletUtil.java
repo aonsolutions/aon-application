@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.net.DummyHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
 import com.sun.facelets.FaceletHandler;

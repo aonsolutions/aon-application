@@ -96,6 +96,7 @@ import com.code.aon.cms.SportPosition;
 import com.code.aon.cms.SportPositionDetail;
 import com.code.aon.cms.SportSeason;
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 public class CMSAliasWriter {
 
@@ -195,6 +196,7 @@ public class CMSAliasWriter {
 		classes[89] = SportCareerPath.class.getName();
 		classes[90] = SportCoach.class.getName();
 		classes[91] = SportConfig.class.getName();
+		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

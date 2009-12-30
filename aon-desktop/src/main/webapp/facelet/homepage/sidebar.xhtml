@@ -3,7 +3,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -13,99 +12,84 @@
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<aon:commandLink action="home">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-home.png']}" />
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-home.png']}" />
 					<aon:div><aon:outputText value="#{bundle.aon_home}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{email.sidebarEnabled and email.mailActive}">
 				<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-correo.png']}" />
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-correo.png']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_webmail}" /></aon:div>
 				</aon:outputLink>
 			</aon:div>
 			
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink actionListener="#{notice.onSearch}" action="notice">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-avisos.png']}" />
+				<aon:commandLink 
+					actionListener="#{notice.onSearch}" action="notice">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-avisos.png']}" />
 					<aon:div><aon:outputText value="#{groupwareBundle.aon_alarms}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 			
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink actionListener="#{note.onSearch}" action="note">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-notas.png']}" />
+				<aon:commandLink 
+					actionListener="#{note.onSearch}" action="note">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-notas.png']}" />
 					<aon:div><aon:outputText value="#{groupwareBundle.aon_notes}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink rendered="#{currentUser.contactsEnabled}"
-					actionListener="#{contact.onSearch}" action="contact_list">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-contactos.png']}" />
-					<aon:div><aon:outputText value="#{webmailBundle.webmail_contacts}" /></aon:div>
+				<aon:commandLink 
+					actionListener="#{contact.onSearch}" action="contact">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-contactos.png']}" />
+					<aon:div><aon:outputText value="#{groupwareBundle.aon_contacts}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink actionListener="#{favorite.onSearch}" action="favorite">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-favoritos.png']}" />
+				<aon:commandLink 
+					actionListener="#{favorite.onSearch}" action="favorite">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-favoritos.png']}" />
 					<aon:div><aon:outputText value="#{groupwareBundle.aon_favorites}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{smsManager.sidebarEnabled}">
-				<aon:commandLink actionListener="#{sms.reset}" action="sms">
-					<aon:graphicImage height="32" width="32" 
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-sms.png']}" />
-					<aon:div><aon:outputText value="#{smsBundle.sms_module}" /></aon:div>
+			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{sms.sidebarEnabled}">
+				<aon:commandLink 
+					actionListener="#{sms.reset}" action="sms">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-sms.png']}" />
+					<aon:div><aon:outputText value="#{appBundle.aon_desktop_sms}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<aon:commandLink action="corporate_identity" actionListener="#{company.onLoad}">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-identity.gif']}" />
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-identity.gif']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_corporate_identity}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
-				<aon:commandLink actionListener="#{user.onSearch}" action="user">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-users.png']}" />
+				<aon:commandLink 
+					actionListener="#{user.onSearch}" action="user">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-users.png']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_users}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
-				<aon:commandLink actionListener="#{currentDomain.onLoadCurrentDomain}" action="application_list">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-ambito.png']}" />
+				<aon:commandLink 
+					actionListener="#{domain.onLoadCurrentDomain}" action="application_list">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-ambito.png']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_profiles}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
-			<c:if test="#{currentDomain.domainManagement}">
-				<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
-					<aon:commandLink actionListener="#{domain.onSearch}" action="domain_list">
-						<aon:graphicImage height="32" width="32"
-							url="#{aonResource.resolveLocal['/images/aon-icon-big-employee-group.png']}" />
-						<aon:div><aon:outputText value="#{appBundle.aon_domains}" /></aon:div>
-					</aon:commandLink>
-				</aon:div>
-			</c:if>
-			
 			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
 				<aon:commandLink action="company" actionListener="#{company.onLoad}">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-enterprise-configure.png']}" />
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-enterprise-configure.png']}" />
 					<aon:div><aon:outputText value="#{companyBundle.company_data_module}"/></aon:div>
 					<f:setPropertyActionListener value="#{false}" target="#{company.showRegistryBank}" />
 					<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />

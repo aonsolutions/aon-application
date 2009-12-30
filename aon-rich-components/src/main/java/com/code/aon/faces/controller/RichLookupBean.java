@@ -24,11 +24,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
+import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
 
@@ -217,15 +217,6 @@ public class RichLookupBean {
 		getController().setBeanName(beanName);
 	}
 
-	/**
-	 * Return the POJO class short name associated to controller.
-	 * 
-	 * @return String
-	 */
-	public String getPojoShortName() {
-		return getController().getPojoShortName();
-	}
-	
 	/**
 	 * Set the limit of page in the model associated to controller.
 	 * 
@@ -561,8 +552,9 @@ public class RichLookupBean {
 				LOGGER.severe( e.getMessage() );
 			}
 			return pojo;
-		} 
-		pojo = getController().getPojo();			
+		} else {
+			pojo = getController().getPojo();			
+		}
 		return pojo;
 	}
 	
@@ -637,8 +629,9 @@ public class RichLookupBean {
 			String type = ve.getType(ctx.getELContext()).getName();
 			if (type.equals(pojo)) {
 				return ve;
-			} 
-			ve = getParentBinding(ctx, ve);
+			} else {
+				ve = getParentBinding(ctx, ve);
+			}
 		}
 		return null;
 	}

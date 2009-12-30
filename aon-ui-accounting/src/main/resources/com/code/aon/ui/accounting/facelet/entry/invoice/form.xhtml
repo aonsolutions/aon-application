@@ -116,7 +116,7 @@
 							value="#{bundle.aon_series}/#{bundle.aon_number}" />
 						<aon:outputLabel for="Account_invoice_referenceCode"
 							rendered="#{!invoiceEntry.sales}"  
-							value="#{accountingBundle.accounting_referenceCode}" />
+							value="#{financeBundle.finance_invoice_number}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoice_series"
 								rendered="#{invoiceEntry.sales}"
@@ -249,6 +249,7 @@
 							<ui:param name="wizard" value="#{accountWizard}" />
 							<ui:param name="id" value="accountId" />
 							<ui:param name="size" value="12" />
+							<ui:param name="maxlength" value="12" />
 							<ui:param name="renderDescription" value="#{true}" />
 							<ui:param name="renderedAttr" value="#{true}" />
 							<ui:param name="disabled"

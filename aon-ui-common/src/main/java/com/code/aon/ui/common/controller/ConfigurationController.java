@@ -18,6 +18,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
@@ -185,8 +187,9 @@ public class ConfigurationController implements Serializable {
 				InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
 				Manifest m = new Manifest(in);
 				Attributes attrs = m.getMainAttributes();
-				String version = attrs.getValue("Implementation-Version");
-				if(version != null){
+				String value = attrs.getValue("Implementation-Version");
+				if (! StringUtils.isEmpty(value)) {
+					this.version = StringUtils.trim(value);
 					LOGGER.info(version);
 				} else {
 					LOGGER.warning("Imposible determinar la versión");

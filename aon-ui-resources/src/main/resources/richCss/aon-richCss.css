@@ -240,13 +240,6 @@ color:#000;
 		line-height:34px;
 	height:34px;
 	}
-.aon-icon-big-error{
-	background:transparent url(images/aon-icon-big/aon-icon-big-error.png) center  center no-repeat;
-	padding-top:1px;
-	padding-bottom:1px;
-	line-height:34px;
-	height:34px;
-	}
 .aon-icon-big-commandButton-disabled{
 	}
 .aon-icon-big-correo{
@@ -415,13 +408,6 @@ color:#000;
  .aon-icon-predetermine{
 	background:transparent url(images/aon-icon/aon-icon-predetermine.png) scroll left center no-repeat;	
  }
- .aon-icon-errorwarning{
-	background:transparent url(images/aon-icon/aon-icon-errorwarning.png) scroll left center no-repeat;	
- }
- .aon-icon-exception{
-	background:transparent url(images/aon-icon/aon-icon-exception.png) scroll left center no-repeat;	
- }
-
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
@@ -1129,17 +1115,7 @@ color:#000;
 .aon-dataTable-row-even{
 	background-color:#f8f9f9;
 	}
-.aon-dataTable-link {
-	background:transparent url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
-	padding-right: 10px;
-}
-
-.aon-dataTable-link:hover {
-	color: #285E9C; 
-	text-decoration: underline;
-}
-
-
+	
 /*************************/
 /******  EDITTABLE  ******/
 /*************************/

@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -23,6 +21,8 @@ import javax.security.auth.Subject;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Environment;
 import org.hibernate.connection.DatasourceConnectionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A strategy for obtaining JDBC connections.
@@ -55,7 +55,8 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 	/**
 	 * Logger initialization
 	 */
-	private static final Logger LOG = Logger.getLogger(C3P0ConnectionProvider.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(C3P0ConnectionProvider.class);
+	
 	
 	/** Data source. */
 	private DatasourceConnectionProvider dataSourceProvider;
@@ -65,12 +66,12 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 		String jndiName = props.getProperty(Environment.DATASOURCE);
 		if (jndiName == null) {
 			String msg = "datasource JNDI name was not specified by property " + Environment.DATASOURCE;
-			LOG.severe(msg);
+			LOGGER.error(msg);
 			throw new HibernateException(msg);
 		}
 		try {
 			Properties connectionProperties = getConnectionProperties(props);
-			LOG.info( "Connection properties: " + connectionProperties );
+			LOGGER.info( "Connection properties: {}", connectionProperties );
 			props.putAll( connectionProperties );
 			super.configure(props);			
 		} catch ( NamingException ne ) {
@@ -193,7 +194,7 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 		try {
 			name = (String) ic.lookup( SECURITY_M_BEAN );
 		} catch (NamingException e) {
-			LOG.log( Level.FINE, "Not found " + SECURITY_M_BEAN, e );
+			LOGGER.debug( "Not found " + SECURITY_M_BEAN, e );
 		}
 		if (name == null) {
 			name = props.getProperty( CONNECTION_SERVICE );

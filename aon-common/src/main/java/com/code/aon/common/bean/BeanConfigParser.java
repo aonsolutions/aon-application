@@ -3,10 +3,11 @@ package com.code.aon.common.bean;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.xmlrules.DigesterLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.ManagerBeanException;
@@ -38,7 +39,7 @@ public class BeanConfigParser {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(BeanConfigParser.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(BeanConfigParser.class);
 
 	/**
 	 * The Digester instance.
@@ -71,7 +72,7 @@ public class BeanConfigParser {
 	 */
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
-			LOGGER.info("Reading config from " + RULES_FILE);
+			LOGGER.info("Reading config from {}", RULES_FILE);
 			DIGESTER = DigesterLoader
 					.createDigester(BeanConfigParser.class
 							.getResource(RULES_FILE));

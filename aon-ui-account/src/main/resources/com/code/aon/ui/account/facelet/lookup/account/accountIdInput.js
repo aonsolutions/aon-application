@@ -18,5 +18,3 @@ function activateSuggestionBox(field) {
 	if (field.value.indexOf('*') > 0) return true;
 	return false;
 }
-
-

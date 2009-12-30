@@ -4,10 +4,10 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-rich-components/aon-rich-components">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-groupware/aon-groupware">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-resources/aon-ui-resources">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-common-ldap/aon-common-ldap">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="aon-desktop"/>

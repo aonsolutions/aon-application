@@ -6,14 +6,24 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="album_i18n")
 public class AlbumDetail implements ITransferObject {
+
+	private static final long serialVersionUID = 602462901203612968L;
 
 	private Integer id;
 	
@@ -67,7 +77,8 @@ public class AlbumDetail implements ITransferObject {
 		this.title = title;
 	}
 
-	@Column(length=65535)
+	@Lob
+	@Type(type="stringClob")
 	public String getDescription() {
 		return description;
 	}
@@ -84,4 +95,47 @@ public class AlbumDetail implements ITransferObject {
 	public void setAlt(String alt) {
 		this.alt = alt;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final AlbumDetail o = (AlbumDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.album, o.album)
+				.append(this.alt, o.alt)				
+				.append(this.description, o.description)
+				.append(this.language, o.language)				
+				.append(this.title, o.title)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(album)
+			.append(alt)
+			.append(description)
+			.append(id)	
+			.append(language)
+			.append(title)			
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("album", album.getId()).
+			append("alt", alt).
+			append("description", StringUtils.abbreviate(description, 32)).
+			append("id", id).
+			append("language", language.getId()).
+			append("title", StringUtils.abbreviate(title, 32)).
+			toString();
+	}
+
 }

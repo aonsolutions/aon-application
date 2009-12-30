@@ -1,5 +1,6 @@
 package com.code.aon.product.strategy;
 
+import com.code.aon.account.Account;
 import com.code.aon.config.enumeration.TaxType;
 
 /**
@@ -40,6 +41,11 @@ public class TaxBreakDown {
 	 * Tax base
 	 */
 	private double base;
+
+	/**
+	 * Tax account
+	 */
+	private Account account;
 
 	/**
 	 * Returns the tax type 
@@ -148,4 +154,23 @@ public class TaxBreakDown {
 	public void setBase(double base) {
 		this.base = base;
 	}
+
+	/**
+	 * Returns the account
+	 * 
+	 * @return the account
+	 */
+	public Account getAccount() {
+		return account;
+	}
+
+	/**
+	 * Assigns the account
+	 * 
+	 * @param account
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
 }

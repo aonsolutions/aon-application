@@ -6,7 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/commercial/facelet/target/formContent.xhtml">
-		<ui:param name="targetController" value="#{lookup}"/>
+		<ui:param name="controller" value="#{lookup}"/>
 	</ui:include>
 
 	<aon:outputLabel for="Company_address" 
@@ -38,7 +38,7 @@
 	<aon:outputLabel for="Company_address_geozone" 
 		value="#{registryBundle.registry_geozone}" />
 	<aon:selectOneMenu id="Company_address_geozone"
-		value="#{targetLookupListener.mainAddress.geozone.id}">
+		value="#{targetLookupListener.mainAddress.geozone}">
 		<f:selectItems value="#{geozoneCollections.geoTrees}" />
 	</aon:selectOneMenu>
 	

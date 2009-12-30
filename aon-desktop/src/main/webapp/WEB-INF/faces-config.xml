@@ -23,7 +23,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.5.1</value>
+			<value>/aonResource/3.5.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -81,7 +81,7 @@
 
 	<!-- ************ PROFILES ************** -->
 	<managed-bean>
-		<managed-bean-name>currentDomain</managed-bean-name>
+		<managed-bean-name>domain</managed-bean-name>
 		<managed-bean-class>com.code.aon.desktop.controller.AonDomainController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -114,8 +114,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>smsManager</managed-bean-name>
+		<managed-bean-name>sms</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.desktop.applications.SMSManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>smsContact</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
@@ -167,29 +172,4 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************* DOMAIN ***************** -->
-	<managed-bean>
-		<managed-bean-name>domain</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.desktop.controller.DomainController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.desktop.Domain</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>domain</value>
-		</managed-property>								
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Domain_commonName</value>
-		</managed-property>
-	</managed-bean>	
-	
 </faces-config>

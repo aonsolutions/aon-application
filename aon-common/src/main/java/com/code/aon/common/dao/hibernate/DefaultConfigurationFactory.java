@@ -10,7 +10,10 @@ public class DefaultConfigurationFactory implements IConfigurationFactory {
 
     private static final IConfigurationFactory SINGLETON = new DefaultConfigurationFactory();
     
-    private DefaultConfigurationFactory() {
+    /**
+     * Instantiates a new default configuration factory.
+     */
+    protected DefaultConfigurationFactory() {
     }
     
     /**
@@ -22,9 +25,18 @@ public class DefaultConfigurationFactory implements IConfigurationFactory {
     	return SINGLETON;
     }
     
+    /**
+     * Complete configuration.
+     * 
+     * @param configuration the configuration
+     */
+    protected void completeConfiguration( Configuration configuration ) {    	
+    }
+    
 	public Configuration getConfiguration( String sessionFactoryName ) {
 		String configurationResource = System.getProperty(HibernateUtil.HIBERNATE_CONFIGURATION_FILE_PROPERTY);
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
+		completeConfiguration(configuration);
 		if (configurationResource != null) {
 			configuration.configure(configurationResource);
 		} else {

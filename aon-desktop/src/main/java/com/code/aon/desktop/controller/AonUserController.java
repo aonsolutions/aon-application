@@ -12,7 +12,6 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ldap.AonDN;
@@ -30,11 +29,15 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
-public class AonUserController extends UserController implements ILdapConstants, IAonObjectClasses, IDesktopConstants {
+public class AonUserController extends UserController implements ILdapConstants, IAonObjectClasses {
+
+	private static final String PASSWORD_EXPIRATION_TIMESTAMP = "passwordExpirationTimestamp";
+
+	private static final String USER_ALTERNATIVE_EMAIL = "mail";
+
+	private static final String USER_CELLULAR_NUMBER = "mobile";
 
 	private static final Logger LOGGER = Logger.getLogger(AonUserController.class.getName());
-	
-	private AuthPrincipal principal;
 	
 	private String name;
 	
@@ -46,10 +49,6 @@ public class AonUserController extends UserController implements ILdapConstants,
 
 	private String domain;
 	
-	private boolean passwordExpired;
-	
-	private boolean contactsEnabled;
-	
 	private boolean managerChangingPassword;
 	
 	private boolean showPasswordChangedWindow;
@@ -59,10 +58,8 @@ public class AonUserController extends UserController implements ILdapConstants,
 	private boolean accepted;
 	
 	public AonUserController() {
-		principal = UserUtils.getInstance().getPrincipal();
-		domain = principal.getDomain();
-		passwordExpired = calculatePasswordExpired();
-		contactsEnabled = calculateContactsEnabled();
+		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+		domain = user.getDomain();
 		onLoadCurrentUser( null );
 	}
 
@@ -140,7 +137,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 				if ( ! expireToday ) {
 					newDate = DateUtils.addDays(newDate, 180);
 				}	
-				session.replaceAttribute(userDN, PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE, newDate);
+				session.replaceAttribute(userDN, PASSWORD_EXPIRATION_TIMESTAMP, newDate);
 			} catch (LdapException e) {
 				AonUtil.addErrorMessage("Error actualizando la fecha de expiración de la contraseña" );
 			} finally {
@@ -188,7 +185,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 		if ( ctx.getMaximumSeverity() == null ) {
 			updateExpirationTimestamp( user.getLogin(), managerChangingPassword );
 			changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );				
-			AonDomainController domainController = (AonDomainController) FormUtil.getController(CURRENT_DOMAIN_CONTROLLER_NAME);
+			AonDomainController domainController = (AonDomainController) FormUtil.getController("domain");
 			domainController.flushAuthenticationCache( user.getLogin() );
 			setShowPasswordChangedWindow(true);
 		} else {
@@ -211,43 +208,26 @@ public class AonUserController extends UserController implements ILdapConstants,
 	public void setShowUserChangedWindow(boolean showUserChangedWindow) {
 		this.showUserChangedWindow = showUserChangedWindow;
 	}
-	
-	public boolean isContactsEnabled() {
-		return this.contactsEnabled;
-	}
-		
-	public boolean calculateContactsEnabled() {		
-		DistinguishedName contactsDN = AonDN.getUserAddressBookDN( domain, principal.getShortName() );
-		BasicLdap ldap = new BasicLdap();
-		boolean enabled = ldap.exists(contactsDN, ORGANIZATIONAL_UNIT);
-		ldap.closeSession();
-		return enabled;
-	}
-	
+
 	public boolean isPasswordExpired() {
-		return passwordExpired;
-	}
-	
-	public boolean calculatePasswordExpired() {
 		boolean passwordExpired = false;
-		DistinguishedName userDN = AonDN.getUserDN( domain, principal.getShortName() );
+		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+		DistinguishedName userDN = AonDN.getUserDN( domain, user.getShortName() );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
 			try {
 				LdapSession session = ldap.getLdapSession();
 				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE);
-				if (userEntry.getSearchDN() == null) {
-					Date expirationDate = userEntry.getAsDate(PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE);
-					passwordExpired = new Date().after(expirationDate);
-				}
+				Entry userEntry = session.get(userDN.toString(), filter, PASSWORD_EXPIRATION_TIMESTAMP);
+				Date expirationDate = userEntry.getAsDate(PASSWORD_EXPIRATION_TIMESTAMP);
+				passwordExpired = new Date().after(expirationDate);
 			} catch (LdapException e) {
 				AonUtil.addErrorMessage("Error actualizando la fecha de expiración de la contraseña" );
 			} finally {
 				ldap.closeSession();
 			}
 		} else {
-			LOGGER.severe( "No existe en LDAP el usuario " + principal.getShortName() + " para el dominio " + domain );
+			LOGGER.severe( "No existe en LDAP el usuario " + user.getShortName() + " para el dominio " + domain );
 		}
 		return passwordExpired;
 	}
@@ -283,17 +263,20 @@ public class AonUserController extends UserController implements ILdapConstants,
 				session.replaceAttribute(userDN, SURNAME_ATTRIBUTE, surname);
 
 				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE);
+				Entry userEntry = session.get(userDN.toString(), filter, COMMON_NAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
 				String old_mail = null;
-				if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
-					old_mail = userEntry.getAsString(MAIL_ATTRIBUTE);
-				}
 				String old_mobile = null;
-				if ( userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
-					old_mobile = userEntry.getAsString(MOBILE_ATTRIBUTE);
+				try {
+					old_mail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
 				}
-				session.updateAttribute(userDN, MAIL_ATTRIBUTE, old_mail, mail);
-				session.updateAttribute(userDN, MOBILE_ATTRIBUTE, old_mobile, mobile);
+				catch (NullPointerException npe) {}
+				try {
+					old_mobile = userEntry.getAsString(USER_CELLULAR_NUMBER);
+				}
+				catch (NullPointerException npe) {}
+				
+				session.updateAttribute(userDN, USER_ALTERNATIVE_EMAIL, old_mail, mail);
+				session.updateAttribute(userDN, USER_CELLULAR_NUMBER, old_mobile, mobile);
 			} catch (LdapException e) {
 				e.printStackTrace();
 				AonUtil.addErrorMessage("Error actualizando los datos de usuario." );
@@ -358,10 +341,10 @@ public class AonUserController extends UserController implements ILdapConstants,
 		try {
 			DistinguishedName dn = AonDN.getUserDN(domain, login);
 			String filter = LdapSession.getObjectClass("aonUser");
-			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, MAIL_ATTRIBUTE);
+			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, USER_ALTERNATIVE_EMAIL);
 			if ( entry != null ) {
 				try {
-					alternativeEmail = entry.getAsString(MAIL_ATTRIBUTE);
+					alternativeEmail = entry.getAsString(USER_ALTERNATIVE_EMAIL);
 				}
 				catch (NullPointerException npe) {}
 			}
@@ -385,10 +368,10 @@ public class AonUserController extends UserController implements ILdapConstants,
 		try {
 			DistinguishedName dn = AonDN.getUserDN(domain, login);
 			String filter = LdapSession.getObjectClass("aonUser");
-			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, MOBILE_ATTRIBUTE);
+			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, USER_CELLULAR_NUMBER);
 			if ( entry != null ) {
 				try {
-					cellular = entry.getAsString(MOBILE_ATTRIBUTE);
+					cellular = entry.getAsString(USER_CELLULAR_NUMBER);
 				}
 				catch (NullPointerException npe) {}
 			}

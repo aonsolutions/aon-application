@@ -10,9 +10,11 @@ import java.util.regex.Pattern;
  * @since 1.0
  *  
  */
-public class DiscountExpression implements Serializable, Comparable{
+public class DiscountExpression implements Serializable, Comparable<DiscountExpression> {
 	
-    /**
+	private static final long serialVersionUID = 399393675072081550L;
+
+	/**
      * Aritmetic expression for discounts.
      */
     private String discountExpr;
@@ -109,19 +111,6 @@ public class DiscountExpression implements Serializable, Comparable{
      */
     public double[] getDiscounts() {
         return discounts;
-    }
-
-    /**
-     * Compares this object with the one specified. .
-     * 
-     * @param object *
-     *            The object to be compared.
-     * @return int Returns a negative integer, zero or a positive integer if is less, the same o larger.
-     * 
-     * @see java.lang.Comparable#compareTo(Object)
-     */
-    public int compareTo(Object object) {
-        return compareTo((DiscountExpression) object);
     }
 
     /**

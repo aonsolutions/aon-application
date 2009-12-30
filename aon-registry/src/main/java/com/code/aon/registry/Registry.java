@@ -16,11 +16,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
@@ -36,6 +40,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Entity
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
+@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REIGSTRY", columnNames={"name","surname"})})
 public class Registry implements ITransferObject {
 	
 	private static final long serialVersionUID = 8635760095705923309L;
@@ -110,6 +115,7 @@ public class Registry implements ITransferObject {
 	 * @return the document
 	 */
 	@Column(length=16)
+	@Index(name="IDX_REGISTRY_DOCUMENT")
 	public String getDocument() {
 		return document;
 	}
@@ -356,24 +362,37 @@ public class Registry implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Registry o = (Registry) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alias, o.alias)
+				.append(this.document, o.document)				
+				.append(this.name, o.name)
+				.append(this.surname, o.surname)				
+				.append(this.type, o.type)
+				.isEquals();
 		}
-		if (obj instanceof Registry) {
-			Registry o = (Registry) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(alias)
+			.append(document)
+			.append(id)	
+			.append(name)			
+			.append(surname)
+			.append(type)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

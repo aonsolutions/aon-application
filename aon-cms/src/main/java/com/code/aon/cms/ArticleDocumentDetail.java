@@ -6,14 +6,24 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="article_document_i18n")
 public class ArticleDocumentDetail implements ITransferObject {
+
+	private static final long serialVersionUID = -4716764645276950974L;
 
 	private Integer id;
 	
@@ -67,7 +77,8 @@ public class ArticleDocumentDetail implements ITransferObject {
 		this.title = title;
 	}
 
-	@Column(length=65535)
+	@Lob
+	@Type(type="stringClob")
 	public String getDescription() {
 		return description;
 	}
@@ -84,4 +95,47 @@ public class ArticleDocumentDetail implements ITransferObject {
 	public void setFile(String file) {
 		this.file = file;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ArticleDocumentDetail o = (ArticleDocumentDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.append(this.description, o.description)
+				.append(this.file, o.file)
+				.append(this.language, o.language)
+				.append(this.title, o.title)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(articleDocument)
+			.append(description)
+			.append(file)
+			.append(id)	
+			.append(language)
+			.append(title)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+		append("articleDocument", articleDocument.getId()).
+		append("description", StringUtils.abbreviate(description, 32)).
+		append("file", file).
+		append("id", id).
+		append("language", language.getId()).
+		append("title", StringUtils.abbreviate(title, 32)).
+		toString();
+	}	
+	
 }

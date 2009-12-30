@@ -10,20 +10,26 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.report</artifactId>
-	<version>3.4.1</version>
+	<version>3.5.0</version>
 	<description>AON UI REPORT</description>
 	<name>AON UI REPORT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.report</artifactId>
-			<version>3.4.1</version>
+			<version>3.4.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.common</artifactId>
+			<version>3.5.0</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_02</version>
+			<version>1.2_09</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -32,5 +38,11 @@
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>		
 	</dependencies>
 </project>

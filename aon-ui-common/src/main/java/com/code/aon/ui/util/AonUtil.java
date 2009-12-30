@@ -362,17 +362,11 @@ public class AonUtil {
 	 * @return The updated String.
 	 */
 	public static String substituteParams(Locale locale, String msgtext, Object params[]) {
-		String localizedStr = null;
-		if (params == null || msgtext == null)
+		if (params == null || msgtext == null) {
 			return msgtext;
-		StringBuffer b = new StringBuffer(100);
-		MessageFormat mf = new MessageFormat(msgtext);
-		if (locale != null) {
-			mf.setLocale(locale);
-			b.append(mf.format((params)));
-			localizedStr = b.toString();
 		}
-		return localizedStr;
+		MessageFormat mf = new MessageFormat( msgtext, locale );
+		return mf.format( params );
 	}
 	
     /**
@@ -481,13 +475,22 @@ public class AonUtil {
     }
     
     /**
-     * @param bundleKey
-     * @param messageKey
+     * Gets the message.
+     * 
+     * @param bundleKey the bundle key
+     * @param messageKey the message key
+     * @param arguments the arguments
+     * 
      * @return String
      */
-    public static String getMessage(String bundleKey, String messageKey) {
+    public static String getMessage(String bundleKey, String messageKey, Object ... arguments ) {
     	ResourceBundle bundle = getResourceBundle(bundleKey);
-    	return bundle.getString(messageKey);
+    	String value = bundle.getString(messageKey);
+    	if ( arguments.length > 0 ) {
+    		MessageFormat mf = new MessageFormat( value, AonUtil.getCurrentLocale() );
+    		value = mf.format( arguments );
+    	}
+    	return value;
     }
     
 }

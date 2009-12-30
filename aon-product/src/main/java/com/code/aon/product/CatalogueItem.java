@@ -10,8 +10,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Transfer Object that represents a CatalogueItem.
@@ -70,6 +75,8 @@ public class CatalogueItem implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="catalogue", nullable=false)
+	@ForeignKey(name = "FK_CATALOGUE_ITEM_CATALOGUE")
+	@Index(name = "IDX_CATALOGUE_ITEM_CATALOGUE")		
 	public Catalogue getCatalogue() {
 		return catalogue;
 	}
@@ -90,6 +97,8 @@ public class CatalogueItem implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="item", nullable=false)
+	@ForeignKey(name = "FK_CATALOGUE_ITEM_ITEM")
+	@Index(name = "IDX_CATALOGUE_ITEM_ITEM")	
 	public Item getItem() {
 		return item;
 	}
@@ -108,6 +117,7 @@ public class CatalogueItem implements ITransferObject {
 	 * 
 	 * @return the quantity
 	 */
+	@Column(nullable = true)
 	public double getQuantity() {
 		return quantity;
 	}
@@ -126,6 +136,7 @@ public class CatalogueItem implements ITransferObject {
 	 * 
 	 * @return the price
 	 */
+	@Column(nullable = true)
 	public double getPrice() {
 		return price;
 	}
@@ -144,6 +155,7 @@ public class CatalogueItem implements ITransferObject {
 	 * 
 	 * @return the discount
 	 */
+	@Column(nullable = true, precision = 6, scale = 2)
 	public double getDiscount() {
 		return discount;
 	}
@@ -159,24 +171,37 @@ public class CatalogueItem implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final CatalogueItem o = (CatalogueItem) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.catalogue, o.catalogue)				
+				.append(this.discount, o.discount)				
+				.append(this.item, o.item)				
+				.append(this.price, o.price)								
+				.append(this.quantity, o.quantity)				
+				.isEquals();
 		}
-		if (obj instanceof CatalogueItem) {
-			CatalogueItem o = (CatalogueItem) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(catalogue)
+			.append(discount)
+			.append(id)			
+			.append(item)						
+			.append(price)						
+			.append(quantity)						
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

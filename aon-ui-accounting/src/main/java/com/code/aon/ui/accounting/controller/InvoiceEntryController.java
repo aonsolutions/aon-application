@@ -491,7 +491,9 @@ public class InvoiceEntryController {
 	}
 
 	public void accept(ActionEvent event) {
-		if (getFinanceTotal() > 0 && getInvoiceTotal() != getFinanceTotal()) {
+		double invoiceTotal = getInvoiceTotal();
+		double financeTotal = getFinanceTotal();
+		if (financeTotal > 0 && invoiceTotal != financeTotal) {
 			String msg = AonUtil.addErrorMessageFromBundle("financeBundle", "finance_unable_record_inaccuracy_error");
 			throw new AbortProcessingException(msg);
 		}
@@ -531,7 +533,7 @@ public class InvoiceEntryController {
 					}
 				}
 			}
-			Invoice invoice = insertOrUpdateInvoice();
+			Invoice invoice = insertOrUpdateInvoice( sessionName );
 			insertInvoiceDetails(invoice);
 			insertFinances(invoice);
 			if (!isNew) {
@@ -541,7 +543,7 @@ public class InvoiceEntryController {
 			if (isNew) {
 				this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 			} 
-			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice), getInvoiceTotal(), 
+			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal, 
 					obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
 			this.isNew = false;
@@ -684,12 +686,15 @@ public class InvoiceEntryController {
 		}
 	}
 
-	private Invoice insertOrUpdateInvoice() throws ManagerBeanException {
+	private Invoice insertOrUpdateInvoice(String sessionName) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
 		if (isNew()) {
 			invoice = (Invoice) invoiceBean.insert(invoice);
+		} else{
+			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
+			invoice = (Invoice) invoiceBean.update(invoice);
 		}
 		// Al convertir el proceso en transaccional, el update
 		// de invoice se realiza al momento del session.flush()

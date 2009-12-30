@@ -13,13 +13,13 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
-import com.code.aon.product.Tariff;
 import com.code.aon.product.TariffCatalogue;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
@@ -75,6 +75,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getTaxBreakDowns(com.code.aon.product.strategy.ICalculableContainer, com.code.aon.registry.ITaxInfo)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
 		if(!iti.isTaxFree()){
@@ -127,6 +128,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getTaxableBase(com.code.aon.product.strategy.ICalculableContainer)
 	 */
+	@SuppressWarnings("unchecked")
 	public double getTaxableBase(ICalculableContainer icc) {
 		double taxableBase = 0;
 		Iterator iter = icc.getDetailList().iterator();
@@ -149,9 +151,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		return calc.getItem().getPrice();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.product.strategy.IPriceStrategy#getUnitPrice(com.code.aon.product.strategy.ICalculable, com.code.aon.product.Tariff)
-	 */
+	@SuppressWarnings("unchecked")
 	public double getUnitPrice(ICalculable calc, Date date, Tariff tariff) {
 		try {
 			if (tariff != null) {
@@ -204,6 +204,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getTotalPrice(com.code.aon.product.strategy.ICalculableContainer, com.code.aon.registry.ITaxInfo)
 	 */
+	@SuppressWarnings("unchecked")
 	public double getTotalPrice(ICalculableContainer icc, ITaxInfo iti) {
 		double total = getTaxableBase(icc);
 		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
@@ -227,6 +228,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	 * @param date the date to be applied
 	 * @return the tax detail
 	 */
+	@SuppressWarnings("unchecked")
 	private TaxDetail obtainTaxDetail(Tax vat, Date date) {
 		try {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);

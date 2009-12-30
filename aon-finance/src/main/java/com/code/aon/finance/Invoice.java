@@ -242,26 +242,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     }
 
     /**
-     * Gets the tax date.
-     * 
-     * @return the tax date
-     */
-    @Transient
-    public Date getTaxDate() {
-        return issueDate;
-        // Retorna fecha de factura , hasta que la columna esté en la BD.        
-    }
-
-    /**
-     * Sets the tax date.
-     * 
-     * @param taxDate the tax date
-     */
-    public void setTaxDate(Date taxDate) {
-        // Nada, hasta que la columna esté en la BD.
-    }
-
-    /**
      * Gets the number.
      * 
      * @return the number
@@ -572,6 +552,11 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	@Transient
 	public boolean isRecorded() {
 		return getStatus() == InvoiceStatus.SCORED;
+	}
+
+	@Transient
+	public String getSeriesNumber() {
+		return (getSeries() + "/" + getNumber());
 	}
 
 	@Override

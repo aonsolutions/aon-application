@@ -3,7 +3,6 @@ package com.code.aon.common.dao.hibernate;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
@@ -15,6 +14,8 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.common.dao.sql.DAOException;
@@ -40,7 +41,7 @@ public class HibernateUtil {
     /**
      * Obtain a suitable Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(HibernateUtil.class.getName()); 
+    private final static Logger LOGGER = LoggerFactory.getLogger(HibernateUtil.class);
 
     /**
      * Map that holds sessionFactory.
@@ -159,7 +160,7 @@ public class HibernateUtil {
         session.get(sessionFactoryName).set(null); 
         if (s != null) {
             s.close();
-            LOGGER.finest("** Hibernate session closed" );
+            LOGGER.debug("** Hibernate session closed" );
         } 
     } 
     
@@ -227,7 +228,7 @@ public class HibernateUtil {
         Transaction tx = transaction.get(sessionFactoryName).get(); 
         try {
             if (tx == null) {
-                LOGGER.fine("Starting new database transaction in this thread.");
+                LOGGER.debug("Starting new database transaction in this thread.");
                 tx = getSession(sessionFactoryName).beginTransaction();
                 transaction.get(sessionFactoryName).set(tx);
             }
@@ -256,7 +257,7 @@ public class HibernateUtil {
         Transaction tx = transaction.get(sessionFactoryName).get(); 
         try {
             if (tx != null && !tx.wasCommitted() && !tx.wasRolledBack()) {
-                LOGGER.fine("Committing database transaction of this thread.");
+                LOGGER.debug("Committing database transaction of this thread.");
                 tx.commit();
             }
             transaction.get(sessionFactoryName).set(null); 
@@ -287,7 +288,7 @@ public class HibernateUtil {
         try {
             transaction.get(sessionFactoryName).set(null); 
             if (tx != null && !tx.wasCommitted() && !tx.wasRolledBack()) {
-                LOGGER.fine("Tyring to rollback database transaction of this thread.");
+                LOGGER.debug("Tyring to rollback database transaction of this thread.");
                 tx.rollback();
             }
         } catch (HibernateException ex) {
@@ -396,7 +397,7 @@ public class HibernateUtil {
             DAOConstantsResolver resolver = new DAOConstantsResolver(configuration);
             resolver.createDAOConstants();
         } catch (HibernateException he) {
-            LOGGER.severe(he.getMessage()); 
+            LOGGER.error(he.getMessage(), he); 
             throw new RuntimeException("Configuration problem: " + he.getMessage(), he); 
         }
         return factory;

@@ -7,8 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 
@@ -61,7 +66,7 @@ public class Catalogue implements ITransferObject {
 	 * 
 	 * @return the name
 	 */
-	@Column(length=32)
+	@Column(length=32, nullable = false)
 	public String getName() {
 		return name;
 	}
@@ -80,7 +85,8 @@ public class Catalogue implements ITransferObject {
 	 * 
 	 * @return the start date
 	 */
-	@Column(name="start_date")
+	@Column(name="start_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -100,6 +106,7 @@ public class Catalogue implements ITransferObject {
 	 * @return the end date
 	 */
 	@Column(name="end_date")
+	@Temporal(TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -115,24 +122,33 @@ public class Catalogue implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Catalogue o = (Catalogue) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.endDate, o.endDate)
+				.append(this.name, o.name)				
+				.append(this.startDate, o.startDate)				
+				.isEquals();
 		}
-		if (obj instanceof Catalogue) {
-			Catalogue o = (Catalogue) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(endDate)
+			.append(id)			
+			.append(name)			
+			.append(startDate)			
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }

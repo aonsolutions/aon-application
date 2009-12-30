@@ -8,12 +8,9 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="columnClasses"
-			value="aon-nowrap aon-editDataTable-textColumn, 
-					aon-nowrap aon-editDataTable-textColumn, 
-					aon-editDataTable-numberColumn,
-					aon-editDataTable-numberColumn, 
-					aon-editDataTable-numberColumn,
-					aon-nowrap aon-editDataTable-textColumn" />			
+			value="aon-nowrap aon-editDataTable-textColumn, aon-editDataTable-numberColumn,
+			aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
+			aon-nowrap aon-editDataTable-textColumn" />			
 		<ui:param name="showDataScroller" value="false" />			
 		<ui:param name="skipResetButton" value="#{controller.model.rowCount > 0}" />			
 
@@ -26,37 +23,13 @@
 				<aon:outputText value="#{to.payment.name}"
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="RegistryPayMethod_payment"
-					valueChangeListener="#{controller.onPayMethodChanged}"
-					reRender="RegistryPayMethod_bank"
 					rendered="#{formEdit}" value="#{controller.to.payment}">
 					<f:selectItems value="#{configCollections.payMethods}" />
 				</aon:selectOneMenu>					
 				<f:facet name="footer">
 					<aon:selectOneMenu id="RegistryPayMethod_payment-New"
-						valueChangeListener="#{controller.onPayMethodChanged}"
-						reRender="RegistryPayMethod_bank-New"
 						rendered="#{formNew}" value="#{controller.to.payment}">
 						<f:selectItems value="#{configCollections.payMethods}" />
-					</aon:selectOneMenu>					
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
-				</f:facet>
-				<aon:outputText value="#{to.registryBank.fullName}"
-					rendered="#{formList}" />
-				<aon:selectOneMenu id="RegistryPayMethod_bank"
-					rendered="#{formEdit}" value="#{controller.to.registryBank}">
-					<f:selectItem value="#{nullItem.value}" />
-					<f:selectItems value="#{controller.banks}" />
-				</aon:selectOneMenu>					
-				<f:facet name="footer">
-					<aon:selectOneMenu id="RegistryPayMethod_bank-New"
-						rendered="#{formNew}" value="#{controller.to.registryBank}">
-						<f:selectItem value="#{nullItem.value}" />
-						<f:selectItems value="#{controller.banks}" />
 					</aon:selectOneMenu>					
 				</f:facet>
 			</aon:column>

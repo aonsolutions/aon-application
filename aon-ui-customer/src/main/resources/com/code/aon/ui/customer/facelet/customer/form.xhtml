@@ -57,12 +57,11 @@
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</aon:selectOneMenu>
 
-					
-						<aon:outputLabel for="Customer_surcharge"
-							value="#{customerBundle.customer_surcharge}" />
-						<aon:selectBooleanCheckbox id="Customer_surcharge"
-							value="#{customer.to.surcharge}" />
-					
+					<aon:outputLabel for="Customer_surcharge"
+						value="#{customerBundle.customer_surcharge}" />
+					<aon:selectBooleanCheckbox id="Customer_surcharge"
+						value="#{customer.to.surcharge}" />
+
 					<c:if test="#{customer.showAccount}">
 						<aon:outputLabel for="Customer_account"
 							value="#{accountingBundle.accounting_account}" />
@@ -73,19 +72,6 @@
 						<aon:inputText rendered="#{customerAccount.account == null}"
 							value="" disabled="true" size="60" />
 					</c:if>
-
-						<aon:outputLabel for="Customer_withholding"
-							value="#{bundle.aon_retention}" />
-						<aon:selectBooleanCheckbox id="Customer_withholding"
-							value="#{customer.to.withholding}" />
-						
-						<aon:outputText  value="&#160;"/>
-						<aon:outputText  value="&#160;"/>
-
-						<aon:outputLabel for="Customer_taxFree"
-							value="#{customerBundle.customer_taxFree}" />
-						<aon:selectBooleanCheckbox id="Customer_taxFree"
-							value="#{customer.to.taxFree}" />
 
 				</aon:panelGrid>
 
@@ -130,7 +116,7 @@
 								</aon:panel>
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+										<aon:outputText value="#{configBundle.config_pay_methods}" />
 									</f:facet>
 									<ui:include
 										src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
@@ -139,7 +125,8 @@
 								</aon:panel>
 							</aon:panelTab>
 							<aon:panelTab id="fee"
-								label="#{financeBundle.finance_fees_module}">
+								label="#{financeBundle.finance_fees_module}"
+								actionListener="#{customerFee.onCustomerFee}">
 								<ui:include
 									src="/com/code/aon/ui/finance/facelet/fee/tab_grid.xhtml">
 								</ui:include>

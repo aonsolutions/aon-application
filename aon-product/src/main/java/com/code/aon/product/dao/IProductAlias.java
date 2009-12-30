@@ -13,7 +13,6 @@ import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
 import com.code.aon.product.ProductCategoryTree;
-import com.code.aon.product.Tariff;
 import com.code.aon.product.TariffCatalogue;
 
 /** 
@@ -499,25 +498,6 @@ public interface IProductAlias {
 	* Hibernate value: ProductCategoryTree.parent.id
 	*/
 	String  PRODUCT_CATEGORY_TREE_PARENT_ID = PRODUCT_CATEGORY_TREE_ENTRY.getAliasNames()[2];
-
-
-
-	/** 
-	* DAOConstantsEntry for Tariff entity.
-	*/ 
-	DAOConstantsEntry TARIFF_ENTRY = DAOConstants.getDAOConstant(Tariff.class);
-
-	/** 
-	* Alias value: Tariff_id
-	* Hibernate value: Tariff.id
-	*/
-	String  TARIFF_ID = TARIFF_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Tariff_name
-	* Hibernate value: Tariff.name
-	*/
-	String  TARIFF_NAME = TARIFF_ENTRY.getAliasNames()[1];
 
 
 

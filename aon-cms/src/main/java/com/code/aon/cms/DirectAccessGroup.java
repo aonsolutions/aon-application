@@ -13,12 +13,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.code.aon.cms.enumeration.MenuType;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "direct_access_group")
 public class DirectAccessGroup implements ITransferObject {
+
+	private static final long serialVersionUID = -8987133625137874461L;
 
 	private Integer id;
 
@@ -28,7 +34,7 @@ public class DirectAccessGroup implements ITransferObject {
 
 	private Section section;
 	
-	private Set<MenuOption> options;
+	private Set<DirectAccessGroupDetail> details;
 
 	@Id
 	@GeneratedValue
@@ -69,13 +75,43 @@ public class DirectAccessGroup implements ITransferObject {
 		this.section = section;
 	}
 	
-	@OneToMany(mappedBy = "menu", cascade={CascadeType.REMOVE})
-	public Set<MenuOption> getOptions() {
-		return this.options;
+	@OneToMany(mappedBy = "directAccessGroup", cascade={CascadeType.REMOVE})
+	public Set<DirectAccessGroupDetail> getDetails() {
+		return details;
 	}
 
-	public void setOptions( Set<MenuOption> options ) {
-		this.options = options;
+	public void setDetails(Set<DirectAccessGroupDetail> details) {
+		this.details = details;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DirectAccessGroup o = (DirectAccessGroup) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.section, o.section)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(id)	
+			.append(section)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}		
 }

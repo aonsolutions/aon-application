@@ -155,100 +155,88 @@ public interface IFinanceAlias {
 	String  FINANCE_BANK_ID = FINANCE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Finance_bank_code
-	* Hibernate value: Finance.bank.code
-	*/
-	String  FINANCE_BANK_CODE = FINANCE_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: Finance_concept
 	* Hibernate value: Finance.concept
 	*/
-	String  FINANCE_CONCEPT = FINANCE_ENTRY.getAliasNames()[4];
+	String  FINANCE_CONCEPT = FINANCE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Finance_dueDate
 	* Hibernate value: Finance.dueDate
 	*/
-	String  FINANCE_DUE_DATE = FINANCE_ENTRY.getAliasNames()[5];
+	String  FINANCE_DUE_DATE = FINANCE_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Finance_expenses
 	* Hibernate value: Finance.expenses
 	*/
-	String  FINANCE_EXPENSES = FINANCE_ENTRY.getAliasNames()[6];
+	String  FINANCE_EXPENSES = FINANCE_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Finance_financeStatus
 	* Hibernate value: Finance.financeStatus
 	*/
-	String  FINANCE_FINANCE_STATUS = FINANCE_ENTRY.getAliasNames()[7];
+	String  FINANCE_FINANCE_STATUS = FINANCE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Finance_id
 	* Hibernate value: Finance.id
 	*/
-	String  FINANCE_ID = FINANCE_ENTRY.getAliasNames()[8];
+	String  FINANCE_ID = FINANCE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Finance_invoice_id
 	* Hibernate value: Finance.invoice.id
 	*/
-	String  FINANCE_INVOICE_ID = FINANCE_ENTRY.getAliasNames()[9];
+	String  FINANCE_INVOICE_ID = FINANCE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Finance_payMethod_id
 	* Hibernate value: Finance.payMethod.id
 	*/
-	String  FINANCE_PAY_METHOD_ID = FINANCE_ENTRY.getAliasNames()[10];
+	String  FINANCE_PAY_METHOD_ID = FINANCE_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Finance_payMethod_type
 	* Hibernate value: Finance.payMethod.type
 	*/
-	String  FINANCE_PAY_METHOD_TYPE = FINANCE_ENTRY.getAliasNames()[11];
+	String  FINANCE_PAY_METHOD_TYPE = FINANCE_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Finance_payment
 	* Hibernate value: Finance.payment
 	*/
-	String  FINANCE_PAYMENT = FINANCE_ENTRY.getAliasNames()[12];
+	String  FINANCE_PAYMENT = FINANCE_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Finance_registry_id
 	* Hibernate value: Finance.registry.id
 	*/
-	String  FINANCE_REGISTRY_ID = FINANCE_ENTRY.getAliasNames()[13];
+	String  FINANCE_REGISTRY_ID = FINANCE_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Finance_securityLevel
 	* Hibernate value: Finance.securityLevel
 	*/
-	String  FINANCE_SECURITY_LEVEL = FINANCE_ENTRY.getAliasNames()[14];
+	String  FINANCE_SECURITY_LEVEL = FINANCE_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Finance_invoice_series
 	* Hibernate value: Finance.invoice.series
 	*/
-	String  FINANCE_INVOICE_SERIES = FINANCE_ENTRY.getAliasNames()[15];
+	String  FINANCE_INVOICE_SERIES = FINANCE_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Finance_invoice_number
 	* Hibernate value: Finance.invoice.number
 	*/
-	String  FINANCE_INVOICE_NUMBER = FINANCE_ENTRY.getAliasNames()[16];
-
-	/** 
-	* Alias value: Finance_invoice_referenceCode
-	* Hibernate value: Finance.invoice.referenceCode
-	*/
-	String  FINANCE_INVOICE_REFERENCE_CODE = FINANCE_ENTRY.getAliasNames()[17];
+	String  FINANCE_INVOICE_NUMBER = FINANCE_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Finance_invoice_issueDate
 	* Hibernate value: Finance.invoice.issueDate
 	*/
-	String  FINANCE_INVOICE_ISSUE_DATE = FINANCE_ENTRY.getAliasNames()[18];
+	String  FINANCE_INVOICE_ISSUE_DATE = FINANCE_ENTRY.getAliasNames()[16];
 
 
 
@@ -337,28 +325,22 @@ public interface IFinanceAlias {
 	String  FINANCE_BATCH_DETAIL_STATUS = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: FinanceBatchDetail_financeBatch_issueDate
-	* Hibernate value: FinanceBatchDetail.financeBatch.issueDate
-	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_BATCH_ISSUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: FinanceBatchDetail_finance_invoice_series
 	* Hibernate value: FinanceBatchDetail.finance.invoice.series
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[6];
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: FinanceBatchDetail_finance_invoice_number
 	* Hibernate value: FinanceBatchDetail.finance.invoice.number
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[7];
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: FinanceBatchDetail_finance_dueDate
 	* Hibernate value: FinanceBatchDetail.finance.dueDate
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[8];
+	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[7];
 
 
 
