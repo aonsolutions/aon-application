@@ -21,28 +21,28 @@
 				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
 				<t:outputLabel for="Creditor_registry_document"
-					value="#{accountBundle.aon_document}"
+					value="#{financeBundle.aon_document}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Creditor_registry_document" size="20"
 					valueChangeListener="#{creditorAlias.addExpression}"
 					styleClass="aon-form-input-text" onblur="toUpperCase(this);"/>
 
 				<t:outputLabel for="Creditor_registry_name"
-					value="#{accountBundle.aon_name}"
+					value="#{registryBundle.aon_name}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Creditor_registry_name" size="40"
 					valueChangeListener="#{creditorAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
 				<t:outputLabel for="Creditor_registry_surname"
-					value="#{accountBundle.aon_surname}"
+					value="#{registryBundle.aon_surname}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Creditor_registry_surname" size="40"
 					valueChangeListener="#{creditorAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
 				<t:outputLabel for="Creditor_registry_alias"
-					value="#{accountBundle.aon_alias}"
+					value="#{registryBundle.aon_alias}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Creditor_registry_alias" size="40"
 					valueChangeListener="#{creditorAlias.addExpression}"

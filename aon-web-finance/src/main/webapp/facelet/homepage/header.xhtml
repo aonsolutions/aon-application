@@ -10,9 +10,6 @@
 
 	<ui:define name="content">
 
-		<f:loadBundle basename="#{facesContext.application.messageBundle}" var="bundle" />
-		<f:loadBundle basename="com.code.aon.ui.finance.i18n.menu" var="menuBundle" />
-		
 		<t:div styleClass="aon-header" id="aon-header" forceId="#{true}" >	
 
 		<h:panelGrid columns="2" styleClass="aon-table-default"
@@ -24,7 +21,10 @@
 						alt="#{financeBundle.aon_application_title}"/>
 				</t:div>
 				<t:div styleClass="aon-applicationName">
-					<h:outputText value="#{financeBundle.aon_application_title}" /> 
+					<h:outputText value="#{financeBundle.aon_application_title}" />
+					<h:outputText value="[" />
+					<h:outputText value="#{aonConfiguration.applicationVersion}" />
+					<h:outputText value="]" /> 
 				</t:div>				
 			</h:panelGroup>
 
@@ -55,7 +55,44 @@
 									<h:outputText value="#{bundle.aon_home}" />
 								</h:outputLink>
 							</t:div>
-						</t:div>				
+							<t:div styleClass="aon-header-menu-item">
+								<h:outputLink styleClass="aon-header-menu-item-link"
+									onclick="window.open('${facesContext.externalContext.requestContextPath}/facelet/about/accelerators.faces','','height=401,width=500,status=no,toolbar=no,menubar=no,location=no');"
+									value="#">
+									<h:outputText value="#{bundle.aon_help}" />
+								</h:outputLink>
+							</t:div>
+							<!-- 
+							<t:div styleClass="aon-header-menu-item">
+								<h:outputLink styleClass="aon-header-menu-item-link" style="border-right:0;"
+									onclick="window.open('${facesContext.externalContext.requestContextPath}/facelet/about/content.faces','','height=401,width=505,status=no,toolbar=no,menubar=no,location=no,resizable=no');"
+									value="#" >
+									<h:outputText value="#{bundle.aon_about}"  />
+								</h:outputLink>
+							</t:div>
+							<t:div styleClass="aon-header-menu-item">
+								<h:outputLink styleClass="aon-header-menu-item-link"
+									target="_blank"
+									value="#{user.adminConsoleUrl}">
+									<h:outputText value="Seguridad" />
+								</h:outputLink>
+							</t:div>
+							 -->
+							<t:div styleClass="aon-header-menu-item" >
+								<h:form style="display:inline;" >
+									<h:commandLink styleClass="aon-header-menu-item-link" style="border-right:0;"
+											onclick="parent.window.close();"
+											target="_top" 
+											actionListener="#{user.onLogout}">
+										<h:outputText value="#{securityBundle.aon_login_user_logout}" />
+									</h:commandLink>
+								</h:form>
+							</t:div>
+						</t:div>
+						<t:div styleClass="aon-header-userAdOnRight">
+							<h:outputText value="#{securityBundle.aon_login_user}: " styleClass="aon-header-information-description"/>
+							<h:outputText value="#{user.userManager.userFromPrincipal.name}" styleClass="aon-header-information-item" />
+						</t:div>
 					</t:panelGroup>
 				</t:panelGrid>
 			</h:panelGroup>

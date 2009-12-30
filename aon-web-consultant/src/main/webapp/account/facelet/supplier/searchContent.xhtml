@@ -21,28 +21,28 @@
 				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
 				<t:outputLabel for="Supplier_document"
-					value="#{purchaseBundle.supplier_document}"
+					value="#{financeBundle.aon_document}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Supplier_document" size="20"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" onblur="toUpperCase(this);"/>
 
 				<t:outputLabel for="Supplier_name"
-					value="#{purchaseBundle.supplier_name}"
+					value="#{registryBundle.aon_name}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Supplier_name" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
 				<t:outputLabel for="Supplier_surname"
-					value="#{purchaseBundle.supplier_surname}"
+					value="#{registryBundle.aon_surname}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Supplier_surname" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
 				<t:outputLabel for="Supplier_alias"
-					value="#{purchaseBundle.supplier_alias}"
+					value="#{registryBundle.aon_alias}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText id="Supplier_alias" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"

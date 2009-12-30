@@ -29,35 +29,74 @@ function findLookupAndSubmit(formSubmit, evt, ctx, pojo) {
 	formToSubmit = formSubmit;
 }
 
-function findBeanLookup(evt, ctx, bean, ids) {
+function getValues( valueIds ) {
+    var result = "";
+    var name = "";
+	var start = 0;
+	while ( start < valueIds.length ) {
+		var end = valueIds.indexOf(',', start );
+		if ( end == -1 ) {
+			name = valueIds.substring( start );
+			start = valueIds.length;
+		} else {
+			name = valueIds.substring( start, end );
+			start = end + 1;
+		}
+   		var node = document.getElementById(name);
+   		if ( node ) {
+   			result += node.value + ",";
+   		}
+	}
+    return result;
+}
+
+function getElem(evt) {
     // equalize W3C/IE event models to get event object
-	evt = (evt) ? evt : ((window.event) ? window.event : null);
-	if (evt) {
-		// equalize W3C/IE models to get event target reference
-		var elem = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
-		if (elem) {
-			try {
-				var url = location.protocol + '://' + location.host + ctx + BEAN_SERVLET;
-				var fullURL = url + '?bean=' + bean + '&value=' + elem.value;
-				if ( ids ) {
-					fullURL += '&ids=' + ids;
-				}
-				sendLookup( fullURL );
-			} catch(e) {
-				var msg = (typeof e == "string") ? e : ((e.message) ? e.message : "Unknown Error");
-				alert("Unable to get XML data:\n" + msg);
-				return;
-			}
+    evt = (evt) ? evt : ((window.event) ? window.event : null);
+    if (evt) {
+        // equalize W3C/IE models to get event target reference
+        var elem = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+        return elem;
+	}
+}
+
+function findBeanLookupImpl(elem, ctx, bean, values, ids) {
+	if (elem) {
+		try {
+			var url = location.protocol + '://' + location.host + ctx + BEAN_SERVLET;
+			var fullURL = url + '?bean=' + bean + '&value=' + getValues(values);
+			if ( ids ) {
+				fullURL += '&ids=' + ids;
+			} 
+			sendLookup( fullURL );
+		} catch(e) {
+			var msg = (typeof e == "string") ? e : ((e.message) ? e.message : "Unknown Error");
+			alert("Unable to get XML data:\n" + msg);
+			return;
 		}
 	}
 }
 
-function findBeanLookupAndSubmit(formSubmit, evt, ctx, pojo) {
-	findBeanLookup(evt,ctx,pojo);
+function findBeanLookupExt(evt, ctx, bean, values, ids) {
+	findBeanLookupImpl( getElem(evt), ctx, bean, values, ids );
+}
+
+function findBeanLookup(evt, ctx, bean, ids) {
+	var elem = getElem(evt);
+	findBeanLookupImpl( elem, ctx, bean, elem.value, ids);
+}
+
+function findBeanLookupAndSubmit(formSubmit, evt, ctx, pojo, ids) {
+	findBeanLookup(evt,ctx,pojo,ids);
 	mustSubmitForm = true;
 	formToSubmit = formSubmit;
 }
 
+function findBeanLookupAndSubmitExt(formSubmit, evt, ctx, bean, values, ids) {
+	findBeanLookupImpl( getElem(evt), ctx, bean, values, ids );
+	mustSubmitForm = true;
+	formToSubmit = formSubmit;
+}
 
 function sendLookup(url) {
     // branch for native XMLHttpRequest object

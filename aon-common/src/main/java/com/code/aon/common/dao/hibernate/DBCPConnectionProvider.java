@@ -3,6 +3,7 @@ package com.code.aon.common.dao.hibernate;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -152,6 +153,7 @@ public class DBCPConnectionProvider implements ConnectionProvider {
 	 * @return DataSource
 	 * @throws Exception 
 	 */
+	@SuppressWarnings("unchecked")
 	private DataSource createDataSource(Properties props) throws Exception {
 		try {
 			Properties dsProperties = null;
@@ -161,7 +163,22 @@ public class DBCPConnectionProvider implements ConnectionProvider {
 			MBeanServer server = null;
 			List servers = MBeanServerFactory.findMBeanServer(null);
 			if (servers.size() > 0) {
-				server = (MBeanServer) servers.get(0);
+				if (servers.size() > 1) {
+//	Iterates over servers list untill AonMainDeployerMBean is found.
+//	TODO Isolate application server. 
+					Iterator it = servers.iterator();
+					while (it.hasNext()) {
+						server = (MBeanServer) it.next();
+						try {
+							ObjectName jbossname = new ObjectName( "jboss.admin:service=AonMainDeployer" );
+							server.getObjectInstance( jbossname );
+							break;
+						} catch(Exception e) {
+						}
+					}
+				} else {
+					server = (MBeanServer) servers.get(0);
+				}
 			}
 			if ( subject == null )
 				throw new NamingException("");

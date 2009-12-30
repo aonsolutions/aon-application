@@ -9,9 +9,9 @@
 			<max-ses-user>-1</max-ses-user>
 		</access-policy>
 		<application>
-			<id>aon-consultant.war</id>
+			<id>consultant</id>
 			<datasource-metadata>
-				<connection-url>jdbc:mysql://localhost:3306/aon?autoReconnect=true</connection-url>
+				<connection-url>jdbc:mysql://localhost:6606/aon?autoReconnect=true</connection-url>
 				<driver-class>org.gjt.mm.mysql.Driver</driver-class>
 				<username>dbuser</username>
 				<password>serubd2000</password>
@@ -30,6 +30,7 @@
 						<id>GestionCampanas</id>
 						<id>Procesos</id>
 						<id>Configuracion</id>
+						<id>Centros</id>
 						<id>Empresa</id>
 						<id>GestionUsuarios</id>
 						<id>Usuarios</id>
@@ -57,6 +58,7 @@
 						<id>GestionTiempos</id>
 						<id>Informes</id>
 						<id>Configuracion</id>
+						<id>Centros</id>
 						<id>Impuestos</id>
 						<id>CambioContrasena</id>
 					</list>
@@ -75,6 +77,7 @@
 						<id>GestionCampanas</id>
 						<id>BandejaCampanas</id>
 						<id>Configuracion</id>
+						<id>Centros</id>
 						<id>CambioContrasena</id>
 						<id>BandejaEntrada</id>
 					</list>

@@ -13,6 +13,14 @@
 			key="account_leasing_entry" descriptionKey="account_leasing_entry_desc">
 			<actionListener action="#{accountLeasing.onReset}" />
 		</option>
+		<option contextRelative="false" external="false" ref="accSupplier"
+			key="account_supplier" descriptionKey="account_supplier_desc">
+			<actionListener action="#{accBasicSupplier.onEditSearch}" />
+		</option>
+		<option contextRelative="false" external="false" ref="accCreditor"
+			key="account_creditor" descriptionKey="account_creditor_desc">
+			<actionListener action="#{accBasicCreditor.onEditSearch}" />
+		</option>
 	</menu>
 	<menu ref="content" key="aon_account_entries" descriptionKey="aon_account_entries_desc">
 		<option contextRelative="false" external="false"  ref="accountEntry"

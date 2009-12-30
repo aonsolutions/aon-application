@@ -97,6 +97,56 @@
 		<nested-report report="taxBreakDown"/>
 	</report>
 	
+	<!--  *********  feeCheckingPrint  ********* -->
+	<report id="customeFeeChecking" description="Fee Checking">
+		<template path="/com/code/aon/ui/finance/report/feeChecking.jasper"/>
+		<collection provider="#{feeCheckingPrinter}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+		<nested-report report="feeCheckingDetail"/>
+	</report>
+	
+	<report id="feeCheckingDetail" description="feeCheckingDetail">
+		<template path="/com/code/aon/ui/finance/report/feeCheckingDetail.jasper"/>
+	</report>
+
+	<!--  *********  financeCheckingPrint  ********* -->
+	<report id="financeChecking" description="Finance Checking">
+		<template path="/com/code/aon/ui/finance/report/financeChecking.jasper"/>
+		<collection provider="#{financeCheckingPrinter}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+		<nested-report report="financeCheckingDetail"/>
+	</report>
+	
+	<report id="financeCheckingDetail" description="financeCheckingDetail">
+		<template path="/com/code/aon/ui/finance/report/financeCheckingDetail.jasper"/>
+	</report>
+
+	<!--  *********  feePrintList  ********* -->
+	<report id="feePrintList" description="Fee Print">
+		<template path="/com/code/aon/ui/sales/report/feeList.jasper"/>
+		<bean key="com.code.aon.sales.CustomerFee" />
+		<criteria provider="#{feePrint}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+	</report>
+	
 	<!--  *********  Receipt  ********* -->
 	<report id="receipt" description="Receipt's Report">
 		<template path="/com/code/aon/ui/finance/report/receipt.jasper"/>

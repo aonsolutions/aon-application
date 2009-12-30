@@ -1,6 +1,10 @@
 /*****************
 *  CONTENT MENU   *
 ******************/
+.aon-applicationName{
+	padding-top:0.8em;
+	left:45px;
+	}
 .aon-content-menu{
 	border-top:#3C5F84 4px solid;
 	padding:4px 0.5em 7px 0.5em;
@@ -8,7 +12,7 @@
 	}
 .aon-content-menu-item{
 	border:0;
-	background:#fff url("../images/content/ibm-content-menu-item.gif") left center no-repeat;
+	background:#fff url("./blue/images/content/blue-content-menu-item.gif") left 5px no-repeat;
 	color:#5C81A7;
 	padding:0 14px 0 4px;
 	text-decoration:none;	
@@ -28,7 +32,7 @@
 	padding:0 10px 0 8px;
 	text-decoration:none;
 	font-weight:bold;
-	background:#fff url("../images/content/ibm-content-menu-item-active.gif") left center no-repeat;
+	background:#fff url("./blue/images/content/blue-content-menu-item-active.gif") left 5px no-repeat;
 
 	}
 .aon-content-menu-item-active:visited{
@@ -44,6 +48,11 @@
 	padding:0 1em 3px 1em;
 	font-family:arial,verdana,sans-serif;
 	color:#666;
+	font-weight:bold;
+	background:#f2f2f2 url("./blue/images/content/blue-content-menu-item-active.gif") left center no-repeat;
+	border-top:#666 1px solid;
+	margin:0 5px;
+	font-size:1.3em;
 	}
 
 /*****************
@@ -169,3 +178,21 @@
   .aon-dd{
   padding-right:2em;
   }
+/*********************************/	  
+/**********  TIMER *************/
+/*********************************/	
+.aon-timer{
+	background-color:#fff;
+	border:#ccc 1px outset;
+	padding:10px 20px;
+	background-color:#f2f2f2;
+}
+.aon-timer-title{
+	background-color:#ccc;
+	color:#000;
+	margin:1px;
+	font-size:1.1em;
+	font-weight:bold;
+	text-align:center;
+	text-transform:uppercase;
+	}

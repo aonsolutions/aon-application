@@ -171,7 +171,7 @@
 									<t:div rendered="#{rdirStaff.new}">
 										<t:inputText id="Registry_Lookup_document-New" size="16"
 											forceId="#{true}" styleClass="aon-form-input-text"
-											onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','registryLookup','Registry_document|Registry_Lookup_document-New,Registry_full_name|Registry_full_name-New');"
+											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','registryLookup','Registry_Lookup_document-New','Registry_document|Registry_Lookup_document-New,Registry_full_name|Registry_full_name-New');"
 											onblur="disableInputs( -1 );" required="true"
 											value="#{rdirStaff.to.document}" />
 									</t:div>

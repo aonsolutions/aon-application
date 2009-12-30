@@ -20,7 +20,7 @@
 				forceId="#{true}">
 				<t:div styleClass="aon-content-toolbar-internal">
 					<t:div styleClass="aon-content-toolbar-item-group">
-						<t:commandButton id="save" value="#{financeBundle.aon_finance_to_fraction}"
+						<t:commandButton id="save" value="#{bundle.aon_accept}"
 							forceId="#{true}" onclick="return (confirm('#{bundle.aon_save_confirm}'))"
 							actionListener="#{financeFraction.onAcceptFractions}" action="finance_list"
 							disabled="#{!financeFraction.fractionable}" 

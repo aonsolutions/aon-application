@@ -233,6 +233,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
+		<managed-bean-name>purchaseCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.PurchaseCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
 		<managed-bean-name>productCollections</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.product.controller.ProductCollectionsController</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
@@ -412,7 +419,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>aliasPrefix</property-name>
-			<value>Registry</value>
+			<value>Registry_Lookup</value>
 		</managed-property>
 		<managed-property>
 			<property-name>foreignJoinProperties</property-name>
@@ -1858,7 +1865,7 @@
     </navigation-case>
     <navigation-case>
       <from-outcome>customer</from-outcome>
-      <to-view-id>/facelet/customer/form.faces</to-view-id>
+      <to-view-id>/facelet/customer/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>item</from-outcome>
@@ -1911,6 +1918,10 @@
     <navigation-case>
       <from-outcome>scope</from-outcome>
       <to-view-id>/facelet/config/scope/grid.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>workplace</from-outcome>
+      <to-view-id>/facelet/registry/company/auxiliary/workplace/grid.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>not_available</from-outcome>

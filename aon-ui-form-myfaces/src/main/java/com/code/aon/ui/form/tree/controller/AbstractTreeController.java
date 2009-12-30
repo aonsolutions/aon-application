@@ -11,7 +11,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.myfaces.custom.tree2.HtmlTree;
 import org.apache.myfaces.custom.tree2.TreeModel;
 import org.apache.myfaces.custom.tree2.TreeModelBase;
-import org.apache.myfaces.shared_impl.util.MessageUtils;
+import org.apache.myfaces.shared_tomahawk.util.MessageUtils;
 
 import com.code.aon.common.tree.ITreeNodeTO;
 import com.code.aon.common.tree.enumeration.TreeNodeType;

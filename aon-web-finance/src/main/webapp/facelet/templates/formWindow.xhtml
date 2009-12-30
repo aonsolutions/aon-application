@@ -43,11 +43,11 @@
 							<t:div styleClass="aon-logo">
 								<h:graphicImage
 									url="#{aonConfiguration.applicationLogoContextRelativePath}"
-									alt="#{financeBundle.aon_application_title}"
+									alt="#{appBundle.aon_application_title}"
 								/>
 							</t:div>
 							<t:div styleClass="aon-applicationName">
-								<h:outputText value="#{financeBundle.aon_application_title}" />
+								<h:outputText value="#{appBundle.aon_application_title}" />
 							</t:div>						
 						</h:panelGroup>
 						<t:div>
@@ -71,11 +71,10 @@
 		</t:div>
 		<!-- *********** footer ********  -->
 		<t:div id="aon-window-popup-footer" forceId="#{true}" styleClass="aon-foot" >
-				<f:loadBundle basename="#{facesContext.application.messageBundle}" var="bundle" />
 				<h:panelGrid columns="2" 
 					columnClasses="aon-foot-leftGroup,aon-foot-rightGroup" dir="true">
 					<h:panelGroup>
-						<t:div styleClass="aon-foot-leftGroup-item"><h:outputText value="#{financeBundle.aon_footer}" /></t:div>
+						<t:div styleClass="aon-foot-leftGroup-item"><h:outputText value="#{appBundle.aon_footer}" /></t:div>
 					</h:panelGroup>
 					<h:panelGroup>
 						<f:verbatim>&#160;</f:verbatim>

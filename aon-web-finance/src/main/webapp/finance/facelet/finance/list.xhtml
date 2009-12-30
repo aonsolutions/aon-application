@@ -20,6 +20,13 @@
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
 							accesskey="#{bundle.aon_key_search}"/>
+						<t:commandButton id="financeList" value="#{bundle.aon_listing}"
+							forceId="#{true}"
+							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
+							accesskey="#{bundle.aon_key_print}" />
 					</t:div>
 				</t:div>
 			</t:div>
@@ -52,8 +59,8 @@
 										<h:outputText value="#{finance.payment?(financeBundle.aon_creditor):(financeBundle.aon_debtor)}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText
-									value="#{to.registry.name}, #{to.registry.surname}" />
+								<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
+								<h:outputText value="#{to.registry.name}" />
 							</h:column>
 
 							<h:column>
@@ -83,7 +90,7 @@
 										<h:outputText value="#{financeBundle.aon_amount}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.amount}" >
+								<h:outputText value="#{to.totalAmount}" >
 									<f:convertNumber pattern="#,##0.00" />
 								</h:outputText>
 							</h:column>

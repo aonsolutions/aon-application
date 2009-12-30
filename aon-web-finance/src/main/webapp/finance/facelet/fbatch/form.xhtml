@@ -3,8 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"            
 	xmlns:h="http://java.sun.com/jsf/html">
-
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -26,6 +26,7 @@
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+							disabled="#{fbatch.recorded}"
 							accesskey="#{bundle.aon_key_save}" />
 						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							actionListener="#{fbatch.onCancel}" action="fbatch_list"
@@ -36,14 +37,21 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<t:commandButton id="remove" value="#{bundle.aon_remove}"
-							forceId="#{true}" immediate="#{true}"
+							forceId="#{true}" immediate="#{true}" rendered="#{!fbatch.new}"
 							action="fbatch_list" actionListener="#{fbatch.onRemove}"
-							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							onclick="if(confirm('#{bundle.aon_remove_confirm}')){viewDialog.show();}else{ return false; }"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
-							disabled="#{!fbatch.removable}"
+							disabled="#{fbatch.recorded}"
 							accesskey="#{bundle.aon_key_remove}"/>	
+						<t:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{!fbatch.new}" action="fbatch_form"
+							actionListener="#{fbatch.onReset}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'"
+							accesskey="#{bundle.aon_key_new}" />
 						<h:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="#{true}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
@@ -59,12 +67,27 @@
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
 							accesskey="#{bundle.aon_key_print}" />
-						<h:commandButton id="csb" value="#{financeBundle.aon_create_csb}"
-							rendered="#{!fbatch.new}"
+						<h:commandButton id="csb" value="#{financeBundle.aon_create_disk}"
+							rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.to.registryBank.id != null}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
-							actionListener="#{fbatch.createCSB}" />	
+							onclick="viewDialog.show();"
+							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />	
+						<h:commandButton id="record" value="#{financeBundle.aon_record}"
+							rendered="#{fbatch.done or !fbatch.diskMode}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							onclick="viewDialog.show();"
+							action="fbatch_form" actionListener="#{fbatch.onRecord}" />
+						<h:commandButton id="unrecord" value="#{financeBundle.aon_unrecord}"
+							rendered="#{fbatch.recorded}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							onclick="viewDialog.show();"
+							action="fbatch_form" actionListener="#{fbatch.onUnrecord}" />
 					</t:div>
 				</t:div>
 			</t:div>
@@ -79,47 +102,22 @@
 
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
-					<h:panelGrid columns="3" >
+					<h:panelGrid columns="2">
 						<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 	
-							<h:outputLabel for="FinanceBatch_payment"
+							<h:outputLabel for="FinanceBatch_id"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_payment} / #{financeBundle.aon_charge}" />
-							<t:selectOneMenu id="FinanceBatch_payment"
-								value="#{fbatch.to.payment}">
-								<f:selectItem itemLabel="#{financeBundle.aon_payment}"
-									itemValue="#{true}" />
-								<f:selectItem itemLabel="#{financeBundle.aon_charge}"
-									itemValue="#{false}" />
-							</t:selectOneMenu>
+								value="#{financeBundle.aon_code}" />
+							<h:inputText id="FinanceBatch_id" value="#{fbatch.to.id}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								required="#{true}" size="8" disabled="#{true}" />
 
-							<h:outputLabel for="FinanceBatch_financeBatchType"
-								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_type}" />
-							<h:selectOneMenu id="FinanceBatch_financeBatchType"
-								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-								value="#{fbatch.to.financeBatchType}">
-								<f:selectItems value="#{financeCollections.financeBatchTypes}" />
-							</h:selectOneMenu>
-	
-							<h:outputLabel for="FinanceBatch_financeBatchStatus"
-								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_status}" />
-							<h:selectOneMenu id="FinanceBatch_financeBatchStatus"
-								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-								value="#{fbatch.to.financeBatchStatus}" disabled="true" >
-								<f:selectItems value="#{financeCollections.financeBatchStatus}" />
-							</h:selectOneMenu>
-	
-						</h:panelGrid>
-						
-						<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-						
 							<h:outputLabel for="FinanceBatch_issueDate"
 								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_date}" />
 							<t:inputCalendar size="8" id="FinanceBatch_issueDate"
-								value="#{fbatch.to.issueDate}"
+								value="#{fbatch.to.issueDate}" required="#{true}"
+								disabled="#{fbatch.recorded}"
 								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 								currentDayCellClass="currentDayCell" renderAsPopup="true"
 								popupButtonStyleClass="aon-form-calendar-button"
@@ -127,26 +125,35 @@
 								popupTodayString="#{bundle.aon_popup_today}"
 								popupWeekString="#{bundle.aon_popup_week}" />
 
-							<h:outputLabel for="RegistryBank_Lookup_id"
-								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank}" />
-							<t:selectOneMenu id="RegistryBank_Lookup_id"
-								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
-								value="#{fbatch.to.registryBank.id}">
-								<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
-								<f:selectItems value="#{financeCollections.companyBanks}" />
-							</t:selectOneMenu>
-							
-							<h:outputLabel for="FinanceBatch_total"
+							<h:outputLabel for="FinanceBatch_payment"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_total}" />
-							<t:inputText id="FinanceBatch_total"
+								value="#{financeBundle.aon_fbatch_type}" />
+							<t:selectOneMenu id="FinanceBatch_payment"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								value="#{fbatch.to.payment}" disabled="#{!fbatch.new}">
+								<f:selectItem itemLabel="#{financeBundle.aon_payment}" itemValue="#{true}" />
+								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
+							</t:selectOneMenu>
+
+							<h:outputLabel for="FinanceBatch_financeBatchType"
+								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_disk_type}" />
+							<h:selectOneMenu id="FinanceBatch_financeBatchType"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								disabled="#{!fbatch.new}"
+								value="#{fbatch.to.financeBatchType}">
+								<f:selectItems value="#{financeCollections.financeBatchTypes}" />
+							</h:selectOneMenu>
+	
+							<h:outputLabel for="FinanceBatch_totalRegs"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_total_regs}" />
+							<t:inputText id="FinanceBatch_totalRegs"
 								styleClass="aon-form-input-text-disabled"
-								disabled="true"
-								value="#{fbatch.toTotal}" forceId="#{true}" >
-								<f:convertNumber pattern="#,##0.00" />
+								disabled="true" size="8"
+								value="#{fbatch.toTotalDetails}" forceId="#{true}" >
+								<f:convertNumber pattern="#,##0" />
 							</t:inputText>	
-							
+
 						</h:panelGrid>
 						
 						<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
@@ -156,8 +163,20 @@
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_finance_batch_description}" />
 							<t:inputText id="FinanceBatch_description"
-								value="#{fbatch.to.description}" styleClass="aon-form-input-text"
-								forceId="#{true}" size="40" />
+								styleClass="aon-form-input-text" forceId="#{true}"
+								value="#{fbatch.to.description}" disabled="#{fbatch.recorded}"
+								required="#{true}" size="45" />
+
+							<h:outputLabel for="RegistryBank_Lookup_id"
+								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank}" />
+							<t:selectOneMenu id="RegistryBank_Lookup_id"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
+								value="#{fbatch.to.registryBank.id}" disabled="#{!fbatch.todo}"
+								valueChangeListener="#{fbatch.onRBankChanged}">
+								<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+								<f:selectItems value="#{financeCollections.companyBanks}" />
+							</t:selectOneMenu>
 
 							<h:outputLabel for="RegistryBank_Lookup_bankAccount"
 								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank_account}" />
@@ -165,6 +184,25 @@
 								styleClass="aon-form-input-text-disabled" forceId="#{true}"
 								disabledOnClientSide="true" size="35" />
 
+							<h:outputLabel for="FinanceBatch_financeBatchStatus"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_status}" />
+							<h:selectOneMenu id="FinanceBatch_financeBatchStatus"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								value="#{fbatch.to.financeBatchStatus}" disabled="#{true}" >
+								<f:selectItems value="#{financeCollections.financeBatchStatus}" />
+							</h:selectOneMenu>
+	
+							<h:outputLabel for="FinanceBatch_totalAmount"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_total_amount}" />
+							<t:inputText id="FinanceBatch_totalAmount"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="15"
+								value="#{fbatch.toTotalAmount}" forceId="#{true}" >
+								<f:convertNumber pattern="#,##0.00" />
+							</t:inputText>	
+							
 						</h:panelGrid>
 						
 					</h:panelGrid>
@@ -175,14 +213,36 @@
 							<t:outputLabel for="fBatchDetailData"
 								value="#{financeBundle.aon_included_finance}" />
 						</t:div>
-
 						<t:div styleClass="aon-form-group-body">
+							<t:div rendered="#{!fbatch.recorded}">
+								<t:commandButton title="#{financeBundle.aon_select_all}"
+									styleClass="aon-form-button-plus"
+									onclick="viewDialog.show();"
+									value="#{financeBundle.aon_select_all}"
+									actionListener="#{fBatchDetail.checkAll}"/>
+								<t:commandButton title="#{financeBundle.aon_select_none}"
+									styleClass="aon-form-button-minus"
+									onclick="viewDialog.show();"
+									value="#{financeBundle.aon_select_none}"
+									actionListener="#{fBatchDetail.checkNone}"/>
+								<t:commandButton title="#{financeBundle.aon_remove_batch}"
+									styleClass="aon-form-button"
+									value="#{financeBundle.aon_remove_batch}"
+									onclick="viewDialog.show();"
+									actionListener="#{fbatch.onRemoveSelected}" />
+								<t:commandButton title="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
+									styleClass="aon-form-button" rendered="#{fbatch.csbOutput!=null}"
+									value="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
+									actionListener="#{fbatch.downloadDisk}" />
+							</t:div>
 							<t:dataTable id="fBatchDetailData" var="to" value="#{fBatchDetail.model}"
 								rendered="#{fBatchDetail.model.rowCount > 0}"
 								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
 								footerClass="aon-edit-table-footer" rows="20"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 								columnClasses="aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
 									aon-edit-table-body aon-edit-table-body-string,
 									aon-edit-table-body aon-edit-table-body-string,
 									aon-edit-table-body aon-edit-table-body-string,
@@ -194,29 +254,33 @@
 									<f:facet name="header">
 										<f:verbatim>&#160;</f:verbatim>
 									</f:facet>
-									<t:commandButton title="#{bundle.aon_remove}"
-										actionListener="#{fBatchDetail.onRemoveSelected}"
-										immediate="#{true}" onclick="confirm('#{bundle.aon_remove_confirm}');"
-										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete" value=""/>
+									<t:selectBooleanCheckbox id="Included_Row_checked"
+										value="#{fBatchDetail.rowChecked}"
+										rendered="#{!fbatch.recorded}"
+										valueChangeListener="#{fBatchDetail.rowSelected}"
+										onmouseover="enableRowSubmit(false)"
+										onmouseout="enableRowSubmit(true)"
+										styleClass="aon-form-selectBooleanCheckbox-field" />	
 								</h:column>
 
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{financeBundle.aon_id}" />
+										<h:outputText value="#{financeBundle.aon_invoice}" />
 									</f:facet>
 									<h:outputText value="#{to.finance.invoice.series} / #{to.finance.invoice.number}" />
 								</h:column>
 								
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{financeBundle.aon_finance_batch_name}" />
+										<h:outputText value="#{financeBundle.aon_finance_batch_description}" />
 									</f:facet>
-									<h:outputText value="#{to.finance.registry.name} #{to.finance.registry.surname}" />
+									<h:outputText value="#{to.finance.registry.surname}, " rendered="#{to.finance.registry.surname != null and to.finance.registry.surname != ''}"/>								
+									<h:outputText value="#{to.finance.registry.name}" />
 								</h:column>
 
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{financeBundle.aon_date}" />
+										<h:outputText value="#{financeBundle.aon_finance_date}" />
 									</f:facet>
 									<h:outputText value="#{to.finance.dueDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -228,38 +292,77 @@
 									<f:facet name="header">
 										<h:outputText value="#{financeBundle.aon_pay_method}" />
 									</f:facet>
-									<h:outputText value="#{to.finance.payMethod.name}">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</h:outputText>
+									<h:outputText value="#{to.finance.payMethod.name}"/>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_bank_account}" />
+									</f:facet>
+									<h:outputText value="#{to.finance.formattedBankAccount}"/>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_status}" />
+									</f:facet>
+									<h:outputText value="#{to.status}"/>
 								</h:column>
 
 								<h:column>
 									<f:facet name="header">
 										<h:outputText value="#{financeBundle.finance_amount}" />
 									</f:facet>
-									<h:outputText value="#{to.finance.amount}" >
+									<h:outputText value="#{to.amount}" >
 										<f:convertNumber pattern="#,##0.00" />
 									</h:outputText>
 								</h:column>
 							</t:dataTable>
+							
 						</t:div>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="fBatchDetailData" />
+							<ui:param name="model" value="#{fBatchDetail.model}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+
 					</t:div>
-					
+
 					<t:div styleClass="aon-form-group"
-						rendered="#{!fbatch.new and finance.model.rowCount >0}">
+						rendered="#{!fbatch.new and !fbatch.recorded}">
 						<t:div styleClass="aon-form-group-title">
 							<t:outputLabel for="financeData"
 								value="#{financeBundle.aon_not_batched_finances}" />
 						</t:div>
 
-						<t:div styleClass="aon-form-group-body">
+						<t:div styleClass="aon-form-group-body"
+							rendered="#{finance.model.rowCount > 0}">
+							<t:div>
+								<t:commandButton title="#{financeBundle.aon_select_all}"
+									styleClass="aon-form-button-plus"
+									value="#{financeBundle.aon_select_all}"
+									onclick="viewDialog.show();"
+									actionListener="#{finance.checkAll}"/>
+								<t:commandButton title="#{financeBundle.aon_select_none}"
+									styleClass="aon-form-button-minus"
+									value="#{financeBundle.aon_select_none}"
+									onclick="viewDialog.show();"
+									actionListener="#{finance.checkNone}"/>
+								<t:commandButton title="#{financeBundle.aon_add_batch}"
+									styleClass="aon-form-button"
+									value="#{financeBundle.aon_add_batch}"
+									onclick="viewDialog.show();"
+									actionListener="#{fbatch.onBatchSelected}" />
+							</t:div>
 							<t:dataTable id="financeData" var="to" value="#{finance.model}"
-								rendered="#{finance.model.rowCount > 0}"
+								rendered="#{finance.model.rowCount > 0}" rows="20"
 								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
-								footerClass="aon-edit-table-footer" rows="20"
+								footerClass="aon-edit-table-footer"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 								columnClasses="aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
 									aon-edit-table-body aon-edit-table-body-string,
 									aon-edit-table-body aon-edit-table-body-string,
 									aon-edit-table-body aon-edit-table-body-string,
@@ -281,21 +384,22 @@
 
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{financeBundle.aon_id}" />
+										<h:outputText value="#{financeBundle.aon_invoice}" />
 									</f:facet>
 									<h:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
 								</h:column>
 								
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{financeBundle.aon_finance_batch_name}" />
+										<h:outputText value="#{financeBundle.aon_finance_batch_description}" />
 									</f:facet>
-									<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
+									<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
+									<h:outputText value="#{to.registry.name}" />
 								</h:column>
 
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{financeBundle.aon_date}" />
+										<h:outputText value="#{financeBundle.aon_finance_date}" />
 									</f:facet>
 									<h:outputText value="#{to.dueDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -315,23 +419,50 @@
 
 								<h:column>
 									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_bank_account}" />
+									</f:facet>
+									<h:outputText value="#{to.formattedBankAccount}"/>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_status}" />
+									</f:facet>
+									<h:outputText value="#{to.financeStatus}"/>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
 										<h:outputText value="#{financeBundle.finance_amount}" />
 									</f:facet>
-									<h:outputText value="#{to.amount}" >
+									<h:outputText value="#{to.totalAmount}" >
 										<f:convertNumber pattern="#,##0.00" />
 									</h:outputText>
 								</h:column>
 							</t:dataTable>
-							<t:div style="text-align:right;">
-								<t:commandButton title="#{financeBundle.aon_add_batch}"
-									value="#{financeBundle.aon_add_batch}"
-									actionListener="#{fbatch.onBatchSelected}" />
-							</t:div>
 						</t:div>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="financeData" />
+							<ui:param name="model" value="#{finance.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>
+						
 					</t:div>
-
 				</t:div>
 			</t:div>
+
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
 
 		</h:form>
 		<h:form id="placeList" target="list" />

@@ -51,13 +51,16 @@
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-number"
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
 
 							<h:column>
 								<f:facet name="header">
-									<h:outputText value="#{financeBundle.aon_id}" />
+									<h:outputText value="#{financeBundle.aon_code}" />
 								</f:facet>
 								<h:outputText value="#{to.id}" />
 								<t:commandLink immediate="#{true}"
@@ -67,18 +70,14 @@
 							
 							<h:column>
 								<f:facet name="header">
-									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_finance_batch_description}" />
-									</h:panelGroup>
+									<h:outputText value="#{financeBundle.aon_finance_batch_description}" />
 								</f:facet>
 								<h:outputText value="#{to.description}" />
 							</h:column>
 
 							<h:column>
 								<f:facet name="header">
-									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_payment} / #{financeBundle.aon_charge}" />
-									</h:panelGroup>
+									<h:outputText value="#{financeBundle.aon_fbatch_type}" />
 								</f:facet>
 								<h:outputText
 									value="#{to.payment?(financeBundle.aon_payment):(financeBundle.aon_charge)}" />
@@ -86,9 +85,7 @@
 
 							<h:column>
 								<f:facet name="header">
-									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_date}" />
-									</h:panelGroup>
+									<h:outputText value="#{financeBundle.aon_date}" />
 								</f:facet>
 								<h:outputText value="#{to.issueDate}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -98,20 +95,39 @@
 
 							<h:column>
 								<f:facet name="header">
-									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_bank}" />
-									</h:panelGroup>
+									<h:outputText value="#{financeBundle.aon_bank}" />
 								</f:facet>
 								<h:outputText value="#{to.registryBank.bank.name}" />
 							</h:column>
 							
 							<h:column>
 								<f:facet name="header">
-									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_total}" />
-									</h:panelGroup>
+									<h:outputText value="#{financeBundle.aon_bank_account}" />
 								</f:facet>
-								<h:outputText value="#{fbatch.modelToTotal}" >
+								<h:outputText value="#{to.registryBank.bankAccount}" />
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_status}" />
+								</f:facet>
+								<h:outputText value="#{to.financeBatchStatus}" />
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_regs}" />
+								</f:facet>
+								<h:outputText value="#{fbatch.modelToTotalDetails}" >
+									<f:convertNumber pattern="#,##0" />
+								</h:outputText>	
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_amount}" />
+								</f:facet>
+								<h:outputText value="#{fbatch.modelToTotalAmount}" >
 									<f:convertNumber pattern="#,##0.00" />
 								</h:outputText>	
 							</h:column>

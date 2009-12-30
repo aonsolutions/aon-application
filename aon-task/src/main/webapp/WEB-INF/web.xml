@@ -46,17 +46,6 @@
 
 	<context-param>
 		<description>
-			A semicolon (;) delimitted list of paths to Facelet tag
-			libraries, relative to your application's root. These
-			libraries will be loaded when the first request hits the
-			FaceletViewHandler for page compilation.
-		</description>
-		<param-name>facelets.LIBRARIES</param-name>
-		<param-value>/WEB-INF/aon-components.taglib.xml</param-value>
-	</context-param>
-
-	<context-param>
-		<description>
 			Set this flag to true if you want the JavaServer Faces
 			Reference Implementation to validate the XML in your
 			faces-config.xml resources against the DTD. Default value is

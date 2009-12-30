@@ -76,9 +76,13 @@
 						inactiveTabStyleClass="aon-tabpanel-inactive"
 						serverSideTabSwitch="true">
 
-						<t:panelTab id="customer_fee"
-							label="#{appBundle.aon_customer_fees}">
-							<ui:include src="/facelet/customer/customer_fee/grid.xhtml" />
+						<t:panelTab id="customer_fee" label="#{appBundle.aon_customer_fees}">
+							<t:div rendered="#{!customerFee.new and customerFee.to == null}" >
+								<ui:include src="/facelet/customer/customer_fee/list.xhtml" />
+							</t:div>
+							<t:div rendered="#{customerFee.new or customerFee.to != null}" >
+								<ui:include src="/facelet/customer/customer_fee/form.xhtml" />
+							</t:div>
 						</t:panelTab>
 
 						<t:panelTab id="finance_data"

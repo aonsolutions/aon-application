@@ -26,6 +26,11 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							actionListener="#{financeReturn.onSearch}"
 							accesskey="#{bundle.aon_key_search}" />
+						<h:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
 					</t:div>
 				</t:div>
 			</t:div>
@@ -56,7 +61,7 @@
 							<t:outputLabel for="Customer_Lookup_id"
 								rendered="#{!financeReturn.payment}"
 								styleClass="aon-form-input-text-label"
-								value="#{customerBundle.customer_customer}" />
+								value="#{financeBundle.aon_customer}" />
 							<t:div rendered="#{!financeReturn.payment}">
 								<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 									styleClass="aon-form-input-text"
@@ -90,18 +95,22 @@
 							<h:outputLabel for="Finance_invoice_series"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
-							<h:panelGrid columns="2">
-								<t:inputText id="Finance_invoice_series"
-									onblur="toUpperCase(this);"
-									value="#{financeReturn.series}"
-									styleClass="aon-form-input-text" forceId="#{true}" size="6"
-									maxlength="5">
-									<f:validateLength maximum="5" />
-								</t:inputText>
+							<h:panelGrid columns="3">
+								<t:selectOneMenu id="Finance_invoice_series"
+									styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','seriesLookup','Finance_invoice_series','Series_id|Finance_invoice_series,Series_description|Series_Lookup_description');"
+									value="#{financeReturn.series}">
+									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									<f:selectItems value="#{configCollections.series}" />
+								</t:selectOneMenu>
 								<t:inputText id="Finance_invoice_number"
 									value="#{financeReturn.number}"
 									styleClass="aon-form-input-text" forceId="#{true}"
 									size="7" />
+								<t:inputText id="Series_Lookup_description"
+									styleClass="aon-form-input-text-disabled" forceId="#{true}"
+									readonly="true" disabledOnClientSide="true" size="50">
+								</t:inputText>
 							</h:panelGrid>
 
 							<h:outputLabel styleClass="aon-form-input-text-label"
@@ -170,7 +179,8 @@
 									<f:facet name="header">
 										<h:outputText value="#{financeBundle.aon_finance_batch_name}" />
 									</f:facet>
-									<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
+									<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
+									<h:outputText value="#{to.registry.name}" />
 								</h:column>
 
 								<h:column>
@@ -204,6 +214,14 @@
 
 							</t:dataTable>
 						</t:div>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="financeDataList" />
+							<ui:param name="model" value="#{financeReturn.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>
+						
+						
 					</t:div>
 				</t:div>
 			</t:div>

@@ -3,14 +3,14 @@
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:c="http://java.sun.com/jstl/core"			
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:aon="http://www.code.es/aon-components">
+	xmlns:aon="http://www.code.es/aon-ice-components">
 <f:view>
 <c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
 	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
 </c:forEach>
 <head>
 	<title><ui:insert name="title">Title</ui:insert></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Expires" content="0" />
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Cache-Control" content="no-store" />

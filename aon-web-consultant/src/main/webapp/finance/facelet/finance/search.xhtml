@@ -57,7 +57,7 @@
 							<t:outputLabel for="Customer_id"
 								rendered="#{!finance.payment}"
 								styleClass="aon-form-input-text-label"
-								value="#{customerBundle.customer_customer}" />
+								value="#{financeBundle.aon_customer}" />
 							<t:div rendered="#{!finance.payment}">
 								<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 									styleClass="aon-form-input-text"
@@ -78,11 +78,11 @@
 							<t:div rendered="#{finance.payment}">
 								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 									styleClass="aon-form-input-text"
-									onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup');"
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
 									valueChangeListener="#{finance.addRegistryExpression}" />
 								<h:commandButton id="find_Supplier_Lookup_id"
 									styleClass="aon-form-lookup-button" value="" immediate="true"
-									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}');return false;" />	
+									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
 								<t:inputText id="Supplier_full_name" forceId="#{true}"
 									styleClass="aon-form-input-text-disabled" disabled="true"
 									size="40" />
@@ -91,18 +91,22 @@
 							<h:outputLabel for="Finance_invoice_series"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
-							<h:panelGrid columns="2">
-								<t:inputText id="Finance_invoice_series"
-									onblur="toUpperCase(this);"
-									valueChangeListener="#{finance.addExpression}"
-									styleClass="aon-form-input-text" forceId="#{true}" size="3"
-									maxlength="3">
-									<f:validateLength maximum="3" />
-								</t:inputText>
+							<h:panelGrid columns="3">
+								<t:selectOneMenu id="Finance_invoice_series"
+									styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','seriesLookup','Finance_invoice_series','Series_id|Finance_invoice_series,Series_description|Series_Lookup_description');"
+									valueChangeListener="#{finance.addExpression}">
+									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									<f:selectItems value="#{configCollections.series}" />
+								</t:selectOneMenu>
 								<t:inputText id="Finance_invoice_number"
 									valueChangeListener="#{finance.addExpression}"
 									styleClass="aon-form-input-text" forceId="#{true}"
 									size="7" />
+								<t:inputText id="Series_Lookup_description"
+									styleClass="aon-form-input-text-disabled" forceId="#{true}"
+									readonly="true" disabledOnClientSide="true" size="50">
+								</t:inputText>
 							</h:panelGrid>
 							
 							<h:outputLabel styleClass="aon-form-input-text-label"
@@ -196,6 +200,17 @@
 								valueChangeListener="#{finance.addEqualExpression}">
 								<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
 								<f:selectItems value="#{financeCollections.payMethods}" />
+							</h:selectOneMenu>
+
+							<h:outputLabel for="Finance_financeStatus"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.finance_status}" />
+							<h:selectOneMenu id="Finance_financeStatus"
+								styleClass="aon-form-selectOneMenu-field"
+								converter="financeStatusConverter" forceId="#{true}"
+								valueChangeListener="#{finance.addExpression}">
+								<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+								<f:selectItems value="#{financeCollections.financeStatuses}" />
 							</h:selectOneMenu>
 							
 					</h:panelGrid>

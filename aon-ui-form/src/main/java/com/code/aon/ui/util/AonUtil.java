@@ -307,9 +307,19 @@ public class AonUtil {
 	 */
 
 	public static void addFatalMessage(String message) {
-		addMessage(message, FacesMessage.SEVERITY_FATAL);
+		String[] args = {message};
+		addMessage(args, FacesMessage.SEVERITY_FATAL);
 	}
 
+	/**
+	 * Adds <code>message</code> to the messages collection
+	 * 
+	 * @param args
+	 *            Messages to be added to the messages collection
+	 */
+	public static void addFatalMessage(String[] args) {
+		addMessage(args, FacesMessage.SEVERITY_FATAL);
+	}
 	/**
 	 * Adds <code>message</code> as an error message to the messages
 	 * collection
@@ -318,7 +328,18 @@ public class AonUtil {
 	 *            the message
 	 */
 	public static void addErrorMessage(String message) {
-		addMessage(message, FacesMessage.SEVERITY_ERROR);
+		String[] args = {message};
+		addMessage(args, FacesMessage.SEVERITY_ERROR);
+	}
+
+	/**
+	 * Adds <code>message</code> to the messages collection
+	 * 
+	 * @param args
+	 *            Messages to be added to the messages collection
+	 */
+	public static void addErrorMessage(String[] args) {
+		addMessage(args, FacesMessage.SEVERITY_ERROR);
 	}
 
 	/**
@@ -328,7 +349,18 @@ public class AonUtil {
 	 *            the message
 	 */
 	public static void addInfoMessage(String message) {
-		addMessage(message, FacesMessage.SEVERITY_INFO);
+		String[] args = {message};
+		addMessage(args, FacesMessage.SEVERITY_INFO);
+	}
+
+	/**
+	 * Adds <code>message</code> to the messages collection
+	 * 
+	 * @param args
+	 *            Messages to be added to the messages collection
+	 */
+	public static void addInfoMessage(String[] args) {
+		addMessage(args, FacesMessage.SEVERITY_INFO);
 	}
 
 	/**
@@ -339,18 +371,28 @@ public class AonUtil {
 	 *            the message
 	 */
 	public static void addWarningMessage(String message) {
-		addMessage(message, FacesMessage.SEVERITY_WARN);
+		String[] args = {message};
+		addMessage(args, FacesMessage.SEVERITY_WARN);
+	}
+	/**
+	 * Adds <code>message</code> to the messages collection
+	 * 
+	 * @param args
+	 *            Messages to be added to the messages collection
+	 */
+	public static void addWarningMessage(String[] args) {
+		addMessage(args, FacesMessage.SEVERITY_WARN);
 	}
 
 	/**
 	 * @param message
 	 * @param severity
 	 */
-	public static void addMessage(String message, FacesMessage.Severity severity) {
-		String[] args = { message };
+	public static void addMessage(String[] message, FacesMessage.Severity severity) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		FacesMessage msg = getMessage(ctx, AonUtil.AON_ERROR, args);
+		FacesMessage msg = getMessage(ctx, AonUtil.AON_ERROR, message);
 		msg.setSeverity(severity);
+		ctx.addMessage(AonUtil.AON_ERROR, msg);
 	}
 
 	/**
