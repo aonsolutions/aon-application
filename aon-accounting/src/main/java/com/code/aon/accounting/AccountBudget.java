@@ -1,7 +1,5 @@
 package com.code.aon.accounting;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
@@ -36,23 +41,14 @@ public class AccountBudget implements ITransferObject {
     /** The security level. */
     private SecurityLevel securityLevel;
 
-    /** The entry date. */
-    private Date date;
-
-    /** The debit. */
-	private double debit;
-	
-	/** The credit. */
-	private double credit;
-
-	/**
+    /**
 	 * Gets the id.
 	 * 
 	 * @return the id
 	 */
 	@Id
 	@GeneratedValue
-	@Column(nullable = false)
+	@Column(nullable = false, length = 4)
 	public Integer getId() {
 		return id;
 	}
@@ -71,7 +67,9 @@ public class AccountBudget implements ITransferObject {
 	 * 
 	 * @return the account period
 	 */
-	@Column(name="account_period", length=4)
+	@Column(name="account_period", length=4, nullable=false)
+	@ForeignKey(name = "FK_ACCOUNT_BUDGET_PERIOD")
+	@Index(name = "IDX_ACCOUNT_BUDGET_ACCOUNT_PERIOD")	
 	public String getPeriod() {
 		return period;
 	}
@@ -92,6 +90,8 @@ public class AccountBudget implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account", nullable=false )
+	@ForeignKey(name = "FK_ACCOUNT_BUDGET_ACCOUNT")
+	@Index(name = "IDX_ACCOUNT_BUDGET_ACCOUNT")
 	public Account getAccount() {
 		return account;
 	}
@@ -110,7 +110,7 @@ public class AccountBudget implements ITransferObject {
 	 * 
 	 * @return the security level
 	 */
-	@Column(name="security_level")
+	@Column(name="security_level", length = 2)
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -123,59 +123,36 @@ public class AccountBudget implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
-
-    /**
-     * Gets the entry date.
-     * 
-     * @return the entry date
-     */
-    @Column(name="entry_date")
-    public Date getDate() {
-        return date;
-    }
-
-    /**
-     * Sets the entry date.
-     * 
-     * @param entryDate the entry date
-     */
-    public void setDate(Date dateate) {
-        this.date = dateate;
-    }
-
-    /**
-     * Gets the debit.
-     * 
-     * @return the debit
-     */
-    public double getDebit() {
-        return debit;
-    }
-
-    /**
-     * Sets the debit.
-     * 
-     * @param debit the debit
-     */
-    public void setDebit(double debit) {
-        this.debit = debit;
-    }
-
-	/**
-	 * Gets the credit.
-	 * 
-	 * @return the credit
-	 */
-	public double getCredit() {
-		return credit;
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() !=  getClass()) return false;
+		final AccountBudget o = (AccountBudget) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.period, o.period)
+			.append(this.account, o.account)
+			.append(this.securityLevel, o.securityLevel)
+			.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());
 	}
 
-	/**
-	 * Sets the credit.
-	 * 
-	 * @param credit the credit
-	 */
-	public void setCredit(double credit) {
-		this.credit = credit;
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(this.id)
+			.append(this.period)
+			.append(this.account)
+			.append(this.securityLevel)
+			.toHashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }

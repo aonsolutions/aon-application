@@ -160,7 +160,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * CAPTCHA PHP
 	 */
-	CAPTCHA;
+	CAPTCHA,
+	
+	/**
+	 * ACTIVITY
+	 */
+	ACTIVITY;
 	
 	
 	/**

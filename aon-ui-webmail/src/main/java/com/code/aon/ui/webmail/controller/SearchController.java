@@ -2,26 +2,20 @@ package com.code.aon.ui.webmail.controller;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ArrayDataModel;
-import javax.faces.model.DataModel;
-import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonFolder;
-import com.code.aon.webmail.bean.AonMessage;
-import com.code.aon.webmail.bean.AonMessageSortableList;
-import com.code.aon.webmail.bean.AonSearcher;
+import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.bean.AonMessageSortableList;
+import com.code.aon.ui.webmail.bean.AonSearcher;
+import com.code.aon.ui.webmail.exception.WebmailException;
 
-public class SearchController implements WebMailConstants {
+public class SearchController {
 
 	private AonMessageSortableList sortableList;
-	
-	private DataModel model;
 	
 	private String bodyText;
 
@@ -131,7 +125,6 @@ public class SearchController implements WebMailConstants {
 				as.addStringTerm(subject,AonSearcher.SUBJECT);
 			}
 			sortableList.setMessageList(as.search());
-			this.model = new ArrayDataModel( sortableList.getMessageList() );
 	    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 	    	messageController.setReturnAction(WebMailConstants.NAVIGATION_SEARCH);
 		} catch (WebmailException e) {
@@ -146,10 +139,7 @@ public class SearchController implements WebMailConstants {
 	}
 	
 	public boolean isResultFound(){
-		if ( this.sortableList != null ) {
-			return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());	
-		}
-		return false;
+		return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());
 	}
 
 	public boolean isResultSelected(){
@@ -157,15 +147,5 @@ public class SearchController implements WebMailConstants {
 			return false;
 		return true;
 	}
-	
-    public void changeSelectedMessage(ActionEvent event) throws MessagingException {
-    	AonMessage aonMessage = (AonMessage) getModel().getRowData();
-    	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-       	messageController.setMessage( aonMessage );      				
-    }	
-    
-    public DataModel getModel() {
-    	return this.model;
-    }
 
 }

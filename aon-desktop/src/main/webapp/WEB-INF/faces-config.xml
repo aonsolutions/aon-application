@@ -20,7 +20,7 @@
 		<managed-bean-class>
 			com.code.aon.ui.resources.bean.ResourceResolver
 		</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
+		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
 			<value>/aonResource/3.5.1</value>
@@ -81,7 +81,7 @@
 
 	<!-- ************ PROFILES ************** -->
 	<managed-bean>
-		<managed-bean-name>currentDomain</managed-bean-name>
+		<managed-bean-name>domain</managed-bean-name>
 		<managed-bean-class>com.code.aon.desktop.controller.AonDomainController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -147,10 +147,6 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>corporateIdentityAttach</value>
-		</managed-property>										
-		<managed-property>
 			<property-name>maximumSize</property-name>
 			<value>1048576</value>
 		</managed-property>
@@ -171,63 +167,4 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************* DOMAIN ***************** -->
-	<managed-bean>
-		<managed-bean-name>domain</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.desktop.controller.DomainController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.desktop.Domain</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>domain</value>
-		</managed-property>								
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Domain_commonName</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{domainControllerListener}</value>
-			</list-entries>
-		</managed-property>		
-	</managed-bean>	
-
-	<managed-bean>
-		<managed-bean-name>domainControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.desktop.event.DomainControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<!--  **** CUSTOMER **** -->
-	<managed-bean>
-		<managed-bean-name>userListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<list-entries>
-			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{userDomainManagementListener}</value>
-		</list-entries>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>userDomainManagementListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.desktop.event.UserDomainManagementListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
 </faces-config>

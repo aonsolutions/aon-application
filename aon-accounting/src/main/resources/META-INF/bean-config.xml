@@ -22,6 +22,7 @@
 	        <listener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanListener</listener>
 		</listeners>
 		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailBeanVetoListener</vetoListener>
 	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>

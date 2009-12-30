@@ -37,7 +37,7 @@ public class SummaryProvider {
 			if (!params.isBudgeted()) {
 				sumStmt.append(" FROM account_summary s ");
 			} else {
-				sumStmt.append(" FROM account_budget s ");
+				sumStmt.append(" FROM account_budget_detail s ");
 			}
 
 			sumStmt.append(" WHERE s.account LIKE ?");

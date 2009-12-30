@@ -10,12 +10,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.common.ITransferObject;
@@ -67,6 +72,8 @@ public class Amortization implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="amortization_type", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_AMORTIZATION_TYPE")
+	@Index(name = "IDX_AMORTIZATION_AMORTIZATION_TYPE")	
 	public AmortizationType getAmortizationType() {
 		return amortizationType;
 	}
@@ -76,6 +83,7 @@ public class Amortization implements ITransferObject {
 	}
 
 	@Column(name = "initial_date", nullable = false)
+	@Temporal(TemporalType.DATE)	
 	public Date getInitialDate() {
 		return initialDate;
 	}
@@ -85,6 +93,7 @@ public class Amortization implements ITransferObject {
 	}
 
 	@Column
+	@Temporal(TemporalType.DATE)
 	public Date getDeadline() {
 		return deadline;
 	}
@@ -121,7 +130,8 @@ public class Amortization implements ITransferObject {
     }
 	
 	
-	@Column(name="comments",length=65535)
+	@Column(name="comments")
+	@Lob
 	public String getComments() {
 		return comments;
 	}

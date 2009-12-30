@@ -11,8 +11,6 @@
 
 	<ui:define name="mainContent">
 		<c:if test="#{(!currentUser.passwordExpired) and (company.model.rowCount > 0)}">
-			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{false}" />
-			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{false}" />
 			<a4j:include id="aonContent" ajaxRendered="false"
 				viewId="/homepage.xhtml" />
 		</c:if>

@@ -13,11 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 
 @Entity
 @Table(name = "faq")
-public class Faq implements ITransferObject, IPositionObject {
+public class Faq implements IActivableObject, IPositionObject {
 
 	private Integer id;
 

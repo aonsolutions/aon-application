@@ -43,7 +43,7 @@ public class FinanceAliasWriter {
 		classes[9] = FinanceTracking.class.getName();
 		classes[10] = InvoicingGroup.class.getName();
 		classes[11] = InvoicingGroupDetail.class.getName();
-		HibernateUtil.getSessionFactory(null);
+		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.finance.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

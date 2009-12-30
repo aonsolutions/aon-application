@@ -13,37 +13,17 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 	/** The date. */
 	private Date date;
 	
-	/** The period. */
-	private Period period;
-	
-	/** The description. */
-	private String description;
-	
 	/** The amount. */
 	private double amount;
 	
 	/** The registry bank. */
-	private RegistryBank rBank;
+	private RegistryBank registryBank;
 	
+	/** The concept. */
+	private String concept;
+	
+	/** The security level. */
 	private SecurityLevel securityLevel;
-
-	/**
-	 * Gets the amount.
-	 * 
-	 * @return the amount
-	 */
-	public double getAmount() {
-		return amount;
-	}
-
-	/**
-	 * Sets the amount.
-	 * 
-	 * @param amount the amount
-	 */
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
 
 	/**
 	 * Gets the date.
@@ -64,39 +44,21 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 	}
 
 	/**
-	 * Gets the description.
+	 * Gets the amount.
 	 * 
-	 * @return the description
+	 * @return the amount
 	 */
-	public String getDescription() {
-		return description;
+	public double getAmount() {
+		return amount;
 	}
 
 	/**
-	 * Gets the period.
+	 * Sets the amount.
 	 * 
-	 * @return the period
+	 * @param amount the amount
 	 */
-	public Period getPeriod() {
-		return period;
-	}
-
-	/**
-	 * Sets the period.
-	 * 
-	 * @param period the period
-	 */
-	public void setPeriod(Period period) {
-		this.period = period;
-	}
-
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
 
 	/**
@@ -104,8 +66,8 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 	 * 
 	 * @return the registry bank
 	 */
-	public RegistryBank getRBank() {
-		return rBank;
+	public RegistryBank getRegistryBank() {
+		return registryBank;
 	}
 
 	/**
@@ -113,15 +75,44 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 	 * 
 	 * @param registryBank the registry bank
 	 */
-	public void setRBank(RegistryBank registryBank) {
-		this.rBank = registryBank;
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
 	}
 
+	/**
+	 * Gets the concept.
+	 * 
+	 * @return the concept
+	 */
+	public String getConcept() {
+		return concept;
+	}
+
+	/**
+	 * Sets the concept.
+	 * 
+	 * @param concept the concept
+	 */
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+
+	/**
+	 * Gets the security level.
+	 * 
+	 * @return the security level
+	 */
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
 
+	/**
+	 * Sets the security level.
+	 * 
+	 * @param securityLevel the security level
+	 */
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+
 }

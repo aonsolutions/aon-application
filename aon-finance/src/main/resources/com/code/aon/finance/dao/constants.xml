@@ -20,11 +20,6 @@
 		<hibernate names="sourceId,description,discountExpression,id,invoice.id,item.id,line,price,quantity,source,item.product.type,item.product.code,taxableBase,taxes,workPlace.id" />
 	</bean>
 	
-	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">
-		<alias names="id,invoiceDetail_id,invoiceDetail_invoice_id,taxType,percentage,surcharge" />
-		<hibernate names="id,invoiceDetail.id,invoiceDetail.invoice.id,taxType,percentage,surcharge" />
-	</bean>
-	
 	<bean class="com.code.aon.finance.InvoicingGroup" sqlName="invoicing_group">
 		<alias names="id,parent_id,parent_surname,parent_name" />
 		<hibernate names="id,parent.id,parent.surname,parent.name" />

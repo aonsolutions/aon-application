@@ -1,26 +1,23 @@
 package com.code.aon.desktop.event;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.naming.Name;
 
 import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.config.User;
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.AonDomainController;
 import com.code.aon.desktop.controller.AonUserController;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
+import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.config.event.UserSecurityActivationListener;
 import com.code.aon.ui.config.util.UserUtils;
@@ -33,9 +30,17 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class SecurityUserListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses, IDesktopConstants {
+public class SecurityUserListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses {
 
 	private static final Logger LOGGER = Logger.getLogger(SecurityUserListener.class.getName());
+
+	private static final String USER_UID_NUMBER_ATTRIBUTE = "uidNumber";
+
+	private static final String ACTIVE_ATTRIBUTE = "active";
+
+	private static final String USER_ALTERNATIVE_EMAIL = "mail";
+
+	private static final String USER_CELLULAR_NUMBER = "mobile";
 
 	private boolean showUserNotExistsWindow = false;
 	
@@ -102,7 +107,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			throws ControllerListenerException {
 		User user = (User) event.getController().getTo();
 		setProperties( user, true );
-		AonUserController userController = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
+		AonUserController userController = (AonUserController) AonUtil.getRegisteredBean("currentUser");
 		userController.updateExpirationTimestamp( user.getLogin(), true );
 	}
 
@@ -130,24 +135,24 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			this.active = true;
 		} else {
 			this.disabled = calculateDisabled(user);
-			Name userDN = NameResolver.getUserDN( domain, user.getLogin() );
+			DistinguishedName userDN = AonDN.getUserDN( domain, user.getLogin() );
 			BasicLdap ldap = new BasicLdap();
 			if ( ldap.exists(userDN, USER) ) {
 				this.showUserNotExistsWindow = false;
 				try {
 					LdapSession session = ldap.getLdapSession();
-					String filter = NameResolver.getObjectClass(USER);
-					Entry userEntry = session.get(userDN, filter, 
-							COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE, ACTIVE_ATTRIBUTE);
+					String filter = LdapSession.getObjectClass(USER);
+					Entry userEntry = session.get(userDN.toString(), filter, 
+							COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER, ACTIVE_ATTRIBUTE);
 					name = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
 					surname = userEntry.getAsString(SURNAME_ATTRIBUTE);
 					active = userEntry.getAsBoolean(ACTIVE_ATTRIBUTE);
-					if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
-						alternativeEmail = userEntry.getAsString(MAIL_ATTRIBUTE);
-					}
-					if ( userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
-						cellular = userEntry.getAsString(MOBILE_ATTRIBUTE);
-					}
+					try {
+						alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
+					}catch (NullPointerException npe) {}
+					try {
+						cellular = userEntry.getAsString(USER_CELLULAR_NUMBER);
+					}catch (NullPointerException npe) {}
 				} catch (LdapException e) {
 					AonUtil.addErrorMessage( "Error obteniendo una propiedad de " + user.getLogin() );
 				} finally {
@@ -162,7 +167,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 	}
 	
 	private void setProperties( User user, boolean updateId ) {
-		Name userDN = NameResolver.getUserDN( domain, user.getLogin() );
+		DistinguishedName userDN = AonDN.getUserDN( domain, user.getLogin() );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
 			try {
@@ -170,24 +175,27 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 				session.replaceAttribute(userDN, COMMON_NAME_ATTRIBUTE, name);
 				session.replaceAttribute(userDN, SURNAME_ATTRIBUTE, surname);
 				session.replaceAttribute(userDN, ACTIVE_ATTRIBUTE, active);
-				session.replaceAttribute(userDN, USER_ID_NUMBER_ATTRIBUTE, user.getId().toString());
+				session.replaceAttribute(userDN, USER_UID_NUMBER_ATTRIBUTE, user.getId().toString());
 
-				String filter = NameResolver.getObjectClass(USER);
-				Entry userEntry = session.get(userDN, filter, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE);
+				String filter = LdapSession.getObjectClass(USER);
+				Entry u = session.get(userDN.toString(), filter, COMMON_NAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
 				String old_mail = null;
-				if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
-					old_mail = userEntry.getAsString(MAIL_ATTRIBUTE);
+				String old_cellular = null;
+				try {
+					old_mail = u.getAsString(USER_ALTERNATIVE_EMAIL);
+					old_cellular = u.getAsString(USER_CELLULAR_NUMBER);
 				}
-				String old_mobile = null;
-				if ( userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
-					old_mobile = userEntry.getAsString(MOBILE_ATTRIBUTE);
+				catch (NullPointerException npe) {
 				}
-				session.updateAttribute(userDN, MAIL_ATTRIBUTE, old_mail, alternativeEmail);
-				session.updateAttribute(userDN, MOBILE_ATTRIBUTE, old_mobile, cellular);
+				
+				session.updateAttribute(userDN, USER_ALTERNATIVE_EMAIL, old_mail, alternativeEmail);
+				session.updateAttribute(userDN, USER_CELLULAR_NUMBER, old_cellular, cellular);
+
+//				if ( updateId ) {
+//					session.replaceAttribute(userDN, "uidNumber", user.getId().toString());	
+//				}
 			} catch (LdapException e) {
-				String message = "Error estableciendo las propiedades del usuario " + user.getLogin();
-				LOGGER.log(Level.SEVERE, message, e);
-				AonUtil.addErrorMessage( message );
+				AonUtil.addErrorMessage( "Error obteniendo las propiedades del usuario " + user.getLogin() );
 			} finally {
 				ldap.closeSession();
 			}
@@ -196,7 +204,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			LOGGER.severe( "No existe en LDAP el usuario " + user.getLogin() + " para el dominio " + domain );
 		}			
 		try {
-			AonDomainController domainController = (AonDomainController) FormUtil.getController(CURRENT_DOMAIN_CONTROLLER_NAME);
+			AonDomainController domainController = (AonDomainController) FormUtil.getController("domain");
 			domainController.flushAuthenticationCache( user.getLogin() );
 		} catch (DeploymentException e) {
 			LOGGER.severe( "Error refrescando la cache de autentificacion" );			

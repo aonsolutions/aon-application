@@ -15,7 +15,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
 				<ui:param name="controller" value="#{user}" />
-				<ui:param name="skipResetButton" value="#{!currentDomain.userManagement}" />
+				<ui:param name="skipResetButton" value="#{!domain.userManagement}" />
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"

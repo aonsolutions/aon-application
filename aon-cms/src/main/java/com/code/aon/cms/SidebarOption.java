@@ -13,14 +13,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.SidebarType;
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
+import com.code.aon.cms.util.IReferenceObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "sidebar_option")
-public class SidebarOption implements ITransferObject, IPositionObject {
+public class SidebarOption implements IActivableObject, IPositionObject, IReferenceObject {
+
+	private static final long serialVersionUID = 7985304255268260197L;
 
 	private Integer id;
 
@@ -135,5 +143,45 @@ public class SidebarOption implements ITransferObject, IPositionObject {
 		this.side = side;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final SidebarOption o = (SidebarOption) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.ident, o.ident)
+				.append(this.level, o.level)
+				.append(this.position, o.position)
+				.append(this.side, o.side)
+				.append(this.sidebar, o.sidebar)
+				.append(this.type, o.type)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(id)			
+			.append(ident)
+			.append(level)
+			.append(position)
+			.append(side)
+			.append(sidebar)
+			.append(type)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}		
 	
 }

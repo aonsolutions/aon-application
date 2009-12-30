@@ -9,11 +9,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "modular_page_i18n")
 public class ModularPageDetail implements ITransferObject {
+
+	private static final long serialVersionUID = 4534503231127061010L;
 
 	private Integer id;
 
@@ -62,5 +70,41 @@ public class ModularPageDetail implements ITransferObject {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ModularPageDetail o = (ModularPageDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.label, o.label)
+				.append(this.language, o.language)
+				.append(this.modular_page, o.modular_page)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)	
+			.append(label)
+			.append(language)
+			.append(modular_page)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("id", id).
+			append("label", StringUtils.abbreviate(label, 32)).
+			append("language", language.getId()).
+			append("modular_page", modular_page.getId()).
+			toString();
+	}	
 
 }

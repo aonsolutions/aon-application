@@ -18,6 +18,8 @@ import com.code.aon.ui.form.FormUtil;
 
 public class ApplicationsManager {
 
+	static final String BEAN_NAME = "aonapps";
+
 	private List<App> applicationList;
 
 	@SuppressWarnings("unchecked")

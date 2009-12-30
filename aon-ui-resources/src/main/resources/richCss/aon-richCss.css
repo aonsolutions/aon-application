@@ -33,15 +33,21 @@ padding:0;
 display:inline;
 }
 
+input:focus, select:focus, textarea:focus{
+background-color: #FBEDB6;
+}
 input, select, textarea {
 font: 1em "arial","lucida Grande","Trebuchet MS",sans-serif;
+}
+select {
+border: solid #808080 1px;
 }
 input{
  }
 textarea {
 line-height:1.25;
 }
- ul, ol{
+ul, ol{
  margin:0;
  padding:0;
  }
@@ -121,6 +127,18 @@ color:#000;
 	}
 .aon-width-100{
 	width:100px;
+}	
+.aon-width-110{
+	width:110px;
+}	
+.aon-width-120{
+	width:120px;
+}	
+.aon-width-130{
+	width:130px;
+}	
+.aon-width-140{
+	width:140px;
 }	
 .aon-width-150{
 	width:150px;
@@ -285,6 +303,9 @@ color:#000;
 .aon-icon-big-configuration{
 	background:transparent url(images/aon-icon-big/aon-icon-big-configuration.png) center  center no-repeat;
 	}
+ .aon-icon-big-sendingMail{
+	background:transparent url(images/aon-icon-big/aon-icon-big-sending-mail.gif) scroll left center no-repeat;	
+ }
 
 /*************************/
 /*******  ICONS  *********/
@@ -1198,11 +1219,16 @@ color:#000;
 	
 	}
 .aon-editDataTable-button{
+	min-height: 16px;
 	border:0;
 	cursor:pointer;
-	padding-left:16px;
+	padding-left: 15px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
 	background-color:transparent;
-	}
+	margin-right: 5px;
+}
 /*************************/
 /******  PANEL TABSET  ******/
 /*************************/
@@ -1376,7 +1402,7 @@ color:#000;
 	 background:transparent url(images/aon-icon/aon-icon-menu-top-item.png) left top no-repeat;
  }
  .aon-menuItem-selectClass{
- 	background-color:red; 		
+ 	background-color:#ddd; 		
  }
  .aon-menuItem-no-iconClass{
  	display:none;
@@ -1892,14 +1918,26 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	}
 .aon-search-add{
 	background:transparent url(images/aon-icon/aon-icon-search-add.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
-	border: 0;	
- }
+	border: 0;
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}
 
 .aon-search-minus{
 	background:transparent url(images/aon-icon/aon-icon-search-minus.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
 	border: 0;
- }
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}
+
+.new-mail-button{
+    font-weight:bold;
+	cursor:hand;
+	background:transparent url(images/aon-content/aon-fileupload-button.png) scroll left center no-repeat;	
+	padding:4px 1em !important;
+	margin:0;
+	border:transparent 1px solid;
+	width:100px;
+}

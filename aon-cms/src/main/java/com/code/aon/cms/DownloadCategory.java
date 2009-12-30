@@ -13,11 +13,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.code.aon.common.ITransferObject;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import com.code.aon.cms.util.IActivableObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="download_category")
-public class DownloadCategory implements ITransferObject, IPositionObject {
+public class DownloadCategory implements IActivableObject, IPositionObject {
+
+	private static final long serialVersionUID = -4197866947961276581L;
 
 	private Integer id;
 	
@@ -110,4 +117,41 @@ public class DownloadCategory implements ITransferObject, IPositionObject {
 		this.itemsPerPage = itemsPerPage;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DownloadCategory o = (DownloadCategory) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.image, o.image)
+				.append(this.itemsPerPage, o.itemsPerPage)
+				.append(this.position, o.position)
+				.append(this.section, o.section)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(id)
+			.append(image)	
+			.append(itemsPerPage)
+			.append(position)
+			.append(section)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
+	
 }

@@ -200,15 +200,16 @@ public class AonFolder extends AonMessageSortableList {
 		}
     }
     
-    public int getUnreadMessageCount() throws WebmailException {
+    public int getUnreadMessageCount() {
+    	int count = 0;
 		try {
 			if ( isHoldMessages() ) {
-				return folder.getUnreadMessageCount();				
+				count = folder.getUnreadMessageCount();				
 			}
-			return 0;
 		} catch (MessagingException e) {
-			throw new WebmailException(e);
+			LOGGER.log( Level.WARNING, "Error getting unread message count", e );
 		}    	
+		return count;
     }
     
     public boolean isDeleteable() throws WebmailException{
@@ -238,10 +239,14 @@ public class AonFolder extends AonMessageSortableList {
     	return false;
     }
 
-    public String getName(){
+    public String getName() {
     	return folder.getName();
     }
 
+    public String getFullName() {
+    	return folder.getFullName();
+    }
+    
     public boolean isOpen(){
     	return folder.isOpen();
     }

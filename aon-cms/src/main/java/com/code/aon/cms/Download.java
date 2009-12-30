@@ -14,11 +14,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 
 @Entity
 @Table(name="download")
-public class Download implements ITransferObject, IPositionObject {
+public class Download implements IActivableObject, IPositionObject {
 
 	private Integer id;
 	

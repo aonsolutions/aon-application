@@ -95,7 +95,12 @@ public enum PageType implements IResourceable {
 	/**
 	 * SPORT,
 	 */
-	SPORT;
+	SPORT,
+	
+	/**
+	 * Activity
+	 */
+	ACTIVITY;
 	
 	/**
 	 * Ruta base del fichero de mensajes.

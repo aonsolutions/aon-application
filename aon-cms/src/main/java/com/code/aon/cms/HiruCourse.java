@@ -12,11 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.cms.enumeration.HiruCourseSubject;
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 
 @Entity
 @Table(name="hiru_course")
-public class HiruCourse implements ITransferObject {
+public class HiruCourse implements IActivableObject {
 
 	private Integer id;
 	

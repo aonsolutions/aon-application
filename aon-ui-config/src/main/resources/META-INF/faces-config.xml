@@ -51,22 +51,25 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
-			<value>#{userListeners}</value>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{userSecurityActivationListener}</value>
+				<value>#{userScopeListener}</value>
+				<value>#{userWorkGroupListener}</value>
+			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{userOptionalListeners}</value>
+		</managed-property>		
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>userListeners</managed-bean-name>
+		<managed-bean-name>userOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-		<list-entries>
-			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<value>#{userSecurityActivationListener}</value>
-			<value>#{userScopeListener}</value>
-			<value>#{userWorkGroupListener}</value>
-		</list-entries>
 	</managed-bean>
-	
+		
 	<managed-bean>
 		<managed-bean-name>userSecurityActivationListener</managed-bean-name>
 		<managed-bean-class>
@@ -286,21 +289,22 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
-			<value>#{taxListeners}</value>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taxDetailListener}</value>
+			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{taxOptionalListeners}</value>
+		</managed-property>		
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>taxListeners</managed-bean-name>
+		<managed-bean-name>taxOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
-				<value>#{taxDetailListener}</value>
-		</list-entries>
-	</managed-bean>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>taxDetailListener</managed-bean-name>

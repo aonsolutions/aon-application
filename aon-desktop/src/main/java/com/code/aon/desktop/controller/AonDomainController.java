@@ -15,7 +15,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -23,10 +22,7 @@ import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.plugin.DomainManager;
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.desktop.Domain;
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INode;
@@ -34,19 +30,22 @@ import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.Relation;
 import com.code.aon.jaas.deployment.DeploymentException;
+import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants, IDesktopConstants {
+public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
+
+    private static final String USER_MANAGEMENT_ATTRIBUTE = "userManagement";
 
 	/** Obtiene un logger apropiado. */
 	private static final Logger LOGGER = Logger.getLogger(AonDomainController.class.getName());
@@ -56,32 +55,18 @@ public class AonDomainController extends BasicController implements IAonObjectCl
     private ListDataModel applications;
     private ListDataModel profiles;
     private ListDataModel users;
-    private Domain domain;
     private IDomainApplication da;
     private Relation profile;
     private Relation user;
     private String currentTab;
     
-    private boolean userManagement;
-    private boolean domainManagement;
+    private Boolean userManagement;
     
     private boolean newProfile;
     private boolean newUser;
     
     private List<SelectItem> availableUsers;
     
-	public AonDomainController() {
-		domain = getCurrentDomain();
-		if ( domain != null ) {
-			userManagement = domain.getUserManagement();
-			domainManagement = domain.getDomainManagement();
-		}
-	}
-
-	public Domain getDomain() {
-		return domain;
-	}
-
 	public boolean isNewProfile() {
 		return newProfile;
 	}
@@ -238,7 +223,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	public String getCurrentUserName() {
 		if ( this.users.isRowAvailable() ) {
 			IRelation user = (IRelation) this.users.getRowData();
-			AonUserController userController = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);		
+			AonUserController userController = (AonUserController) AonUtil.getRegisteredBean("currentUser");		
 			return userController.getUserName(user.getId());
 		}
 		return "";
@@ -303,14 +288,14 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	}
 	
 	private void addUser( String domainId, String applicationId, IRelation user ) {
-		Name dn = NameResolver.getDomainApplicationUserDN(domainId, applicationId, user.getId());
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, applicationId, user.getId());
 		BasicLdap ldap = new BasicLdap();
-		Entry entry = new Entry(dn);
+		Entry entry = new Entry(dn.toString());
 		try {
 			LdapSession session = ldap.getLdapSession();
 			entry.addObjectClasses(new String[] {TOP, DOMAIN_APPLICATION_USER} );
 			for( String role : user.relations() ) {
-				Name member = session.getFullDN( NameResolver.getApplicationProfileDN(applicationId, role) );
+				DistinguishedName member = session.getFullDN( AonDN.getApplicationProfileDN(applicationId, role) );
 				entry.put( MEMBER_ATTRIBUTE, member.toString() );
 			}
 			entry.put( STATUS_ATTRIBUTE, 0 );
@@ -323,7 +308,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	}
 
 	private void removeUser( String domainId, String applicationId, IRelation user ) throws LdapException {
-		Name dn = NameResolver.getDomainApplicationUserDN(domainId, applicationId, user.getId());
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, applicationId, user.getId());
 		BasicLdap ldap = new BasicLdap();
 		ldap.delete(dn);
 	}
@@ -401,7 +386,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	}
 	
 	private boolean isSystemProfile( String name ) {
-		Name profileDN = NameResolver.getApplicationProfileDN(da.getId(), name);
+		DistinguishedName profileDN = AonDN.getApplicationProfileDN(da.getId(), name);
 		BasicLdap ldap = new BasicLdap();
 		return ldap.exists( profileDN, PROFILE );
 	}
@@ -418,25 +403,25 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		return false;
 	}
 
-	private Domain getCurrentDomain() {
-		Domain domain = null;
-		AonUserController userController = (AonUserController) FormUtil.getController(CURRENT_USER_CONTROLLER_NAME);
-		try {
-			IManagerBean bean = FormUtil.getController(DOMAIN_CONTROLLER_NAME).getManagerBean();
-			Name id = NameResolver.getDomainDN(userController.getDomain());
-			domain = (Domain) bean.get( id );
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obteniendo de LDAP el aonDomain " + userController.getDomain(), e );
-		}
-		return domain;
-	}
-
 	public boolean isUserManagement() {
-		return userManagement;
-	}
-
-	public boolean isDomainManagement() {
-		return domainManagement;
+		if ( userManagement == null ) {
+			userManagement = Boolean.FALSE;
+			AonUserController userController = (AonUserController) FormUtil.getController("currentUser");
+			DistinguishedName dn = AonDN.getDomainDN(userController.getDomain());			
+			BasicLdap ldap = new BasicLdap();
+			try {
+				String objectClass = LdapSession.getObjectClass(DOMAIN);
+				Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
+				if ( (entry != null) && (entry.containsKey(USER_MANAGEMENT_ATTRIBUTE)) ) {
+					userManagement = entry.getAsBoolean(USER_MANAGEMENT_ATTRIBUTE);
+				}
+			} catch ( LdapException e ) {
+				LOGGER.log(Level.SEVERE, "Error añadiendo usuario " + dn, e );
+			} finally {
+				ldap.closeSession();
+			}
+		}
+		return userManagement.booleanValue();
 	}
 	
 }

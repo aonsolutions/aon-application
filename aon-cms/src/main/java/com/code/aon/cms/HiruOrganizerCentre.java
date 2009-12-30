@@ -6,11 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.cms.util.IActivableObject;
 
 @Entity
 @Table(name="hiru_organizer_centre")
-public class HiruOrganizerCentre implements ITransferObject {
+public class HiruOrganizerCentre implements IActivableObject {
 
 	private Integer id;
 	
