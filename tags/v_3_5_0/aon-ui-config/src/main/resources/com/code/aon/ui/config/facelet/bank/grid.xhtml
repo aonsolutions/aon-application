@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="bankList">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:include
+					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{financeBundle.finance_banks}" />
+					<ui:param name="controller" value="#{bank}" />
+				</ui:include>
+
+				<aon:div styleClass="aon-scroll-area">
+					<ui:decorate
+						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+						<ui:param name="controller" value="#{bank}" />
+						<ui:param name="columnClasses" value="aon-editDataTable-text,aon-editDataTable-text aon-width-100" />
+
+						<ui:define name="columns">
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Bank_name" value="#{bundle.aon_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}" rendered="#{formList}" />
+								<aon:inputText id="Bank_name"
+									rendered="#{formEdit}" size="40" maxlength="64"
+									value="#{bank.to.name}" required="true" />
+								<f:facet name="footer">
+									<aon:inputText id="Bank_name-New"
+										rendered="#{formNew}" size="40" maxlength="64"
+										value="#{bank.to.name}" required="true" />
+								</f:facet>
+							</aon:column>
+							
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Bank_code" value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.code}" rendered="#{formList}" />
+								<aon:inputText id="Bank_code"
+									rendered="#{formEdit}" maxlength="4" size="6"
+									value="#{bank.to.code}" required="true" />
+								<f:facet name="footer">
+									<aon:inputText id="Bank_code-New"
+										rendered="#{formNew}" value="#{bank.to.code}"
+										required="true" maxlength="4" size="6"/>
+								</f:facet>
+							</aon:column>
+
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

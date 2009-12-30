@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.cms.ProductCategory" sqlName="product_category">
+		<alias names="id,alias,active,parent_id" />
+		<hibernate names="id,alias,active,parent&lt;id" />
+	</bean>
+	<bean class="com.code.aon.cms.CompanyActivity" sqlName="company_activity">
+		<alias names="activity_id,company_id,id,company_name"/>
+		<hibernate names="activity.id,company.id,id,company.name"/>
+	</bean>	
+</dao>
