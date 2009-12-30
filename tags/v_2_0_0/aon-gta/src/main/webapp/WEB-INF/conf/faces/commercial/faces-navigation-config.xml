@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+  <!-- =================== Navigation Rules ================= -->
+
+  <!-- ********************************* -->
+  <!-- *********** MASTER ************** -->
+  <!-- ********************************* -->
+
+  <!-- =================== Offer ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>offer_form</from-outcome>
+      <to-view-id>/facelet/commercial/master/offer/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>offer_list</from-outcome>
+      <to-view-id>/facelet/commercial/master/offer/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>offer_search</from-outcome>
+      <to-view-id>/facelet/commercial/master/offer/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- =================== Target ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>target_form</from-outcome>
+      <to-view-id>/facelet/commercial/master/target/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>target_list</from-outcome>
+      <to-view-id>/facelet/commercial/master/target/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>target_search</from-outcome>
+      <to-view-id>/facelet/commercial/master/target/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ********************************* -->
+  <!-- ************ MENU *************** -->
+  <!-- ********************************* -->
+  
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>offer</from-outcome>
+      <to-view-id>/facelet/commercial/master/offer/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>target</from-outcome>
+      <to-view-id>/facelet/commercial/master/target/form.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+</faces-config>

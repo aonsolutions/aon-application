@@ -1,0 +1,329 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!--  *************** 
+		 ERROR MESSAGES
+		***************** -->
+	<managed-bean>
+		<managed-bean-name>errorMessages</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.controller.ErrorMessageController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
+   <!-- ***************************************** -->
+   <!-- ************ MANAGED BEANS ************** -->
+   <!-- ***************************************** -->
+	<managed-bean>
+        <managed-bean-name>login</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.LoginController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+	<managed-bean>
+        <managed-bean-name>webmail</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.WebMailController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+	
+	<managed-bean>
+        <managed-bean-name>tree</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.TreeController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>listeners</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.webmail.listener.ITreeListener</value-class>
+				<value>#{folder}</value>
+			</list-entries>
+		</managed-property>
+    </managed-bean>
+	
+	<managed-bean>
+        <managed-bean-name>folder</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.FolderController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+	
+	<managed-bean>
+        <managed-bean-name>message</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.MessageController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+	
+	<managed-bean>
+        <managed-bean-name>attach</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.AttachController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+	<managed-bean>
+        <managed-bean-name>search</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.SearchController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>inputFile</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.webmail.controller.InputFileController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+		  <property-name>renderManager</property-name>
+		  <value>#{renderManager}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.webmail.listener.IFileUploadedListener</value-class>
+				<value>#{message}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ EMAIL ************** -->
+	<managed-bean>
+		<managed-bean-name>email</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.controller.ICEController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.groupware.Contact</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{emailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>emailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.event.EmailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ SIGNATURE ************** -->
+	<managed-bean>
+		<managed-bean-name>signature</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.webmail.controller.SignatureController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.webmail.Signature</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>signature</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{signatureControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>signatureControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.event.SignatureControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ AUTOCOMPLETE ************** -->
+
+	<managed-bean>
+		<managed-bean-name>autoCompleteEmailDictionary</managed-bean-name>
+		<managed-bean-class>
+				com.code.aon.ui.webmail.controller.AutoCompleteEmailDictionary
+			</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>autoCompleteEmailBean</managed-bean-name>
+			<managed-bean-class>
+				com.code.aon.ui.webmail.controller.AutoCompleteEmailBean
+			</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+		  <property-name>dictionary</property-name>
+		  <value>#{autoCompleteEmailDictionary.dictionary}</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ AUTOCOMPLETE ************** -->
+
+	<managed-bean>
+		<managed-bean-name>multiSelectionEmailBean</managed-bean-name>
+		<managed-bean-class>
+				com.code.aon.ui.webmail.controller.MultiSelectionEmailBean
+			</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+		<!-- ************ MAILACCOUNT ************** -->
+	<managed-bean>
+		<managed-bean-name>mailAccount</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.webmail.controller.MailAccountController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.webmail.MailAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mailAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{mailAccountControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>mailAccountControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.webmail.event.MailAccountControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ BWLIST ************** -->
+
+	<managed-bean>
+		<managed-bean-name>blacklist</managed-bean-name>
+		<managed-bean-class>
+				com.code.aon.ui.webmail.controller.BlackListController
+			</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+
+	<!-- ***************************************** -->
+    <!-- ************** CONVERTER ****************** -->
+    <!-- ***************************************** -->
+    <converter>
+            <converter-id>longString</converter-id>
+            <converter-class>
+                com.code.aon.ui.webmail.converter.LongStringConverter
+            </converter-class>
+    </converter>
+
+    <converter>
+            <converter-id>maxLenghtString</converter-id>
+            <converter-class>
+                com.code.aon.ui.webmail.converter.MaxLenghtStringConverter
+            </converter-class>
+    </converter>
+
+  <!-- ======================================================================= -->	
+  <!-- =========================== Navigation Rules ========================== -->	
+  <!-- ======================================================================= -->
+  
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>login</from-outcome>
+			<to-view-id>/home.iface</to-view-id>
+			<redirect/>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>folder</from-outcome>
+			<to-view-id>/webmail/facelet/folderView.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>message</from-outcome>
+			<to-view-id>/webmail/facelet/messageView.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>messageNew</from-outcome>
+			<to-view-id>/webmail/facelet/messageNew.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emails</from-outcome>
+			<to-view-id>/webmail/facelet/email/grid.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>messageSearch</from-outcome>
+			<to-view-id>/webmail/facelet/messageSearch.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>signature_list</from-outcome>
+			<to-view-id>/webmail/facelet/signature/list.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>signature_form</from-outcome>
+			<to-view-id>/webmail/facelet/signature/form.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mailAccount_list</from-outcome>
+			<to-view-id>/webmail/facelet/mailAccount/list.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mailAccount_form</from-outcome>
+			<to-view-id>/webmail/facelet/mailAccount/form.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mailAccount_change</from-outcome>
+			<to-view-id>/webmail/facelet/mailAccount/change.iface</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bwlist</from-outcome>
+			<to-view-id>/webmail/facelet/bwlist/list.iface</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	
+  <!-- =================== Application Menu Navigation Rules ================= -->	
+
+</faces-config>

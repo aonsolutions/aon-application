@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<aon:panelGrid columns="1" >
+		<ice:tree id="tree"
+				  value="#{tree.model}"
+				  var="item"
+				  hideRootNode="false"
+				  hideNavigation="false"
+				  styleClass="aon-tree">
+			<ice:treeNode>
+                <f:facet name="content">
+                    <ice:panelGroup style="display: inline"
+							dropListener="#{item.userObject.navigationDropAction}"
+                            dropTarget="#{item.userObject.leaf}"
+							hoverclass="droptargethover"
+							styleClass="aon-tree-item">
+					
+						<ice:graphicImage 
+                            value="#{item.userObject.branchExpandedIcon}"/>
+						<aon:outputText  
+							escape="false"  
+							rendered="#{item.userObject.folder.root}"
+							value="#{item.userObject.text}" />
+						<aon:commandButton 
+							rendered="#{!item.userObject.folder.root and !item.userObject.expanded}"
+							action="folder"
+							actionListener="#{item.userObject.nodeClicked}"
+							value="#{item.userObject.text}" 
+							styleClass="aon-tree-item-commandButton" 
+							>
+						</aon:commandButton>
+						<aon:commandButton
+							rendered="#{!item.userObject.folder.root and item.userObject.expanded}"
+							action="folder"
+							actionListener="#{item.userObject.nodeClicked}"
+							value="#{item.userObject.text}" 
+							styleClass="aon-tree-item-commandButton" 
+							>
+						</aon:commandButton>
+						<aon:outputText 
+							escape="false"  	styleClass="aon-tree-item-commandButton aon-tree-item-commandButton-type1"						
+							value="#{item.userObject.unread}" />
+						<aon:commandButton
+							rendered="#{!item.userObject.folder.root and item.userObject.purgable}"
+							actionListener="#{item.userObject.purgeFolder}"
+							value="(#{appBundle.aon_webmail_purgefolder})" 
+							styleClass="aon-tree-item-commandButton aon-tree-item-commandButton-type2" 
+							>
+						</aon:commandButton>
+					</ice:panelGroup>
+				</f:facet>
+			</ice:treeNode>
+		</ice:tree>
+	</aon:panelGrid>
+	
+</ui:composition>
+
+</body>
+</html>

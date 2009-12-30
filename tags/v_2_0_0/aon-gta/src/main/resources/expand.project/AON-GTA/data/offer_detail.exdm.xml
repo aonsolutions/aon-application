@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="offer_detail">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="offer" sqlType="integer" type="integer"/>
+        <column label="" name="item" sqlType="integer" type="integer"/>
+        <column label="" length="64" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" name="quantity" sqlType="double" type="double"/>
+        <column label="" name="price" sqlType="double" type="double"/>
+        <column label="" length="32" name="discount_expr"
+            sqlType="varchar" type="string"/>
+        <column label="" length="4" name="status" sqlType="tinyint" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="offer_detail_ibfk_1" foreignPath="data/offer.exdm.xml">
+            <sourceColumns>
+                <column name="offer"/>
+            </sourceColumns>
+        </join>
+        <join description="offer_detail_ibfk_2" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

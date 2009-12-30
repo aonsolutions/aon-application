@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="accountInvoiceForm" styleClass="aon-form">
+
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							accesskey="#{bundle.aon_key_save}"
+							actionListener="#{accountInvoice.accept}" action="account_entry_form"
+							styleClass="aon-content-toolbar-item"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}" 
+							actionListener="#{accountInvoice.onReset}" rendered="#{!accountInvoice.new}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="remove" value="#{bundle.aon_remove}"
+							accesskey="#{bundle.aon_key_remove}" action="account_entry_search"
+							actionListener="#{accountInvoice.onRemove}" rendered="#{!accountInvoice.new}"
+							styleClass="aon-content-toolbar-item" immediate="true"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of grid layout -->
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<h:outputLabel for="Account_invoiceType"
+							value="#{accountBundle.aon_account_invoice_type}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Account_invoiceType"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.type}"
+							onchange="submit();">
+							<f:selectItems value="#{accountInvoice.invoiceTypes}" />
+						</h:selectOneMenu>
+						
+						<t:outputLabel for="Customer_Lookup_id"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_customer}" rendered="#{accountInvoice.sales}"/>
+						<t:div rendered="#{accountInvoice.sales}">
+							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+								value="#{accountInvoice.header.registry.id}"
+								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
+							<h:commandButton id="find_Customer_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+							<t:inputText id="Customer_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text" size="40" 
+								value="#{accountInvoice.header.name}"/>
+						</t:div>
+						<t:outputLabel for="Customer_Lookup_registry_document"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.sales}"/>
+						<t:inputText id="Customer_Lookup_registry_document" styleClass="aon-form-input-text"
+							value="#{accountInvoice.header.document}" size="20"
+							forceId="#{true}" rendered="#{accountInvoice.sales}">
+						</t:inputText>
+						
+						<t:outputLabel for="Supplier_Lookup_id"
+							styleClass="aon-form-lookup-label" 
+							value="#{accountBundle.aon_supplier}" rendered="#{accountInvoice.purchase}"/>
+						<t:div rendered="#{accountInvoice.purchase}">
+							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
+								value="#{accountInvoice.header.registry.id}" 
+								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
+							<h:commandButton id="find_Supplier_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
+							<t:inputText id="Supplier_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text" size="40" 
+								value="#{accountInvoice.header.name}"/>
+						</t:div>
+						<t:outputLabel for="Supplier_Lookup_document"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.purchase}"/>
+						<t:inputText id="Supplier_Lookup_document" styleClass="aon-form-input-text"
+							value="#{accountInvoice.header.document}" size="20"
+							forceId="#{true}" rendered="#{accountInvoice.purchase}">
+						</t:inputText>
+						
+						<t:outputLabel for="Creditor_Lookup_id"
+							styleClass="aon-form-lookup-label" 
+							value="#{accountBundle.aon_creditor}" rendered="#{accountInvoice.expense}"/>
+						<t:div rendered="#{accountInvoice.expense}">
+							<t:inputText id="Creditor_Lookup_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','creditorLookup','Creditor_Lookup_id','Creditor_id|Creditor_Lookup_id,Creditor_full_name|Creditor_full_name');"
+								value="#{accountInvoice.header.registry.id}" 
+								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
+							<h:commandButton id="find_Creditor_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{creditorLookup.encodedSearchPagePath}','Creditor_id|Creditor_Lookup_id,Creditor_full_name|Creditor_full_name');return false;" />	
+							<t:inputText id="Creditor_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text" size="40" 
+								value="#{accountInvoice.header.name}"/>
+						</t:div>
+						<t:outputLabel for="Creditor_Lookup_registry_document"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.expense}"/>
+						<t:inputText id="Creditor_Lookup_registry_document" styleClass="aon-form-input-text"
+							value="#{accountInvoice.header.document}" size="20"
+							forceId="#{true}" rendered="#{accountInvoice.expense}">
+						</t:inputText>
+						
+  						<h:outputLabel for="Account_Period"
+							value="#{accountBundle.aon_accPeriod_period}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Account_Period"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.period.id}">
+							<f:selectItems value="#{accountCollections.accountPeriods}" />
+						</h:selectOneMenu>
+
+						<t:outputLabel for="Account_date"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_date}" />						
+						<t:inputCalendar id="Account_date"
+							value="#{accountInvoice.header.date}" size="8" required="true" 
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+							
+						<h:outputLabel for="Account_invoice_series"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_series_number}" />
+						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
+							<t:inputText id="Account_invoice_series"
+								value="#{accountInvoice.header.series}" size="3" maxlength="3"
+								styleClass="aon-form-input-text" forceId="#{true}" >
+								<f:validateLength maximum="3" />
+							</t:inputText>	
+							<t:inputText id="Account_invoice_number"
+								value="#{accountInvoice.header.number}" size="7" maxlength="7"
+								styleClass="aon-form-input-text" forceId="#{true}">
+								<f:validateLength maximum="7" />
+							</t:inputText>	
+						</h:panelGrid>
+
+						<h:outputLabel for="Account_account-Sales"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_account}" rendered="#{accountInvoice.sales}"/>
+						<h:selectOneMenu id="Account_account-Sales"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.account.id}"
+							rendered="#{accountInvoice.sales}">
+							<f:selectItems value="#{accountCollections.salesAccounts}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Account_account-Purchase"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_account}" rendered="#{accountInvoice.purchase}"/>
+						<h:selectOneMenu id="Account_account-Purchase"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.account.id}"
+							rendered="#{accountInvoice.purchase}">
+							<f:selectItems value="#{accountCollections.purchaseAccounts}" />
+						</h:selectOneMenu>
+												
+						<h:outputLabel for="Account_account-Expenses"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_account}" rendered="#{accountInvoice.expense}"/>
+						<h:selectOneMenu id="Account_account-Expenses"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.account.id}"
+							rendered="#{accountInvoice.expense}">
+							<f:selectItems value="#{accountCollections.expensesAccounts}" />
+						</h:selectOneMenu>
+						
+						<h:outputLabel for="AccountEntry_securityLevel"
+							value="#{accountBundle.aon_account_security_level}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="AccountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountInvoice.header.securityLevel}">
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+					<!-- end of grid layout -->
+					<!-- end of bag panel -->
+					
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="TaxesData"
+								value="#{accountBundle.aon_details}" />
+						</t:div>
+
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="TaxesData" var="to" value="#{accountInvoice.details}"
+								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer" rows="20"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" 
+								rowOnClick="sendRow( this )"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,									
+									aon-edit-table-body aon-edit-table-body-buttons"
+								cellpadding="0" cellspacing="0">
+								
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:commandLink immediate="#{true}"
+										styleClass="aon-table-row-selected"
+										rendered="#{to!=accountInvoice.currentDetail}"
+										actionListener="#{accountInvoice.onSelectDetail}" />
+									<f:facet name="footer">
+										<t:div>
+											<t:commandButton value=""
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+												title="#{accountBundle.aon_newLine}"
+												actionListener="#{accountInvoice.onNewDetail}"
+												rendered="#{!accountInvoice.newDetail}"
+												accesskey="#{bundle.aon_key_new_line}" />
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_taxable_base}" />
+									</f:facet>
+									<t:outputText id="Account_Taxable_Base"
+										rendered="#{to!=accountInvoice.currentDetail}" 
+										value="#{to.taxableBase}" forceId="#{true}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+									<t:inputText id="Item_price_new-New"
+										rendered="#{to==accountInvoice.currentDetail}" forceId="#{true}"
+										value="#{accountInvoice.currentDetail.taxableBase}" required="#{true}" />
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<t:inputText id="Item_details_total"
+												rendered="#{accountInvoice.newDetail}"
+												value="#{accountInvoice.currentDetail.taxableBase}">
+											</t:inputText>
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{accountBundle.aon_retention}" />
+									</f:facet>
+									<h:outputText value="#{to.retention.name}" rendered="#{to!=accountInvoice.currentDetail}" />
+									<h:selectOneMenu id="Account_Retention-Edit"
+										styleClass="aon-form-selectOneMenu-field" 
+										rendered="#{to==accountInvoice.currentDetail}" 
+										value="#{accountInvoice.currentDetail.retention.id}"
+										valueChangeListener="#{accountInvoice.onTaxChange}">
+										<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+										<f:selectItems value="#{productCollections.retentionTaxes}" />
+									</h:selectOneMenu>
+									<f:verbatim>&#160;</f:verbatim>
+									<f:facet name="footer">
+										<h:selectOneMenu id="Account_Retention-New"
+											styleClass="aon-form-selectOneMenu-field" 
+											rendered="#{accountInvoice.newDetail}" 
+											value="#{accountInvoice.currentDetail.retention.id}"
+											valueChangeListener="#{accountInvoice.onTaxChange}">
+											<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+											<f:selectItems value="#{productCollections.retentionTaxes}" />
+										</h:selectOneMenu>
+									</f:facet>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{accountBundle.aon_vat}" />
+									</f:facet>
+									<h:outputText value="#{to.vat.name}" rendered="#{to!=accountInvoice.currentDetail}" />
+									<h:selectOneMenu id="Account_Vat-Edit"
+										styleClass="aon-form-selectOneMenu-field" 
+										rendered="#{to==accountInvoice.currentDetail}" 
+										value="#{accountInvoice.currentDetail.vat.id}"
+										valueChangeListener="#{accountInvoice.onTaxChange}">
+										<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+										<f:selectItems value="#{productCollections.vatTaxes}" />
+									</h:selectOneMenu>
+									<f:verbatim>&#160;</f:verbatim>
+									<f:facet name="footer">
+										<h:selectOneMenu id="Account_Vat-New"
+											styleClass="aon-form-selectOneMenu-field" 
+											rendered="#{accountInvoice.newDetail}" 
+											value="#{accountInvoice.currentDetail.vat.id}"
+											valueChangeListener="#{accountInvoice.onTaxChange}">
+											<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+											<f:selectItems value="#{productCollections.vatTaxes}" />
+										</h:selectOneMenu>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_retention_quota}" />
+									</f:facet>
+									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
+										value="#{to.retentionQuota}" forceId="#{true}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_vat_quota}" />
+									</f:facet>
+									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
+										value="#{to.vatQuota}" forceId="#{true}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_surcharge}" />
+									</f:facet>
+									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
+										value="#{to.surcharge}" forceId="#{true}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_total}" />
+									</f:facet>
+									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
+										value="#{to.total}" forceId="#{true}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:div rendered="#{to==accountInvoice.currentDetail}">
+										<t:commandButton title="#{bundle.aon_save}"
+											actionListener="#{accountInvoice.onUpdateDetail}"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											value="" accesskey="#{bundle.aon_key_save_line}" />
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{accountInvoice.onCancelDetail}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}" />
+										<t:commandButton title="#{bundle.aon_remove}"
+											actionListener="#{accountInvoice.onRemoveDetail}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+											value="" accesskey="#{bundle.aon_key_remove_line}" />
+									</t:div>
+									<f:facet name="footer">
+										<t:div>
+											<t:div rendered="#{accountInvoice.newDetail}">
+												<t:commandButton title="#{bundle.aon_save}"
+													actionListener="#{accountInvoice.onAddDetail}"
+													onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+													value="" accesskey="#{bundle.aon_key_save_line}" />
+												<t:commandButton title="#{bundle.aon_cancel}"
+													actionListener="#{accountInvoice.onCancelDetail}"
+													immediate="#{true}"
+													onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+													value="" accesskey="#{bundle.aon_key_cancel_line}" />
+											</t:div>
+										</t:div>
+									</f:facet>
+								</h:column>
+									
+							</t:dataTable>	
+						</t:div>
+					</t:div>
+
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="TaxesData"
+								value="#{accountBundle.aon_finances}" />
+						</t:div>
+
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="FinancesData" var="financeTo" value="#{accountInvoice.finances}"
+								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer" rows="20"
+								rowOnMouseOver="selectRow( this )" rowIndexVar="rowIndex"
+								rowOnMouseOut="unselectRow( this )" 
+								rowOnClick="sendRow( this )"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,									
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-buttons"
+								cellpadding="0" cellspacing="0">
+								
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:commandLink immediate="#{true}"
+										styleClass="aon-table-row-selected"
+										rendered="#{financeTo!=accountInvoice.currentFinance}"
+										actionListener="#{accountInvoice.onSelectFinance}" />
+									<f:facet name="footer">
+										<t:div>
+											<t:commandButton value=""
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+												title="#{accountBundle.aon_newLine}"
+												actionListener="#{accountInvoice.onNewFinance}"
+												rendered="#{!accountInvoice.newFinance}"
+												accesskey="#{bundle.aon_key_new_line}" />
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_date}" />
+									</f:facet>
+									<t:outputText id="Account_Finance_DueDate"
+										rendered="#{financeTo!=accountInvoice.currentFinance}" 
+										value="#{financeTo.dueDate}" forceId="#{true}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:outputText>
+									<t:inputCalendar size="8" id="Account_Finance_DueDate-Edit"
+										rendered="#{financeTo==accountInvoice.currentFinance}" forceId="#{true}"
+										value="#{accountInvoice.currentFinance.dueDate}"
+										monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+										currentDayCellClass="currentDayCell" renderAsPopup="true"
+										styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+										popupTodayString="#{bundle.aon_popup_today}"
+										popupWeekString="#{bundle.aon_popup_week}" />	
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<t:inputCalendar size="8" id="Account_Finance_DueDate-New"
+												rendered="#{accountInvoice.newFinance}" forceId="#{true}"
+												value="#{accountInvoice.currentFinance.dueDate}"
+												monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+												currentDayCellClass="currentDayCell" renderAsPopup="true"
+												styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+												popupTodayString="#{bundle.aon_popup_today}"
+												popupWeekString="#{bundle.aon_popup_week}" />
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{accountBundle.aon_pay_method}" />
+									</f:facet>
+									<h:outputText value="#{financeTo.payMethod.name}" rendered="#{financeTo!=accountInvoice.currentFinance}" />
+									<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
+										rendered="#{financeTo==accountInvoice.currentFinance}" 
+										value="#{accountInvoice.currentFinance.payMethod.id}"
+										valueChangeListener="#{accountInvoice.onPayMethodChange}">
+										<f:selectItems value="#{financeCollections.payMethods}" />
+									</h:selectOneMenu>
+									<f:verbatim>&#160;</f:verbatim>
+									<f:facet name="footer">
+										<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
+											rendered="#{accountInvoice.newFinance}" 
+											value="#{accountInvoice.currentFinance.payMethod.id}"
+											valueChangeListener="#{accountInvoice.onPayMethodChange}">
+											<f:selectItems value="#{financeCollections.payMethods}" />
+										</h:selectOneMenu>
+									</f:facet>
+								</h:column>
+								
+								<t:column width="300">
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_bank}" />
+									</f:facet>
+									<t:outputText value="#{financeTo.bank.name}" rendered="#{financeTo!=accountInvoice.currentFinance}" />
+									<t:div rendered="#{financeTo==accountInvoice.currentFinance}">
+										<t:inputHidden id="Bank_Lookup_id-Edit" forceId="#{true}"
+											styleClass="aon-form-input-text"
+											value="#{accountInvoice.currentFinance.bank.id}"/>
+										<t:inputText id="Bank_Lookup_code-Edit" size="5" forceId="#{true}"
+											styleClass="aon-form-input-text"
+											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-Edit[#{rowIndex}]','Bank_id|Bank_Lookup_id-Edit[#{rowIndex}],Bank_code|Bank_Lookup_code-Edit[#{rowIndex}],Bank_name|Bank_Lookup_name-Edit[#{rowIndex}]');"
+											value="#{accountInvoice.currentFinance.bank.code}"/>
+										<h:commandButton id="find_Bank_Lookup_id-Edit"
+											styleClass="aon-form-lookup-button" value="" immediate="true"
+											onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-Edit[#{rowIndex}],Bank_code|Bank_Lookup_code-Edit[#{rowIndex}],Bank_name|Bank_Lookup_name-Edit[#{rowIndex}]');return false;" />	
+										<t:inputText id="Bank_Lookup_name-Edit" forceId="#{true}"
+											styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
+											size="30" value="#{accountInvoice.currentFinance.bank.name}"/>
+									</t:div>
+									<f:facet name="footer">
+										<t:div rendered="#{accountInvoice.newFinance}">
+											<t:inputHidden id="Bank_Lookup_id-New" forceId="#{true}"
+												styleClass="aon-form-input-text"
+												value="#{accountInvoice.currentFinance.bank.id}"/>
+											<t:inputText id="Bank_Lookup_code-New" size="5" forceId="#{true}"
+												styleClass="aon-form-input-text"
+												onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-New','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');"
+												value="#{accountInvoice.currentFinance.bank.code}"/>
+											<h:commandButton id="find_Bank_Lookup_id-New"
+												styleClass="aon-form-lookup-button" value="" immediate="true"
+												onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');return false;" />	
+											<t:inputText id="Bank_Lookup_name-New" forceId="#{true}"
+												styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
+												size="30" value="#{accountInvoice.currentFinance.bank.name}"/>
+										</t:div>
+									</f:facet>
+								</t:column>
+
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_bank_account}" />
+									</f:facet>
+									<t:outputText id="Account_Finance_Bank_Account"
+										rendered="#{financeTo!=accountInvoice.currentFinance}" 
+										value="#{financeTo.bankAccount}" forceId="#{true}">
+									</t:outputText>
+									<t:inputText id="Account_Finance_Bank_Account-Edit"
+										rendered="#{financeTo==accountInvoice.currentFinance}" forceId="#{true}"
+										value="#{accountInvoice.currentFinance.bankAccount}" required="#{true}" />
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<t:inputText id="Account_Finance_Bank_Account-New"
+												rendered="#{accountInvoice.newFinance}"
+												value="#{accountInvoice.currentFinance.bankAccount}">
+											</t:inputText>
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{accountBundle.aon_amount}" />
+									</f:facet>
+									<t:outputText id="Account_Finance_Amount"
+										rendered="#{financeTo!=accountInvoice.currentFinance}" 
+										value="#{financeTo.amount}" forceId="#{true}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+									<t:inputText id="Account_Finance_Amount-Edit"
+										rendered="#{financeTo==accountInvoice.currentFinance}" forceId="#{true}"
+										value="#{accountInvoice.currentFinance.amount}" required="#{true}" />
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<t:inputText id="Account_Finance_Amount-New"
+												rendered="#{accountInvoice.newFinance}"
+												value="#{accountInvoice.currentFinance.amount}">
+											</t:inputText>
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:div rendered="#{financeTo==accountInvoice.currentFinance}">
+										<t:commandButton title="#{bundle.aon_save}"
+											actionListener="#{accountInvoice.onUpdateFinance}"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											value="" accesskey="#{bundle.aon_key_save_line}" />
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{accountInvoice.onCancelFinance}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}" />
+										<t:commandButton title="#{bundle.aon_remove}"
+											actionListener="#{accountInvoice.onRemoveFinance}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+											value="" accesskey="#{bundle.aon_key_remove_line}" />
+									</t:div>
+									<f:facet name="footer">
+										<t:div>
+											<t:div rendered="#{accountInvoice.newFinance}">
+												<t:commandButton title="#{bundle.aon_save}"
+													actionListener="#{accountInvoice.onAddFinance}"
+													onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+													value="" accesskey="#{bundle.aon_key_save_line}" />
+												<t:commandButton title="#{bundle.aon_cancel}"
+													actionListener="#{accountInvoice.onCancelFinance}"
+													immediate="#{true}"
+													onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+													value="" accesskey="#{bundle.aon_key_cancel_line}" />
+											</t:div>
+										</t:div>
+									</f:facet>
+								</h:column>
+									
+							</t:dataTable>	
+						</t:div>
+					</t:div>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

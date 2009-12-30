@@ -1,0 +1,1241 @@
+/***** Global Settings *****/
+
+html, body {
+border:0;
+margin:0;
+padding:0;
+}
+
+body {
+font: 13px/1.333 "lucida Grande","Trebuchet MS",Arial,sans-serif;
+color:#4b4b4b;
+background-color:#fff;
+}
+img {
+border:0;
+}
+sup {
+position:relative;
+bottom:0.3em;
+vertical-align:baseline;
+}
+
+sub {
+position:relative;
+bottom:-0.2em;
+vertical-align:baseline;
+}
+td{
+	vertical-align:top;
+	}
+/***** Forms *****/
+
+form {
+margin:0;
+padding:0;
+display:inline;
+}
+
+input, select, textarea {
+font:1em arial, helvetica, sans-serif;
+}
+input{
+ }
+textarea {
+line-height:1.25;
+}
+ ul, ol{
+ margin:0;
+ padding:0;
+ }
+ 
+a{
+text-decoration:none;
+	} 
+/***** Global Classes *****/
+
+.aon-clear 			{ clear:both; }
+
+.aon-float-left 	{ float:left; }
+.aon-float-right 	{ float:right; }
+
+.aon-text-left 		{ text-align:left; }
+.aon-text-right 	{ text-align:right; }
+.aon-text-center 	{ text-align:center; }
+.aon-text-justify 	{ text-align:justify; }
+
+.aon-text-nowrap	{white-space:nowrap:}
+
+.aon-bold 			{ font-weight:bold; }
+.aon-italic 		{ font-style:italic; }
+.aon-underline 		{ border-bottom:1px solid; }
+.aon-highlight 		{ background:#ffc; }
+
+.aon-nowrap 		{ width:100%;margin:0 auto; white-space:nowrap;}
+
+.img-left 		{ float:left;margin:4px 10px 4px 0; }
+.img-right 		{ float:right;margin:4px 0 4px 10px; }
+
+.nopadding 		{ padding:0; }
+.noindent 		{ margin-left:0;padding-left:0; }
+.nobullet 		{ list-style:none;list-style-image:none; }
+
+.aon-vertical-align-top{vertical-align:top;}
+.aon-vertical-align-middle{vertical-align:middle;}
+.aon-vertical-align-bottom{vertical-align:top;}
+
+.aon-padding{padding:2px 1em;}
+.aon-noborder{border:0;}
+
+.aon-text-bold{font-weight:bold;}
+.aon-full-width{width:100%;}
+
+.iceRowSelMouseOver .aon-outputText{color:#000 !important;}
+/***** aon styles header  ********************/
+#aon-content .aon-header-bar{
+		border-top:#999999 1px solid;
+		border-bottom:#999999 1px solid;
+		background:#47473e url(images/aon-main-menu/aon-main-menu.gif) scroll left top repeat-x;
+		color:#fff;
+		font-size:0.9em;
+	}
+#aon-content .aon-header-bar span{	
+	color:#fff;
+	}
+#aon-content #aon-header{
+	border-top:#fff 1px solid;
+	background-color:#f2f7fd;
+	}
+#aon-content #aon-header .aon-logo{
+	padding:10px 0 5px 45px;
+	float:left;
+	
+	}
+#aon-content  .aon-connection-status{
+	position:absolute;
+	left:5px;
+	top:3px;
+	border:#000 1px solid;	
+	}
+
+#aon-content .aon-connection-control{
+	margin:0;
+	padding:0;
+}
+
+#aon-content #aon-header .aon-applicationName .aon-outputText{
+	font-weight:bold;
+	padding-top:10px;
+	padding-left:5px;
+	font-size:1.4em;
+	float:left;
+	z-Index:500px;
+	color:#efefe4;
+	}
+	
+#aon-content #aon-header .aon-header-menu{
+	text-align:right;
+	padding:5px 1em;
+	}	
+#aon-content #aon-header .aon-header-menu-item{
+	padding:0 0 0 2em;
+	display:inline;
+	}	
+#aon-content #aon-header .aon-header-menu-item a .aon-outputText, .aon-header-menu-item a:visited .aon-outputText{
+	text-decoration:none;
+	color:#414141;
+	background:transparent url("images/aon-header/aon-header-menu-item.gif") scroll left 5px no-repeat;
+	padding-left:14px;
+	font-size:0.9em;
+	font-weight:bold;
+	}
+	
+#aon-content #aon-header .aon-header-menu-item a:hover .aon-outputText{
+	color:#000;
+	}
+	
+/*****HOME ********/
+
+.aon-content-home{
+	background:#fff url(images/aon-home/aon-home.jpg) scroll left top no-repeat;
+	height:400px;
+	}	
+	
+/*****MAIN MENU ****************/
+#aon-content #aon-main-menu {
+		border-top:#999999 1px solid;
+		border-bottom:#999999 1px solid;
+		background:#47473e url(images/aon-main-menu/aon-main-menu.gif) scroll left top repeat-x;
+	}
+#aon-content #aon-main-menu .iceMnuBar{
+		background:transparent url(images/aon-main-menu/aon-pipe.png) scroll 10px 5px no-repeat;
+		height:1.4em;
+		padding:2px 1em 2px 22px;
+		border-top:#000 1px solid;
+		
+ }
+#aon-content #aon-main-menu a{
+	/*background:#141414 url(images/aon-main-menu/aon-main-menu-item.gif) scroll left top repeat-x;*
+	border-bottom:#5e5e5e 1px solid;
+	border-right:#5e5e5e 1px solid;*/
+	color:#ecece0;
+	font-size:0.8em;
+	text-transform:uppercase;
+	font-weight:bold;
+	padding:0px 1em 0px 0em;
+	margin:2px 5px 2px 0px;
+	background-color:transparent;
+	border:0;
+  }
+
+#aon-content #aon-main-menu .iceMnuBarSubMenu{
+ 	background-color:#ebe8e3;
+ 	border:#c1c0bc 1px solid;
+	padding:1px;
+  }
+
+ /****   branch    ********/
+#aon-content  #aon-main-menu .aon-main-menu-branch{
+  	background:transparent url(images/aon-main-menu/aon-folder-grey-icon.png) scroll 8px top no-repeat; 	
+  	
+  }
+#aon-content #aon-main-menu .aon-main-menu-branch a{
+ 	padding:3px 16px 3px 26px;
+ 	margin:0;
+ 	color:#47473e;
+  }
+#aon-content #aon-main-menu .aon-main-menu-branch a:hover{
+  	color:#efefe4;  	
+  	background:#484a49 url(images/aon-main-menu/aon-mainMenu-branch-arrow.png) scroll right 5px no-repeat; 	çcolor:#47473e;
+  }
+#aon-content #aon-main-menu  .aon-main-menu-branch img{
+   display:none;
+   }
+#aon-content #aon-main-menu .aon-main-menu-branch a span{
+	
+  }
+ 
+ /****   leaf    ********/
+#aon-content #aon-main-menu .aon-main-menu-leaf{
+  	background:transparent url(images/aon-main-menu/aon-file-icon.gif) scroll 8px top no-repeat; 	
+  }
+#aon-content #aon-main-menu .aon-main-menu-leaf a{
+ 	padding:3px 16px 3px 26px;
+ 	margin:0;
+ 	color:#47473e;
+ 	
+  }
+#aon-content #aon-main-menu .aon-main-menu-leaf a:hover{
+ 	background:#484a49 url(images/aon-main-menu/aon-file-icon.gif) scroll 8px top no-repeat; 	
+  }
+#aon-content #aon-main-menu  .aon-main-menu-leaf img{
+   display:none;
+   }   
+#aon-content #aon-main-menu .aon-main-menu-leaf a span{
+	
+ }
+ 
+ /***** deshabilitado ********/
+#aon-content #aon-main-menu .aon-main-menu-leaf-dis{
+  background:transparent url(images/aon-main-menu/aon-file-icon.gif) scroll 8px top no-repeat; 
+  }
+#aon-content #aon-main-menu .aon-main-menu-leaf-dis a{  
+  padding:3px 16px 3px 26px;
+  color:#b8b4ae;
+  display:block;
+  }
+#aon-content #aon-main-menu .aon-main-menu-leaf-dis a:hover{
+  }
+#aon-content #aon-main-menu  .aon-main-menu-leaf-dis img{
+   display:none;
+   }
+#aon-content #aon-main-menu .aon-main-menu-leaf-dis a span{
+  }
+
+/********  AON SECONDARY MENU  ****************/
+.aon-secondary-menu{
+	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x;
+	padding:0px 0em;
+	border-bottom:#a1a6b1 1px solid;
+	}
+.aon-secondary-menu-application{
+	background:transparent url(images/aon-content/aon-application-logo.png) scroll 8px center no-repeat;
+	padding:0px 1em 0px 28px;
+	font-size:0.9em;
+	font-weight:bold;
+	border-right:#a1a6b1 1px solid;
+	line-height:2em;
+	}
+/********  FOOT  ***********/
+#aon-footer{
+	display:none;
+	background-color:#464647;
+	border-top:#848585 2px solid;
+	background:#3c3c3d url(images/aon-main-menu/aon-iceMnuBar.png) scroll left top repeat-x;
+	}
+#aon-footer .aon-outputText{
+	color:#e1e1e1;
+	font-size:0.7em;
+	font-weight:bold;
+	margin:2px 1.5em 2px 1.5em;
+	}
+/*******   CONTENIDO  ********/
+#aon-content{
+	 }
+#aon-errors{
+	padding:0;
+	margin:0;	
+}
+
+/************  REGIONES DE CONTENIDO *****************/
+.aon-menu-sidebar{
+	width:20%;
+	border-left:#fff 1px solid;
+	border-top:#fff 1px solid;
+	border-bottom:#ccc 1px solid;
+	border-right:#ccc 1px solid;
+	/*background:#f9f9f5 url(images/aon-content/aon-menu-sidebar.png) scroll right top repeat-y;*/
+	background-color:#f9f9f5;	
+	padding:0 1em 1em 0;
+	}
+.aon-content-area{
+	padding:0 1em;
+	}
+/********  CONTENT TOOLBAR  ****************/
+/* tabla que contiene en la columna izda el titulo y en la derecha el toolbar*/
+#aon-content .aon-title-toolbar{
+		border-bottom:#808080 1px solid;
+		width:100%;
+	}
+#aon-content .aon-content-toolbar{
+	background-color:#d4d0c8; 
+	padding:3px 1em 1px 1em;
+	
+}
+#aon-content .aon-content-toolbar-item-group{
+	float:left;
+	border-right:#fff 1px groove;
+	padding-left:5px;
+	}
+	
+#aon-content .aon-content-toolbar .aon-content-toolbar-internal{
+	  }
+#aon-content .aon-content-toolbar-item{
+ 	color:#000;
+ 	text-transform:uppercase; 	
+ 	font-size:0.8em;
+ 	font-weight:bold;
+ 	padding:1px 5px 1px 16px;
+ 	margin:0 0 0 5px;
+ 	border:0;
+ 	border-right:#808080 1px solid;
+ 	text-align:left;
+	cursor:pointer;
+	width:auto;
+	overflow:visible;
+ } 
+
+#aon-content  .aon-content-toolbar-item-hover{
+	cursor:pointer;
+ }
+
+#aon-content .aon-content-toolbar-group{
+	padding-right:1em;
+	margin-right:1em;
+	background:transparent url(images/aon-content/aon-toolbar-group.png) scroll right center no-repeat;
+	display:inline;
+	}
+/********  CONTENIDO  ****************/
+
+#aon-content  .aon-scroll-area{	
+	padding:8px 1.5em 1.5em 1.5em;
+}
+#aon-content  .aon-scroll-area .aon-scroll-area-internal{	
+	width:100%;
+	}
+#aon-content  .aon-content-title {
+	background:#d4d0c8 url(images/aon-content/aon-content-title.gif) scroll right top no-repeat;
+	padding:0px 50px 1px 10px;
+	width:20px;
+	}
+#aon-content  .aon-content-title-internal {
+	background:transparent url(images/aon-icon/aon-icon-tree.png) scroll left center no-repeat;
+	padding:2px 0 2px 16px;
+	white-space:nowrap;
+	}
+#aon-content  .aon-content-title .aon-outputText{
+	color:#000;
+	font-weight:bold;	
+	white-space:nowrap;
+ }
+#aon-content  .aon-content-subTitle{
+	color:#4a4a4a;
+	text-transform:uppercase;
+	font-size:1.1em;
+	font-weight:bold;
+	}
+/****** FORM TABLES *********/
+#aon-content .aon-formTable{	
+	border-left:#c4c4c4 1px solid;
+	border-top:#c4c4c4 1px solid;
+	border-collapse:collase;
+	background-color:#fff;
+ }
+
+#aon-content .aon-formTable-column-odd{
+ border-bottom:#c4c4c4 1px solid;
+ border-top:#fff 1px solid;
+ border-right:#fff 1px solid;
+ padding:1px 0.5em 1px 0.5em;
+ font-weight:bold;
+ background-color:#f2f2f2;
+ width:50px;
+ white-space: nowrap;
+ }
+#aon-content .aon-formTable-column-odd .aon-outputText{
+		display:block;
+		white-space:nowrap;
+	}  
+#aon-content .aon-formTable-column-odd .aon-outputLabel{
+		display:block;
+		white-space:nowrap;
+	}  
+#aon-content .aon-formTable-column-even{
+	background-color:#fff;
+  border-bottom:#c4c4c4 1px solid;
+ border-top:#fff 1px solid;
+ border-left:#c4c4c4 1px solid;
+ border-right:#c4c4c4 1px solid;
+  padding:2 5px 2 2;
+ }
+
+/****** DATA TABLES *********/
+ #aon-content .aon-dataTable {
+	 width:100%;
+	 margin:0;
+ }
+  #aon-content .aon-dataTable td{
+  padding-top:0;
+  padding-bottom:0;
+  }
+ #aon-content .aon-dataTable-columnOdd{
+  background-color:#fff;
+ }
+ 
+  #aon-content .aon-dataTable-columnEven{
+  background-color:#f1f1f1;
+ }
+ 
+  #aon-content .aon-dataTable-columnOdd td, #aon-content .aon-dataTable-columnEven td {
+  border:0 !important;
+  }
+ #aon-content .aon-dataTable th .aon-outputText{
+ 	font-weight:bold;
+ 	font-size:0.9em;
+ 	text-transform:uppercase;
+ }
+
+ #aon-content .aon-table-row-hover td .aon-outputText{
+  color:#fff;
+  }
+ #aon-content .aon-dataTable .aon-dataTable-number{
+   	text-align:right;
+   }
+ #aon-content .aon-dataTable-odd {
+ background-color:#fff;
+ }
+ #aon-content .aon-dataTable-even {
+ background-color:#f2f2f2;
+ }
+#aon-content .aon-dataTableCol{
+	padding-top:0px !important;
+	padding-bottom:0px !important;
+	
+	}
+
+/*  en general para todas las tablas */
+#aon-content .aon-table-row-hover{
+ 	background-color:#f2f7fd !important; 	
+ 	cursor:pointer;
+ 	color:#000 !important;
+ }
+ #aon-content .aon-table-row-selected{
+ color:#ccc;
+ background-color:#f2f7fd !important; 	
+ }
+ 
+.aon-datatable-icon{
+	width:20px;
+		} 
+.aon-datatable-date{
+	width:120px;
+	font-weight:bold;
+	
+		} 
+.aon-datatable-time{
+	width:60px;
+	font-weight:bold;
+	
+		} 
+/****** EDIT TABLE *********/   
+#aon-content .aon-editTable{
+	margin:0;
+	width:100%;	
+	}
+#aon-content .aon-editTable td{
+	padding-top:0;
+	padding-bottom:0;
+	}
+#aon-content .aon-editTable th{
+	font-weight:bold;
+	text-transform:uppercase;
+	font-size:0.9em;
+	text-align:left;
+	}
+#aon-content .aon-editTable-buttons{
+	width:80px;
+	white-space:nowrap;
+	border-bottom:#ccc 1px solid;
+	}
+#aon-content .aon-editTable-button{
+	border:0;
+	margin:2px;
+	width:18px;
+	cursor:pointer;
+	} 
+#aon-content .aon-editTable-icon{
+	width:20px;
+	}
+#aon-content .aon-editTable-cell{
+	}
+
+#aon-content .aon-editTable .aon-editTable-row-selected {
+	background-color:#ccc !important;
+	}
+#aon-content .aon-editTable .aon-editTable-row-hover {
+	background-color:#f2f7fd;
+	cursor:pointer;
+	color:#000 !important;
+	} 
+#aon-content .aon-editTable .aon-editTable-row-hover a{
+	color:#000 !important;
+	}
+#aon-content .aon-editTable .aon-editTable-row-hover a{	
+	color:#000 !important;
+	}
+/****** DATA SCROLLER *********/  
+#aon-content .aon-datascroller{
+	border-top:#eaeaea 5px solid;
+	margin-top:1em;
+ }
+ 
+#aon-content  .aon-datascroller-text{
+	color:#464647;
+	font-weight:bold;
+	font-size:1.1em;
+	padding:5px 1em 0 0;
+ }
+
+#aon-content .aon-datascroller .aon-datascroller-buttons{
+  	font-weight:bold;
+  	font-size:1.1em;
+  	text-transform:uppercase;
+  }
+
+#aon-content .aon-datascroller .aon-datascroller-buttons .iceDatPgrScrBtn a:hover{
+ 	cursor:pointer;
+  }
+
+#aon-content .iceDatPgrScrCol a {
+	background-color:#f2f2f2;
+	color:#000;
+	margin:0;
+	font-size:10px;
+	font-family:arial;
+	padding:0 5px;
+	}
+    /*
+#aon-content .iceDatPgrCol a{
+	padding:0 3px;
+	margin:0;
+	font-size:10px;
+	font-family:arial;
+}
+#aon-content .aon-datascroller .iceOutFrmt{
+	font-size:1.1em;
+	font-weight:bold;
+	padding:3px 1em 0 0.5em;
+	display:block;
+	}*/
+#aon-content .aon-datascroller .aon-icon{
+	width:16px;
+	height:16px;
+	border-bottom:0;
+	padding:0 0 1px 10px;
+	margin:0;
+	}
+/*******  ICONS  *********/
+
+.aon-icon{
+	padding-left:20px;margin-right:10px;
+	}
+.aon-icon-commandButton{
+	padding:0 0 0 16px;
+	text-align:left;
+	border:0px;
+	width:auto;
+   	overflow:visible;
+   	cursor:pointer;
+	}
+.aon-icon-commandButton-disabled{
+	padding:0 0 0 16px;
+	text-align:left;
+	border:0px;
+	width:auto;
+   	overflow:visible;
+   	cursor:pointer;
+   	color:#666;
+	}
+/* general */
+.aon-icon-accept{
+	background:transparent url(images/aon-icon/aon-icon-save.png) scroll left center no-repeat;	
+ }
+.aon-icon-cancel{
+	background:transparent url(images/aon-icon/aon-icon-cancel.png) scroll left center no-repeat;
+ }
+.aon-icon-delete{
+	background:transparent url(images/aon-icon/aon-icon-delete.png) scroll left center no-repeat;
+ }
+.aon-icon-search{
+	background:transparent url(images/aon-icon/aon-icon-search.png) scroll left center no-repeat;
+  }
+.aon-icon-reset{
+	background:transparent url(images/aon-icon/aon-icon-reset.png) scroll left center no-repeat;
+ }
+.aon-icon-tree{
+   background:transparent url(images/aon-icon/aon-icon-tree.png) scroll left center no-repeat;
+  }
+.aon-icon-lookup{
+   background:transparent url(images/aon-icon/aon-icon-lookup.png) scroll left center no-repeat;
+ } 
+.aon-icon-refresh{
+	background:transparent url(images/aon-icon/aon-icon-refresh.png) scroll left center no-repeat;
+ }
+.aon-icon-attach{
+	background:transparent url(images/aon-icon/aon-icon-attach-file.png) scroll left center no-repeat;	
+ }
+.aon-icon-mail-save{
+	background:transparent url(images/aon-icon/aon-icon-mail-save.png) scroll left center no-repeat;	
+ }
+ .aon-icon-printer{
+	background:transparent url(images/aon-icon/aon-icon-printer.png) scroll left center no-repeat;	
+ }
+  .aon-icon-ambito{
+	background:transparent url(images/aon-icon/aon-icon-ambito.png) scroll left center no-repeat;	
+ }
+ .aon-icon-group{
+	background:transparent url(images/aon-icon/aon-icon-group.png) scroll left center no-repeat;	
+ }
+ .aon-icon-category{
+	background:transparent url(images/aon-icon/aon-icon-category.png) scroll left center no-repeat;	
+ }
+ .aon-icon-favorite{
+	background:transparent url(images/aon-icon/aon-icon-favorite.png) scroll left center no-repeat;	
+ }
+ .aon-icon-user{
+	background:transparent url(images/aon-icon/aon-icon-user.png) scroll left center no-repeat;	
+ }
+/* otros */
+.aon-icon-agenda{
+	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
+ }
+.aon-icon-agenda-newContact{
+	background:transparent url(images/aon-icon/aon-icon-agenda-newContact.png) scroll left center no-repeat;
+	}
+ .aon-icon-signature{
+	background:transparent url(images/aon-icon/aon-icon-signature.png) scroll left center no-repeat;
+ }
+ .aon-icon-newSignature{
+	background:transparent url(images/aon-icon/aon-icon-newSignature.png) scroll left center no-repeat;
+ }
+ .aon-icon-move{
+	 background:transparent url(images/aon-icon/aon-icon-move.png) scroll left center no-repeat;
+	 cursor:pointer;
+  }
+  
+  
+ /*folder icons*/
+.aon-icon-folder{
+	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
+ }
+.aon-icon-newFolder{
+	background:transparent url(images/aon-icon/aon-icon-newFolder.png) scroll left center no-repeat;
+ }
+.aon-icon-deleteFolder{
+	background:transparent url(images/aon-icon/aon-icon-deleteFolder.png) scroll left center no-repeat;
+ }
+ .aon-icon-deleteFolder-disabled{
+	background:transparent url(images/aon-icon/aon-icon-deleteFolder-disabled.png) scroll left center no-repeat;
+ }
+.aon-icon-renameFolder{
+	background:transparent url(images/aon-icon/aon-icon-renameFolder.png) scroll left center no-repeat;
+ }
+.aon-icon-renameFolder-disabled{
+	background:transparent url(images/aon-icon/aon-icon-renameFolder-disabled.png) scroll left center no-repeat;
+ }
+
+/* account */
+.aon-icon-mailAccount{
+	background:transparent url(images/aon-icon/aon-icon-mailAccount.png) scroll left center no-repeat;
+ }
+.aon-icon-newMailAccount{
+	background:transparent url(images/aon-icon/aon-icon-newMailAccount.png) scroll left center no-repeat;
+ }
+.aon-icon-mailAccountChange{
+	background:transparent url(images/aon-icon/aon-icon-mailAccountChange.png) scroll left center no-repeat;
+ }
+/* mail */
+.aon-icon-newMail{
+	background:transparent url(images/aon-icon/aon-icon-newMail.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailReply{
+	background:transparent url(images/aon-icon/aon-icon-mailReply.png) scroll left center no-repeat;
+ }
+  .aon-icon-mailReply-disabled{
+	background:transparent url(images/aon-icon/aon-icon-mailReply-disabled.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailReplyAll{
+	background:transparent url(images/aon-icon/aon-icon-mailReplyAll.png) scroll left center no-repeat;
+ }
+.aon-icon-mailReplyAll-disabled{
+	background:transparent url(images/aon-icon/aon-icon-mailReplyAll-disabled.png) scroll left center no-repeat;
+ }
+.aon-icon-mailForward{
+	background:transparent url(images/aon-icon/aon-icon-mailForward.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailForward-disabled{
+	 background:transparent url(images/aon-icon/aon-icon-mailForward-disabled.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailDelete{
+	background:transparent url(images/aon-icon/aon-icon-mailDelete.png) scroll left center no-repeat;
+ }
+  .aon-icon-mailDelete-disabled{
+	background:transparent url(images/aon-icon/aon-icon-mailDelete-disabled.png) scroll left center no-repeat;
+ }
+  .aon-icon-mailDeleteAll{
+	background:transparent url(images/aon-icon/aon-icon-mailDeleteAll.png) scroll left center no-repeat;
+ }
+  .aon-icon-mailDeleteAll-disabled{
+	background:transparent url(images/aon-icon/aon-icon-mailDeleteAll-disabled.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailSearch{
+	background:transparent url(images/aon-icon/aon-icon-mailSearch.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailInbox{
+	background:transparent url(images/aon-icon/aon-icon-mailInbox.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailInbox-read{
+	background:transparent url(images/aon-icon/aon-icon-mailInbox-read.png) scroll left center no-repeat;
+ }
+ .aon-icon-mailInbox-answered{
+	background:transparent url(images/aon-icon/aon-icon-mailInbox-answered.png) scroll left center no-repeat;
+ }
+  .aon-icon-white-list{
+	background:transparent url(images/aon-icon/aon-icon-white-list.png) scroll left center no-repeat;
+ }
+ .aon-icon-black-list{
+	background:transparent url(images/aon-icon/aon-icon-black-list.png) scroll left center no-repeat;
+ }
+  .aon-icon-mail-spam{
+	background:transparent url(images/aon-icon/aon-icon-tree-spam.png) scroll left center no-repeat;
+ }
+  .aon-icon-mailNext{
+	background:transparent url(images/aon-icon/aon-icon-mailNext.png) scroll right center no-repeat;
+	color:#2580b9;
+	font-weight:bold;
+	padding-right:20px;
+	margin-left:10px;
+ }
+ .aon-icon-mailPrevious{
+	background:transparent url(images/aon-icon/aon-icon-mailPrevious.png) scroll left center no-repeat;
+	color:#2580b9;
+	font-weight:bold;
+	padding-left:20px;
+	margin-right:10px;
+ }
+   .aon-icon-mailNext-dis{
+	background:transparent url(images/aon-icon/aon-icon-mailNext-dis.png) scroll right center no-repeat;
+	color:#a6a6a6;
+	padding-right:20px;
+	margin-left:10px;
+ }
+ .aon-icon-mailPrevious-dis{
+	background:transparent url(images/aon-icon/aon-icon-mailPrevious-dis.png) scroll left center no-repeat;
+		color:#a6a6a6;
+		padding-left:20px;
+		margin-right:10px;
+ }
+ /* check */
+ .aon-icon-checkAll{
+	background:transparent url(images/aon-icon/aon-icon-check-all.png) scroll left center no-repeat;
+ }
+ .aon-icon-checkNone{
+	background:transparent url(images/aon-icon/aon-icon-check-none.png) scroll left center no-repeat;
+ }
+ .aon-icon-check{
+  	background:transparent url(images/aon-icon/aon-icon-check.png) scroll 5px 6px no-repeat;
+ }
+ .aon-icon-checked{
+ 	background:transparent url(images/aon-icon/aon-icon-checked.png) scroll 5px 6px no-repeat;
+  }
+ /* datascroller */
+  .aon-icon-first{
+	background:transparent url(images/aon-icon/aon-icon-first.png) scroll left 3px no-repeat;
+ }
+  .aon-icon-last{
+	background:transparent url(images/aon-icon/aon-icon-last.png) scroll left 3px no-repeat;
+ }
+  .aon-icon-next{
+	background:transparent url(images/aon-icon/aon-icon-next.png) scroll left 3px no-repeat;
+ }
+  .aon-icon-previous{
+	background:transparent url(images/aon-icon/aon-icon-previous.png) scroll left 3px no-repeat;
+ }
+  .aon-icon-fast-forward{
+	background:transparent url(images/aon-icon/aon-icon-fast-forward.png) scroll left 3px no-repeat;
+ }
+  .aon-icon-fast-rewind{
+	background:transparent url(images/aon-icon/aon-icon-fast-rewind.png) scroll left 3px no-repeat;
+ }
+
+/** avisos icons **/
+.aon-icon-call{
+	background:transparent url(images/aon-icon/aon-icon-call.png) scroll left center no-repeat;
+	}
+.aon-icon-visit{
+	background:transparent url(images/aon-icon/aon-icon-visit.png) scroll left center no-repeat;
+	}
+.aon-icon-message{
+	background:transparent url(images/aon-icon/aon-icon-message.png) scroll left center no-repeat;
+	}
+ .aon-icon-info{
+	background:transparent url(images/aon-icon/aon-icon-info.png) scroll left center no-repeat;
+ }
+/* portlet icons */
+.aon-icon-new{
+	background:transparent url(images/aon-icon/aon-icon-new.png) scroll left center no-repeat;
+	}
+.aon-icon-open-popup{
+	background:transparent url(images/aon-icon/aon-icon-open-popup.png) scroll left center no-repeat;
+	}
+.aon-icon-alarms{
+	background:transparent url(images/aon-icon/aon-icon-alarms.png) scroll left center no-repeat;
+	}
+.aon-icon-notes{
+	background:transparent url(images/aon-icon/aon-icon-notes.png) scroll left center no-repeat;
+	}
+.aon-icon-webmail{
+	background:transparent url(images/aon-icon/aon-icon-webmail.png) scroll left center no-repeat;
+	}
+	
+/*  task icon  */
+.aon-icon-task-assume{
+	background:transparent url(images/aon-icon/aon-icon-task-assume.png) scroll left center no-repeat;
+	}
+.aon-icon-task-liberate{
+	background:transparent url(images/aon-icon/aon-icon-task-liberate.png) scroll left center no-repeat;
+	}
+.aon-icon-task-finish{
+	background:transparent url(images/aon-icon/aon-icon-task-finish.png) scroll left center no-repeat;
+	}
+	
+/*******  ICONS BIG *********/
+.aon-icon-big{
+	padding-top:40px;
+	font-weight:bold;
+	text-align:center;
+	font-size:0.9em;
+	display:block;
+	margin-bottom:5px;	
+	}
+
+.aon-icon-big-commandButton{
+	padding:40px 5px 0px 5px;
+	text-align:center;
+	vertical-align:bottom;
+	border:0px;
+	width:auto;
+   	overflow:visible;
+   	cursor:pointer;
+   	display:inline;
+   	font-weight:bold;
+   	font-size:0.9em;
+	margin-bottom:5px;
+	}
+.aon-icon-big-commandButton-disabled{
+	}
+.aon-icon-big-correo{
+	background:transparent url(images/aon-icon-big/aon-icon-big-correo.png) center  center no-repeat;
+	}
+.aon-icon-big-alarms{
+	background:transparent url(images/aon-icon-big/aon-icon-big-avisos.png) center  center no-repeat;
+	}
+.aon-icon-big-contacts{
+	background:transparent url(images/aon-icon-big/aon-icon-big-contactos.png) center  center no-repeat;
+	}
+.aon-icon-big-notes{
+	background:transparent url(images/aon-icon-big/aon-icon-big-notas.png) center  center no-repeat;
+	}
+.aon-icon-big-agenda{
+	background:transparent url(images/aon-icon-big/aon-icon-big-notas.png) center  center no-repeat;
+	}
+.aon-icon-big-favorites{
+	background:transparent url(images/aon-icon-big/aon-icon-big-favoritos.png) center  center no-repeat;
+	}
+
+.aon-icon-big-home{
+	background:transparent url(images/aon-icon-big/aon-icon-big-home.png) center  center no-repeat;
+	}
+
+.aon-icon-big-employee{
+	background:transparent url(images/aon-icon-big/aon-icon-big-employee.png) center  center no-repeat;
+	}
+
+.aon-icon-big-employee-group{
+	background:transparent url(images/aon-icon-big/aon-icon-big-employee-group.png) center  center no-repeat;
+	}
+
+.aon-icon-big-users{
+	background:transparent url(images/aon-icon-big/aon-icon-big-users.png) center  center no-repeat;
+	}
+
+.aon-icon-big-ambito{
+	background:transparent url(images/aon-icon-big/aon-icon-big-ambito.png) center  center no-repeat;
+	}
+
+.aon-sidebarIcons{
+	background:#f1f1f1 url(images/aon-content/aon-sidebarIcons-background.png) right  top repeat-y;
+	border-left:#fff 1px solid;	
+	border-bottom:#ccc 1px solid;
+	width:75px;
+	height:100%;
+	padding-bottom:20px;
+	}
+.aon-sidebarIcons-bottom{
+
+	} 
+	
+/******* GROUP  **********/
+#aon-content  .aon-form-group{
+	margin:1em 0;
+ }
+#aon-content .aon-form-group-title{
+	font-size:1.1em;
+	font-weight:bold;
+	border-top:#f2f2f2 8px solid;
+	padding:5px 0 0px 0;
+ }
+ 
+/******* SECTION  **********/
+.aon-section-title {
+	font-size:1.2em;
+	font-weight:bold;
+	padding:5px 0 0px 0;
+	color: #808080;
+	margin-bottom: 5px;
+}
+.aon-section-toolbar{
+	border-left:#ccc 1px solid;
+	border-top:#ccc 1px solid;
+	border-right:#808080 1px solid;
+	border-bottom:#808080 1px solid;
+	background-color:#f2f2f2;
+	padding:1px 1em;
+	margin-bottom:1em;
+	}
+/********  ERRORS  ************/
+#aon-content #aon-errors{
+	position:absolute;
+	left:20px;
+	top:6.8em;
+	background-color:red;
+	color:#fff;
+ }
+ #aon-content #aon-errors ul{
+ 	list-style-type:none;
+ }
+ 
+/************ FORM CONTROLS  ********/
+
+#aon-content .aon-inputText-disabled{
+	border:#ababab 1px solid !important;
+	background-color:#f2f2f2;
+	color:#ababab;
+ }
+#aon-content .aon-text-disabled{
+	color:#666;
+	font-style:italic;
+	}
+#aon-content .on-inputText-number{
+  text-align:right;
+  }
+ #aon-content .on-inputText-icon{
+  text-align:center;
+  }
+  
+  
+ #aon-content .aon-lookup-area{
+ 	height:300px;
+ 	overflow:scroll;
+  }
+  
+  #aon-content .aon-lookup-button{
+  border:#808080 1px solid;
+  background-color:#ccc;
+  width:18px;
+  height:18px;
+  position:relative;
+  top:-2px;
+  }
+ .aon-form-button{
+ padding:1px 10px 1px 16px;
+ border:#fff 2px outset;
+ text-transform:uppercase;
+ font-weight:bold;
+ font-size:0.9em;
+ background-color:#f2f2f2; 
+ width:auto;
+ overflow:visible;
+ margin:0 5px;
+ }
+ 
+/********   GRID   ****************/
+#aon-content .aon-panelGrid{
+
+	}
+#aon-content .aon-panelGrid td{
+	vertical-align:top;
+}
+
+/*
+#aon-content .aon-panelGrid td.aon-panelGridCol1{
+	width:30%;
+	 }
+ #aon-content .aon-panelGrid td.aon-panelGridCol2{
+	background-color:#ddd;
+	border:#ccc 1px solid;
+	padding:10px;
+	 }
+
+
+#aon-content .aon-panelGrid .aon-formTable{	 
+	 width:95%; margin:10px;
+}
+*/
+/**********  TREE **************/
+#aon-content .aon-tree-option-selected{
+	font-weight:bold;
+	font-size:1.2em;
+ }
+#aon-content .aon-tree{
+	}
+#aon-content .aon-tree .aon-tree-item{
+
+	}
+.aon-tree-item-commandButton{
+	background-color:transparent;
+	border:0;
+	text-align:left;
+	width:auto;
+	overflow:visible;
+	padding-left:2px;
+	}
+.aon-tree-item-commandButton-type1{
+	font-weight:bold;
+	line-height:1.4em;
+	padding:0;
+	}
+.aon-tree-item-commandButton-type2{
+	text-decoration:underline;
+	font-style:italic;
+	}
+/*********  NOTES - WARNINGS **********/
+#aon-content .aon-note{
+	border:#ccc 1px solid;
+}
+#aon-content .aon-note-internal{
+	border:#fff 1px solid;
+	padding:1em;
+}
+
+/*********  BOXES   **************/
+
+#aon-content .aon-box{
+	border:#ccc 1px solid;
+	margin:5px 0;
+	padding:0 0.5em;
+	}
+#aon-content .aon-box-title{
+	background:#fff url(images/aon-content/aon-box-title.png) scroll left top repeat-x;
+	border:#aaabad 1px solid;
+  }
+ #aon-content .aon-box-outstanding{
+ background-color:#f1f1f1 !important;
+ }
+#aon-content .aon-box-outstanding2{
+ background-color:#ffffeb !important;
+ }
+ 
+/******   DESKTOP  ***********/
+#aon-content .aon-desktop-header{
+	background:#304055 url(images/aon-desktop/aon-desktop-header.png) scroll left top repeat-x !important;
+	border-bottom:#717e88 1px solid;
+
+ }
+#aon-content .aon-desktop-header-tab{
+	background:#304055 url(images/aon-desktop/aon-desktop-header-tab.png) scroll left top no-repeat;
+	padding:2px 10px 2px 40px;
+	text-align:right;
+	float:right;
+ }
+
+/******   PORTLET   *********/
+#aon-content .aon-portlets-column1{
+	width:180px;
+	}
+#aon-content .aon-portlets-column2{
+	width:*;
+	}
+#aon-content .aon-portlets-column3{
+	width:160px;
+	}
+#aon-content .aon-portlet{
+	padding:0 0 5px 0;
+	}
+#aon-content .aon-portlet-title{
+		border:#ccc 1px solid;
+		background:#fff url(images/aon-content/aon-portlet-title.png) scroll left top repeat-x !important;
+		font-weight:bold;
+		font-size:11px;
+		overflow:auto;
+		height:100%;
+ }
+#aon-content .aon-portlet-title-text{
+	font-weight:bold;
+	float:left;
+	margin:0px 0.5em 0 0.5em;
+	cursor:pointer;
+	}
+#aon-content .aon-portlet-title-buttons{
+	white-space:nowrap;
+	border-left:#fff 2px outset;
+	text-align:right;
+	float:right;	
+	padding:2px 0.5em;
+}
+
+#aon-content .aon-portlet-title .aon-icon-portlet{
+	padding-left:14px;
+	}
+#aon-content .aon-portlet-body{
+		border:#ccc 1px solid;
+		border-top:0;
+		padding:0;
+		_padding:5px 0;		
+		background-color:#fff;
+		text-align:center;
+		margin:0 auto;
+ }
+#aon-content .aon-portlet-body a span,#aon-content .aon-portlet-body a span, #aon-content .aon-portlet-body a:hover, #aon-content .aon-portlet-body a:visited{
+ 	color:#3a86b8 !important;
+ 	}
+#aon-content .aon-portlet-body .aon-table-portlet{
+	border:0;
+	background-color:transparent;
+
+	}
+#aon-content .aon-portlet-body {
+	text-align:center;
+	margin:0 auto;
+	}
+#aon-content .aon-portlet-body .aon-table-portlet td, #aon-content .aon-portlet-body .aon-table-portlet td span{
+	border:0;	
+	font-size:12px;
+	background-color:transparent;
+	}
+#aon-content .aon-portlet-body .aon-table-portlet td{
+	border-bottom:#ccc 1px solid;
+	padding:0 5px 0 0;
+	vertical-align:middle;
+}
+#aon-content .aon-portlet-body .aon-collapsible-{
+	margin: 0 auto;
+	}
+#aon-content .aon-portlet-body .aon-collapsible- .aon-table-portlet td{
+	vertical-align:top;
+	}
+#aon-content  .aon-company-logo{
+	text-align:center;
+	padding-bottom:5px;
+	}
+/***** COLLAPSIBLES ****/
+#aon-content .aon-portlet-body .aon-collapsible-, #aon-content .aon-portlet-body .aon-collapsible-Colpsd{
+	width:95%;
+}
+#aon-content .aon-portlet-body {
+	padding-top:2px;
+	}
+#aon-content .aon-portlet-body .aon-collapsible-Hdr {
+	background:#fff url(images/aon-content/aon-collapsible-title-expanded.png) scroll left center no-repeat !important;
+	padding:2px 1em 2px 16px;
+	border-bottom:#ccc 1px solid;
+	}
+#aon-content .aon-portlet-body .aon-collapsible-ColpsdHdr {
+	background:#fff url(images/aon-content/aon-collapsible-title-collapsed.png) scroll left center no-repeat !important;
+	padding:2px 1em 2px 16px;
+	border-bottom:#ccc 1px solid;
+	}
+	
+#aon-content .aon-portlet-body .aon-collapsible-Cnt {
+	background-color:#fff;
+	border:0;
+	text-align:left;
+	padding:2px 0 0 0;
+	margin:0;
+}
+
+#aon-content .aon-portlet-body .aon-collapsible-Cnt .aon-table-portlet{
+	width:97%;
+	border:0;
+}
+
+/**** row selector ****/
+#aon-content .aon-portlet-body .aon-table-portletRow a,
+ #aon-content .aon-portlet-body .aon-table-portletRow a:hover, 
+ #aon-content .aon-portlet-body .aon-table-portletRow a:visited, 
+ #aon-content .aon-portlet-body .aon-table-portletRow span
+ #aon-content .aon-portlet-body .aon-table-row-hover {
+	color:#000 !important;
+	background-color:transparent !important;
+}
+
+/********* GRUPOS ***********/
+#aon-content .aon-group{
+	border:#ccc 1px solid;
+	margin:1em 0 1em 0;
+	padding:0 0 0.5em 0;
+}
+#aon-content .aon-group-title{
+	position:relative;
+	top:-1em;
+	background-color:#fff;
+	display:inline;
+	font-weight:bold;
+	padding:0 0.5em 2px 0.5em;
+	font-size:0.9em;
+}
+/*** calendar ****/
+.aon-calendar-Input{
+	margin:0 5px 0 2px;
+	border:#ababab 1px solid;
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.tas.SupportOrder" sqlName="support_order">
+		<alias names="counterti,description,employee_id,finalDate,id,number,series,startDate,status,operation,target_id,target_registry_document,tasItem_id,tasItem_publicCode,workPlace_id" />
+		<hibernate names="counterti,description,employee.id,finalDate,id,number,series,startDate,status,operation,target.id,target.registry.document,tasItem.id,tasItem.publicCode,workPlace.id" />
+	</bean>
+	
+	<bean class="com.code.aon.tas.Model" sqlName="model">
+		<alias names="id,make_id,make_name,name" />
+		<hibernate names="id,make.id,make.name,name" />
+	</bean>
+</dao>

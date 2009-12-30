@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/formHead.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+
+			<t:div styleClass="aon-content-title" forceId="#{true}"
+				id="aon-window-popup-title">
+					<t:div styleClass="aon-content-title-internal">
+						<h:outputText value="#{tasBundle.model_name}" />
+					</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+
+						<t:dataTable id="modelDataSW" styleClass="aon-table"
+							headerClass="aon-table-header" value="#{TASModelSearch.model}"
+							cellpadding="0" cellspacing="0" var="to"
+							columnClasses="aon-table-body aon-table-body-number,aon-table-body aon-table-body-string"
+							rows="20" rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{tasBundle.model_id}" />
+								</f:facet>
+								<t:div>
+									<t:commandLink
+										onclick="window.opener.update('#{TASModelSearch.lookupsAsXML}');window.close();"
+										immediate="#{true}" styleClass="aon-table-row-selected" />
+									<h:outputText value="#{to.id}" />
+								</t:div>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{tasBundle.model_name}" />
+								</f:facet>
+								<t:div>
+									<h:outputText value="#{to.make.name}, #{to.name}" />
+								</t:div>
+							</h:column>
+						</t:dataTable>
+
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="modelDataSW" />
+						<ui:param name="model" value="#{TASModelSearch.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+
+				</t:div>
+
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

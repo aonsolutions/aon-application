@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="activityProcessForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="cancel" value="#{bundle.aon_back}"
+						actionListener="#{activityProcess.onCancel}" action="campaign_form"
+						immediate="#{true}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{campaignBundle.campaign_view_task}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="Campaign_description" value="#{campaignBundle.campaign_label}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Campaign_description" forceId="#{true}"
+							value="#{campaign.to.description}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" />
+
+						<h:outputLabel for="Campaign_customer" value="#{customerBundle.customer_customer}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Campaign_customer" forceId="#{true}"
+							value="#{activityProcess.campaignDossier.dossier.customer.registry.document} - #{activityProcess.campaignDossier.dossier.customer.registry.name} #{activityProcess.campaignDossier.dossier.customer.registry.surname}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" />
+
+						<h:outputLabel for="Campaign_dossier" value="#{projectBundle.dossier_dossier}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Campaign_dossier" forceId="#{true}"
+							value="#{activityProcess.campaignDossier.dossier.number}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" />
+
+						<h:outputLabel for="Campaign_process_detail" value="#{campaignBundle.campaign_current_action}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:panelGroup>
+							<h:selectOneMenu id="Campaign_process_detail" forceId="#{true}"
+								value="#{activityProcess.processDetail.id}"
+								styleClass="aon-form-selectOneMenu-field"
+								converter="IntegerEmptyConverter">
+								<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+								<f:selectItems value="#{activityProcess.processDetailList}" />
+							</h:selectOneMenu>
+							<t:commandButton title="#{campaignBundle.campaign_change_current_action}"
+								styleClass="aon-form-button"
+								value="#{campaignBundle.campaign_change_current_action}"
+								actionListener="#{activityProcess.onChangeProcessDetail}"
+								action="campaign_form" />
+						</h:panelGroup>
+					</h:panelGrid>
+
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="ActivityProcessDataList"
+								value="#{projectBundle.aon_tasks}" />
+						</t:div>
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="ActivityProcessDataList" var="to"
+								styleClass="aon-table" headerClass="aon-table-header"
+								footerClass="aon-table-footer" cellpadding="0"
+								cellspacing="0" value="#{activityProcess.model}"
+								rowOnMouseOut="unselectRow( this )" rowIndexVar="rowIndex" rows="20"
+								rowClasses="aon-table-row-odd,aon-table-row-even"
+								columnClasses="aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string">
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{campaignBundle.aon_description}" />
+									</f:facet>
+									<t:outputText value="#{to.task.description}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{campaignBundle.aon_initial_date}" />
+									</f:facet>
+									<t:outputText value="#{to.task.startDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:outputText>
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{campaignBundle.aon_final_date}" />
+									</f:facet>
+									<t:outputText value="#{to.task.endDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:outputText>
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{campaignBundle.aon_due_date}" />
+									</f:facet>
+									<t:outputText value="#{to.task.dueDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:outputText>
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{campaignBundle.aon_status}" />
+									</f:facet>
+									<t:outputText value="#{to.task.status}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{campaignBundle.aon_work_group}" />
+									</f:facet>
+									<t:outputText value="#{to.task.workGroup.description}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{projectBundle.aon_daily_tracking_user}" />
+									</f:facet>
+									<t:outputText value="#{to.task.user.name}" />
+								</t:column>
+
+							</t:dataTable>
+
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="ActivityProcessDataList" />
+								<ui:param name="model" value="#{activityProcess.model}" />
+								<ui:param name="showNote" value="#{true}" />
+							</ui:include>
+						</t:div>
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

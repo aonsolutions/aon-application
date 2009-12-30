@@ -1,0 +1,167 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.DBCPConnectionProvider</property>
+		<property name="connection.service">jboss.admin:service=AonSecurity</property>
+		<!--
+		<property name="connection.service">Catalina:type=Security,name=AonSecurity</property>
+		-->
+		<property name="connection.datasource">java:comp/env/jdbc/AonGTA</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		
+		<!-- AON-CONFIG Mapping files -->		
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
+		
+		<!-- AON-TAS Mapping files -->		
+		<mapping class="com.code.aon.tas.Make"/>
+		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.TasItem"/>
+		<mapping class="com.code.aon.tas.SupportOrder"/>
+
+		<!-- AON-PRODUCT Mapping files -->		
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Tariff"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.TaxDetail"/>
+		<mapping class="com.code.aon.product.Tax"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemTariff"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>		
+		<mapping class="com.code.aon.product.ItemPos"/>		
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+		
+		<!-- AON-PURCHASE Mapping files -->
+		<mapping class="com.code.aon.purchase.Supplier"/>
+		<mapping class="com.code.aon.purchase.SupplierSegment"/>
+		<mapping class="com.code.aon.purchase.Purchase"/>
+		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
+		
+		<!-- AON-FINANCE Mapping files -->	
+		<mapping class="com.code.aon.finance.InvoiceTax"/>
+		<mapping class="com.code.aon.finance.InvoiceDetail"/>
+		<mapping class="com.code.aon.finance.InvoicingGroup"/>
+		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
+		<mapping class="com.code.aon.finance.Invoice"/>
+		<mapping class="com.code.aon.finance.Bank"/>		
+		<mapping class="com.code.aon.finance.PayMethod"/>		
+		<mapping class="com.code.aon.finance.Finance"/>
+		<mapping class="com.code.aon.finance.FinanceTracking"/>
+		<mapping class="com.code.aon.finance.FinanceBatch"/>
+		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
+		<mapping class="com.code.aon.finance.RegistryBank"/>
+		<mapping class="com.code.aon.finance.RegistryPayMethod"/>
+		<mapping class="com.code.aon.finance.Creditor"/>
+		
+		<!-- AON-WAREHOUSE Mapping files -->		
+		<mapping class="com.code.aon.warehouse.Income"/>
+		<mapping class="com.code.aon.warehouse.IncomeDetail" />
+		<mapping class="com.code.aon.warehouse.Warehouse" />
+		<mapping class="com.code.aon.warehouse.Delivery" />
+		<mapping class="com.code.aon.warehouse.Stock" />
+		<mapping class="com.code.aon.warehouse.DeliveryDetail" />
+		<mapping class="com.code.aon.warehouse.Inventory"/>
+		<mapping class="com.code.aon.warehouse.InventoryDetail" />
+		
+		<!-- AON-SALES Mapping files -->		
+		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.CustomerSegment"/>
+		<mapping class="com.code.aon.sales.Seller"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
+		<mapping class="com.code.aon.sales.SalesAttachment"/>
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesType"/>
+		<mapping class="com.code.aon.sales.CustomerFee"/>
+		<mapping class="com.code.aon.sales.FinanceSales"/>
+		<mapping class="com.code.aon.sales.PointOfSale"/>
+		
+		<!-- AON-SALES-PURCHASE Mapping files -->
+		<mapping class="com.code.aon.salesPurchase.SalesPurchase"/>
+		
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.config.User"/>
+		
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.WebInfo"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoZone"/>			
+		<mapping class="com.code.aon.geozone.Country"/>
+		
+		<!-- AON-COMPOSITE Mapping files -->		
+		<mapping class="com.code.aon.composition.Composition"/>
+		<mapping class="com.code.aon.composition.CompositionDetail"/>
+		<mapping class="com.code.aon.composition.CompositionExpense"/>
+		<mapping class="com.code.aon.composition.Production"/>
+		<mapping class="com.code.aon.composition.ProductionDetail"/>
+		<mapping class="com.code.aon.composition.ProductionExpense"/>
+		
+		<!-- AON-COMMERCIAL Mapping files -->
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		
+		<!-- AON-TAS Mapping files -->
+		<mapping class="com.code.aon.tasCommercial.TasOffer"/>
+		<mapping class="com.code.aon.tasDelivery.TasDelivery"/>
+
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		
+		<!-- AON-PLANNER Mapping files -->
+		<mapping class="com.code.aon.planner.core.IncidenceType"/>
+
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+						
+		<!-- AON-ACCOUNT Mapping files -->
+		<mapping class="com.code.aon.account.Account"/>
+		<mapping class="com.code.aon.account.Period"/>
+		<mapping class="com.code.aon.account.AutoConcept"/>
+		<mapping class="com.code.aon.account.AccountEntry"/>
+		<mapping class="com.code.aon.account.AccountEntryDetail"/>
+		<mapping class="com.code.aon.account.AccountSummary"/>
+		<mapping class="com.code.aon.account.Loan"/>
+		<mapping class="com.code.aon.account.Leasing"/>
+		
+		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
+		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
+		<mapping class="com.code.aon.account.bridge.CreditorAccount"/>
+		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
+		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
+		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>
+	</session-factory>
+
+</hibernate-configuration>

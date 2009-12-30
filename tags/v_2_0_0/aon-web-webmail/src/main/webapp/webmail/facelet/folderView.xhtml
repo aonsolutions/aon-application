@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="webmailForm" styleClass="aon-form" >
+		
+			<ui:include src="/webmail/facelet/webmailButtons.xhtml" />	
+			
+					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%"
+					columnClasses="aon-menu-sidebar,aon-content-area">
+					
+						<ui:include src="/webmail/facelet/webmailTree.xhtml" />	
+
+						<aon:div id="noFolderSelected" rendered="#{!folder.folderSelected}">
+							<aon:div styleClass="aon-content-home">
+								<aon:outputText value="" />
+							</aon:div>		
+						</aon:div>
+					
+						<aon:div id="folderSelected" rendered="#{folder.folderSelected}" >
+						
+				        <aon:panelGroup >
+							    <aon:div styleClass="aon-section-title">
+					              <aon:outputText value="#{folder.folder.name}"/>
+					         	</aon:div>
+							
+							<aon:div styleClass="aon-section-toolbar">									
+								<aon:commandButton
+									id="refreshFolder"
+									action="folder"
+									actionListener="#{folder.refresh}"
+									title="#{appBundle.aon_webmail_refresh}"
+									value="#{appBundle.aon_webmail_refresh}"
+									styleClass="aon-content-toolbar-item aon-icon-refresh"
+									>
+								</aon:commandButton>
+																
+								<aon:commandButton
+									id="newMail"
+									title="#{appBundle.aon_webmail_newmail}"
+									action="messageNew"
+									actionListener="#{message.createNewMessage}"
+									styleClass="aon-content-toolbar-item aon-icon-newMail"
+									value="#{appBundle.aon_webmail_newmail}">
+								</aon:commandButton>
+							
+								<aon:confirmButton id="deleteButton_n"
+									title="#{appBundle.aon_webmail_deletemail}"
+									confirmTitle="Confirmation Dialog" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									accesskey="#{bundle.aon_key_remove}"
+									confirmActionListener="#{folder.deleteCheckedMessages}"
+									value="#{appBundle.aon_webmail_deletemail}"
+									styleClass="aon-icon-mailDelete aon-content-toolbar-item" />
+							
+								<aon:commandButton
+									id="searchMail"
+									title="#{appBundle.aon_webmail_search}"
+									action="messageSearch"
+									actionListener="#{search.init}"
+									value="#{appBundle.aon_webmail_search}"
+									styleClass="aon-icon-mailSearch aon-content-toolbar-item" >
+								</aon:commandButton>								
+							
+								<aon:confirmButton id="deleteAllButton"
+									rendered="#{folder.folder.deleteableAllMessages}"
+									title="#{appBundle.aon_webmail_deleteallmail}"
+									confirmTitle="Confirmation Dialog" 
+									confirmMessage="#{appBundle.aon_remove_all_confirm}"
+									accesskey="#{bundle.aon_key_remove}"
+									confirmActionListener="#{folder.deleteAllMessages}"
+									value="#{appBundle.aon_webmail_deleteallmail}"
+									styleClass="aon-icon-mailDelete aon-content-toolbar-item" />
+						
+							</aon:div>
+
+							<aon:div styleClass="aon-datascroller"  rendered="#{folder.folder.messageCount>0}">
+								<aon:panelGrid columns="2" cellpadding="0" cellspacing="0"
+								columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+									<ice:dataPaginator for="messageDataTable"
+										  rowsCountVar="rowsCount"
+										  displayedRowsCountVar="displayedRowsCountVar"
+										  firstRowIndexVar="firstRowIndex"
+										  lastRowIndexVar="lastRowIndex"
+										  pageCountVar="pageCount"
+										  pageIndexVar="pageIndex"
+										  styleClass="dataScrollerTable"
+										  actionListener="#{folder.paginatorAction}"
+										>
+										<ice:outputFormat 
+												value="{0} #{appBundle.aon_webmail_messages}. #{appBundle.aon_webmail_page} {1} / {2}"
+												styleClass="standard">
+											<f:param value="#{rowsCount}"/>
+											<f:param value="#{pageIndex}"/>
+											<f:param value="#{pageCount}"/>
+										</ice:outputFormat>
+									</ice:dataPaginator>
+							
+									<ice:dataPaginator for="messageDataTable"
+											rendered="#{folder.folder.messageCount>folder.pageObjectNumber}"
+										   fastStep="3"
+										   pageCountVar="pageCount"
+										   pageIndexVar="pageIndex"
+										   paginator="true"
+										   paginatorMaxPages="5"
+										  actionListener="#{folder.paginatorAction}"
+										>
+										<f:facet name="first">
+											<aon:outputText styleClass="aon-icon aon-icon-first" title="#{appBundle.aon_webmail_paginator_first}" value="&#160;" />
+										</f:facet>
+										<f:facet name="last">
+											<aon:outputText styleClass="aon-icon aon-icon-last" title="#{appBundle.aon_webmail_paginator_last}" value="&#160;" />
+										</f:facet>
+										<f:facet name="previous">
+											<aon:outputText styleClass="aon-icon aon-icon-previous" title="#{appBundle.aon_webmail_paginator_previous}" value="&#160;" />
+										</f:facet>
+										<f:facet name="next">
+											<aon:outputText styleClass="aon-icon aon-icon-next" title="#{appBundle.aon_webmail_paginator_next}" value="&#160;" />
+										</f:facet>
+										<f:facet name="fastforward">
+											<aon:outputText styleClass="aon-icon aon-icon-fast-forward" title="#{appBundle.aon_webmail_paginator_fast_forward}" value="&#160;" />
+										</f:facet>
+										<f:facet name="fastrewind">
+											<aon:outputText styleClass="aon-icon aon-icon-fast-rewind" title="#{appBundle.aon_webmail_paginator_fast_rewind}" value="&#160;" />
+										</f:facet>
+									</ice:dataPaginator>					
+								</aon:panelGrid>
+							</aon:div>								
+						
+							<aon:panelGroup 
+								styleClass="aon-box aon-box-outstanding2" 
+								rendered="#{folder.folder.messageCount==0}">
+									<aon:outputText value="#{appBundle.aon_webmail_nomessages}"/>
+							</aon:panelGroup>
+							
+							<aon:dataTable
+								rendered="#{folder.folder.messageCount>0}"
+								styleClass="aon-dataTable"
+								id="messageDataTable"
+								rows="#{folder.pageObjectNumber}"
+								sortColumn="#{folder.folder.sort}"
+								sortAscending="#{folder.folder.ascending}"
+								var="to"
+								value="#{folder.folder.messageList}"
+								rowClasses="aon-dataTable-columnOdd,aon-dataTable-columnEven"
+								columnClasses="aon-text-nowrap,,,"
+								columnWidths="55,100,,100" scrollable="yes">
+								<aon:column id="folderCol">
+									<f:facet name="header">
+										<aon:panelGroup >
+											
+												<aon:commandButton
+														id="selectButton"
+														actionListener="#{folder.selectAllPageMessages}"
+														styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
+												</aon:commandButton>
+												<aon:commandButton
+														id="deselectButton"
+														actionListener="#{folder.deselectAllPageMessages}"
+														styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
+												</aon:commandButton>
+											
+										</aon:panelGroup>
+									</f:facet>
+									
+										<aon:selectBooleanCheckbox styleClass="aon-float-left"
+											id="checkMessage"
+											value="#{to.selected}"
+											>
+										</aon:selectBooleanCheckbox>
+										<aon:panelGroup styleClass="aon-float-left"
+											draggable="true"
+											dragValue="#{to}"
+											dragOptions="dragGhost"
+											dragMask="dragging,drag_cancel,hover_end,hover_start"
+											dropMask="dragging,drag_cancel,hover_start,hover_end"
+											>
+											<aon:outputText rendered="#{!to.readed}" value="&#160;"  styleClass="aon-icon aon-icon-mailInbox" style="cursor: pointer;width:16px;" />
+											<aon:outputText rendered="#{to.readed and !to.answered}" value="&#160;" styleClass="aon-icon aon-icon-mailInbox-read" style="cursor: pointer;width:16px;"/>
+											<aon:outputText rendered="#{to.answered}" value="&#160;" styleClass="aon-icon aon-icon-mailInbox-answered" style="cursor: pointer;width:16px;"/>
+										</aon:panelGroup>
+										<aon:div styleClass="aon-float-left">
+											<ice:graphicImage  
+											value="/css/iceCss/images/aon-icon/aon-file-attached.png" 
+											rendered="#{to.attachment}" />
+										</aon:div>
+									
+								</aon:column>
+								<aon:column>
+									<f:facet name="header">
+										<ice:commandSortHeader columnName="from" arrow="true" >
+											<aon:outputText value="#{appBundle.aon_webmail_from}" rendered="#{!folder.sentItemColumn}"/>
+											<aon:outputText value="#{appBundle.aon_webmail_to}" rendered="#{folder.sentItemColumn}"/>
+										</ice:commandSortHeader>
+									</f:facet>
+									<aon:div style="white-space:nowrap">
+										<aon:commandLink action="message" actionListener="#{to.changeSelectedMessage}">
+											<aon:outputText escape="false" title="#{to.senderEmail}" value="#{to.senderShort}" rendered="#{!folder.sentItemColumn and to.readed}"/>
+											<aon:outputText escape="false" title="#{to.senderEmail}" value="#{to.senderShort}" rendered="#{!folder.sentItemColumn and !to.readed}" style="font-weight: bold" />
+											<aon:outputText escape="false" title="#{to.recipientsToEmail}" value="#{to.recipientsToShort}" rendered="#{folder.sentItemColumn}"/>
+										</aon:commandLink>
+									</aon:div>
+								</aon:column>
+								<aon:column>
+									<f:facet name="header">
+										<ice:commandSortHeader columnName="subject" arrow="true">
+											<aon:outputText value="#{appBundle.aon_webmail_subject}"/>
+										</ice:commandSortHeader>
+									</f:facet>
+									<aon:commandLink action="message" actionListener="#{to.changeSelectedMessage}">
+										<aon:outputText escape="false" value="#{to.subjectShort}" rendered="#{to.readed}"/>
+										<aon:outputText escape="false" value="#{to.subjectShort}" rendered="#{!to.readed}" style="font-weight: bold" />
+									</aon:commandLink>
+								</aon:column>		  
+								<aon:column>
+									<f:facet name="header">
+										<ice:commandSortHeader columnName="date" arrow="true">
+											<aon:outputText value="#{appBundle.aon_webmail_date}"/>
+										</ice:commandSortHeader>
+									</f:facet>
+									<aon:div style="white-space:nowrap">
+									<aon:commandLink action="message" actionListener="#{to.changeSelectedMessage}">
+										<aon:outputText value="#{to.sentDateString}" rendered="#{to.readed}" />
+										<aon:outputText value="#{to.sentDateString}" rendered="#{!to.readed}" style="font-weight: bold"/>
+									</aon:commandLink>
+										</aon:div>
+								</aon:column>		  
+							</aon:dataTable>
+	
+							<aon:panelGroup rendered="#{folder.folder.messageCount>0}">
+								<aon:div styleClass="aon-datascroller">
+									<aon:panelGrid columns="2" cellpadding="0" cellspacing="0"
+									columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+										<ice:dataPaginator for="messageDataTable"
+												  rowsCountVar="rowsCount"
+												  displayedRowsCountVar="displayedRowsCountVar"
+												  firstRowIndexVar="firstRowIndex"
+												  lastRowIndexVar="lastRowIndex"
+												  pageCountVar="pageCount"
+												  pageIndexVar="pageIndex"
+												  styleClass="dataScrollerTable"
+												  actionListener="#{folder.paginatorAction}"
+												>
+												<ice:outputFormat 
+														value="{0} #{appBundle.aon_webmail_messages}. #{appBundle.aon_webmail_page} {1} / {2}"
+														styleClass="standard">
+													<f:param value="#{rowsCount}"/>
+													<f:param value="#{pageIndex}"/>
+													<f:param value="#{pageCount}"/>
+												</ice:outputFormat>
+											</ice:dataPaginator>
+									
+											<ice:dataPaginator for="messageDataTable"
+												rendered="#{folder.folder.messageCount>folder.pageObjectNumber}"
+												   fastStep="5"
+												   pageCountVar="pageCount"
+												   pageIndexVar="pageIndex"
+												   paginator="true"
+												   paginatorMaxPages="5"
+												  actionListener="#{folder.paginatorAction}"
+												>
+												<f:facet name="first">
+													<aon:outputText styleClass="aon-icon aon-icon-first" title="#{appBundle.aon_webmail_paginator_first}" value="&#160;" />
+												</f:facet>
+												<f:facet name="last">
+													<aon:outputText styleClass="aon-icon aon-icon-last" title="#{appBundle.aon_webmail_paginator_last}" value="&#160;" />
+												</f:facet>
+												<f:facet name="previous">
+													<aon:outputText styleClass="aon-icon aon-icon-previous" title="#{appBundle.aon_webmail_paginator_previous}" value="&#160;" />
+												</f:facet>
+												<f:facet name="next">
+													<aon:outputText styleClass="aon-icon aon-icon-next" title="#{appBundle.aon_webmail_paginator_next}" value="&#160;" />
+												</f:facet>
+												<f:facet name="fastforward">
+													<aon:outputText styleClass="aon-icon aon-icon-fast-forward" title="#{appBundle.aon_webmail_paginator_fast_forward}" value="&#160;" />
+												</f:facet>
+												<f:facet name="fastrewind">
+													<aon:outputText styleClass="aon-icon aon-icon-fast-rewind" title="#{appBundle.aon_webmail_paginator_fast_rewind}" value="&#160;" />
+												</f:facet>
+										</ice:dataPaginator>					
+									</aon:panelGrid>
+								</aon:div>
+								</aon:panelGroup>								
+	
+					        </aon:panelGroup>
+								
+							</aon:div>
+					</aon:panelGrid>
+		
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

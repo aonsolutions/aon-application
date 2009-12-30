@@ -1,0 +1,321 @@
+<?xml version="1.0"?> 
+
+<web-app version="2.4" 
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <context-param>
+		<description>State saving method: "client" or "server" (= default) See JSF Specification 2.5.2</description>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+
+	<context-param>
+		<description>Use Documents Saved as *.xhtml</description>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Setting this to true will cause the FaceletViewHandler to print out debug information in an easy to use
+			screen when an error occurs during the rendering process.
+		</description>
+		<param-name>facelets.DEVELOPMENT</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>facelets.SKIP_COMMENTS</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Set this flag to true if you want the JavaServer Faces
+			Reference Implementation to validate the XML in your
+			faces-config.xml resources against the DTD.  Default
+			value is false.
+		</description>
+		<param-name>com.sun.faces.validateXml</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Set this flag to true if you want the JavaServer Faces
+			Reference Implementation to verify that all of the application
+			objects you have configured (components, converters,
+			renderers, and validators) can be successfully created.
+			Default value is false.
+		</description>
+		<param-name>com.sun.faces.verifyObjects</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+   <context-param>
+		<description>
+			To cause request scope to last only for the duration of a
+			single user event, "standard request scope" must be enabled.
+		</description>
+        <param-name>com.icesoft.faces.standardRequestScope</param-name>
+        <param-value>true</param-value>
+   </context-param>
+
+	<context-param>
+		<param-name>com.icesoft.faces.actionURLSuffix</param-name>
+		<param-value>.iface</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Resources such as JavaScript and CSS files can be compressed
+			when sent to the browser. This can improve application load
+			time in certain deployments. This configuration works
+			independently from the web-server configuration. The feature
+			can be turned on application-wide using the ICEfaces context
+			parameter, com.icesoft.faces.compressResources. Default is
+			false.
+		</description>
+		<param-name>com.icesoft.faces.compressResources</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>com.icesoft.faces.debugDOMUpdate</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			To allow multiple windows for a single application,
+			concurrent DOM views must be enabled. This is set through
+			the ICEfaces context parameter,
+			com.icesoft.faces.concurrentDOMViews.
+		</description>
+		<param-name>com.icesoft.faces.concurrentDOMViews</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+
+	<!-- Asynchronous Updates -->
+	<context-param>
+		<description>
+			Synchronous or asynchronous updates can be turned off/on
+			application-wide using the ICEfaces context parameter,
+			com.icesoft.faces.synchronousUpdate. Typically this is set
+			in the web.xml file of your web application. If not
+			specified, the parameter value is false; thus, by default,
+			the application will run in asynchronous mode.
+		</description>
+		<param-name>com.icesoft.faces.synchronousUpdate</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>com.icesoft.faces.doJSFStateManagement</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<!-- UPLOAD DIR -->
+	<context-param>
+	    <param-name>com.icesoft.faces.uploadDirectory</param-name>
+	    <param-value>/uploads</param-value>
+	</context-param>
+    <context-param>
+        <param-name>com.icesoft.faces.uploadDirectoryAbsolute</param-name>
+        <param-value>true</param-value>
+    </context-param>	
+
+	<context-param>
+        <param-name>com.icesoft.faces.uploadMaxFileSize</param-name>
+        <param-value>10485760</param-value>
+    </context-param>
+<!--     
+	<context-param> 
+		<param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name> 
+		<param-value>true</param-value> 
+	</context-param>
+ -->	
+  	<!-- Listener, that does all the startup work (configuration, init). -->
+<!--   	
+	<listener>
+		<listener-class>
+			org.apache.myfaces.webapp.StartupServletContextListener
+		</listener-class>
+	</listener>
+	<listener>
+		<listener-class>
+			com.icesoft.faces.util.event.servlet.ContextEventRepeater
+		</listener-class>
+	</listener>
+	<listener>
+		<listener-class>
+			com.icesoft.faces.webapp.http.servlet.SessionDispatcher$Listener
+		</listener-class>
+	</listener>
+ -->
+	<servlet>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<servlet-class>
+			com.icesoft.faces.webapp.xmlhttp.PersistentFacesServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<url-pattern>/xmlhttp/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<url-pattern>*.iface</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<url-pattern>*.jspx</url-pattern>
+	</servlet-mapping>
+
+	<!-- Blocking Servlet -->
+	<servlet>
+		<servlet-name>Blocking Servlet</servlet-name>
+		<servlet-class>
+			com.icesoft.faces.webapp.xmlhttp.BlockingServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Blocking Servlet</servlet-name>
+		<url-pattern>/block/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Blocking Servlet</servlet-name>
+		<url-pattern>/webmail/facelet/block/resource/*</url-pattern>
+	</servlet-mapping>
+
+    <!-- Faces Servlet -->
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.faces</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/</url-pattern>
+    </servlet-mapping>
+
+    <!-- CID image Servlet -->
+	<servlet>
+		<servlet-name>CidServlet</servlet-name>
+		<servlet-class>com.code.aon.ui.webmail.servlet.CidServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CidServlet</servlet-name>
+		<url-pattern>*.cid</url-pattern>
+	</servlet-mapping>
+	
+	<!-- file upload Servlet -->
+    <servlet>
+         <servlet-name>uploadServlet</servlet-name>
+         <servlet-class>com.icesoft.faces.component.inputfile.FileUploadServlet</servlet-class>
+         <load-on-startup> 1 </load-on-startup>
+    </servlet>
+    <servlet-mapping>
+         <servlet-name>uploadServlet</servlet-name>
+         <url-pattern>/uploadHtml</url-pattern>
+    </servlet-mapping> 
+	
+	<!-- FCK Faces Servlet -->
+	<servlet>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<servlet-class>com.code.aon.faces.component.inputRichText.InputRichTextServlet</servlet-class>
+		<!-- 
+		<init-param>
+			<description>Allows to specify the path of the FCKeditor resources</description>
+			<param-name>customResourcePath</param-name>
+			<param-value>/</param-value>
+		</init-param>
+		 -->
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<url-pattern>/fckfaces/*</url-pattern>
+	</servlet-mapping> 
+
+	<!-- Deploy Servlet 
+		<servlet>
+			<servlet-name>autodeploy</servlet-name>
+			<servlet-class>
+				com.code.aon.bridge.servlet.DeployServlet
+			</servlet-class>
+			<init-param>
+				<param-name>name</param-name>
+				<param-value>aon-web-webmail.war</param-value>
+			</init-param>
+			<load-on-startup>1</load-on-startup>
+		</servlet>
+    -->
+	<session-config>
+		<session-timeout>600</session-timeout>
+	</session-config>
+	
+	<servlet>
+		<servlet-name>Tomcat Push Servlet</servlet-name>
+		<servlet-class>
+			com.icesoft.faces.webapp.http.servlet.TomcatPushServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tomcat Push Servlet</servlet-name>
+		<url-pattern>/block/receive-updated-views/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- Security Constraint -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>facelet</web-resource-name>
+			<url-pattern>/facelet/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>jsp</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>faces</web-resource-name>
+			<url-pattern>*.iface</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>Manager</role-name>
+			<role-name>User</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<form-login-config>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/LoginError.jsp?aon_login_error_code=666</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<security-role><role-name>Manager</role-name></security-role>
+	<security-role><role-name>User</role-name></security-role>
+	
+	<resource-env-ref>
+	  <resource-env-ref-name>jdbc/AonWebmail</resource-env-ref-name>
+	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+	</resource-env-ref>
+
+</web-app>

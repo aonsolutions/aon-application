@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!-- ************ CUSTOMER LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>customerLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.ICELookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.customer.Customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/customer/lookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerLookupTaskListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerLookupTaskListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.task.event.CustomerLookupTaskListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ USER LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>userLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.ICELookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>userLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/employee/user/lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+
+</faces-config>

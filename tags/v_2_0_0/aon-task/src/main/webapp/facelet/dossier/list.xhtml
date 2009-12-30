@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition>
+
+		
+		<!-- start toolbar navigation -->
+		<aon:div styleClass="aon-section-toolbar">
+				<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+					actionListener="#{ICEDossier.onReset}"
+					styleClass="aon-icon-commandButton aon-icon-reset"
+					onmouseout="this.className='aon-icon-commandButton aon-icon-reset'"
+					onmouseover="this.className='aon-icon-commandButton aon-icon-reset aon-content-toolbar-item-hover'"
+					accesskey="#{bundle.aon_key_new}" />
+		</aon:div>
+
+
+	<!--  aon-region-body -->
+
+
+			<aon:dataTable id="dossierDataList" value="#{ICEDossier.model}" var="to"
+				rows="20" styleClass="aon-dataTable" >
+
+				<aon:column>
+					<aon:rowSelector selectionListener="#{ICEDossier.onSelect}" />
+					<f:facet name="header">
+						<aon:outputText value="#{projectBundle.dossier_number}" />
+					</f:facet>
+					<aon:outputText value="#{to.number}" />
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{projectBundle.dossier_location}" />
+					</f:facet>
+					<aon:outputText value="#{to.location}" />
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{projectBundle.aon_customer}" />
+					</f:facet>
+					<aon:outputText
+						value="#{to.customer.registry.name} #{to.customer.registry.surname}" />
+				</aon:column>
+
+			</aon:dataTable>
+
+
+				<ui:include src="/facelet/shared/dataScroller.xhtml">
+					<ui:param name="dataTable" value="dossierDataList" />
+					<ui:param name="model" value="#{ICEDossier.model}" />
+					<ui:param name="showNote" value="#{true}" />
+				</ui:include>
+			
+	
+</ui:composition>
+
+</body>
+</html>

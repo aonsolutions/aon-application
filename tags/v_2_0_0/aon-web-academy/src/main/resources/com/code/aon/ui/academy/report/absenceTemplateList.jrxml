@@ -1,0 +1,1164 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="absenceTemplateList"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="782"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
+	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
+	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
+	<parameter name="evaluation" isForPrompting="false" class="java.lang.Integer"/>
+	<parameter name="nestedReports" isForPrompting="false" class="java.util.Map"/>
+	<parameter name="instructor" isForPrompting="false" class="com.code.aon.academy.CourseInstructor"/>
+
+	<field name="course" class="com.code.aon.academy.Course"/>
+	<field name="id" class="java.lang.Integer"/>
+	<field name="customer" class="com.code.aon.customer.Customer"/>
+	<field name="status" class="com.code.aon.academy.enumeration.CourseAlumnStatus"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="70"  isSplitAllowed="true" >
+				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Blank" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="5"
+						y="5"
+						width="83"
+						height="59"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-1"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="170"
+						y="32"
+						width="263"
+						height="14"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{course}.getCode()+" "+$F{course}.getDescription()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="102"
+						y="32"
+						width="62"
+						height="14"
+						key="textField-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{course_course}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="102"
+						y="10"
+						width="96"
+						height="17"
+						key="staticText-32"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica-BoldOblique" size="12" isBold="true" isItalic="true"/>
+					</textElement>
+				<text><![CDATA[AUSENCIAS]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="170"
+						y="51"
+						width="367"
+						height="14"
+						key="textField-8"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{instructor}.getEmployee().getRegistry().getName()+" "+$P{instructor}.getEmployee().getRegistry().getSurname()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="102"
+						y="51"
+						width="62"
+						height="14"
+						key="textField-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{instructor_instructor}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="441"
+						y="32"
+						width="62"
+						height="14"
+						key="textField-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_month}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="20"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="220"
+						y="0"
+						width="1"
+						height="20"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="237"
+						y="0"
+						width="1"
+						height="20"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="254"
+						y="0"
+						width="1"
+						height="20"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="271"
+						y="0"
+						width="1"
+						height="20"
+						key="line-8"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="288"
+						y="0"
+						width="1"
+						height="20"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="305"
+						y="0"
+						width="1"
+						height="20"
+						key="line-10"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="322"
+						y="0"
+						width="1"
+						height="20"
+						key="line-11"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="339"
+						y="0"
+						width="1"
+						height="20"
+						key="line-12"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="356"
+						y="0"
+						width="1"
+						height="20"
+						key="line-17"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="373"
+						y="0"
+						width="1"
+						height="20"
+						key="line-18"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="390"
+						y="0"
+						width="1"
+						height="20"
+						key="line-19"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="407"
+						y="0"
+						width="1"
+						height="20"
+						key="line-20"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="424"
+						y="0"
+						width="1"
+						height="20"
+						key="line-25"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="441"
+						y="0"
+						width="1"
+						height="20"
+						key="line-26"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="458"
+						y="0"
+						width="1"
+						height="20"
+						key="line-27"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="475"
+						y="0"
+						width="1"
+						height="20"
+						key="line-28"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="492"
+						y="0"
+						width="1"
+						height="20"
+						key="line-33"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="509"
+						y="0"
+						width="1"
+						height="20"
+						key="line-34"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="526"
+						y="0"
+						width="1"
+						height="20"
+						key="line-35"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="543"
+						y="0"
+						width="1"
+						height="20"
+						key="line-36"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="560"
+						y="0"
+						width="1"
+						height="20"
+						key="line-41"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="577"
+						y="0"
+						width="1"
+						height="20"
+						key="line-42"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="594"
+						y="0"
+						width="1"
+						height="20"
+						key="line-43"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="611"
+						y="0"
+						width="1"
+						height="20"
+						key="line-44"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="628"
+						y="0"
+						width="1"
+						height="20"
+						key="line-49"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="645"
+						y="0"
+						width="1"
+						height="20"
+						key="line-50"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="662"
+						y="0"
+						width="1"
+						height="20"
+						key="line-51"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="679"
+						y="0"
+						width="1"
+						height="20"
+						key="line-52"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="696"
+						y="0"
+						width="1"
+						height="20"
+						key="line-57"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="713"
+						y="0"
+						width="1"
+						height="20"
+						key="line-58"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="730"
+						y="0"
+						width="1"
+						height="20"
+						key="line-59"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="745"
+						y="0"
+						width="1"
+						height="20"
+						key="line-60"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="220"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[1]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="237"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[2]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="254"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[3]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="271"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[4]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="288"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[5]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="305"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[6]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="322"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[7]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="339"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-8"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[8]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="356"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[9]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="373"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[10]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="390"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[11]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="407"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[12]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="424"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[13]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="441"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[14]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="458"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[15]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="475"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-16"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[16]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="492"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-17"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[17]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="509"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[18]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="526"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[19]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="543"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-20"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[20]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="560"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-21"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[21]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="577"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-22"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[22]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="594"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-23"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[23]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="611"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[24]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="628"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-25"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[25]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="645"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-26"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[26]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="662"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-27"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[27]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="679"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-28"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[28]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="696"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-29"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[29]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="713"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-30"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[30]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="730"
+						y="0"
+						width="17"
+						height="20"
+						key="staticText-31"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[31]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="20"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="5"
+						y="3"
+						width="208"
+						height="15"
+						key="textField-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getName()+" "+$F{customer}.getRegistry().getSurname()]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="220"
+						y="0"
+						width="1"
+						height="20"
+						key="line-61"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="237"
+						y="0"
+						width="1"
+						height="20"
+						key="line-62"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="254"
+						y="0"
+						width="1"
+						height="20"
+						key="line-63"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="271"
+						y="0"
+						width="1"
+						height="20"
+						key="line-64"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="288"
+						y="0"
+						width="1"
+						height="20"
+						key="line-65"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="305"
+						y="0"
+						width="1"
+						height="20"
+						key="line-66"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="322"
+						y="0"
+						width="1"
+						height="20"
+						key="line-67"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="339"
+						y="0"
+						width="1"
+						height="20"
+						key="line-68"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="356"
+						y="0"
+						width="1"
+						height="20"
+						key="line-69"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="373"
+						y="0"
+						width="1"
+						height="20"
+						key="line-70"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="390"
+						y="0"
+						width="1"
+						height="20"
+						key="line-71"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="407"
+						y="0"
+						width="1"
+						height="20"
+						key="line-72"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="424"
+						y="0"
+						width="1"
+						height="20"
+						key="line-73"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="441"
+						y="0"
+						width="1"
+						height="20"
+						key="line-74"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="458"
+						y="0"
+						width="1"
+						height="20"
+						key="line-75"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="475"
+						y="0"
+						width="1"
+						height="20"
+						key="line-76"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="492"
+						y="0"
+						width="1"
+						height="20"
+						key="line-77"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="509"
+						y="0"
+						width="1"
+						height="20"
+						key="line-78"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="526"
+						y="0"
+						width="1"
+						height="20"
+						key="line-79"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="543"
+						y="0"
+						width="1"
+						height="20"
+						key="line-80"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="560"
+						y="0"
+						width="1"
+						height="20"
+						key="line-81"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="577"
+						y="0"
+						width="1"
+						height="20"
+						key="line-82"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="594"
+						y="0"
+						width="1"
+						height="20"
+						key="line-83"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="611"
+						y="0"
+						width="1"
+						height="20"
+						key="line-84"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="628"
+						y="0"
+						width="1"
+						height="20"
+						key="line-85"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="645"
+						y="0"
+						width="1"
+						height="20"
+						key="line-86"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="662"
+						y="0"
+						width="1"
+						height="20"
+						key="line-87"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="679"
+						y="0"
+						width="1"
+						height="20"
+						key="line-88"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="696"
+						y="0"
+						width="1"
+						height="20"
+						key="line-89"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="713"
+						y="0"
+						width="1"
+						height="20"
+						key="line-90"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="730"
+						y="0"
+						width="1"
+						height="20"
+						key="line-91"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="745"
+						y="0"
+						width="1"
+						height="20"
+						key="line-92"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="1"
+						width="782"
+						height="0"
+						key="line-93"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

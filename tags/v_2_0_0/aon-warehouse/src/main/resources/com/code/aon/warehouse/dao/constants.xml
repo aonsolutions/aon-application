@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.warehouse.DeliveryDetail">
+		<alias names="delivery_id,description,discountExpression,id,item_id,line,price,quantity,salesDetail_id,warehouse_id,item_product_type"/>
+		<hibernate names="delivery.id,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,warehouse.id,item.product.type"/>
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.IncomeDetail">
+		<alias names="description,discountExpression,id,income_id,item_id,price,purchaseDetail_id,quantity,warehouse_id,item_product_type"/>
+		<hibernate names="description,discountExpression,id,income.id,item.id,price,purchaseDetail.id,quantity,warehouse.id,item.product.type"/>
+	</bean>
+</dao>

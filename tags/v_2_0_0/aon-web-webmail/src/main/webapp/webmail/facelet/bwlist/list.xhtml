@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+		<aon:form id="emailList">
+			<ui:include src="/webmail/facelet/webmailButtons.xhtml" />
+			<aon:panelGrid columns="2" cellpadding="0" cellspacing="0"
+				columnClasses="aon-menu-sidebar,aon-content-area">	
+									
+				<ui:include src="/webmail/facelet/webmailTree.xhtml" />	
+
+				  <aon:panelGroup>
+		
+					<aon:div styleClass="aon-section-title">
+						<aon:outputText value="#{appBundle.aon_webmail_black_white_list}" />: <aon:outputText value="#{bundle.aon_listing}- #{bundle.aon_editing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-section-toolbar">		
+						<aon:confirmButton id="save"
+							value="#{appBundle.aon_webmail_black_white_list_save}" 
+							styleClass="aon-content-toolbar-item aon-icon-accept"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{appBundle.aon_webmail_black_white_list_save}"
+							confirmActionListener="#{blacklist.onSave}"
+							confirmAction="blacklist"
+							accesskey="#{appBundle.aon_webmail_black_white_list_save}"/>
+						<aon:confirmButton id="load"
+							value="#{appBundle.aon_webmail_black_white_list_reload}" 
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{appBundle.aon_webmail_black_white_list_reload}"
+							confirmActionListener="#{blacklist.onLoad}"
+							confirmAction="blacklist"
+							accesskey="#{appBundle.aon_webmail_black_white_list_reload}"/>
+					</aon:div>
+			
+					<!-- end toolbar navigation -->
+
+					<!--  aon-region-body -->
+										
+						<aon:panelGroup>
+							<aon:panelGrid columns="2" dir="true" styleClass="aon-formTable"
+								columnClasses="aon-formTable-column-odd,aon-formTable-column-even"
+								cellpadding="0" cellspacing="0">
+	
+								<aon:outputLabel for="blacklist_score"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.aon_webmail_blacklist_score}" />
+								<ice:selectOneRadio id="blacklist_score" 
+									partialSubmit="false"
+									value="#{blacklist.spamScoreType}">
+									<f:selectItems value="#{blacklist.scoreTypes}" />
+								</ice:selectOneRadio>
+									
+								<aon:outputLabel for="blacklist_report"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.aon_webmail_blacklist_report}" />
+								<ice:selectOneRadio id="blacklist_report" 
+									partialSubmit="false"
+									value="#{blacklist.spamReportType}">
+									<f:selectItems value="#{blacklist.reportTypes}" />
+								</ice:selectOneRadio>
+									
+								<aon:outputLabel for="blacklist_rewrite"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.aon_webmail_blacklist_rewrite}" />
+								<aon:inputText id="blacklist_rewrite"
+									styleClass="aon-form-input-text"
+									size="45" maxlength="40"
+									value="#{blacklist.rewrite_1}" />
+									
+							</aon:panelGrid>
+						</aon:panelGroup>
+						
+					<aon:panelGroup>
+						<aon:panelGrid columns="2" cellpadding="0" cellspacing="0"
+							styleClass="aon-box aon-box-outstanding2"
+							columnClasses="aon-vertical-align-middle,aon-vertical-align-middle">
+							<aon:selectBooleanCheckbox 
+								styleClass="aon-float-left"
+								value="#{blacklist.addContactsToWhite}" />
+							<aon:outputLabel for="blacklist_score"
+								escape="false" 
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.aon_webmail_add_contacts_to_white_list}" />
+						</aon:panelGrid>
+					</aon:panelGroup>
+					
+							<aon:panelGrid columns="2" cellpadding="0" cellspacing="0">
+	
+			                    <aon:dataTable id="whiteList" 
+						                    	var="whiteTo" 
+						                    	value="#{blacklist.whiteLst}" >
+			                        <aon:column>
+			                            <f:facet name="header">
+											<aon:div>
+				                                <aon:outputText value="#{appBundle.aon_webmail_blacklist_white}"/>
+											</aon:div>
+			                            </f:facet>
+										<aon:selectBooleanCheckbox 
+											styleClass="aon-float-left"
+											value="#{whiteTo.selected}">
+										</aon:selectBooleanCheckbox>
+			                            <aon:outputText value="N" rendered="#{whiteTo.added}" />
+			                            <aon:outputText value="#{whiteTo.email}"/>
+			                            <f:facet name="footer">
+											<aon:div>
+												<aon:commandButton alt="[#{bundle.aon_reset}]"
+													styleClass="aon-editTable-button aon-icon-reset"
+													actionListener="#{whitelist.openNewBlackPanelPopup}" value="">
+												</aon:commandButton>
+											</aon:div>
+										</f:facet>
+			                        </aon:column>
+			                        
+			                    </aon:dataTable>
+			                    		
+			                    <aon:dataTable id="blackList" 
+						                    	var="blackTo" 
+						                    	value="#{blacklist.blackLst}" >
+			                        <aon:column>
+			                            <f:facet name="header">
+											<aon:div>
+				                                <aon:outputText value="#{appBundle.aon_webmail_blacklist_black}"/>
+											</aon:div>
+			                            </f:facet>
+										<aon:selectBooleanCheckbox 
+											styleClass="aon-float-left"
+											value="#{blackTo.selected}">
+										</aon:selectBooleanCheckbox>
+			                            <aon:outputText value="N" rendered="#{blackTo.added}" />
+			                            <aon:outputText value="#{blackTo.email}"/>
+			                            <f:facet name="footer">
+											<aon:div>
+												<aon:commandButton alt="[#{bundle.aon_reset}]"
+													styleClass="aon-editTable-button aon-icon-reset"
+													actionListener="#{blacklist.openNewBlackPanelPopup}" value="">
+												</aon:commandButton>
+											</aon:div>
+										</f:facet>
+			                        </aon:column>
+								</aon:dataTable>
+							</aon:panelGrid>	
+						
+							
+		        </aon:panelGroup>
+
+			</aon:panelGrid>
+
+			<ice:panelPopup styleClass="aon-popup-"
+				modal="true"
+				rendered="true"
+				style="z-index:999; top: 200px; left: 200px; width: 300px; position:absolute; background: #FFFFFF;"
+				visible="#{blacklist.showNewPanelPopup}">
+			
+				<f:facet name="header">
+					<h:panelGrid id="popupHeaderBlackList" width="100%" cellpadding="0" cellspacing="0" columns="2" 
+					columnClasses="popupIcon,aon-text-right popupButton">
+						<aon:outputText value="#{appBundle.aon_webmail_blacklist_black_new}"/>
+						<aon:commandButton id="popupCloseBlackList" type="button" image="/images/icefaces/popupclose.gif"
+							actionListener="#{blacklist.closeNewPanelPopup}" style="cursor: pointer;"/>
+					</h:panelGrid>
+				</f:facet>
+			
+				<f:facet name="body">
+					<h:panelGrid id="popupBodyBlackList" width="100%" cellpadding="0" cellspacing="0" columns="1"
+						columnClasses="popupIcon,aon-text-right popupButton">
+						<aon:outputText value="#{appBundle.aon_webmail_email}:" />
+						<aon:inputText 
+							size="40"
+							value="#{blacklist.newEmail}"/>
+						<aon:commandButton id="closeModalBlackList" 
+							styleClass="aon-icon-commandButton aon-icon-accept"
+							actionListener="#{blacklist.createNew}" value="Ok"/>
+					</h:panelGrid>
+				</f:facet>
+			</ice:panelPopup>
+
+		</aon:form>
+			
+		<aon:form id="placeList" target="list" />
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

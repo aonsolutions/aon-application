@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-components">
+<body>
+
+<ui:composition>
+
+	<aon:div styleClass="aon-form-note"
+		rendered="#{model.rowCount == 0 and showNote}">
+		<aon:div styleClass="aon-form-note-internal">
+			<aon:panelGroup>
+				<aon:outputText value="#{bundle.aon_search_no_results}" />
+			</aon:panelGroup>
+		</aon:div>
+	</aon:div>
+
+	<aon:div styleClass="aon-dataScroller"
+		rendered="#{model.rowCount>0}">
+		<aon:panelGrid columns="2"
+			columnClasses="aon-dataScroller-text,aon-dataScroller-buttons">
+			<aon:dataPaginator for="#{dataTable}" rowsCountVar="rowsCount"
+				firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex">
+				<h:outputFormat value="#{bundle.aon_scroll}">
+					<f:param value="#{firstRowIndex}" />
+					<f:param value="#{lastRowIndex}" />
+					<f:param value="#{rowsCount}" />
+				</h:outputFormat>
+			</aon:dataPaginator>
+			<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true"
+				paginatorMaxPages="5"
+				rendered="#{model.rowCount>20}">
+
+				<f:facet name="first">
+					<aon:div styleClass="aon-dataScroller-first">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="last">
+					<aon:div styleClass="aon-dataScroller-last">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="previous">
+					<aon:div styleClass="aon-dataScroller-previous">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="next">
+					<aon:div styleClass="aon-dataScroller-next">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="fastforward">
+					<aon:div styleClass="aon-dataScroller-fastforward">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="fastrewind">
+					<aon:div styleClass="aon-dataScroller-fastrewind">&#160;</aon:div>
+				</f:facet>
+			</aon:dataPaginator>
+
+		</aon:panelGrid>
+	</aon:div>
+
+</ui:composition>
+
+</body>
+</html>
+

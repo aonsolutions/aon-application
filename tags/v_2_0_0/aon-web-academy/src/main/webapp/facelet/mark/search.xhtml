@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<script type="text/javascript">
+			window.onload = function()
+			{
+				document.getElementById("Mark_alumn_customer_registry_name").focus();
+			}
+		</script>	
+	</ui:define>
+	
+	<ui:define name="content">
+		<h:form id="markForm">
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="accept" value="#{bundle.aon_search}"
+						actionListener="#{mark.onSearch}" action="mark_list" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{mark.onCancel}" action="mark_list" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						actionListener="#{mark.onReset}" action="mark_form" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Mark_alumn_customer_registry_name" value="#{customerBundle.customer_name}" />
+						<t:inputText id="Mark_alumn_customer_registry_name" size="50"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+							valueChangeListener="#{mark.addExpression}" />
+		
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Mark_alumn_customer_registry_surname" value="#{customerBundle.customer_surname}" />
+						<t:inputText id="Mark_alumn_customer_registry_surname" size="50"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+							valueChangeListener="#{mark.addExpression}" />
+
+						<t:outputLabel for="Mark_alumn_course_academicYear_id"
+							value="#{appBundle.course_academic_year}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="Mark_alumn_course_academicYear_id"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="IntegerEmptyConverter" forceId="#{true}"
+							valueChangeListener="#{mark.addDirectExpression}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{academyCollections.academicYears}" />
+						</h:selectOneMenu>
+		
+						<t:outputLabel for="Mark_alumn_course_courseSubject_id"
+							value="#{appBundle.course_subject}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="Mark_alumn_course_courseSubject_id"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="IntegerEmptyConverter" forceId="#{true}"
+							valueChangeListener="#{mark.addDirectExpression}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{academyCollections.courseSubjects}" />
+						</h:selectOneMenu>
+		
+						<t:outputLabel for="Mark_alumn_course_courseLevel_id"
+							value="#{appBundle.course_level}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="Mark_alumn_course_courseLevel_id"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="IntegerEmptyConverter" forceId="#{true}"
+							valueChangeListener="#{mark.addDirectExpression}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{academyCollections.courseLevels}" />
+						</h:selectOneMenu>
+		
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Mark_evaluation" value="#{appBundle.mark_evaluation}" />
+						<t:inputText id="Mark_evaluation" size="4"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+							valueChangeListener="#{mark.addExpression}" />
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Mark_subject_academicSkill_id" value="#{appBundle.mark_subject}" />
+						<h:selectOneMenu id="Mark_subject_academicSkill_id"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="IntegerEmptyConverter" forceId="#{true}"
+							valueChangeListener="#{mark.addDirectExpression}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{academyCollections.academicSkills}" />
+						</h:selectOneMenu>
+		
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Mark_mark" value="#{appBundle.mark_mark}" />
+						<t:inputText id="Mark_mark" size="4"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{mark.addExpression}" />
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{appBundle.course_course}" />
+						<t:div>
+							<t:selectOneMenu id="Course_Lookup_academicYear-Edit" forceId="#{true}"
+								converter="IntegerEmptyConverter"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','courseLookup','Course_Lookup_academicYear-Edit,Course_Lookup_code-Edit','Course_id|Mark_alumn_course_id,Course_description|Course_Lookup_description-Edit,Course_academicYear_id|Course_Lookup_academicYear-Edit,Course_code|Course_Lookup_code-Edit');"							
+								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItems value="#{academyCollections.academicYears}" />
+							</t:selectOneMenu>
+							<t:inputText id="Course_Lookup_code-Edit" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','courseLookup','Course_Lookup_academicYear-Edit,Course_Lookup_code-Edit','Course_id|Mark_alumn_course_id,Course_description|Course_Lookup_description-Edit,Course_academicYear_id|Course_Lookup_academicYear-Edit,Course_code|Course_Lookup_code-Edit');"
+								/>
+							<h:commandButton id="find_Mark_alumn_course_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{courseLookup.encodedSearchPagePath}','Course_id|Mark_alumn_course_id,Course_description|Course_Lookup_description-Edit,Course_academicYear_id|Course_Lookup_academicYear-Edit,Course_code|Course_Lookup_code-Edit');return false;" />
+							<t:inputHidden id="Mark_alumn_course_id" forceId="#{true}"
+								valueChangeListener="#{mark.addExpression}" />
+							<t:inputText id="Course_Lookup_description-Edit" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="30" />
+						</t:div>
+
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

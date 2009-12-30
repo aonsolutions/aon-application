@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components">
+<body>
+
+<ui:composition>
+
+	<aon:form>
+		<aon:div styleClass="aon-popup-panel aon-popup-lookup">
+			<ice:panelPopup visible="#{lookup.showWindow}"
+				styleClass="aon-popup-" style="width:480px;">
+
+				<f:facet name="header">
+					<aon:panelGrid width="100%" cellpadding="0" cellspacing="0"
+						columns="2"
+						columnClasses="aon-popup-title, aon-popup-title-closeButton">
+						<aon:outputText value="Select Window" styleClass="aon-popup-title" />
+						<aon:commandButton type="button" immediate="true"
+							styleClass="aon-popup-button-close"
+							image="#{facesContext.externalContext.requestContextPath}/images/icefaces/popupclose.gif"
+							actionListener="#{lookup.onCloseWindow}" />
+					</aon:panelGrid>
+				</f:facet>
+
+				<f:facet name="body">
+					<aon:panelGrid cellpadding="0" cellspacing="0" columns="1"
+						width="100%">
+	
+
+						<ice:panelStack width="100%"
+							selectedPanel="#{lookup.beanName}#{lookup.selectedPanel}"
+							rendered="#{lookup.showWindow}">
+
+							<c:if test="#{lookup.listPagePath != null}">
+								<aon:panelGroup id="#{lookup.beanName}list">
+									<ui:include src="/facelet/lookup/listContent.xhtml" />
+								</aon:panelGroup>
+							</c:if>
+
+							<c:if test="#{lookup.searchPagePath != null}">
+								<aon:panelGroup id="#{lookup.beanName}search">
+									<ui:include src="/facelet/lookup/searchContent.xhtml" />
+								</aon:panelGroup>
+							</c:if>
+
+							<c:if test="#{lookup.newPagePath != null}">
+								<aon:panelGroup id="#{lookup.beanName}form">
+									<ui:include src="/facelet/lookup/formContent.xhtml" />
+								</aon:panelGroup>
+							</c:if>
+
+						</ice:panelStack>
+
+					</aon:panelGrid>
+				</f:facet>
+
+			</ice:panelPopup>
+		</aon:div>
+	</aon:form>
+
+	<script>
+		aonResizeBody();
+	</script>
+
+</ui:composition>
+
+</body>
+</html>

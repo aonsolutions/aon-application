@@ -1,0 +1,53 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+<!-- 
+		<property name="connection.datasource">java:comp/env/jdbc/AonGTM</property>		
+ -->
+
+ <!-- 
+ 		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_gtm?autoReconnect=true</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="show_sql">true</property>		
+		<property name="connection.password">serubd2000</property>		
+ -->
+ 		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_gtm?autoReconnect=true</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="show_sql">true</property>		
+		<property name="connection.password">serubd2000</property>		
+ 
+		<!-- AON-TAS Mapping files -->		
+		<mapping class="com.code.aon.tas.Make"/>
+		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.TasItem"/>
+		<mapping class="com.code.aon.tas.SupportOrder"/>
+
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoZone"/>			
+		<mapping class="com.code.aon.geozone.Country"/>
+		
+		<!-- AON-COMMERCIAL Mapping files -->	
+		<mapping class="com.code.aon.commercial.Target"/>	
+		
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>	
+	</session-factory>
+
+</hibernate-configuration>

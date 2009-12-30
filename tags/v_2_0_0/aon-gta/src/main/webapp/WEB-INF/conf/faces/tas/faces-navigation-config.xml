@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+	<!-- =================== Navigation Rules ================= -->
+
+	<!-- =================== Make ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>Make_list</from-outcome>
+			<to-view-id>/facelet/TAS/Make/grid.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Model ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>TasModel_form</from-outcome>
+			<to-view-id>/facelet/TAS/Model/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TasModel_list</from-outcome>
+			<to-view-id>/facelet/TAS/Model/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TasModel_search</from-outcome>
+			<to-view-id>/facelet/TAS/Model/search.faces</to-view-id>
+		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>TasModel_sw</from-outcome>
+	      <to-view-id>/facelet/sw/models.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>TasModel_sw_search</from-outcome>
+	      <to-view-id>//facelet/sw/modelSearch.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<!-- =================== TAS-SupportOrder ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>SupportOrder_form</from-outcome>
+			<to-view-id>/facelet/TAS/support/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>SupportOrder_list</from-outcome>
+			<to-view-id>/facelet/TAS/support/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>SupportOrder_search</from-outcome>
+			<to-view-id>/facelet/TAS/support/search.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== TAS-Item ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>TasItem_form</from-outcome>
+			<to-view-id>/facelet/TAS/TasItem/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TasItem_list</from-outcome>
+			<to-view-id>/facelet/TAS/TasItem/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TasItem_search</from-outcome>
+			<to-view-id>/facelet/TAS/TasItem/search.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Employee ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>employee_form</from-outcome>
+      <to-view-id>/facelet/TAS/employee/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>employee_list</from-outcome>
+      <to-view-id>/facelet/TAS/employee/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>employee_search</from-outcome>
+      <to-view-id>/facelet/TAS/employee/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+	<!-- **************** MENU  *************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>Make</from-outcome>
+			<to-view-id>/facelet/TAS/Make/grid.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>Model</from-outcome>
+			<to-view-id>/facelet/TAS/Model/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>TasItem</from-outcome>
+			<to-view-id>/facelet/TAS/TasItem/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>SupportOrder</from-outcome>
+			<to-view-id>/facelet/TAS/support/form.faces</to-view-id>
+		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>employee</from-outcome>
+	      <to-view-id>/facelet/TAS/employee/form.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+</faces-config>

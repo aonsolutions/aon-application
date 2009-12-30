@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="mailAccountList">
+
+			<aon:div id="aon-scroll-area" forceId="#{true}">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<ui:include src="/webmail/facelet/webmailButtons.xhtml" />	
+
+					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;"
+					columnClasses="aon-menu-sidebar,aon-content-area">
+					
+						<ui:include src="/webmail/facelet/webmailTree.xhtml" />	
+
+				        <aon:panelGroup>
+
+			<aon:div styleClass="aon-section-title">
+				<aon:outputText value="#{appBundle.aon_webmail_mailAccount}" />
+			</aon:div>
+			
+			<aon:div styleClass="aon-section-toolbar">				
+				<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+					action="mailAccount_form" actionListener="#{mailAccount.onReset}"
+					styleClass="aon-content-toolbar-item aon-icon-newMailAccount"
+					accesskey="#{bundle.aon_key_new}"/>			   
+			</aon:div>
+
+			<!--  aon-region-body -->
+		<aon:div  >
+			<aon:div >
+
+					
+					<aon:dataTable id="mailAccountDataList" 
+						value="#{mailAccount.model}" var="to" rows="20"
+						styleClass="aon-dataTable" 
+						>
+					
+							<aon:column>
+								<aon:rowSelector selectionListener="#{mailAccount.onSelect}" 
+									rendered="#{!mailAccount.currentToDefaultAccount}"/>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.aon_webmail_mailAccount_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.email}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.aon_webmail_mailAccount_active}" />
+								</f:facet>
+								<aon:outputText value="#{appBundle.aon_webmail_mailAccount_default_account}" 
+									rendered="#{mailAccount.currentToDefaultAccount}"/>
+								<aon:outputText value="#{appBundle.aon_webmail_mailAccount_user_account}" 
+									rendered="#{!mailAccount.currentToDefaultAccount}"/>
+							</aon:column>
+
+						</aon:dataTable>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="mailAccountDataList" />
+							<ui:param name="model" value="#{mailAccount.model}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+						
+					
+				</aon:div>
+			</aon:div>
+							
+				        </aon:panelGroup>
+
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

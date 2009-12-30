@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="financeCheckingList">
+
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						action="finance_checking_search" actionListener="#{financeChecking.onEditSearch}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="mark" value="#{financeChecking.pending?(financeBundle.finance_mark_as_paid):(financeBundle.finance_mark_as_pending)}"
+						action="finance_checking_search" actionListener="#{financeChecking.onMark}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>	
+					<t:commandButton id="financeList" value="#{bundle.aon_listing}"
+						forceId="#{true}"
+						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
+						accesskey="#{bundle.aon_key_print}" />		
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="financeCheckingDataList" cellpadding="0" cellspacing="0"
+							var="to" value="#{financeChecking.model}" rows="20" styleClass="aon-table"
+							rendered="#{financeChecking.model.rowCount > 0}"
+							headerClass="aon-table-header"
+							rowClasses="aon-table-row-odd,aon-table-row-even"
+							columnClasses="aon-table-body aon-table-body-icon,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-number">
+							
+							<h:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<f:verbatim>&#160;</f:verbatim>
+								<t:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
+									value="#{financeChecking.rowChecked}"
+									styleClass="aon-form-selectBooleanCheckbox-field" />
+							</h:column>		
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.finance_invoice}" />
+								</f:facet>
+								<h:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeChecking.payment?(financeBundle.finance_creditor):(financeBundle.finance_debtor)}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText
+									value="#{to.invoice.registry.name}, #{to.invoice.registry.surname}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.finance_due_date}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.dueDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</h:outputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.finance_status}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.financeStatus}" />
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.finance_payMethod}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.payMethod.name}" />
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.finance_amount}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.amount}" >
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+							</h:column>
+						</t:dataTable>
+
+					</t:div>
+					
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="financeCheckingDataList" />
+						<ui:param name="model" value="#{financeChecking.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+					
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

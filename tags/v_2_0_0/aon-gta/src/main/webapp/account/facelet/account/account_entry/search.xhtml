@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="accountEntryForm" styleClass="aon-form">
+
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							accesskey="#{bundle.aon_key_search}" action="account_entry_form"
+							actionListener="#{accountEntry.onSearch}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}" action="account_entry_form"
+							actionListener="#{accountEntry.onReset}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton type="reset" id="clear"
+							value="#{bundle.aon_clear}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText value="#{bundle.aon_search}" />
+				</t:div>
+			</t:div>
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="AccountEntry_id"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{accountBundle.aon_id}" />
+						<t:inputText id="AccountEntry_id" size="10"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{accountEntry.addExpression}" />
+
+						<h:outputLabel for="AccountEntry_accountPeriod"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{accountBundle.aon_accPeriod_period}" />
+						<t:inputText id="AccountEntry_accountPeriod" size="10"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{accountEntry.addExpression}" />
+
+						<h:outputLabel for="AccountEntry_type"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{accountBundle.aon_type}" />
+						<h:selectOneMenu id="AccountEntry_type"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="accountEntryTypeConverter"
+							valueChangeListener="#{accountEntry.addEqualExpression}">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+							<f:selectItems value="#{accountCollections.accountTypes}" />
+						</h:selectOneMenu>
+						
+						<h:outputLabel styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_date}" />
+						<h:panelGrid columns="4">
+							<h:outputLabel for="AccountEntry_entryDate-From"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_date_from}" />
+							<t:inputCalendar size="8" id="AccountEntry_entryDate-From"
+								valueChangeListener="#{accountEntry.addEntryDateFromExpression}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+							
+							<h:outputLabel for="AccountEntry_entryDate-To"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_date_to}" />
+							<t:inputCalendar size="8" id="AccountEntry_entryDate-To"
+								valueChangeListener="#{accountEntry.addEntryDateToExpression}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />	
+						</h:panelGrid>
+
+					</h:panelGrid>
+
+
+				</t:div>
+			</t:div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

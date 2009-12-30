@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="taskForm">
+		
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+					
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{menuBundle.aon_master}" />
+					<aon:outputText value="#{menuBundle.aon_task}" />					
+				</aon:div>		
+				
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="search"
+							value="#{bundle.aon_search}"
+							action="task_list" actionListener="#{task.onSearch}"
+							styleClass="aon-content-toolbar-item aon-icon-accept"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_search}"/>
+						<aon:commandButton id="reset"
+							value="#{bundle.aon_reset}"
+							action="task_form" actionListener="#{task.onReset}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}"/>
+						<aon:commandButton id="cancel"
+							value="#{bundle.aon_cancel}"
+							action="task_list" actionListener="#{task.onCancel}"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_cancel}"/>
+
+					</aon:div>
+				</aon:div>
+			</aon:panelGrid>
+			<!-- end toolbar navigation -->
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">		
+					<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle">
+						<aon:div styleClass="aon-content-subtitle-internal">
+							<aon:outputText value="#{bundle.aon_search}" />
+						</aon:div>
+					</aon:div>
+			
+					<aon:panelGrid columns="2" styleClass="aon-formTable"
+					cellpadding="0" cellspacing="0"
+						columnClasses="aon-formTable-column-odd,aon-formTable-column-even">
+
+						<aon:outputLabel for="Task_description"
+							value="#{projectBundle.aon_description}" />
+						<aon:inputText id="Task_description" size="60"
+							styleClass="aon-inputText"
+							valueChangeListener="#{task.addExpression}" />
+							
+						<aon:outputLabel value="#{projectBundle.aon_initial_date}" />
+						<aon:panelGrid columns="4" styleClass="aon-nowrap">
+							<aon:outputLabel for="Task_startDate-From"
+								value="#{projectBundle.aon_date_from}" />	
+							<aon:selectInputDate id="Task_startDate-From" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{task.addStartDateFromExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+							
+							<aon:outputLabel for="Task_startDate-To"
+								value="#{projectBundle.aon_date_to}" />	
+							<aon:selectInputDate id="Task_startDate-To" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{task.addStartDateToExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+						</aon:panelGrid>
+						
+						<aon:outputLabel value="#{projectBundle.aon_final_date}" />
+						<aon:panelGrid columns="4" styleClass="aon-nowrap">
+							<aon:outputLabel for="Task_endDate-From"
+								value="#{projectBundle.aon_date_from}" />	
+							<aon:selectInputDate id="Task_endDate-From" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{task.addEndDateFromExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+							
+							<aon:outputLabel for="Task_endDate-To"
+								value="#{projectBundle.aon_date_to}" />	
+							<aon:selectInputDate id="Task_endDate-To" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{task.addEndDateToExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+						</aon:panelGrid>
+						
+						<aon:outputLabel value="#{projectBundle.aon_due_date}" />
+						<aon:panelGrid columns="4" styleClass="aon-nowrap">
+							<aon:outputLabel for="Task_dueDate-From"
+								value="#{projectBundle.aon_date_from}" />	
+							<aon:selectInputDate id="Task_dueDate-From" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{task.addDueDateFromExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+							
+							<aon:outputLabel for="Task_dueDate-To"
+								value="#{projectBundle.aon_date_to}" />	
+							<aon:selectInputDate id="Task_dueDate-To" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{task.addDueDateToExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+						</aon:panelGrid>
+						
+						<aon:outputLabel for="Task_customer_id"
+							styleClass="aon-form-input-text-label"
+							value="#{projectBundle.aon_customer}" />
+						<aon:div styleClass="aon-nowrap">	
+							<aon:lookupInputText id="Task_customer_id" lookup="#{customerLookup}"
+								value="#{task.customer.id}"
+								valueChangeListener="#{task.addCustomerExpression}" size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton lookup="#{customerLookup}"
+								property="#{task.customer}" 
+								windowTitle="#{projectBundle.aon_customer}" 
+								styleClass="aon-lookup-button aon-icon-lookup" />
+							<aon:inputText id="Task_customer_name"
+								value="#{task.customer.registry.name} #{task.customer.registry.surname}"
+								styleClass="aon-inputText-disabled"
+								size="45" disabled="true" />
+						</aon:div>							
+						
+						
+					</aon:panelGrid>
+
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<h:outputText rendered="#{windowClose.closeWindow}" value="#{windowClose.script}" escape="false" />		
+	</ui:define>
+
+	<ui:define name="content">
+
+		<f:loadBundle basename="com.code.aon.ui.finance.i18n.menu" var="menuBundle" />
+
+		<t:div styleClass="aon-content-title" forceId="#{true}"
+			id="aon-window-popup-title">
+			<t:div styleClass="aon-content-title-internal">
+				<h:outputText value="#{menuBundle.aon_creditor}"/>
+				<h:outputText value="#{creditorAdd.parameters}" style="visibility: hidden" />
+			</t:div>	
+		</t:div>
+
+		<h:form id="creditorForm">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{creditorAdd.accept}"
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_save}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						rendered="#{creditorAdd.new}" immediate="#{true}"
+						onclick="if (confirm('#{bundle.aon_cancel_confirm}')) { window.close() } return false;"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="close" value="#{bundle.aon_close}"
+						rendered="#{!creditorAdd.new}" immediate="#{true}"
+						actionListener="#{creditorAdd.onCancel}"
+						onclick="window.opener.update('#{creditorAdd.toLookupsAsXML}');"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-close"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-close'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-close'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_close}">
+						<f:actionListener type="com.code.aon.ui.form.listener.WindowCloseListener" />
+					</h:commandButton>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<ui:include src="/finance/facelet/creditor/formContent.xhtml">
+				<ui:param name="creditorAlias" value="#{creditorAdd}"/>
+				<ui:param name="viewDetails" value="#{false}"/>
+			</ui:include>
+
+		</h:form>
+
+		<h:form id="placeList" target="list" />
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

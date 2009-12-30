@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:aon="http://www.code.es/aon-components">
+<body>
+
+<ui:composition>	
+	<aon:div id="aon-footer">
+		<aon:panelGrid columns="2" cellpadding="0" cellspacing="0"  dir="true" width="100%">
+			<aon:panelGroup>
+				<aon:div styleClass="aon-foot-leftGroup-item"><aon:outputText value="#{appBundle.aon_application_footer}" /></aon:div>
+			</aon:panelGroup>
+			
+			<aon:panelGroup rendered="#{aonConfiguration.properties.rightFooter == null}">
+				<aon:outputText value="&#160;"/>
+			</aon:panelGroup>
+	
+			<aon:panelGroup rendered="#{aonConfiguration.properties.rightFooter != null}" style="text-align:right;">
+				<aon:outputText escape="false" value="#{aonConfiguration.properties.rightFooter}" />
+			</aon:panelGroup>
+		</aon:panelGrid>			
+		<script language="javascript">
+			aonResizeBody();
+		</script> 
+	</aon:div>		
+</ui:composition>
+
+</body>
+</html>

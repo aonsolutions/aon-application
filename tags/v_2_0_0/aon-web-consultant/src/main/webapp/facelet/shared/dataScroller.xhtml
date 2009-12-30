@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-form-note"
+		rendered="#{model.rowCount == 0 and showNote}">
+		<t:div styleClass="aon-form-note-internal">
+			<h:panelGroup>
+				<h:outputText value="#{bundle.aon_search_no_results}" />
+			</h:panelGroup>
+		</t:div>
+	</t:div>
+
+	<t:div styleClass="aon-datascroller">
+		<h:panelGrid columns="2"
+			columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+			<t:dataScroller for="#{dataTable}"
+				rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex"
+				lastRowIndexVar="lastRowIndex" rendered="#{model.rowCount>0}">
+				<h:outputFormat value="#{bundle.aon_scroll}">
+					<f:param value="#{firstRowIndex}" />
+					<f:param value="#{lastRowIndex}" />
+					<f:param value="#{rowsCount}" />
+				</h:outputFormat>
+			</t:dataScroller>
+
+			<t:dataScroller for="#{dataTable}" fastStep="5"
+				paginator="#{true}" paginatorMaxPages="5"
+				paginatorActiveColumnClass="aon-datascroller-currentpage"
+				paginatorColumnClass="aon-datascroller-page"
+				rendered="#{model.rowCount>20}">
+
+				<f:facet name="first">
+					<t:div styleClass="aon-datascroller-button-first">&#160;</t:div>
+				</f:facet>
+				<f:facet name="last">
+					<t:div styleClass="aon-datascroller-button-last">&#160;</t:div>
+				</f:facet>
+				<f:facet name="previous">
+					<t:div styleClass="aon-datascroller-button-previous">&#160;</t:div>
+				</f:facet>
+				<f:facet name="next">
+					<t:div styleClass="aon-datascroller-button-next">&#160;</t:div>
+				</f:facet>
+				<f:facet name="fastforward">
+					<t:div styleClass="aon-datascroller-button-fastforward">&#160;</t:div>
+				</f:facet>
+				<f:facet name="fastrewind">
+					<t:div styleClass="aon-datascroller-button-fastrewind">&#160;</t:div>
+				</f:facet>
+			</t:dataScroller>
+		</h:panelGrid>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>
+

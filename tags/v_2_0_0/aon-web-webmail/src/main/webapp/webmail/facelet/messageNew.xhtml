@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="webmailForm">
+
+			<aon:div id="aon-scroll-area" forceId="#{true}">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<ui:include src="/webmail/facelet/webmailButtons.xhtml" />	
+
+					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%"
+					columnClasses="aon-menu-sidebar,aon-content-area">
+						
+						<ui:include src="/webmail/facelet/webmailTree.xhtml" />	
+						
+						<aon:panelGroup>
+							
+								<aon:div styleClass="aon-section-title">
+									<aon:outputText value="#{appBundle.aon_webmail_newmail}" />
+								</aon:div>
+								<aon:div styleClass="aon-section-toolbar">
+									
+										<aon:confirmButton id="send"
+											value="#{appBundle.aon_webmail_send}"
+											styleClass="aon-icon-accept aon-content-toolbar-item"
+											confirmTitle="Confirmation Dialog" 
+											confirmMessage="#{appBundle.aon_webmail_send_confirm}"
+											confirmAction="#{message.getReturnAction}"
+											confirmActionListener="#{message.send}"/>
+										<aon:commandButton
+												action="#{message.getReturnAction}"
+												title="#{appBundle.aon_webmail_back}"
+												value="#{appBundle.aon_webmail_back}"
+												styleClass="aon-icon-cancel aon-content-toolbar-item">
+										</aon:commandButton>
+										<aon:commandButton
+											id="addEmail"
+											title="#{appBundle.aon_webmail_email}"
+											value="#{appBundle.aon_webmail_email}"
+											actionListener="#{message.openEmailsPanelPopup}"
+											styleClass="aon-icon-agenda aon-content-toolbar-item">
+										</aon:commandButton>
+										<aon:commandButton
+											id="addAttachButton"
+											title="#{appBundle.aon_webmail_addattach}"
+											value="#{appBundle.aon_webmail_addattach}"
+											actionListener="#{inputFile.openAddAttachPanelPopup}"
+											styleClass="aon-icon-attach aon-content-toolbar-item">
+										</aon:commandButton>
+									
+								</aon:div>
+							<!-- icon to collapse message details -->
+
+							
+							
+							<aon:div styleClass="aon-box aon-box-outstanding" style="font-size:1.1em;">
+								<aon:panelGrid columns="2" cellpadding="0" cellspacing="5">
+									
+									<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="border-right:#ccc 1px solid;padding-right:1em;">
+										
+										<aon:outputLabel for="NewMail_to" styleClass="aon-text-bold"
+											value="#{appBundle.aon_webmail_to}: " />
+										<aon:div>
+											<aon:inputText id="NewMail_to"
+												size="60"
+												value="#{message.recipientsTo}"/>
+											
+										</aon:div>
+	
+										<aon:outputLabel for="NewMail_cc" styleClass="aon-text-bold"
+											value="#{appBundle.aon_webmail_cc}: " />
+										<aon:div>
+											<aon:inputText id="NewMail_cc"
+												size="60"
+												value="#{message.recipientsCc}"/>								
+										</aon:div>
+	
+										<aon:outputLabel for="NewMail_Bcc" styleClass="aon-text-bold"
+											value="#{appBundle.aon_webmail_bcc}: " />
+										<aon:div>
+											<aon:inputText id="NewMail_Bcc"
+												size="60"
+												value="#{message.recipientsBcc}"/>											
+										</aon:div>
+									</aon:panelGrid>
+									
+									
+									<aon:panelGrid columns="5" cellpadding="0" cellspacing="2">
+										<aon:outputLabel for="NewMail_searchAuto"
+												value="#{appBundle.aon_webmail_search}:" styleClass="aon-text-bold" />
+											<ice:selectInputText
+													value="#{message.email}"
+													width="150"
+													partialSubmit="true"
+													valueChangeListener="#{autoCompleteEmailBean.updateList}">
+												<f:selectItems value="#{autoCompleteEmailBean.list}"/>
+											</ice:selectInputText>
+											
+											<aon:commandButton id="selectToEmail" 
+													actionListener="#{message.acceptToEmailItem}" 
+													value="#{appBundle.aon_webmail_to}"/>
+											<aon:commandButton id="selectCcEmail" 
+													actionListener="#{message.acceptCcEmailItem}" 
+													value="#{appBundle.aon_webmail_cc}"/>
+											<aon:commandButton id="selectBccEmail" 
+													actionListener="#{message.acceptBccEmailItem}" 
+													value="#{appBundle.aon_webmail_bcc}"/>										
+									</aon:panelGrid>
+								</aon:panelGrid>	
+							</aon:div>
+							
+							<aon:div styleClass="aon-box aon-box-outstanding2" >
+								<aon:panelGrid columns="2" cellpadding="3" cellspacing="0"
+								columnClasses="aon-vertical-align-middle,aon-vertical-align-middle">
+									
+										<aon:div>
+											<aon:outputLabel for="NewMail_Subject" styleClass="aon-text-bold"
+											value="#{appBundle.aon_webmail_subject}: " />
+										</aon:div>										
+										<aon:inputText id="NewMail_Subject"
+											size="60"
+											value="#{message.subject}"/>			
+									
+									<aon:div>
+									</aon:div>
+								</aon:panelGrid>
+							</aon:div>
+							<!-- Message Attach -->
+							<aon:div styleClass="aon-form-group">
+								<aon:dataTable
+										style="margin:0;padding:0;"
+										rowsCountVar="rowsCount"
+										id="attachDataTable"
+										rows="0"
+										cellpadding="0" cellspacing="0"
+										var="attachment"
+										value="#{message.files}">
+										<aon:column>
+											<aon:commandLink
+													actionListener="#{attachment.fileDeleted}">
+												<aon:outputText value="#{attachment.file.name}" />
+												<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-delete" />
+
+											</aon:commandLink>
+										</aon:column>
+								</aon:dataTable>
+							</aon:div>	
+
+							<!-- Message Body -->
+							<aon:panelGroup
+									scrollWidth="100%"
+									 >
+ 								<aon:inputRichText value="#{message.content}" />
+
+							</aon:panelGroup>
+
+							<ice:panelPopup styleClass="aon-popup-"
+								style="z-index:999; top: 200px; left: 200px; width: 700px; position:absolute; background: #FFFFFF;"
+								modal="true"
+								rendered="true"
+								visible="#{message.showEmailsPanelPopup}">
+							
+								<f:facet name="header">
+									<aon:panelGrid id="popupEmailHeader2" width="100%" cellpadding="0" cellspacing="0" columns="2" 
+										columnClasses="popupIcon,aon-text-right popupButton">
+										<aon:outputText value="#{appBundle.aon_webmail_message_selectEmail}"/>
+										<aon:commandButton id="popupEmailClose2" type="button" image="/images/icefaces/popupclose.gif"
+											actionListener="#{message.closeEmailsPanelPopup}" style="cursor: pointer;"/>
+									</aon:panelGrid>
+								</f:facet>
+							
+								<f:facet name="body">
+									<aon:div style="height:250px;overflow:auto;">
+									<aon:panelGrid id="popupEmailBody2" width="100%" cellpadding="0" cellspacing="0" column="2">
+
+										<aon:div styleClass="aon-section-title">
+											<aon:outputText value="#{appBundle.aon_webmail_message_selectDestiny}"/>
+										</aon:div>										
+										
+										<aon:div styleClass="aon-section-toolbar">
+											<aon:panelGrid cellpadding="2" cellspacing="0" border="0" columns="5"
+												columnClasses="aon-vertical-align-middle,aon-vertical-align-middle">
+												
+												<aon:selectOneRadio value="#{message.selectedDestinyContainer}"
+												partialSubmit="true" style="border:0;">
+												<f:selectItems value="#{message.destinyContainers}" style="border:0;"/>
+												</aon:selectOneRadio>
+												
+												<aon:div style="padding-top:5px;padding-left:1em;">
+													<aon:commandButton id="selectEmail" 
+													actionListener="#{message.acceptAllEmailItems}" 
+													value="Add" styleClass="aon-icon-commandButton aon-icon-accept"/>
+												</aon:div>
+											</aon:panelGrid>
+										</aon:div>
+										
+										<aon:dataTable
+											id="emailData"
+											styleClass="aon-editTable"
+											var="to"
+											value="#{multiSelectionEmailBean.emails}"
+											columnClasses="aon-editTable-icon, aon-editTable-cell, aon-editTable-cell">
+											<aon:column id="selectionCol">
+												<aon:rowSelector 
+													value="#{to.selected}" 
+													multiple="true"
+													mouseOverClass="aon-table-row-hover"
+													selectedClass="aon-table-row-selected"
+													selectionListener="#{multiSelectionEmailBean.rowSelection}"/>
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+												<aon:outputText value="&#160;" />
+											</aon:column>
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
+												</f:facet>
+												<aon:outputText value="#{to.email.name}" />
+											</aon:column>
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.aon_webmail_email_email}" />
+												</f:facet>
+												<aon:outputText value="#{to.email.email}" />
+											</aon:column>
+										</aon:dataTable>
+									
+									</aon:panelGrid>
+									</aon:div>
+								</f:facet>
+							</ice:panelPopup>
+
+						</aon:panelGroup>
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="attachUpload" target="list" enctype="multipart/form-data">
+			<ice:panelPopup styleClass="aon-popup-"
+				modal="true"
+				rendered="true"
+				visible="#{inputFile.showAddAttachPanelPopup}"
+				style="z-index:999; top: 200px; left: 200px; width: 300px; position:absolute; background: #FFFFFF;">>
+			
+				<f:facet name="header">
+					<h:panelGrid id="popupAttach" width="100%" cellpadding="0" cellspacing="0" columns="2" 
+					columnClasses="popupIcon,aon-text-right popupButton">
+						<aon:outputText value="#{appBundle.aon_webmail_addattach}"/>
+						<aon:commandButton id="popupAttachClose" type="button" 
+							image="/images/icefaces/popupclose.gif"
+							actionListener="#{inputFile.closeAddAttachPanelPopup}"
+							style="cursor: pointer;"/>
+					</h:panelGrid>
+				</f:facet>
+			
+				<f:facet name="body">
+					<aon:div>
+					<aon:div style="border:#ccc 1px solid;padding:0 10px 10px 10px;width:90%;">
+						<h:panelGrid id="popupAttachBody" width="100%" cellpadding="0" cellspacing="0" columns="1">
+							<aon:div styleClass="aon-form-group-title">	
+								<aon:outputText value="#{appBundle.aon_webmail_attach_file}" />	
+							</aon:div>
+							<aon:panelGrid cellpadding="0" cellspacing="0" border="0" columns="1">	
+								<ice:inputFile 
+									uniqueFolder="true"
+									uploadDirectoryAbsolute="true"
+									uploadDirectory="/tmp" 
+									progressListener="#{inputFile.progress}"
+									actionListener="#{inputFile.action}"
+									style="margin:0;padding:0;width:420px;overflow:hidden;"/>
+							</aon:panelGrid>
+						</h:panelGrid>
+					</aon:div>
+					<aon:div style="background-color:#f2f2f2;text-align:right;padding:5px 10px; margin-top:5px;">
+						<aon:outputText value="#{appBundle.aon_webmail_endattach}" />	
+						<aon:commandButton  type="button" 
+							image="/images/icefaces/finalizar.png"
+							id="popupAttachClose2" 
+							actionListener="#{inputFile.closeAddAttachPanelPopup}"
+							style="cursor: pointer;border:0;">
+						</aon:commandButton>
+					</aon:div>
+						</aon:div>
+				</f:facet>
+			</ice:panelPopup>
+
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

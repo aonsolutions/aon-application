@@ -1,0 +1,739 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>accountCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **************** ACCOUNTING PERIOD ************************** -->
+	<managed-bean>
+		<managed-bean-name>accPeriod</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.Period</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accPeriod</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **************** ACCOUNT ************************** -->
+	<managed-bean>
+		<managed-bean-name>account</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.Account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{accountControllerLevelListener}</value>
+				<value>#{accountControllerListener}</value>
+				<value>#{accountAppParamsControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountControllerLevelListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountControllerLevelListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountAppParamsControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountAppParamsControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **************** AUTHOMATIC CONCEPTS ************************** -->
+	<managed-bean>
+		<managed-bean-name>autConcept</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.AutoConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>autConcept</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- **************** ACCOUNT ENTRY ************************** -->
+	<managed-bean>
+		<managed-bean-name>accountEntry</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountEntryController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.AccountEntry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountEntry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{accountEntryControllerListener}</value>
+				<value>#{accountEntryControllerValidatorListener}</value>
+				<value>#{accountEntryDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountEntryControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountEntryControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountEntryControllerValidatorListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountEntryControllerValidatorListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountEntryDetailListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountEntryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AccountEntryDetail_accountEntry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT ENTRY DETAIL CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountEntryDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.AccountEntryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountEntry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>accountEntry.id</value>
+				</map-entry>
+				<map-entry>
+					<key>accountPeriod</key>
+					<value>accountEntry.accountPeriod</value>
+				</map-entry>
+				<map-entry>
+					<key>entryDate</key>
+					<value>accountEntry.entryDate</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{accountEntryDetailControllerValidatorListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountEntryDetailControllerValidatorListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountEntryDetailControllerValidatorListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+
+	<!-- ********** ACCOUNT INVOICE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountInvoice</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountInvoiceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!-- ********** ACCOUNT EXPENSE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountExpense</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountExpensesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT SALARY CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountSalary</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountSalaryController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT SOCIAL INSURANCE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountSocialInsurance</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountSocialInsuranceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ********** ACCOUNT LOAN CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountLoan</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountLoanController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT LOAN FEE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountLoanFee</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountLoanFeeController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ********** ACCOUNT LEASING CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountLeasing</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountLeasingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT LEASING FEE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountLeasingFee</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountLeasingFeeController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* ACCOUNT LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>accountLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.account.Account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>description</value>
+				<value>entryEnabled</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/account/facelet/sw/accountSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* LOAN LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>loanLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.account.Loan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Loan_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>description</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/account/facelet/sw/loanSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* LOAN LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>leasingLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.account.Leasing</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Leasing_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>description</value>
+				<value>supplierName</value>
+				<value>supplierDocument</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/account/facelet/sw/leasingSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT ENTRY REPORT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountEntryReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountEntryReportController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.AccountEntryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{accountEntryReportControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountEntryReportControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountEntryReportControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT SUMMARY REPORT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountSummaryReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountSummaryReportController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ********** ACCOUNT MONTHLY REPORT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountMonthlyReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountMonthlyReportController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  *************** ACCOUNT APP PARAMS ***************** -->
+	<managed-bean>
+		<managed-bean-name>accAppParams</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountAppParamsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultParameters</property-name>
+			<map-entries>
+				<key-class>java.lang.String</key-class>
+				<value-class>java.lang.String</value-class>
+				<map-entry>
+					<key>ACC_DEFAULT_SALES_ACC</key>
+					<value>700</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_PURCHASE_ACC</key>
+					<value>600</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_CHARGED_VAT_ACC</key>
+					<value>47701</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_PAID_VAT_ACC</key>
+					<value>47201</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_PAID_RET_ACC</key>
+					<value>47301</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_CHARGED_RET_ACC</key>
+					<value>47501</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_SALARY_ACC</key>
+					<value>640</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_PENDING_SALARY_ACC</key>
+					<value>465</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_SOCIAL_INSURANCE_ACC</key>
+					<value>476</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+  <!-- =================== Converters ================= -->
+  <converter>
+	  <description>Conversor para AccountEntryType</description>
+	  <converter-id>accountEntryTypeConverter</converter-id>
+	  <converter-class>com.code.aon.ui.account.converter.AccountEntryTypeConverter</converter-class>
+  </converter>
+  
+  <!-- =================== Navigation Rules ================= -->
+
+  <!-- =================== ACCOUNT ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>account_form</from-outcome>
+      <to-view-id>/account/facelet/account/account/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>account_list</from-outcome>
+      <to-view-id>/account/facelet/account/account/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>account_search</from-outcome>
+      <to-view-id>/account/facelet/account/account/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+    <!-- =================== ACCOUNT INVOICE ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>accountInvoice_form</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/invoice/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>accountInvoice_list</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/invoice/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>accountInvoice_search</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/invoice/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+   <!-- =================== ACCOUNT ENTRY ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>account_entry_form</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>account_entry_list</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>account_entry_search</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+   <!-- =================== DAYBOOK ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>daybook_list</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/daybook/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>daybook_search</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/daybook/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+   <!-- =================== ABSTRACT ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>abstract_list</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/abstract/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>abstract_search</from-outcome>
+      <to-view-id>/account/facelet/account/account_entry/abstract/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+   <!-- =================== PROFIT AND LOSS ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>profit_and_loss_list</from-outcome>
+	  <to-view-id>/account/facelet/account/account_entry/profitAndLoss/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>profit_and_loss_search</from-outcome>
+	  <to-view-id>/account/facelet/account/account_entry/profitAndLoss/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- =================== Application Menu Navigation Rules ================= -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+        <from-outcome>firstContent</from-outcome>
+        <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
+    </navigation-case>
+	<navigation-case>
+		<from-outcome>accPeriod</from-outcome>
+		<to-view-id>/account/facelet/account/accPeriod/grid.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>account</from-outcome>
+		<to-view-id>/account/facelet/account/account/list.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>autConcept</from-outcome>
+		<to-view-id>/account/facelet/account/autConcept/grid.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/search.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountInvoiceEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/invoice/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountExpenseEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/expense/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountSalaryEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/salary/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountSocialInsuranceEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/social_insurance/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountLoanEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/loan/open/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountLoanFeeEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/loan/fee/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountLeasingEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/leasing/open/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountLeasingFeeEntry</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/leasing/fee/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountEntryDaybook</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/daybook/search.faces</to-view-id>
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>accountEntryAbstract</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/abstract/search.faces</to-view-id>
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>accountEntryProfitAndLoss</from-outcome>
+		<to-view-id>/account/facelet/account/account_entry/profitAndLoss/search.faces</to-view-id>
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>defaultParams</from-outcome>
+		<to-view-id>/account/facelet/acc_appParams/form.faces</to-view-id>
+	</navigation-case>	
+	
+  <!-- =================== Application Select Windows Navigation Rules ================= -->	
+	<navigation-case>
+		<from-outcome>account_sw</from-outcome>
+		<to-view-id>/account/facelet/sw/account.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>account_sw_search</from-outcome>
+		<to-view-id>/account/facelet/sw/accountSearch.faces</to-view-id>
+	</navigation-case>
+	
+	<navigation-case>
+		<from-outcome>loan_sw</from-outcome>
+		<to-view-id>/account/facelet/sw/loan.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>loan_sw_search</from-outcome>
+		<to-view-id>/account/facelet/sw/loanSearch.faces</to-view-id>
+	</navigation-case>
+	
+	<navigation-case>
+		<from-outcome>leasing_sw</from-outcome>
+		<to-view-id>/account/facelet/sw/leasing.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>leasing_sw_search</from-outcome>
+		<to-view-id>/account/facelet/sw/leasingSearch.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+</faces-config>

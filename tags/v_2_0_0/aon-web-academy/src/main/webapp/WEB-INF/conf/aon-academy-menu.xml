@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root id="root" key="AON_APP" descriptionKey="aon_application_menu_title" ref="firstContent">
+
+	<option key="aon_customer" descriptionKey="aon_customer_desc" ref="customer">
+		<actionListener action="#{customer.onEditSearch}"/>
+	</option>
+
+	<option key="aon_course" descriptionKey="aon_course_desc" ref="course">
+		<actionListener action="#{course.onEditSearch}"/>
+	</option>
+
+	<menu ref="content" key="aon_academic_management" descriptionKey="aon_academic_management_desc">
+		<option key="aon_employee" descriptionKey="aon_employee_desc" ref="employee">
+			<actionListener action="#{employee.onEditSearch}" />
+		</option>
+		<option key="aon_mark_search" descriptionKey="aon_mark_search_desc" ref="mark">
+			<actionListener action="#{mark.onNewSearch}" />
+		</option>
+		<option key="aon_loan" descriptionKey="aon_loan_desc" ref="loan">
+			<actionListener action="#{loan.onEditSearch}"/>
+		</option>
+	</menu>
+
+	<menu id="aon_administrative_management" ref="content" key="aon_administrative_management" descriptionKey="aon_administrative_management_desc">
+		<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement">
+			<actionListener action="#{feeInvoicing.onEditSearch}"/>
+		</option>
+		<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint">
+			<actionListener action="#{invoicePrint.onEditSearch}"/>
+		</option>
+		<menu ref="content" key="aon_fee_management" descriptionKey="aon_fee_management_desc">
+			<option key="aon_invoicing" descriptionKey="aon_invoicing_desc" ref="feeInvoicing">
+				<actionListener action="#{feeInvoicing.onInitialize}"/>
+			</option>
+			<option key="aon_pre_invoicing" descriptionKey="aon_pre_invoicing" ref="feePreInvoicing">
+				<actionListener action="#{preInvoicing.onInitialize}"/>
+			</option>
+		</menu>
+		<menu ref="content" key="finance" descriptionKey="finance_desc">
+			<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance">
+				<actionListener action="#{finance.onEditSearch}"/>
+			</option>
+			<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return">
+				<actionListener action="#{financeReturn.onEditSearch}"/>
+			</option>
+			<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment">
+				<actionListener action="#{financePayment.onEditSearch}"/>
+			</option>
+			<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch"/>
+			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup"/>
+		</menu>
+	</menu>
+	
+	<menu ref="content" key="aon_auxiliar" descriptionKey="aon_auxiliar_desc">
+		<menu ref="content" key="aon_customer" descriptionKey="aon_customer_desc">
+			<option key="aon_relationship" descriptionKey="aon_relationship_desc" ref="relationship"/>
+			<option key="aon_customer_segment" descriptionKey="aon_customer_segment_desc" ref="customerSegment"/>
+		</menu>
+		<menu ref="content" key="aon_academic" descriptionKey="aon_academic_desc">
+			<option key="aon_course_subject" descriptionKey="aon_course_subject_desc" ref="course_subject"/>
+			<option key="aon_course_level" descriptionKey="aon_course_level_desc" ref="course_level"/>
+			<option key="aon_academic_skill" descriptionKey="aon_academic_skill_desc" ref="academic_skill"/>
+			<option key="aon_qualification" descriptionKey="aon_qualification_desc" ref="qualification"/>
+			<option key="aon_observation" descriptionKey="aon_observation_desc" ref="observation"/>
+			<option key="aon_quality_skill" descriptionKey="aon_quality_skill_desc" ref="quality_skill"/>
+		</menu>
+		<menu ref="content" key="aon_administrative" descriptionKey="aon_administrative_desc">
+			<option key="aon_item" descriptionKey="aon_item_desc" ref="item">
+				<actionListener action="#{item.onReset}"/>
+			</option>
+			<option key="aon_product_category" descriptionKey="aon_product_category_desc" ref="productCategory"/>		
+			<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank"/>
+			<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method"/>
+			<option ref="tax" key="aon_product_tax" descriptionKey="aon_product_tax_desc" />
+			<option ref="series" key="aon_series" descriptionKey="aon_series_desc"/>
+		</menu>
+	</menu>
+
+	<menu ref="content" key="aon_configuration" descriptionKey="aon_configuration_desc">
+		<option key="aon_company" descriptionKey="aon_company_desc" ref="company">
+			<actionListener action="#{company.onLoad}" />
+		</option> 
+		<option key="aon_workplace" descriptionKey="aon_workplace_desc" ref="workplace">
+			<actionListener action="#{workplace.onSearch}" />
+		</option>
+		<option key="aon_academic_year" descriptionKey="aon_academic_year_desc" ref="academic_year"/>
+	</menu>
+</root>

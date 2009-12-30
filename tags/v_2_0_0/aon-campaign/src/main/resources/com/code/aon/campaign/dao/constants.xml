@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.campaign.ActivityProcess" sqlName="activity_process">
+		<alias names="id,campaign_id,activity_id,processDetail_id,task_id,dossier_id,processDetail_position,task_endDate,task_dueDate" />
+		<hibernate names="id,campaign.id,activity.id,processDetail.id,task.id,activity.dossier.id,processDetail.position,task.endDate,task.dueDate" />
+	</bean>
+
+	<bean class="com.code.aon.campaign.CampaignDossier" sqlName="campaign_dossier">
+		<alias names="id,campaign_id,dossier_id,dossier_number,customer_document,customer_name,customer_surname" />
+		<hibernate names="id,campaign.id,dossier.id,dossier.number,dossier.customer.registry.document,dossier.customer.registry.name,dossier.customer.registry.surname" />
+	</bean>
+</dao>

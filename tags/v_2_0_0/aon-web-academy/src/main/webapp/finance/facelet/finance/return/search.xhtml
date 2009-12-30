@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+	
+	<ui:define name="content">
+	
+		<h:form id="financeReturnForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							actionListener="#{financeReturn.onSearch}"
+							accesskey="#{bundle.aon_key_search}" />
+						<h:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{bundle.aon_editing}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of flow layout -->
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<h:outputLabel for="Finance_payment"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_payment} / #{financeBundle.aon_charge}" />
+							<t:selectOneRadio id="Finance_payment" value="#{financeReturn.payment}" onclick="submit();" valueChangeListener="#{financeReturn.onPaymentChange}">
+								<f:selectItem itemLabel="#{financeBundle.aon_payment}" itemValue="#{true}" />
+								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
+							</t:selectOneRadio>
+							
+							<t:outputLabel for="Customer_Lookup_id"
+								rendered="#{!financeReturn.payment}"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.aon_alumn}" />
+							<t:div rendered="#{!financeReturn.payment}">
+								<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
+									styleClass="aon-form-input-text"
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+									value="#{financeReturn.registryId}"/>
+								<h:commandButton id="find_Customer_Lookup_id"
+									styleClass="aon-form-lookup-button" value="" immediate="true"
+									onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />
+								<t:inputText id="Customer_full_name" forceId="#{true}"
+									styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
+									value="#{financeReturn.registryName}" size="40" />
+							</t:div>
+							
+							<t:outputLabel for="Supplier_Lookup_id"
+								rendered="#{financeReturn.payment}"
+								value="#{financeBundle.aon_supplier}"
+								styleClass="aon-form-lookup-label" />
+							<t:div rendered="#{financeReturn.payment}">
+								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
+									styleClass="aon-form-input-text"
+									onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup');"
+									value="#{financeReturn.registryId}"/>
+								<h:commandButton id="find_Supplier_Lookup_id"
+									styleClass="aon-form-lookup-button" value="" immediate="true"
+									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}');return false;" />	
+								<t:inputText id="Supplier_full_name" forceId="#{true}"
+									styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
+									value="#{financeReturn.registryName}" size="40" />
+							</t:div>
+
+							<h:outputLabel for="Finance_invoice_series"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_series_number}" />
+							<h:panelGrid columns="2">
+								<t:selectOneMenu id="Finance_invoice_series"
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{financeReturn.series}">
+									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									<f:selectItems value="#{configCollections.series}" />
+								</t:selectOneMenu>
+								<t:inputText id="Finance_invoice_number"
+									value="#{financeReturn.number}"
+									styleClass="aon-form-input-text" forceId="#{true}"
+									size="7" />
+							</h:panelGrid>
+
+							<h:outputLabel styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_invoice_date}" />
+							<h:panelGrid columns="4">
+								<h:outputLabel for="Finance_dueDate-From"
+									styleClass="aon-form-input-text-label"
+									value="#{financeBundle.finance_date_from}" />
+								<t:inputCalendar size="8" id="Finance_dueDate-From"
+									value="#{financeReturn.fromDate}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									popupButtonStyleClass="aon-form-calendar-button"
+									styleClass="aon-form-input-text"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+								
+								<h:outputLabel for="Finance_dueDate-To"
+									styleClass="aon-form-input-text-label"
+									value="#{financeBundle.finance_date_to}" />
+								<t:inputCalendar size="8" id="Finance_dueDate-To"
+									value="#{financeReturn.toDate}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									popupButtonStyleClass="aon-form-calendar-button"
+									styleClass="aon-form-input-text"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />	
+							</h:panelGrid>
+						
+					</h:panelGrid>
+					<!-- end of flow layout -->
+					<!-- end of bag panel -->
+					
+					<t:div styleClass="aon-form-group" rendered="#{financeReturn.model.rowCount > 0}">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="financeDataList"
+								value="#{financeBundle.finance_paids}" />
+						</t:div>
+
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="financeDataList" cellpadding="0" cellspacing="0"
+								var="to" value="#{financeReturn.model}" rows="20"
+								rendered="#{financeReturn.model.rowCount > 0}"
+								styleClass="aon-table" headerClass="aon-table-header"
+								rowClasses="aon-table-row-odd,aon-table-row-even"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+								columnClasses="aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-number">
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_series_number}" />
+									</f:facet>
+									<h:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
+									<t:commandLink immediate="#{true}"
+										styleClass="aon-table-row-selected" action="finance_return_return"
+										actionListener="#{financeReturn.onSelect}" />
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_finance_batch_name}" />
+									</f:facet>
+									<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_date}" />
+									</f:facet>
+									<h:outputText value="#{to.dueDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</h:outputText>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.aon_pay_method}" />
+									</f:facet>
+									<h:outputText value="#{to.payMethod.name}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</h:outputText>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{financeBundle.finance_amount}" />
+									</f:facet>
+									<h:outputText value="#{to.totalAmount}" >
+										<f:convertNumber pattern="#,##0.00" />
+									</h:outputText>
+								</h:column>
+
+							</t:dataTable>
+						</t:div>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="financeDataList" />
+							<ui:param name="model" value="#{financeReturn.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>
+						
+						
+					</t:div>
+				</t:div>
+			</t:div>
+
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

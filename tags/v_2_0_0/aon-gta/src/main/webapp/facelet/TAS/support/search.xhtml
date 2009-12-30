@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>		
+	<ui:define name="content">
+
+		<h:form id="SupportOrderForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="search" value="#{bundle.aon_search}"
+						actionListener="#{SupportOrder.onSearch}" action="SupportOrder_list"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{SupportOrder.onCancel}" action="SupportOrder_list"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						actionListener="#{SupportOrder.onReset}" action="SupportOrder_form"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="SupportOrder_series" 
+							value="#{tasBundle.aon_series_number}" />
+						<t:div>
+							<t:inputText id="SupportOrder_series" size="5"
+								styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+								valueChangeListener="#{SupportOrder.addExpression}" />
+							<t:inputText id="SupportOrder_number" size="15"
+								styleClass="aon-form-input-text"
+								valueChangeListener="#{SupportOrder.addExpression}" />
+						</t:div>
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="SupportOrder_startDate" value="#{tasBundle.supportOrder_currentDate}" />
+						<t:div>
+							<t:inputText styleClass="aon-form-input-text"
+								id="SupportOrder_startDate1" 
+								forceId="#{true}"
+								valueChangeListener="#{SupportOrder.addStartGreaterThanExpression}"
+								size="20" maxlength="20">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-lookup-button"
+								id="SupportOrder_startDate1_button" forceId="#{true}" value=""
+								immediate="true" />
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "SupportOrder_startDate1", button : "SupportOrder_startDate1_button",
+								ifFormat    : "%d/%m/%Y" } );
+							</script>
+							<t:inputText styleClass="aon-form-input-text"
+								id="SupportOrder_startDate2" 
+								forceId="#{true}"
+								valueChangeListener="#{SupportOrder.addStartLessThanExpression}"
+								size="20" maxlength="20">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-lookup-button"
+								id="SupportOrder_startDate2_button" forceId="#{true}" value=""
+								immediate="true" />
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "SupportOrder_startDate2", button : "SupportOrder_startDate2_button",
+								ifFormat    : "%d/%m/%Y" } );
+							</script>
+						</t:div>
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="SupportOrder_finalDate" value="#{tasBundle.supportOrder_finalDate}" />
+						<t:div>
+							<t:inputText styleClass="aon-form-input-text"
+								id="SupportOrder_finalDate1" 
+								forceId="#{true}"
+								valueChangeListener="#{SupportOrder.addEndGreaterThanExpression}"
+								size="20" maxlength="20">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-lookup-button"
+								id="SupportOrder_finalDate1_button" forceId="#{true}" value=""
+								immediate="true" />
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "SupportOrder_finalDate1", button : "SupportOrder_finalDate1_button",
+								ifFormat    : "%d/%m/%Y" } );
+							</script>
+							<t:inputText styleClass="aon-form-input-text"
+								id="SupportOrder_finalDate2" 
+								forceId="#{true}"
+								valueChangeListener="#{SupportOrder.addEndLessThanExpression}"
+								size="20" maxlength="20">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-lookup-button"
+								id="SupportOrder_finalDate2_button" forceId="#{true}" value=""
+								immediate="true" />
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "SupportOrder_finalDate2", button : "SupportOrder_finalDate2_button",
+								ifFormat    : "%d/%m/%Y" } );
+							</script>
+						</t:div>
+							
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="SupportOrder_description" value="#{tasBundle.supportOrder_description}" />
+						<t:inputText id="SupportOrder_description" size="50"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{SupportOrder.addExpression}" />
+							
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="SupportOrder_target_registry_document" 
+							value="#{tasBundle.supportOrder_registry_document}" />
+						<t:inputText id="SupportOrder_target_registry_document" size="15"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+							valueChangeListener="#{SupportOrder.addTargetExpression}" />
+							
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="SupportOrder_tasItem_publicCode" 
+							value="#{tasBundle.tasItem_publicCode}" />
+						<t:inputText id="SupportOrder_tasItem_publicCode" size="25"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+							valueChangeListener="#{SupportOrder.addExpression}" />
+							
+						<h:outputLabel for="SupportOrder_status"
+							value="#{tasBundle.supportOrder_status}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
+						<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
+							id="SupportOrder_status" 
+							valueChangeListener="#{SupportOrder.addEqualExpression}"
+							converter="aonSupportOrderStatusConverter">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+							<f:selectItems value="#{TASCollections.supportOrderStatuses}" />
+						</h:selectOneMenu>
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

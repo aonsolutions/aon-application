@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+	
+	<ui:define name="content">
+		<h:form id="dailyTrackingForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+				 <t:commandLink id="CustomerDailyTracking" value="#{projectBundle.daily_tracking_by_customer}" target="_new"
+					onclick="reportWindow('placeList', '${facesContext.externalContext.requestContextPath}/facelet/dailyTracking/by_customer.faces');return false;"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"/>	
+				<t:commandLink id="UserDailyTracking" value="#{projectBundle.daily_tracking_by_user}" target="_new"
+					onclick="reportWindow('placeList', '${facesContext.externalContext.requestContextPath}/facelet/dailyTracking/by_user.faces'); return false;"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"/>	
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal" >
+					<h:outputText value="#{projectBundle.aon_daily_tracking_report_search}" />
+				</t:div>
+			</t:div>
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="DailyTracking_workgroup_id"
+							styleClass="aon-form-input-text-label"
+							value="#{projectBundle.aon_daily_tracking_workgroup}" />
+						<h:selectOneMenu id="DailyTracking_workgroup_id"
+							styleClass="aon-form-selectOneMenu-field"
+							valueChangeListener="#{dailyTracking.workgroupChanged}"
+							onchange="submit();" value="#{dailyTracking.workgroupId}">
+							<f:selectItem  itemValue="" itemLabel="-" itemDisabled="true" />
+							<f:selectItems value="#{configCollections.workgroups}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="DailyTracking_user_id"
+							styleClass="aon-form-input-text-label"
+							value="#{projectBundle.aon_daily_tracking_user}" />
+						<h:selectOneMenu id="DailyTracking_user_id"
+							styleClass="aon-form-selectOneMenu-field"
+							onchange="submit();" value="#{dailyTracking.userId}">
+							<f:selectItem  itemValue="" itemLabel="-" itemDisabled="true" />
+							<f:selectItems value="#{dailyTracking.users}" />
+						</h:selectOneMenu>
+			 
+			 			<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
+							styleClass="aon-form-input-text-label" />
+						<t:div>
+							<t:inputText id="Customer_Lookup_id" forceId="#{true}"
+								styleClass="aon-form-input-text" size="5" 
+								onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+								value="#{dailyTracking.customerId}"
+								valueChangeListener="#{dailyTracking.reloadDossiers}"/>
+							<h:commandButton id="find_Customer_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+							<t:inputText id="Customer_full_name"
+								value="#{dailyTracking.customerName}"
+								disabledOnClientSide="true" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled" size="40" />
+						</t:div>
+						
+						<h:outputLabel for="DailyTracking_customer_status"
+							styleClass="aon-form-input-text-label"
+							value="#{projectBundle.aon_daily_tracking_user}" />
+						<h:selectOneMenu id="DailyTracking_customer_status"
+							styleClass="aon-form-selectOneMenu-field"
+							onchange="submit();" value="#{dailyTracking.customerStatus}">
+							<f:selectItems value="#{customerCollections.customerStatuses}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="DailyTracking_dossier_id" value="#{projectBundle.aon_daily_tracking_dossier}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="DailyTracking_dossier_id" forceId="#{true}"
+							styleClass="aon-form-selectOneMenu-field"
+							valueChangeListener="#{dailyTracking.dossierChange}"
+							onchange="submit();" value="#{dailyTracking.dossierId}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{dailyTracking.dossiers}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="DailyTracking_activity_id" value="#{projectBundle.aon_daily_tracking_activity}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="DailyTracking_activity_id" forceId="#{true}"
+							styleClass="aon-form-selectOneMenu-field"
+							onchange="submit();" value="#{dailyTracking.activityId}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{dailyTracking.activities}" />
+						</h:selectOneMenu>
+			 
+						<h:outputLabel value="#{projectBundle.aon_date}"
+							styleClass="aon-form-input-text-label" />
+						<h:panelGrid columns="4">
+							<h:outputLabel for="DailyTracking_trackingDate-From" value="#{projectBundle.aon_date_from}"
+								styleClass="aon-form-input-text-label" />
+							<t:inputCalendar id="DailyTracking_trackingDate-From" size="10"
+								onchange="submit();" value="#{dailyTracking.fromDate}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+
+							<h:outputLabel for="DailyTracking_trackingDate-To" value="#{projectBundle.aon_date_to}"
+								styleClass="aon-form-input-text-label" />
+							<t:inputCalendar id="DailyTracking_trackingDate-To" size="10"
+								onchange="submit();" value="#{dailyTracking.toDate}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+						</h:panelGrid>
+
+						<h:outputLabel for="DailyTracking_jobType_id" value="#{projectBundle.aon_daily_tracking_job_type}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="DailyTracking_jobType_id" forceId="#{true}"
+							onchange="submit();" value="#{dailyTracking.jobTypeId}"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="IntegerEmptyConverter">
+							<f:selectItem itemLabel="-" itemValue="" />
+							<f:selectItems value="#{projectCollections.jobTypes}" />
+						</h:selectOneMenu>
+						
+					<h:outputLabel for="outputFormat"
+						value="#{bundle.aon_output_format}"
+						styleClass="aon-form-input-text-label" />
+					<h:selectOneMenu id="outputFormat" value="#{dailyTracking.outputFormat}"
+						onchange="submit();" required="#{true}"
+						styleClass="aon-form-selectOneMenu-field">
+						<f:selectItems value="#{report.outputFormats}" />
+					</h:selectOneMenu>
+					
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+		</h:form>
+		<script>
+			function reportWindow(form, action){
+				hform=document.forms[form];
+				hform.action = action;
+				window.open(hform.action, hform.target);
+			}
+		</script>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

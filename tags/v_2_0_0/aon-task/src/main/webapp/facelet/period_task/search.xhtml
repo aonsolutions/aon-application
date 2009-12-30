@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="periodTaskForm">
+		
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+					
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{menuBundle.aon_master}" />
+					<aon:outputText value="#{menuBundle.aon_period_task}" />					
+				</aon:div>		
+				
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="search"
+							value="#{bundle.aon_search}"
+							action="period_task_list" actionListener="#{periodTask.onSearch}"
+							styleClass="aon-content-toolbar-item aon-icon-accept"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_search}"/>
+						<aon:commandButton id="reset"
+							value="#{bundle.aon_reset}"
+							action="period_task_form" actionListener="#{periodTask.onReset}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}"/>
+						<aon:commandButton id="cancel"
+							value="#{bundle.aon_cancel}"
+							action="period_task_list" actionListener="#{periodTask.onCancel}"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_cancel}"/>
+
+					</aon:div>
+				</aon:div>
+			</aon:panelGrid>
+			<!-- end toolbar navigation -->
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">		
+					<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle">
+						<aon:div styleClass="aon-content-subtitle-internal">
+							<aon:outputText value="#{bundle.aon_search}" />
+						</aon:div>
+					</aon:div>
+			
+					<aon:panelGrid columns="2" styleClass="aon-formTable"
+					cellpadding="0" cellspacing="0"
+						columnClasses="aon-formTable-column-odd,aon-formTable-column-even">
+
+						<aon:outputLabel for="PeriodicalTask_task_description"
+							value="#{projectBundle.aon_description}" />
+						<aon:inputText id="PeriodicalTask_task_description" size="60"
+							styleClass="aon-inputText"
+							valueChangeListener="#{periodTask.addDirectExpression}" />
+							
+						<aon:outputLabel value="#{projectBundle.period_task_next_date}" />
+						<aon:panelGrid columns="4" styleClass="aon-nowrap">
+							<aon:outputLabel for="PeriodicalTask_nextDate-From"
+								value="#{projectBundle.aon_date_from}" />	
+							<aon:selectInputDate id="PeriodicalTask_nextDate-From" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{periodTask.addNextDateFromExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+							
+							<aon:outputLabel for="PeriodicalTask_nextDate-To"
+								value="#{projectBundle.aon_date_to}" />	
+							<aon:selectInputDate id="PeriodicalTask_nextDate-To" styleClass="aon-calendar-"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 valueChangeListener="#{periodTask.addNextDateToExpression}" 
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 renderAsPopup="true">
+							</aon:selectInputDate>
+						</aon:panelGrid>
+							
+					</aon:panelGrid>
+
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
