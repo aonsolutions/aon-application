@@ -9,6 +9,7 @@
 		<ui:define name="toolbarContent">
 			<c:if test="#{!skipSaveButton}">		
 				<aon:commandButton id="#{toolbarID}-save"
+					title="#{bundle.aon_key_save_accelerator}"
 					value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
 					action="#{saveAction}"
 					actionListener="#{saveActionListener}"
@@ -18,6 +19,7 @@
 			</c:if>
 			<c:if test="#{!skipCancelButton}">			
 				<aon:confirmButton id="#{toolbarID}-cancel"
+					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_cancel}" reRender="#{cancelButtonReRender}"
 					rendered="#{formNew}" immediate="true" 
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -29,6 +31,7 @@
 			</c:if>								
 			<c:if test="#{!skipRemoveButton}">				
 				<aon:confirmButton id="#{toolbarID}-remove"
+					title="#{bundle.aon_key_remove_accelerator}"
 					value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -42,6 +45,7 @@
 			</c:if>
 			<c:if test="#{!skipSearchButton}">			
 				<aon:commandButton id="#{toolbarID}-search" 
+					title="#{bundle.aon_key_search_accelerator}"
 					value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					action="#{searchAction}" actionListener="#{searchActionListener}"
@@ -50,6 +54,7 @@
 			</c:if>
 			<c:if test="#{!skipResetButton}">								
 				<aon:commandButton id="#{toolbarID}-reset"
+					title="#{bundle.aon_key_new_accelerator}"
 					value="#{bundle.aon_reset}" reRender="#{resetButtonReRender}"
 					rendered="#{!formNew}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
@@ -58,6 +63,7 @@
 			</c:if>															
 			<c:if test="#{!skipBackButton}">								
 				<aon:commandButton id="#{toolbarID}-back"
+					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_back}" reRender="#{backButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
