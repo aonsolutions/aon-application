@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="identityForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_corporate_identity}" />
+				<ui:param name="toolbarDescription" value="#{corporateIdentity.identityReport.company.fullName}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+						action="home"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="4" styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-portlets-column1,aon-portlets-column1,aon-portlets-column1">
+	
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{appBundle.aon_corporate_identity_fax}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporate_identity_fax"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-fax.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+		
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{appBundle.aon_corporate_identity_letter}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporate_identity_letter"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-carta.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+					
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{appBundle.aon_corporate_identity_label}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporate_identity_label"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-etiquetas.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+		
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{appBundle.aon_corporate_identity_recibi}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporate_identity_recibi"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-recibi.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+		
+				</aon:panelGrid>
+			
+				<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel value="#{appBundle.aon_corporate_identity_other_documents}" />
+						</aon:div>
+					</aon:div>
+					
+					<rich:panel styleClass="aon-content-home">
+						<aon:editDataTable id="corporateIdentityAttach_datatable" value="#{corporateIdentityAttach.model}"
+							var="to" rows="10" 
+							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn aon-width-auto, 
+								aon-editDataTable-buttonsColumn">
+					
+							<aon:rowSelector toggleOnClick="false"/>
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="&#160;"/>
+								</f:facet>
+								<a4j:support actionListener="#{corporateIdentityAttach.onSelect}" event="onclick" reRender="identityForm" renderedOnUserRole="Manager" />
+								<aon:outputText value="&#160;"/>
+								<f:facet name="footer">
+									<aon:div rendered="#{desktop.roleManager}">
+										<aon:commandButton id="reset"
+											styleClass="aon-icon-reset aon-icon-commandButton"
+											value="" rendered="#{!corporateIdentityAttach.new}" actionListener="#{corporateIdentityAttach.onReset}"
+											accesskey="#{bundle.aon_key_new_line}">
+										</aon:commandButton>
+									</aon:div>
+								</f:facet>
+							</aon:column>
+					
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:div rendered="#{to!=corporateIdentityAttach.to and desktop.roleManager}">
+									<a4j:support actionListener="#{corporateIdentityAttach.onSelect}" event="onclick" reRender="identityForm"/>
+									<aon:outputText value="#{to.description}" />
+								</aon:div>
+								<aon:div rendered="#{to!=corporateIdentityAttach.to and !desktop.roleManager}">
+									<aon:outputText value="#{to.description}" />
+								</aon:div>
+								<aon:div rendered="#{to==corporateIdentityAttach.to}" >
+									<aon:inputText value="#{corporateIdentityAttach.to.description}"
+										size="40" />
+								</aon:div>
+								<f:facet name="footer">
+									<aon:div renderedOnUserRole="Manager">
+										<aon:div rendered="#{corporateIdentityAttach.new}">
+											<aon:fileUpload id="attach_file" required="#{true}"
+												addControlLabel="#{bundle.aon_fileUpload_add}"
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												clearControlLabel="Limpiar"
+												clearAllControlLabel="Limpiar"
+												doneLabel="Hecho"
+												fileUploadListener="#{corporateIdentityAttach.fileUploaded}"
+												immediateUpload="true" listHeight="65">
+												<f:facet name="label">
+													<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+												</f:facet>
+												<!-- a4j:support event="onuploadcomplete" reRender="attach_file" /-->
+											</aon:fileUpload>
+										</aon:div>
+									</aon:div>
+								</f:facet>
+							</aon:column>
+					
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="&#160;"/>
+								</f:facet>
+								<aon:div rendered="#{to==corporateIdentityAttach.to}" >
+									<aon:commandButton title="#{bundle.aon_save}"
+										actionListener="#{corporateIdentityAttach.onAccept}"
+										value="" styleClass="aon-editDataTable-button aon-icon-accept"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:commandButton title="#{bundle.aon_cancel}"
+										actionListener="#{corporateIdentityAttach.onCancel}" immediate="#{true}"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										value="" accesskey="#{bundle.aon_key_cancel_line}" />
+									<aon:commandButton title="#{bundle.aon_remove}"
+										actionListener="#{corporateIdentityAttach.onRemove}"
+										styleClass="aon-editDataTable-button aon-icon-delete"
+										value="" accesskey="#{bundle.aon_key_remove_line}" />
+								</aon:div>
+								<aon:div rendered="#{to!=corporateIdentityAttach.to}" styleClass="aon-text-center">
+									<aon:commandLink onclick="window.open('#{to.id}.cidocument','','width=20px,height=50px,resizable=false');">
+										<aon:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon/aon-icon-file-download.png']}" style="border:0px;margin:2px;" alt="Download"/>
+									</aon:commandLink>
+								</aon:div>
+								<f:facet name="footer">		
+									<aon:div rendered="#{desktop.roleManager}">
+										<aon:outputText rendered="#{!corporateIdentityAttach.new}" value="&#160;"/>
+										<aon:commandButton title="#{bundle.aon_save}"
+											actionListener="#{corporateIdentityAttach.onAccept}"
+											rendered="#{corporateIdentityAttach.new}" value=""
+											styleClass="aon-editDataTable-button aon-icon-accept"
+											accesskey="#{bundle.aon_key_save_line}" />
+										<aon:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{corporateIdentityAttach.onCancel}" immediate="#{true}"
+											rendered="#{corporateIdentityAttach.new}"
+											styleClass="aon-editDataTable-button aon-icon-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}" />
+									</aon:div>
+								</f:facet>
+							</aon:column>
+						</aon:editDataTable>
+						
+						<aon:dataScroller2 for="corporateIdentityAttach_datatable" showNote="false"  />
+					</rich:panel>
+				</aon:div>
+				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="autConceptList">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_leasing_entry_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{leasingEntry.accept}"
+						action="accountEntry_form"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}"
+						actionListener="#{leasingEntry.onReset}"
+						rendered="#{!leasingEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
+						actionListener="#{leasingEntry.onRemove}"
+						rendered="#{!leasingEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+					<aon:outputLabel for="Account_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="Account_date" required="true"
+						value="#{leasingEntry.leasing.leasingDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Account_supplierName"
+						value="#{bundle.aon_company_name}" />
+					<aon:inputText id="Account_supplierName"
+						value="#{leasingEntry.leasing.supplierName}" size="40"
+						maxlength="32" />
+
+					<aon:outputLabel for="Account_supplierDocument"
+						value="#{bundle.aon_company_document}" />
+					<aon:inputText id="Account_supplierDocument"
+						value="#{leasingEntry.leasing.supplierDocument}" size="16"
+						maxlength="16" />
+
+					<aon:outputLabel for="Account_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Account_description"
+						value="#{leasingEntry.leasing.description}" size="40"
+						maxlength="32" />
+
+					<aon:outputLabel for="Account_term"
+						value="#{accountingBundle.accounting_term}" />
+					<aon:inputText id="Account_term"
+						value="#{leasingEntry.leasing.term}" size="16" maxlength="16" />
+
+					<aon:outputLabel for="Account_interest_percent"
+						value="#{accountingBundle.accounting_interest}" />
+					<aon:inputText id="Account_interest_percent"
+						value="#{leasingEntry.leasing.interestPercent}" size="10"
+						maxlength="16" />
+
+					<aon:outputLabel for="Account_review"
+						value="#{accountingBundle.accounting_review}" />
+					<aon:inputText id="Account_review"
+						value="#{leasingEntry.leasing.review}" size="16" maxlength="16" />
+
+					<aon:outputLabel for="RegistryBank_id"
+						value="#{configBundle.config_bank}" />
+					<aon:selectOneMenu id="RegistryBank_id"
+						value="#{leasingEntry.leasing.registryBank.id}"
+						reRender="RegistryBank_bankAccount"
+						valueChangeListener="#{leasingEntry.onRBankChange}">
+						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+						<f:selectItems value="#{financeCollections.companyBanks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="RegistryBank_bankAccount"
+						value="#{configBundle.config_bank_account}" />
+					<aon:inputText id="RegistryBank_bankAccount" disabled="true"
+						value="#{leasingEntry.leasing.registryBank.bankAccount}"
+						size="35" />
+
+					<aon:outputLabel for="Account_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Account_amount"
+						value="#{leasingEntry.leasing.amount}" size="16">
+						<f:validateDoubleRange />
+					</aon:inputText>
+
+					<aon:outputLabel for="Fixed_asset_account"
+						value="#{accountingBundle.accounting_fixed_asset_account}" />
+					<aon:selectOneMenu id="Fixed_asset_account" required="true"
+						value="#{leasingEntry.leasing.fixedAssetAccount.id}">
+						<f:selectItems value="#{accountCollections.fixedAssestsAccounts}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Leasing_vat"
+						value="#{bundle.aon_vat}" />
+					<aon:selectOneMenu id="Leasing_vat"
+						value="#{leasingEntry.leasing.vat.id}">
+						<f:selectItems value="#{configCollections.vatTaxes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Leasing_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="Leasing_securityLevel"
+						value="#{leasingEntry.leasing.securityLevel}">
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
