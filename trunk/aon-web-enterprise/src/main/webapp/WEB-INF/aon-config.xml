@@ -73,6 +73,9 @@
 			showAttachment="false"
 			showEcommerceData="false"
 		/>
+		<product:productCategory
+			showCategoryGroup="true"
+		/>
 	</product:config>
 
 	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
