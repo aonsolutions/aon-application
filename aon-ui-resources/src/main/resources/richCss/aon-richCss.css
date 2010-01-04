@@ -1606,6 +1606,7 @@ color:#000;
 	width:18px;
 	height:18px;
 	margin:0 2px 0 2px;
+	vertical-align: top;
 	}
 .aon-lookupButton-disabled{
 	background:#fff url(images/aon-icon/aon-icon-lookup-disabled.png) center center no-repeat;
@@ -1613,6 +1614,7 @@ color:#000;
 	width:18px;
 	height:18px;
 	margin:0 2px 0 2px;
+	vertical-align: top;
 	}
 .aon-lookupButton-new{
 	background:#fff url(images/aon-icon/aon-icon-lookup-new.png) center center no-repeat;
@@ -1620,6 +1622,7 @@ color:#000;
 	width:18px;
 	height:18px;
 	margin:0 2px 0 2px;
+	vertical-align: top;
 	}
 .aon-lookupButton-new-disabled{
 	background:#fff url(images/aon-icon/aon-icon-lookup-new-disabled.png) center center no-repeat;
@@ -1627,6 +1630,7 @@ color:#000;
 	width:18px;
 	height:18px;
 	margin:0 2px 0 2px;
+	vertical-align: top;
 	}
 
 /**********************************************/
