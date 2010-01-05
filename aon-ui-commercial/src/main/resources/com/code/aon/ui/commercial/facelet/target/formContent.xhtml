@@ -7,9 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
-		<ui:param name="controller" value="#{controller}" />
-	</ui:include>
+		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
 
 	<aon:outputLabel for="Target_advertising" value="#{commercialBundle.commercial_target_advertising}" />
 	<aon:selectOneMenu id="Target_advertising" value="#{controller.to.advertising}"
@@ -41,4 +39,5 @@
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneRadio>
 	</c:if>
+	
 </ui:composition>
