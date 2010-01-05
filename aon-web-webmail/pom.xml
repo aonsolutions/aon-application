@@ -10,7 +10,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon-web-webmail</artifactId>
+	<artifactId>aon.web.webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
 	<version>4.16.2</version>
