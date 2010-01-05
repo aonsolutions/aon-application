@@ -54,6 +54,9 @@
 
 			</aon:div>
 		</aon:form>
+		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		</c:if>		
 	</ui:define>
 </ui:composition>
 
