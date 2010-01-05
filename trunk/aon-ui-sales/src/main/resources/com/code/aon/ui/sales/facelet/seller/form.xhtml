@@ -21,16 +21,20 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-			
-				<aon:panelGrid id="menuGrid" columns="2" dir="true">
-
-					<ui:include src="/com/code/aon/ui/sales/facelet/seller/formContent.xhtml">
+				<c:if test="#{seller.new}">
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/formNewContent.xhtml">
 						<ui:param name="controller" value="#{seller}" />
-					</ui:include>
-
-				</aon:panelGrid>
-
+					</ui:include>								
+				</c:if>
 				<c:if test="#{!seller.new}">
+					<aon:panelGrid id="menuGrid" columns="2" dir="true">
+	
+						<ui:include src="/com/code/aon/ui/sales/facelet/seller/formContent.xhtml">
+							<ui:param name="controller" value="#{seller}" />
+						</ui:include>
+	
+					</aon:panelGrid>
+
 					<aon:panelTabSet selectedTab="#{seller.selectedTab}">
 
 						<aon:panelTab id="sellerAddress" label="#{registryBundle.registry_address_module}">
