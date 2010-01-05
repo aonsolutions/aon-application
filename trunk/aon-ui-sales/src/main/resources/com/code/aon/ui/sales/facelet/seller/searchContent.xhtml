@@ -2,25 +2,35 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
-		<ui:param name="controller" value="#{seller}" />
-	</ui:include>
+	<aon:outputText value="" />
+	<aon:div style="width:510px;">
+		<aon:panelCollapsible expanded="true" label="#{commercialBundle.commercial_search_general}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<ui:include src="/com/code/aon/ui/commercial/facelet/target/searchBasicContent.xhtml" />
+			</aon:panelGrid>
+		</aon:panelCollapsible>					
+					
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
+					<ui:param name="searchController" value="#{sellerSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
 
-	<aon:outputLabel for="Seller_description"
-		value="#{bundle.aon_description}" />
-	<aon:inputText id="Seller_description" size="60"
-		valueChangeListener="#{controller.addExpression}" />
-		
-	<aon:outputLabel for="Seller_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Seller_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{salesCollections.sellerStatuses}" />
-	</aon:selectOneMenu>		
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
+					<ui:param name="searchController" value="#{sellerSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+	</aon:div>
 
 </ui:composition>
