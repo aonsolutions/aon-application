@@ -553,7 +553,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/target/form.xhtml</value>
+			<value>/com/code/aon/ui/commercial/facelet/target/formNewContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
