@@ -44,11 +44,20 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{sellerSearch}</value>
 				<value>#{sellerAddressListener}</value>
 				<value>#{sellerMediaListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>sellerSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistrySearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>sellerAddressListener</managed-bean-name>
@@ -177,7 +186,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/sales/facelet/lookup/seller/form.xhtml</value>
+			<value>/com/code/aon/ui/sales/facelet/seller/formNewContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
