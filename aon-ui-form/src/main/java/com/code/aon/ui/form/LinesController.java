@@ -176,7 +176,8 @@ public class LinesController extends BasicController {
 			getManagerBean().insertOrUpdate(object);
 		}
 		this.model = null;
-		initializeModel();
+		super.initializeModel();
+		getCheckList().clear();
 	}
 
 	/**
