@@ -440,7 +440,6 @@ public class Registry implements ITransferObject {
 			phones += media.getValue()+", ";
 		}
 		return (phones=="")?"":phones.substring(0, phones.length()-2);
-//		return phones.substring(0, phones.length()-2);
 	}
 
 }
