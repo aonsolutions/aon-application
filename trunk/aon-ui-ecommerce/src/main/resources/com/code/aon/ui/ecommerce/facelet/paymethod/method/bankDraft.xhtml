@@ -8,7 +8,21 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<div>
-		<aon:outputText value="Giro postal" />
-	</div>
+	<aon:form>
+		<div>
+			<aon:outputText value="Giro postal" />
+		</div>
+		<div>
+		<!--  
+			<h:commandButton action="" value="" />
+			<h:commandLink action="" value="" />	
+		-->
+			<aon:commandButton id="aonToolbar-accept" value="#{bundle.aon_accept}"
+				action="cartOffer_form"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				immediate="true" accesskey="#{bundle.aon_key_accept}" >
+				<aon:actionListener method="#{cartOffer.onAccept}" />
+			</aon:commandButton>
+		</div>
+	</aon:form>
 </ui:composition>
