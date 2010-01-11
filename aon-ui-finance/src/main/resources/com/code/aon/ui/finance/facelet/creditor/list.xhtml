@@ -8,19 +8,39 @@
 
 	<ui:define name="content">
 		<aon:form>
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_creditor_module}" />
 				<ui:param name="controller" value="#{creditor}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink id="creditorReport" value="#{bundle.aon_report}"
+						target="_new" rendered="#{!creditor.new}"
+						action="#{report.onExecute}"
+						disabled="#{creditor.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-printer">
+						<f:param name="reportKey" value="creditorReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+					<h:commandLink id="creditorDetailReport" value="#{registryBundle.aon_report_detail}"
+						target="_new" rendered="#{!creditor.new}"
+						action="#{report.onExecute}"
+						disabled="#{creditor.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-printer">
+						<f:param name="reportKey" value="creditorDetailReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+				</ui:define>
+			</ui:decorate>
 
-			<aon:div id="creditorData" styleClass="aon-scroll-area">
-				<aon:dataTable id="creditorDataList"
-					value="#{creditor.model}" rows="20" var="to"
-					rendered="#{creditor.model.rowCount > 0}">
-
-					<aon:rowSelector action="creditor_form" 
-						actionListener="#{creditor.onSelect}" />
-
+		<aon:div styleClass="aon-scroll-area">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+				<ui:param name="controller" value="#{creditor}" />
+				<ui:param name="columnClasses" value="
+					aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+				<ui:define name="columns">
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_id}" />
@@ -48,8 +68,9 @@
 						</f:facet>
 						<aon:outputText value="#{to.status}" />
 					</aon:column>
-				</aon:dataTable>
-				<aon:dataScroller2 for="creditorDataList" showNote="true" />
+				</ui:define>
+			</ui:decorate>
+
 			</aon:div>
 		</aon:form>
 	</ui:define>
