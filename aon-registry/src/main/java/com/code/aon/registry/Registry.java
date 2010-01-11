@@ -427,7 +427,7 @@ public class Registry implements ITransferObject {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	@Transient 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	public String getPhones() throws ManagerBeanException{
 		IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
