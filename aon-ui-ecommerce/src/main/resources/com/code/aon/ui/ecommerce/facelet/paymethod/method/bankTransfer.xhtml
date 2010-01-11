@@ -7,9 +7,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
-
-	<div>
-		<aon:outputText value="Transferencia" />
+	
+	<aon:form>
+		<div>
+			<aon:outputText value="Transferencia" />
 		
 		<aon:panelGrid columns="2" style="width:100%">
 			
@@ -22,6 +23,19 @@
 			-->
 		
 		</aon:panelGrid>
-		
-	</div>
+		</div>
+		<div>
+		<!--  
+			<h:commandButton action="" value="" />
+			<h:commandLink action="" value="" />	
+		-->
+			<aon:commandButton id="aonToolbar-accept" value="#{bundle.aon_accept}"
+				action="cartOffer_form"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				immediate="true" accesskey="#{bundle.aon_key_accept}" >
+				<aon:actionListener method="#{cartOffer.onAccept}" />
+			</aon:commandButton>
+		</div>
+	</aon:form>
+	
 </ui:composition>
