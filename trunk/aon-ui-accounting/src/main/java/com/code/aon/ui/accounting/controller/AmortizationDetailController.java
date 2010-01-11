@@ -1,5 +1,8 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -19,6 +22,16 @@ import com.code.aon.ui.util.AonUtil;
 public class AmortizationDetailController extends LinesController {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
+
+	private List<AmortizationDetail> amortizationList;
+	
+	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
+		return (List<AmortizationDetail>) getCalculatedModel().getWrappedData();
+	}
+
+	public void setAmortizationList(LinkedList<AmortizationDetail> amortizationList) {
+		this.amortizationList = amortizationList;
+	}
 
 	public DataModel getCalculatedModel() throws ManagerBeanException {
 		DataModel model = super.getModel();

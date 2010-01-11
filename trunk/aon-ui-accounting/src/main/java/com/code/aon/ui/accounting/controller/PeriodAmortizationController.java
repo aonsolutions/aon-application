@@ -1,5 +1,8 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -31,8 +34,18 @@ public class PeriodAmortizationController extends BasicController {
 	private double totalAccumulated;
 	private double totalAllocation;
 	private double totalPending;
-	private AccountingUtil accountingUtil;
+	private AccountingUtil accountingUtil;	
+	private List<AmortizationDetail> amortizationList;
+	
+	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
+		setAmortizationList(null);
+		return (List<AmortizationDetail>) getCalculatedModel().getWrappedData();
+	}
 
+	public void setAmortizationList(LinkedList<AmortizationDetail> amortizationList) {
+		this.amortizationList = amortizationList;
+	}
+	
 	public AccountingUtil getAccountingUtil() {
 		if (accountingUtil == null) {
 			accountingUtil = new AccountingUtil();

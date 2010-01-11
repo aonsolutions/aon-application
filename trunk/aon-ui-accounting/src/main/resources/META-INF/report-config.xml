@@ -267,5 +267,42 @@
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
+	
+	<!--  *********  FICHAS DE AMORTIZACION LISTADO ********* -->
+	<report id="amortizationList" description="Amortization List">
+		<template path="/com/code/aon/ui/accounting/report/amortizationList.jasper"/>
+		<bean key="com.code.aon.accounting.Amortization" />
+		<criteria provider="#{amortization}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
+	<!--  *********  FICHAS DE AMORTIZACION FORMULARIO  ********* -->
+	<report id="amortizationForm" description="Amortization Form">
+		<template path="/com/code/aon/ui/accounting/report/amortizationForm.jasper" />
+		<collection provider="#{amortizationDetail.amortizationList}" />  
+		<!-- <bean key="com.code.aon.accounting.AmortizationDetail" />
+		<criteria provider="#{amortizationDetail}"/> -->
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>	  
+		
+	<!--  *********  PERIODOS DE AMORTIZACION LISTADO ********* -->
+	<report id="amortizationPeriod" description="Amortization Period List">
+		<template path="/com/code/aon/ui/accounting/report/amortizationPeriod.jasper"/>
+		<collection provider="#{periodAmortization.amortizationList}" />  
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="period" value="#{periodAmortization.getPeriod}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
 
 </report-config>
