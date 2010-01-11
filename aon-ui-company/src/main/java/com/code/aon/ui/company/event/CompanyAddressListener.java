@@ -1,9 +1,8 @@
 package com.code.aon.ui.company.event;
 
 import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,7 +24,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class CompanyAddressListener extends ControllerAdapter {
 	
 	/** The LOGGER. */
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyAddressListener.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CompanyAddressListener.class.getName());
 	
 	/* (non-Javadoc)
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
@@ -65,7 +64,7 @@ public class CompanyAddressListener extends ControllerAdapter {
 				workPlace.setActive( true );
 				workPlaceBean.insert(workPlace);
 			} catch (ManagerBeanException e) {
-				LOGGER.error("Error adding workPlace for rAddres with id= " + address.getId(), e);
+				LOGGER.log(Level.SEVERE, "Error adding workPlace for rAddres with id= " + address.getId(), e);
 			}
 		}
 	}
@@ -122,7 +121,7 @@ public class CompanyAddressListener extends ControllerAdapter {
 				return (WorkPlace)iter.next();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining workPlace with address= " + registryAddress.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error obtaining workPlace with address= " + registryAddress.getId(), e);
 		}
 		return null;
 	}
