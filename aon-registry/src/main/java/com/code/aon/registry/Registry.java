@@ -416,5 +416,31 @@ public class Registry implements ITransferObject {
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
 	}
+	
+	/**
+	 * Gets the registry media of the type FIXED_PHONE.
+	 * 
+	 * @param type the type
+	 * 
+	 * @return the registry media
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	@Transient 
+	@SuppressWarnings({ "unchecked", "unused" })
+	public String getPhones() throws ManagerBeanException{
+		IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID), getId());
+		criteria.addEqualExpression(rMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.FIXED_PHONE);
+		Iterator iter = rMediaBean.getList(criteria).iterator();
+		String phones = "";
+		while(iter.hasNext()){
+			RegistryMedia media = (RegistryMedia)iter.next();
+			phones += media.getValue()+", ";
+		}
+		return (phones=="")?"":phones.substring(0, phones.length()-2);
+//		return phones.substring(0, phones.length()-2);
+	}
 
 }
