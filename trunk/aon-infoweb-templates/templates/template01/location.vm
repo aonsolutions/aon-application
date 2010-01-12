@@ -1,7 +1,7 @@
 <div class="content">
 	<table cellpadding="20" cellspacing="20" border="0" align="center">
 		<tr>
-			<td width="150px">
+			<td>
 				<div class="title"><strong>Direcciones</strong></div>
 				<p>$!address.getAddress() $!address.getAddress2() $!address.getAddress3()</p>
 				<p>$!address.getZip() $!address.getCity() ($!address.getGeozone().getName())</p>
@@ -59,10 +59,7 @@
 				#end
  			</td>
 		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>	
+		
 	#end
 	</table>
 </div>

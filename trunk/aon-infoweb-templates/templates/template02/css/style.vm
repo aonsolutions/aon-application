@@ -145,7 +145,7 @@ a, img, a:hover, a:visited{
 .infoHelp{
 	font-size:9px; 
 	padding:15px;
-	margin-top:20px;
+	margin-top:65px;
 	background-color:#dddddd;
 	margin-left:255px;
 	text-align:justify;

@@ -94,12 +94,12 @@ a:hover {
 	text-align:right;
 }
 .infoHelp{
-	width:330px; 
-	padding:5px;
-	background-color:#dddddd;
-	margin-left:235px;
-	text-align:justify;
-	font-size:9px;
+	background-color:#DDDDDD;
+font-size:9px;
+margin-left:255px;
+padding:17px;
+text-align:justify;
+width:425px;
 }
 .gallery-navigation{
 	text-align:center;

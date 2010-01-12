@@ -75,7 +75,7 @@ a:hover {
 }
 #nav {
 	line-height:2.5em;
-	padding:14px 0px 4px 0px;
+	padding:30px 0px 4px 0px;
 	margin:0 0 5px 0;
 	width:765px;
 	clear:both;

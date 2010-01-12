@@ -1,7 +1,7 @@
 <div id="content">
 	<table cellpadding="10" cellspacing="5" border="0">
 		<tr>
-			<td valign=top width="180">
+			<td valign=top width="220">
 			<p align="justify"><strong>$!company.getName()</strong></p>
 			<br>$!address.getAddress() $!address.getAddress2() $!add.getAddress3()</br> 
 

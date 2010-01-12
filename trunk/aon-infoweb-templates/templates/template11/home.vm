@@ -23,7 +23,7 @@
 		</p>
 #if ($schedule && !$schedule.toString().trim().equals(""))
 		<div class="title">
-			Horario
+			
 		</div>
 		<p>
 			$!schedule

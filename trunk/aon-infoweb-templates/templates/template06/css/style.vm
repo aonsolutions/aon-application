@@ -73,10 +73,7 @@ background-color:${bgcolor_color_de_fondo_contenido};
 .graypanel{
 	border:solid 1px #666666; 
 	background-color:#F7F7F7; 
-	padding-top:125px; 
-	padding-right:25px;
-	padding-left:25px;
-	padding-bottom:25px;
+	padding:100px 25px 80px;
 	margin:10px;
 }
 .bodytext {
@@ -159,4 +156,4 @@ background-color:${bgcolor_color_de_fondo_contenido};
 	color:&{color_color_de_texto_contenido};
 }
 td img{
-padding:20px;}
+/*padding:20px;*/}

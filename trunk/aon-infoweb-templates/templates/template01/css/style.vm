@@ -33,6 +33,7 @@ a:active {
 	text-decoration: none;
 	color: ${color_texto_links};
 }
+a img { border:none;}
 .header{
 		background-color: ${bgcolor_color_fondo_de_cabecera};
 		padding-top:35px;
@@ -50,7 +51,6 @@ a:active {
 		background-color: ${bgcolor_color_fondo_menu};
 		position:absolute;
 		top:25px;
-		left:5px;
 		width:160px;
 		text-decoration: none;
 }
@@ -64,9 +64,9 @@ a:active {
 		text-decoration:none;
 		color: ${color_texto_menu};
 }
-#content{ width:695px; }
+.content{ width:695px; margin-top:45px;}
 .content-text{
-		margin-left:175px;
+		margin-top:50px;
 		text-align: justify;
 }
 .content-img{		text-align: justify;}
@@ -83,13 +83,14 @@ a:active {
 		padding:5px ;
 		margin-top:20px;
 		width:450px;
+		margin-left:175px;
 }
 .title2 {
 		font-size: ${size_tamano_fuente_titular};
 		color: ${color_texto_titular};
 		background-color: ${bgcolor_Color_fondo_titular};
 		padding:0px ;
-		margin-top:20px;
+		margin-top:50px;
 		width:170px;
 }
 .img-border{
@@ -161,9 +162,10 @@ td img{padding:20px;}
 .album {
 	height:400px;
 	text-align:center;
+	margin-top:50px;
 }
 .objeto {
 	float:left;
 	padding:25px;
 }
-h1{font-size:12px;} 
+h1{font-size:12px; margin-left:175px;} 

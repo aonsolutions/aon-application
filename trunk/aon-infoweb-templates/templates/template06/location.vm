@@ -63,10 +63,6 @@
 				#end
  			</td>
 		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>	
 	#end
 	</table>
 </div>
