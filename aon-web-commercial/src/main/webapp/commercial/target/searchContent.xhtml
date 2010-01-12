@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputText value="" />
+	<aon:div style="width:510px;">
+		<aon:panelCollapsible expanded="true" label="#{appBundle.aon_commercial_tracking_target}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<ui:include src="/commercial/target/searchBasicContent.xhtml">
+					<ui:param name="controller" value="#{target}"/>
+				</ui:include>
+				<aon:outputLabel for="MarketingTarget_customer"
+					value="#{appBundle.aon_customer}" />
+				<aon:selectOneMenu id="MarketingTarget_customer" 
+					valueChangeListener="#{controller.addDirectExpression}">
+					<f:selectItem value="#{null}" itemLabel="" />
+					<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
+					<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}" />
+				</aon:selectOneMenu>									
+			</aon:panelGrid>
+		</aon:panelCollapsible>					
+					
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.aon_address}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<aon:outputLabel for="Target_registry_addresses_address"
+					value="#{registryBundle.aon_address}" />
+				<aon:inputText id="Target_registry_addresses_address" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+				<aon:outputLabel for="Target_registry_addresses_zip"
+					value="#{registryBundle.aon_zip}" />
+				<aon:inputText id="Target_registry_addresses_zip" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+				<aon:outputLabel for="Target_registry_addresses_city"
+					value="#{registryBundle.aon_city}" />
+				<aon:inputText id="Target_registry_addresses_city" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+				<aon:outputLabel for="Target_registry_addresses_geozone_id"
+					value="#{registryBundle.aon_geozone}" />
+				<aon:selectOneMenu id="Target_registry_addresses_geozone_id" 
+					valueChangeListener="#{controller.addDirectExpression}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{geozoneCollections.geoTrees}" />
+				</aon:selectOneMenu>			
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.aon_media}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
+				<aon:outputLabel for="Target_registry_medias_mediaType"
+					value="#{registryBundle.aon_media}" />
+				<aon:div id="mediaTypeDiv">
+					<a4j:repeat value="#{targetSearch.mediaTypes}" rowKeyVar="index" var="mediaType">
+						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+							<aon:selectOneMenu id="Target_registry_medias_mediaType" 
+								value="#{targetSearch.mediaTypes[index]}">
+								<aon:enumConverter enum="com.code.aon.registry.enumeration.MediaType" />
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{registryCollections.mediaTypes}" />
+								<a4j:support event="onchange" reRender="mediaTypeDiv"/>
+							</aon:selectOneMenu>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="mediaTypeDiv"
+								actionListener="#{targetSearch.onRemoveMediaType}"
+								rendered="#{mediaType != null}">
+								<f:param name="index" value="#{index}" />
+							</aon:commandButton>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
+								actionListener="#{targetSearch.onAddMediaType}"
+								rendered="#{(mediaType != null) and (index == (targetSearch.mediaTypesSize-1))}"/>
+						</aon:div>						
+					</a4j:repeat>
+				</aon:div>			
+				<aon:outputLabel for="Target_registry_medias_value"
+					value="#{bundle.aon_value}" />
+				<aon:inputText id="Target_registry_medias_value" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+				<aon:outputLabel for="Target_registry_medias_comment"
+					value="#{bundle.aon_comment}" />
+				<aon:inputText id="Target_registry_medias_comment" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+				
+		<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_segment}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" style="width:460px;">					
+				<aon:outputLabel for="Target_segments_segment_id"
+					value="#{bundle.aon_name}" />
+				<aon:selectOneMenu id="Target_segments_segment_id"
+					valueChangeListener="#{controller.addDirectExpression}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{controller.segments}" />
+				</aon:selectOneMenu>
+			</aon:panelGrid>		
+		</aon:panelCollapsible>
+						
+		<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_item}" >					
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
+				<aon:outputLabel for="Target_items_item_product_code"
+					value="#{productBundle.item_code}" />
+				<aon:inputText id="Target_items_item_product_code"
+					size="20" valueChangeListener="#{controller.addDirectExpression}" />
+				
+				<aon:outputLabel for="Target_items_item_product_name"
+					value="#{productBundle.item_description}" />
+				<aon:inputText id="Target_items_item_product_name"
+					size="60" valueChangeListener="#{controller.addDirectExpression}" />
+				 
+				<aon:outputLabel for="Target_items_item_product_category_id"
+					value="#{productBundle.item_category}" />
+				<aon:selectOneMenu id="Target_items_item_product_category_id"
+					valueChangeListener="#{controller.addDirectExpression}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="Target_items_item_status"
+					value="#{productBundle.item_status}" />
+				<aon:selectOneMenu id="Target_items_item_status"
+					valueChangeListener="#{controller.addDirectExpression}">
+					<aon:enumConverter enum="com.code.aon.product.enumeration.ProductStatus" />
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{productCollections.productStatuses}" />
+				</aon:selectOneMenu>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+						
+		<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_seller}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
+				<aon:outputLabel for="Target_sellers_seller_id"
+					value="#{registryBundle.aon_id}" />
+				<aon:inputText id="Target_sellers_seller_id" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+			
+				<aon:outputLabel for="Target_sellers_seller_registry_document"
+					value="#{registryBundle.aon_nif}" />
+				<aon:inputText id="Target_sellers_seller_registry_document" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+			
+				<aon:outputLabel for="Target_sellers_seller_registry_name"
+					value="#{registryBundle.aon_name}" />
+				<aon:inputText id="Target_sellers_seller_registry_name" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+			
+				<aon:outputLabel for="Target_sellers_seller_registry_surname"
+					value="#{registryBundle.aon_surname}" />
+				<aon:inputText id="Target_sellers_seller_registry_surname" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+			
+				<aon:outputLabel for="Target_sellers_seller_registry_alias"
+					value="#{registryBundle.aon_alias}" />
+				<aon:inputText id="Target_sellers_seller_registry_alias" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+		<aon:panelCollapsible expanded="false" label="#{marketingBundle.aon_target_profile}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
+				<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
+				<aon:div>
+					<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-From" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-From"
+						value="#{targetSearch.profileDateFrom}" inputSize="10"
+						popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+					</aon:selectInputDate>
+		
+					<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-To" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-To"
+						value="#{targetSearch.profileDateTo}" inputSize="10"
+						popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+					</aon:selectInputDate>
+				</aon:div>							
+				<aon:outputLabel for="MarketingTarget_profiles_question_id"
+					value="#{marketingBundle.aon_marketing_question}" />
+				<aon:div styleClass="aon-lookup">
+					<aon:lookupInputText id="MarketingTarget_profiles_question_id"
+						lookup="#{questionLookup}"
+						reRender="MarketingTarget_profiles_question_detail"
+						value="#{targetSearch.question.id}" size="5">
+					</aon:lookupInputText>
+					<aon:lookupButton windowTitle="#{marketingBundle.aon_lookup_question}" 
+						selectReRender="MarketingTarget_profiles_question_id,MarketingTarget_profiles_question_detail"
+						lookup="#{questionLookup}" minHeight="460" minWidth="650"
+						property="#{targetSearch.question}">
+					</aon:lookupButton>
+					<aon:inputText id="MarketingTarget_profiles_question_detail"
+						value="#{targetSearch.question.text}"
+						size="44" disabled="true" />
+				</aon:div>
+				<aon:div styleClass="aon-padding-top">				
+					<aon:outputText value="#{bundle.aon_value}" />
+				</aon:div>
+				<aon:div>
+					<aon:div styleClass="aon-padding-top">
+						<aon:outputLabel for="MarketingTarget_profiles_question_date-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="MarketingTarget_profiles_question_date-From"
+							value="#{targetSearch.questionDateFrom}" inputSize="10"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+			
+						<aon:outputLabel for="MarketingTarget_profiles_question_date-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="MarketingTarget_profiles_question_date-To"
+							value="#{targetSearch.questionDateTo}" inputSize="10"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+					</aon:div>
+					<aon:div styleClass="aon-padding-top">
+						<aon:inputText id="MarketingTarget_profiles_text" size="60"
+							value="#{targetSearch.questionText}" />													
+					</aon:div>								
+				</aon:div>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+		<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_tracking}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
+				<aon:div>
+					<aon:outputLabel for="Target_trackings_date-From" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectInputDate id="Target_trackings_date-From"
+						value="#{targetSearch.trackingDateFrom}" inputSize="10"
+						popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+					</aon:selectInputDate>
+		
+					<aon:outputLabel for="Target_trackings_date-To" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectInputDate id="Target_trackings_date-To"
+						value="#{targetSearch.trackingDateTo}" inputSize="10"
+						popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+					</aon:selectInputDate>
+				</aon:div>
+		
+				<aon:outputLabel for="Target_trackings_seller_id"
+					value="#{appBundle.aon_commercial_tracking_seller}" />
+				<aon:div styleClass="aon-lookup">
+					<aon:lookupInputText id="Target_trackings_seller_id"
+						lookup="#{sellerLookup}"
+						reRender="Target_trackings_seller_name"
+						value="#{targetSearch.seller.id}" size="5">
+					</aon:lookupInputText>
+					<aon:lookupButton id="Target_trackings_seller_lookup"
+						windowTitle="#{appBundle.aon_lookup_seller}"
+						selectReRender="Target_trackings_seller_id,Target_trackings_seller_name"
+						lookup="#{sellerLookup}" minHeight="440"
+						property="#{targetSearch.seller}">
+					</aon:lookupButton>
+					<aon:inputText id="Target_trackings_seller_name"
+						value="#{(targetSearch.seller.registry.name!=null)?(targetSearch.seller.registry.fullName):('')}"
+						size="44" disabled="true" />
+				</aon:div>		
+				
+				<aon:outputLabel for="Target_trackings_activity_id"
+					value="#{appBundle.aon_commercial_tracking_activity}" />
+				<aon:selectOneMenu id="Target_trackings_activity_id" 
+					value="#{targetSearch.activity}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{commercialCollections.activities}" />
+				</aon:selectOneMenu>
+
+				<aon:outputText value="#{bundle.aon_status}"/>
+				<aon:selectManyCheckbox value="#{targetSearch.trackingStatuses}">
+					<f:selectItems value="#{commercialCollections.commercialTrackingStatuses}"/>
+				</aon:selectManyCheckbox>							
+
+				<aon:outputLabel for="Target_trackings_comments"
+					value="#{appBundle.aon_commercial_tracking_comments}" />
+				<aon:inputText id="Target_trackings_comments" size="60"
+					valueChangeListener="#{controller.addDirectExpression}" />													
+			</aon:panelGrid>
+		</aon:panelCollapsible>						
+	</aon:div>
+
+</ui:composition>

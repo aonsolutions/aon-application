@@ -2,6 +2,7 @@ package com.code.aon.db;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Criteria;
@@ -11,12 +12,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.transform.ResultTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class QueryIterable<E> implements Iterable<E> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueryIterable.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(QueryIterable.class.getName());
 	
 	private int maxResults;
 	

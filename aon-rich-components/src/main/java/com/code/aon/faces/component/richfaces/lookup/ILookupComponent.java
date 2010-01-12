@@ -1,18 +1,14 @@
 package com.code.aon.faces.component.richfaces.lookup;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
-
-import com.code.aon.ui.form.event.IControllerListener;
+import javax.faces.el.MethodBinding;
+import javax.faces.el.ValueBinding;
 
 public interface ILookupComponent {
 
-	ValueExpression getProperty();
+	ValueBinding getLookup();
+
+	ValueBinding getProperty();
 	
-	String getLookupProperty();
-	
-	MethodExpression getLookupChangeListener();
-	
-	IControllerListener getControllerListener();
+	MethodBinding getValueChangeListener();
 	
 }

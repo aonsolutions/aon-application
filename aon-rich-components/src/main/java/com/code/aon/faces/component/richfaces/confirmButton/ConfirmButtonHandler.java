@@ -1,9 +1,7 @@
 package com.code.aon.faces.component.richfaces.confirmButton;
 
-import java.io.IOException;
 import java.net.URL;
 
-import javax.el.ELException;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.FacesException;
@@ -14,7 +12,6 @@ import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxCommandHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
-import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
@@ -26,34 +23,26 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  * 
  * @author atellitu
  */
-public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRichFacesTags, HTML {
+public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRichFacesTags {
 
-	private static final String PREFFIX = "aon_cb_";
-	
+	private static final String CONFIRM_ID = "confirmId";
+
     private static final String COMPONENT_TYPE = "com.code.aon.faces.HtmlConfirmButton";
 	
-	private static final String CONFIRM_SHOW_WINDOW = "showWindow";
+	private static final String CONFIRM_SHOW_WINDOW = "confirmShowWindow";
 	
 	private static final String CONFIRM_ACTION = "confirmAction";
 
 	private static final String CONFIRM_ACTION_LISTENER = "confirmActionListener";
-	
-	private static final String CONFIRM_ON_CLICK = "confirmOnClick";
-	
-	private static final String CONFIRM_ON_COMPLETE = "confirmOnComplete";
 
-	private static final String CANCEL_ACTION = "cancelAction";
-
-	private static final String CANCEL_ACTION_LISTENER = "cancelActionListener";
-	
-	private static final String CANCEL_RE_RENDER = "cancelReRender";
-	
 	private static final String CONFIRM_TITLE = "confirmTitle";
 
 	private static final String CONFIRM_MESSAGE = "confirmMessage";
 
 	private static final String IMMEDIATE = "immediate";
 	
+	private static final String CONFIRM_RE_RENDER = "confirmReRender";
+
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "template.xhtml";
@@ -84,7 +73,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	}
 	
 	private String getModalPanelId(FaceletContext ctx) {
-		return "cb_" + getId(ctx);
+		return "aon" + getId(ctx) + "ModalPanel";
 	}
 
 	@Override
@@ -111,7 +100,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	
 	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-		newMapper.setVariable(PREFFIX + CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
+		newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(INNER_TEMPLATE), newMapper);
 	}
 	
@@ -129,14 +118,19 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	private void addAttribues( FaceletContext ctx, UIComponent component ) {
 		VariableMapper mapper = ctx.getVariableMapper();
 		TagAttribute tagImmediate = getAttribute(IMMEDIATE);
-		mapper.setVariable(PREFFIX + IMMEDIATE, FaceletUtil.getBooleanValueExpression(ctx, tagImmediate));
-		String panelId = getModalPanelId(ctx);
+		if (tagImmediate != null) {
+			mapper.setVariable(IMMEDIATE, getValueExpression(ctx,
+					tagImmediate));
+		} else {
+			mapper.setVariable(IMMEDIATE, ctx.getExpressionFactory()
+					.createValueExpression(ctx, "false", Boolean.class));
+		}
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
-				ctx, panelId, String.class);
-		mapper.setVariable(PREFFIX + ID_ATTR, id);
-		mapper.setVariable(PREFFIX + CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
-		mapper.setVariable(PREFFIX + CONFIRM_TITLE, getValueExpression(ctx, titleTag));
-		mapper.setVariable(PREFFIX + CONFIRM_MESSAGE, getValueExpression(ctx,
+				ctx, getModalPanelId(ctx), String.class);
+		mapper.setVariable(CONFIRM_ID, id);
+		mapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
+		mapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
+		mapper.setVariable(CONFIRM_MESSAGE, getValueExpression(ctx,
 				messageTag));
 		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION,
 				String.class, FaceletUtil.ACTION_SIG);
@@ -144,50 +138,25 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 			action = FaceletUtil.getMethodEmptyExpression(ctx, CONFIRM_ACTION,
 					String.class, FaceletUtil.ACTION_SIG);
 		}
-		mapper.setVariable(PREFFIX + CONFIRM_ACTION, action);
+		mapper.setVariable(CONFIRM_ACTION, action);
 		ValueExpression al = getMethodExpression(ctx, CONFIRM_ACTION_LISTENER,
 				null, FaceletUtil.ACTION_LISTENER_SIG);
 		if (al != null) {
 			mapper.setVariable(CONFIRM_ACTION_LISTENER, al);
 		}
-		ValueExpression cancelAction = getMethodExpression(ctx, CANCEL_ACTION,
-				String.class, FaceletUtil.ACTION_SIG);
-		if (cancelAction == null) {
-			cancelAction = FaceletUtil.getMethodEmptyExpression(ctx, CANCEL_ACTION,
-					String.class, FaceletUtil.ACTION_SIG);
-		}
-		mapper.setVariable(PREFFIX + CANCEL_ACTION, cancelAction);
-		ValueExpression cl = getMethodExpression(ctx, CANCEL_ACTION_LISTENER,
-				null, FaceletUtil.ACTION_LISTENER_SIG);
-		if (cl != null) {
-			mapper.setVariable(PREFFIX + CANCEL_ACTION_LISTENER, cl);
-		}
 		TagAttribute reRender = getAttribute(RERENDER);
 		if (reRender != null) {
-			mapper.setVariable(PREFFIX + RERENDER, getValueExpression(ctx, reRender));
-		}
-		TagAttribute cancelReRender = getAttribute(CANCEL_RE_RENDER);
-		if (cancelReRender != null) {
-			mapper.setVariable(PREFFIX + CANCEL_RE_RENDER, getValueExpression(ctx, cancelReRender));
-		}
-		TagAttribute onClick = getAttribute(CONFIRM_ON_CLICK);
-		if (onClick != null) {
-			mapper.setVariable(PREFFIX + CONFIRM_ON_CLICK, getValueExpression(ctx, onClick));
-		}
-		TagAttribute onComplete = getAttribute(CONFIRM_ON_COMPLETE);
-		if (onComplete != null) {
-			mapper.setVariable(PREFFIX + CONFIRM_ON_COMPLETE, getValueExpression(ctx, onComplete));
+			mapper.setVariable(CONFIRM_RE_RENDER, getValueExpression(ctx, reRender));
 		}
 	}
 
 	@Override
-	protected void applyNextHandler(FaceletContext ctx, UIComponent component) 
-		throws IOException, FacesException, ELException {
-		super.applyNextHandler(ctx, component);	
+	protected void applyNextHandler(FaceletContext ctx, UIComponent component) {
 		URL path = FaceletUtil.getTemplate(TEMPLATE);
 		VariableMapper orig = ctx.getVariableMapper();
 		ctx.setVariableMapper(new VariableMapperWrapper(orig));
 		try {
+			super.nextHandler.apply(ctx, component);
 			addAttribues(ctx, component);
 			ctx.includeFacelet(component, path );
 		} catch (Exception e) {

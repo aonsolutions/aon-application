@@ -1,12 +1,8 @@
 package com.code.aon.faces.component.richfaces.lookup.button;
 
-import java.io.IOException;
-
-import javax.el.ELException;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
+import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
@@ -15,6 +11,7 @@ import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.el.LegacyMethodBinding;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
@@ -27,12 +24,8 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
 public class LookupButtonHandler extends AonAjaxComponentHandler implements ILookupTags, IRichFacesTags {
 
    	private static final String LIST_STYLE_CLASS = "aon-lookupButton";
-   	
-   	private static final String LIST_DISABLED_STYLE_CLASS = "aon-lookupButton-disabled";
 
-   	private static final String NEW_STYLE_CLASS = "aon-lookupButton-new";
-   	
-   	private static final String NEW_DISABLED_STYLE_CLASS = "aon-lookupButton-new-disabled";
+   	private static final String NEW_STYLE_CLASS = "aon-form-new-button";
 
    	private static final String LIST_TITLE = "#{bundle.aon_open_select_window}";
    	
@@ -43,6 +36,8 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
    	private static final String SEARCH_ACTION_LISTENER = "onShowSearchWindow";
    	
    	private static final String NEW_ACTION_LISTENER = "onShowNewWindow";
+   	
+   	private static final Class[] VALUE_LISTENER_ARGS = {ValueChangeEvent.class};
    	
    	private TagAttribute lookup;
    	
@@ -73,20 +68,11 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		return type;
 	}
 	
-	private String getStyleClass( HtmlLookupButton button, LookupButtonType type ) {
-		String styleClass = LIST_STYLE_CLASS;
-		if ( button.isDisabled() ) {
-			if ( type == LookupButtonType.NEW ) {
-				styleClass = NEW_DISABLED_STYLE_CLASS;
-			} else {
-				styleClass = LIST_DISABLED_STYLE_CLASS;
-			}
-		} else {
-			if ( type == LookupButtonType.NEW ) {
-				styleClass = NEW_STYLE_CLASS;
-			}
+	private String getStyleClass( LookupButtonType type ) {
+		if ( type == LookupButtonType.NEW ) {
+			return NEW_STYLE_CLASS;
 		}
-		return styleClass;
+		return LIST_STYLE_CLASS;
 	}
 
 	private String getTitle( LookupButtonType type ) {
@@ -112,16 +98,12 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		}
 		UIComponentTagUtils.setActionListenerProperty( ctx.getFacesContext(), button, actionListener);
 	}
-
-	public static String getLookupBeanName(FaceletContext ctx, TagAttribute lookupTag) {
-		String value = FaceletUtil.appendExpression(lookupTag.getValue(), "beanName" );
-		ValueExpression name = ctx.getExpressionFactory().createValueExpression(
-				ctx, value, String.class);		
-		return (String) name.getValue(ctx);
-	}
 	
 	public static String getModalPanelId(FaceletContext ctx, TagAttribute lookupTag) {
-		return getLookupBeanName(ctx, lookupTag) + "ModalPanel";
+		String value = FaceletUtil.appendExpression(lookupTag.getValue(), "beanName" );
+		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
+				ctx, value, String.class);		
+		return id.getValue(ctx) + "ModalPanel";
 	}
 	
 	/**
@@ -137,32 +119,31 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		button.setValue("");
 		LookupButtonType type = getType(ctx); 
 		button.setActionType( type );
+		if (! FaceletUtil.hasValue(ctx, tag, HTML.STYLE_CLASS_ATTR) ) {
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.STYLE_CLASS_ATTR, getStyleClass(type) );
+		}
 		if (! FaceletUtil.hasValue(ctx, tag, HTML.TITLE_ATTR) ) {
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, getTitle(type) );			
 		}
-		TagAttribute vcl = getAttribute(LOOKUP_CHANGE_LISTENER);
+		TagAttribute vcl = getAttribute("valueChangeListener");
 		if ( vcl != null ) {
-			MethodExpression me = vcl.getMethodExpression(ctx, null, FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG);
-			button.setLookupChangeListener( me );
+			MethodExpression me = vcl.getMethodExpression(ctx, null, VALUE_LISTENER_ARGS);
+			button.setValueChangeListener( new LegacyMethodBinding(me) );
+		}
+		TagAttribute windowTitle = getAttribute(WINDOW_TITLE);
+		if ( windowTitle != null ) {
+			String value = windowTitle.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, WINDOW_TITLE, value );
+		}
+		TagAttribute selectReRender = getAttribute(SELECT_RE_RENDER);
+		if ( selectReRender != null ) {
+			String value = selectReRender.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, SELECT_RE_RENDER, value );
 		}
 		setActionListener(ctx, button);
 		String id = getModalPanelId(ctx, lookup) + "ReRender";
 		String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
 		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, RERENDER, value);
 	}
-
-	@Override
-	protected void applyNextHandler(FaceletContext ctx, UIComponent c)
-			throws IOException, FacesException, ELException {
-		HtmlLookupButton button = (HtmlLookupButton) c;
-		LookupButtonType type = getType(ctx); 
-		if (! FaceletUtil.hasValue(ctx, tag, HTML.STYLE_CLASS_ATTR) ) {
-			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.STYLE_CLASS_ATTR, getStyleClass(button, type) );
-		}
-		String buttonId = button.getClientId(ctx.getFacesContext());
-		button.setWindowCloseFocus( buttonId );
-		super.applyNextHandler(ctx, c);
-	}
-
 	
 }

@@ -5,6 +5,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.infoweb.util.PathUtil;
 
@@ -21,7 +21,7 @@ public class TemplateImageServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 481356189045635775L;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateImageServlet.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(TemplateImageServlet.class.getName());
 	
 	/**
 	 * Retrieves the required RegistryAttachment from the database
@@ -56,7 +56,7 @@ public class TemplateImageServlet extends HttpServlet {
         		bos.flush();
 	            res.flushBuffer();
 	        } catch (Throwable th) {
-	        	LOGGER.error(th.getMessage(), th);
+	        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
 	            throw new ServletException(th.getMessage(), th);
 	        } finally {
 	        	IOUtils.closeQuietly(bis);

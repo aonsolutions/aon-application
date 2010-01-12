@@ -18,7 +18,7 @@
 				com.code.aon.faces.PanelGrid
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.panelGrid.PanelGridHandler
+				com.code.aon.faces.component.AonComponentHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -167,7 +167,7 @@
 				com.code.aon.faces.InputText
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -178,7 +178,7 @@
 				com.code.aon.faces.InputTextarea
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -186,13 +186,13 @@
 		<tag-name>inputRichText</tag-name>
 		<component>
 			<component-type>
-				org.richfaces.Editor
+				com.code.aon.faces.InputRichText
 			</component-type>
 			<renderer-type>
-				org.richfaces.EditorRenderer
+				com.code.aon.faces.InputRichTextRenderer
 			</renderer-type>
 			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -203,7 +203,7 @@
 				com.code.aon.faces.InputSecret
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -214,7 +214,7 @@
 				com.code.aon.faces.SelectOneMenu
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -225,7 +225,7 @@
 				com.code.aon.faces.SelectOneRadio
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -236,7 +236,7 @@
 				com.code.aon.faces.SelectOneListbox
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -247,7 +247,7 @@
 				com.code.aon.faces.SelectBooleanCheckbox
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -258,7 +258,7 @@
 				com.code.aon.faces.SelectManyCheckbox
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -269,7 +269,7 @@
 				com.code.aon.faces.SelectManyMenu
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -280,8 +280,15 @@
 				com.code.aon.faces.SelectManyListbox
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>subForm</tag-name>
+		<component>
+			<component-type>org.apache.myfaces.SubForm</component-type>
+			<renderer-type>org.apache.myfaces.SubForm</renderer-type>
 		</component>
 	</tag>
 	<tag>
@@ -308,18 +315,7 @@
 				com.code.aon.faces.DataTable
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.dataTable.DataTableHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>extendedDataTable </tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.ExtendedDataTable 
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.richfaces.dataTable.DataTableHandler
+				com.code.aon.faces.component.AonComponentHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -339,7 +335,7 @@
 		<component>
 			<component-type>com.code.aon.faces.Column</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.column.ColumnHandler
+				com.code.aon.faces.component.AonComponentHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -361,18 +357,6 @@
 		<tag-name>dataScroller</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.dataScroller.DataScrollerHandler
-		</handler-class>
-	</tag>
-	<tag>
-		<tag-name>dataScroller2</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.richfaces.dataScroller2.DataScroller2Handler
-		</handler-class>
-	</tag>
-	<tag>
-		<tag-name>spin</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.richfaces.spin.SpinHandler
 		</handler-class>
 	</tag>
 	<tag>
@@ -413,7 +397,7 @@
 				com.code.aon.faces.SelectInputDate
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -435,7 +419,7 @@
 				com.code.aon.faces.HtmlLookupInputText
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.lookup.inputText.LookupInputTextHandler
+				com.code.aon.faces.component.richfaces.RegionableInputHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -534,64 +518,5 @@
 				com.code.aon.faces.component.richfaces.fileUpload.FileUploadHandler
 			</handler-class>
 		</component>
-	</tag>
-	<tag>
-		<tag-name>outputFormat</tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.OutputFormat
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>actionHotKey</tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.HotKey
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.richfaces.actionHotKey.ActionHotKeyHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>pickList</tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.PickList
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>methodParam</tag-name>
-		<handler-class>com.code.aon.faces.component.methodParam.MethodParamHandler</handler-class>
-	</tag>
-	<tag>
-		<tag-name>valueParam</tag-name>
-		<handler-class>com.code.aon.faces.component.param.ParamHandler</handler-class>
-	</tag>
-   <tag>
-      <tag-name>abbreviateConverter</tag-name>
-      <converter>
-         <converter-id>aon.AbbreviateConverter</converter-id>
-      </converter>
-   </tag>	
-   <tag>
-      <tag-name>enumConverter</tag-name>
-      <converter>
-         <converter-id>aon.EnumConverter</converter-id>
-      </converter>
-   </tag>
-	<tag>
-		<tag-name>set</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.richfaces.set.SetHandler
-		</handler-class>
 	</tag>
 </facelet-taglib>

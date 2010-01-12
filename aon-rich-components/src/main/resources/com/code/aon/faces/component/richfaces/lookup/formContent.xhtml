@@ -2,41 +2,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
 <ui:composition>
 
-	<aon:div styleClass="aon-toolbar">
-		<aon:commandButton id="saveLookup" value="#{bundle.aon_save}"
-			actionListener="#{lookup.accept}" reRender="#{lookupId}LookupContent"
-			styleClass="aon-finding-toolbar-item aon-icon-accept"
-			accesskey="#{bundle.aon_key_save}" />
-		<aon:commandButton id="cancelLookup" value="#{bundle.aon_cancel}"
-			actionListener="#{lookup.onCloseWindow}" rendered="#{lookup.new}"
-			focus="#{lookup.windowCloseFocus}" immediate="true"
-			styleClass="aon-finding-toolbar-item aon-icon-cancel"
-			accesskey="#{bundle.aon_key_cancel}" >
-			<rich:componentControl for="#{lookupId}" event="onclick"
-				disableDefault="true" operation="hide" />					
-		</aon:commandButton>
-		<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"  
-			actionListener="#{lookup.onFormSelect}" rendered="#{!lookup.new}"
-			focus="#{lookup.windowCloseFocus}" immediate="true"
-			reRender="#{lookup.component.selectReRender}"
-			styleClass="aon-finding-toolbar-item aon-icon-cancel"
-			accesskey="#{bundle.aon_key_close}" >
-			<rich:componentControl for="#{lookupId}" event="onclick"
-				disableDefault="true" operation="hide" />					
-		</aon:commandButton>					
-	</aon:div>
+	<aon:div styleClass="aon-finding-title-toolbar">
+		<aon:panelGrid columns="2" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-toolbar">					
+	
+			<aon:div styleClass="aon-finding-title-internal">
+				<aon:outputText
+					value="#{lookup.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+			</aon:div>
+	
 
-	<aon:div>
+			<aon:div styleClass="aon-finding-toolbar-item-group">
+				<aon:commandButton id="saveLookup" value="#{bundle.aon_save}"
+					actionListener="#{lookup.accept}"
+					styleClass="aon-finding-toolbar-item aon-content-toolbar-item-save"
+					accesskey="#{bundle.aon_key_save}" />
+				<aon:commandButton id="cancelLookup" value="#{bundle.aon_cancel}"
+					actionListener="#{lookup.onCloseWindow}" rendered="#{lookup.new}" partialSubmit="true"
+					styleClass="aon-finding-toolbar-item aon-content-toolbar-item-cancel"
+					accesskey="#{bundle.aon_key_cancel}" />
+				<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"
+					rendered="#{!lookup.new}" partialSubmit="true"
+					actionListener="#{lookup.onFormSelect}"
+					styleClass="aon-finding-toolbar-item aon-content-toolbar-item-close"
+					accesskey="#{bundle.aon_key_close}"/>					
+			</aon:div>
+	  </aon:panelGrid>
+	</aon:div>	
 
-		<ui:include src="#{lookup.newPagePath}" />
-					
-	</aon:div>			
+	<ui:include src="#{lookup.newPagePath}" />			
 	
 </ui:composition>
 

@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -30,8 +32,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.db.hibernate.ExportConfigurationPatcher;
@@ -45,7 +45,7 @@ public class HibernateDataManager {
 	
 	private static final int DEFAULT_EXPORT_FLUSH = 500;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateDataManager.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(HibernateDataManager.class.getName());
 	
 	private File directory;
 	
@@ -313,7 +313,7 @@ public class HibernateDataManager {
 			properties.load( in );
 			in.close();			
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return properties;
 	}

@@ -1,13 +1,10 @@
 package com.code.aon.faces.component.richfaces.form;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIData;
 import javax.faces.component.UIViewRoot;
 
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
@@ -19,8 +16,6 @@ public class FormHandler extends AonAjaxComponentHandler {
 
 	public static final String CURRENT_FORM = "com.code.aon.faces.Form.current";
 	
-	public static final String CURRENT_FORM_DATA_TABLE_MAP = "com.code.aon.faces.Form.current.DataTable.map";
-	
 	public FormHandler(ComponentConfig config) {
 		super(config);
 	}
@@ -30,7 +25,6 @@ public class FormHandler extends AonAjaxComponentHandler {
 			throws IOException, FacesException, ELException {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
 		root.getAttributes().put( CURRENT_FORM, component );
-		root.getAttributes().put( CURRENT_FORM_DATA_TABLE_MAP, new HashMap<String, UIData>() );
 		super.applyNextHandler(ctx, component);
 	}
 
@@ -39,17 +33,6 @@ public class FormHandler extends AonAjaxComponentHandler {
 			UIComponent parent) {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);
 		root.getAttributes().remove( CURRENT_FORM );
-		root.getAttributes().remove( CURRENT_FORM_DATA_TABLE_MAP );
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static Map<String,UIData> getDataTableMap( UIViewRoot root ) {
-		Map<String,UIData> dataTableMap = (Map<String, UIData>) root.getAttributes().get( CURRENT_FORM_DATA_TABLE_MAP );
-		if ( dataTableMap == null ) {
-			dataTableMap = new HashMap<String, UIData>();
-			root.getAttributes().put( CURRENT_FORM_DATA_TABLE_MAP, dataTableMap );
-		}
-		return dataTableMap;
 	}
 	
 }

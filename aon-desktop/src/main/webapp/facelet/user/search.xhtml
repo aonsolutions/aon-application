@@ -9,41 +9,54 @@
 
 	<ui:define name="content">
 
-		<aon:form id="userSearch">
+		<aon:form id="userForm">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
-				<ui:param name="controller" value="#{user}" />
-				<ui:param name="skipResetButton" value="#{!currentDomain.userManagement}" />
-			</ui:include>			
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true" 				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+								
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_users}" />
+					</aon:div>						
+		
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_search}" />
+					</aon:div>				
+		
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_accept}"
+							action="user_list" actionListener="#{user.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							action="user" actionListener="#{workGroup.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">		
+			
+					<aon:panelGrid columns="2" >
 
-				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{user.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="user_list" />		
+						<aon:outputLabel for="User_name"
+							value="#{configBundle.user_name}" />
+						<aon:inputText id="User_name" size="80"
+							valueChangeListener="#{user.addExpression}" />
 
-					<aon:outputLabel for="User_name"
-						value="#{configBundle.config_user_name}" />
-					<aon:inputText id="User_name" size="80"
-						valueChangeListener="#{user.addExpression}" />
+						<aon:outputLabel for="User_login"
+							value="#{configBundle.user_login}" />
+						<aon:inputText id="User_login" size="20"
+							valueChangeListener="#{user.addExpression}" />
+							
+					</aon:panelGrid>
 
-					<aon:outputLabel for="User_login"
-						value="#{configBundle.config_user_login}" />
-					<aon:inputText id="User_login" size="20"
-						valueChangeListener="#{user.addExpression}" />
-
-					<aon:outputLabel for="User_available"
-						value="#{configBundle.config_user_active}" />
-					<aon:selectOneMenu id="User_available"
-						valueChangeListener="#{user.addExpression}">
-						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneMenu>
-				</ui:define>
-				
-			</ui:decorate>							
+				</aon:div>
+			</aon:div>
 
 		</aon:form>
 	</ui:define>

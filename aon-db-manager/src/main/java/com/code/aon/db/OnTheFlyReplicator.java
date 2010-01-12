@@ -1,6 +1,7 @@
 package com.code.aon.db;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.ReplicationMode;
@@ -10,12 +11,10 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.AssociationType;
 import org.hibernate.type.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OnTheFlyReplicator implements IEntityManager {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OnTheFlyReplicator.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OnTheFlyReplicator.class.getName());
 	
 	private HibernateDataManager hdm;
 	

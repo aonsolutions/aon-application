@@ -2,23 +2,21 @@ package com.code.aon.ui.desktop.applications;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.AonUserController;
-import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
-public class ApplicationsManager implements IDesktopConstants {
+public class ApplicationsManager {
+
+	static final String BEAN_NAME = "aonapps";
 
 	private List<App> applicationList;
 
@@ -29,32 +27,23 @@ public class ApplicationsManager implements IDesktopConstants {
 		services.load(is);
 		applicationList = new ArrayList<App>();
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		
-		String thisIp = InetAddress.getLocalHost().getHostAddress();
-
-		
-		AonUserController aonUserController = (AonUserController) FormUtil.getController( "currentUser" );
+		AonUserController aonUserController = (AonUserController) AonUtil.getController( "currentUser" );
 		List list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);
-			String context = app.getContext() + "/?aonDesktop=true";
-			String ip = Util.findStoredApplicationIp( thisIp, app.getContext() );
-			if ( !thisIp.equals( ip ) ) {
-				context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
-			}
+			String context = ec.getRequestContextPath() + app.getContext() + ".auth";
 			String property = services.getProperty( app.getId() );
-			App application;
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();
 				String role = property.substring( property.indexOf( ';' ) + 1 , property.length() );
 				boolean isUserInRole = role.equals("") || ec.isUserInRole( role );
-				application = new App( app.getId(), app.getDescription(), context, bar, isUserInRole );
+				App a = new App( app.getId(), app.getDescription(), context, bar, isUserInRole );
+				applicationList.add(a);
 			} else {
-				application = new App( app.getId(), app.getDescription(), context, new char[] {'1','0','0'}, true );
+				App a = new App( app.getId(), app.getDescription(), context, new char[] {'1','0','0'}, true );
+				applicationList.add(a);
 			}
-			applicationList.add(application);
         }
-        Collections.sort( applicationList );
 	}
 
 	public List<App> getApplicationList(){
@@ -70,7 +59,7 @@ public class ApplicationsManager implements IDesktopConstants {
         return null;
 	}
 
-	public class App implements Comparable<App> {
+	public class App {
 
 		private String id;
 
@@ -120,11 +109,5 @@ public class ApplicationsManager implements IDesktopConstants {
 			return toolbar;
 		}
 
-		@Override
-		public int compareTo(App o) {
-			return name.compareTo(o.getName());
-		}
-
 	}
-
 }

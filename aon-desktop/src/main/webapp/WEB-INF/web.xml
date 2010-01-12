@@ -6,7 +6,9 @@
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
-			/WEB-INF/navigation-faces-config.xml
+			/WEB-INF/beans-faces-config.xml
+			,/WEB-INF/lookup-beans-faces-config.xml
+			,/WEB-INF/navigation-faces-config.xml
 		</param-value>
 	</context-param>
 	<context-param>
@@ -42,10 +44,6 @@
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
-	</context-param>
-	<context-param>
-		<param-name>facelets.RESOURCE_RESOLVER</param-name>
-		<param-value>com.code.aon.ui.resources.TemplateResolver</param-value>
 	</context-param>
 	<context-param>
 		<description>
@@ -93,14 +91,9 @@
 		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
 		<param-value>8640000</param-value>
 	</context-param>
-	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
 	<context-param>
-		<param-name>org.richfaces.LoadScriptStrategy</param-name>
-		<param-value>ALL</param-value>
-    </context-param>	
-	<context-param>
-		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>richFaces3.3.2.SR1/</param-value>
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>richFaces3.2.1/</param-value>
 	</context-param>	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
@@ -126,12 +119,11 @@
 			com.code.aon.bridge.session.ConcurrentSessionListener
 		</listener-class>
 	</listener>
-	
-	<!-- Document Servlet -->
+	<!-- Attachment Servlet -->
 	<servlet>
-		<servlet-name>CorporateIdentityDocument</servlet-name>
+		<servlet-name>CompanyLogo</servlet-name>
 		<servlet-class>
-			com.code.aon.desktop.servlet.CorporateIdentityDocumentServlet
+			com.code.aon.ui.company.servlet.CompanyLogoServlet
 		</servlet-class>
 		<init-param>
 			<param-name>pojo</param-name>
@@ -141,10 +133,9 @@
 		</init-param>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>CorporateIdentityDocument</servlet-name>
-		<url-pattern>*.cidocument</url-pattern>
+		<servlet-name>CompanyLogo</servlet-name>
+		<url-pattern>*.logo</url-pattern>
 	</servlet-mapping>
-
 	<!-- Key Validator
 		<servlet>
 		<servlet-name>User Servlet</servlet-name>
@@ -201,12 +192,34 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
-
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>
+			com.code.aon.bridge.session.BackDoorAuthenticationFilter
+		</filter-class>
+	</filter>
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>/auth/*</url-pattern>
+	</filter-mapping>
 	<session-config>
 		<session-timeout>240</session-timeout>
 	</session-config>
-
+	<!-- BackDoorAuthentication Bean Servlet -->
+	<servlet>
+		<servlet-name>BackDoorAuthentication</servlet-name>
+		<servlet-class>
+			com.code.aon.bridge.servlet.BackDoorAuthentication
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BackDoorAuthentication</servlet-name>
+		<url-pattern>*.auth</url-pattern>
+	</servlet-mapping>
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
@@ -224,7 +237,7 @@
 	</servlet-mapping>
 	<!-- Welcome File List -->
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>index2.jsp</welcome-file>
 	</welcome-file-list>
 	<!-- Security Constraint -->
 	<security-constraint>
@@ -233,8 +246,12 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
+			<web-resource-name>groupware</web-resource-name>
+			<url-pattern>/groupware/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>/index2.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
@@ -245,16 +262,13 @@
 			<role-name>User</role-name>
 			<role-name>SMSSender</role-name>
 			<role-name>FAXSender</role-name>
-			<role-name>DocumentsVisible</role-name>
-			<role-name>PredefinedDocumentsExecutable</role-name>
-			<role-name>CorporativeDocumentsManager</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jspx</form-login-page>
-			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
 	<security-role>
@@ -268,15 +282,6 @@
 	</security-role>
 	<security-role>
 		<role-name>FAXSender</role-name>
-	</security-role>
-	<security-role>
-		<role-name>DocumentsVisible</role-name>
-	</security-role>
-	<security-role>
-		<role-name>PredefinedDocumentsExecutable</role-name>
-	</security-role>
-	<security-role>
-		<role-name>CorporativeDocumentsManager</role-name>
 	</security-role>
 
 	<resource-env-ref>

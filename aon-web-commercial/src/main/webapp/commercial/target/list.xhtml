@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="targetList">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.aon_targets}" />
+				<ui:param name="controller" value="#{target}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<a4j:htmlCommandLink target="_blank"
+						action="#{report.onExecute}" value="#{bundle.aon_report}"
+						styleClass="aon-finding-toolbar-item aon-icon-printer">
+						<f:param name="reportKey" value="targetList"/>
+					</a4j:htmlCommandLink> 						
+				</ui:define>				
+			</ui:decorate>		
+			
+			<ui:include src="/commercial/target/listContent.xhtml" />
+
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

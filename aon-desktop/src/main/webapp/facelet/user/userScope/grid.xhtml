@@ -6,37 +6,97 @@
 
 	<aon:div styleClass="aon-form-group" rendered="#{!user.new}">
 		<aon:div styleClass="aon-form-group-title">
-			<aon:div styleClass="aon-form-group-title-internal">
-				<aon:outputLabel for="userScopeData" value="#{configBundle.config_scopes}" />
-			</aon:div>
+			<aon:outputLabel for="userScopeDataList"
+				value="#{configBundle.scope_scopes}" />
+
 		</aon:div>
 
-		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-			<ui:param name="controller" value="#{userScope}" />
-			<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
-			<ui:param name="rows" value="0" />
-			<ui:param name="showDataScroller" value="false" />		
-			<ui:define name="columns">
+		<aon:editDataTable id="userScopeDataList" var="to"
+			value="#{userScope.model}" rows="20"
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_scope}" />
-					</f:facet>
-					<aon:outputText value="#{to.scope.description}"
-						rendered="#{to!=userScope.to}" />
-					<aon:selectOneMenu rendered="#{to==userScope.to}"
-						value="#{userScope.to.scope}">
+			<aon:rowSelector toggleOnClick="#{userScope.to == null}"
+				actionListener="#{userScope.onSelect}" />
+				
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{userScope.onReset}" value=""
+							rendered="#{!userScope.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.scope_scope}" />
+				</f:facet>
+				<aon:outputText value="#{to.scope.description}"
+					rendered="#{to!=userScope.to}" />
+				<aon:selectOneMenu rendered="#{to==userScope.to}"
+					valueChangeListener="#{userScope.onScopeChanged}"
+					value="#{userScope.to.scope.id}">
+					<f:selectItems value="#{configCollections.scopes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu rendered="#{userScope.new}"
+						valueChangeListener="#{userScope.onScopeChanged}"
+						value="#{userScope.to.scope.id}">
 						<f:selectItems value="#{configCollections.scopes}" />
 					</aon:selectOneMenu>
-					<f:facet name="footer">
-						<aon:selectOneMenu rendered="#{userScope.new}"
-							value="#{userScope.to.scope}">
-							<f:selectItems value="#{configCollections.scopes}" />
-						</aon:selectOneMenu>
-					</f:facet>
-				</aon:column>
-			</ui:define>
-		</ui:decorate>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=userScope.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
+						actionListener="#{userScope.onAccept}" 
+						rendered="#{to==userScope.to}" value=""
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton id="cancelEdit-userScope" title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==userScope.to}"
+						actionListener="#{userScope.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="cancelRemove-userScope" title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==userScope.to}"
+						confirmTitle="#{bundle.aon_confirm_title}" 
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{userScope.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!userScope.new}">&#160;</f:verbatim>
+						<aon:commandButton title="#{bundle.aon_save}"
+							actionListener="#{userScope.onAccept}"
+							rendered="#{userScope.new}" value=""
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancelNew-userScope" title="#{bundle.aon_cancel}"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{userScope.new}"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{userScope.onCancel}" immediate="true"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</aon:editDataTable>
 
 	</aon:div>
 </ui:composition>

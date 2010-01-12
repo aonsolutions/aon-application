@@ -5,17 +5,16 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.AssociationType;
 import org.hibernate.type.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DependencyResolver {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(DependencyResolver.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DependencyResolver.class.getName());
 	
 	private SessionFactory sessionFactory;
 
@@ -53,7 +52,7 @@ public class DependencyResolver {
 	           	processed.remove( entity );
        		}	           
     	} else {
-    		LOGGER.warn( "Entity is being processed: " + entity );
+    		LOGGER.warning( "Entity is being processed: " + entity );
     	}
     }
 	

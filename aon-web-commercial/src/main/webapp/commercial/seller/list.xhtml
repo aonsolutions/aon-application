@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="sellerList">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.aon_sellers}" />
+				<ui:param name="controller" value="#{seller}" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="sellerData" value="#{seller.model}"
+					var="to" rows="20" rendered="#{seller.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="seller_form" actionListener="#{seller.onSelect}" />
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.name}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_surname}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.surname}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.aon_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.alias}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_description}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}"/>
+					</aon:column>
+ 
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="sellerData" showNote="true" />
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

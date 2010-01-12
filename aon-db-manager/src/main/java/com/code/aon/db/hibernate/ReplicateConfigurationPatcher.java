@@ -3,6 +3,8 @@ package com.code.aon.db.hibernate;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,14 +14,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class ReplicateConfigurationPatcher {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReplicateConfigurationPatcher.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ReplicateConfigurationPatcher.class.getName());
 	
 	private List<ClassMetadata> entities;
 
@@ -51,7 +51,7 @@ public class ReplicateConfigurationPatcher {
 			DocumentBuilder builder = dBF.newDocumentBuilder();
 			return builder.newDocument();	
 		} catch (ParserConfigurationException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return null;
 	}
