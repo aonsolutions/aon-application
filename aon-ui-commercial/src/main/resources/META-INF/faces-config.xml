@@ -1150,7 +1150,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>reportKey</property-name>
-			<value>offerSimple</value>
+			<value>offer</value>
 		</managed-property>
 	</managed-bean>
 
