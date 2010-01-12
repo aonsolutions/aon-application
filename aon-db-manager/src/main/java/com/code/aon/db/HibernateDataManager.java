@@ -10,12 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -30,12 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-
-import com.code.aon.db.hibernate.ExportConfigurationPatcher;
-import com.code.aon.db.hibernate.IConfigurationPatcher;
 
 public class HibernateDataManager {
 	
@@ -45,7 +41,7 @@ public class HibernateDataManager {
 	
 	private static final int DEFAULT_EXPORT_FLUSH = 500;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateDataManager.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(HibernateDataManager.class.getName());
 	
 	private File directory;
 	
@@ -78,8 +74,6 @@ public class HibernateDataManager {
 	private boolean ignoreDependencies;
 	
 	private boolean insert;
-	
-	private boolean onDemand;
 	
 	private List<Class<? extends Serializable>> includeEntities;
 	
@@ -173,9 +167,9 @@ public class HibernateDataManager {
 		return importFactory;
 	}
 
-	private Configuration getExportConfiguration( IConfigurationPatcher patcher ) {
+	private Configuration getExportConfiguration() {
 		if ( exportConfiguration == null ) {
-			exportConfiguration = createConfiguration(configurationFile, exportProperties, patcher);
+			exportConfiguration = createConfiguration(configurationFile, exportProperties);
 		}
 		return exportConfiguration;
 	}
@@ -186,10 +180,7 @@ public class HibernateDataManager {
 
 	public SessionFactory getExportFactory() {
 		if ( exportFactory == null ) {
-			Configuration cfg = createConfiguration(configurationFile, exportProperties); 
-			ExportConfigurationPatcher patcher = new ExportConfigurationPatcher();
-			patcher.setSessionFactory( cfg.buildSessionFactory() );
-			exportFactory = getExportConfiguration(patcher).buildSessionFactory();
+			exportFactory = getExportConfiguration().buildSessionFactory();
 		}
 		return exportFactory;
 	}
@@ -287,14 +278,6 @@ public class HibernateDataManager {
 		this.insert = insert;
 	}
 
-	public boolean isOnDemand() {
-		return onDemand;
-	}
-
-	public void setOnDemand(boolean onDemand) {
-		this.onDemand = onDemand;
-	}
-
 	public IEntityVisitor getVisitor() {
 		if ( visitor == null ) {
     		this.visitor = new EntityImportVisitor(getImportFactory(), getMaxImport());	
@@ -313,24 +296,17 @@ public class HibernateDataManager {
 			properties.load( in );
 			in.close();			
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return properties;
 	}
-
-    public static AnnotationConfiguration createConfiguration( File configurationFle, File propertiesFile ) {
-    	return createConfiguration(configurationFle, propertiesFile, null);
-    }
 	
-    public static AnnotationConfiguration createConfiguration( File configurationFle, File propertiesFile, IConfigurationPatcher patcher ) {
+    public static AnnotationConfiguration createConfiguration( File configurationFle, File propertiesFile) {
     	AnnotationConfiguration configuration = null;
         try {
     		configuration = new AnnotationConfiguration();
     		Properties properties = loadProperties(propertiesFile);
     		configuration.addProperties( properties );
-    		if ( patcher != null ) {
-    			patcher.completeConfiguration(configuration);
-    		}
     		if ( configurationFle != null ) {
     			configuration.configure( configurationFle );
     		} else {
@@ -401,10 +377,8 @@ public class HibernateDataManager {
     public void exportData() throws EntityProcessException {
     	DBToXMLExporter exporter = new DBToXMLExporter( this, getElementEntityIterable() );
     	List<Class<? extends Serializable>> entities = getEntities();
-    	if (! ignoreDependencies ) {
-	   		DependencyResolver dr = new DependencyResolver( getExportFactory() );
-	   		entities = dr.organize(entities);
-    	}
+   		DependencyResolver dr = new DependencyResolver( getExportFactory() );
+   		entities = dr.organize(entities);    	
     	for( Class entity : entities ) {
     		exporter.proccess(entity);
     	}
@@ -419,9 +393,6 @@ public class HibernateDataManager {
     		DependencyResolver dr = new DependencyResolver( getImportFactory() );
     		entities = dr.organize(entities);
     	}
-		if (onDemand) {
-    		Collections.sort( entities, new CountComparator(getExportFactory()) );	
-		}
     	for( Class entity : entities ) {
    			importer.proccess( entity );    			
     	}
@@ -463,7 +434,6 @@ public class HibernateDataManager {
     public void execute() throws EntityProcessException {
     	if ( isOnTheFly() ) {
     		importer = new OnTheFlyReplicator( this, getEntityIterable(), isInsert() );
-    		((OnTheFlyReplicator) importer).setOnDemand( isOnDemand() );
         	importData();    		
     	} else {
 	    	if ( isExportData() ) {
@@ -483,22 +453,20 @@ public class HibernateDataManager {
     private static void _export() throws EntityProcessException {
     	HibernateDataManager hdm = new HibernateDataManager();
     	hdm.setExportData(true);
-    	// hdm.setFile( new File("/tmp/aon_master.xml") );
-    	hdm.setDirectory( new File("/tmp/tol/export") );
+    	hdm.setFile( new File("/tmp/aon_master.xml") );
+    	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
-    	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/ctsql.properties") );
-    	hdm.setMaxExport(50000);
-    	hdm.setIgnoreDependencies(true);
+    	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
     	hdm.execute();
     }
 
     private static void _import() throws EntityProcessException {
     	HibernateDataManager hdm = new HibernateDataManager();
     	hdm.setImportData(true);
-    	// hdm.setFile( new File("/tmp/aon_master.xml") );
-    	hdm.setDirectory( new File("/tmp/tol/export") );
+    	hdm.setFile( new File("/tmp/aon_master.xml") );
+    	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
-    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );    	
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );    	
     	hdm.execute();
     }
     
@@ -506,15 +474,8 @@ public class HibernateDataManager {
     	HibernateDataManager hdm = new HibernateDataManager();
     	hdm.setOnTheFly(true);
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
-    	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/ctsql.properties") );
-    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
-    	/*
-    	hdm.setIgnoreDependencies(true);
-    	hdm.setMaxImport(100);
-    	hdm.setMaxExport(100);
-    	hdm.setOnDemand(true);
-    	 */
-    	hdm.setOnDemand(true);
+    	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );    	
     	hdm.execute();
     }
 

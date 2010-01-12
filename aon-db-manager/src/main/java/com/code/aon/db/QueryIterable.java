@@ -1,28 +1,28 @@
 package com.code.aon.db;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.transform.ResultTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hibernate.type.AssociationType;
+import org.hibernate.type.Type;
 
 public class QueryIterable<E> implements Iterable<E> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueryIterable.class.getName());
-	
 	private int maxResults;
 	
 	private Class<?> entity;
-	
-	private Integer rowCount;
 	
 	private boolean asElement;
 	
@@ -44,7 +44,6 @@ public class QueryIterable<E> implements Iterable<E> {
 
 	public void setEntity(Class<?> entity) {
 		this.entity = entity;
-		this.rowCount = CountComparator.getRowCount(sessionFactory, entity);
 	}
 
 	private int getMaxResults() {
@@ -105,7 +104,7 @@ public class QueryIterable<E> implements Iterable<E> {
 		this.criteria = null;
 	}
 
-	private void orderById() {
+	public void orderById() {
 		ClassMetadata cmd = getSessionFactory().getClassMetadata( getEntity() );
 		String id = cmd.getIdentifierPropertyName();
 		getCriteria().addOrder( Order.asc(id) );
@@ -131,8 +130,16 @@ public class QueryIterable<E> implements Iterable<E> {
 		return criteria;
 	}
 	
-	public Integer getRowCount() {
-		return this.rowCount;
+	public int getCount() {
+		int result = 0;
+		getCriteria().setProjection(Projections.rowCount());
+		Object value = getCriteria().uniqueResult();
+		if ( value != null ) {
+			result = ((Integer) value).intValue();
+		}
+		getCriteria().setProjection(null);
+		getCriteria().setResultTransformer(Criteria.ROOT_ENTITY);
+		return result;
 	}
 	
 	private class ResultIterator implements Iterator<E> {
@@ -140,8 +147,6 @@ public class QueryIterable<E> implements Iterable<E> {
 		private int index;
 		
 		private int offset;
-		
-		private boolean orderAdded;
 		
 		private List<E> results;
 		
@@ -153,19 +158,12 @@ public class QueryIterable<E> implements Iterable<E> {
 		private void updateResults() {
 			updateCriteria();
 			results = getCriteria().list();
-			LOGGER.info( "List returned: " + results.size() + " for " + getEntity() );
 			index = ( results.size() == 0 ) ? -1 : 0;
 		}
 		
 		private void updateCriteria() {
-			if ( (getRowCount() == null) || (getRowCount() > getMaxResults()) ) {
-				if (! orderAdded ) {
-					orderById();
-					this.orderAdded = true;
-				}
-				getCriteria().setMaxResults( getMaxResults() );			
-				getCriteria().setFirstResult( offset );
-			}
+			getCriteria().setMaxResults( getMaxResults() );			
+			getCriteria().setFirstResult( offset );
 		}
 		
 		public boolean hasNext() {
@@ -184,7 +182,6 @@ public class QueryIterable<E> implements Iterable<E> {
 				}
 			}
 			if (! next ) {
-				this.results = null;
 				closeSession();
 			}
 			return next;

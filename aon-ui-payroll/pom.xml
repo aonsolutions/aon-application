@@ -18,9 +18,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-<!-- 
 				<version>1.0-beta-1</version>
- -->
 					<configuration>
 						<sourceDirectory>src/main/resources/com/code/aon/ui/payroll/report</sourceDirectory>
 						<outputDirectory>target/classes/com/code/aon/ui/payroll/report</outputDirectory>
@@ -92,6 +90,12 @@
 			<artifactId>jboss-jmx</artifactId>
 			<version>4.2.1.GA</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.0.2-FINAL</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

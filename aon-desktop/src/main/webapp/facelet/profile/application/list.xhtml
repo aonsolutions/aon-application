@@ -12,30 +12,45 @@
 
 		<aon:form id="applicationList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_profiles}" />
-				<ui:param name="toolbarDescription" value="#{appBundle.aon_applications}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_profiles}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{appBundle.aon_applications}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+							action="user_list" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
+				<aon:dataTable id="applicationDataList" value="#{domain.applications}"
+					var="to" rows="20" columnClasses="aon-editDataTable-textColumn">
 
-				<aon:methodParam name="rowSelectorAction" value="profile_list" />
-				<aon:methodParam name="rowSelectorActionListener" value="#{currentDomain.onSelectApplication}" type="actionListener" />
-			
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="rows" value="20" />
-					<ui:param name="dataTableId" value="applicationDataList" />
-					<ui:param name="dataModel" value="#{currentDomain.applications}" />
-					<ui:define name="columns">
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_application}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}"/>
-						</aon:column>
-					</ui:define>
-				</ui:decorate>
+					<aon:rowSelector action="profile_list" actionListener="#{domain.onSelectApplication}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_application}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}"/>
+					</aon:column>
+
+				</aon:dataTable>
 
 			</aon:div>
 

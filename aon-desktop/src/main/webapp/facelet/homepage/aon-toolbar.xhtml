@@ -3,31 +3,19 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:a4j="http://richfaces.org/a4j"			
+	xmlns:c="http://java.sun.com/jstl/core"			
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
 <ui:composition>
 	<aon:form>
 		<aon:div styleClass="aon-secondary-menu" >
-			<c:if test="#{!currentDomain.domainManagement}">		
-				<c:forEach items="#{aonapps.applicationList}" var="app">
-					<aon:outputLink styleClass="aon-secondary-menu-application" 
-							value="#{app.context}" target="_blank" rendered="#{app.toolbarEnabled}">
-						<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
-					</aon:outputLink>
-				</c:forEach>
-			</c:if>
-			<c:if test="#{currentDomain.domainManagement}">
-				<c:forEach items="#{aonapps.applicationList}" var="app">
-					<aon:commandLink
-						styleClass="aon-secondary-menu-application" style="text-transform:uppercase" 
-						action="domain_select" value="#{app.name}" rendered="#{app.toolbarEnabled}">
-						<f:setPropertyActionListener value="#{app}" target="#{domain.selectedApplication}" />
-					</aon:commandLink>
-				</c:forEach>
-			</c:if>
+			<c:forEach items="#{aonapps.applicationList}" var="app">
+				<aon:outputLink styleClass="aon-secondary-menu-application" 
+						value="#{app.context}" target="_blank" rendered="#{app.toolbarEnabled}">
+					<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
+				</aon:outputLink>
+			</c:forEach>
 		</aon:div>
 	</aon:form>
 </ui:composition>

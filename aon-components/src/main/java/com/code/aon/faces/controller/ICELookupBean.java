@@ -10,10 +10,11 @@ import java.util.logging.Logger;
 import javax.faces.application.Application;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
+import javax.faces.event.PhaseListener;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
@@ -59,9 +60,6 @@ public class ICELookupBean {
 	/** The value binding of foreign Pojo. */
 	private ValueBinding sourcePojoBinding;
 
-	/** The method binding for the ValueCangeListener. */
-	private MethodBinding buttonValueChangeListener;
-	
 	/** The map of join value bindings. */
 	// private Map<String,ValueBinding> joinBindingsMap;
 	/** The show window. */
@@ -433,42 +431,12 @@ public class ICELookupBean {
 			entry.getValue().setValue(ctx, value);
 		}
 	}
-	
-	private Object getCurrentSourcePojo() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		try {
-			return this.sourcePojoBinding.getValue(ctx);
-		} catch ( Throwable th ) {
-			LOGGER.fine( this.sourcePojoBinding + " is possibly null" );
-		}
-		return null;
-	}
-	
-	private void fireValueChangeListener(UIComponent component) {
-		if ( this.buttonValueChangeListener != null ) {
-			ValueChangeEvent event = null;
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			if ( getController().isNew() ) {
-				event = new ValueChangeEvent(component, null, getController().getTo() );
-			} else {
-				Object newValue = null;
-				try {
-					newValue = getController().getModel().getRowData();
-				} catch (ManagerBeanException e) {
-					LOGGER.severe( e.getMessage() );
-				}
-				Object oldValue = getCurrentSourcePojo();
-				event = new ValueChangeEvent(component, oldValue, newValue );
-			}
-			this.buttonValueChangeListener.invoke(ctx, new Object[]{event});
-		}
-	}
 
 	private void updateSourcePojo() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		sourcePojoBinding.setValue(ctx, getController().getTo());
 	}
-	
+
 	/**
 	 * Lookup changed.
 	 * 
@@ -479,7 +447,7 @@ public class ICELookupBean {
 	public void lookupChanged(ValueChangeEvent event) throws ManagerBeanException {
 		LOGGER.info("lookupChanged: " + event.getNewValue() + " old: " + event.getOldValue());
 		boolean restoreValues = false;
-		setBindings(event.getComponent());
+		updateSourcePojoBinding(event.getComponent());
 		Map<String, ValueBinding> joinBindingsMap = getJoinBindingsMap(event);
 		Map<String, Object> valuesMap = getValuesMap(joinBindingsMap);
 		Criteria criteria = getCriteria(valuesMap);
@@ -540,14 +508,13 @@ public class ICELookupBean {
 		return null;
 	}
 
-	private void setBindings(UIComponent component) {
+	private void updateSourcePojoBinding(UIComponent component) {
 		if (component instanceof ILookupComponent) {
 			ILookupComponent lookupComponent = (ILookupComponent) component;
 			this.sourcePojoBinding = lookupComponent.getProperty();
 			if (this.sourcePojoBinding == null) {
 				this.sourcePojoBinding = getSourcePojoBinding(component);
 			}
-			this.buttonValueChangeListener = lookupComponent.getValueChangeListener();
 		}
 	}
 
@@ -559,7 +526,7 @@ public class ICELookupBean {
 	 * @throws ManagerBeanException
 	 */
 	public void onShowListWindow(ActionEvent event) throws ManagerBeanException {
-		setBindings(event.getComponent());
+		updateSourcePojoBinding(event.getComponent());
 		setShowWindow(true);
 		setSelectedPanel(LIST_ID);
 		getController().clearCriteria();
@@ -574,7 +541,7 @@ public class ICELookupBean {
 	 *            the event
 	 */
 	public void onShowSearchWindow(ActionEvent event) {
-		setBindings(event.getComponent());
+		updateSourcePojoBinding(event.getComponent());
 		setShowWindow(true);
 		setSelectedPanel(SEARCH_ID);
 		onEditSearch(null);
@@ -588,7 +555,7 @@ public class ICELookupBean {
 	 *            the event
 	 */
 	public void onShowNewWindow(ActionEvent event) {
-		setBindings(event.getComponent());
+		updateSourcePojoBinding(event.getComponent());
 		setShowWindow(true);
 		setSelectedPanel(FORM_ID);
 		onReset(null);
@@ -629,7 +596,6 @@ public class ICELookupBean {
 			event.queue();
 		} else if (phaseId.equals(PhaseId.UPDATE_MODEL_VALUES)) {
 			LOGGER.info("onListSelect: " + event.getRow());
-			fireValueChangeListener(event.getComponent());
 			onSelect(null);
 			updateSourcePojo();
 			setShowWindow(false);
@@ -646,7 +612,6 @@ public class ICELookupBean {
 	 */
 	public void onFormSelect(ActionEvent event) {
 		LOGGER.info("onFormSelect: " + getController().getTo());
-		fireValueChangeListener(event.getComponent());
 		updateSourcePojo();
 		setShowWindow(false);
 		clearModel();

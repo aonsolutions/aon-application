@@ -3,51 +3,41 @@ package com.code.aon.ui.infoweb.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.code.aon.ui.infoweb.controller.IInfoWebConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class FTPUtil implements IInfoWebConstants {
+public class FTPUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FTPUtil.class.getName());
-		
+	private static final Logger LOGGER = Logger.getLogger(FTPUtil.class.getName());
+	
 	private static final String PATH_SEPARATOR = "/";
 	
-	private static final String SERVER_DEFAULT = "192.168.3.47";
-	private static final String USER_DEFAULT = "ftpcms";
-	private static final String PASSWORD_DEFAULT = "cms2001";
+	private static final String SERVER = "192.168.3.47";
+	private static final String USER = "ftpcms";
+	private static final String PASSWORD = "cms2001";
 	
-	private static FTPClient getFTPClient( String destination, Properties properties ) throws IOException {
+	public static void uploadFTP(File source, String destination) throws IOException {
 		FTPClient ftp = new FTPClient();
-		String server = properties.getProperty(FTP_SERVER, SERVER_DEFAULT);
-		LOGGER.debug("Connecting to: {}", server );
-		ftp.connect(server);
-		String user = properties.getProperty(FTP_USER, USER_DEFAULT);
-		String password = properties.getProperty(FTP_PASSWORD, PASSWORD_DEFAULT);
-		ftp.login(user, password);
+		LOGGER.fine("Connecting to: " + SERVER );
+		ftp.connect(SERVER);
+		ftp.login(USER, PASSWORD);
 		ftp.enterLocalPassiveMode();
 		ftp.changeWorkingDirectory(destination);
-		return ftp;
-	}
-	
-	public static void uploadFTP(File source, String destination, Properties properties) throws IOException {
-		FTPClient ftp = getFTPClient( destination, properties );
-		LOGGER.debug("Connected.");
-		LOGGER.debug("Reply String: {}", ftp.getReplyString());
-		LOGGER.debug("System Name: {}", ftp.getSystemName());
-		LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
-		LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
+		LOGGER.fine("Connected.");
+		LOGGER.fine("Reply String: " + ftp.getReplyString());
+		LOGGER.fine("System Name: " + ftp.getSystemName());
+		LOGGER.fine("Working Directory: " + ftp.printWorkingDirectory());
+		LOGGER.fine("File Type: " + ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
 		FTPFile files[] = ftp.listFiles();
 		if (! ArrayUtils.isEmpty(files)) {
 			if (! hasWritePermission(files[0]) ) {
-				LOGGER.error("Write permission denied for {}", files[0]);
+				LOGGER.severe("Write permission denied for " + files[0]);
 				AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
 			}
 		}
@@ -67,20 +57,20 @@ public class FTPUtil implements IInfoWebConstants {
 	private static void deleteFile(FTPClient ftp, String pathname) {
 		try {
 			if (! ftp.deleteFile(pathname) ) {
-				LOGGER.error("File no deleted {}", pathname);
+				LOGGER.severe("File no deleted " + pathname);
 			}
 		} catch (Throwable th) {
-			LOGGER.error("Error deleting file {}", pathname, th);
+			LOGGER.log(Level.SEVERE, "Error deleting file " + pathname, th);
 		}
 	}
 
 	private static void deleteDirectory(FTPClient ftp, String pathname) {
 		try {
 			if (! ftp.removeDirectory(pathname) ) {
-				LOGGER.error("Directory no deleted {}", pathname);
+				LOGGER.severe("Directory no deleted " + pathname);
 			}
 		} catch (Throwable th) {
-			LOGGER.error("Error deleting directory {}", pathname, th);
+			LOGGER.log(Level.SEVERE, "Error deleting directory " + pathname, th);
 		}
 	}
 	
@@ -101,7 +91,7 @@ public class FTPUtil implements IInfoWebConstants {
 				}
 			}
 		} else {
-			LOGGER.error( "Error in change of working directory: {}", destination );
+			LOGGER.severe( "Error in change of working directory: " + destination );
 		}
 	}
 
@@ -111,20 +101,20 @@ public class FTPUtil implements IInfoWebConstants {
 			File f = new File(ftpDir, dirList[i]);
 			if (f.isDirectory()) {
 				String directory = breadCrum + PATH_SEPARATOR + f.getName();
-				LOGGER.debug("Creating directory: {}", directory);
+				LOGGER.fine("Creating directory: " + directory);
 				if ( fc.makeDirectory(directory) ) {
 					ftpDir(f, fc, directory);
 				} else {
 					AonUtil.addErrorMessage("FTP ERROR: No se ha podido crear el directorio " + directory);
-					LOGGER.error("Can not create directory {}", directory);
+					LOGGER.severe("Can not create directory " + directory);
 				}
 			} else {
 				FileInputStream fis = new FileInputStream(f);
 				String name = breadCrum + PATH_SEPARATOR + f.getName();
-				LOGGER.debug("Creating file: {}", name);
+				LOGGER.fine("Creating file: " + name);
 				if (!fc.storeFile(name, fis)) {
 					AonUtil.addErrorMessage("FTP ERROR: No se ha podido escribir el fichero " + name);
-					LOGGER.error("Can not write {}", name);
+					LOGGER.severe("Can not write " + name);
 				}
 				fis.close();
 			}

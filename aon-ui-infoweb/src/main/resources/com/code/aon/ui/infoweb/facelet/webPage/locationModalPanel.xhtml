@@ -22,7 +22,6 @@
 					<aon:form>
 						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 							reRender="showLocationModalPanel" immediate="true">
-							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener target="#{webPage.showLocationModalPanel}" value="#{false}" />
 							<rich:componentControl for="locationModalPanel" operation="hide" event="onclick" />
 						</aon:commandButton>

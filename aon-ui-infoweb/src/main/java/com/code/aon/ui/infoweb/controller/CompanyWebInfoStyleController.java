@@ -13,23 +13,21 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoStyle;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
@@ -41,13 +39,12 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class CompanyWebInfoStyleController extends BasicController implements VelocityConstants {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyWebInfoStyleController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoStyleController.class.getName());
 
 	public boolean showPreviewModalPanel = false;
 
@@ -55,45 +52,31 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	
 	public Integer homepage;
 	
-	@Override
+	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
 		cancel(event);
 		super.onSelect(event);
 	}
 
-	private boolean isValidTemplateDirectory( File directory ) {
-		if ( directory.exists() && directory.isDirectory() && directory.canRead() ) {
-			String template = directory.getName();
-			File styleDefaults = PathUtil.getStyleDefaults(template);
-			if ( styleDefaults.exists() && styleDefaults.isFile() && styleDefaults.canRead() ) {
-				File styleTemplate = PathUtil.getStyleTemplate(template);
-				if ( styleTemplate.exists() && styleTemplate.isFile() && styleTemplate.canRead() ) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
 	public List<SelectItem> getTemplates() throws ManagerBeanException {
 		List<SelectItem> templates = new LinkedList<SelectItem>();
 
-		File f = PathUtil.getTemplatesPath();
+		String path = TEMPLATE_PATH;
+		File f = new File(path);
 		if (!f.exists()) {
 			AonUtil.addErrorMessage("ERROR: No existe el directorio de plantillas. Contacte con su administrador."); 
-		} else {
+		}
+		else {
+			File directories[] = f.listFiles();
+			Arrays.sort(directories);
 			SelectItem item = new SelectItem("","");
 			templates.add(item);
-			File list[] = f.listFiles();
-			if (! ArrayUtils.isEmpty(list) ) {
-				Arrays.sort(list);
-				for (int i=0;i<list.length;i++) {
-					File directory = list[i];
-					if ( isValidTemplateDirectory(directory) ) {
-						String template = directory.getName();
-						item = new SelectItem(template, template);
-						templates.add(item);
-					}
+			for (int i=0;i<directories.length;i++) {
+				File temp = directories[i];
+				if (temp.isDirectory()) {
+					String template = temp.getName();
+					item = new SelectItem(template, template);
+					templates.add(item);
 				}
 			}
 		}
@@ -122,7 +105,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 
 	public void chargeValues() {
 		List<ITransferObject> vars = new ArrayList<ITransferObject>();
-		Map<String,String> varMap = parseTemplateStyle();
+		HashMap<String,String> varMap = parseTemplateStyle();
 
 		try {
 			IManagerBean wisBean = BeanManager.getManagerBean(WebInfoStyle.class);
@@ -135,7 +118,8 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 				WebInfoStyle wis = new WebInfoStyle();
 				if (list.size() > 0) {
 					wis = (WebInfoStyle)list.get(0);
-				} else {
+				}
+				else {
 					wis.setVariable(var);
 					WebInfoVariableType type = getVariableType(var); 
 					String value = getDefaultValue(var, type);
@@ -146,16 +130,18 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			}
 			model = new ListDataModel(vars);
 		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
-	public Map<String,String> parseTemplateStyle() {
-		Map<String,String> styleMap = new HashMap<String,String>();
-		File f = PathUtil.getStyleTemplate( getTemplate() );
+	public HashMap<String,String> parseTemplateStyle() {
+		HashMap<String,String> styleMap = new HashMap<String,String>();
+		String path = TEMPLATE_PATH + "/" + getTemplate() + "/" + CSS_PATH + "/" + STYLE_TEMPLATE;
+		File f = new File(path);
 		if (!f.exists()) {
 			AonUtil.addErrorMessage("ERROR: No existe el fichero de estilos para esta plantilla. Contacte con su administrador."); 
-		} else {
+		}
+		else {
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(f));
 			    String line = br.readLine();
@@ -171,9 +157,9 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			    }
 			
 			} catch (FileNotFoundException e) {
-				LOGGER.error( e.getMessage(), e );
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			} catch (IOException e) {
-				LOGGER.error( e.getMessage(), e );
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			}
 		}
 		return styleMap;
@@ -200,15 +186,16 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     	//Guardar el template en constantes
 		try {
 			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = (ApplicationParameter) apBean.get(TEMPLATE_NAME_PARAM);
-			if ( ap == null ) {
-				ap = new ApplicationParameter();	
-			}
+			ApplicationParameter ap = new ApplicationParameter();
 			ap.setName(TEMPLATE_NAME_PARAM);
 			ap.setValue(getTemplate());
-			apBean.insertOrUpdate( ap );
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), TEMPLATE_NAME_PARAM);
+			List<ITransferObject> list = apBean.getList(criteria);
+			if (list.size() > 0) apBean.update(ap);
+			else apBean.insert(ap);
 		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		//Cargar valores del template actual
 		chargeValues();
@@ -218,15 +205,16 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     	//Guardar la homepage en constantes
 		try {
 			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = (ApplicationParameter) apBean.get(HOMEPAGE_NAME_PARAM);
-			if ( ap == null ) {
-				ap = new ApplicationParameter();	
-			}
+			ApplicationParameter ap = new ApplicationParameter();
 			ap.setName(HOMEPAGE_NAME_PARAM);
-			ap.setValue( String.valueOf(getHomepage()) );
-			apBean.insertOrUpdate( ap );
+			ap.setValue(""+getHomepage());
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
+			List<ITransferObject> list = apBean.getList(criteria);
+			if (list.size() > 0) apBean.update(ap);
+			else apBean.insert(ap);
 		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
     }
 
@@ -234,13 +222,16 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		if (template == null) {
 			try {
 				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				ApplicationParameter ap = (ApplicationParameter) apBean.get(TEMPLATE_NAME_PARAM);
-				if ( ap != null ) {
-					template = ap.getValue();				
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), TEMPLATE_NAME_PARAM);
+				List<ITransferObject> list = apBean.getList(criteria);
+				if (list.size() > 0) {
+					ApplicationParameter ap = (ApplicationParameter)list.get(0);
+					template = ap.getValue();
 					chargeValues();
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.error( e.getMessage(), e );
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			}
 		}
 		this.model.setRowIndex(0);
@@ -252,12 +243,15 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			try {
 				homepage = 0;
 				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				ApplicationParameter ap = (ApplicationParameter) apBean.get(HOMEPAGE_NAME_PARAM);
-				if ( ap != null ) {
-					homepage = Integer.parseInt(ap.getValue());				
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
+				List<ITransferObject> list = apBean.getList(criteria);
+				if (list.size() > 0) {
+					ApplicationParameter ap = (ApplicationParameter)list.get(0);
+					homepage = Integer.parseInt(ap.getValue());
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.error( e.getMessage(), e );
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			}
 		}
 		return homepage;
@@ -286,9 +280,9 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	    		return getVariableType(style.getVariable());
 	    	}
     	} catch (ManagerBeanException e ) {
-    		LOGGER.error( e.getMessage(), e );
+    		LOGGER.log( Level.SEVERE, e.getMessage(), e );
     	}
-    	LOGGER.warn( "No row available in model: {}", this.model );	
+    	LOGGER.severe( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ERROR OBTENIENDO getRowData de "+this.model+"" );	
 		return WebInfoVariableType.IMAGE;
     }
 
@@ -308,19 +302,15 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     public String getDefaultValue(String name, WebInfoVariableType type) {
         Properties properties = new Properties();
         try {
-    		File f = PathUtil.getStyleDefaults(getTemplate());
-    		if (!f.exists()) {
-    			return getDefaultValueByType(type);
-    		} else {
-    			properties.load(new FileInputStream(f));
-    		}
+    		String path = TEMPLATE_PATH + "/" + getTemplate() + "/" + CSS_STYLE_DEFAULTS;
+    		File f = new File(path);
+    		if (!f.exists()) return getDefaultValueByType(type);
+    		else properties.load(new FileInputStream(f));
     		String defaultValue = properties.getProperty(name);
-    		if (defaultValue == null) {
-    			return getDefaultValueByType(type);
-    		}
+    		if (defaultValue == null) return getDefaultValueByType(type);
     		return defaultValue;
         } catch (IOException e) {
-        	LOGGER.error( e.getMessage(), e );
+        	LOGGER.log( Level.SEVERE, e.getMessage(), e );
         	return getDefaultValueByType(type);
         }
     }
@@ -380,7 +370,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
 			Integer id = rattach.getId();
 			String name = rattach.getDescription();
-			LOGGER.debug("{}", rattach);
+			LOGGER.fine(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
 			SelectItem item = new SelectItem(id, name);
 			images.add(item);
 		}
@@ -415,7 +405,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		} catch (NumberFormatException n) {
 			name = "blank.jpg";
 		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return name;
 	}
@@ -437,7 +427,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			}
 
 		} catch (NumberFormatException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return "Sin tipo";
 	}
@@ -459,7 +449,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			}
 
 		} catch (NumberFormatException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return "Verdana";
 	}

@@ -2,19 +2,18 @@ package com.code.aon.ui.infoweb.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,6 +26,7 @@ import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -36,7 +36,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CompanyWebInfoPageController extends BasicController implements IInfoWebConstants {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyWebInfoPageController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
 	
 	private static final char[] VALID_CHARS = new char[] {' ', '-', '_', '(', ')', '$', '&', '{', '}'};
 
@@ -83,54 +83,42 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 				++position;
 			}
 		}catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return position;
 	}
 
-	public void onActivate(ActionEvent event) {
+	public void onActivate(ActionEvent event) throws ManagerBeanException {
 		activate(true);
 	}
 
-	public void onDeactivate(ActionEvent event) {
+	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
 		activate(false);
 	}
 	
-	private void activate(boolean active) {
-		WebInfoPage wip = null;
-		try {
-			wip = (WebInfoPage) getSelectedTO();
-			wip.setActive(active);
-			getManagerBean().update(wip);
-		} catch (ManagerBeanException e) {
-			LOGGER.error("activate", e);
-			addMessage( "Error cambiando el estado activo de la pagina " + wip.getName() );
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
+	private void activate(boolean active) throws ManagerBeanException {
+		WebInfoPage wip = (WebInfoPage)this.model.getRowData();
+		wip.setActive(active);
+		getManagerBean().update(wip);
 	}
 	
-	private void move( WebInfoPage wip, int movement ) {
-		try {		
-			int oldPosition = wip.getPosition();
-			int newPosition = oldPosition + movement;
-			
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), newPosition);
-			List<ITransferObject> list = getManagerBean().getList(criteria);
-			if (!list.isEmpty()) {
-				WebInfoPage otherPage = (WebInfoPage) list.get(0);
-				otherPage.setPosition(oldPosition);
-				getManagerBean().update(otherPage);
-			}
-			wip.setPosition(newPosition);
-			getManagerBean().update(wip);
+	@SuppressWarnings("unchecked")
+	private void move( WebInfoPage wip, int movement ) throws ManagerBeanException, ExpressionException {
+		int oldPosition = wip.getPosition();
+		int newPosition = oldPosition + movement;
 		
-			initializeModel();
-		} catch (ManagerBeanException e) {
-			LOGGER.error("move", e);
-			addMessage( "Error cambiando la posición de la pagina " + wip.getName() );
-			throw new AbortProcessingException(e.getMessage(), e);
-		}			
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), newPosition);
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		if (!list.isEmpty()) {
+			WebInfoPage otherPage = (WebInfoPage) list.get(0);
+			otherPage.setPosition(oldPosition);
+			getManagerBean().update(otherPage);
+		}
+		wip.setPosition(newPosition);
+		getManagerBean().update(wip);
+		
+		initializeModel();
 	}
 	
 	public void reorderObjects() throws ManagerBeanException {
@@ -147,16 +135,17 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		initializeModel();
 	}	
 	
-    public void onMoveUp(ActionEvent event) {
+    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
     	move((WebInfoPage) this.model.getRowData(), -1);
     }
 
-    public void onMoveDown(ActionEvent event) {
+    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
     	move((WebInfoPage) this.model.getRowData(), 1);    	
     }
 
+
 	public void onSelectDetail(ActionEvent event) {
-		WebInfoPage wip = (WebInfoPage) getSelectedTO();
+		WebInfoPage wip = (WebInfoPage)this.model.getRowData();
 		current = wip;
 		setSelectedData(wip);
 		if (wip.getType().equals(WebInfoPageType.GENERIC)) {
@@ -208,7 +197,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			resources = new ListDataModel(listWipr);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -222,10 +211,11 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
     public void onAcceptDetail(ActionEvent event) {
 		try {
 			IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
-			detail.setWebInfoPage( current );
-			wipdBean.insertOrUpdate( detail );
+			detail.setWebInfoPage(current);
+			if (detail.getId() != null) wipdBean.update(detail);
+			else wipdBean.insert(detail);
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
@@ -236,11 +226,12 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
     }
 
     public void onCancelResource(ActionEvent event) {
-		LOGGER.debug("Resource: {} canceled.", resource.getContent());
+		LOGGER.fine(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " CANCELED.");
 		resource = new WebInfoPageResource();
 		resetResource();
     }
 
+	@SuppressWarnings("unused")
 	public void onSelectResource(ActionEvent event) {
 		WebInfoPageResource wipr = (WebInfoPageResource)this.resources.getRowData();
 		resource = wipr; 
@@ -260,7 +251,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
@@ -274,7 +265,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 

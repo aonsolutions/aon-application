@@ -24,67 +24,72 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{auditSession}" />
-					<ui:define name="columns">
+				<aon:dataTable id="sessionData" value="#{auditSession.model}"
+					var="to" rows="20" rendered="#{auditSession.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-						<aon:column styleClass="aon-width-80 aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_id}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}"/>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_start_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.startDate}">
-								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>							
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_end_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.endDate}">
-								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>							
-						</aon:column>
-	
-	 					<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{auditBundle.audit_domain}" />
-							</f:facet>
-							<aon:outputText value="#{to.user.domain.name}"/>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{auditBundle.audit_application}" />
-							</f:facet>
-							<aon:outputText value="#{to.application.name}"/>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_login_user}" />
-							</f:facet>
-							<aon:outputText value="#{to.user.login}"/>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{auditBundle.audit_session_remoteAddress}" />
-							</f:facet>
-							<aon:outputText value="#{to.remoteAddress}"/>
-						</aon:column>
-					</ui:define>
-				
-				</ui:decorate>
+					<aon:rowSelector action="auditSession_form" actionListener="#{auditSession.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_start_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.startDate}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>							
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_end_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.endDate}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>							
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{auditBundle.audit_domain}" />
+						</f:facet>
+						<aon:outputText value="#{to.user.domain.name}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{auditBundle.audit_application}" />
+						</f:facet>
+						<aon:outputText value="#{to.application.name}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_login_user}" />
+						</f:facet>
+						<aon:outputText value="#{to.user.login}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{auditBundle.audit_session_remoteAddress}" />
+						</f:facet>
+						<aon:outputText value="#{to.remoteAddress}"/>
+					</aon:column>
+ 
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="sessionData" showNote="true" />
+
 			</aon:div>
 		</aon:form>
 

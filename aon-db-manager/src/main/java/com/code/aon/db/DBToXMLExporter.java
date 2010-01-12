@@ -2,13 +2,9 @@ package com.code.aon.db;
 
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DBToXMLExporter implements IEntityManager<Element> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DBToXMLExporter.class.getName());
-	
 	private HibernateDataManager hdm;
 	
 	private QueryIterable<Element> entityIterable;	
@@ -22,8 +18,8 @@ public class DBToXMLExporter implements IEntityManager<Element> {
 		try {
 	        XMLWriter writer = hdm.startDocument(entity);
 		       
-			this.entityIterable.setEntity( entity );
-	        LOGGER.info( "Enitity: " + entity + " rows " + entityIterable.getRowCount() );
+			this.entityIterable.setEntity( entity );	        
+			this.entityIterable.orderById();
 	        int counter = 0;
 	        for( Object element : entityIterable ) {
 	        	writer.write( element );

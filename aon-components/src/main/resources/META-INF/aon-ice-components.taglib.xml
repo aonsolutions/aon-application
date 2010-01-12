@@ -20,7 +20,11 @@
     </tag>
     <tag>
         <tag-name>lookupButtonPopup</tag-name>
-		<handler-class>com.code.aon.faces.component.icefaces.lookup.button.popup.LookupButtonPopupHandler</handler-class>
+        <component>
+            <component-type>com.code.aon.faces.LookupButtonPopup</component-type>
+            <renderer-type>com.code.aon.faces.LookupButtonPopup</renderer-type>
+            <handler-class>com.code.aon.faces.component.icefaces.lookup.button.popup.LookupButtonPopupHandler</handler-class>
+        </component>
     </tag>
     <tag>
         <tag-name>subForm</tag-name>
@@ -240,7 +244,7 @@
 		<tag-name>rowSelector</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.RowSelector</component-type>
-			<handler-class>com.code.aon.faces.component.icefaces.rowSelector.RowSelectorHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.icefaces.AonIceComponentHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
@@ -277,9 +281,5 @@
 			<component-type>com.code.aon.faces.HtmlInputRichText</component-type>
 			<handler-class>com.code.aon.faces.component.icefaces.AonIceComponentHandler</handler-class>
 		</component>
-	</tag>
-	<tag>
-		<tag-name>valueChangeNotifier</tag-name>
-		<handler-class>com.code.aon.faces.component.sandbox.ValueChangeNotifierHandler</handler-class>
 	</tag>
 </facelet-taglib>

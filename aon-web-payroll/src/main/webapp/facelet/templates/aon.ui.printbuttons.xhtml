@@ -6,30 +6,29 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 	<ui:composition>
-		<h:commandLink id="export2pdf" value="PDF"
+		<a4j:htmlCommandLink id="export2pdf" value="PDF"
 				title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf}"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf"
 				action="#{report.onExecute}" rendered="#{!controller.new}" 
 				target="_blank">
 			<f:param name="reportKey" value="#{reportKey}" />
-		</h:commandLink>
-		<h:commandLink id="export2excel" value="XLS"
+		</a4j:htmlCommandLink>
+		<a4j:htmlCommandLink id="export2excel" value="XLS"
 				title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel}"
 				styleClass="aon-finding-toolbar-item aon-icon-excel"
 				action="#{report.onExecute}" rendered="#{!controller.new}" 
 				target="_blank">
 			<f:param name="reportKey" value="#{(reportKeyXls==null)?(reportKey):(reportKeyXls)}" />
 			<f:param name="outputFormat" value="MS Excel" />
-		</h:commandLink>
-		
-		<h:commandLink id="export2csv" value="CSV"
+		</a4j:htmlCommandLink>
+		<a4j:htmlCommandLink id="export2csv" value="CSV"
 				title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv}"
 				styleClass="aon-finding-toolbar-item aon-icon-csv"
 				action="#{report.onExecute}" rendered="#{!controller.new}" 
 				target="_blank">
 			<f:param name="reportKey" value="#{(reportKeyXls==null)?(reportKey):(reportKeyXls)}" />
 			<f:param name="outputFormat" value="CSV" />
-		</h:commandLink>
+		</a4j:htmlCommandLink>
 	
 	</ui:composition>
 </body>

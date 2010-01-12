@@ -11,22 +11,13 @@
 		<project>aon-groupware</project>
 		<project>aon-common-ldap</project>
 		<project>aon-messaging</project>
-		<project>aon-ldap</project>
-		<project>aon-ui-groupware</project>
-		<project>aon-ui-common</project>
-		<project>aon-project</project>
-		<project>aon-ui-company</project>
-		<project>aon-ui-form</project>
-		<project>aon-company</project>
-		<project>aon-ui-registry</project>
-		<project>aon-ui-config</project>
-		<project>aon-webmail</project>
-		<project>aon-config</project>
-		<project>aon-ui-messaging</project>
-		<project>aon-ui-report</project>
-		<project>aon-ui-geozone</project>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>org.maven.ide.eclipse.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -42,18 +33,12 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>org.devzuz.q.maven.jdt.core.mavenIncrementalBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
-		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-		<nature>org.maven.ide.eclipse.maven2Nature</nature>
-		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
+		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 	</natures>
 </projectDescription>

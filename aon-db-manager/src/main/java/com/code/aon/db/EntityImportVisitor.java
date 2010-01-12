@@ -72,7 +72,6 @@ public class EntityImportVisitor implements IEntityVisitor {
 		notNullableStringProperties.clear();
 		ClassMetadata cmd = getSessionFactory().getClassMetadata(entity);
 		String[] names = cmd.getPropertyNames();
-		notNullableStringProperties.add( cmd.getIdentifierPropertyName() );
 		boolean[] nullables = cmd.getPropertyNullability();
 		for( int i = 0; i < names.length; i++ ) {
 			if ( !nullables[i] ) {

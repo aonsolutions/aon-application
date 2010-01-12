@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.icefaces.confirmButton;
 
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
@@ -9,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.faces.component.icefaces.AonIceComponentHandler;
 import com.code.aon.faces.component.icefaces.lookup.ILookupTags;
 import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.faces.component.util.MethodValueExpression;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
@@ -80,6 +83,24 @@ public class ConfirmButtonHandler extends AonIceComponentHandler implements
 		return tag.getValueExpression(ctx, Object.class);
 	}
 
+	private ValueExpression getMethodExpression(FaceletContext ctx, String name, Class type, Class[] paramTypes ) {
+		ValueExpression valueExpression = null;
+		TagAttribute tag = getAttribute(name);
+		if (tag != null) {
+			ValueExpression ve = tag.getValueExpression(ctx, Object.class );
+			MethodExpression methodExpression = tag.getMethodExpression( ctx, type, paramTypes );
+			valueExpression = new MethodValueExpression( ve, methodExpression );
+		}
+		return valueExpression;
+	}
+
+	private ValueExpression getMethodEmptyExpression(FaceletContext ctx, String name, Class type, Class[] paramTypes ) {
+        ExpressionFactory f = ctx.getExpressionFactory();
+        ValueExpression ve = f.createValueExpression( ctx, "", Object.class );
+        MethodExpression me = f.createMethodExpression(ctx, name, type, paramTypes );
+        return new MethodValueExpression( ve, me );
+	}
+	
 	private void addConfirmButtonState( FaceletContext ctx, UIComponent component ) {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
 		String stateKey = getStateKey(component);
@@ -108,12 +129,12 @@ public class ConfirmButtonHandler extends AonIceComponentHandler implements
 		newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		newMapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
 		newMapper.setVariable(CONFIRM_MESSAGE, getValueExpression(ctx, messageTag));
-		ValueExpression action = FaceletUtil.getMethodExpression(ctx, getAttribute(CONFIRM_ACTION), String.class, ACTION_SIG);
+		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION, String.class, ACTION_SIG);
 		if ( action == null ) {
-			action = FaceletUtil.getMethodEmptyExpression(ctx, CONFIRM_ACTION, String.class, ACTION_SIG);
+			action = getMethodEmptyExpression(ctx, CONFIRM_ACTION, String.class, ACTION_SIG);
 		}
 		newMapper.setVariable( CONFIRM_ACTION, action );
-		ValueExpression al = FaceletUtil.getMethodExpression(ctx, getAttribute(CONFIRM_ACTION_LISTENER), null, ACTION_LISTENER_SIG);;
+		ValueExpression al = getMethodExpression(ctx, CONFIRM_ACTION_LISTENER, null, ACTION_LISTENER_SIG);
 		if ( al != null ) {
 			newMapper.setVariable( CONFIRM_ACTION_LISTENER, al );				
 		}

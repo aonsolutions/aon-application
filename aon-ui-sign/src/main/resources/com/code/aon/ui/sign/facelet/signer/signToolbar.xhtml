@@ -12,17 +12,14 @@
 	<aon:methodParam name="cancelSignActionListener" default="#{signController.onCancelSign}" type="actionListener" />
 
 	<c:if test="#{company.EInvoice}">
-		<c:if test="#{!skipSignButton and !certificate.sessionCertificateStored}">
+		<c:if test="#{!skipSignButton and !signController.sessionCertificateStored}">
 			<aon:commandButton id="sign"
 				value="#{signBundle.sign_sign}"
-				actionListener="#{certificate.onShowSignWindow}"
+				actionListener="#{signController.onShowSignWindow}"
 				styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
-				reRender="showSignWindow" >
-				<f:setPropertyActionListener
-					target="#{certificate.signerController}" value="#{signController}" />				
-			</aon:commandButton>
+				reRender="showSignWindow" />
 		</c:if>
-		<c:if test="#{!skipSignButton and certificate.sessionCertificateStored}">
+		<c:if test="#{!skipSignButton and signController.sessionCertificateStored}">
 			<aon:commandButton id="sign"
 				value="#{signBundle.sign_sign}"
 				actionListener="#{signActionListener}"

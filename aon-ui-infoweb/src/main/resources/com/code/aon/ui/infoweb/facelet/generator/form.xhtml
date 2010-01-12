@@ -25,14 +25,7 @@
 						<aon:commandButton id="generate"
 							value="#{infowebBundle.infoweb_generate}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{generator.onGenerate}" immediate="true"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />								
-						<aon:commandButton id="publish"
-							value="#{infowebBundle.infoweb_publish}"
-							rendered="#{generator.generated}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{generator.onPublish}" immediate="true"
+							actionListener="#{generator.onGenerate}"
 							onclick="Richfaces.showModalPanel('waitProccess')" 
 				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />								
 						<h:outputLink id="web" value="#{generator.webPage}" target="_new"

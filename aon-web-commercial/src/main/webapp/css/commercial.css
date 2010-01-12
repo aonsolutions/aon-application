@@ -21,21 +21,7 @@
 .aon-icon-save{
 	background:transparent url(../images/aon-icon-save.png) scroll left center no-repeat;	
  }
-
-.aon-search-add{
-	background:transparent url(../images/aon-icon-search-add.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
-	border: 0;	
- }
-
-.aon-search-minus{
-	background:transparent url(../images/aon-icon-search-minus.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
-	border: 0;
- }
-
+ 
 .aon-width-170{
 	width:170px;
 }
@@ -48,7 +34,7 @@
 	color:#4b4b4b;
 	font-size:0.9em;
 	font-weight:bold;
-	width:120px;
+	width:130px;
 	}
 .tbl-tab-search-even{
 	background-color:#fff !important;	

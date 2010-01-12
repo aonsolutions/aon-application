@@ -5,21 +5,20 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.log.CommonsLogLogChute;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class VelocityUtil extends VelocityEngine implements VelocityConstants {
     
-	private static final Logger LOGGER = LoggerFactory.getLogger(VelocityUtil.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(VelocityUtil.class.getName());
 	
 	public static final int INFO = 0;
 
@@ -29,22 +28,26 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
 	private File templateDirectory;
 
-	private File outputDirectory;
+	private File temporalDirectory;
 	
 	private String template;
 
 	private VelocityContext context = new VelocityContext();
 	
-	public void setTemplateDirectory(File templateDirectory) {
-		this.templateDirectory = templateDirectory;
+	public void setTemplateDirectory(File template_path) {
+		this.templateDirectory = new File( template_path, template );
+		File f = new File(templateDirectory, INDEX_TEMPLATE);
+		if (!f.exists()) {
+			addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
+		}
+	}
+
+	public void setTemporalDirectory(File temporalDirectory) {
+		this.temporalDirectory = temporalDirectory;
 	}
 	
-	public void setOutputDirectory(File temporalDirectory) {
-		this.outputDirectory = temporalDirectory;
-	}
-	
-	public File getOutputDirectory() {
-		return outputDirectory;
+	public File getTemporalDirectory() {
+		return temporalDirectory;
 	}
 
 	public VelocityContext getContext() {
@@ -59,13 +62,12 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
         this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, templateDirectory.getAbsolutePath());
         this.setProperty(Velocity.INPUT_ENCODING, VELOCITY_FILE_ENCODING);
         this.setProperty(Velocity.OUTPUT_ENCODING, VELOCITY_FILE_ENCODING);
-        this.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
-        this.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, LOGGER.getName());
+        this.setProperty(Velocity.RUNTIME_LOG, templateDirectory + "/" + VELOCITY_LOG_FILE);        
         this.setProperty(Velocity.RUNTIME_LOG_REFERENCE_LOG_INVALID, Boolean.TRUE.toString());
         try {
         	this.init();
         } catch (Throwable th) {
-            LOGGER.error(th.getMessage(), th);
+            LOGGER.log(Level.SEVERE, th.getMessage(), th);
         }
     }
 
@@ -81,7 +83,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	}
 
 	public void put(String key, Object value) {
-		LOGGER.debug( "Key: {}, Value: {}",  key, value );
+		LOGGER.fine( "Key: " + key + ", Value: " + value );
 		this.context.put(key, value);
 	}
 
@@ -90,25 +92,32 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	}
 
     public boolean generate(File template, File page) {
-		boolean error = true;
-		LOGGER.debug( "Template: {} -> {}", template, page );
+		boolean error = false;
+		LOGGER.fine( "Template: " + template + " -> " + page );
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
-			if ( template.exists() ) {
+			if (!template.exists()) {
+				error = true;
+			} else {
+				reader = new BufferedReader(new FileReader(template));
+			}
+			if (!error) {
 				try {
-					reader = new BufferedReader(new FileReader(template));					
 					writer = new BufferedWriter(new FileWriter(page));
                     this.evaluate(context, writer, "AON-INFOWEB", reader);
 					writer.flush();
-					error = false;
-				} catch (Throwable th) {
-				    LOGGER.error(th.getMessage(), th);
+				} catch(Throwable th) {
+				    error = true;
 					addMessage("Error al evaluar el contexto en el fichero '" + template + "' <BR/>" + th.getMessage(), ERROR);
 				}
 			} else {
-				addMessage("No se han encontrado la plantilla '" + template + "'", ERROR);
+				addMessage("No se pudo generar el fichero '" + page + "'", ERROR);
 			}
+		}  catch(Throwable th) {
+		    error = true;
+			addMessage("Error al generar el fichero '" + page + "' </BR> " + th.getMessage() + "", ERROR);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		} finally {
 			IOUtils.closeQuietly(writer);
 			IOUtils.closeQuietly(reader);
@@ -118,13 +127,13 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
     public boolean generate(String page) {
         File template = new File(this.templateDirectory, INDEX_TEMPLATE);
-    	File file = new File(this.outputDirectory, page);
+    	File file = new File(this.temporalDirectory, page);
     	return generate(template, file);
 	}
     
     public boolean generate(String template, String page) {
         File templateFile = new File(this.templateDirectory, template);
-    	File file = new File(this.outputDirectory, page);
+    	File file = new File(this.temporalDirectory, page);
     	return generate(templateFile, file);
 	}
     
@@ -132,7 +141,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 		File templateCss = new File( this.templateDirectory, CSS_PATH );
         File template = new File(templateCss, STYLE_TEMPLATE);
 
-        File temporalCss = new File( this.outputDirectory, CSS_PATH );
+        File temporalCss = new File( this.temporalDirectory, CSS_PATH );
         File file = new File(temporalCss, "style.css");
 
         return generate(template, file);
