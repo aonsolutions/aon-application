@@ -30,7 +30,7 @@
 								value="#{userLogin.login}" size="15" />
 	
 							<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_ecommerce_user_passwd}" />
-							<aon:inputText id="Password" required="false" 
+							<aon:inputSecret id="Password" required="false" 
 								value="#{userLogin.password}" size="15" />
 	
 							<aon:commandLink id="login-request-buttom" 
@@ -41,7 +41,8 @@
 							</aon:commandLink>
 							<aon:commandButton id="login-buttom" 
 								value="#{bundle.aon_accept}"
-								action="paymethod_form"
+								action="#"
+								reRender="aon-content"
 								styleClass="aon-finding-toolbar-item aon-icon-accept">
 								<aon:actionListener method="#{userLogin.onLogin}" />
 							</aon:commandButton>
