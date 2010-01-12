@@ -29,7 +29,7 @@ MARGIN:20PX;
 	float:right; 
 	margin-right:10px;
 	height:24px;
-	width:600px; 
+	width:730px; 
 	background-image: url(images/bg_menu.gif);
 	background-repeat:repeat-x;
 	color:${color_color_de_texto_menu};

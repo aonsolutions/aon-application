@@ -57,7 +57,7 @@ acronym{
 			 
 			 border-top: 1px solid #999;
 			 z-index: 1;
-			 width:580px;
+			 width:650px;
 }
 #navcontainer ul{
 			 list-style-type: none;

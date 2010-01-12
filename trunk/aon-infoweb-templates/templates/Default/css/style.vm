@@ -65,7 +65,7 @@ div.dummyicon {
 	text-align: center;
 }
 #content {
-	margin: 0 0 0 8em;
+	margin: 0 0 0 10em;
 	padding: 1em 0 0 2.5em;
 	border-left: ${border_size_bordes} ${color_color_borde} solid;
 	min-height: 450px;

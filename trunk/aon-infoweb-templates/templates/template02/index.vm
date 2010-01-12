@@ -7,7 +7,7 @@
 </head>
 
 <body>
-
+<!-- template 02 -->
 <!--inicio header-->
 		
 	#parse ("header.vm")		  	

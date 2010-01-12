@@ -23,9 +23,10 @@ body {
 	font-size: ${size_tamano_de_fuente_menu};
 	font-weight:bold;
 	padding-top:19px;
-	padding-bottom:22px;
+	/*padding-bottom:22px;*/
 	display:block;
 	width:100%;
+        float:right;
 }
 #menu ul li { 
 	display: inline; 

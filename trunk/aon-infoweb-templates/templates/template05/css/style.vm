@@ -35,7 +35,7 @@ margin-top:20px;
 .menu a{
 		text-decoration:none;
 		color:${color_color_de_texto_menu};
-		white-space:nowrap;
+		/*white-space:nowrap;*/
 		padding:0 1em 0 1em;
 		border-right:#999900 1px solid;
 		font-size:${size_tamano_de_fuente_menu};

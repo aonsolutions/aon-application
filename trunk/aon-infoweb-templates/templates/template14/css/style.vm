@@ -46,14 +46,14 @@ a:hover {
 #menu ul li{ 
 	display:inline-block; 
 	float:left; 
-	width:104px; 
+	width:150px; 
 	list-style:none; 
 	text-align:center; 
 }
 #menu a { 
 	display:block; 
-	float:left; 
-	width:104px; 
+	/*float:left; */
+	/*width:110px;*/ 
 	color: ${color_color_de_texto_menu};
 	font-size: ${size_tamano_de_fuente_menu};
 	text-transform:uppercase; 
