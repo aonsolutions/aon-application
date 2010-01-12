@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="percepDataDiv2">
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{percep}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-dateColumn, aon-editDataTable-dateColumn,
+			aon-editDataTable-textColumn, aon-editDataTable-numberColumn" />
+			<!--  
+			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
+			-->
+			
+			<ui:param name="skipSaveButton" value="#{true}" />
+			<ui:param name="skipRemoveButton" value="#{true}" />
+			<!-- <aon:methodParam name="resetAction" value="trabajo_form" /> -->
+			<ui:param name="skipResetButton" value="#{true}" />
+			
+			
+			
+			
+			
+			<ui:define name="columns">
+				<aon:column  
+					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<h:commandButton alt="[#{bundle.aon_reset}]" title="[Ir a mnto percepciones]"
+						styleClass="aon-editDataTable-button aon-icon-rowSelector"
+						reRender="integralPresonasData"
+						rendered="#{percep.to==to}"
+						action="percep_form" accesskey="#{bundle.aon_key_new_line}"/>
+							
+					<f:facet name="footer">
+						<aon:div>
+							<h:commandButton
+								id="trabajador-reset" title="#{bundle.aon_reset}"
+								action="percep_form" actionListener="#{percepbasic.onReset}"
+								rendered="#{trabajador.to!=null}" 
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" />
+	
+						</aon:div>
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecini_comp}" />
+					</f:facet>
+					<aon:outputText value="#{to.fecini}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecfin_comp}" />
+					</f:facet>
+					<aon:outputText value="#{to.fecfin}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+				 
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_desc_completa_comp}" />
+					</f:facet>
+					<aon:outputText value="#{to.descom}" />
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_importe_comp}" />
+					</f:facet>
+					<aon:outputText value="#{to.importe}" />
+				</aon:column>
+								
+			</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

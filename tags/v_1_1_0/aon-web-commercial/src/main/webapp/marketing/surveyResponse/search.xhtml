@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="surveyResponseSearch">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_survey_responses}" />
+				<ui:param name="controller" value="#{surveyResponse}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{surveyResponse.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="surveyResponse_list" />		
+
+					<aon:outputLabel for="SurveyResponse_survey_id"
+						value="#{marketingBundle.aon_marketing_survey}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="SurveyResponse_survey_id"
+							lookup="#{surveyLookup}"
+							reRender="SurveyResponse_survey_name"
+							value="#{surveyResponse.survey.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton 
+							windowTitle="#{marketingBundle.aon_lookup_survey}"
+							selectReRender="SurveyResponse_survey_id,SurveyResponse_survey_name"
+							lookup="#{surveyLookup}" minHeight="460"
+							property="#{surveyResponse.survey}">
+						</aon:lookupButton>
+						<aon:inputText id="SurveyResponse_survey_name"
+							value="#{surveyResponse.survey.description}"
+							size="80" disabled="true" />
+					</aon:div>
+					
+					<aon:outputLabel for="SurveyResponse_action_id" 
+						value="#{marketingBundle.aon_campaign_action}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="SurveyResponse_action_id"
+							lookup="#{campaignActionLookup}" 
+							reRender="SurveyResponse_action_detail"
+							value="#{surveyResponse.action.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{marketingBundle.aon_lookup_action}"
+							selectReRender="SurveyResponse_action_id,SurveyResponse_action_detail"
+							lookup="#{campaignActionLookup}" minHeight="440"
+							property="#{surveyResponse.action}">
+						</aon:lookupButton>
+						<aon:inputText id="SurveyResponse_action_detail"
+							value="#{surveyResponse.action.campaign.description}"
+							size="80" disabled="true" />
+					</aon:div>
+					
+					<aon:outputLabel for="SurveyResponse_target_id"
+						value="#{appBundle.aon_commercial_tracking_target}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="SurveyResponse_target_id"
+							lookup="#{targetLookup}"
+							reRender="SurveyResponse_target_name"
+							value="#{surveyResponse.target.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton 
+							windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
+							selectReRender="SurveyResponse_target_id,SurveyResponse_target_name"
+							lookup="#{targetLookup}" minHeight="460" minWidth="650"
+							property="#{surveyResponse.target}">
+						</aon:lookupButton>
+						<aon:inputText id="SurveyResponse_target_name"
+							value="#{(surveyResponse.target.registry.name!=null)?(surveyResponse.target.registry.fullName):('')}"
+							size="80" disabled="true" />
+					</aon:div>
+
+					<aon:outputLabel for="SurveyResponse_user_name"
+						value="#{bundle.aon_login_user}" />
+					<aon:inputText id="SurveyResponse_user_name" size="60"
+						valueChangeListener="#{surveyResponse.addDirectExpression}" />		
+			
+				</ui:define>			
+			</ui:decorate>
+							 
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
+	</ui:define>
+		
+</ui:composition>
