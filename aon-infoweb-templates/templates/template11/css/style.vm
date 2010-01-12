@@ -22,7 +22,7 @@ body {
 	font-family: ${font_fuente};
 	font-size: ${size_tamano_de_fuente_menu};
 	font-weight:bold;
-	padding-top:19px;
+	padding-top:12px;
 	/*padding-bottom:22px;*/
 	display:block;
 	width:100%;
@@ -41,11 +41,11 @@ body {
 	padding-left: 10px;
 	color: ${color_color_de_texto_menu};
 	width: 100%;
-	border-right: 1px  ${color_color_borde} solid;
+	/*border-right: 1px  ${color_color_borde} solid;*/
 }
 #menu ul li a:hover {
 	color: ${color_color_de_texto_menu_hover};
-	background: url(images/navhover_02.gif) repeat-x top;
+	/*background: url(images/navhover_02.gif) repeat-x top;*/
 	font-size: ${size_tamano_de_fuente_menu};
 	font-weight:bold;
 	text-decoration:none;

@@ -22,7 +22,7 @@ $!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.get
 		</p>
 #if ($schedule && !$schedule.toString().trim().equals(""))
 		<div class="title">
-			Horario
+		
 		</div>
 		<p>
 			$!schedule

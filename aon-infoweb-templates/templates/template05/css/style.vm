@@ -29,7 +29,6 @@ margin-top:20px;
 		background-color: ${bgcolor_color_de_fondo_menu};
 		text-align:right;
 		width:750px;
-		white-space:nowrap;
 		padding:15px 0;
 }
 .menu a{
@@ -47,8 +46,7 @@ margin-top:20px;
 	border-left:#000000 1px solid;
 	border-bottom:#000000 1px solid;
 	border-right:#000000 1px solid;
-	padding:25px;
-padding-top:20px;
+	padding:20px 25px 83px;
 }
 .foot{
 		background-color:${bgcolor_color_de_fondo_pie};
@@ -86,6 +84,7 @@ margin-bottom:20px;
 .formulario{
 	float: left;
 	line-height:15px;
+	padding-bottom:25px;
 }
 .copiesferalia {
 	font-family: ${font_fuente} ;

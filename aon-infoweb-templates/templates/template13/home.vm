@@ -22,7 +22,7 @@ $!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.get
 		</p>
 #if ($schedule && !$schedule.toString().trim().equals(""))
 		<div class="h1">
-			Horario
+		
 		</div>
 		<p>
 			$!schedule
@@ -30,8 +30,8 @@ $!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.get
 #end
 	</td>
 	<td style="text-align:right;">
-	<p>SLOGAN: $!slogan</p>
-	<p>TEXTO: $!description</p>
+	<p> $!slogan</p>
+	<p> $!description</p>
 	</td>
 </tr>
 </table>

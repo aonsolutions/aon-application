@@ -4,8 +4,6 @@
 <tr>
 	<td>
 		<p>$!company.getName() </p>
-		<p>Pintor Vicente Abreu 7 Bajo  </p>
-		<p>01008 Vitoria (ALAVA)</p>
 
 $!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName()
 
@@ -25,7 +23,7 @@ $!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.get
 		</p>
 #if ($schedule && !$schedule.toString().trim().equals(""))
 		<div class="title">
-			Horario
+			
 		</div>
 		<p>
 			$!schedule
@@ -34,8 +32,8 @@ $!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.get
 #end
 	</td>
 	<td style="text-align:left;">
-	<p>SLOGAN: $!slogan</p>
-	<p>TEXTO: $!description</p>
+	<p>$!slogan</p>
+	<p>$!description</p>
 	</td>
 </tr>
 </table>

@@ -104,7 +104,7 @@ li.copyright{
 	text-align:right;
 }
 .infoHelp{
-	width:330px; 
+	/*width:330px;*/ 
 	padding:5px;
 	background-color:#dddddd;
 	text-align:justify;
