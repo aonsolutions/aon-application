@@ -20,7 +20,7 @@ dd{
 
 #header{
 	background-repeat: no-repeat;
-	width: 750px;
+	/*width: 750px;*/
 	text-decoration: none;
 	color:${color_cabecera_color_de_texto};
 	background-color:${bgcolor_color_de_fondo_cabecera};
@@ -66,7 +66,7 @@ dd{
 	}
 .menu ul{
 	margin:3px;
-	padding:10px;
+	padding:2px;
 	}
 .menu li{
 	display:inline;

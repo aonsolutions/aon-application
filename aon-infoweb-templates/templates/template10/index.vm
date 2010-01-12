@@ -8,6 +8,7 @@
 
 <body>
 <div id="canvas">
+<!-- template 10 -->
 <!--inicio header-->
 		
 	#parse ("header.vm")		  	
