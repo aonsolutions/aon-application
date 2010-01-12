@@ -22,10 +22,11 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="15" splitType="Stretch">
+		<band height="16" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean(!$F{name}.isEmpty())]]></printWhenExpression>
 			<elementGroup>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement key="textField-5" positionType="Float" x="0" y="1" width="515" height="14">
+					<reportElement key="textField-5" positionType="Float" x="0" y="0" width="515" height="14">
 						<printWhenExpression><![CDATA[$F{general}]]></printWhenExpression>
 					</reportElement>
 					<box>

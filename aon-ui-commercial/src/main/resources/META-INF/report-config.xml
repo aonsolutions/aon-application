@@ -55,6 +55,38 @@
 		<nested-report report="offerGeneralTerms"/>
 		<nested-report report="offerParticularTerms"/>
 	</report>
+	
+	<report id="offerSimple" description="Offers's Report">
+		<template path="/com/code/aon/ui/commercial/report/offerSimple.jasper"/>
+		<collection provider="#{offer}" forceRefresh="true"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="TotalPrice" value="#{offer.getTotalPrice}" />
+			<param id="PriceStrategy" value="#{offerDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="targetPhone" value="#{offer.getTargetPhone}" />
+			<param id="targetCellular" value="#{offer.getTargetCellularPhone}" />
+			<param id="targetEmail" value="#{offer.getTargetEmail}" />
+			<param id="targetFax" value="#{offer.getTargetFax}" />
+			<param id="targetPayMethod" value="#{offer.getTargetPayMethod}" />
+			<param id="defaultPayMethod" value="#{offer.getDefaultPayMethod}" />			
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+		
+		<nested-report report="offerDetail"/>
+		<nested-report report="offerVatBreakDown"/>
+		<nested-report report="offerGeneralTerms"/>
+		<nested-report report="offerParticularTerms"/>
+	</report>
 		
 	<report id="offerDetail" description="OfferDetail' Subreport">
 		<template path="/com/code/aon/ui/commercial/report/offerDetail.jasper" />	

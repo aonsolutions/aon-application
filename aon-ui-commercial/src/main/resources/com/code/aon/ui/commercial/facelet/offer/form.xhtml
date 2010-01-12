@@ -61,13 +61,13 @@
 							styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border">
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="DOCX" />
-						</h:commandLink>											
+						</h:commandLink>
 						<h:commandLink id="offerPDF" value="#{commercialBundle.commercial_offer}"
 							target="_blank" action="#{offerSigner.onReport}"
 							rendered="#{!offer.new}" disabled="#{offerDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="offer" />
+							<f:param name="reportKey" value="offerSimple" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
