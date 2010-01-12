@@ -53,12 +53,12 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 			AonFile f = new AonFile();
 			f.setData(image.getData());
 			f.setFileName(image.getDescription());
+			imagesController.setAonFile(f);
 			MimeType mimeType = image.getMimeType();
 			if ( mimeType == null ) {
 				mimeType = CompanyImagesController.getMimeType(f.getFileName(), f.getData());
 			}
-			f.setMimeType(mimeType);
-			imagesController.setAonFile(f);			
+			imagesController.setMimeType(mimeType);
 		}
 	}
 	
@@ -67,6 +67,7 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 			throws ControllerListenerException {
 		CompanyImagesController imagesController = (CompanyImagesController) event.getController();
 		imagesController.setAonFile(new AonFile());
+		imagesController.setMimeType(null);
 	}
 
 	private void checkAonFile( CompanyImagesController imagesController ) throws ControllerListenerException {
@@ -87,7 +88,7 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 		checkAonFile(imagesController);
 		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
 		attach.setRegistryAttachmentType(imagesController.getAttachmentType());
-		imagesController.update(attach);	
+		CompanyImagesController.update(attach, imagesController.getAonFile());	
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
 		checkAonFile(imagesController);
 		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
-		imagesController.update(attach);	
+		CompanyImagesController.update(attach, imagesController.getAonFile());	
 	}
 	
 }

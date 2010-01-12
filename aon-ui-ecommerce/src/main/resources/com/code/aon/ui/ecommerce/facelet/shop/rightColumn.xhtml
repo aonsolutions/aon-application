@@ -31,7 +31,7 @@
 <!--  
 		LOGIN BOX
 -->
-		<c:if test="#{ecConfig.onDemandLogin}">
+		<c:if test="#{ecConfig.onDemandLogin or shop.logged}">
 			<aon:div id="login-box" styleClass="login-box">
 				<aon:div id="login-box-header" styleClass="box-header">
 					<aon:div id="login-box-icon" styleClass="login-box-header-icon"></aon:div>
@@ -50,6 +50,7 @@
 					value="#{securityBundle.aon_login_user_logout}"
 					action="#"
 					rendered="#{shop.logged}"
+					reRender="aon-content"
 					actionListener="#{userLogin.onLogout}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept">
 				</aon:commandButton>

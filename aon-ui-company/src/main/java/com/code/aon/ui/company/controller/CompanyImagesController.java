@@ -1,18 +1,18 @@
 package com.code.aon.ui.company.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
@@ -21,12 +21,9 @@ import net.sf.jmimemagic.MagicMatch;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -38,13 +35,12 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.company.util.ImageUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CompanyImagesController extends LinesController implements ICompanyConstants {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyImagesController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CompanyImagesController.class.getName());
 	
 	private static final RegistryAttachmentType[] DEFAULT_DISPLAYED_TYPES = new RegistryAttachmentType[] {RegistryAttachmentType.ADDITIONAL_IMAGE};
 
@@ -53,6 +49,8 @@ public class CompanyImagesController extends LinesController implements ICompany
 	private static final int DEFAULT_MAXIMUM_NUMBER = 16;
 	
 	private AonFile aonFile;
+	
+	private MimeType mimeType;
 	
 	private int maximumNumber;
 	
@@ -64,71 +62,11 @@ public class CompanyImagesController extends LinesController implements ICompany
 	
 	private List<SelectItem> registryAttachmentTypes;
 	
-	private BufferedImage image;
-	
-	private boolean ratio;
-	
-	private int width;
-	
-	private int height;
-	
-	private int maxWidth;
-	private int maxHeight;	
-	
 	public CompanyImagesController() {
 		setMaximumSize(DEFAULT_MAXIMUM_SIZE);
 		setDisplayedTypes(DEFAULT_DISPLAYED_TYPES);
 		setAttachmentType(RegistryAttachmentType.ADDITIONAL_IMAGE);
 		setMaximumNumber(DEFAULT_MAXIMUM_NUMBER);
-		setRatio(true);
-	}
-	
-	public BufferedImage getImage() {
-		return image;
-	}
-
-	public void setImage(BufferedImage image) {
-		this.image = image;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-	
-	public int getMaxWidth() {
-		return maxWidth;
-	}
-
-	public void setMaxWidth(int maxWidth) {
-		this.maxWidth = maxWidth;
-	}
-
-	public int getMaxHeight() {
-		return maxHeight;
-	}
-
-	public void setMaxHeight(int maxHeight) {
-		this.maxHeight = maxHeight;
-	}
-
-	public boolean isRatio() {
-		return ratio;
-	}
-
-	public void setRatio(boolean ratio) {
-		this.ratio = ratio;
 	}
 
 	public long getMaximumSize() {
@@ -150,24 +88,17 @@ public class CompanyImagesController extends LinesController implements ICompany
 	public AonFile getAonFile() {
 		return aonFile;
 	}
-	
-	private void init( byte[] data ) {
-		setImage(null);
-		if (! ArrayUtils.isEmpty(data) ) {
-			BufferedImage bImage = ImageUtil.getImage( data );
-			if ( bImage != null ) {
-				setImage(bImage);
-				setWidth(bImage.getWidth());
-				setMaxWidth(bImage.getWidth());
-				setHeight(bImage.getHeight());
-				setMaxHeight(bImage.getHeight());
-			}			
-		}				
-	}
 
 	public void setAonFile(AonFile aonFile) {
 		this.aonFile = aonFile;
-		init( aonFile.getData() );
+	}
+
+	public MimeType getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(MimeType mimeType) {
+		this.mimeType = mimeType;
 	}
 
 	public RegistryAttachmentType[] getDisplayedTypes() {
@@ -211,7 +142,6 @@ public class CompanyImagesController extends LinesController implements ICompany
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			f.setMimeType(getMimeType(f.getFileName(), f.getData()));
 			setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
@@ -224,14 +154,9 @@ public class CompanyImagesController extends LinesController implements ICompany
 		}
 	}    
 	
-	public void update(RegistryAttachment attachment ) {
-		byte[] data = aonFile.getData();
-		if ( (width != image.getWidth()) || (height != image.getHeight()) ) {
-			BufferedImage newImage = ImageUtil.scale(image, width, height);
-			data = ImageUtil.getJPEGImage(newImage, -1);
-		}
-		attachment.setData(data);
-		MimeType mimeType = CompanyImagesController.getMimeType(aonFile.getFileName(), data);
+	public static void update(RegistryAttachment attachment, AonFile aonFile ) {
+		attachment.setData(aonFile.getData());
+		MimeType mimeType = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
 		attachment.setMimeType(mimeType);		
 	}
 	
@@ -250,7 +175,7 @@ public class CompanyImagesController extends LinesController implements ICompany
 					result = MimeType.get(match.getMimeType());
 				}
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th );
+				LOGGER.log(Level.SEVERE, th.getMessage(), th );
 			}
 		}
 		return result;
@@ -282,17 +207,4 @@ public class CompanyImagesController extends LinesController implements ICompany
 			}
 		}
 	}	
-	
-	public void onChangeWidth(ActionEvent event) throws ManagerBeanException {
-		if (ratio){
-			setHeight( ImageUtil.getProportionalHeight(image, width));
-		}
-	}
-
-	public void onChangeHeight(ActionEvent event) throws ManagerBeanException {
-		if (ratio){
-			setWidth( ImageUtil.getProportionalWidth(image, height));
-		}
-	}	
-	
 }
