@@ -56,8 +56,8 @@
 		<nested-report report="offerParticularTerms"/>
 	</report>
 	
-	<report id="offerSimple" description="Offers's Report">
-		<template path="/com/code/aon/ui/commercial/report/offerSimple.jasper"/>
+	<report id="offerExtended" description="Offers's Report">
+		<template path="/com/code/aon/ui/commercial/report/offerExtended.jasper"/>
 		<collection provider="#{offer}" forceRefresh="true"/>
 
 		<params>
