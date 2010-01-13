@@ -36,32 +36,38 @@ a:hover {
 	text-transform:uppercase;
 }
 #menu { 
-	background: url(images/menu_bckg.jpg) ${bgcolor_color_de_fondo_menu}; 
+	background: url(images/menu_bckg.jpg) ${bgcolor_color_de_fondo_menu};
 	height:30px; 
 }
 #menu ul { 
 	margin:0; 
 	padding:0;
+	background: url(images/menu_bckg.jpg) ${bgcolor_color_de_fondo_menu};
 }
-#menu ul li{ padding-left:5px;
-	display:inline-block; 
-	float:left; 
-	/*width:150px;*/ 
-	list-style:none; 
-	text-align:center; 
+#menu ul li{ 
+
+border-right:1px solid #FFFFFF;
+display:inline-block;
+float:left;
+list-style-image:none;
+list-style-position:outside;
+list-style-type:none;
+padding:3px;
+text-align:center;
+
 }
 #menu a { 
 	display:block; 
 	/*float:left; */
 	/*width:110px;*/ 
 	color: ${color_color_de_texto_menu};
-	font-size: ${size_tamano_de_fuente_menu};
+	font-size: 12px;
 	text-transform:uppercase; 
 	font-weight:bold; 
 	text-decoration:none; 
 	padding-top:4px; 
 	font-style:italic;
-	 padding-left:5px;
+	
 }
 #menu a:hover{ 
 	padding-top:4px; 
@@ -92,7 +98,7 @@ h1 {
 	font-size:1.8em; 
 	color: ${color_color_de_texto_titulos} ;
 	font-style:italic;
-padding:20px;
+padding-top:35px;
 }
 #main { 
 	float:left; 
@@ -189,6 +195,7 @@ padding-bottom:20px;
 .album {
 	margin-left:40px;
 	text-align:center;
+margin-top:15px;
 }
 .album a{
 	text-decoration:none;

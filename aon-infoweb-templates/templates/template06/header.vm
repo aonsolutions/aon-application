@@ -1,4 +1,4 @@
-<div id="header">
+<div class="header">
 	<div id="logo">
 	#if ($logo)
 		<a href="index.html" title="Inicio">	

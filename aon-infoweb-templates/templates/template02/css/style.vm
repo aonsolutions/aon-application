@@ -1,6 +1,6 @@
 body {
 	background-color:${bgcolor_color_de_fondo};
-	background-image: url(images/${img_imagen_de_fondo}) repeat-x scroll left top;
+	background-image: url(images/${img_imagen_de_fondo});
 	font-family: ${font_fuente} ;
 	font-size: ${size_tamano_de_fuente};
 	font-style: normal;
