@@ -293,11 +293,11 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void accept(ActionEvent event) {
 		try {
 			getManagerBean().restoreNullSubPOJOs(getTo());
+			boolean updateModel = isNew();
 			accept();
-			if (isNew()) {
+			if (updateModel) {
 				initializeModel();
 				synchronizeAddedPojo();
-				setNew(false);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onAccept",e);
@@ -342,6 +342,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			if (isNew) {
 				controllerListenerSupport.fireBeforeBeanAdded(evt);
 				this.to = add();
+				setNew(false);
 				controllerListenerSupport.fireAfterBeanAdded(evt);
 			} else {
 				controllerListenerSupport.fireBeforeBeanUpdated(evt);
