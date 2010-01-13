@@ -488,7 +488,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/form.xhtml</value>
+			<value>/com/code/aon/ui/supplier/facelet/supplier/formNewContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -502,7 +502,7 @@
 
 	<managed-bean>
 		<managed-bean-name>supplierLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 

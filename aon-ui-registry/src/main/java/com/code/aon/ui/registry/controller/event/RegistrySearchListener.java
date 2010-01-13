@@ -8,15 +8,32 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.util.AonUtil;
 
 public class RegistrySearchListener extends ControllerSearchListener {
+
+	private static final String LOOKUP_LISTENER = "LookupListener";
+	
+	private static final String MEDIA_SUFFIX = "Media";
+
+	private static final String ADDRESS_SUFFIX = "Address";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RegistrySearchListener.class);
 	
 	private static final GeoZone EMPTY_GEOZONE = new GeoZone();
 	
@@ -27,7 +44,13 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	private List<GeoZone> geoZones;
 	
 	private List<String> segments;
-
+	
+	private RegistryLookupListener formListener;
+	
+	private LinesController registryAddress;
+	
+	private LinesController registryMedia;
+	
 	public List<MediaType> getMediaTypes() {
 		if (mediaTypes == null) {
 			mediaTypes = new LinkedList<MediaType>();
@@ -172,4 +195,71 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		}
 	}
 
+	private RegistryLookupListener getLookupListener(ControllerEvent event) throws ManagerBeanException {
+		if ( this.formListener == null ) {
+			BasicController controller = (BasicController) event.getController();
+			Class<?> pojoClass = controller.getManagerBean().getPOJOClass();
+			if ( IRegistry.class.isAssignableFrom(pojoClass) ) {
+				String name = controller.getBeanName();
+				initControllers(name);
+			}
+		}
+		return this.formListener; 
+	}
+	
+	protected void initControllers( String name ) {
+		this.formListener = (RegistryLookupListener) AonUtil.getRegisteredBean(name + LOOKUP_LISTENER);
+		if ( this.formListener == null ) {
+			LOGGER.error( "Lookup listener not found for {}", name );
+		}			
+		this.registryAddress = (LinesController) AonUtil.getRegisteredBean(name + ADDRESS_SUFFIX);
+		if ( registryAddress == null ) {
+			LOGGER.error( "Registry Address Managed Bean not found for {}", name );
+		}			
+		this.registryMedia = (LinesController) AonUtil.getRegisteredBean(name + MEDIA_SUFFIX);
+		if ( registryMedia == null ) {
+			LOGGER.error( "Registry Media Managed Bean not found for {}", name );
+		}					
+	}
+	
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		try {		
+			RegistryLookupListener listener = getLookupListener(event);
+			if ( listener != null ) {
+				listener.afterBeanCreated(event);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		try {
+			RegistryLookupListener listener = getLookupListener(event);
+			if ( listener != null ) {
+				updateListeners( listener );
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
+	
+	protected void updateListeners( IControllerListener controllerListener ) throws ControllerListenerException {
+		RegistryLookupListener listener = (RegistryLookupListener) controllerListener;
+		try {
+			if ( registryAddress != null ) {
+				listener.updateRegistryAddress(registryAddress);	
+			}
+			if ( registryMedia != null ) {
+				listener.updateRegistryMedia(registryMedia);	
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
+	
 }
