@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<!-- start toolbar navigation -->
+	<aon:div styleClass="aon-toolbar">
+		<aon:commandButton id="search" value="#{bundle.aon_search}"
+			accesskey="#{bundle.aon_key_search}"
+			actionListener="#{lookup.onFilterSearch}" reRender="lookupContent"
+			styleClass="aon-finding-toolbar-item aon-icon-accept" />
+		<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+			accesskey="#{bundle.aon_key_cancel}"
+			actionListener="#{lookup.onCloseWindow}"
+			styleClass="aon-finding-toolbar-item aon-icon-cancel">
+			<rich:componentControl for="#{lookupId}" event="onclick"
+				disableDefault="true" operation="hide" />
+		</aon:commandButton>
+		<aon:commandButton id="clear" type="reset"
+			value="#{bundle.aon_clear}"
+			styleClass="aon-finding-toolbar-item aon-icon-new" />
+	</aon:div>
+
+	<!-- end toolbar navigation -->
+
+	<ui:include src="#{lookup.searchPagePath}" />
+
+</ui:composition>
+
+</body>
+</html>

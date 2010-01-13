@@ -1,0 +1,9 @@
+<div class="header">
+	<div id="logo">
+	#if ($logo)
+		<a href="index.html" title="Inicio">	
+			<img src="images/$!logo" border="0px">
+	</a>
+	#end
+	</div>
+</div>
