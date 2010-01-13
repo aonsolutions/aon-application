@@ -15,6 +15,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.code.aon.bridge.jmx.mbean.ConsoleAdminFactoryManager;
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
@@ -28,6 +31,9 @@ import com.code.aon.jaas.deployment.DeploymentException;
  * @author Consulting & Development. Iñaki Ayerbe - 15/05/2007
  */
 public class SessionFilter implements Filter {
+
+    /** Obtains the SessionFilter Logger. */
+	protected static final Log LOGGER = LogFactory.getLog( SessionFilter.class.getName() );
 
 	@Override
 	public void destroy() {	}

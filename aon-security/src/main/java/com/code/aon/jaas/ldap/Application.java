@@ -4,31 +4,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.naming.Name;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IRole;
-import com.code.aon.jaas.client.ast.core.Role;
 import com.code.aon.jaas.deployment.event.SubDeployerEvent;
-import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
+import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
-import com.code.aon.ldap.NameResolver;
 
 public class Application implements IApplication, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 
 	private static final long serialVersionUID = -7774786273060605086L;
 
 	/** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(Application.class);
+	private static final Log LOGGER = LogFactory.getLog( Application.class.getName() );
 	
 	/** Domain identifier. */
 	private String id;
@@ -52,9 +50,9 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
     /** Hash encoding format. Default BASE64. */
 	private String hashEncoding = Util.BASE64_ENCODING;
     
-	private BasicLdap ldap;
+	private SecurityLdap ldap;
 	
-	public Application(BasicLdap ldap) {
+	public Application(SecurityLdap ldap) {
 		this.ldap = ldap;
 	}
 	
@@ -69,7 +67,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	
 	@Override
 	public Collection<IDomain> domains() {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 	
 	public void setDescription(String description) {
@@ -115,22 +113,22 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 
 	@Override
 	public IRole getRole(String name) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
 	public String getRoles() {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
 	public String getSecurityDomain() {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
 	public IDomain remove(IDomain domain) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
@@ -140,7 +138,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 
 	@Override
 	public void accept(INodeVisitor visitor) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
@@ -150,31 +148,31 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 
 	@Override
 	public void domainFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
 	public void methodPermissionFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
 	public void roleFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
 	public void securityPermissionFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	@Override
 	public void vendorDescriptorFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
-	public static Name getDN( String application ) {
-		return NameResolver.getApplicationDN(application);
+	public static DistinguishedName getDN( String application ) {
+		return AonDN.getApplicationDN(application);
 	}
 	
 	private static Application getObject( SecurityLdap ldap, Entry entry ) {
@@ -186,10 +184,16 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	
 	public static Application get( SecurityLdap ldap, String applicationId ) {
 		Application application = null;
-		Name dn = getDN(applicationId);
-		Entry entry = ldap.get( dn, APPLICATION );
-		if ( entry != null ) {
+		try {
+			LdapSession session = ldap.getLdapSession();
+			String objectClass = LdapSession.getObjectClass(APPLICATION);
+			DistinguishedName dn = getDN(applicationId);
+			Entry entry = session.get( dn.toString(), objectClass );
 			application = getObject(ldap, entry);
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
 		}
 		return application;
 	}
@@ -198,25 +202,19 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		List<IRole> roles = new ArrayList<IRole>();
 		try {
 			LdapSession session = this.ldap.getLdapSession();
-			String objectClass = NameResolver.getObjectClass(ROLE);
-			Name dn = NameResolver.getApplicationRolesDN(application);
-			List<Entry> list = session.search(dn, objectClass );
+			String objectClass = LdapSession.getObjectClass(ROLE);
+			DistinguishedName dn = AonDN.getRolesDN(application);
+			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
-				IRole role = getRole(entry);
+				IRole role = this.ldap.getRole(entry);
 				roles.add(role);
 			}
-		} catch ( Throwable th ) {
-			LOGGER.error( th.getMessage(), th );
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
 		} finally {
 			this.ldap.closeSession();
 		}
 		return roles;
 	}
-	
-	public IRole getRole( Entry entry ) {
-		Role role = new Role();
-		role.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
-		return role;
-	}	
 	
 }

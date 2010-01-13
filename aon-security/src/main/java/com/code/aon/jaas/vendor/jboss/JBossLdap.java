@@ -11,15 +11,14 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.management.ObjectName;
-import javax.naming.Context;
-import javax.naming.Name;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.system.ServiceMBeanSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
+import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
@@ -33,10 +32,11 @@ import com.code.aon.jaas.ldap.DomainApplication;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.StorageException;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.NameResolver;
 
 /**
  * @author Consulting & Development. Aimar Tellitu - 03/04/2008
@@ -46,7 +46,7 @@ import com.code.aon.ldap.NameResolver;
 public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, ILdapConstants, IAonObjectClasses {
 
 	/** JBossSecurity Logger instance. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(JBossLdap.class);
+	private static final Log LOGGER = LogFactory.getLog( JBossLdap.class.getName() );
 	
 	private Map<String, IOption> options;
 	
@@ -66,9 +66,6 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 			if ( option.getName().startsWith("java.naming") ) {
 				ldapProperties.put( option.getName(), option.getValue() );
 			}
-		}
-		if (! ldapProperties.contains(Context.REFERRAL) ) {
-			ldapProperties.put(Context.REFERRAL, "follow");
 		}
 		this.ldap = new SecurityLdap( ldapProperties );
 	}
@@ -111,53 +108,45 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 
 	public IApplication getApplication4Ctx(String ctx) {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Retrieving application for: CONTEXT[{}]", ctx);
+			LOGGER.debug("Retrieving application for: CONTEXT[" + ctx + "]");
 		}
 		Application application = this.ldap.getApplication4Ctx(ctx);
-		if ( application != null ) {
-			updateApplication(application);	
-		}
+		updateApplication(application);
 		return application;
 	}
 	
 	public IDomain getDomain(String appContext, String domainId) {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Retrieving IDomain for: CONTEXT[{}]", appContext );
+			LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
 		}
 		return Domain.get(this.ldap, domainId);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List getUserApplications(String domainId, String userId) {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Retrieving user applications for: DOMAIN[{}], USER [{}]", domainId, userId );
+			LOGGER.debug("Retrieving user applications for: DOMAIN[" + domainId + "], USER [" + userId + "]" );
 		}
 		List<IApplication> applications = new ArrayList<IApplication>();
 		for( String name : this.ldap.getUserApplications(domainId, userId) ) {
-			Application application = Application.get(this.ldap, name);
-			if ( application != null ) {
-				applications.add( application );	
-			}
+			applications.add( Application.get(this.ldap, name) );
 		}
 		return applications;
 	}
 	
     public IApplication getApplication(String name) {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Retrieving application for: NAME[{}]", name );
+			LOGGER.debug("Retrieving application for: NAME[" + name + "]" );
 		}
 		Application application = Application.get(this.ldap, name);
-		if ( application != null ) {
-			updateApplication(application);	
-		}
+		updateApplication(application);
 		return application;
 	}
 
 	public IRelation removeProfile(String appId, String domainId, IRelation relation) throws StorageException {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Removing profile relation from: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+			LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		Name dn = NameResolver.getApplicationProfileDN(appId, relation.getId());
+		DistinguishedName dn = AonDN.getApplicationProfileDN(appId, relation.getId());
 		if ( this.ldap.exists(dn, PROFILE) ) {
 			try {
 				this.ldap.delete(dn);
@@ -173,11 +162,11 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 
 	public IRelation updateProfile(String appId, String domainId, IRelation relation) throws StorageException {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Updating profile relation for: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+			LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		Name dn = NameResolver.getApplicationProfileDN(appId, relation.getId());
+		DistinguishedName dn = AonDN.getApplicationProfileDN(appId, relation.getId());
 		if ( this.ldap.exists(dn, PROFILE) ) {
-			DomainApplication.updateRelation( ldap, dn, relation );
+			ldap.updateRelation( dn, relation );
 		} else {
 			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
 			domainApplication.updateProfile(relation);
@@ -187,20 +176,20 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 	
 	public IRelation updateRelation(String appId, String domainId, IRelation relation) throws StorageException {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Updating user relation for: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+			LOGGER.debug("Updating user relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		Name dn = NameResolver.getDomainApplicationUserDN(domainId, appId, relation.getId());
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, appId, relation.getId());
 		if ( this.ldap.exists(dn, DOMAIN_APPLICATION_USER) ) {
-			DomainApplication.updateRelation( ldap, dn, relation);
+			this.ldap.updateRelation(dn, relation);
 		}
 		return relation;
 	}
 	
 	public IRelation removeRelation(String appId, String domainId, IRelation relation) throws StorageException {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Removing user relation from: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+			LOGGER.debug("Removing user relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		Name dn = NameResolver.getDomainApplicationUserDN(domainId, appId, relation.getId());
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, appId, relation.getId());
 		if ( this.ldap.exists(dn, DOMAIN_APPLICATION_USER) ) {
 			this.ldap.deleteAttribute(dn, MEMBER_ATTRIBUTE);
 		}
@@ -209,7 +198,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 
 	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Updating IUser {} for: DOMAIN[{}], APPLICATION[{}]", new Object[]{user.getId(), domainId, appId} );
+			LOGGER.debug("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
 		String algorithm = null;
 		if ( options.get( IConstants.ALGORITHM ) != null ){
@@ -221,7 +210,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 
 	public void addUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Adding IUser {} for: DOMAIN[{}], APPLICATION[{}]", new Object[]{user.getId(), domainId, appId} );
+			LOGGER.debug("Adding IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
 		String algorithm = null;
 		if ( options.get( IConstants.ALGORITHM ) != null ){

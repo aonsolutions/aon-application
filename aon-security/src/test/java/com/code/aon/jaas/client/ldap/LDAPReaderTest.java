@@ -15,10 +15,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IUser;
@@ -29,7 +26,7 @@ import com.code.aon.ldap.Entry;
 
 public class LDAPReaderTest {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(LDAPReaderTest.class);
+	private static Log LOGGER = LogFactory.getLog(LDAPReaderTest.class.getName());
 	
 	private static final String HOST = "192.168.2.100";
 	
@@ -60,15 +57,15 @@ public class LDAPReaderTest {
 		
 		Entry user = ldap.getUser("localhost", "atellitu");
 		Assert.assertNotNull( user );
-		LOGGER.info( "User: {}", user );
+		LOGGER.info( "User: " + user );
 		
 		Entry domainApplicationUser = ldap.getDomainApplicationUser("localhost", "aon-task", "atellitu");
 		Assert.assertNotNull( domainApplicationUser );
-		LOGGER.info( "Domain Application User: {}", domainApplicationUser );
+		LOGGER.info( "Domain Application User: " + domainApplicationUser );
 		
 		List<String> applications = ldap.getUserApplications("localhost", "atellitu");
 		Assert.assertNotNull( applications );
-		LOGGER.info( "Applications: {}", applications );
+		LOGGER.info( "Applications: " + applications );
     }
 
 	@Test

@@ -3,10 +3,12 @@ package com.code.aon.faces.component.richfaces;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 
@@ -14,20 +16,24 @@ import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.ComponentInfo;
 import com.code.aon.faces.component.ComponentManager;
+import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.richfaces.outputLabel.OutputLabelHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
-import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagHandler;
 import com.sun.facelets.tag.jsf.ComponentConfig;
+import com.sun.facelets.tag.jsf.ComponentSupport;
 
-public class AonAjaxInputHandler extends AonComponentHandler implements IRichFacesTags {
+public class AonAjaxInputHandler extends AonComponentHandler implements IRichFacesTags, HTML {
 
 	private static final String SUPPORT_RENDERER_TYPE = "org.ajax4jsf.components.AjaxSupportRenderer";
 
 	private static final String SUPPORT_COMPONENT_TYPE = "org.ajax4jsf.Support";
+
+	private static final String DISABLED_STYLE_CLASS = "disabledStyleClass";
 	
 	private static final String PARTIAL_SUBMIT = "partialSubmit";
 	
@@ -37,23 +43,20 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	
 	private TagAttribute reRender;
 	
-	private TagAttribute ajaxSingle;
-	
 	private boolean ajaxNeeded;
 	
 	public AonAjaxInputHandler(ComponentConfig config) {
 		super(config);
 		partialSubmit = getAttribute(PARTIAL_SUBMIT);
 		reRender = getAttribute(RERENDER);
-		ajaxSingle = getAttribute(AJAX_SINGLE);
-		ajaxNeeded = (partialSubmit != null) || (reRender != null) || (ajaxSingle != null);
+		ajaxNeeded = (partialSubmit != null) || (reRender != null);
 	}
 	
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);
+		set.ignore(DISABLED_STYLE_CLASS);
 		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT);
-		set.ignore(AJAX_SINGLE).ignore(FOCUS);
 		return set;
 	}
 
@@ -61,6 +64,34 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	protected void setAttributes( FaceletContext ctx, Object instance ) {
 		super.setAttributes(ctx, instance);
 		UIComponent component = (UIComponent) instance;
+		updateDisabledStyleClass(ctx, component);
+		updateLabel(ctx, component);
+	}
+	
+	protected String getInputStyleClass() {
+		return STYLE_CLASS_ATTR;
+	}
+	
+	private void updateDisabledStyleClass(FaceletContext ctx, UIComponent c) {
+		TagAttribute disabledClass = getAttribute(DISABLED_STYLE_CLASS);
+		if ( disabledClass != null ) {
+			TagAttribute disabled = getAttribute(DISABLED_ATTR);
+			if ( (disabled != null) && disabled.getBoolean(ctx) ) {
+				String value = disabledClass.getValue(ctx);
+				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, getInputStyleClass(), value);
+			}
+		}
+	}
+	
+	private void updateLabel(FaceletContext ctx, UIComponent c) {
+		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
+		Map map = (Map) root.getAttributes().get(OutputLabelHandler.LABELS_MAP);
+		if (map != null) {
+			Object value = map.get(getId(ctx));
+			if ( value != null ) {
+				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, LABEL_ATTR, value.toString());				
+			}
+		}
 	}
 
 	public boolean isAjaxNeeded() {
@@ -72,7 +103,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	}
 	
 	public TagAttribute getRendered() {
-		return getAttribute(RENDERED);
+		return getAttribute("rendered");
 	}
 
 	private String getAjaxEvent() {
@@ -83,7 +114,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				return ainfo.getValue();
 			}
 		}
-		return HTML.ONCHANGE_ATTR;
+		return ONCHANGE_ATTR;
 	}
 	
 	@Override
@@ -101,24 +132,13 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 					}
 				}
 				attributes.add( BasicComponentConfig.newAttribute(tag, EVENT, event) );
-				String ajaxSingleValue = "true";
-				if ( ajaxSingle != null ) {
-					ajaxSingleValue = ajaxSingle.getValue(ctx);
-				}
-				attributes.add( BasicComponentConfig.newAttribute(tag, AJAX_SINGLE, ajaxSingleValue) );
 				if ( reRender != null ) {
 					String value = reRender.getValue(ctx);
 					attributes.add( BasicComponentConfig.newAttribute(tag, RERENDER, value) );
 				}
-				TagAttribute focus = getAttribute(FOCUS);
-				if ( focus != null ) {
-					String value = focus.getValue(ctx);
-					attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
-				}
 				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
 				config.setComponentType(SUPPORT_COMPONENT_TYPE);
 				config.setRendererType(SUPPORT_RENDERER_TYPE);
-				config.setNextHandler(FaceletUtil.LEAF_HANDLER);
 				ajaxSupportHandler = new AjaxSupportHandler(config);
 			}
 			ajaxSupportHandler.apply(ctx, c);

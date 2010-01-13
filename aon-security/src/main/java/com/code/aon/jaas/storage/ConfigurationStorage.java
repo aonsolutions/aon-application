@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.INode;
@@ -24,7 +24,7 @@ public class ConfigurationStorage implements INode, IStorage {
 	private static final long serialVersionUID = -6127147371658566439L;
 
 	/** ConfigurationStorage Logger. */
-    private final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationStorage.class);
+    private static final Log LOGGER = LogFactory.getLog( ConfigurationStorage.class.getName() );
 
     /** Path label. */
 	private static final String PATH = "path";
@@ -115,7 +115,7 @@ public class ConfigurationStorage implements INode, IStorage {
 			file.createNewFile();
 			this.storageManager = StorageManager.getInstance( file.toURL(), ConfigurationRenderer.getInstance() );
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.fatal(e.getMessage());
 		}
 	}
 

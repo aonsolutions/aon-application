@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,8 +22,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 
@@ -40,7 +39,8 @@ public class ResourceServlet extends HttpServlet {
 	/**
 	 * Logger initialization
 	 */
-	private final static Logger LOGGER = LoggerFactory.getLogger(ResourceServlet.class);
+	private static final Logger LOGGER = Logger.getLogger(ResourceServlet.class
+			.getName());
 
 	/**
 	 * One week in milliseconds.
@@ -158,10 +158,7 @@ public class ResourceServlet extends HttpServlet {
 		int pos = resource.lastIndexOf('.');
 		if (pos != -1) {
 			String extension = resource.substring(pos + 1);
-			MimeType mimeType = MimeType.getByExtension(extension);
-			if ( mimeType != null ) {
-				result = mimeType.getName();	
-			}
+			result = MimeType.getByExtension(extension).getName();
 		}
 		if (result == null) {
 			try {
@@ -221,11 +218,11 @@ public class ResourceServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			String resource = getResource(req, true);
-			LOGGER.debug("Request for resource (in jar): {}", resource);
+			LOGGER.fine("Request for resource (in jar): " + resource);
 			InputStream in = getClass().getResourceAsStream(resource);
 			if (in == null) {
 				resource = getResource(req, false);
-				LOGGER.debug("Request for resource (in war):{}", resource);
+				LOGGER.fine("Request for resource (in war): " + resource);
 				in = getClass().getResourceAsStream(resource);
 				if (in == null) {
 					res.sendError(HttpServletResponse.SC_NOT_FOUND);

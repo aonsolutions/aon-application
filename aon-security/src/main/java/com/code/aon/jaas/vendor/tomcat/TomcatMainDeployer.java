@@ -14,16 +14,20 @@ import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
 
 import org.apache.catalina.util.ServerInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.jaas.deployment.DeploymentInfo;
 import com.code.aon.jaas.deployment.IDeployer;
+
 import com.code.aon.jaas.deployment.core.MainDeployer;
+
 import com.code.aon.jaas.deployment.event.IDeployerListener;
+
 import com.code.aon.jaas.vendor.VendorFactoryManager;
+
 import com.code.aon.jaas.vendor.tomcat.deployment.TomcatFactory;
 
 /**
@@ -39,7 +43,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
 		implements IDeployer, TomcatMainDeployerMBean {
 
 	/** TomcatMainDeployer Logger instance. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(TomcatMainDeployer.class);
+	private static final Log LOGGER = LogFactory.getLog( TomcatMainDeployer.class.getName() );
 
 	/** Application Main deployer. */
 	MainDeployer support = new MainDeployer();
@@ -59,7 +63,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
  	 * @jmx:managed-operation
      */
 	public void addDeployerListener(String l) {
-		LOGGER.debug("addDeployerListener String:{}", l);
+		LOGGER.debug("addDeployerListener String:" + l);
 	}
 
     /** (non-Javadoc)
@@ -77,7 +81,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
  	 * @jmx:managed-operation
      */
 	public void removeDeployerListener(String l) {
-		LOGGER.debug("removeDeployerListener String:", l);
+		LOGGER.debug("removeDeployerListener String:" + l);
 	}
 
     /** (non-Javadoc)
@@ -95,7 +99,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
  	 * @jmx:managed-operation
      */
 	public void deploy(String url, String deploy) throws DeploymentException {
-		LOGGER.debug( "TomcatMainDeployer deploying: String[{}]", url );
+		LOGGER.debug( "TomcatMainDeployer deploying: String[" + url +"]" );
 		try {
 			deploy( new URL( "file:" + getCatalinaBase() + url ) );
 		} catch (MalformedURLException e) {
@@ -109,7 +113,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
  	 * @jmx:managed-operation
      */
 	public DeploymentInfo deploy(URL url) throws DeploymentException {
-		LOGGER.debug( "TomcatMainDeployer deploying: URL[{}]", url );
+		LOGGER.debug( "TomcatMainDeployer deploying: URL[" + url + "]" );
 		return support.deploy( url );
 	}
 

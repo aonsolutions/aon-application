@@ -7,8 +7,8 @@ import javax.management.ObjectName;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.client.ast.IOption;
@@ -20,7 +20,7 @@ public class LdapLoginModule extends JBossLoginModule {
 	private static final String JBOSS_SECURITY_DOMAIN = "jboss.security.security_domain";
 	
     /** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(LdapLoginModule.class);
+	private static final Log LOGGER = LogFactory.getLog( LdapLoginModule.class.getName() );
 
 	@SuppressWarnings("unchecked")
 	public Map updateOptions( Map map ) {
@@ -41,8 +41,8 @@ public class LdapLoginModule extends JBossLoginModule {
     				newOptions.put( option.getName(), option.getValue() );
     			}
     		}
-    	} catch (Throwable th) {
-    		LOGGER.error( "Error updating options", th );
+    	} catch (Exception e) {
+    		LOGGER.fatal( "Error updating options. " + e.getMessage(), e );
         }
     	return newOptions;
 	}
@@ -66,8 +66,8 @@ public class LdapLoginModule extends JBossLoginModule {
 			ldap = (SecurityLdap) getMBeanServer().invoke( new ObjectName(this.objectName), "getSecurityLdap",
 						new Object[] {},new String[] {} );
 	        this.authInfo = new AuthInfo( ldap );			
-		} catch (Throwable th) {
-			LOGGER.error( "Error getting SecurityLdap", th );
+		} catch (Exception e) {
+			LOGGER.error( "Error getting SecurityLdap. " + e.getMessage(), e );
 		}
 	}
 

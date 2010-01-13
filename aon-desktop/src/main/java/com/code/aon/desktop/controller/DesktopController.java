@@ -1,11 +1,5 @@
 package com.code.aon.desktop.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,23 +13,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
+import com.code.aon.config.User;
 import com.code.aon.desktop.DesktopAlarm;
 import com.code.aon.desktop.DesktopNoticeSummary;
-import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -45,39 +35,30 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
 import com.code.aon.ui.util.AonUtil;
 
-public class DesktopController extends BasicController implements IDesktopConstants {
+public class DesktopController extends BasicController {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
-	
+	private static final String NOTE_CONTROLLER_NAME = "note";
+	private static final String ALARM_CONTROLLER_NAME = "alarm";
+    private static final String NOTICE_CONTROLLER_NAME = "notice";
+
 	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
-	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
     
     private ListDataModel recentNoteModel;
-    private ListDataModel nextAlarmModel;
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
-    
-    private boolean checkUpdateURL = true;
 
 	public SelectItem getNullValue() {
 		return NULL_SELECT_ITEM;
 	}
-
-	public SelectItem getAllValue() {
-		return ALL_SELECT_ITEM;
-	}
-
+    
     @SuppressWarnings("unchecked")
     public List<DesktopNoticeSummary> getNoticeSummaryModel() {
         List<DesktopNoticeSummary> noticeSummaryList = new LinkedList<DesktopNoticeSummary>();
@@ -117,8 +98,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
 
     @SuppressWarnings("unchecked")
     private List createQuery(String select) {
-    	String name = HibernateUtil.getSessionFactoryName();
-        Session session = HibernateUtil.getSession(name);
+        Session session = HibernateUtil.getSession();
         Query query = session.createQuery(select);
         return query.list();
     }
@@ -135,22 +115,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
         } catch (ManagerBeanException e) {
             throw new ManagerBeanException("Error obtaining recentNoteModel", e);
         }
-    }
-
-    public ListDataModel getNextAlarmModel() throws ManagerBeanException{
-        Calendar from = new GregorianCalendar();
-        from.add(Calendar.DATE, 1);
-        from.set(Calendar.HOUR_OF_DAY, 0);
-        from.set(Calendar.MINUTE, 0);
-        from.set(Calendar.SECOND, 0);
-        Calendar to = new GregorianCalendar();
-        to.add(Calendar.DATE, 6);
-        to.set(Calendar.HOUR_OF_DAY, 23);
-        to.set(Calendar.MINUTE, 59);
-        to.set(Calendar.SECOND, 59);
-
-        this.nextAlarmModel = new ListDataModel(this.createQuery(getUserAlarmSentence(from.getTime(), to.getTime())));
-        return this.nextAlarmModel;
     }
 
     public ListDataModel getTodayAlarmModel() throws ManagerBeanException{
@@ -197,13 +161,11 @@ public class DesktopController extends BasicController implements IDesktopConsta
     private String getUserAlarmSentence(Date from, Date to) throws ManagerBeanException {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-//        String select = "select new com.code.aon.desktop.DesktopAlarm(alarm.id, alarm.description, alarm.alarmDate, notice.type, alarm.priority) " +
-//                        "from Notice as notice, Alarm as alarm " +
-//                        "where notice.id = alarm.sourceId " +
-//        					"and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
-        String select = "select new com.code.aon.desktop.DesktopAlarm(alarm.id, alarm.description, alarm.alarmDate, alarm.source, alarm.sourceId, alarm.priority) " +
-      					"from Alarm as alarm " +
-                        "where alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
+        String select = "select new com.code.aon.desktop.DesktopAlarm(alarm.id, alarm.description, alarm.alarmDate, notice.type, alarm.priority) " +
+                        "from Notice as notice, Alarm as alarm " +
+                        "where notice.id = alarm.sourceId " +
+                        "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
+                        "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
                         "and alarm.user = " + UserUtils.getInstance().getLoggedUser().getId() + " ";
         if (from != null) {
             select += "and alarm.alarmDate >= '" + formatter.format(from) + "' ";
@@ -216,8 +178,9 @@ public class DesktopController extends BasicController implements IDesktopConsta
         return select;
     }
 
+    @SuppressWarnings("unused")
     public void onSelectNote(ActionEvent event) throws ManagerBeanException{
-        NoteController noteController = (NoteController)FormUtil.getController(NOTE_CONTROLLER_NAME);
+        NoteController noteController = (NoteController)AonUtil.getController(NOTE_CONTROLLER_NAME);
         Note note = (Note)recentNoteModel.getRowData();
         Criteria criteria = new Criteria();
         try {
@@ -231,30 +194,23 @@ public class DesktopController extends BasicController implements IDesktopConsta
         }
     }
 
-    public String getTodayDate() {
-        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        Calendar date = new GregorianCalendar();
-        return formatter.format(date);
-    }
-    
-    public void onSelectNextAlarm(ActionEvent event) throws ManagerBeanException{
-        onSelectAlarm(nextAlarmModel);
-    }
-
+    @SuppressWarnings("unused")
     public void onSelectTodayAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(todayAlarmModel);
     }
 
+    @SuppressWarnings("unused")
     public void onSelectRecentAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(recentAlarmModel);
     }
 
+    @SuppressWarnings("unused")
     public void onSelectAncientAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(ancientAlarmModel);
     }
 
     private void onSelectAlarm(ListDataModel model) throws ManagerBeanException{
-        AlarmController alarmController = (AlarmController)FormUtil.getController(ALARM_CONTROLLER_NAME);
+        AlarmController alarmController = (AlarmController)AonUtil.getController(ALARM_CONTROLLER_NAME);
         DesktopAlarm alarm = (DesktopAlarm)model.getRowData();
         Criteria criteria = new Criteria();
         try {
@@ -278,7 +234,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
 
-        NoticeController noticeController = (NoticeController)FormUtil.getController(NOTICE_CONTROLLER_NAME);
+        NoticeController noticeController = (NoticeController)AonUtil.getController(NOTICE_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
         try {
             criteria.addEqualExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_RECIPIENT_ID), UserUtils.getInstance().getLoggedUser().getId());
@@ -287,6 +243,22 @@ public class DesktopController extends BasicController implements IDesktopConsta
             noticeController.onSearch(null);
         } catch (ManagerBeanException e) {
             throw new ManagerBeanException("Error obtaining notice for logged user", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getCompanyName() throws ManagerBeanException {
+        try {
+	    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getName();
+	        }
+	        return null;
+        }
+        catch (Exception e) {
+        	return null;
         }
     }
 
@@ -333,61 +305,29 @@ public class DesktopController extends BasicController implements IDesktopConsta
 	    	return null;
 	    }
 	}
+
+    public String getLoggedUserName() {
+        User user = UserUtils.getInstance().getLoggedUser();
+        return user.getName();
+    }
+
+    public String getLoggedUser() {
+        return UserUtils.getInstance().getPrincipal().getShortName();
+    }
+    
+    public String getCurrentDate() {
+        DateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+
+        return formatter.format(new Date()).toUpperCase();
+    }
     
     public boolean isValidated() {
 		HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 		if (session.getAttribute("AON_KEY_VALIDATOR_OK") != null) return true;
 		return false;
     }
-
-	public String getUpdateURL() {
-    	String server = null;
-		try {
-			server = InetAddress.getLocalHost().getCanonicalHostName();
-		} catch (UnknownHostException e) {
-			try {
-				server = InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e1) {
-				LOGGER.error( "Error getting server address", e1);
-			}
-		}
-    	return "http://" + server + ":7654";		
-	}
-	    
-    public boolean isUpdatesAvailable() {
-    	boolean available = false;
-    	if ( checkUpdateURL ) {
-	    	try {
-				URL url = new URL( getUpdateURL() + "/hasupdate.rpy" );
-				InputStream in = url.openStream();
-				char result = (char) in.read();
-				in.close();
-				available = (result == '1');
-			} catch (Throwable e) {
-				checkUpdateURL = false;
-				LOGGER.info( "Error getting updates available", e);
-			}
-    	}
-    	return available;
-    }
     
-	public String getUpdateApplicationURL() {
-		return getUpdateURL() + "/update.rpy";
-	}
-
-	public boolean isBigLogo() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		RegistryAttachment attach = companyController.getAttach();
-		if ( (attach != null) && (!ArrayUtils.isEmpty(attach.getData())) ) {
-			InputStream in = new ByteArrayInputStream(attach.getData());
-			try {
-				BufferedImage image = ImageIO.read(in);
-				return (image.getWidth() > 200);
-			} catch (Throwable th) {
-				LOGGER.error( "Error reading logo", th);
-			}
-		}
-		return true;
-	}
-	
+    public boolean isRoleManager() {
+    	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole("Manager");
+    }
 }

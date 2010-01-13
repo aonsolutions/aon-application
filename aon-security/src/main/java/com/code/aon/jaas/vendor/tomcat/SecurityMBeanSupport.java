@@ -7,13 +7,13 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ObjectName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SecurityMBeanSupport extends NotificationBroadcasterSupport 
 									implements SecurityMBean, MBeanRegistration {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityMBeanSupport.class);
+	private static final Log LOGGER = LogFactory.getLog( SecurityMBeanSupport.class.getName() );
 
 	/** Descriptive information about this component implementation. */
 	protected static final String info =
@@ -59,7 +59,7 @@ public class SecurityMBeanSupport extends NotificationBroadcasterSupport
 	 * @see com.code.aon.jaas.vendor.tomcat.SecurityMBean#create()
 	 */
 	public void create() throws Exception {
-		LOGGER.debug("Creating {}", serviceName);
+		LOGGER.debug("Creating " + serviceName);
 		try {
 			createService();
 			this.state = CREATED;
@@ -67,7 +67,7 @@ public class SecurityMBeanSupport extends NotificationBroadcasterSupport
 			LOGGER.debug( "Initialization failed " + serviceName, e );
 			throw e;
 		}
-		LOGGER.debug("Created {}", serviceName);
+		LOGGER.debug("Created " + serviceName);
 	}
 
 	/* (non-Javadoc)
@@ -83,7 +83,7 @@ public class SecurityMBeanSupport extends NotificationBroadcasterSupport
 
 		this.state = STARTING;
 		sendStateChangeNotification(STOPPED, STARTING, getName() + " starting", null);
-		LOGGER.debug("Starting {}", serviceName);
+		LOGGER.debug("Starting " + serviceName);
 
 		try {
 			startService();
@@ -95,7 +95,7 @@ public class SecurityMBeanSupport extends NotificationBroadcasterSupport
 		}
 		this.state = STARTED;
 		sendStateChangeNotification(STARTING, STARTED, getName() + " started", null);
-		LOGGER.debug("Started {}", serviceName);
+		LOGGER.debug("Started " + serviceName);
 	}
 
 	/* (non-Javadoc)
@@ -107,7 +107,7 @@ public class SecurityMBeanSupport extends NotificationBroadcasterSupport
 	       
 		state = STOPPING;
 		sendStateChangeNotification(STARTED, STOPPING, getName() + " stopping", null);
-		LOGGER.debug("Stopping {}", serviceName);
+		LOGGER.debug("Stopping " + serviceName);
 
 		try {
 			stopService();
@@ -120,7 +120,7 @@ public class SecurityMBeanSupport extends NotificationBroadcasterSupport
 	       
 		state = STOPPED;
 		sendStateChangeNotification(STOPPING, STOPPED, getName() + "stopped", null);
-		LOGGER.debug("Stopped {}", serviceName);
+		LOGGER.debug("Stopped " + serviceName);
 	}
 
 	/* (non-Javadoc)
@@ -134,14 +134,14 @@ public class SecurityMBeanSupport extends NotificationBroadcasterSupport
 			LOGGER.debug("Destroy requested before stop, calling stop now");
 			stop();
 		}
-		LOGGER.debug("Destroying {}", serviceName);
+		LOGGER.debug("Destroying " + serviceName);
 		try {
 			destroyService();
 		} catch (Throwable t) {
 			LOGGER.warn( "Destroying failed " + serviceName, t );
 		}
 		this.state = DESTROYED;
-		LOGGER.debug("Destroyed {}", serviceName);
+		LOGGER.debug("Destroyed " + serviceName);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

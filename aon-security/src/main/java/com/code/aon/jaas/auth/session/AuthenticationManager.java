@@ -15,6 +15,9 @@ import java.util.Set;
 
 import javax.security.auth.login.LoginException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.event.ExpiredSessionEvent;
 import com.code.aon.jaas.auth.session.event.ExpiredSessionListener;
@@ -26,6 +29,8 @@ import com.code.aon.jaas.client.ast.IAccessPolicy;
  */
 public class AuthenticationManager {
 
+    /** AuthenticationManager Logger class. */
+	protected static final Log LOGGER = LogFactory.getLog( AuthenticationManager.class.getName() );
 	/** */
 	private Map<AuthPrincipal, Set<String>> principals = 
 		Collections.synchronizedMap( new HashMap<AuthPrincipal, Set<String>>() );

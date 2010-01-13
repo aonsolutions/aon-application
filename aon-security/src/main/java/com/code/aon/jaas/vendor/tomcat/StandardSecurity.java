@@ -18,8 +18,8 @@ import java.util.StringTokenizer;
 
 import javax.management.ObjectName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IApplication;
@@ -51,7 +51,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 		implements IOperation, StandardSecurityMBean {
 
 	/** StandardSecurity Logger instance. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(StandardSecurity.class);
+	private static final Log LOGGER = LogFactory.getLog( StandardSecurity.class.getName() );
 	/** login.config relative path. */
 	static final String LOGIN_CONFIG_FILE_RELATIVE_PATH = 
 		File.separator + "conf" + File.separator + "login.config";
@@ -85,7 +85,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
      */
     public IApplication getApplication(String name) {
-		LOGGER.debug("Retrieving application for: NAME[{}]", name);
+		LOGGER.debug("Retrieving application for: NAME[" + name + "]");
 		return this.storage.getApplication(name);   
     }
 
@@ -95,7 +95,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IApplication getApplication4Ctx(String ctx) {
-		LOGGER.debug("Retrieving application for: CONTEXT[{}]", ctx);
+		LOGGER.debug("Retrieving application for: CONTEXT[" + ctx + "]");
 		return this.storage.getApplication4Ctx(ctx);   
 	}
 
@@ -105,7 +105,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
      */
 	public Collection getSDApplications(String securityDomain) {
-		LOGGER.debug("Retrieving deployed applications for: SECURITY-DOMAIN[{}]", securityDomain );
+		LOGGER.debug("Retrieving deployed applications for: SECURITY-DOMAIN[" + securityDomain + "]" );
 		return this.storage.getSDApplications(securityDomain);
 	}
 
@@ -115,7 +115,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
      */
 	public List getUserApplications(String domainId, String userId) {
-		LOGGER.debug("Retrieving user applications for: DOMAIN[{}], USER [{}]", domainId, userId );
+		LOGGER.debug("Retrieving user applications for: DOMAIN[" + domainId + "], USER [" + userId + "]" );
 		return this.storage.getUserApplications( domainId, userId );
 	}
 
@@ -125,7 +125,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public Properties getDSMDProperties(String principal) {
-		LOGGER.debug("STRING: Retrieving Properties  for: PRINCIPAL[{}]", principal );
+		LOGGER.debug("STRING: Retrieving Properties  for: PRINCIPAL[" + principal + "]" );
 		return null;
 	}
 
@@ -135,7 +135,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public Properties getDSMDProperties(Principal principal) {
-		LOGGER.debug("Retrieving DataSource properties for: PRINCIPAL[{}]", principal );
+		LOGGER.debug("Retrieving DataSource properties for: PRINCIPAL[" + principal + "]" );
 		return this.storage.getDSMDProperties(principal);
 	}
 
@@ -145,7 +145,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public List getDomainNames2Import(String appId) {
-		LOGGER.debug("Retrieving domain names to import for: APPLICATION[{}]", appId );
+		LOGGER.debug("Retrieving domain names to import for: APPLICATION[" + appId + "]" );
 		return this.storage.getDomainNames2Import( appId );
 	}
 
@@ -155,7 +155,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void addDomain(String appId, String domain, String flag) throws StorageException {
-		LOGGER.debug("STRING: Adding a domain {} for: APPLICATION[{}]", domain, appId );
+		LOGGER.debug("STRING: Adding a domain " + domain + " for: APPLICATION[" + appId + "]" );
 	}
 
 	/**(non-Javadoc)
@@ -164,7 +164,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void addDomain(String appId, IDomain domain, Boolean flag) throws StorageException {
-		LOGGER.debug("Adding a domain {} for: APPLICATION[{}]", domain, appId );
+		LOGGER.debug("Adding a domain " + domain.getId() + " for: APPLICATION[" + appId + "]" );
 		this.storage.addDomain( appId, domain, flag );
 	}
 
@@ -174,7 +174,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void loadDomain(String domain) throws StorageException {
-		LOGGER.debug("Loading domain {}", domain );
+		LOGGER.debug("Loading domain " + domain );
 	}
 
 	/**(non-Javadoc)
@@ -183,7 +183,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void loadDomain(IDomain domain) throws StorageException {
-		LOGGER.debug("Loading domain {}", domain.getId() );
+		LOGGER.debug("Loading domain " + domain.getId() );
 		this.storage.loadDomain( domain );
 	}
 
@@ -193,7 +193,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IDomain getDomain(String appContext, String domainId) {
-		LOGGER.debug("Retrieving IDomain for: CONTEXT[{}]", appContext );
+		LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
 		return this.storage.getDomain(appContext, domainId);
 	}
 
@@ -203,7 +203,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public List loadUsers(String domain) throws StorageException {
-		LOGGER.debug("Loading users {}", domain );
+		LOGGER.debug("Loading users " + domain );
 		return null;
 	}
 
@@ -214,7 +214,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public List loadUsers(IDomain domain) throws StorageException {
 		if ( LOGGER.isDebugEnabled() )
-			LOGGER.debug("Loading users and relations {}", domain.getId() );
+			LOGGER.debug("Loading users and relations " + domain.getId() );
 
 		return this.storage.loadUsers( domain );
 	}
@@ -225,7 +225,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void addUser(String appName, String domainId, String user, String oldUserId) throws StorageException {
-		LOGGER.debug("STRING: Adding IUser for: DOMAIN[{}], APPLICATION[{}]", domainId, appName );
+		LOGGER.debug("STRING: Adding IUser for: DOMAIN[" + domainId + "], APPLICATION[" + appName + "]" );
 	}
 
 	/** (non-Javadoc)
@@ -234,7 +234,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void addUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
-		LOGGER.info("Adding IUser {} for: DOMAIN[{}], APPLICATION[{}]", new Object[]{user.getId(), domainId, appId} );
+		LOGGER.info("Adding IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		this.storage.addUser( appId, domainId, user, oldUserId );
 	}
 
@@ -244,7 +244,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser getUser(String principal) {
-		LOGGER.debug("STRING: Retrieving IUser for PRINCIPAL[{}]", principal );
+		LOGGER.debug("STRING: Retrieving IUser for PRINCIPAL[" + principal + "]" );
 		return null;
 	}
 
@@ -254,7 +254,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser getUser(Principal principal) {
-		LOGGER.debug("Retrieving IUser for: PRINCIPAL[{}]", principal );
+		LOGGER.debug("Retrieving IUser for: PRINCIPAL[" + principal + "]" );
 		return this.storage.getUser(principal);
 	}
 
@@ -264,7 +264,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser getUser(String appContext, String domainId, String userId) {
-		LOGGER.debug("Retrieving IUser for: USERNAME[{}]", userId );
+		LOGGER.debug("Retrieving IUser for: USERNAME[" + userId + "]" );
 		return this.storage.getUser( appContext, domainId, userId );
 	}
 
@@ -275,7 +275,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public void initApplicationDeployed(String appName, String domainName, String privileged, String contextExtraInfo, String accessPolicy, String metadata) 
 			throws StorageException {
-		LOGGER.debug("STRING: Initializing Deployed Application for: NAME[{}]", appName );
+		LOGGER.debug("STRING: Initializing Deployed Application for: NAME[" + appName + "]" );
 	}
 
 	/**(non-Javadoc)
@@ -287,7 +287,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 										Boolean privileged, String contextExtraInfo,
 										IAccessPolicy accessPolicy, IDataSourceMetaData metadata) 
 			throws StorageException {
-		LOGGER.info("Initializing Deployed Application for: DOMAIN[{}], NAME[{}]", domainId, appId );
+		LOGGER.info("Initializing Deployed Application for: NAME[" + appId + "] and DOMAIN[" + domainId + "]" );
 		this.storage.initApplicationDeployed( appId, domainId, privileged, contextExtraInfo, accessPolicy, metadata );
 		Application app = (Application) this.storage.getApplication(appId);
 		LOGGER.info("PRIVILEGED " + privileged );
@@ -307,7 +307,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IDomain removeDomain(String appName, String domain) throws StorageException {
-		LOGGER.debug("STRING: Removing IDomain from: APPLICATION[{}]", appName );
+		LOGGER.debug("STRING: Removing IDomain from: APPLICATION[" + appName + "]" );
 		return null;
 	}
 
@@ -317,7 +317,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IDomain removeDomain(String appId, IDomain domain) throws StorageException {
-		LOGGER.debug("Removing domain from: APPLICATION[{}]", appId );
+		LOGGER.debug("Removing domain from: APPLICATION[" + appId + "]" );
 		return this.storage.removeDomain( appId, domain );
 	}
 
@@ -327,7 +327,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation removeProfile(String appName, String domainId, String relation) throws StorageException {
-		LOGGER.debug("STRING: Removing IRelation from: DOMAIN[{}], APPLICATION[{}]", domainId, appName );
+		LOGGER.debug("STRING: Removing IRelation from: DOMAIN[" + domainId + "], APPLICATION[" + appName + "]" );
 		return null;
 	}
 
@@ -337,7 +337,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation removeProfile(String appId, String domainId, IRelation relation) throws StorageException {
-		LOGGER.debug("Removing profile relation from: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+		LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		return this.storage.removeProfile( appId, domainId, relation );
 	}
 
@@ -347,7 +347,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation removeRelation(String appName, String domainId, String relation) throws StorageException {
-		LOGGER.debug("STRING: Removing IRelation from: DOMAIN[{}], APPLICATION[{}]", domainId, appName );
+		LOGGER.debug("STRING: Removing IRelation from: DOMAIN[" + domainId + "], APPLICATION[" + appName + "]" );
 		return null;
 	}
 
@@ -358,7 +358,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public IRelation removeRelation(String appId, String domainId, IRelation relation) 
 			throws StorageException {
-		LOGGER.debug("Removing user relation from: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+		LOGGER.debug("Removing user relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		return this.storage.removeRelation( appId, domainId, relation );
 	}
 
@@ -368,7 +368,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser removeUser(String appName, String domainId, String user) throws StorageException {
-		LOGGER.debug("STRING: Removing IUser for: DOMAIN[{}], APPLICATION[{}]", domainId, appName );
+		LOGGER.debug("STRING: Removing IUser for: DOMAIN[" + domainId + "], APPLICATION[" + appName + "]" );
 		return null;
 	}
 
@@ -378,7 +378,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser removeUser(String appId, String domainId, IUser user) throws StorageException {
-		LOGGER.debug("Removing user for: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+		LOGGER.debug("Removing user for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		return this.storage.removeUser( appId, domainId, user );
 	}
 
@@ -388,7 +388,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void updateAccessPolicy(String appName, String domainName, String accessPolicy) throws StorageException {
-		LOGGER.debug("STRING: Updating Access Policy for: NAME[{}] and DOMAIN[{}]", appName, domainName );
+		LOGGER.debug("STRING: Updating Access Policy for: NAME[" + appName + "] and DOMAIN[" + domainName + "]" );
 	}
 
 	/** (non-Javadoc)
@@ -398,7 +398,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public void updateAccessPolicy(String appId, String domainId, IAccessPolicy accessPolicy) 
 			throws StorageException {
-		LOGGER.debug("Updating Access Policy for: NAME[{}] and DOMAIN[{}]", appId, domainId );
+		LOGGER.debug("Updating Access Policy for: NAME[" + appId + "] and DOMAIN[" + domainId + "]" );
 		this.storage.updateAccessPolicy(appId, domainId, accessPolicy);
 	}
 
@@ -408,7 +408,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void updateDSMD(String appName, String domainName, String metadata) throws StorageException {
-		LOGGER.debug("STRING: Updating Datasource Properties for: NAME[{}] and DOMAIN[{}]", appName, domainName );
+		LOGGER.debug("STRING: Updating Datasource Properties for: NAME[" + appName + "] and DOMAIN[" + domainName + "]" );
 	}
 
 	/** (non-Javadoc)
@@ -418,7 +418,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public void updateDSMD(String appId, String domainId, IDataSourceMetaData metadata) 
 			throws StorageException {
-		LOGGER.debug("Updating Datasource Properties for: NAME[{}] and DOMAIN[{}]", appId, domainId );
+		LOGGER.debug("Updating Datasource Properties for: NAME[" + appId + "] and DOMAIN[" + domainId + "]" );
 		this.storage.updateDSMD(appId, domainId, metadata);
 	}
 
@@ -428,7 +428,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void updateDomain(String appName, String domain) throws StorageException {
-		LOGGER.debug("STRING: Updating IDomain for: APPLICATION[{}]", appName );
+		LOGGER.debug("STRING: Updating IDomain for: APPLICATION[" + appName + "]" );
 	}
 
 	/**(non-Javadoc)
@@ -437,7 +437,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void updateDomain(String appId, IDomain domain) throws StorageException {
-		LOGGER.debug("Updating domain to: APPLICATION[{}]", appId );
+		LOGGER.debug("Updating domain to: APPLICATION[" + appId + "]" );
 		this.storage.updateDomain( appId, domain );
 	}
 
@@ -447,7 +447,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
      * @jmx:managed-operation
 	 */
 	public IRelation updateProfile(String appName, String domainId, String relation) throws StorageException {
-		LOGGER.debug("STRING: Updating IRelation for: DOMAIN[{}], APPLICATION[{}]", domainId, appName );
+		LOGGER.debug("STRING: Updating IRelation for: DOMAIN[" + domainId + "], APPLICATION[" + appName + "]" );
 		return null;
 	}
 
@@ -458,7 +458,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public IRelation updateProfile(String appId, String domainId, IRelation relation) 
 			throws StorageException {
-		LOGGER.debug("Updating profile relation for: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+		LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		return this.storage.updateProfile( appId, domainId, relation );
 	}
 
@@ -468,7 +468,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation updateRelation(String appName, String domainId, String relation) throws StorageException {
-		LOGGER.debug("STRING: Updating IRelation for: DOMAIN[{}], APPLICATION[{}]", domainId, appName );
+		LOGGER.debug("STRING: Updating IRelation for: DOMAIN[" + domainId + "], APPLICATION[" + appName + "]" );
 		return null;
 	}
 
@@ -479,7 +479,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public IRelation updateRelation(String appId, String domainId, IRelation relation) 
 			throws StorageException {
-		LOGGER.debug("Updating user relation for: DOMAIN[{}], APPLICATION[{}]", domainId, appId );
+		LOGGER.debug("Updating user relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		return this.storage.updateRelation( appId, domainId, relation );
 	}
 
@@ -489,7 +489,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser updateUser(String appName, String domainId, String user, String oldUserId) throws StorageException {
-		LOGGER.debug("STRING: Updating IUser for: DOMAIN[{}], APPLICATION[{}]", domainId, appName );
+		LOGGER.debug("STRING: Updating IUser for: DOMAIN[" + domainId + "], APPLICATION[" + appName + "]" );
 		return null;
 	}
 
@@ -500,7 +500,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) 
 			throws StorageException {
-		LOGGER.info("Updating IUser {} for: DOMAIN[{}], APPLICATION[{}]", new Object[]{user.getId(), domainId, appId} );
+		LOGGER.info("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		return this.storage.updateUser( appId, domainId, user, oldUserId );
 	}
 
@@ -608,7 +608,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 				line = reader.readLine();
 			}
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		}		
 	}
 

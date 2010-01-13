@@ -23,10 +23,7 @@
     	<attribute name="todayControlMode" value="hidden"/>    	
     	<attribute name="partialSubmit" value="ondateselected" ignore="true" />
     	<attribute name="inputClass" value="aon-selectInputDate-inputClass" />
-    	<attribute name="disabledStyleClass" value="aon-selectInputDate-inputClass-disabled" />
-    	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />
-    	<attribute name="inputSize" value="10" type="2" />
-    	<attribute name="enableManualInput" value="true" type="1" />    	
+    	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />    	
 	</component>
 	
 	<component localName="div">
@@ -65,14 +62,11 @@
 	</component>
 
 	<component localName="commandButton">
-    	<attribute name="styleClass" value="aon-commandButton" />
-    	<attribute name="reRender" value="aonContent" />			
+    	<attribute name="styleClass" value="aon-commandButton" />			
 	</component>
 
 	<component localName="commandLink">
-    	<attribute name="styleClass" value="aon-commandLink" />
-    	<attribute name="disabledStyleClass" value="aon-commandLink-disabled" />			
-    	<attribute name="reRender" value="aonContent" />
+    	<attribute name="styleClass" value="aon-commandLink" />			
 	</component>
 	
 	<component localName="panelTabSet">
@@ -90,23 +84,20 @@
 	</component>
 	
 	<component localName="inputText">
-    	<attribute name="styleClass" value="aon-inputText" />
-		<attribute name="disabledStyleClass" value="aon-inputText-disabled" />
+    	<attribute name="styleClass" value="aon-inputText" />			
 	</component>
 
 	<component localName="inputTextarea">
-    	<attribute name="styleClass" value="aon-inputTextarea" />
-    	<attribute name="disabledStyleClass" value="aon-inputText-disabled" />			
+    	<attribute name="styleClass" value="aon-inputTextarea" />			
 	</component>
 
 	<component localName="inputRichText">
     	<attribute name="styleClass" value="aon-inputRichText" />
-    	<attribute name="language" value="#{facesContext.application.defaultLocale.language}" />			
+    	<attribute name="style" value="display: none;" />			
 	</component>
 
 	<component localName="inputSecret">
-    	<attribute name="styleClass" value="aon-inputSecret" />
-    	<attribute name="disabledStyleClass" value="aon-inputText-disabled" />			
+    	<attribute name="styleClass" value="aon-inputSecret" />			
 	</component>
 
 	<component localName="selectOneMenu">
@@ -114,8 +105,7 @@
 	</component>
 
 	<component localName="selectOneRadio">
-    	<attribute name="styleClass" value="aon-selectOneRadio" />
-    	<attribute name="partialSubmit" value="onclick" ignore="true"/>			
+    	<attribute name="styleClass" value="aon-selectOneRadio" />			
 	</component>
 
 	<component localName="selectBooleanCheckbox">
@@ -130,14 +120,6 @@
 
 	<component localName="dataTable">
     	<attribute name="styleClass" value="aon-dataTable" />			
-    	<attribute name="headerClass" value="aon-dataTable-header" />
-    	<attribute name="footerClass" value="aon-dataTable-footer" />    	
-    	<attribute name="rowClasses" value="aon-dataTable-row-odd, aon-dataTable-row-even" />
-    	<attribute name="cellpadding" value="0" />
-    	<attribute name="cellspacing" value="0" />
-	</component>
-
-	<component localName="extendedDataTable">
     	<attribute name="headerClass" value="aon-dataTable-header" />
     	<attribute name="footerClass" value="aon-dataTable-footer" />    	
     	<attribute name="rowClasses" value="aon-dataTable-row-odd, aon-dataTable-row-even" />
@@ -169,7 +151,6 @@
     	<attribute name="mouseOverClass" ignore="true" />
     	<attribute name="event" value="onRowClick" />
     	<attribute name="toggleOnClick" alias="rendered" />
-    	<attribute name="reRender" value="aonContent" />
 	</component>
 
 	<component localName="mediaOutput">
@@ -186,20 +167,12 @@
     	<attribute name="selectItemClass" value="aon-dropDownMenu-selectItem" />
     	<attribute name="disabledItemClass" value="aon-dropDownMenu-disabledItem" />
     	<attribute name="iconClass" value="aon-iconClass" />    		
-    	<attribute name="event" value="onclick" />
-	</component>
-	
-	<component localName="menuGroup">
-		<attribute name="styleClass" value="aon-menuGroup-styleClass" /> 
 	</component>
 	
 	<component localName="menuItem">
 		<attribute name="styleClass" value="aon-menuItem-styleClass" /> 
 		<attribute name="iconClass" value="aon-menuItem-iconClass" />
-		<attribute name="selectClass" value="aon-menuItem-selectClass" /> 				
-		<attribute name="submitMode" value="ajax" />       
-		<attribute name="immediate" value="true" type="1" />
-		<attribute name="reRender" value="aonContent" />
+		<attribute name="selectClass" value="aon-menuItem-selectClass" /> 				       
 	</component>
 	
 	<component localName="panelCollapsible">
@@ -214,15 +187,5 @@
 		<attribute name="styleClass" value="aon-group" /> 
 		<attribute name="headerClass" value="aon-group-title" /> 
 		<attribute name="bodyClass" value="aon-group-body" /> 	
-	</component>
-
-	<component localName="fileUpload">
-    	<attribute name="addControlLabel" value="#{bundle.aon_fileUpload_add}" />
-    	<attribute name="stopControlLabel" value="#{bundle.aon_fileUpload_stop}" />
-    	<attribute name="stopEntryControlLabel" value="#{bundle.aon_fileUpload_stop}" />
-    	<attribute name="uploadControlLabel" value="#{bundle.aon_fileUpload_upload}" />
-    	<attribute name="listHeight" value="0px" />
-    	<attribute name="immediateUpload" value="true" type="1" />    	
-    	<attribute name="autoclear" value="true" type="1" />
 	</component>
 </components>

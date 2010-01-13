@@ -1,7 +1,11 @@
 package com.code.aon.ui.resources.bean;
 
 import java.util.AbstractMap;
+import java.util.Map;
 import java.util.Set;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -45,7 +49,7 @@ public class ResourceResolver {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public class FakeMap extends AbstractMap<String,String> {
+	private class FakeMap extends AbstractMap {
 		
 		private boolean local;
 		
@@ -59,14 +63,11 @@ public class ResourceResolver {
 		}
 		
 		@Override
-		public String get(Object key) {
-			String result;
+		public Object get(Object key) {
 			if ( local ) {
-				result = StringUtils.join( new Object[] {resourceURIPreffix, key} );
-			} else {
-				result = StringUtils.join( new Object[] {resourceContextPath, resourceURIPreffix, key} );	
+				return resourceURIPreffix + key;
 			}
-			return StringUtils.removeStart( result, "/");
+			return resourceContextPath + resourceURIPreffix + key;
 		}
 		
 	}

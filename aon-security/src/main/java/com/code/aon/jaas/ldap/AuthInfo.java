@@ -1,10 +1,15 @@
 package com.code.aon.jaas.ldap;
 
+import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.jaas.auth.IAuthInfo;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IRelation;
-import com.code.aon.jaas.client.ast.IUser;
+import com.code.aon.jaas.client.ast.core.Relation;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.ILdapConstants;
 
@@ -39,14 +44,11 @@ public class AuthInfo implements IAuthInfo, ILdapConstants, ILdapSecurityConstan
 	}
 
 	@Override
-	public String getUserPassword(String domainId, String userId)
+	public String getUserPassword(String domainName, String name)
 			throws AuthenticationLoginException {
-		Domain domain = Domain.get(ldap, domainId);
-		if ( domain != null ) {
-			IUser user = domain.getStandaloneUser(userId);
-			if ( user != null ) {
-				return user.getPasswd();
-			}
+		Entry user = ldap.getUser(domainName, name);
+		if ( user != null ) {
+			return ldap.getUser(user).getPasswd();
 		}
 		return null;
 	}
@@ -55,11 +57,7 @@ public class AuthInfo implements IAuthInfo, ILdapConstants, ILdapSecurityConstan
 	public IRelation getUserRelation(String domainName, String context,
 			String name) throws AuthenticationLoginException {
 		String application = ldap.getApplicationId(context);
-		DomainApplication da = DomainApplication.get(ldap, domainName, application);
-		if ( da != null ) {
-			return da.getUser(name);
-		}
-		return null;
+		return ldap.getUserRelation(domainName, application, name);
 	}
 	
 	@Override

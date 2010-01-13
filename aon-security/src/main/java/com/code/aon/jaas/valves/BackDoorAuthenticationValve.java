@@ -27,8 +27,8 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.valves.ValveBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.auth.IConstants;
@@ -48,7 +48,7 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 	public static final String BACKDOOR_PARAM = "aonDesktop";
 
 	/** BackDoorAuthenticationValve Logger instance. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(BackDoorAuthenticationValve.class);
+	private static final Log LOGGER = LogFactory.getLog( BackDoorAuthenticationValve.class.getName() );
 
 	/** Maintain the application server Principals for programmatic web login */
 	protected Map<String, BackDoorPrincipal> backdoorPrincipals = new HashMap<String, BackDoorPrincipal>();
@@ -65,7 +65,7 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 			String nonHashedPassword = (String) session.getNote( Constants.SESS_PASSWORD_NOTE );
 			if ( nonHashedPassword != null ) {
 				String username = (String) session.getNote( Constants.SESS_USERNAME_NOTE );
-				LOGGER.debug( "Adding principal: {} session: {}", username, session.getId() );
+				LOGGER.debug( "Adding principal: " + username + " session:" + session.getId() );
 				backdoorPrincipals.put( session.getId(), new BackDoorPrincipal( username, nonHashedPassword ) );
 				request.setAttribute( AUTH_PASSWORD_NOTE, nonHashedPassword );
 			}
@@ -89,17 +89,16 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 					serSessionId = getCookie( request.getRequest(), SER_SESSION_ID ).getValue();
 					bdp = (BackDoorPrincipal) Util.getSSOPrincipal( mserver, getAonSessionManager(), serSessionId );
 				} catch (RuntimeException e) {
-					LOGGER.warn( "Asking for REQUEST parameter. Cookie does no exits. " + serSessionId, e);
+					LOGGER.warn( "Asking for REQUEST parameter. Cookie does no exits." + e.getMessage() + " "  + serSessionId);
 				} catch (Exception e) {
-					LOGGER.error( e.getMessage(), e );
+					LOGGER.error( e );
 				}
 			}
-			LOGGER.debug( "Using Authenticated Principal: {} SIZE: {}", bdp, backdoorPrincipals.size() );
+			LOGGER.debug( "Using Authenticated Principal:" + bdp + " SIZE:" + backdoorPrincipals.size() );
 			if ( bdp != null ) {
 				String username = bdp.getPrincipal().getShortName() + IConstants.IDENTITY_SEPARATOR 
 								+ bdp.getPrincipal().getDomain() + request.getContextPath();
 				List<String> roles = getRoles( request.getContextPath() );
-				LOGGER.debug( "Registering: {}, with the following roles: {}", username, roles );
 				register( request, new AonGenericPrincipal( request, username, bdp.getPassword(), roles ), AUTH_TYPE );
 			}
 		}
@@ -114,7 +113,7 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 				try {
 					Util.removeSSOPrincipal( mserver, getAonSessionManager(), session.getId() );
 				} catch (Exception e) {
-					LOGGER.error( "Error removing SSO principal for this session: " + session.getId(), e );
+					LOGGER.error( "Error removing SSO principal for this session:" + session.getId() + ". " + e.getMessage(), e );
 				}
 		}
 	}
@@ -257,7 +256,7 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 			request.getResponse().addCookie( cookie );
 			request.getResponse().sendRedirect( uri );
 		} catch (Exception e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		}
 	}
 
@@ -274,15 +273,15 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 			String[] sig = { String.class.getName(), Object.class.getName() };
 			mserver.invoke( getAonSessionManager(), "flushSSOPrincipal", params, sig );
 		} catch (MalformedObjectNameException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (NullPointerException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (InstanceNotFoundException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (MBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (ReflectionException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		}
 	}
 
@@ -306,15 +305,15 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 			}
 			return roles;
 		} catch (MalformedObjectNameException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (NullPointerException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (InstanceNotFoundException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (MBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		} catch (ReflectionException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.error( e );
 		}
 		return null;
 	}

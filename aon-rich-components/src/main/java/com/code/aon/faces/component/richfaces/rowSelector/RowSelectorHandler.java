@@ -9,7 +9,6 @@ import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 import org.richfaces.component.html.HtmlDataTable;
-import org.richfaces.component.html.HtmlExtendedDataTable;
 
 import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
@@ -44,6 +43,8 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 	
 	private ComponentConfig config;
 	
+	private TagHandler ajaxSupportHandler;
+	
 	/**
 	 * The Constructor.
 	 * 
@@ -64,7 +65,7 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 		return value;
 	}
 
-	private void addRowClasses(FaceletContext ctx, IDataTable dataTable) {
+	private void addRowClasses(FaceletContext ctx, HtmlDataTable dataTable) {
 		String selectedClass = getValue(ctx, SELECTED_CLASS_ATTRIBUTE, SELECTED_CLASS_VALUE);
 		StringBuffer mouseOut = new StringBuffer();
 		mouseOut.append("onDataTableOut(this,'").append(selectedClass)
@@ -86,40 +87,33 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 	}
 	
 	private TagHandler getSupportHandler(FaceletContext ctx, UIComponent component) {
-		List<AttributeInfo> attributes = new ArrayList<AttributeInfo>();
-		UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
-		String id = (String) root.getAttributes().get( EditDataTableHandler.EDIT_DATA_TABLE_ID );
-		if ( id != null ) {
-			String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
-			AttributeInfo reRender = new AttributeInfo(RERENDER, value);
-			reRender.setForce(true);
-			attributes.add(reRender);
+		if ( this.ajaxSupportHandler == null ) {
+			List<AttributeInfo> attributes = new ArrayList<AttributeInfo>();
+			UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
+			String id = (String) root.getAttributes().get( EditDataTableHandler.EDIT_DATA_TABLE_ID );
+			if ( id != null ) {
+				String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
+				AttributeInfo info = new AttributeInfo(RERENDER, value);
+				attributes.add(info);
+			}
+			AttributeInfo onSubmit = new AttributeInfo(ON_SUBMIT_ATTRIBUTE, ON_SUBMIT_VALUE);
+			attributes.add(onSubmit);
+			AonComponentConfig aonConfig = new AonComponentConfig(config, attributes); 
+			ajaxSupportHandler = new AjaxSupportHandler(aonConfig);
 		}
-		AttributeInfo onSubmit = new AttributeInfo(ON_SUBMIT_ATTRIBUTE, ON_SUBMIT_VALUE);
-		attributes.add(onSubmit);
-		AonComponentConfig aonConfig = new AonComponentConfig(config, attributes); 
-		return new AjaxSupportHandler(aonConfig);
-	}
-	
-	private IDataTable getDataTable( UIComponent component ) {
-		if ( component instanceof HtmlDataTable ) {
-			return new DataTableWrapper( (HtmlDataTable) component );
-		} else if ( component instanceof HtmlExtendedDataTable ) {
-			return new ExtendedDataTableWrapper( (HtmlExtendedDataTable) component );
-		}
-		return null;
+		return this.ajaxSupportHandler;
 	}
 	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) throws IOException {
-		IDataTable dataTable = getDataTable(parent);
-		if ( dataTable != null ) {
+		if (parent instanceof HtmlDataTable) {
+			HtmlDataTable dataTable = (HtmlDataTable) parent;
 			if (ComponentSupport.isNew(parent)) {
 				addRowClasses( ctx, dataTable );
 			}
 		} else {
 			throw new TagException(this.tag,
-					"Parent is not an HtmlDataTable, type is: " + parent);
+					"Parent is not of type org.richfaces.component.html.HtmlDataTable, type is: " + parent);
 		}
 		getSupportHandler(ctx, parent).apply(ctx, parent);
 	}

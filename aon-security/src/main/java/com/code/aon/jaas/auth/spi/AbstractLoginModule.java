@@ -11,8 +11,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.IConstants;
 
@@ -28,7 +28,7 @@ import com.code.aon.jaas.auth.IConstants;
 public abstract class AbstractLoginModule implements LoginModule, IConstants {
 
     /** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(AbstractLoginModule.class);
+	protected static final Log LOGGER = LogFactory.getLog( AbstractLoginModule.class.getName() );
 
     /** El Subject a tener en cuenta despues de una identificación positiva. */
 	protected Subject subject;
@@ -95,7 +95,7 @@ public abstract class AbstractLoginModule implements LoginModule, IConstants {
 		if( name != null ) {
 			try {
 				unauthenticatedIdentity = createIdentity( name );
-				LOGGER.debug( "Saw unauthenticatedIdentity={}", name );
+				LOGGER.debug( "Saw unauthenticatedIdentity=" + name );
 	         } catch(Exception e) {
 				LOGGER.warn( "Failed to create principal" );
 			}
@@ -125,9 +125,9 @@ public abstract class AbstractLoginModule implements LoginModule, IConstants {
 					return true;
 				}
 				//	Else, fall through and perform the login
-			} catch (Throwable th) { // $codepro.audit.disable caughtExceptions
+			} catch (Exception e) { // $codepro.audit.disable caughtExceptions
 				// Dump the exception and continue
-				LOGGER.error( "login failed", th );
+				LOGGER.fatal( "login failed:" + e.getMessage() );
 			}
 		}
 		return false;
@@ -152,7 +152,7 @@ public abstract class AbstractLoginModule implements LoginModule, IConstants {
 		Principal identity = getIdentity();
 		principals.add(identity);
 		roles4Subject(principals);
-		LOGGER.debug( "commit, loginOk={} {}", loginOk, subject.getPrincipals() );
+		LOGGER.debug( "commit, loginOk=" + loginOk + " " + subject.getPrincipals() );
 		return true;
 	}
 

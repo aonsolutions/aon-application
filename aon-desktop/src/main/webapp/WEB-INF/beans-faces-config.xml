@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!-- ************ DESKTOP ************** -->
+	<managed-bean>
+		<managed-bean-name>desktop</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.DesktopController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>currentUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.AonUserController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>currentUser</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{userSecurityActivationListener}</value>
+				<value>#{userScopeListener}</value>
+				<value>#{userWorkGroupListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ PROFILES ************** -->
+	<managed-bean>
+		<managed-bean-name>domain</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.AonDomainController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.jaas.client.ast.IDomainApplication</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>securityUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.event.SecurityUserListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>controller</property-name>
+			<value>#{user}</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ DESKTOP SERVICES ************** -->
+	<managed-bean>
+		<managed-bean-name>aonapps</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.ApplicationsManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>email</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.WebmailManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>sms</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.SMSManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>smsContact</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>fax</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.FAXManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>task</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.TaskManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ Collections ************** -->
+	<managed-bean>
+		<managed-bean-name>commonsCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.CommonsCollections</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+</faces-config>

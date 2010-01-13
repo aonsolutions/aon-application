@@ -13,8 +13,8 @@ import javax.security.auth.login.LoginException;
 import org.apache.catalina.Context;
 import org.apache.catalina.Session;
 import org.apache.catalina.core.StandardHost;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
@@ -34,7 +34,7 @@ public class TomcatSessionManager extends SecurityMBeanSupport
 		implements TomcatSessionManagerMBean, ExpiredSessionListener {
 
 	/** TomcatSessionManager Logger instance. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(TomcatSessionManager.class);
+	private static final Log LOGGER = LogFactory.getLog( TomcatSessionManager.class.getName() );
 	/** Field STANDARD_HOST (value is ""Catalina:host=localhost,type=Host"") */
 	static final String STANDARD_HOST = "Catalina:host=localhost,type=Host";
 	/** Managed Resource Constant name */
@@ -65,7 +65,7 @@ public class TomcatSessionManager extends SecurityMBeanSupport
 	 */
 	public void authenticate(String principal, String activeUsers, String access) 
 			throws LoginException {
-    	LOGGER.debug("Authenticating sessions for: PRINCIPAL[{}]", principal );
+    	LOGGER.debug("Authenticating sessions for: PRINCIPAL[" + principal + "]" );
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class TomcatSessionManager extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void registerSession(String sessionInfo) throws LoginException {
-    	LOGGER.debug("Session Registration[{}]", sessionInfo );
+    	LOGGER.debug("Session Registration[" + sessionInfo + "]" );
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class TomcatSessionManager extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void fillLastLoginException(String lastLoginException) {
-    	LOGGER.info("Setting last login exception STRING [{}]", lastLoginException );
+    	LOGGER.info("Setting last login exception STRING [" + lastLoginException + "]" );
 	}
 
 	/* (non-Javadoc)
@@ -231,7 +231,7 @@ public class TomcatSessionManager extends SecurityMBeanSupport
 		try {
 			invalidate( sessionInfo.getPrincipal().getContext(), sessionInfo.getSessionId() );
 		} catch (DeploymentException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		}
 	}
 

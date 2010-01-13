@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.client.ast.IApplication;
@@ -41,7 +41,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	private static final long serialVersionUID = -3828039834213639137L;
 
 	/** ApplicationsStorage Logger. */
-    private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationsStorage.class);
+    private static final Log LOGGER = LogFactory.getLog( ApplicationsStorage.class.getName() );
 
     /** Tells storage manager of serializing configuration resource <b>deployed.xml</b> file. */
 	private transient StorageManager storageManager;
@@ -134,7 +134,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 			Application app = (Application) it.next();
 			if ( !app.getId().equals( appId ) && app.getDomain( domain.getId() ) != null ) {
 				app.replaceDomain( domain.getId(), domain );
-				LOGGER.debug( "Domain [{}] Loaded and Replaced inside [{}] Application",  domain.getId(), app.getId() );
+				LOGGER.debug( "Domain [" + domain.getId() + "] Loaded and Replaced inside [" + app.getId() + "] Application." );
 			}
 		}
 	}
@@ -165,7 +165,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 		try {
 			return !FileUtils.getUptodateFile( getStorageDir().getCanonicalPath() ).exists();
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e.getMessage() );
 			return true;
 		}
 	}
@@ -207,7 +207,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
     		app.setHashEncoding( options.get( IConstants.ENCODING ).getValue() );
 //	Check if deployed application already exist inside "deployed.xml" file.
     	if ( this.applications.containsKey( app.getId() ) ) {
-			LOGGER.debug( "Deploying an existing application: {} {}", app.getId(), app.hashCode() );
+			LOGGER.debug( "Deploying an existing application:" + app.getId() + " " + app.hashCode() );
         	Application storageApp = (Application) this.applications.get( app.getId() );
 	    	storageApp.actualize(app);
 	    	Iterator<IDomain> iter = storageApp.domains().iterator();
@@ -220,7 +220,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 						(DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
 //	TODO. Asociar a cada aplicacion solamente la parte del objeto IDomain que le interesa
 					storageApp.replaceDomain( domain.getId(), es.getDomain() );
-					LOGGER.debug( "Domain [{}] Loaded and Replaced inside [{}] Application", domain.getId(), storageApp.getId() );
+					LOGGER.debug( "Domain [" + domain.getId() + "] Loaded and Replaced inside [" + storageApp.getId() + "] Application." );
 				} catch (IOException e) {
 					throw new DeploymentException(e.getMessage(), e.getCause());
 				} catch (AstException e) {
@@ -229,7 +229,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 			}
     	} else {
 //	Check if deployed application has defined a domain, in other case creates a default one.
-			LOGGER.debug( "Deploying a new Application: {} {}", app.getId(), app.hashCode() );
+			LOGGER.debug( "Deploying a new Application:" + app.getId() + " " + app.hashCode() );
 			if ( app.domains().size() == 0 ) {
 				( (Application)app ).addDomain( Domain.getInstance(app.getId()) );
 			}
@@ -237,7 +237,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 			Iterator<IDomain> iter = app.domains().iterator();
 			while (iter.hasNext()) {
 				IDomain domain = iter.next();
-				LOGGER.debug( "Deploying domain: {} {}", domain.getId(), domain.hashCode() );
+				LOGGER.debug( "Deploying domain:" + domain.getId() + " " + domain.hashCode() );
 				try {
 					File resource = 
 						new File( getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + XML);
@@ -246,7 +246,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 					if ( resource.exists() ) {
 						es = (DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
 						Domain existingDomain = (Domain) es.getDomain();
-						LOGGER.debug( "Deployed Domain: {} {}", existingDomain.getId(), existingDomain.hashCode() );
+						LOGGER.debug( "Deployed Domain:" + existingDomain.getId() + " " + existingDomain.hashCode() );
 						existingDomain.add( domain.getDomainApplication( app.getId() ) );
 						Iterator<IUser> iterator = domain.standaloneUsers().values().iterator();
 						while (iterator.hasNext()) {
@@ -260,24 +260,24 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 					} else {
 						resource.createNewFile();
 					}
-					LOGGER.debug( "New Domain: {} {}", domain.getId(), domain.hashCode() );
+					LOGGER.debug( "New Domain:" + domain.getId() + " " + domain.hashCode() );
 					es.setDomain(domain);
 					es.initialize( StorageManager.getInstance( resource.toURL(), DomainRenderer.getInstance() ) );
 //					es.initialize( new StorageManager( resource.toURL(), DomainRenderer.getInstance() ) );
 					es.write();
-					LOGGER.debug( "Domain [{}] updated and wrote", domain.getId() );
+					LOGGER.debug( "Domain [" + domain.getId() + "] updated and wrote." );
 				} catch (IOException e) {
 					throw new DeploymentException(e.getMessage(), e.getCause());
 				} catch (AstException e) {
 					throw new DeploymentException(e.getMessage(), e.getCause());
 				} catch (StorageException e) {
-					LOGGER.warn( e.getMessage(), e );
+					LOGGER.warn( e );
 					throw new DeploymentException(e.getMessage(), e.getCause());
 				}
 			}
     		try {
 				write();
-				LOGGER.debug( "New Application [{}] added and wrote", app.getId() );
+				LOGGER.debug( "New Application [" + app.getId() + "] added and wrote." );
 			} catch (StorageException e) {
 				throw new DeploymentException(e.getMessage(), e.getCause());
 			}

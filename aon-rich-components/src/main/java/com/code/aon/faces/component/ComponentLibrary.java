@@ -5,15 +5,14 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ComponentLibrary {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(ComponentLibrary.class);
+	private static final Logger LOGGER = Logger.getLogger(ComponentLibrary.class.getName());	
 
 	private String namespace;
 	
@@ -46,7 +45,7 @@ public class ComponentLibrary {
 			getDigester().parse( in );
 			in.close();
 		} catch ( Throwable th ) {
-			LOGGER.error( th.getMessage(), th );
+			LOGGER.severe( th.getMessage() );
 		}
 	}
 	

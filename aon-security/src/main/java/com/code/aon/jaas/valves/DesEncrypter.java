@@ -23,8 +23,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Encrypting a File or Stream with DES.
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class DesEncrypter {
 
 	/** DesEncrypter Log */
-	private final static Logger LOGGER = LoggerFactory.getLogger(DesEncrypter.class);
+	private static final Log LOGGER = LogFactory.getLog( DesEncrypter.class.getName() );
 
 	private static final byte[] salt = {
         (byte)0xA9, (byte)0x9B, (byte)0xC8, (byte)0x32,
@@ -65,13 +65,13 @@ public class DesEncrypter {
 			ecipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
 			dcipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
 		} catch (java.security.InvalidAlgorithmParameterException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		} catch (javax.crypto.NoSuchPaddingException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		} catch (java.security.NoSuchAlgorithmException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		} catch (java.security.InvalidKeyException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		}
 	}
 
@@ -87,7 +87,7 @@ public class DesEncrypter {
 			}
 			out.close();
 		} catch (java.io.IOException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		}
 	}
 
@@ -103,7 +103,7 @@ public class DesEncrypter {
 			}
 			out.close();
 		} catch (java.io.IOException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		}
 	}
 
@@ -112,9 +112,9 @@ public class DesEncrypter {
 			//Seal (encrypt) the object
 	        return new SealedObject( ser, ecipher );
 		} catch (java.io.IOException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 	    } catch (javax.crypto.IllegalBlockSizeException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 	    }
 	    return null;
 	}
@@ -124,13 +124,13 @@ public class DesEncrypter {
             // Unseal (decrypt) the class
 			return so.getObject( dcipher );
 		} catch (IllegalBlockSizeException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		} catch (BadPaddingException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		} catch (IOException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		} catch (ClassNotFoundException e) {
-			LOGGER.warn( e.getMessage(), e );
+			LOGGER.warn( e.getMessage() );
 		}
 		return null;
 	}

@@ -2,6 +2,7 @@ package com.code.aon.jaas.auth.spi;
 
 import java.security.Principal;
 import java.security.acl.Group;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,22 +15,22 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.security.auth.Subject;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.AuthGroup;
 import com.code.aon.jaas.auth.AuthInfo;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IAuthInfo;
 import com.code.aon.jaas.auth.IConstants;
+
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
@@ -45,8 +46,6 @@ import com.code.aon.jaas.client.ast.IRelation;
  */
 public abstract class XMLLoginModule extends AbstractLoginModule {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(XMLLoginModule.class);
-	
 	/** The login identity */
 	private Principal identity;
 	/** The proof of login identity */
@@ -114,15 +113,13 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 			if( hashEncoding == null )
 				hashEncoding = Util.BASE64_ENCODING;
 			hashCharset = (String) options.get( IConstants.CHARSET );
-			if ( LOGGER.isDebugEnabled() ) {
-				LOGGER.debug("Password hashing activated: algorithm = " + hashAlgorithm
-						+ ", encoding = " + hashEncoding
-						+ ", charset = " + (hashCharset == null ? "{default}" : hashCharset)
-						+ ", callbackHandler = " + callbackHandler
-						+ ", callback = " + options.get("digestCallback")
-						+ ", storeCallback = " + options.get("storeDigestCallback")
-						);
-			}
+			LOGGER.debug("Password hashing activated: algorithm = " + hashAlgorithm
+					+ ", encoding = " + hashEncoding
+					+ ", charset = " + (hashCharset == null ? "{default}" : hashCharset)
+					+ ", callbackHandler = " + callbackHandler
+					+ ", callback = " + options.get("digestCallback")
+					+ ", storeCallback = " + options.get("storeDigestCallback")
+					);
         }
 		String flag = (String) options.get("ignorePasswordCase");
 		ignorePasswordCase = Boolean.valueOf(flag).booleanValue();
@@ -154,7 +151,7 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 				try {
 					identity = createIdentity(name);
 				} catch(Exception e) {
-					LOGGER.warn( "Failed to create principal", e );
+					LOGGER.warn( "Failed to create principal" );
 					throw new LoginException("Failed to create principal: "+ e.getMessage());
 				}
 			}
@@ -174,14 +171,14 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 		String password = info[1];
 		if (username == null && password == null) {
 			identity = unauthenticatedIdentity;
-			LOGGER.debug( "Authenticating as unauthenticatedIdentity={}", identity );
+			LOGGER.debug( "Authenticating as unauthenticatedIdentity=" + identity );
 		}
 		if (identity == null) {
 			try {
 				identity = createIdentity(username);
-				LOGGER.debug( "identity[{}]", identity );
+				LOGGER.debug( "identity[" + identity + "]" );
 			} catch(Exception e) {
-				LOGGER.warn( "Failed to create principal", e );
+				LOGGER.warn( "Failed to create principal" );
 				throw new LoginException("Failed to create principal: "+ e.getMessage());
 			}
 			AuthPrincipal authPrincipal = (AuthPrincipal) identity;
@@ -221,7 +218,7 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 			sharedState.put( "javax.security.auth.login.password", credential );
 		}
 		super.loginOk = true;
-		LOGGER.debug("User '{}' authenticated, loginOk={}", identity, loginOk );
+		LOGGER.debug("User '" + identity + "' authenticated, loginOk=" + loginOk );
 		return true;
 	}
 
@@ -413,19 +410,19 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 					new Object[] { this.identity, getActiveUsers(domain, context), access },
 					new String[] { Principal.class.getName(), Integer.class.getName(), IAccessPolicy.class.getName() } );
 		} catch (InstanceNotFoundException e) {
-			LOGGER.debug( domain + " " + context + " " + access, e );
+			LOGGER.debug( domain + " " + context + " " + access + ". " + e.getMessage() );
 			throw new LoginException( e.getMessage() );
 		} catch (MalformedObjectNameException e) {
-			LOGGER.debug( domain + " " + context + " " + access, e );
+			LOGGER.debug( domain + " " + context + " " + access + ". " + e.getMessage() );
 			throw new LoginException( e.getMessage() );
 		} catch (MBeanException e) {
-			LOGGER.debug( domain + " " + context + " " + access, e );
+			LOGGER.debug( domain + " " + context + " " + access + ". " + e.getMessage() );
 			throw new LoginException( e.getMessage() );
 		} catch (ReflectionException e) {
-			LOGGER.debug( domain + " " + context + " " + access, e );
+			LOGGER.debug( domain + " " + context + " " + access + ". " + e.getMessage() );
 			throw new LoginException( e.getMessage() );
 		} catch (NullPointerException e) {
-			LOGGER.debug( domain + " " + context + " " + access, e );
+			LOGGER.debug( domain + " " + context + " " + access + ". " + e.getMessage() );
 			throw new LoginException( e.getMessage() );
 		}
 	}
@@ -455,8 +452,8 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
     						new Object[] { this.securityDomain },
 							new String[] { String.class.getName() } );
 	        this.authInfo = new AuthInfo( apps );
-    	} catch (Throwable th) {
-    		LOGGER.error( "Error loading Host[" + domain + "]", th );
+    	} catch (Exception e) {
+    		LOGGER.fatal( "Error loading Host[" + domain + "]." + e.getMessage() );
         }
 	}
 
@@ -504,8 +501,8 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
     		ObjectName name = new ObjectName(this.sessionManagerObjectName);
     		AuthenticationLoginException e = new AuthenticationLoginException( message, obj); 
     		getMBeanServer().invoke( name, "fillLastLoginException", new Object[] { e }, new String[] { AuthenticationLoginException.class.getName() } );
-    	} catch (Throwable th) {
-    		LOGGER.error( "Error setting FailedLoginException", th );
+    	} catch (Exception e) {
+    		LOGGER.fatal( "Error setting FailedLoginException: " + e.getMessage() );
         }
 	}
 

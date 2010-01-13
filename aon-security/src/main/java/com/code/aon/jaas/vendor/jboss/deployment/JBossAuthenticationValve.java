@@ -16,10 +16,10 @@ import javax.management.ReflectionException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
@@ -30,7 +30,7 @@ import com.code.aon.jaas.vendor.deployment.ast.IVendorDescriptor;
 public class JBossAuthenticationValve extends BackDoorAuthenticationValve {
 
 	/** BackDoorAuthenticationValve Logger instance. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(JBossAuthenticationValve.class);
+	private static final Log LOGGER = LogFactory.getLog( JBossAuthenticationValve.class.getName() );
 
 	@Override
 	protected ObjectName getAonLdap() throws MalformedObjectNameException {
@@ -58,7 +58,7 @@ public class JBossAuthenticationValve extends BackDoorAuthenticationValve {
 		javax.naming.Context ctx = null;
 		try {
 			BackDoorPrincipal bdp = backdoorPrincipals.get( sessionId );
-			LOGGER.debug( "Flushing REMOTE access using IP: {} session: {} principal: {}", new Object[]{IP, sessionId, bdp.getPrincipal().getName()} );
+			LOGGER.debug( "Flushing REMOTE access using IP:" + IP + " session:" + sessionId + " principal:" + bdp.getPrincipal().getName() );
 			ctx = new InitialContext(env);
 			RMIAdaptor server = (RMIAdaptor) ctx.lookup( "jmx/invoker/RMIAdaptor" );
 			Object[] params = { sessionId, bdp };
@@ -69,7 +69,7 @@ public class JBossAuthenticationValve extends BackDoorAuthenticationValve {
 				try {
 					ctx.close();
 				} catch (NamingException e) {
-					LOGGER.error( e.getMessage(), e );
+					LOGGER.error( e );
 				}
 		}
 	}
@@ -104,15 +104,15 @@ public class JBossAuthenticationValve extends BackDoorAuthenticationValve {
 			Util.serialize( l );
 			deployed = true;
 		} catch (InstanceNotFoundException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		} catch (MBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		} catch (ReflectionException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		} catch (MalformedObjectNameException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		} catch (NullPointerException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.fatal( e );
 		}
 	}
 

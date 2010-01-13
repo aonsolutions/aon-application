@@ -6,13 +6,13 @@ import javax.management.ObjectName;
 
 import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.mbeans.ServerLifecycleListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SecurityLifecycleListener extends ServerLifecycleListener {
 
 	/** SecurityLifecycleListener Logger instance. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityLifecycleListener.class);
+	private static final Log LOGGER = LogFactory.getLog( SecurityLifecycleListener.class.getName() );
 	/** Applications Deployed file relative path */
 	static final String DELPOYED_FILE_RELATIVE_PATH = "aon.workspace" + File.separator + "deployed.xml";
 
@@ -42,7 +42,7 @@ public class SecurityLifecycleListener extends ServerLifecycleListener {
 				tss.start();
 			}
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.fatal(e.getMessage());
 		}
 	}
 
