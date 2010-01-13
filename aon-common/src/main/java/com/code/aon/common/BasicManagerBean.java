@@ -180,6 +180,23 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		}
 	}
 	
+	/**
+	 * Return when it is necessary to restore and when not.
+	 * 
+	 * @param bean
+	 * @param pd
+	 * @return boolean
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 */
+	private boolean needRestore(Object bean, PropertyDescriptor pd) throws IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
+		return (pd.getWriteMethod() != null)
+				&& (!pd.getReadMethod().isAnnotationPresent(Transient.class))
+				&& (!pd.getReadMethod().isAnnotationPresent(Cascade.class));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException {
 		try {
@@ -191,7 +208,7 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 				Class fieldClass = pd.getPropertyType();
 				String name = pd.getName();
 				if (ITransferObject.class.isAssignableFrom(fieldClass)) {
-					if (!pd.getReadMethod().isAnnotationPresent(Cascade.class)) {
+					if ( needRestore(to, pd) ) {
 						LOGGER.debug("Initializing TO " + name + " property");
 						ITransferObject childTO = (ITransferObject) PropertyUtils.getProperty(to, name);
 						if (childTO != null ) {
