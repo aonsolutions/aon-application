@@ -15,8 +15,8 @@ body {
 }
 .header{
 	
-	width:750px; 
-MARGIN:20PX;
+	/*width:730px;*/ 
+margin:20PX;
 	background-color:${bgcolor_color_de_fondo_cabecera};
 
 }

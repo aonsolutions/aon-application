@@ -54,7 +54,7 @@ acronym{
 #navcontainer{
 			 margin-left: auto;
 			 margin-right: auto;
-			 border-top: 1px solid #999;
+			 /*border-top: 1px solid #999;*/
 			 z-index: 1;
 			 width:675px;
 }
