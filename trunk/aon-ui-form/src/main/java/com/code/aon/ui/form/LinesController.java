@@ -173,11 +173,11 @@ public class LinesController extends BasicController {
 		while (i.hasNext()) {
 			ITransferObject object = (ITransferObject) i.next();
 			updateJoinProperties(masterTO, object);
+			getManagerBean().restoreNullSubPOJOs(object);
 			getManagerBean().insertOrUpdate(object);
 		}
 		this.model = null;
-		super.initializeModel();
-		getCheckList().clear();
+		initializeModel();
 	}
 
 	/**
