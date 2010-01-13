@@ -163,9 +163,9 @@
 		</navigation-case>
 
 	    <navigation-case>
-			<from-outcome>customer_month_stats</from-outcome>
+			<from-outcome>product_statistics</from-outcome>
 			<to-view-id>
-				/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/monthStats.xhtml</to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/productStats.xhtml</to-view-id>
 		</navigation-case>
 		
 
