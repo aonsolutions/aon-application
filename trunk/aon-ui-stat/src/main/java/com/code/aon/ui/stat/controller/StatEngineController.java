@@ -35,6 +35,7 @@ public class StatEngineController {
 	private List<Stat> dayStats;
 	private List<Stat> customerStats;
 	private List<Stat> abcStats;
+	private List<Stat> productStats;
 	private Integer currentYear;
 	private Integer currentMonth;
 	private Integer currentDay;
@@ -53,6 +54,7 @@ public class StatEngineController {
 	private DataModel customerStatModel;
 	private DataModel abcStatModel;
 	private DataModel invoicesModel;
+	private DataModel productModel;
 	private StatParams params;
 	private String reportName;
 	private String itemTitle;
@@ -70,6 +72,26 @@ public class StatEngineController {
 	private Integer checkLevel;
 	
 	
+	
+	public DataModel getProductModel() {
+		setProductModel(null);
+		if (productModel == null) {
+			productModel  = new ListDataModel(getProductStats());
+		}
+		return productModel ;
+	}
+
+	public void setProductModel(DataModel productModel) {
+		this.productModel = productModel;
+	}
+
+	public List<Stat> getProductStats() {
+		return productStats;
+	}
+
+	public void setProductStats(List<Stat> productStats) {
+		this.productStats = productStats;
+	}
 
 	public Integer getCheckLevel() {
 		return checkLevel;
@@ -772,6 +794,36 @@ public class StatEngineController {
 		}
 	}
 	
+	public void onProductInvoiceList(ActionEvent event) {
+		try {
+			
+			invoices = new LinkedList<Invoice>();
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			Map<String, String> paramss = ec.getRequestParameterMap();
+			String product = paramss.get("product");
+			setProduct(Integer.parseInt(product));
+			
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
+			criteria.addEqualExpression("Invoice.lines.item.product.id",this.getProduct());
+			
+			setInvoiceBackAction("abc_product_stats");
+							
+			List<ITransferObject> list;
+			list = invoiceBean.getList(criteria);
+			for (ITransferObject to : list) {
+				Invoice inv = (Invoice) to;
+				invoices.add(inv);
+			}
+			
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice) this.invoicesModel.getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
@@ -1001,6 +1053,7 @@ public class StatEngineController {
 			throw new AbortProcessingException(e);
 		}
 	}
+	
 
 	private void getRegistryProductStatistics() throws ManagerBeanException {
 
@@ -1009,11 +1062,11 @@ public class StatEngineController {
 		params.setInvoiceType(invoiceType);
 		List<Stat> list = new LinkedList<Stat>();
 		list.addAll(se.getRegistryProductStats(params));
-		setAbcStats(list);
+		setProductStats(list);
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
 		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
-		abcStatModel = null;
+		productModel = null;
 	}
 
 	
