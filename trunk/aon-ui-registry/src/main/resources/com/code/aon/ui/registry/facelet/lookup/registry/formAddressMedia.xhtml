@@ -7,20 +7,9 @@
 
 	<aon:outputLabel for="Company_address" 
 		value="#{registryBundle.registry_address}" />
-	<aon:div>
-		<aon:div>
-			<aon:inputText id="Company_address"
-				value="#{controllerLookupListener.mainAddress.address}" size="64" maxlength="128"/>
-		</aon:div>
-		<aon:div>
-			<aon:inputText id="Company_address2"
-				value="#{controllerLookupListener.mainAddress.address2}" size="64" maxlength="128"/>
-		</aon:div>
-		<aon:div>
-			<aon:inputText id="Company_address3"
-				value="#{controllerLookupListener.mainAddress.address3}" size="64" maxlength="128"/>		
-		</aon:div>
-	</aon:div>
+	<aon:inputText id="Company_address"
+		value="#{controllerLookupListener.mainAddress.address}" size="64" maxlength="128"/>
+
 	<aon:outputLabel for="Company_address_city" 
 		value="#{registryBundle.registry_city}" />
 	<aon:inputText id="Company_address_city" 
@@ -54,10 +43,5 @@
 		value="#{registryBundle.registry_email}" />
 	<aon:inputText id="Company_email" 
 		value="#{controllerLookupListener.email.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
-		
-	<aon:outputLabel for="Company_web" 
-		value="#{registryBundle.registry_web}" />
-	<aon:inputText id="Company_web" 
-		value="#{controllerLookupListener.web.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
 
 </ui:composition>
