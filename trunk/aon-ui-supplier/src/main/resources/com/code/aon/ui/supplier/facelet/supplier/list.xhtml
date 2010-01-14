@@ -8,12 +8,6 @@
 
 	<ui:define name="content">
 		<aon:form>
-			<!--  
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
-				<ui:param name="controller" value="#{supplier}" />
-			</ui:include>
-			-->
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
@@ -57,17 +51,7 @@
 					</h:commandLink>
 				</ui:define>
 			</ui:decorate>
-			
 
-		<!--  
-			<aon:div id="supplierData" styleClass="aon-scroll-area">
-				<aon:dataTable id="supplierDataList"
-					value="#{supplier.model}" rows="20" var="to"
-					rendered="#{supplier.model.rowCount > 0}">
-
-					<aon:rowSelector action="supplier_form" 
-						actionListener="#{supplier.onSelect}" />
-		-->
 		<aon:div styleClass="aon-scroll-area">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{supplier}" />
