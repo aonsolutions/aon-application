@@ -34,7 +34,15 @@
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{fbatch}" />
+					<ui:param name="columnClasses" value="
+						aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+					<ui:define name="columns">
 
+<!--  
 				<aon:dataTable id="fbatchData" value="#{fbatch.model}"
 					var="to" rows="20" rendered="#{fbatch.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
@@ -43,6 +51,7 @@
 						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn">
 
 					<aon:rowSelector action="fbatch_form" actionListener="#{fbatch.onSelect}" />
+-->
 
 					<aon:column>
 						<f:facet name="header">
@@ -106,9 +115,14 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>	
 					</aon:column>
+				</ui:define>
+			</ui:decorate>
+					
+<!--  
 				</aon:dataTable>
 
 				<aon:dataScroller2 for="fbatchData" showNote="true" />
+-->					
 			</aon:div>
 			
 		</aon:form>
