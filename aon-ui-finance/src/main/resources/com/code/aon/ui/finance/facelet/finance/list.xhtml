@@ -73,15 +73,12 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="financeData" value="#{finance.model}" var="to"
-					rows="20" rendered="#{finance.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-numberColumn">
-
-					<aon:rowSelector action="finance_form"
-						actionListener="#{finance.onSelect}" />
-
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{finance}" />
+					<ui:param name="columnClasses" value="
+						aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+					<ui:define name="columns">
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{financeBundle.finance_invoice}" />
@@ -148,9 +145,8 @@
 						</aon:div>
 						</f:facet>
 					</aon:column>
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="financeData" showNote="true" />
+				</ui:define>
+			</ui:decorate>
 			</aon:div>
 
 		</aon:form>
