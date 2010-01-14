@@ -200,5 +200,4 @@ public class RegistryLookupListener extends ControllerAdapter {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
-
 }

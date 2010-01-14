@@ -5,8 +5,12 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -22,6 +26,8 @@ import com.code.aon.ui.webmail.controller.MessageController;
  */
 public class RegistryController extends BasicController {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryController.class);
+	
 	private String selectedTab;
 
 	public String getSelectedTab() {
@@ -48,22 +54,28 @@ public class RegistryController extends BasicController {
 
 	public void onChangeDocument(ActionEvent event) {
 		try {
-			IRegistry iRegistry = (IRegistry) getTo();
 			if (isNew()) {
-				String document = iRegistry.getRegistry().getDocument();
-				if (StringUtils.isNotEmpty(document)) {
-					Criteria criteria = new Criteria();
-					String alias = getManagerBean().getFieldName(
-							getPojoShortName() + "_registry_document");
-					criteria.addEqualExpression(alias, document);
-					List<ITransferObject> list = getManagerBean().getList(criteria);
-					if (list.size() > 0 ) {
-						AonUtil.addWarningMessage("Ya existe un registro para el NIF: " + document);
-					}
-				}
+				IRegistry iRegistry = (IRegistry) getTo();
+				RegistryController.validateDocument(iRegistry,getManagerBean());
 			}
 		} catch (ManagerBeanException e) {
-			// DO
+			LOGGER.warn("unable to check Document.",e);
+		}
+	}
+	
+	public static void validateDocument(IRegistry iRegistry, IManagerBean bean) throws ManagerBeanException {
+		String document = iRegistry.getRegistry().getDocument();
+		if (StringUtils.isNotEmpty(document)) {
+			Criteria criteria = new Criteria();
+			String alias = bean.getFieldName(
+					ClassUtils.getShortClassName(bean.getPOJOClass())
+					+ "_registry_document");
+			criteria.addEqualExpression(alias, document);
+			List<ITransferObject> list = bean.getList(criteria);
+			if (list.size() > 0 ) {
+				String msg = AonUtil.getMessage("registryBundle", "registry_document_error"); 
+				AonUtil.addWarningMessage(msg + " " + document);
+			}
 		}
 	}
 }
