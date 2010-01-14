@@ -12,10 +12,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BankAccountValidationListener extends ControllerAdapter {
 
-	private final String CONFIG_BUNDLE = "configBundle";
-	private final String ERROR_MESSAGE = "config_invalid_bank_account";
+	private static final String CONFIG_BUNDLE = "configBundle";
+	private static final String ERROR_MESSAGE = "config_invalid_bank_account";
 
-	private boolean nullable = false;
+	private boolean nullable;
 
 	public boolean isNullable() {
 		return nullable;
@@ -28,16 +28,16 @@ public class BankAccountValidationListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IBankAccountContainer bac = (IBankAccountContainer) event.getController().getTo();
-		checkBankAccount(bac);
+		checkBankAccount(bac, nullable);
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		IBankAccountContainer bac = (IBankAccountContainer) event.getController().getTo();
-		checkBankAccount(bac);
+		checkBankAccount(bac, nullable);
 	}
 
-	private void checkBankAccount(IBankAccountContainer bac) throws ControllerListenerException {
+	public static void checkBankAccount(IBankAccountContainer bac, boolean nullable) throws ControllerListenerException {
 		Bank bank = bac.getBank();
 		BankAccount bankAccount = bac.getBankAccount();
 		if (!nullable) {
