@@ -42,6 +42,20 @@
 						</aon:selectOneMenu>
 					</c:if>
 
+					<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
+						<aon:outputText value="#{customerBundle.customer_delivery_info}" />
+						<aon:div>
+							<aon:selectBooleanCheckbox id="Customer_deliveryGrouped" styleClass="aon-margin-left"
+								value="#{customer.to.deliveryGrouped}" />
+							<aon:outputLabel for="Customer_deliveryGrouped" styleClass="aon-italic"
+								value="#{customerBundle.customer_deliveryGrouped}" />
+							<aon:selectBooleanCheckbox id="Customer_deliveryValuated" styleClass="aon-margin-left"
+								value="#{customer.to.deliveryValuated}" />
+							<aon:outputLabel for="Customer_deliveryValuated" styleClass="aon-italic"
+								value="#{customerBundle.customer_deliveryValuated}" />
+						</aon:div>
+					</c:if>
+
 					<c:if test="#{company.EInvoice}">
 						<aon:outputLabel for="Customer_eInvoice"
 							value="#{customerBundle.customer_eInvoice}" />
