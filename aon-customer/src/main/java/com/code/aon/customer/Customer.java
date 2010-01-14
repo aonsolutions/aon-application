@@ -50,8 +50,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
     private CustomerStatus status;
     private Scope scope;
     private boolean eInvoice;
-    private boolean deliveryGrouped;
-    private boolean deliveryValuated;
+    private boolean deliveryGrouped = true;
+    private boolean deliveryValuated = true;
 
     @Id
 	@Column(name="registry")
