@@ -166,7 +166,7 @@
 	<!-- ************ SELLER LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>sellerLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
