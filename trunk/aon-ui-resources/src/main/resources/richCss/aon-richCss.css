@@ -934,7 +934,10 @@ color:#000;
 }
 .aon-group-body{
 	padding:0 1em;
-	}
+	color:#4B4B4B;
+	font-family:"arial","lucida Grande","Trebuchet MS",sans-serif;
+	font-size:12px;
+}
 .aon-group-body-internal{
 	width:100%;
 	}	
