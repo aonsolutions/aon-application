@@ -195,7 +195,7 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		}
 	}
 
-	private RegistryLookupListener getLookupListener(ControllerEvent event) throws ManagerBeanException {
+	protected RegistryLookupListener getLookupListener(ControllerEvent event) throws ManagerBeanException {
 		if ( this.formListener == null ) {
 			BasicController controller = (BasicController) event.getController();
 			Class<?> pojoClass = controller.getManagerBean().getPOJOClass();

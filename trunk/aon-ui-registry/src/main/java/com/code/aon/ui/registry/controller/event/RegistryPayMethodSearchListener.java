@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
@@ -49,5 +50,16 @@ public class RegistryPayMethodSearchListener extends RegistrySearchListener {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		try {		
+			RegistryPayMethodLookupListener listener = (RegistryPayMethodLookupListener) getLookupListener(event);
+			listener.checkRegistryBank();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}	
 	
 }
