@@ -94,5 +94,17 @@ public interface ICustomerAlias {
 	*/
 	String  CUSTOMER_E_INVOICE = CUSTOMER_ENTRY.getAliasNames()[12];
 
+	/** 
+	* Alias value: Customer_deliveryGrouped
+	* Hibernate value: Customer.deliveryGrouped
+	*/
+	String  CUSTOMER_DELIVERY_GROUPED = CUSTOMER_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Customer_deliveryValuated
+	* Hibernate value: Customer.deliveryValuated
+	*/
+	String  CUSTOMER_DELIVERY_VALUATED = CUSTOMER_ENTRY.getAliasNames()[14];
+
 
 }
