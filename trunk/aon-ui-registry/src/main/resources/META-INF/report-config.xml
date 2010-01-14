@@ -129,4 +129,45 @@
 		</params>
 	</report>
 	
+	<report id="sellerReport" description="Seller report ">
+		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
+		<bean key="com.code.aon.seller.Seller" />
+		<criteria provider="#{seller}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="title" value="#{seller.getReportTitle}" />
+		</params>
+	</report>
+	<report id="sellerDetailReport" description="Seller Detailed report ">
+		<template path="/com/code/aon/ui/registry/report/masterRegistryDetailedList.jasper" />
+		<bean key="com.code.aon.seller.Seller" />
+		<criteria provider="#{seller}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="title" value="#{seller.getReportTitle}" />
+		</params>
+	</report>
+	
 </report-config>
