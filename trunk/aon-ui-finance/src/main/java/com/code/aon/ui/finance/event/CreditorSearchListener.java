@@ -7,9 +7,9 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.ui.registry.controller.event.RegistryPayMethodSearchListener;
 
-public class CreditorSearchListener extends RegistrySearchListener {
+public class CreditorSearchListener extends RegistryPayMethodSearchListener {
 
 	private CreditorStatus[] creditorStatuses;
 	
