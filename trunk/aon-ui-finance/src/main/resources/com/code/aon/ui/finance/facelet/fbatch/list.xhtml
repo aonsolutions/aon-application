@@ -42,17 +42,6 @@
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 					<ui:define name="columns">
 
-<!--  
-				<aon:dataTable id="fbatchData" value="#{fbatch.model}"
-					var="to" rows="20" rendered="#{fbatch.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn">
-
-					<aon:rowSelector action="fbatch_form" actionListener="#{fbatch.onSelect}" />
--->
-
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_id}" />
@@ -117,12 +106,7 @@
 					</aon:column>
 				</ui:define>
 			</ui:decorate>
-					
-<!--  
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="fbatchData" showNote="true" />
--->					
+						
 			</aon:div>
 			
 		</aon:form>
