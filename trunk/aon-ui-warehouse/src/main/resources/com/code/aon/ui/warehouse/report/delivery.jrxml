@@ -20,7 +20,6 @@
 	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="warehouse" class="com.code.aon.warehouse.Warehouse"/>
 	<parameter name="defaultPayMethod" class="java.lang.Boolean"/>
-	<parameter name="valuableDelivery" class="java.lang.Boolean"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="id" class="java.lang.Integer"/>
@@ -382,11 +381,11 @@
 			</subreport>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-4" positionType="Float" x="2" y="201" width="536" height="41">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="valuableDelivery">
-					<subreportParameterExpression><![CDATA[$P{valuableDelivery}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
@@ -447,7 +446,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="2" y="251" width="69" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
@@ -456,7 +455,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="2" y="274" width="68" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
@@ -465,7 +464,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="71" y="274" width="124" height="23" forecolor="#000000">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -481,7 +480,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="2" y="297" width="68" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
@@ -490,7 +489,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="315" y="274" width="124" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -506,7 +505,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="231" y="274" width="82" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
@@ -515,7 +514,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="231" y="297" width="82" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
@@ -524,7 +523,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="315" y="297" width="124" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -540,7 +539,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="71" y="297" width="124" height="23">
-					<printWhenExpression><![CDATA[$P{valuableDelivery}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>

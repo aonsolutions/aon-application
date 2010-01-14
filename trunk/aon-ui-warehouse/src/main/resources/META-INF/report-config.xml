@@ -90,7 +90,6 @@
 			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
 			<param id="warehouse" value="#{delivery.getWarehouse}" />
 			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
-			<param id="valuableDelivery" value="#{delivery.getValuableDelivery}" />
 		</params>
 		
 		<nested-report report="deliveryDetail"/>

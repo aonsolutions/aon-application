@@ -44,7 +44,7 @@
 							<f:setPropertyActionListener target="#{delivery.valuableDelivery}" value="#{true}" />
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
-						<h:commandLink id="valuableDelivery" value="#{warehouseBundle.warehouse_delivery_valuated}"
+						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery}"
 							target="_new" rendered="#{!delivery.new}"
 							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
@@ -52,10 +52,8 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="delivery" />
 							<f:param name="outputFormat" value="PDF" />
-							<f:setPropertyActionListener target="#{delivery.valuableDelivery}"
-								value="#{true}" />
 						</h:commandLink>
-						<aon:commandButton value="&#160;" id="email"
+					<!-- 	<aon:commandButton value="&#160;" id="email"
 							title="#{webmailBundle.webmail_send_email}"
 							rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
@@ -70,9 +68,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="delivery" />
 							<f:param name="outputFormat" value="PDF" />
-							<f:setPropertyActionListener target="#{delivery.valuableDelivery}"
-								value="#{false}" />
-						</h:commandLink>					
+						</h:commandLink>	 -->				
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
