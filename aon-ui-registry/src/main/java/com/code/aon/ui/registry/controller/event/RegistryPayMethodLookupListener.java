@@ -66,7 +66,7 @@ public class RegistryPayMethodLookupListener extends RegistryLookupListener {
 		return (registryPayMethod.getPayment() == null) || (this.registryPayMethod.getPayment().getType() == null);
 	}
 	
-	private void updateRegistryPayMethod( Registry registry ) throws ManagerBeanException, ControllerListenerException {
+	private void updateRegistryPayMethod( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		if (! isEmpty(registryPayMethod) ) {
 			registryPayMethod.setRegistry(registry);
@@ -76,41 +76,40 @@ public class RegistryPayMethodLookupListener extends RegistryLookupListener {
 		}
 	}
 
+	private void updateRegistryBank( Registry registry ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+		if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {
+			getRegistryBank().setRegistry(registry);
+			bean.insertOrUpdate(getRegistryBank());
+		}
+	}
+	
+	@Override
+	protected void updateRegistryLines(Registry registry)
+			throws ManagerBeanException {
+		super.updateRegistryLines(registry);
+		updateRegistryBank(registry);
+		updateRegistryPayMethod(registry);
+	}
+
 	public void updateRegistryPayMethod( LinesController controller ) throws ManagerBeanException {
 		if (! isEmpty(registryPayMethod) ) {
 			onAccept(controller, registryPayMethod);
 		}
 	}	
 
-	public void updateRegistryBank( LinesController controller ) throws ManagerBeanException, ControllerListenerException {
+	public void updateRegistryBank( LinesController controller ) throws ManagerBeanException {
 		if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {		
-			BankAccountValidationListener.checkBankAccount(getRegistryBank(), true);
 			setRegistryBank( (RegistryBank) onAccept(controller, getRegistryBank()) );
 		}
 	}	
 	
-	@Override
-	public void afterBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		super.afterBeanAdded(event);
-		try {
-			updateRegistryPayMethod( getRegistry(event) );
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
-		}
+	public void checkRegistryBank() throws ControllerListenerException {
+		if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {		
+			BankAccountValidationListener.checkBankAccount(getRegistryBank(), true);
+		}		
 	}
-
-	@Override
-	public void afterBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		super.afterBeanUpdated(event);
-		try {
-			updateRegistryPayMethod( getRegistry(event) );
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
-		}
-	}
-
+	
 	public void onPayMethodChanged(ValueChangeEvent event) {
 		PayMethod oldPay = (PayMethod) event.getOldValue();
 		PayMethod newPay = (PayMethod) event.getNewValue();
@@ -123,5 +122,11 @@ public class RegistryPayMethodLookupListener extends RegistryLookupListener {
 		return (registryPayMethod.getPayment() != null)
 			&& (registryPayMethod.getPayment().getType() != registryPayMethodType);
 	}
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		checkRegistryBank();
+	}		
 	
 }

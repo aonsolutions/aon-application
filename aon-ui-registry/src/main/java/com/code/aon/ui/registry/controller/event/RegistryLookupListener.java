@@ -157,7 +157,7 @@ public class RegistryLookupListener extends ControllerAdapter {
 		}		
 	}
 		
-	private void updateRegistryLines( Registry registry ) throws ManagerBeanException {
+	protected void updateRegistryLines( Registry registry ) throws ManagerBeanException {
 		updateRegistryAddress(registry, mainAddress);
 		updateRegistryMedia(registry, phone);
 		updateRegistryMedia(registry, fax);
