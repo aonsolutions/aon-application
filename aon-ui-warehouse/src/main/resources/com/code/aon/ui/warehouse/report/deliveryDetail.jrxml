@@ -6,7 +6,7 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
-	<parameter name="valuableDelivery" class="java.lang.Boolean"/>
+	<parameter name="valuated" class="java.lang.Boolean"/>
 	<field name="price" class="java.lang.Double"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="discountExpression" class="com.code.aon.product.util.DiscountExpression"/>
@@ -94,7 +94,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="¤ #,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-7" x="356" y="0" width="59" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 ||$F{price}.doubleValue()>0.0)&&$P{valuableDelivery}.booleanValue())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 ||$F{price}.doubleValue()>0.0)&&$P{valuated}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -109,7 +109,7 @@
 			</textField>
 			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 				<reportElement key="textField-11" x="415" y="0" width="31" height="12">
-					<printWhenExpression><![CDATA[new Boolean((($F{quantity}.doubleValue()>=0.0 || $F{price}.doubleValue()>0.0)&&! $F{discountExpression}.getDiscountExpr().equals("0.0"))&&$P{valuableDelivery}.booleanValue())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean((($F{quantity}.doubleValue()>=0.0 || $F{price}.doubleValue()>0.0)&&! $F{discountExpression}.getDiscountExpr().equals("0.0"))&&$P{valuated}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -124,7 +124,7 @@
 			</textField>
 			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-13" x="446" y="0" width="69" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0)&&$P{valuableDelivery}.booleanValue())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0)&&$P{valuated}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
