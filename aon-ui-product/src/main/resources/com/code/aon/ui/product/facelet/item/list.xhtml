@@ -10,17 +10,22 @@
 	<ui:define name="content">
 		<aon:form id="itemList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{productBundle.product_module}" />
 				<ui:param name="controller" value="#{item}" />
-			</ui:include>
-
-			<aon:div id="itemData" styleClass="aon-scroll-area">
-				<aon:dataTable id="itemDataList" value="#{item.model}"
-					rows="20" var="to" rendered="#{item.model.rowCount > 0}">
-
-					<aon:rowSelector action="item_form" 
-						actionListener="#{item.onSelect}" />
+				<ui:define name="additionalToolbarContent">
+				
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+				<ui:param name="controller" value="#{item}" />
+				<ui:param name="columnClasses" value="
+					aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+				<ui:define name="columns">
 
 					<aon:column>
 						<f:facet name="header">
@@ -68,8 +73,8 @@
 						</aon:outputText>
 					</aon:column>
 
-				</aon:dataTable>
-				<aon:dataScroller2 for="itemDataList" showNote="true" />
+				</ui:define>
+			</ui:decorate>	
 			</aon:div>
 		</aon:form>
 	</ui:define>
