@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.account</artifactId>
-	<version>4.0.1</version>
+	<version>4.0.2</version>
 	<description>AON ACCOUNT</description>
 	<name>AON-ACCOUNT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.5.0</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
