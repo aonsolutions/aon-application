@@ -4,23 +4,30 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import javax.naming.Name;
+import javax.naming.ldap.Rdn;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.IDAO;
+import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ldap.Scope;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -35,16 +42,15 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-	private static final Logger LOGGER = Logger.getLogger(LdapDAO.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(LdapDAO.class);
 
 	private EntityMetadata metadata;
 	
-	private String baseDN;
+	private Name baseDN;
 
 	/**
 	 * Instantiates a new ldap dao.
 	 * 
-	 * @param properties the properties
 	 * @param pojoClass the pojo class
 	 */
 	public LdapDAO( Class<? extends ITransferObject> pojoClass ) {
@@ -64,58 +70,82 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		setBaseDN( this.metadata.getBaseDN() );			
 	}
 	
-	public String getBaseDN() {
+	/**
+	 * Gets the base dn.
+	 * 
+	 * @return the base dn
+	 */
+	public Name getBaseDN() {
 		return baseDN;
 	}
 
-	public void setBaseDN(String baseDN) {
+	/**
+	 * Sets the base dn.
+	 * 
+	 * @param baseDN the new base dn
+	 */
+	public void setBaseDN(Name baseDN) {
 		this.baseDN = baseDN; 
 		try {
-			String base = getLdapSession().getBaseDN();
-			if (! StringUtils.isEmpty(base) ) {
-				if ( StringUtils.isEmpty(this.baseDN) ) {
-					this.baseDN = base;
-				} else {
-					this.baseDN = baseDN + "," + base;	
-				}
-			}
+			Name base = getLdapSession().getBaseDN();
+			this.baseDN = NameResolver.getName(baseDN, base);
 		} catch ( LdapException e ) {
-			LOGGER.info( "Error obtaining base DN of the LDAP connection" );
+			LOGGER.warn( "Error obtaining base DN of the LDAP connection", e );
 		} finally {
 			closeSession();
 		}
 	}
 
-	private void setDN( ITransferObject to, DistinguishedName dn ) throws DAOException {
+	private void setDN( ITransferObject to, Name dn ) throws DAOException {
 		try {
-			BeanUtils.setProperty( to, metadata.getDnHolder(), dn.toString() );
+			PropertyUtils.setProperty( to, metadata.getDnHolder(), dn );
 		} catch (Exception e) {
 			throw new DAOException( e );
 		}
 	}
 	
-	private String getDN( ITransferObject to ) throws DAOException {
+	private Name getDN( ITransferObject to ) throws DAOException {
 		try {
-			return BeanUtils.getProperty( to, metadata.getDnHolder() );
+			String name = BeanUtils.getProperty( to, metadata.getDnHolder() );
+			return NameResolver.getName(name);
 		} catch (Exception e) {
 			throw new DAOException( e );
 		}
 	}
 	
-	public String calculateDN( ITransferObject to ) throws DAOException {
-		StringBuffer dn = new StringBuffer( this.baseDN );
+	/**
+	 * Calculate dn.
+	 * 
+	 * @param to the to
+	 * 
+	 * @return the string
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
+	public Name calculateDN( ITransferObject to ) throws DAOException {
+		Name dn = this.baseDN;
 		try {
 			Object value = getValue(to, metadata.getRDN());
 			if ( value != null ) {
-				dn.insert( 0, metadata.getRDN().getLdapName() + "=" + value + "," );
+				Rdn rdn = NameResolver.getRdn(metadata.getRDN().getLdapName(), value);
+				dn = NameResolver.getName( rdn, this.baseDN );
 			}
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}		
-		return dn.toString();
+		return dn;
 	}
 
-	public boolean exists( String id ) throws DAOException {
+	/**
+	 * Exists.
+	 * 
+	 * @param id the id
+	 * 
+	 * @return true, if successful
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
+	public boolean exists( Name id ) throws DAOException {
 		return exists( id, this.metadata.getMainObjectClass() );
 	}
 	
@@ -123,10 +153,10 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	public int getCount(Criteria criteria) throws DAOException {
 		int count = 0;
 		try {
-			String dn = getDN(criteria);
+			Name dn = getDN(criteria);
 			String filter = getFilter(criteria);
-			LOGGER.info( "getCount, dn=" + dn + ",filter=" + filter );
-			count = getLdapSession().getCount(dn.toString(), filter, Scope.SUBTREE_SCOPE );
+			LOGGER.debug( "getCount, dn={},filter={}", dn, filter );
+			count = getLdapSession().getCount(dn, filter, Scope.ONELEVEL_SCOPE );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + metadata.getMainObjectClass(), e );
 		} finally {
@@ -139,46 +169,75 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return metadata.getPojoClass();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private IDAO getDAO( PropertyInfo info ) {
-		LdapDAO dao = new LdapDAO( getProperties(), (Class<ITransferObject>) info.getPropertyClass() );
+		LdapDAO dao = new LdapDAO( getProperties(), (Class<ITransferObject>) info.getBaseClass() );
 		if ( info.getBaseDN() != null ) {
 			String baseDN = info.getBaseDN();
-			if ( getBaseDN() != null ) {
-				baseDN = baseDN.replace( "{this}", getBaseDN() );
+			if (! StringUtils.isEmpty(baseDN) ) {
+				baseDN = baseDN.replace( "{this}", getBaseDN().toString() );
 				if ( baseDN.indexOf("{parent}") != -1 ) {
-					DistinguishedName dn = new DistinguishedName( getBaseDN() );
-					baseDN = baseDN.replace( "{parent}", dn.getParent().toString() );
+					Name parent = NameResolver.getParent(getBaseDN());
+					baseDN = baseDN.replace( "{parent}", parent.toString() );
 				}
 			}
-			dao.setBaseDN(baseDN);
+			dao.setBaseDN(NameResolver.getName(baseDN));
 		}
 		return dao;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object getValue( ITransferObject to, PropertyInfo info ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, DAOException {
 		Object value = PropertyUtils.getProperty(to, info.getAccesPath());
-		if ( value != null ) {
-			if ( info.isTransferObject() ) {
-				IDAO dao = getDAO(info);
-				value = dao.getId( (ITransferObject) value );
-			} else if ( value instanceof Boolean ) {
-				value = ((Boolean) value).booleanValue() ? LdapSession.TRUE_VALUE : LdapSession.FALSE_VALUE;
-			} else if (! (value instanceof byte[]) ) {
-				value = value.toString();
-			}
-			if ( value instanceof String ) {
-				value = StringUtils.trimToNull( (String) value );
-			}
+		if ( info.isCollection() ) {
+			return getCollectionValue( (List<Object>) value, info);
 		}
-		return value;
+		return getSingleValue(value, info);
 	}
 	
+	private Object getCollectionValue( List<Object> list, PropertyInfo info ) throws DAOException {
+		if ( list != null ) {
+			List<Object> result = new LinkedList<Object>();	
+			for( Object object : list ) {
+				result.add( getSingleValue(object, info) );
+			}
+			return result;
+		}
+		return null;
+	}
+
+	private Object getSingleValue( Object value, PropertyInfo info ) throws DAOException {
+		Object result = value; 
+		if ( result != null ) {
+			if ( info.isTransferObject() && (value instanceof ITransferObject) ) {
+				IDAO dao = getDAO(info);
+				result = dao.getId( (ITransferObject) result );
+			}
+			if ( result instanceof Boolean ) {
+				result = ((Boolean) result).booleanValue() ? LdapSession.TRUE_VALUE : LdapSession.FALSE_VALUE;
+			} else if (! (result instanceof byte[]) ) {
+				result = result.toString();
+			}
+			if ( result instanceof String ) {
+				result = StringUtils.trimToNull( (String) result );
+			}
+		}
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
 	private void setProperties( ITransferObject to, Entry entry ) throws DAOException {
 		for( PropertyInfo info : metadata.getMappings()) {
 			try {
 				Object value = getValue(to, info);
 				if ( value != null ) {
-					entry.put( info.getLdapName(), value );						
+					if ( info.isCollection() ) {
+						for( Object object : (List) value ) {
+							entry.put( info.getLdapName(), object );
+						}
+					} else {
+						entry.put( info.getLdapName(), value );						
+					}
 				}
 			} catch (Exception e) {
 				throw new DAOException( e );
@@ -212,7 +271,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	@Override
 	public boolean remove(ITransferObject to) throws DAOException {
 		try {
-			String dn = getDN(to);
+			Name dn = getDN(to);
 			getLdapSession().delete(dn);
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in remove of " + metadata.getMainObjectClass(), e );
@@ -222,20 +281,19 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return true;
 	}
 
-	private String getDN( Criteria criteria ) throws DAOException {
-		StringBuffer dn = new StringBuffer( this.baseDN );
-		if ( criteria != null ) {
-		}
-		return dn.toString();
+	private Name getDN( Criteria criteria ) {
+		return this.baseDN;
 	}
 
-	private String getFilter( Criteria criteria ) throws DAOException {
-		String expression = LdapSession.getObjectClass(metadata.getMainObjectClass()); 
+	private String getFilter( Criteria criteria ){
+		String expression = NameResolver.getObjectClass(metadata.getMainObjectClass()); 
 		if ( criteria != null ) {
 			LdapRenderer renderer = new LdapRenderer();
 			renderer.visitCriteria(criteria);
 			String filter = renderer.getExpression();
-			expression = "(&" + expression + filter + ")";
+			if (! StringUtils.isEmpty(filter) ) {
+				expression = NameResolver.getAndExpression( expression, filter );	
+			}
 		}
 		return expression;
 	}
@@ -247,7 +305,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 				Order order = orderList.get(i);
 				String attribute = order.getExpression().getName();
 				EntryComparator comparator = new EntryComparator( attribute, order.isAscending() );
-				LOGGER.info( "Sorting " + order );
+				LOGGER.debug( "Sorting {}", order );
 				Collections.sort( list, comparator );
 			}
 		}
@@ -257,22 +315,41 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private List<Entry> getSubList( List<Entry> list, int offset, int count ) {
 		if ( offset >= 0 ) {
 			int toIndex = Math.min( offset+count, list.size() );
-			LOGGER.info( "SubList, offset=" + offset + ",toIndex=" + toIndex );
+			LOGGER.debug( "SubList, offset={},toIndex={}", offset, toIndex );
 			return list.subList( offset, toIndex );	
 		}
 		return list;
 	}
+
+	private Object convert( Object value, PropertyInfo info ) throws DAOException {
+		Object result = null;
+		if ( info.isTransferObject() ) {
+			IDAO dao = getDAO(info);
+			Name id = NameResolver.getName( value.toString() );
+			result = dao.get( id );								
+		} else {
+			result = ConvertUtils.convert(value, info.getBaseClass());	
+		}
+		return result;
+	}
 	
-	private void setProperty( ITransferObject to, PropertyInfo info, Entry entry ) throws InstantiationException, IllegalAccessException, InvocationTargetException, DAOException {
+	private Object convertCollection( List<Object> list, PropertyInfo info ) throws DAOException {
+		List<Object> result = new LinkedList<Object>();
+		for( Object object : list ) {
+			result.add( convert(object, info) );	
+		}
+		return result;
+	}
+	
+	private void setProperty( ITransferObject to, PropertyInfo info, Entry entry ) throws IllegalAccessException, InvocationTargetException, DAOException {
 		if ( entry.containsKey(info.getLdapName()) ) {
-			Object value = entry.getAsObject( info.getLdapName() );
-			if ( value != null ) {
-				if ( info.isTransferObject() ) {
-					IDAO dao = getDAO(info);
-					value = dao.get( (Serializable) value );
-				}
-				BeanUtils.setProperty(to, info.getAccesPath(), value);						
+			Object value = null;
+			if ( info.isCollection() ) {
+				value = convertCollection(entry.get(info.getLdapName()), info);
+			} else {
+				value = convert(entry.getAsObject(info.getLdapName()), info);
 			}
+			BeanUtils.setProperty(to, info.getAccesPath(), value);						
 		}
 	}
 	
@@ -305,10 +382,10 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			int count) throws DAOException {
 		List<ITransferObject> tos = null;
 		try {
-			String dn = getDN(criteria);
+			Name dn = getDN(criteria);
 			String filter = getFilter(criteria);
-			LOGGER.info( "getList, dn=" + dn + ",filter=" + filter );
-			List<Entry> list = getLdapSession().search(dn.toString(), filter, Scope.SUBTREE_SCOPE );
+			LOGGER.debug( "getList, dn={},filter={}", dn, filter );
+			List<Entry> list = getLdapSession().search(dn, filter, Scope.ONELEVEL_SCOPE );
 			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
 			tos = convertList(list);
@@ -332,57 +409,48 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public void setId(ITransferObject to, Serializable id) throws DAOException {
-		DistinguishedName dn = new DistinguishedName( (String) id );
-		setDN(to, dn);
+		setDN(to, (Name) id);
 	}
 	
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
-		LOGGER.info( "Get: " + pk );
+		LOGGER.debug( "Get: {}", pk );
 		ITransferObject to = null;
-		try {
-			LdapSession session = getLdapSession();
-			String dn = (String) pk;
-			String filter = LdapSession.getObjectClass(metadata.getMainObjectClass());
-			if ( session.exists(dn, filter) ) {
-				Entry entry = session.get(dn, filter);
-				if ( entry != null ) {
-					to = convert(entry);
-				}
+		Name dn = (Name) pk;
+		if ( exists(dn, metadata.getMainObjectClass()) ) {
+			Entry entry = get(dn, metadata.getMainObjectClass());
+			if ( entry != null ) {
+				to = convert(entry);
+			} else {
+				throw new DAOException( "Error in get of " + metadata.getMainObjectClass() );	
 			}
-		} catch ( LdapException e ) {
-			throw new DAOException( "Error in get of " + metadata.getMainObjectClass(), e );
-		} finally {
-			closeSession();
 		}
 		return to;
+	}
+	
+	private Object getValue( Entry entry, String name, PropertyInfo info ) throws DAOException {
+		if ( info.isCollection() ) {
+			return getCollectionValue(entry.get(name), info);
+		}
+		return getSingleValue(entry.getAsObject(name), info);
 	}
 	
 	@Override
 	public ITransferObject update(ITransferObject to) throws DAOException {
 		try {
 			LdapSession session = getLdapSession();
-			String dn = getDN(to);
-			String filter = LdapSession.getObjectClass(metadata.getMainObjectClass());
+			Name dn = getDN(to);
+			String filter = NameResolver.getObjectClass(metadata.getMainObjectClass());
 			Entry entry = session.get(dn, filter);
 			for( PropertyInfo info : metadata.getMappings() ) {
 				try {
-					Object value = getValue(to, info);
+					Object newValue = getValue(to, info);
 					String name = info.getLdapName();
+					Object oldValue = null;
 					if ( entry.containsKey(name) ) {
-						if ( value != null ) {
-							Object entryValue = entry.getAsObject(name);
-							if (! ObjectUtils.equals(value, entryValue) ) {
-								session.replaceAttribute(dn, name, value);	
-							}				
-						} else {
-							session.removeAttributes(dn, name);
-						}						
-					} else {
-						if ( value != null ) {
-							session.addAttribute(dn, name, value);						
-						}						
+						oldValue = getValue(entry, name, info);
 					}
+					session.updateAttribute(dn, name, oldValue, newValue);
 				} catch (Exception e) {
 					throw new DAOException( e );
 				}
@@ -397,7 +465,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 
 	public ITransferObject insertOrUpdate(ITransferObject to)
 			throws DAOException {
-		String dn = getDN(to);
+		Name dn = getDN(to);
 		if ( dn == null ) {
 			insert(to);
 		} else {
@@ -406,21 +474,25 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return to;
 	}
 
+	@Override
+	public ITransferObject replicate(ITransferObject to, ReplicationMode mode)
+			throws DAOException {
+		throw new UnsupportedOperationException("Not supported!");
+	}
+
 	public void setProperty(ITransferObject to, String propertyName,
 			Object value) throws DAOException {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List getList(ProjectionList projectionList, Criteria criteria)
 			throws DAOException {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	public Object getUniqueResult(Projection projection, Criteria criteria)
 			throws DAOException {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 

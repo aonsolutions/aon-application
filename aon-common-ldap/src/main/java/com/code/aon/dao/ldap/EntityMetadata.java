@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
+import javax.naming.Name;
 import javax.persistence.Id;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -19,12 +19,14 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.NameResolver;
 
+/**
+ * The Class EntityMetadata.
+ */
 public class EntityMetadata {
 
 	private Class<? extends ITransferObject> pojoClass;
-	
-	private Properties ldapProperties;
 	
 	private PropertyInfo rdn;
 	
@@ -38,7 +40,7 @@ public class EntityMetadata {
 	
 	private String[] objectClasses;
 	
-	private String baseDN;
+	private Name baseDN;
 
 	/**
 	 * Instantiates a new Entity Metadata.
@@ -49,7 +51,7 @@ public class EntityMetadata {
 		this.pojoClass = pojoClass;
 		if ( this.pojoClass.isAnnotationPresent(EntryObject.class) ) {
 			EntryObject entity = this.pojoClass.getAnnotation(EntryObject.class);
-			this.baseDN = entity.baseDN();
+			this.baseDN = NameResolver.getName(entity.baseDN());
 			this.mainObjectClass = entity.mainObjectClass();
 			this.objectClasses = entity.objectClasses();
 		} else {
@@ -67,13 +69,21 @@ public class EntityMetadata {
 		Attribute attribute = method.getAnnotation(Attribute.class);
 		String accessPath = StringUtils.defaultIfEmpty(attribute.accessPath(), pd.getName());
 		String ldapName = StringUtils.defaultIfEmpty(attribute.name(), pd.getName());
-		PropertyInfo info = new PropertyInfo( accessPath, ldapName );
-		info.setPropertyClass( pd.getPropertyType() );
+		PropertyInfo info = new PropertyInfo( accessPath, ldapName, pd.getPropertyType() );
 		info.setLength( attribute.length() );
 		info.setNullable( attribute.nullable() );
 		info.setAlias( getAlias(accessPath) );
+		if (! StringUtils.isEmpty(attribute.baseClass()) ) {
+			try {
+				Class<?> baseClass = ClassUtils.getClass(attribute.baseClass());
+				info.setBaseClass( baseClass );
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException( e );
+			}			
+		}
 		if ( method.isAnnotationPresent(BaseDN.class) ) {
-			info.setBaseDN( method.getAnnotation(BaseDN.class).value() );
+			String name = method.getAnnotation(BaseDN.class).value();
+			info.setBaseDN( name );
 		}
 		return info;
 	}
@@ -106,35 +116,75 @@ public class EntityMetadata {
 		}
 	}
 
+	/**
+	 * Gets the pojo class.
+	 * 
+	 * @return the pojo class
+	 */
 	public Class<? extends ITransferObject> getPojoClass() {
 		return pojoClass;
 	}
 
+	/**
+	 * Gets the rDN.
+	 * 
+	 * @return the rDN
+	 */
 	public PropertyInfo getRDN() {
 		return rdn;
 	}
 
+	/**
+	 * Gets the dn holder.
+	 * 
+	 * @return the dn holder
+	 */
 	public String getDnHolder() {
 		return dnHolder;
 	}
 
+	/**
+	 * Gets the field map.
+	 * 
+	 * @return the field map
+	 */
 	public Map<String, String> getFieldMap() {
 		return fieldMap;
 	}
 
+	/**
+	 * Gets the mappings.
+	 * 
+	 * @return the mappings
+	 */
 	public List<PropertyInfo> getMappings() {
 		return mappings;
 	}
 
+	/**
+	 * Gets the main object class.
+	 * 
+	 * @return the main object class
+	 */
 	public String getMainObjectClass() {
 		return mainObjectClass;
 	}
 
+	/**
+	 * Gets the object classes.
+	 * 
+	 * @return the object classes
+	 */
 	public String[] getObjectClasses() {
 		return objectClasses;
 	}
 
-	public String getBaseDN() {
+	/**
+	 * Gets the base dn.
+	 * 
+	 * @return the base dn
+	 */
+	public Name getBaseDN() {
 		return baseDN;
 	}
 	
