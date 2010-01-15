@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AonGenericPrincipal;
@@ -33,7 +33,7 @@ import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
 public class BackDoorAuthenticationFilter implements Filter, IConstants {
 
 	/** AuthenticationValve Logger */
-	private final static Logger LOGGER = LoggerFactory.getLogger(BackDoorAuthenticationFilter.class);
+	private static final Log LOGGER = LogFactory.getLog( BackDoorAuthenticationFilter.class.getName() );
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -53,12 +53,13 @@ public class BackDoorAuthenticationFilter implements Filter, IConstants {
 			try {
 				agp = Utils.getSSOPrincipal( httpRequest.getSession().getId() );
 			} catch (DeploymentException e) {
-				LOGGER.error( e.getMessage(), e );
+				LOGGER.error( e );
 			}
 			if ( agp != null && httpRequest.getAuthType().equals( AUTH_TYPE ) ) {
 				AuthPrincipal principal = (AuthPrincipal) agp.getUserPrincipal();
 				if ( principal != null ) {
-					String username = getUserName(principal, httpRequest);
+					String username = principal.getShortName() + IConstants.IDENTITY_SEPARATOR 
+										+ principal.getDomain() + httpRequest.getContextPath();
 					Principal p = agp.getRealm().authenticate( username, (String) agp.getCredentials() ); 
 					if( p != null ) {
 						register( agp.getRequest(), p, AUTH_TYPE );
@@ -69,13 +70,6 @@ public class BackDoorAuthenticationFilter implements Filter, IConstants {
 			}
 		}
 		chain.doFilter( request, response );
-	}
-	
-	private String getUserName( AuthPrincipal principal, HttpServletRequest httpRequest) {
-		String domain = DomainResolver.getDomain(httpRequest);
-		String username = principal.getShortName() + IConstants.IDENTITY_SEPARATOR 
-			+ domain + httpRequest.getContextPath();
-		return username;
 	}
 
 	/**
