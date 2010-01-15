@@ -12,6 +12,8 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{customerBundle.customer_module}." />
 				<ui:param name="controller" value="#{customer}" />
+				<aon:methodParam name="resetAction" value="customer_consultant_form" />
+				<aon:methodParam name="searchAction" value="customer_consultant_search" />				
 			</ui:include>
 
 			<aon:div id="customerData" styleClass="aon-scroll-area">
