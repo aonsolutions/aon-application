@@ -1,20 +1,9 @@
 package com.code.aon.ebackoffice.event;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ebackoffice.Ecconfig;
-import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.ebackoffice.util.EmailUtils;
 
 public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {

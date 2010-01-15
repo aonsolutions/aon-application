@@ -12,15 +12,15 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{configBundle.config_paymethod_module}"  />
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="controller" value="#{paymethod}" />
+				<ui:param name="controller" value="#{pmethod}" />
 			</ui:include>
 
 			<aon:div id="itemData" styleClass="aon-scroll-area">
-				<aon:dataTable id="paymethodDataList" value="#{paymethod.model}"
-					rows="20" var="to" rendered="#{paymethod.model.rowCount > 0}">
+				<aon:dataTable id="paymethodDataList" value="#{pmethod.model}"
+					rows="20" var="to" rendered="#{pmethod.model.rowCount > 0}">
 
-					<aon:rowSelector action="paymethod_form" 
-						actionListener="#{paymethod.onSelect}" />
+					<aon:rowSelector action="pmethod_form" 
+						actionListener="#{pmethod.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">
@@ -33,7 +33,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_type}" />
 						</f:facet>
-						<aon:outputText value="#{to.type} " />
+						<aon:outputText value="#{to.type}" />
 					</aon:column>
 
 					

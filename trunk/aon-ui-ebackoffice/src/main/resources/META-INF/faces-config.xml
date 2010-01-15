@@ -183,8 +183,8 @@
 
 	<!-- ************* PAYMETHOD ***************** -->
 	<managed-bean>
-		<managed-bean-name>paymethod</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-name>pmethod</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.ebackoffice.controller.PayMethodController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -196,7 +196,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>paymethod</value>
+			<value>pmethod</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -222,7 +222,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>paymethod</value>
+			<value>ecpaymethod</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -230,7 +230,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
-			<value>paymethod</value>
+			<value>pmethod</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -276,12 +276,12 @@
 		</navigation-case>
 
        	<navigation-case>
-			<from-outcome>paymethod_form</from-outcome>
+			<from-outcome>pmethod_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecPaymethod/form.xhtml</to-view-id>
 		</navigation-case>
 		
 		<navigation-case>
-			<from-outcome>paymethod_list</from-outcome>
+			<from-outcome>pmethod_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecPaymethod/list.xhtml</to-view-id>
 		</navigation-case>
               
