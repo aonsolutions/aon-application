@@ -7,6 +7,8 @@ import java.util.Iterator;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -48,6 +50,14 @@ public class SalesDetailController extends LinesController {
 
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
+
+		SalesDetail salesDetail = (SalesDetail)getTo();
+		if (StringUtils.equals(salesDetail.getItem().getProduct().getName().trim(), salesDetail.getDescription().trim())) {
+			String longDescription = salesDetail.getItem().getDescription();
+			if (!StringUtils.isEmpty(longDescription)) {
+				salesDetail.setDescription(salesDetail.getDescription() + "\r\n" + longDescription);
+			}
+		}
 	}
 
 	public void onShortDescription(ActionEvent event) {

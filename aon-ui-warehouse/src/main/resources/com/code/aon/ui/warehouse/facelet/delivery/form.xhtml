@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
@@ -16,6 +17,7 @@
 					<ui:param name="toolbarTitle"
 						value="#{warehouseBundle.warehouse_delivery_module}" />
 					<ui:param name="controller" value="#{delivery}" />
+					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
@@ -37,11 +39,10 @@
 							<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<aon:commandButton value="&#160;" id="valuableEmail"
+						<aon:commandButton value="&#160;" id="email"
 							title="#{webmailBundle.webmail_send_email}"
 							rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
-							<f:setPropertyActionListener target="#{delivery.valuableDelivery}" value="#{true}" />
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
 						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery}"
@@ -53,22 +54,6 @@
 							<f:param name="reportKey" value="delivery" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
-					<!-- 	<aon:commandButton value="&#160;" id="email"
-							title="#{webmailBundle.webmail_send_email}"
-							rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
-							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
-							<f:setPropertyActionListener target="#{delivery.valuableDelivery}" value="#{false}" />
-							<aon:actionListener method="#{delivery.onSendByEmail}" />
-						</aon:commandButton>															
-						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery_no_valuated}"
-							target="_new" rendered="#{!delivery.new}"
-							action="#{report.onExecute}" 
-							disabled="#{deliveryDetail.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="delivery" />
-							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>	 -->				
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -341,11 +326,11 @@
 										rendered="#{formList}" />
 									<aon:inputText id="DeliveryDetail_line" 
 										value="#{controller.to.line}" rendered="#{formEdit}"
-										required="true" size="2" maxlength="3" />
+										required="true" size="1" maxlength="3" />
 									<f:facet name="footer">
 										<aon:inputText id="DeliveryDetail_line-New" 
 											value="#{controller.to.line}" rendered="#{formNew}"
-											required="true" size="2" maxlength="3" />
+											required="true" size="1" maxlength="3" />
 									</f:facet>
 								</aon:column>
 		
@@ -384,17 +369,31 @@
 												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"
 												actionType="new">
 											</aon:lookupButton>
-											<aon:inputTextarea id="DeliveryDetail_item_product_name" 
-												value="#{deliveryDetail.to.description}"
-												cols="64" rows="#{!deliveryDetail.longDescription?1:5}"
-												style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-												<f:validateLength maximum="1024" />
-											</aon:inputTextarea>
+											<c:if test="#{aonConfiguration.bean.product.showStock}">
+												<aon:commandButton value="&#160;"
+													title="#{warehouseBundle.warehouse_item_stock_module}"
+													rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null and deliveryDetail.to.item.product.inventoriable}"
+													styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+													actionListener="#{itemStock.onShowPanel}"
+													reRender="itemStockContainer">
+													<aon:set var="#{itemStock.alternativesVisible}" value="#{true}" />
+													<aon:set var="#{itemStock.item}" value="#{deliveryDetail.to.item}" /> 
+													<aon:set var="#{itemStock.warehouse}" value="#{delivery.warehouse}" /> 
+													<aon:set var="#{itemStock.componentId}" value="DeliveryDetail_item_product_code" />
+													<aon:set var="#{itemStock.alternativeMethod}" value="deliveryDetail.onItemChanged" />
+												</aon:commandButton>															
+											</c:if>
 										</a4j:region>
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+										<aon:inputTextarea id="DeliveryDetail_item_product_name" 
+											value="#{deliveryDetail.to.description}"
+											cols="60" rows="#{!deliveryDetail.longDescription?1:5}"
+											style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											<f:validateLength maximum="1024" />
+										</aon:inputTextarea>
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
 											actionListener="#{deliveryDetail.onShortDescription}" reRender="DeliveryDetail_item_product_name"
 											rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
 											actionListener="#{deliveryDetail.onLongDescription}" reRender="DeliveryDetail_item_product_name"
 											rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
 									</aon:div>
@@ -426,17 +425,31 @@
 													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"
 													actionType="new">
 												</aon:lookupButton>
-												<aon:inputTextarea id="DeliveryDetail_item_product_name-New" 
-													value="#{deliveryDetail.to.description}"
-													cols="64" rows="#{!deliveryDetail.longDescription?1:5}"
-													style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-													<f:validateLength maximum="1024" />
-												</aon:inputTextarea>
+												<c:if test="#{aonConfiguration.bean.product.showStock}">
+													<aon:commandButton value="&#160;"
+														title="#{warehouseBundle.warehouse_item_stock_module}"
+														rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null and deliveryDetail.to.item.product.inventoriable}"
+														styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+														actionListener="#{itemStock.onShowPanel}"
+														reRender="itemStockContainer">
+														<aon:set var="#{itemStock.alternativesVisible}" value="#{true}" />
+														<aon:set var="#{itemStock.item}" value="#{deliveryDetail.to.item}" /> 
+														<aon:set var="#{itemStock.warehouse}" value="#{delivery.warehouse}" /> 
+														<aon:set var="#{itemStock.componentId}" value="DeliveryDetail_item_product_code-New" />
+														<aon:set var="#{itemStock.alternativeMethod}" value="deliveryDetail.onItemChanged" />
+													</aon:commandButton>															
+												</c:if>
 											</a4j:region>
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+											<aon:inputTextarea id="DeliveryDetail_item_product_name-New" 
+												value="#{deliveryDetail.to.description}"
+												cols="60" rows="#{!deliveryDetail.longDescription?1:5}"
+												style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+												<f:validateLength maximum="1024" />
+											</aon:inputTextarea>
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
 												actionListener="#{deliveryDetail.onShortDescription}" reRender="DeliveryDetail_item_product_name-New"
 												rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
 												actionListener="#{deliveryDetail.onLongDescription}" reRender="DeliveryDetail_item_product_name-New"
 												rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
 										</aon:div>
@@ -455,13 +468,13 @@
 										value="#{controller.to.quantity}" rendered="#{formEdit}"
 										valueChangeListener="#{controller.onQuantityChanged}" 
 										reRender="DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" 
-										required="true" size="7" focus="DeliveryDetail_price" />
+										required="true" size="5" focus="DeliveryDetail_price" />
 									<f:facet name="footer">
 										<aon:inputText id="DeliveryDetail_quantity-New" 
 											value="#{controller.to.quantity}" rendered="#{formNew}" 
 											valueChangeListener="#{controller.onQuantityChanged}" 
 											reRender="DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New" 
-											required="true" size="7" focus="DeliveryDetail_price-New" />
+											required="true" size="5" focus="DeliveryDetail_price-New" />
 									</f:facet>
 								</aon:column>
 
@@ -476,12 +489,12 @@
 									<aon:inputText id="DeliveryDetail_price" 
 										value="#{controller.to.price}" rendered="#{formEdit}"
 										reRender="DeliveryDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="DeliveryDetail_price-New" 
 											value="#{controller.to.price}" rendered="#{formNew}"
 											reRender="DeliveryDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 
@@ -496,12 +509,12 @@
 									<aon:inputText id="DeliveryDetail_discount" 
 										value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
 										reRender="DeliveryDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="DeliveryDetail_discount-New" 
 											value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew}"
 											reRender="DeliveryDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 
@@ -558,6 +571,7 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalTransfer.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/item/modalStock.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>
