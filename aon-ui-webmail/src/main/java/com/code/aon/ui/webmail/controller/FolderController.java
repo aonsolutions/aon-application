@@ -1,6 +1,8 @@
 package com.code.aon.ui.webmail.controller;
 
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -14,8 +16,6 @@ import javax.mail.Flags.Flag;
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.DropEvent;
 import org.richfaces.model.Ordering;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -29,7 +29,7 @@ import com.sun.mail.imap.IMAPFolder;
 
 public class FolderController implements WebMailConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(FolderController.class);
+	private static final Logger LOGGER = Logger.getLogger(FolderController.class.getName());
 	
 	private static final int PAGE_SIZE = 20;
 	
@@ -104,7 +104,7 @@ public class FolderController implements WebMailConstants {
 		try {
 			folder.refresh();
 		} catch (WebmailException e) {
-			LOGGER.error( "Error refreshing folder " + folder.getName(), e);
+			LOGGER.log(Level.SEVERE,"Error refreshing folder " + folder.getName(), e);
 		}
 	}
 	
@@ -161,7 +161,7 @@ public class FolderController implements WebMailConstants {
 			try {
 				folder.refresh();
 			} catch (WebmailException e) {
-				LOGGER.error( e.getMessage(), e);
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		} else {
 	    	AonFolder treeDest = getTreeController().recoverTreeNode(server.getTrashFolderName());

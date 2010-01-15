@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -16,8 +18,6 @@ import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.IManagerBean;
@@ -40,7 +40,7 @@ import com.code.aon.webmail.enumeration.SpamScoreType;
 
 public class SpamController extends BasicLdap implements WebMailConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SpamController.class);
+	private static final Logger LOGGER = Logger.getLogger(SpamController.class.getName());
 	
 	private static final String AMAVIS_ACCOUNT_OBJECT_CLASS = "amavisAccount";
 
@@ -214,7 +214,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			IManagerBean bean = FormUtil.getController(BEAN_CONTACT).getManagerBean();
 			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		Iterator iterContacts = contacts.iterator();
 		AonListEmail aonListEmail;
@@ -348,7 +348,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			addEmail(email, LIST_WHITE_TYPE);
 			save();
 		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 
@@ -360,7 +360,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			addEmail(email, LIST_BLACK_TYPE);
 			save();
 		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 

@@ -37,32 +37,38 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{signature}" />
-					<ui:define name="columns">
+				<aon:dataTable id="dataTable" value="#{signature.model}" var="to"
+					rows="#{signature.pageLimit}"
+					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+								aon-editDataTable-textColumn">
+					
+					<aon:rowSelector action="signature_form"
+						actionListener="#{signature.onSelect}" />
+						
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_check}" />
+						</f:facet>
+						<aon:div styleClass="aon-text-center">
+							<aon:selectBooleanCheckbox
+								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
+								value="#{signature.rowChecked}">
+								<a4j:support event="onclick"
+									reRender="dataTable,aonToolbar" />
+							</aon:selectBooleanCheckbox>
+						</aon:div>
+					</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-iconColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_check}" />
-							</f:facet>
-							<aon:div styleClass="aon-text-center">
-								<aon:selectBooleanCheckbox
-									onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-									value="#{signature.rowChecked}">
-									<a4j:support event="onclick"
-										reRender="dataTable,aonToolbar" />
-								</aon:selectBooleanCheckbox>
-							</aon:div>
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_signature_name}" />
-							</f:facet>
-							<aon:outputText value="#{to.name}" />
-						</aon:column>
-					</ui:define>
-				</ui:decorate>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{webmailBundle.webmail_signature_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="dataTable" showNote="true" />
 
 			</aon:div>
 		</aon:form>

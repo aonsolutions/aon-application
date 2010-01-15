@@ -2,13 +2,13 @@ package com.code.aon.ui.webmail.event;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -27,7 +27,7 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class ContactControllerListener extends ControllerAdapter implements WebMailConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ContactControllerListener.class);	
+	private static final Logger LOGGER = Logger.getLogger(ContactControllerListener.class.getName());
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
@@ -63,7 +63,7 @@ public class ContactControllerListener extends ControllerAdapter implements WebM
 				throw new AbortProcessingException( message );
 			}
 		} catch (DAOException e) {
-	        LOGGER.error(">>>> beforeBeanAdded", e);
+	        LOGGER.severe(">>>> beforeBeanAdded " + e.getMessage());
 	        AonUtil.addErrorMessage( e.getMessage() );
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}
@@ -84,7 +84,7 @@ public class ContactControllerListener extends ControllerAdapter implements WebM
 				return StringUtils.join( groups, ", " );
 			}
     	} catch (ManagerBeanException e) {
-    		LOGGER.error( "Error getting suggestion emails", e );
+    		LOGGER.log( Level.SEVERE, "Error getting suggestion emails", e );
 		}	
     	return null;
 	}
