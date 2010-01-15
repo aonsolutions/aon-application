@@ -127,7 +127,7 @@
 			to be able to edit pages in a running application.
 		</description>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
-		<param-value>0</param-value>
+		<param-value>-1</param-value>
 	</context-param>
 
 	<context-param>
@@ -140,7 +140,7 @@
 			screen when an error occurs during the rendering process.
 		</description>
 		<param-name>facelets.DEVELOPMENT</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 
 	<context-param>
@@ -193,12 +193,11 @@
 		<param-name>org.richfaces.LoadScriptStrategy</param-name>
 		<param-value>ALL</param-value>
     </context-param>
-<!-- 
+
 	<context-param>
 		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
 	</context-param>
--->
 
 	<filter>
 		<display-name>RichFaces Filter</display-name>
