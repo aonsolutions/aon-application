@@ -5,14 +5,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:outputLabel for="#{controller.pojoShortName}_registry_id"
-		value="#{bundle.aon_id}" />
-	<aon:inputText id="#{controller.pojoShortName}_registry_id" size="10"
-		valueChangeListener="#{controller.addExpression}" />
-
-	<aon:outputLabel for="#{controller.pojoShortName}_registry_document"
-		value="#{bundle.aon_company_document}" />
-	<aon:inputText id="#{controller.pojoShortName}_registry_document" size="20"
+	<aon:outputLabel for="#{controller.pojoShortName}_registry_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="#{controller.pojoShortName}_registry_alias" size="40"
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="#{controller.pojoShortName}_registry_name"
@@ -25,9 +20,14 @@
 	<aon:inputText id="#{controller.pojoShortName}_registry_surname" size="40"
 		valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="#{controller.pojoShortName}_registry_alias"
-		value="#{bundle.aon_company_alias}" />
-	<aon:inputText id="#{controller.pojoShortName}_registry_alias" size="40"
+	<aon:outputLabel for="#{controller.pojoShortName}_registry_document"
+		value="#{bundle.aon_company_document}" />
+	<aon:inputText id="#{controller.pojoShortName}_registry_document" size="12"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="#{controller.pojoShortName}_registry_id"
+		value="#{bundle.aon_id}" />
+	<aon:inputText id="#{controller.pojoShortName}_registry_id" size="12"
 		valueChangeListener="#{controller.addExpression}" />
 
 </ui:composition>
