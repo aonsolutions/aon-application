@@ -12,7 +12,7 @@
 		<c:if test="#{delivery.showSalesTransferWindow}">
 			<rich:modalPanel id="salesTransferModalPanel" minHeight="580"
 				minWidth="740" rendered="#{delivery.showSalesTransferWindow}"
-				showWhenRendered="true" zindex="90" style="overflow:auto">
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{warehouseBundle.warehouse_delivery_sales}" />
