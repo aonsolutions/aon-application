@@ -29,7 +29,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
   <managed-bean>
     <managed-bean-name>account</managed-bean-name>
     <managed-bean-class>
-    com.code.aon.ui.form.BasicController</managed-bean-class>
+    com.code.aon.ui.account.controller.AccountController</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
     <managed-property>
       <property-name>queryOnStartUP</property-name>
