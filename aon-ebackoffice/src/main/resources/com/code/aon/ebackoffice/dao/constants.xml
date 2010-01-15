@@ -10,4 +10,9 @@
 		<alias names="id,catalogue,catalogue_id,catalogue_endDate,catalogue_startDate,catalogueImg,catalogueIcon,type,visible" />
 		<hibernate names="id,catalogue,catalogue.id,catalogue.endDate,catalogue.startDate,catalogueImg,catalogueIcon,type,visible" />
 	</bean>
+	<!-- <bean class="com.code.aon.ebackoffice.EcPaymethod" sqlName="ec_paymethod">
+		<alias names="id,password,paymethod_id,paymethod_type,signature,username" />
+		<hibernate names="id,password,paymethod.id,paymethod.type,signature,username" />
+	</bean> -->
+	
 </dao>

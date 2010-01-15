@@ -27,7 +27,9 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.ebackoffice.EcPaymethod;
 import com.code.aon.ebackoffice.Ecconfig;
+import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
 import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.ShowPrice;
@@ -63,15 +65,15 @@ public class EcconfigController extends BasicController {
 	private boolean ecParam;
 
 	public boolean isEcParam() {
-		try {	
-						
+		try {
+
 			ecParam = getEcommerceParam();
 			if (ecParam == false) {
 				IManagerBean bean = BeanManager.getManagerBean(Ecconfig.class);
 				Ecconfig c = (Ecconfig) bean.getList(null).get(0);
 				c.setCommerce(false);
 				bean.update(c);
-			}		
+			}
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,11 +239,13 @@ public class EcconfigController extends BasicController {
 		criteria.addOrder(paymethodBean
 				.getFieldName(IConfigAlias.PAY_METHOD_ID));
 		List<ITransferObject> lista;
-		lista = paymethodBean.getList(criteria);
+		lista = paymethodBean.getList(criteria);		
 		for (ITransferObject rec : lista) {
 			PayMethod method = (PayMethod) rec;
-			SelectItem item = new SelectItem(method, method.getName());
-			paypals.add(item);
+			if (checkTPVData(method.getId())==true){
+				SelectItem item = new SelectItem(method, method.getName());
+				paypals.add(item);
+			}			
 		}
 	}
 
@@ -259,9 +263,24 @@ public class EcconfigController extends BasicController {
 		lista = paymethodBean.getList(criteria);
 		for (ITransferObject rec : lista) {
 			PayMethod method = (PayMethod) rec;
-			SelectItem item = new SelectItem(method, method.getName());
-			creditCards.add(item);
+			if (checkTPVData(method.getId())==true){
+				SelectItem item = new SelectItem(method, method.getName());
+				creditCards.add(item);
+			}			
 		}
+	}
+
+	public boolean checkTPVData(Integer id) throws ManagerBeanException {
+
+		IManagerBean ecpaymethodBean = BeanManager.getManagerBean(EcPaymethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(ecpaymethodBean.getFieldName(IEbackofficeAlias.EC_PAYMETHOD_PAYMETHOD_ID),id);
+		List<ITransferObject> lista;
+		lista = ecpaymethodBean.getList(criteria);
+		if (lista.size()==0){
+			return false;
+		}else
+			return true;
 	}
 
 	public void refreshCashOnDeliverys() throws ManagerBeanException {
@@ -576,12 +595,18 @@ public class EcconfigController extends BasicController {
 	}
 
 	public boolean getEcommerceParam() throws ManagerBeanException {
-		IManagerBean param = BeanManager.getManagerBean(ApplicationParameter.class);
+		IManagerBean param = BeanManager
+				.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(param.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME),"EC_SALES_ALLOWED");
-		if  (param.getList(criteria).isEmpty()|| ((ApplicationParameter) param.getList(criteria).get(0)).getValue() == "false")   {
+		criteria.addEqualExpression(param
+				.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME),
+				"EC_SALES_ALLOWED");
+		if (param.getList(criteria).isEmpty()
+				|| ((ApplicationParameter) param.getList(criteria).get(0))
+						.getValue() == "false") {
 			return false;
-		} else if (((ApplicationParameter) param.getList(criteria).get(0)).getValue().equals("true")) {
+		} else if (((ApplicationParameter) param.getList(criteria).get(0))
+				.getValue().equals("true")) {
 			return true;
 		} else
 			return false;

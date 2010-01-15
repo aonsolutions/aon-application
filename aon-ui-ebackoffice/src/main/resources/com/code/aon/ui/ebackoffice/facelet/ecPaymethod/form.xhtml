@@ -17,7 +17,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{configBundle.config_paymethod_module}" />
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="controller" value="#{paymethod}" />
+				<ui:param name="controller" value="#{pmethod}" />
 				<ui:define name="beforeSpinToolbarContent">
 
 					<aon:commandButton value="Configuracion Ecommerce" 
@@ -33,15 +33,18 @@
 					<aon:outputLabel for="PayMethod_name" value="#{bundle.aon_name}" />
 
 					<aon:inputText id="PayMethod_name"  size="40"
-						maxlength="32" value="#{paymethod.to.name}" required="true" />
+						maxlength="32" value="#{pmethod.to.name}" required="true" />
 					<aon:outputLabel for="PayMethod_type" value="#{bundle.aon_type}" />
+					<aon:div>
 					<aon:selectOneMenu id="PayMethod_type" 
-						value="#{paymethod.to.type}">
+						value="#{pmethod.to.type}">
 						<f:selectItems value="#{configCollections.payMethodTypes}" />
 					</aon:selectOneMenu>
+					<aon:outputLabel rendered="#{pmethod.creditPaymethod}" value=" * requiere datos de pasarela de pago" style="color:#808080;" />
+					</aon:div>
 				</aon:panelGrid>
 				
-				<aon:panelTabSet rendered="#{!paymethod.new}" style="width:50%">				
+				<aon:panelTabSet rendered="#{pmethod.creditPaymethod}" style="width:50%">				
 				<aon:panelTab label="Datos de la pasarela de pago">
 							
 						<ui:include src="grid.xhtml"  />	
