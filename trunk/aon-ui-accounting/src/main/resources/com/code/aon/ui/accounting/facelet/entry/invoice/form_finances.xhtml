@@ -159,7 +159,7 @@
 						rendered="#{invoiceEntry.bankCreationEnabled}"
 						ajaxSingle="true"
 						actionListener="#{invoiceEntry.onAddRBank}"
-						onclick="if (!confirm('Desea agregar el CCC a la lista de bancos de #{invoiceEntry.header.name}?')) return false;"	
+						onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{invoiceEntry.header.name}?')) return false;"	
 						styleClass="aon-editDataTable-button aon-lookupButton-new" />
 					<aon:div style="font-size:0.9em;" styleClass="aon-italic">
 						<aon:selectOneMenu id="Account_Finance_RegistryBank"
@@ -225,7 +225,7 @@
 							rendered="#{invoiceEntry.bankCreationEnabled}"
 							ajaxSingle="true"
 							actionListener="#{invoiceEntry.onAddRBank}"
-							onclick="if (!confirm('Desea agregar el CCC a la lista de bancos de #{invoiceEntry.header.name}?')) return false;"	
+							onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{invoiceEntry.header.name}?')) return false;"	
 							styleClass="aon-editDataTable-button aon-lookupButton-new" />
 						<aon:div style="font-size:0.9em;" styleClass="aon-italic">
 							<aon:selectOneMenu id="Account_Finance_RegistryBank-New"
