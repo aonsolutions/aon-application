@@ -6,6 +6,8 @@ import java.util.Iterator;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -26,10 +28,16 @@ import com.code.aon.warehouse.DeliveryDetail;
 
 public class DeliveryDetailController extends LinesController {
 
-	private boolean longDescription;
-
 	private IPriceStrategy priceStrategy;
+	private boolean longDescription;
 	
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
 	public boolean isLongDescription() {
 		return longDescription;
 	}
@@ -38,15 +46,16 @@ public class DeliveryDetailController extends LinesController {
 		this.longDescription = longDescription;
 	}
 
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
-	}
-
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
+
+		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
+		if (StringUtils.equals(deliveryDetail.getItem().getProduct().getName().trim(), deliveryDetail.getDescription().trim())) {
+			String longDescription = deliveryDetail.getItem().getDescription();
+			if (!StringUtils.isEmpty(longDescription)) {
+				deliveryDetail.setDescription(deliveryDetail.getDescription() + "\r\n" + longDescription);
+			}
+		}
 	}
 
 	public void onShortDescription(ActionEvent event) {

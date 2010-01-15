@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -44,6 +46,14 @@ public class PurchaseDetailController extends LinesController {
 
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
+
+		PurchaseDetail purchaseDetail = (PurchaseDetail)getTo();
+		if (StringUtils.equals(purchaseDetail.getItem().getProduct().getName().trim(), purchaseDetail.getDescription().trim())) {
+			String longDescription = purchaseDetail.getItem().getDescription();
+			if (!StringUtils.isEmpty(longDescription)) {
+				purchaseDetail.setDescription(purchaseDetail.getDescription() + "\r\n" + longDescription);
+			}
+		}
 	}
 
 	public void onShortDescription(ActionEvent event) {
