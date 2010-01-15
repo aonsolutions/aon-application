@@ -24,6 +24,7 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 					<ui:param name="controller" value="#{webPage}" />
 					<ui:param name="rows" value="8" />
+					<ui:param name="skipResetButton" value="#{(webPage.model.rowCount &gt; 7)}" />
 					<ui:param name="columnClasses" value="aon-editDataTable-textColumn aon-width-auto,
 						aon-editDataTable-textColumn aon-width-150,
 						aon-editDataTable-textColumn aon-width-40,
@@ -45,8 +46,8 @@
 										validator="#{webPage.pageNameCheck}"
 										value="#{webPage.to.name}" rendered="#{formNew}"
 										required="true" size="20" />
-									<aon:outputText value="#{infowebBundle.infoweb_max_number_pages}" rendered="#{!formNew and webPage.model.rowCount &lt; 8}"/>
-									<aon:outputText value="#{infowebBundle.infoweb_max_pages_exceeded}" rendered="#{!formNew and webPage.model.rowCount &gt; 7}"/>
+									<aon:outputText value="#{infowebBundle.infoweb_max_number_pages}" rendered="#{!formNew and webPage.model.rowCount &lt; 9}"/>
+									<aon:outputText value="#{infowebBundle.infoweb_max_pages_exceeded}" rendered="#{!formNew and webPage.model.rowCount &gt; 8}"/>
 								</aon:div>
 							</f:facet>
 						</aon:column>

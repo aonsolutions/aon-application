@@ -690,7 +690,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		IManagerBean wipBean = BeanManager.getManagerBean(WebInfoPage.class);
 		Criteria wipCriteria = new Criteria();
 		wipCriteria.addEqualExpression(wipBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
-		List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria);
+		List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria, 0, 8);
 		for (int i=0;i < wipList.size();i++) {
 			WebInfoPage wip = (WebInfoPage)wipList.get(i);
 			switch (wip.getType()) {
