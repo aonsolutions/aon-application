@@ -39,6 +39,10 @@
 			<value>fbatch</value>
 		</managed-property>				
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FinanceBatch_issueDate desc,FinanceBatch_id</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -95,7 +99,7 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>fBatchDetail</value>
-		</managed-property>				
+		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -162,7 +166,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finance_dueDate,Finance_invoice_series,Finance_invoice_number</value>
+			<value>Finance_dueDate desc,Finance_invoice_series,Finance_invoice_number desc</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -392,6 +396,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>creditorMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -1009,6 +1017,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ DELIVERY INVOICING ************* -->
+	<managed-bean>
+		<managed-bean-name>deliveryInvoicing</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.DeliveryInvoicingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* INVOICE SIGNER ***************** -->
 	<managed-bean>
 		<managed-bean-name>invoiceSigner</managed-bean-name>
@@ -1133,7 +1150,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate,Invoice_series,Invoice_number</value>
+			<value>Invoice_issueDate desc,Invoice_series,Invoice_number desc</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1465,7 +1482,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate,Invoice_series,Invoice_number</value>
+			<value>Invoice_issueDate desc,Invoice_series,Invoice_number desc</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1950,6 +1967,14 @@
 	    <navigation-case>
 	      <from-outcome>feeInvoicing</from-outcome>
 	      <to-view-id>/com/code/aon/ui/finance/facelet/feeInvoicing/search.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	 
+	<!-- =================== Delivery Invoicing ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+	      <from-outcome>deliveryInvoicing</from-outcome>
+	      <to-view-id>/com/code/aon/ui/finance/facelet/deliveryInvoicing/search.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	 
