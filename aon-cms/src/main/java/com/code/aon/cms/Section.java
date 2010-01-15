@@ -10,11 +10,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "section")
 public class Section implements ITransferObject {
+
+	private static final long serialVersionUID = 5821101704094845602L;
 
 	private Integer id;
 
@@ -279,5 +286,62 @@ public class Section implements ITransferObject {
 			return parent_.getMenuAltToShow();
 		}
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Section o = (Section) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alias, o.alias)
+				.append(this.default_, o.default_)
+				.append(this.footer, o.footer)
+				.append(this.header, o.header)
+				.append(this.menu, o.menu)
+				.append(this.menu_alt, o.menu_alt)
+				.append(this.parent_, o.parent_)
+				.append(this.parent_sidebar_left, o.parent_sidebar_left)
+				.append(this.parent_sidebar_right, o.parent_sidebar_right)
+				.append(this.show_footer, o.show_footer)
+				.append(this.show_header, o.show_header)
+				.append(this.show_menu, o.show_menu)
+				.append(this.show_menu_alt, o.show_menu_alt)
+				.append(this.show_sidebar_left, o.show_sidebar_left)
+				.append(this.show_sidebar_right, o.show_sidebar_right)
+				.append(this.sidebar, o.sidebar)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(alias)
+			.append(default_)
+			.append(footer)
+			.append(header)
+			.append(id)	
+			.append(menu)			
+			.append(menu_alt)
+			.append(parent_)
+			.append(parent_sidebar_left)
+			.append(parent_sidebar_right)
+			.append(show_footer)
+			.append(show_header)
+			.append(show_menu)
+			.append(show_menu_alt)
+			.append(show_sidebar_left)
+			.append(show_sidebar_right)
+			.append(sidebar)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
 	
 }

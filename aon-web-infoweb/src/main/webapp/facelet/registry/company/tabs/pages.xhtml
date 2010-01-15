@@ -13,25 +13,17 @@
 
 		<aon:form id="pagesForm">
 
-		<aon:div layout="none">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{appBundle.infoweb_pages}" />
-				<ui:param name="controller" value="#{companyImages}" />
-				<ui:param name="skipSaveButton" value="true" />
-				<ui:param name="skipCancelButton" value="true" />
-				<ui:param name="skipRemoveButton" value="true" />
-				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="skipBackButton" value="true" />
+		<aon:div>
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.infoweb_pages}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 			</ui:include>
 			
-			<rich:panel styleClass="aon-content-home">
+			<rich:panel id="pagesPanel" styleClass="aon-content-home">
 				<aon:editDataTable id="WebInfoPage_datatable" value="#{webPage.model}"
 					var="to" rows="8" 
 					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn aon-width-auto, aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 						aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 			
 					<aon:rowSelector toggleOnClick="false"/>
@@ -52,23 +44,26 @@
 						</f:facet>
 					</aon:column>
 			
-					<aon:column>
+					<aon:column styleClass="aon-width-auto">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_name}" />
+							<aon:outputLabel for="WebInfoPage_name" value="#{bundle.aon_name}" />
 						</f:facet>
 						<aon:div rendered="#{to!=webPage.to}">
 							<a4j:support actionListener="#{webPage.onSelect}" event="onclick" reRender="pagesForm"/>
 							<aon:outputText value="#{to.name}" />
 						</aon:div>
 						<aon:div rendered="#{to==webPage.to}" >
-							<aon:inputText value="#{webPage.to.name}"
-								required="#{true}" size="20" />
+							<aon:inputText id="WebInfoPage_name" maxlength="64"
+								validator="#{webPage.pageNameCheck}"
+								value="#{webPage.to.name}" required="true" size="20" />
 						</aon:div>
 						<f:facet name="footer">
 							<aon:div>
 								<aon:div>				
-									<aon:inputText value="#{webPage.to.name}"
-										rendered="#{webPage.new}" required="#{true}" size="20" />
+									<aon:inputText id="WebInfoPage_name-New" maxlength="64"
+										validator="#{webPage.pageNameCheck}"
+										value="#{webPage.to.name}" rendered="#{webPage.new}"
+										required="true" size="20" />
 									<aon:outputText value="#{appBundle.infoweb_max_number_pages}" rendered="#{!webPage.new and webPage.model.rowCount &lt; 8}"/>
 									<aon:outputText value="#{appBundle.infoweb_max_pages_exceeded}" rendered="#{!webPage.new and webPage.model.rowCount &gt; 7}"/>
 								</aon:div>
@@ -76,21 +71,21 @@
 						</f:facet>
 					</aon:column>
 			
-					<aon:column style="width:200px;">
+					<aon:column styleClass="aon-width-150">					
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_type}" />
+							<aon:outputLabel for="WebInfoPage_type" value="#{bundle.aon_type}" />
 						</f:facet>
 						<aon:div rendered="#{to!=webPage.to}">
 							<a4j:support actionListener="#{webPage.onSelect}" event="onclick" reRender="pagesForm"/>
 							<aon:outputText value="#{to.type}" />
 						</aon:div>
 						<aon:div rendered="#{to==webPage.to}">
-							<aon:selectOneMenu value="#{webPage.to.type}">
+							<aon:selectOneMenu id="WebInfoPage_type" value="#{webPage.to.type}">
 								<f:selectItems value="#{webinfoCollections.pageTypes}" />
 							</aon:selectOneMenu>
 						</aon:div>
 						<f:facet name="footer">
-							<aon:selectOneMenu value="#{webPage.to.type}"
+							<aon:selectOneMenu id="WebInfoPage_type-New" value="#{webPage.to.type}"
 								rendered="#{webPage.new}">
 								<f:selectItems value="#{webinfoCollections.pageTypes}" />
 							</aon:selectOneMenu>
@@ -147,15 +142,15 @@
 							<aon:outputText value="&#160;"/>
 						</aon:div>
 						<aon:div rendered="#{to==webPage.to}" >
-							<aon:commandButton title="#{bundle.aon_save}"
+							<aon:commandButton title="#{bundle.aon_save}" reRender="pagesPanel"
 								actionListener="#{webPage.onAccept}"
 								value="" styleClass="aon-editDataTable-button aon-icon-accept"
 								accesskey="#{bundle.aon_key_save_line}" />
-							<aon:commandButton title="#{bundle.aon_cancel}"
+							<aon:commandButton title="#{bundle.aon_cancel}" reRender="pagesPanel"
 								actionListener="#{webPage.onCancel}" immediate="#{true}"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
 								value="" accesskey="#{bundle.aon_key_cancel_line}" />
-							<aon:commandButton title="#{bundle.aon_remove}"
+							<aon:commandButton title="#{bundle.aon_remove}" reRender="pagesPanel"
 								actionListener="#{webPage.onRemove}"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								value="" accesskey="#{bundle.aon_key_remove_line}" />
@@ -163,14 +158,14 @@
 						<f:facet name="footer">		
 							<aon:div>
 								<aon:outputText rendered="#{!webPage.new}" value="&#160;"/>
-								<aon:commandButton title="#{bundle.aon_save}"
-									actionListener="#{webPage.onAccept}"
+								<aon:commandButton title="#{bundle.aon_save}" 
+									actionListener="#{webPage.onAccept}" reRender="pagesPanel"
 									rendered="#{webPage.new}" value=""
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									accesskey="#{bundle.aon_key_save_line}" />
 								<aon:commandButton title="#{bundle.aon_cancel}"
 									actionListener="#{webPage.onCancel}" immediate="#{true}"
-									rendered="#{webPage.new}"
+									rendered="#{webPage.new}" reRender="pagesPanel"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									value="" accesskey="#{bundle.aon_key_cancel_line}" />
 							</aon:div>

@@ -14,7 +14,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
 				<ui:param name="controller" value="#{user}" />
-				<ui:param name="skipResetButton" value="#{!currentDomain.userManagement}" />
+				<ui:param name="skipResetButton" value="#{!domain.userManagement}" />
 			</ui:include>			
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >

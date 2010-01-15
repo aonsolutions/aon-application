@@ -8,10 +8,11 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AbstractFieldMapper;
 import com.code.aon.common.ITransferObject;
@@ -27,10 +28,6 @@ import com.code.aon.common.jndi.ServiceLocatorException;
  */
 public abstract class AbstractDAO extends AbstractFieldMapper {
 
-	/**
-     * Log messages level.
-     */
-    private static final Level LEVEL = Level.INFO; 
     /**
      * Log messages prefix.
      */
@@ -254,8 +251,8 @@ public abstract class AbstractDAO extends AbstractFieldMapper {
      * @param message
      */
     private void debug(String message) {
-        Logger log = Logger.getLogger(this.getClass().getName());
-        log.log( LEVEL , LOG_PRFX + message);
+    	Logger log = LoggerFactory.getLogger(this.getClass());
+        log.debug( LOG_PRFX + message);
     }
 
     /**

@@ -24,35 +24,19 @@ import com.code.aon.registry.dao.IRegistryAlias;
 
 public class FinanceGenerator {
 
-	public Finance initializeFinanceData(Finance finance, double initialAmount) throws ManagerBeanException{
-		if (finance.getInvoice() == null) {
-			throw new IllegalArgumentException("La factura del vto. no puede ser null");
-		}
+	public Finance initializeFinanceData(Finance finance) throws ManagerBeanException{
 		RegistryPayMethod rPayMethod = obtainRPayMethod(finance.getInvoice());
-		return initializeFinanceData(finance,rPayMethod,initialAmount);
+		return initializeFinanceData(finance,rPayMethod);
 	}
 
-	public Finance initializeFinanceData(Finance finance, RegistryPayMethod rPayMethod,double initialAmount){
-		if (finance.getInvoice() == null) {
-			throw new IllegalArgumentException("La factura del vto. no puede ser null");
-		}
-		RegistryBank rBank = null;
+	public Finance initializeFinanceData(Finance finance, RegistryPayMethod rPayMethod){
 		if (rPayMethod != null) {
-			rBank = rPayMethod.getRegistryBank();
+			RegistryBank rBank = rPayMethod.getRegistryBank();
 			if (rBank != null) {
 				finance.setBank(rBank.getBank());
 				finance.setBankAccount( rBank.getBankAccount() );
 			}
 			finance.setPayMethod( rPayMethod.getPayment() );
-		}
-		finance.setDueDate(finance.getInvoice().getIssueDate());
-		finance.setFinanceStatus(FinanceStatus.PENDING);
-		finance.setRegistry(finance.getInvoice().getRegistry());
-		finance.setAmount(initialAmount);
-		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
-			finance.setPayment(false);
-		}else{
-			finance.setPayment(true);
 		}
 		return finance;
 	}
@@ -123,8 +107,8 @@ public class FinanceGenerator {
 		finance.setBank((rBank==null?null:rBank.getBank()));
 		finance.setBankAccount((rBank==null?null:rBank.getBankAccount()));
 		finance.setDueDate(date);
-		finance.setInvoice(invoice);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
+		finance.setInvoice(invoice);
 		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
 		}else{
@@ -167,24 +151,6 @@ public class FinanceGenerator {
 			}
 		}
 		return calendar.getTime();
-	}
-
-	public Finance duplicateFinance(Finance finance, double newAmount) throws ManagerBeanException {
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Finance newFinance = new Finance();
-		newFinance.setPayment(finance.isPayment());
-		newFinance.setRegistry(finance.getRegistry());
-		newFinance.setAmount(newAmount);
-		newFinance.setExpenses(0.0);
-		newFinance.setConcept(finance.getConcept());
-		newFinance.setInvoice(finance.getInvoice());
-		newFinance.setDueDate(finance.getDueDate());
-		newFinance.setPayMethod(finance.getPayMethod());
-		newFinance.setBank(finance.getBank());
-		newFinance.setBankAccount(finance.getBankAccount());
-		newFinance.setFinanceStatus(FinanceStatus.PENDING);
-		newFinance.setSecurityLevel(finance.getSecurityLevel());
-		return (Finance)financeBean.insert(newFinance);
 	}
 
 }

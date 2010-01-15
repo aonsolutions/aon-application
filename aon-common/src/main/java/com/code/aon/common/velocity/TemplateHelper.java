@@ -7,13 +7,14 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 
@@ -25,7 +26,7 @@ import com.code.aon.common.AonException;
  */
 public class TemplateHelper {
 
-	private static Logger LOGGER = Logger.getLogger(TemplateHelper.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TemplateHelper.class);
 
 	private VelocityHelper velocityHelper;
 
@@ -149,7 +150,7 @@ public class TemplateHelper {
 	 * @param value
 	 */
 	public void putInContext(String key, Object value) {
-		LOGGER.finest("putInContext " + key + "=" + value);
+		LOGGER.debug("putInContext {}={}", key, value);
 		if (value == null) {
 			throw new IllegalStateException("value must not be null for " + key);
 		}
@@ -166,7 +167,7 @@ public class TemplateHelper {
 	 * @param expected
 	 */
 	public void removeFromContext(String key, Object expected) {
-		LOGGER.finest("removeFromContext " + key + "=" + expected);
+		LOGGER.debug("removeFromContext {}={}", key, expected);
 		Object replaced = this.context.remove(key);
 		if (replaced == null) {
 			throw new IllegalStateException(key + " did not exist in template context.");

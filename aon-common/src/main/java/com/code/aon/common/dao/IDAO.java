@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -180,6 +181,18 @@ public interface IDAO {
 	 * @throws DAOException the DAO exception
 	 */
 	public ITransferObject insertOrUpdate(ITransferObject to) throws DAOException;
+	
+	/**
+	 * Replicate the Transfer Object.
+	 * 
+	 * @param to the to
+	 * @param mode defines the replication mode
+	 * 
+	 * @return The inserted object.
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
+	ITransferObject replicate(ITransferObject to, ReplicationMode mode) throws DAOException;
 	
 	/**
 	 * Return the POJO(Plain Old Java Object) Class.

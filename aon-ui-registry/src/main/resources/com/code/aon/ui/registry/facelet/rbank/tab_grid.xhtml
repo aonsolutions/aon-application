@@ -2,15 +2,18 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="columnClasses"
+			value="aon-nowrap aon-editDataTable-textColumn,
+			aon-nowrap aon-editDataTable-textColumn,
+			aon-width-150 aon-nowrap aon-editDataTable-textColumn" />
 
 		<ui:define name="columns">
-			<aon:column width="300" styleClass="aon-nowrap aon-editDataTable-textColumn">
+			<aon:column width="300">
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryBank_code" value="#{configBundle.config_bank}" />
 				</f:facet>
@@ -95,23 +98,21 @@
 					</aon:div>
 				</f:facet>
 			</aon:column>
-			
-			<c:if test="#{showSuffix}">
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputLabel for="RegistryBank_suffix" value="#{configBundle.config_bank_sufix}" />
-					</f:facet>
-					<aon:outputText value="#{to.sufix}" rendered="#{formList}" />
-					<aon:inputText id="RegistryBank_suffix"
-						value="#{to.sufix}" rendered="#{formEdit}"
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryBank_suffix" value="#{configBundle.config_bank_sufix}" />
+				</f:facet>
+				<aon:outputText value="#{to.sufix}" rendered="#{formList}" />
+				<aon:inputText id="RegistryBank_suffix"
+					value="#{to.sufix}" rendered="#{formEdit}"
+					size="5" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryBank_suffix-New"
+						value="#{controller.to.sufix}" rendered="#{formNew}"
 						size="5" maxlength="3" />
-					<f:facet name="footer">
-						<aon:inputText id="RegistryBank_suffix-New"
-							value="#{controller.to.sufix}" rendered="#{formNew}"
-							size="5" maxlength="3" />
-					</f:facet>
-				</aon:column>
-			</c:if>
+				</f:facet>
+			</aon:column>
 
 		</ui:define>
 	</ui:decorate>
