@@ -67,7 +67,7 @@ public class CartOfferController extends EmailParentController {
 			offerBean = BeanManager.getManagerBean(Offer.class);
 			offerBean.insert(getOffer());
 		} catch (ManagerBeanException e) {
-			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
+			AonUtil.addInfoMessage("Fallo al guardar el offer.");
 			throw new AbortProcessingException(e);
 		}
 	}
@@ -97,7 +97,7 @@ public class CartOfferController extends EmailParentController {
 				offerDetailBean.insert(od);
 			}
 		} catch (ManagerBeanException e) {
-			AonUtil.addInfoMessage("Fallo al recuperar el offerDetail.");
+			AonUtil.addInfoMessage("Fallo al guardar el offerDetail.");
 			throw new AbortProcessingException(e);
 		}
 	}
