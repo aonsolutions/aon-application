@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="Añadir cuenta contable al crear el Customer.">
+		<pojo>com.code.aon.customer.Customer</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.CustomerBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Añadir cuenta contable al crear el Supplier.">
+		<pojo>com.code.aon.supplier.Supplier</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.SupplierBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Añadir cuenta contable al crear el Creditor.">
+		<pojo>com.code.aon.finance.Creditor</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.CreditorBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Borrado de una factura.">
+		<pojo>com.code.aon.finance.Invoice</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.InvoiceBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Borrado de una línea de factura.">
+		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.InvoiceDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Borrado de la tabla de enlace entre facturas y apuntes">
+		<pojo>com.code.aon.account.bridge.AccountEntryInvoice</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.AccountEntryInvoiceBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Borrado de la tabla de enlace entre seguimiento de vencimientos y apuntes">
+		<pojo>com.code.aon.account.bridge.AccountEntryFinanceTracking</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.AccountEntryFinanceTrackingBeanListener</listener>
+		</listeners>
+	</bean>
+
+</bean-config>

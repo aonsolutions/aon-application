@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="identityForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_corporate_identity}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{corporateIdentity.identityReport.company.fullName}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandLink id="export2pdf_recibi" value="PDF" title="PDF"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf"
+							action="#{report.onExecute}" target="_blank">
+							<f:param name="reportKey" value="recibi_to" />
+						</h:commandLink>
+						<aon:commandButton id="remove" value="#{bundle.aon_clear}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							actionListener="#{corporateIdentity.onClear}" 
+							action="corporate_identity_recibi"
+							immediate="true" accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+							action="corporate_identity"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" /> 
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true">
+	
+					<aon:outputLabel for="pagare_num"
+						value="#{appBundle.aon_corporate_identity_pagare_num}" />
+					<aon:inputText id="pagare_num" 
+						size="15" 
+						value="#{corporateIdentity.identityReport.pagare_num}" />
+	
+					<aon:outputLabel for="pagare_de"
+						value="#{appBundle.aon_corporate_identity_pagare_de}" />
+					<aon:inputText id="pagare_de" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_de}" />
+
+					<aon:outputLabel for="pagare_para"
+						value="#{appBundle.aon_corporate_identity_pagare_para}" />
+					<aon:inputText id="pagare_para" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_para}" />
+
+					<aon:outputLabel for="pagare_info"
+						value="#{appBundle.aon_corporate_identity_pagare_info}" />
+					<aon:inputText id="pagare_info" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_info}" />
+	
+					<aon:outputLabel for="pagare_catidad_num"
+						value="#{appBundle.aon_corporate_identity_pagare_cantidad_num}" />
+					<aon:inputText id="pagare_catidad_num" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_cantidad_num}">
+						<a4j:support 
+							event="onblur" 
+							actionListener="#{corporateIdentity.onN2T}" />					
+					</aon:inputText>
+	
+					<aon:outputLabel for="pagare_concepto"
+						value="#{appBundle.aon_corporate_identity_pagare_concepto}" />
+					<aon:inputTextarea id="pagare_concepto"
+						value="#{corporateIdentity.identityReport.pagare_concepto}"
+						style="width:90%"
+						cols="80" rows="5"/>
+	
+					<aon:outputLabel for="pagare_fecha"
+						value="#{appBundle.aon_corporate_identity_pagare_fecha}" />
+					<aon:inputText id="pagare_fecha" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_fecha}" />
+	
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

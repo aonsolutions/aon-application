@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="financeForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
+				<ui:param name="controller" value="#{finance}" />
+				<ui:param name="skipSaveButton" value="#{!finance.pending and !finance.returned}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="paymentPopup" 
+						value="#{(finance.payment) ? (financeBundle.finance_to_pay) : (financeBundle.finance_to_charge)}"
+						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
+						styleClass="aon-finding-toolbar-item-no-icon"
+						actionListener="#{finance.onFinancePaymentShow}"
+						reRender="showFinancePaymentWindow">
+						<f:setPropertyActionListener target="#{finance.showFinancePaymentWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+					<aon:commandButton id="returnPopup" 
+						value="#{financeBundle.finance_to_return}"
+						immediate="#{true}" rendered="#{finance.paid}"
+						styleClass="aon-finding-toolbar-item-no-icon"
+						actionListener="#{finance.onFinanceReturnShow}"
+						reRender="showFinanceReturnWindow">
+						<f:setPropertyActionListener target="#{finance.showFinanceReturnWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+					<aon:commandButton id="fraction" 
+						value="#{financeBundle.finance_to_fraction}"
+						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
+						styleClass="aon-finding-toolbar-item-no-icon"
+						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction"/>
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150
+						,aon-panelGrid-even aon-width-auto
+						,aon-panelGrid-odd aon-width-150
+						,aon-panelGrid-even aon-width-200">
+
+					<aon:outputLabel for="Finance_invoice_referenceCode"
+						value="#{financeBundle.finance_invoice}" />
+					<aon:div> 
+						<aon:inputText id="Finance_invoice_referenceCode"
+							value="#{finance.to.invoice.referenceCode}"
+							disabled="true" size="20" />
+
+						<aon:selectOneMenu id="Finance_securityLevel"
+							styleClass="aon-margin-left" disabled="true"
+							value="#{finance.to.securityLevel}">
+							<f:selectItems value="#{commonCollections.securityLevels}" />
+						</aon:selectOneMenu>
+
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{finance.to.financeStatus}" />
+					</aon:div>
+
+					<aon:outputLabel for="Finance_invoice_issueDate"
+						value="#{financeBundle.finance_invoice_date}" />
+					<aon:inputText id="Finance_invoice_issueDate"
+						value="#{finance.to.invoice.issueDate}"
+						disabled="true" size="10">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Finance_registry_id"
+						value="#{finance.to.payment ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+					<aon:div>
+						<aon:inputText id="Finance_registry_id"
+							value="#{finance.to.registry.id}"
+							disabled="true" size="5" />	
+						<aon:inputText id="Finance_invoice_registryName"
+							styleClass="aon-margin-left"
+							value="#{finance.to.invoice.registryName}"
+							disabled="true" size="50" />
+						<aon:inputText id="Finance_invoice_registryDocument"
+							styleClass="aon-margin-left"
+							value="#{finance.to.invoice.registryDocument}"
+							disabled="true" size="10" />
+					</aon:div>												
+
+					<aon:outputLabel for="Finance_dueDate"
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:selectInputDate id="Finance_dueDate" 
+						value="#{finance.to.dueDate}"
+						disabled="#{!finance.pending and !finance.returned}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Finance_payMethod_id"
+						value="#{configBundle.config_pay_method}" />
+					<aon:selectOneMenu id="Finance_payMethod_id"
+						value="#{finance.to.payMethod}"
+						valueChangeListener="#{finance.onPayMethodChanged}"
+						reRender="Finance_registryBank_id,Finance_bankAccount"
+						disabled="#{!finance.pending and !finance.returned}">
+						<f:selectItem itemLabel ="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Finance_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:outputText id="Finance_amount"
+					 	styleClass="aon-bold"
+						value="#{finance.to.amount}"
+						size="15">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
+
+					<aon:outputLabel for="Finance_bankAccount"
+						value="#{configBundle.config_bank_account}" />
+					<aon:div id="Finance_bankAccount" styleClass="aon-lookup">
+						<aon:lookupInputText id="Finance_bank_code"
+							value="#{finance.to.bank.code}"
+							disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4"
+							property="#{finance.to.bank}" lookup="#{bankLookup}"
+							lookupChangeListener="#{finance.onBankChanged}"
+							reRender="Finance_bankAccount"
+							>
+							<aon:joinProperty alias="Bank_code"
+								value="#{finance.to.bank.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{configBundle.config_bank_selection}"
+							disabled="#{!finance.pending and !finance.returned}" minHeight="460" minWidth="650"
+							property="#{finance.to.bank}" lookup="#{bankLookup}"
+							lookupChangeListener="#{finance.onBankChanged}"
+							selectReRender="Finance_bankAccount" actionType="search">
+						</aon:lookupButton>
+						<aon:inputText id="Finance_bank_name"
+							value="#{finance.to.bank.name}"
+							disabled="true" size="30" />
+						<aon:inputText id="Finance_bankAccount_office"
+							value="#{finance.to.bankAccount.office}"
+							disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4">
+							<f:validateLength minimum="4" maximum="4" />
+						</aon:inputText>
+						<aon:inputText id="Finance_bankAccount_control"
+							value="#{finance.to.bankAccount.control}"
+							disabled="#{!finance.pending and !finance.returned}" size="1" maxlength="2">
+							<f:validateLength minimum="2" maximum="2" />
+						</aon:inputText>
+						<aon:inputText id="Finance_bankAccount_account"
+							value="#{finance.to.bankAccount.account}"
+							disabled="#{!finance.pending and !finance.returned}" size="10" maxlength="10">
+							<f:validateLength minimum="10" maximum="10" />
+						</aon:inputText>
+					</aon:div>
+
+					<aon:outputLabel for="Finance_expenses"
+						value="#{financeBundle.finance_expenses}" />
+					<aon:inputText id="Finance_expenses"
+						value="#{finance.to.expenses}"
+						disabled="#{!finance.pending and !finance.returned}" size="10" />
+					
+					<aon:outputLabel for="Finance_registryBank_id"
+						value="&#160;" />
+					<aon:selectOneMenu id="Finance_registryBank_id"
+						value="#{registryCollections.registryBank}" reRender="Finance_bankAccount"
+						valueChangeListener="#{finance.onRegistryBankChanged}"
+						disabled="#{!finance.pending and !finance.returned}">
+						<f:selectItem itemLabel ="-" value="#{null}" />
+						<f:selectItems value="#{finance.banks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Finance_total"
+						value="#{bundle.aon_total}" />
+					<aon:outputText id="Finance_total"
+					 	styleClass="aon-bold"
+						value="#{finance.to.totalAmount}"
+						size="15">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
+
+				</aon:panelGrid>
+					
+				<aon:div styleClass="aon-form-group" rendered="#{!finance.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="financeTrackingData" value="#{financeBundle.finance_tracking}" />
+						</aon:div>
+					</aon:div>
+					<aon:div styleClass="aon-scroll-area">
+					
+						<aon:dataTable id="financeTrackingData" value="#{financeTracking.model}"
+							var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}"
+							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+								aon-editDataTable-numberColumn, aon-editDataTable-iconColumn aon-vertical-align-top">
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_date}" />
+									</f:facet>
+									<aon:outputText value="#{to.trackingDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>	
+								</aon:column>
+						
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_tracking_action}" />
+									</f:facet>
+									<aon:outputText value="#{to.type}" />
+								</aon:column>
+						
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_description}" />
+									</f:facet>
+									<aon:outputText value="#{to.description}" />
+								</aon:column>
+						
+								<aon:column width="100">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_amount}" />
+									</f:facet>
+									<aon:outputText value="#{to.amount}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>	
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:confirmButton id="undo"
+										title="#{financeBundle.finance_tracking_undo}"
+										immediate="true" rendered="#{financeTracking.unrecordable}" 
+										confirmTitle="#{bundle.aon_confirm_title}"
+										confirmMessage="#{bundle.aon_remove_confirm}"
+										confirmActionListener="#{financeTracking.undoTracking}"
+										styleClass="aon-editDataTable-button aon-icon-delete"
+										accesskey="#{bundle.aon_key_remove_line}" />										
+								</aon:column>
+
+						</aon:dataTable>
+						
+						<aon:dataScroller2 for="financeTrackingData" showNote="true" />
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
+	</ui:define>
+</ui:composition>
