@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 4.8.0
+# Version: 4.8.1
 # Created by: girazu
-# Creation Date: 11/12/2009 15:13
+# Creation Date: 15/01/2010 11:08
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -193,6 +193,8 @@ CREATE TABLE `customer` (
   `segment` int(4) default NULL COMMENT 'Segmento del Cliente',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `e_invoice` tinyint(1) default '0' COMMENT 'Indica si el Cliente desea recibir Facturas electronicas',
+  `delivery_grouped` tinyint(1) default '1' COMMENT 'Indica si el Cliente desea agrupar Albaranes en una sola Factura',
+  `delivery_valuated` tinyint(1) default '1' COMMENT 'Indica si el Cliente desea imprimir el Albaran valorado',
   PRIMARY KEY  (`registry`),
   KEY `idx_ctmr_trff` (`tariff`),
   KEY `segment` (`segment`),
@@ -2586,8 +2588,8 @@ CREATE TABLE `item_alternative` (
   UNIQUE KEY `IDX_UNQ_ITEM_ALTERNATIVE` (`item`,`alternative_item`),
   KEY `IDX_ITEM_ALTERNATIVE_ITEM` (`item`),
   KEY `IDX_ITEM_ALTERNATIVE_ALTERNATIVE` (`alternative_item`),
-  CONSTRAINT `FK_ITEM_ALTERNATIVE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_ITEM_ALTERNATIVE_ALTERNATIVE` FOREIGN KEY (`alternative_item`) REFERENCES `item` (`id`)
+  CONSTRAINT `FK_ITEM_ALTERNATIVE_ALTERNATIVE` FOREIGN KEY (`alternative_item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_ITEM_ALTERNATIVE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo Alternativos';
 
 #
@@ -3944,7 +3946,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('4.8.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('4.8.1');
 
 COMMIT;
 
