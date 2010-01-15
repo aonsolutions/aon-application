@@ -213,6 +213,10 @@
 			<value>supplierMedia</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
+		</managed-property>
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
