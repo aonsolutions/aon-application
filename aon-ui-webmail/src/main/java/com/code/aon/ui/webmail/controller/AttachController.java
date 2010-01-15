@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -25,8 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
@@ -37,7 +37,7 @@ import com.code.aon.webmail.bean.AonMessage;
 
 public class AttachController {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(AttachController.class);
+	private static final Logger LOGGER = Logger.getLogger(AttachController.class.getName());
 
 	private AonMessage aonMessage;
 	
@@ -97,9 +97,9 @@ public class AttachController {
 			sos.close();
 			response.flushBuffer();
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 	}
 	
@@ -174,9 +174,9 @@ public class AttachController {
     		response.flushBuffer();
     		tempFile.delete();
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
     }
 

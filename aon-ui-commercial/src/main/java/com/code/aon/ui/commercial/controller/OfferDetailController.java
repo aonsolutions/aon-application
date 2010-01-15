@@ -6,6 +6,8 @@ import java.util.Iterator;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
@@ -47,6 +49,14 @@ public class OfferDetailController extends LinesController {
 
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
+
+		OfferDetail offerDetail = (OfferDetail)getTo();
+		if (StringUtils.equals(offerDetail.getItem().getProduct().getName().trim(), offerDetail.getDescription().trim())) {
+			String longDescription = offerDetail.getItem().getDescription();
+			if (!StringUtils.isEmpty(longDescription)) {
+				offerDetail.setDescription(offerDetail.getDescription() + "\r\n" + longDescription);
+			}
+		}
 	}
 
 	public void onShortDescription(ActionEvent event) {

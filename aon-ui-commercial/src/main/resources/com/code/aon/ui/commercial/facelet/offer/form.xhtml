@@ -17,6 +17,7 @@
 					<ui:param name="toolbarTitle"
 						value="#{commercialBundle.commercial_offer_module}" />
 					<ui:param name="controller" value="#{offer}" />
+					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{offer.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{offer.readOnly}" />
 					<ui:define name="beforeSpinToolbarContent">
@@ -61,7 +62,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border">
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="DOCX" />
-						</h:commandLink>											
+						</h:commandLink>
 						<h:commandLink id="offerPDF" value="#{commercialBundle.commercial_offer}"
 							target="_blank" action="#{offerSigner.onReport}"
 							rendered="#{!offer.new}" disabled="#{offerDetail.to != null}"
