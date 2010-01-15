@@ -7,9 +7,9 @@ import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.ui.registry.controller.event.RegistryPayMethodSearchListener;
 
-public class CustomerSearchListener extends RegistrySearchListener {
+public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 
 	private CustomerStatus[] customerStatuses;
 	
