@@ -83,7 +83,7 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{openingEntry}.getCredit())]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
-					<reportElement key="textField-50" x="62" y="21" width="82" height="11">
+					<reportElement key="textField-50" x="18" y="21" width="126" height="11">
 						<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null)]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="5">
@@ -113,7 +113,7 @@
 					<textFieldExpression class="java.util.Date"><![CDATA[$P{openingEntry}.getFromDate()]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
-					<reportElement key="textField-52" x="62" y="32" width="175" height="11">
+					<reportElement key="textField-52" x="18" y="32" width="219" height="11">
 						<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null)]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="5">

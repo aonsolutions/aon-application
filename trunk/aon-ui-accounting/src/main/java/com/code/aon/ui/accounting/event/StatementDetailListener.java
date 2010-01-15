@@ -7,17 +7,14 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.accounting.controller.StatementController;
-import com.code.aon.ui.accounting.controller.TrialBalanceController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class StatementDetailListener extends ControllerAdapter {
 
-//	private static final String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 	
 	@Override
@@ -26,9 +23,6 @@ public class StatementDetailListener extends ControllerAdapter {
 			IController c = event.getController();
 			StatementController asc  = (StatementController) FormUtil
 				.getController(STATEMENT_CONTROLLER_NAME);
-
-//			TrialBalanceController asc = (TrialBalanceController) AonUtil
-//					.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
 			SummaryProviderParameters params = asc.getParams();
 			Criteria criteria = c.getCriteria();
 			
@@ -42,8 +36,10 @@ public class StatementDetailListener extends ControllerAdapter {
 			if (params.getToDate() != null) {
 				criteria.addLessThanOrEqualExpression(alias,params.getToDate()); 
 			}
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));
+			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));	
+			if (params.isExcludeClosingEntry()) {
+				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));	
+			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

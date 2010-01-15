@@ -388,6 +388,10 @@
 			<value>false</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>500</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.accounting.AmortizationDetail</value>
 		</managed-property>
@@ -939,7 +943,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>AccountEntryDetail_accountEntry_entryDate</value>
+			<value>AccountEntryDetail_accountEntry_entryDate,AccountEntryDetail_id</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

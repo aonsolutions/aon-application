@@ -24,7 +24,8 @@
 						actionListener="#{endPeriodEntries.onOpeningEntry}"
 						action="#{endPeriodEntries.navigate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false; else Richfaces.showModalPanel('waitProccess');"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
 				</ui:define>
 			</ui:decorate>
 
@@ -75,5 +76,6 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

@@ -1,6 +1,5 @@
 package com.code.aon.ui.accounting.controller;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -35,15 +34,10 @@ public class PeriodAmortizationController extends BasicController {
 	private double totalAllocation;
 	private double totalPending;
 	private AccountingUtil accountingUtil;	
-	private List<AmortizationDetail> amortizationList;
 	
+	@SuppressWarnings("unchecked")
 	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
-		setAmortizationList(null);
 		return (List<AmortizationDetail>) getCalculatedModel().getWrappedData();
-	}
-
-	public void setAmortizationList(LinkedList<AmortizationDetail> amortizationList) {
-		this.amortizationList = amortizationList;
 	}
 	
 	public AccountingUtil getAccountingUtil() {
@@ -240,6 +234,33 @@ public class PeriodAmortizationController extends BasicController {
 			entryController.setBackAction("periodAmortization_list");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public void onCheckAll(ActionEvent event) {
+		try {
+			for (int i = 0; i < getModel().getRowCount(); i++) {
+				getModel().setRowIndex(i);
+				AmortizationDetail detail = (AmortizationDetail) getModel().getRowData();
+				detail.setChecked(true);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al marcar la lista.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	public void onUncheckAll(ActionEvent event) {
+		try {
+			for (int i = 0; i < getModel().getRowCount(); i++) {
+				getModel().setRowIndex(i);
+				AmortizationDetail detail = (AmortizationDetail) getModel().getRowData();
+				detail.setChecked(false);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al desmarcar la lista.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}

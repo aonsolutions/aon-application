@@ -40,10 +40,11 @@
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:outputLabel value="#{bundle.aon_date_select}" />
 					<aon:panelGrid columns="4">
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-From"
+							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 							value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate
 							id="AccountEntryDetail_accountEntry_entryDate-From"
@@ -51,9 +52,9 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-To"
+							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 							value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate
 							id="AccountEntryDetail_accountEntry_entryDate-To"
@@ -61,6 +62,40 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:panelGrid>
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu
+						id="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{profitAndLossReport.parameters.securityLevel}">
+						<f:selectItem itemValue="" itemLabel=" " />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_exclude_operating"
+							value="#{profitAndLossReport.parameters.excludeOperatingEntry}" />
+						<aon:outputLabel for="Account_exclude_operating"
+							value="#{accountingBundle.accounting_exclude_operating_entry}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_zero_sum"
+							value="#{profitAndLossReport.parameters.noTouchedAccountVisible}" />
+						<aon:outputLabel for="Account_zero_sum"
+							value="#{accountingBundle.accounting_no_touched_account}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_balanced_acounts"
+							value="#{profitAndLossReport.parameters.excludeBalancedAccounts}" />
+						<aon:outputLabel for="Account_balanced_acounts"
+							value="#{accountingBundle.accounting_exclude_balanced_acounts}" />
+					</aon:div>
 
 					<aon:outputLabel for="Account_level"
 						value="#{accountingBundle.accounting_level}" />
@@ -74,24 +109,6 @@
 							<f:selectItem itemLabel="5" itemValue="5" />
 						</aon:selectOneRadio>
 					</aon:div>
-
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="Account_zero_sum"
-							value="#{profitAndLossReport.parameters.noTouchedAccountVisible}" />
-						<aon:outputLabel for="Account_zero_sum"
-							value="#{accountingBundle.accounting_no_touched_account}" />
-					</aon:div>
-
-					<aon:outputLabel
-						for="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu
-						id="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{profitAndLossReport.parameters.securityLevel}">
-						<f:selectItem itemValue="" itemLabel=" " />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

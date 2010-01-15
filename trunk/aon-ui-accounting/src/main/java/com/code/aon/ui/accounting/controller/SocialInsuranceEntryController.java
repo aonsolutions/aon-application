@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountEntryLink;
@@ -415,7 +415,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		header.setDate(entry.getEntryDate());
 		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "570*");
 		if (accountEntryDetail == null) {
-			accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getRBankAccountExpression());
 			header.setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
 		}
 		header.setConcept(accountEntryDetail.getConcept());
@@ -437,6 +437,20 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 			header.setAdjustEntryLink(adjustEntryLink);
 		}
 		setHeader(header);
+	}
+
+	private String getRBankAccountExpression() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryBankAccount.class);
+		List<ITransferObject> list = bean.getList(null);
+		StringBuilder sb = new StringBuilder();
+		for (ITransferObject to: list) {
+			RegistryBankAccount rba = (RegistryBankAccount) to;
+			if (sb.length() > 0 ) {
+				sb.append( "|" );	
+			}
+			sb.append( rba.getAccount().getId() );
+		}
+		return sb.toString();
 	}
 
 	@Override
@@ -475,7 +489,8 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 				c.addEqualExpression(periodAlias, getHeader().getPeriod().getId() );
 				c.addBetweenExpression(dateAlias, fromDate,toDate);
 				c.addEqualExpression(accountAlias, getSocialInsuranceAccount().getId() );
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(typeAlias, AccountEntryType.SOCIAL_INSURANCE_ADJUST));
+				//c.addExpression(ExpressionUtilities.getNotEqualExpression(typeAlias, AccountEntryType.SOCIAL_INSURANCE_ADJUST));
+				c.addExpression(ExpressionUtilities.getEqualExpression(typeAlias, AccountEntryType.SALARY));
 				Balance balance = new Balance();
 				balance.setAccount(getSocialInsuranceAccount().getId());
 				balance.setDescription(getSocialInsuranceAccount().getDescription());

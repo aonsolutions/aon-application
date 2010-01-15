@@ -55,15 +55,21 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
 
-<!-- 					
 					<aon:outputText value="&#160;" />
 					<aon:div>
-						<aon:selectBooleanCheckbox id="Account_zero_sum"
-							value="#{balanceSheet.parameters.noTouchedAccountVisible}" />
-						<aon:outputLabel for="Account_zero_sum"
-							value="#{accountingBundle.accounting_no_touched_account}" />
+						<aon:selectBooleanCheckbox id="Account_exclude_operating"
+							value="#{balanceSheet.parameters.excludeOperatingEntry}" />
+						<aon:outputLabel for="Account_exclude_operating"
+							value="#{accountingBundle.accounting_exclude_operating_entry}" />
 					</aon:div>
--->
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_exclude_closing"
+							value="#{balanceSheet.parameters.excludeClosingEntry}" />
+						<aon:outputLabel for="Account_exclude_closing"
+							value="#{accountingBundle.accounting_exclude_closing_entry}" />
+					</aon:div>
 
 					<aon:outputText value="&#160;" />
 					<aon:div>

@@ -363,10 +363,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 				params.setAccountExpression( getRelatedAccount().getId());
 				params.setAccountLevel(5);
 				params.setBudgeted(false);
-				Period period = getAccountingUtil().getPeriod( getHeader().getFeeDate() );
-				params.setPeriod(period);
-				params.setFromDate(period.getInitiationDate());
-				params.setToDate(period.getDeadline());
+				params.setFromDate(getHeader().getLoan().getLoanDate());
 				params.setSecurityLevel(getHeader().getLoan().getSecurityLevel());
 				SummaryCollection sc = sp.getSummaryCollection(params);
 				double p = CommonUtil.round(sc.getCreditBalance())==0.0?
