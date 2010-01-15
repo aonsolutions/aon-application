@@ -15,6 +15,7 @@
 			<aon:selectOneMenu id="RegistryPayMethod_payment"
 				valueChangeListener="#{controllerLookupListener.onPayMethodChanged}"
 				reRender="#{controller.beanName}-PayMethodDiv,#{controller.beanName}-PayMethodDiv2"
+				focus="RegistryPayMethod_bank"
 				value="#{controllerLookupListener.registryPayMethod.payment}">
 				<f:selectItem value="#{null}" />
 				<f:selectItems value="#{configCollections.payMethods}" />
