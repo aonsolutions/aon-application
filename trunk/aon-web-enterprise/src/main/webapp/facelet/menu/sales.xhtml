@@ -45,6 +45,12 @@
 										action="delivery_search" actionListener="#{delivery.onEditSearch}"
 										value="#{warehouseBundle.warehouse_delivery_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="delivery_invoicing"
+										value="#{financeBundle.finance_delivery_invoicing_module}"
+										actionListener="#{deliveryInvoicing.onInitialize}"
+										action="deliveryInvoicing" />
+								</aon:div>
 							</aon:div>
 						</aon:panel>
 
