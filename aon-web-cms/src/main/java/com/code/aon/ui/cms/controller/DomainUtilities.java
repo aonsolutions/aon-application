@@ -233,7 +233,6 @@ public class DomainUtilities {
 	private static String MENU_HIRU = "MENU_HIRU";
 	private static String MENU_BULLETIN = "MENU_BULLETIN";
 	private static String MENU_SPORT = "MENU_SPORT";
-	private static String MENU_STRUCTURE = "MENU_STRUCTURE";
 
 	public boolean isModularMenu(){
 		return hasMenuOption(MENU_MODULAR_OPTION);
@@ -289,9 +288,5 @@ public class DomainUtilities {
 
 	public boolean isSportMenu(){
 		return hasMenuOption(MENU_SPORT);
-	}
-
-	public boolean isStructureMenu(){
-		return hasMenuOption(MENU_STRUCTURE);
 	}
 }

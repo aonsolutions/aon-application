@@ -19,12 +19,11 @@
 		</aon:selectBooleanCheckbox>
 		<aon:outputLabel for="#{inputTextId}_richTextEnabled"
 			value="#{appBundle.cms_richtext_enabled}" />	
-		<aon:inputRichText id="#{inputTextId}"
+		<rich:editor id="#{inputTextId}"
 			viewMode="#{richTextEnabled?'visual':'source'}"
 			value="#{inputTextValue}" required="#{inputTextRequired}"
-			height="250" width="640" configuration="tinyMCE" >
-			<f:param name="document_base_url" value="#{generator_status.previewURL}"/> 
-		</aon:inputRichText>																		
+			height="250" width="640" configuration="tinyMCE" 
+			language="#{facesContext.application.defaultLocale.language}" />																		
 	</a4j:region>
 
 </ui:composition>

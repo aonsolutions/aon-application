@@ -23,7 +23,7 @@ public class DocumentGalleryController extends GalleryController {
 	}
 	
 	public String getPreviewCurrentUrl() {
-		String url = ControllerUtil.getPreviewURL() + ControllerUtil.DOCUMENTS_PATH + getCurrentRelativePath();
+		String url = ControllerUtil.getPreviewURL() + "/" + ControllerUtil.DOCUMENTS_PATH + getCurrentRelativePath();
 		return url;
 	}
 
