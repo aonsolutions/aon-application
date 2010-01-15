@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -17,8 +18,6 @@ import javax.xml.soap.SOAPException;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -38,7 +37,7 @@ import com.code.aon.webmail.Contact;
 public class SMSController implements Serializable {
 
 	private static final long serialVersionUID = -5534264216750579958L;
-	private static final Logger LOGGER = LoggerFactory.getLogger( SMSController.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger( SMSController.class.getName() );
 	
 	public static final String AON_SMS_APPLICATION = "aon-sms";
 	
@@ -82,6 +81,7 @@ public class SMSController implements Serializable {
 	private boolean showToolbar;
 	private boolean showDemoMessage;
 	
+	@SuppressWarnings("unchecked")
 	public SMSController() {
 		this.allowUpdateRecipients = true;
 		this.showToolbar = true;
@@ -91,9 +91,9 @@ public class SMSController implements Serializable {
 			this.message = new Message();
 			this.sender = new Sender();
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage() );
+			LOGGER.severe( e.getMessage() );
 		} catch (SOAPException e) {
-			LOGGER.error( e.getMessage() );
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 	
@@ -265,7 +265,7 @@ public class SMSController implements Serializable {
 				sendMessage( this.message );
 				reset(event);
 			} catch ( Throwable e ) {
-				LOGGER.error(">>>> sendMessage " + e.getMessage());
+				LOGGER.severe(">>>> sendMessage " + e.getMessage());
 				AonUtil.addErrorMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);				
 			}
@@ -370,7 +370,7 @@ public class SMSController implements Serializable {
 				bean.insert( log );
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage() );
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 

@@ -10,38 +10,44 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.messaging</artifactId>
-	<version>0.7.1</version>
+	<version>0.5.1</version>
 	<description>AON UI MESSAGING</description>
 	<name>AON UI MESSAGING</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.2.0</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.webmail</artifactId>
-			<version>4.0.0</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.messaging</artifactId>
-			<version>0.5.0</version>
+			<version>0.4.0</version>
+			<scope>compile</scope>
+		</dependency>			
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>3.8.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_13</version>
+			<version>1.2_09</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 		    <groupId>javax.faces</groupId>
 		    <artifactId>jsf-impl</artifactId>
-		    <version>1.2_13</version>
+		    <version>1.2_09</version>
 		    <scope>provided</scope>
 		</dependency> 								
 	</dependencies>
