@@ -311,7 +311,6 @@
 		</managed-property>
 	</managed-bean>
 	
-
 	<!--  **** TARGET ADDRESS **** -->
 
 	<managed-bean>
@@ -358,6 +357,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>targetMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -591,7 +594,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Offer_issueDate,Offer_series,Offer_number</value>
+			<value>Offer_issueDate desc,Offer_series,Offer_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
