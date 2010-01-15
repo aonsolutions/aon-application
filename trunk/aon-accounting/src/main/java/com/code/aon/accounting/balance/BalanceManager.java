@@ -32,6 +32,7 @@ public class BalanceManager {
 	private static final String CLOSE_BRACKET = ")";
 	private static final String PIPE = "|";
 	private static final String ASTERISK = "*";
+	private static final String QUESTION_MARK = "?";
 	private static final String COMMA = ",";
 	
 	private List<BalanceItem> list;
@@ -140,6 +141,7 @@ public class BalanceManager {
 			if (StringUtils.isNotBlank(token)) {
 				String t = token;
 				boolean negative = false;
+				boolean greatherThanZero = false;
 				if (token.startsWith(OPEN_BRACKET) && token.endsWith(CLOSE_BRACKET)) {
 					t = token.replace(OPEN_BRACKET, EMPTY).replace(CLOSE_BRACKET, EMPTY);
 					negative = true;
@@ -161,19 +163,26 @@ public class BalanceManager {
 		BalanceDetail bd = item.getDetail();
 		String[] tokens = StringUtils.split(bd.getAccounts(),COMMA);
 		StringBuilder positiveExp = new StringBuilder();
+		List<String> conditionalPositiveExp = new LinkedList<String>();
 		StringBuilder negativeExp = new StringBuilder();
+		List<String> conditionalNegativeExp = new LinkedList<String>();
 		for (String token:tokens) {
 			token = token.trim();
 			if (StringUtils.isNotBlank(token)) {
+				StringBuilder tmpExp = positiveExp;
+				List<String> tmpConditionalExp = conditionalPositiveExp;
 				if (token.startsWith(OPEN_BRACKET) && token.endsWith(CLOSE_BRACKET)) {
-					negativeExp.append(negativeExp.length()>0?PIPE:EMPTY);
-					String t = token.replace(OPEN_BRACKET, EMPTY).replace(CLOSE_BRACKET, EMPTY);
-					negativeExp.append(t);	
-					negativeExp.append(ASTERISK);
+					token = token.replace(OPEN_BRACKET, EMPTY).replace(CLOSE_BRACKET, EMPTY);
+					tmpExp = negativeExp;
+					tmpConditionalExp = conditionalNegativeExp;
+				}
+				if (token.startsWith(QUESTION_MARK)) {
+					String t = token.replace(QUESTION_MARK, EMPTY);
+					tmpConditionalExp.add(t+ASTERISK);
 				} else {
-					positiveExp.append(positiveExp.length()>0?PIPE:EMPTY);
-					positiveExp.append(token);	
-					positiveExp.append(ASTERISK);
+					tmpExp.append(tmpExp.length()>0?PIPE:EMPTY);
+					tmpExp.append(token);	
+					tmpExp.append(ASTERISK);
 				}
 			}
 		}
@@ -185,6 +194,20 @@ public class BalanceManager {
 			pAmount = getAccountsAmount(parameters,bd.isCreditNature());
 			pPreviousAmount = getAccountsAmount(previous,bd.isCreditNature());
 		}
+		if ( conditionalPositiveExp.size() > 0 ) {
+			for (String exp: conditionalPositiveExp ) {
+				parameters.setAccountExpression(exp);
+				previous.setAccountExpression(exp);
+				Double a = getAccountsAmount(parameters,bd.isCreditNature());
+				if (bd.isCreditNature() && a > 0 ) {
+					pAmount = CommonUtil.round(pAmount + a);
+				}
+				Double p = getAccountsAmount(previous,bd.isCreditNature());
+				if (bd.isCreditNature() && p > 0 ) { 
+					pPreviousAmount = CommonUtil.round(pPreviousAmount + p);
+				}
+			}
+		}
 		Double nAmount = new Double(0.0);
 		Double nPreviousAmount = new Double(0.0);
 		if (negativeExp.length() > 0) {
@@ -192,6 +215,20 @@ public class BalanceManager {
 			previous.setAccountExpression(negativeExp.toString());
 			nAmount = getAccountsAmount(parameters,!bd.isCreditNature());
 			nPreviousAmount = getAccountsAmount(previous,!bd.isCreditNature());
+		}
+		if ( conditionalNegativeExp.size() > 0 ) {
+			for (String exp: conditionalNegativeExp ) {
+				parameters.setAccountExpression(exp);
+				previous.setAccountExpression(exp);
+				Double a = getAccountsAmount(parameters,!bd.isCreditNature());
+				if (!bd.isCreditNature() && a > 0 ) {
+					nAmount = CommonUtil.round(nAmount + a);
+				}
+				Double p = getAccountsAmount(previous,!bd.isCreditNature());
+				if (!bd.isCreditNature() && p > 0 ) { 
+					nPreviousAmount = CommonUtil.round(nPreviousAmount + p);
+				}
+			}
 		}
 		item.setAmount( CommonUtil.round(pAmount - nAmount));
 		item.setPreviousAmount(CommonUtil.round(pPreviousAmount - nPreviousAmount));

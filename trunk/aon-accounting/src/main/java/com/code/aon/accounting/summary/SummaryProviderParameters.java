@@ -30,11 +30,6 @@ public class SummaryProviderParameters implements Cloneable{
 	
 	/**
 	 * Nivel de las cuentas. Se devolverán las filas que cumplan la siguiente condición.
-	 * 		1 --> LENGTH(account.id) = 1
-	 *  	2 --> LENGTH(account.id) = 2
-	 *  	3 --> LENGTH(account.id) = 3
-	 *  	4 --> LENGTH(account.id) = 4 || LENGTH(account.id) = 5
-	 *  	5 --> LENGTH(account.id) > 5
 	 *  
 	 */
 	private int accountLevel = 4;
@@ -67,6 +62,13 @@ public class SummaryProviderParameters implements Cloneable{
 
 	private boolean monthlyGrouping;
 	
+	private boolean excludeOpeningEntry;
+
+	private boolean excludeOperatingEntry;
+	
+	private boolean excludeClosingEntry;
+	
+	private boolean excludeBalancedAccounts;
 
 	public SummaryProviderParameters() {
 		setAccountExpression(null);
@@ -83,6 +85,10 @@ public class SummaryProviderParameters implements Cloneable{
 		setRowsPerPage(20);
 		setBudgeted(false);
 		setMonthlyGrouping(false);
+		setExcludeOpeningEntry(false);
+		setExcludeOperatingEntry(false);
+		setExcludeClosingEntry(false);
+		setExcludeBalancedAccounts(false);
 	}
 
 	public String getAccountExpression() {
@@ -195,6 +201,38 @@ public class SummaryProviderParameters implements Cloneable{
 		this.monthlyGrouping = monthlyGrouping;
 	}
 	
+	public boolean isExcludeOpeningEntry() {
+		return excludeOpeningEntry;
+	}
+
+	public void setExcludeOpeningEntry(boolean excludeOpeningEntry) {
+		this.excludeOpeningEntry = excludeOpeningEntry;
+	}
+
+	public boolean isExcludeOperatingEntry() {
+		return excludeOperatingEntry;
+	}
+
+	public void setExcludeOperatingEntry(boolean excludeOperatingEntry) {
+		this.excludeOperatingEntry = excludeOperatingEntry;
+	}
+
+	public boolean isExcludeClosingEntry() {
+		return excludeClosingEntry;
+	}
+
+	public void setExcludeClosingEntry(boolean excludeClosingEntry) {
+		this.excludeClosingEntry = excludeClosingEntry;
+	}
+
+	public boolean isExcludeBalancedAccounts() {
+		return excludeBalancedAccounts;
+	}
+
+	public void setExcludeBalancedAccounts(boolean excludeBalancedAccounts) {
+		this.excludeBalancedAccounts = excludeBalancedAccounts;
+	}
+
 	@Override
 	public SummaryProviderParameters clone() throws CloneNotSupportedException {
 		SummaryProviderParameters cloned = new SummaryProviderParameters();
@@ -207,6 +245,10 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setFromDate(getFromDate());
 		cloned.setLowerLevelVisible(isLowerLevelVisible());
 		cloned.setMonthlyGrouping(isMonthlyGrouping());
+		cloned.setExcludeOpeningEntry(isExcludeOperatingEntry());
+		cloned.setExcludeOperatingEntry(isExcludeOperatingEntry());
+		cloned.setExcludeClosingEntry(isExcludeClosingEntry());
+		cloned.setExcludeBalancedAccounts(isExcludeBalancedAccounts());
 		cloned.setNoTouchedAccountVisible(isNoTouchedAccountVisible());
 		cloned.setPeriod(getPeriod());
 		cloned.setRowsPerPage(getRowsPerPage());

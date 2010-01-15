@@ -15,7 +15,7 @@ B.III.1|1. Clientes por ventas y prestaciones de servicios|430,431,432,433,434,4
 B.III.2|2. Accionistas (socios) por desembolsos exigidos|5580|14|false|false|true|false|false
 B.III.3|3. Otros deudores|44,460,470,471,472,473,5531,5533,544|15|false|false|true|false|false
 B.IV|IV. Inversiones en empresas del grupo y asociadas C/P|5303,5304,5313,5314,5323,5324,5333,5334,5343,5344,5353,5354,(5393),(5394),5523,5524,(593),(5943),(5944),(5953),(5954)|16|true|false|true|false|false
-B.V|V. Inversiones financieras a corto plazo|5305,5315,5325,5335,5345,5355,(5395),540,541,542,543,545,546,547,548,(549),551,5525,5590,5593,565,566,(5945),(5955),(597),(598)|17|true|false|true|false|false
+B.V|V. Inversiones financieras a corto plazo|5305,5315,5325,5335,5345,5355,(5395),540,541,542,543,545,546,547,548,(549),?551,5525,5590,5593,565,566,(5945),(5955),(597),(598)|17|true|false|true|false|false
 B.VI|VI. Periodificaciones a corto plazo|480,567|18|true|false|true|false|false
 B.VII|VII. Efectivo y otros activos líquidos equivalentes|57|19|true|false|true|false|false
 |||20|false|false|true|false|false
@@ -32,11 +32,11 @@ PA.1.III|III. Reservas|112,113,114,115,119,108,109|30|true|false|true|false|true
 PA.1.IV|IV. (Acciones y participaciones en patrimonio propias)|(108),(109)|31|true|false|true|false|true
 PA.1.V|V. Resultado de ejercicios anteriores|120,(121)|32|true|false|true|false|true
 PA.1.VI|VI. Otras aportaciones de socios|118|33|true|false|true|false|true
-PA.1.VII|VII. Resultado del ejercicio|129|34|true|false|true|false|true
+PA.1.VII|VII. Resultado del ejercicio|129,6,7|34|true|false|true|false|true
 PA.1.VIII|VIII. (Dividendo a cuenta )|(557)|35|true|false|true|false|true
 PA.1.IX|IX. Otros instrumentos de patrimonio neto|111|36|true|false|true|false|true
 PA.2|A-2) Ajustes por cambios de valor|133,1340,137|37|true|false|true|false|true
-PA.3|A-3) Subvenciones| donaciones y legados recibidos,130,131,132|38|true|false|true|false|true
+PA.3|A-3) Subvenciones, donaciones y legados recibidos|130,131,132|38|true|false|true|false|true
 |||39|false|false|true|false|true
 PB|B) PASIVO NO CORRIENTE|PB.I,PB.II,PB.III,PB.IV,PB.V|40|true|true|true|false|true
 PB.I|I. Provisiones a largo plazo|14|41|true|false|true|false|true
@@ -54,7 +54,7 @@ PC.II|II. Provisiones a corto plazo|499,529|52|true|false|true|false|true
 PC.III|III. Deudas a corto plazo|PC.III.1,PC.III.2,PC.III.3|53|true|true|true|false|true
 PC.III.1|1. Deudas con entidades de crédito|5105,520,527|54|false|false|true|false|true
 PC.III.2|2. Acreedores por arrendamiento financiero|5125,524|55|false|false|true|false|true
-PC.III.3|3. Otras deudas a corto plazo|(1034),(1044),(190),(192),194,500,501,505,509,5115,5135,5145,521,522,523,525,526,528,551,5525,5530,5532,555,5565,5566,5595,5598,560,561,569|56|false|false|true|false|true
+PC.III.3|3. Otras deudas a corto plazo|(1034),(1044),(190),(192),194,500,501,505,509,5115,5135,5145,521,522,523,525,526,528,?551,5525,5530,5532,555,5565,5566,5595,5598,560,561,569|56|false|false|true|false|true
 PC.IV|IV. Deudas con empresas del grupo y asociadas C/P|5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5523,5524,5563,5564|57|true|false|false|false|true
 PC.V|V. Acreedores comerciales y otras cuentas a pagar|PC.V.1,PC.V.2|58|true|true|true|false|true
 PC.V.1|1. Proveedores|400,401,403,404,405,(406)|59|false|false|true|false|true
