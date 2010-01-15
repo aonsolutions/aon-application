@@ -86,16 +86,16 @@ public class RegistryLookupListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		this.mainAddress = new RegistryAddress();
-		this.mainAddress.setAddressType( AddressType.MAIN );
-		this.mainAddress.setGeozone( new GeoZone() );
-		this.phone = new RegistryMedia();
+		setMainAddress( new RegistryAddress() );
+		getMainAddress().setAddressType( AddressType.MAIN );
+		getMainAddress().setGeozone( new GeoZone() );
+		setPhone( new RegistryMedia() );
 		initRegistryMedia(phone, MediaType.FIXED_PHONE);
-		this.fax = new RegistryMedia();
+		setFax( new RegistryMedia() );
 		initRegistryMedia(fax, MediaType.FAX);
-		this.email = new RegistryMedia();
+		setEmail( new RegistryMedia() );
 		initRegistryMedia(email, MediaType.EMAIL);
-		this.web = new RegistryMedia();
+		setWeb( new RegistryMedia() );
 		initRegistryMedia(web, MediaType.WEB);
 	}
 
@@ -158,7 +158,7 @@ public class RegistryLookupListener extends ControllerAdapter {
 	}
 		
 	protected void updateRegistryLines( Registry registry ) throws ManagerBeanException {
-		updateRegistryAddress(registry, mainAddress);
+		updateRegistryAddress(registry, getMainAddress());
 		updateRegistryMedia(registry, phone);
 		updateRegistryMedia(registry, fax);
 		updateRegistryMedia(registry, email);
@@ -166,7 +166,7 @@ public class RegistryLookupListener extends ControllerAdapter {
 	}
 
 	public void updateRegistryAddress( LinesController registryAddress ) throws ManagerBeanException {
-		updateRegistryAddress(registryAddress, mainAddress);
+		updateRegistryAddress(registryAddress, getMainAddress());
 	}	
 	
 	public void updateRegistryMedia( LinesController registryMedia ) throws ManagerBeanException {
