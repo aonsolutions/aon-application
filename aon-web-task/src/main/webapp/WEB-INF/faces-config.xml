@@ -25,11 +25,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
-			<value>aon-task</value>
+			<value>aon-desktop</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/4.0.0</value>
+			<value>/aonResource/4.3.0</value>
 		</managed-property>		
 	</managed-bean>
 
