@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Familias" sqlSentence="SELECT pcategory.id, pcategory.name, SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;&#xa;  FROM pcategory, product, item, invoice_detail, invoice&#xd;&#xa; WHERE pcategory.id = product.category &#xd;&#xa;   AND product.id = item.product&#xd;&#xa;   AND item.id = invoice_detail.item&#xd;&#xa;   AND invoice_detail.invoice = invoice.id&#xd;&#xa;   AND invoice.type = 0&#xd;&#xa;   AND invoice.issue_date BETWEEN ? AND ?&#xd;&#xa; GROUP BY 1,2&#xd;&#xa;   ">
+    <parameters>
+        <parameter name="initDate" type="DATE"/>
+        <parameter name="endDate" type="DATE"/>
+    </parameters>
+    <results>
+        <result accessName="CATEGORY_ID" columnId="id" export="true"
+            label="Familia" tableId="pcategory" type="INTEGER"/>
+        <result accessName="CATEGORY_NAME" columnId="name" export="true"
+            label="Nombre" tableId="pcategory" type="STRING"/>
+        <result
+            accessName="SUM(TRUNCATE(invoice_detail.taxable_base, 2))"
+            columnId="SUM(TRUNCATE(invoice_detail.taxable_base, 2))"
+            label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report>
+	<datasheet name="Make" description="Marca">
+		<field>
+			<name>id</name>
+			<fieldlabel>ID</fieldlabel>
+		</field>
+		<field>
+			<name>name</name>
+			<fieldlabel>Nombre</fieldlabel>
+		</field>
+	</datasheet>
+</report>
