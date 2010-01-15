@@ -2,9 +2,8 @@ package com.code.aon.ui.audit;
 
 import java.util.Date;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionExecution;
@@ -27,9 +26,8 @@ import com.code.aon.ql.Criteria;
 public class AuditManager implements IAuditAlias {
 	
 	/** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
-	
-	public static final String AUDIT = "aon-audit";
+	private static final Logger LOGGER = Logger
+			.getLogger(AuditManager.class.getName());		
 	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
 	
@@ -37,7 +35,11 @@ public class AuditManager implements IAuditAlias {
 
 	private static final AuditManager SINGLETON = new AuditManager();
 	
-	private boolean auditConfigured;
+	private ISessionFactoryNameProvider previousNameProvider;
+	
+	private AuditConfigurationFactory auditConfigurationFactory;
+	
+	private IConfigurationFactory previousConfigurationFactory;
 	
 	private IManagerBean domainBean;
 	
@@ -72,22 +74,31 @@ public class AuditManager implements IAuditAlias {
 				actionBean = BeanManager.getManagerBean(Action.class);
 				actionExecutionBean = BeanManager.getManagerBean(ActionExecution.class);
 			} catch (ManagerBeanException e) {
-				LOGGER.error( "Error initalizing Audit Manager Beans", e );
+				LOGGER.log( Level.SEVERE, "Error initalizing Audit Manager Beans", e );
 			}
 		}
 	}
 	
-	public boolean isAuditConfigured() {
-		return auditConfigured;
+	private AuditConfigurationFactory getAuditConfigurationFactory() {
+		if ( this.auditConfigurationFactory == null ) {
+			this.auditConfigurationFactory = new AuditConfigurationFactory();
+		}
+		return this.auditConfigurationFactory;
 	}
-
-	public void configureAudit() {
-		ISessionFactoryNameProvider auditNameProvider = new AuditSessionFactoryNameProvider(HibernateUtil.getSessionFactoryNameProvider());
+	
+	public void changeToAuditDB() {
+		this.previousNameProvider = HibernateUtil.getSessionFactoryNameProvider();
+		this.previousConfigurationFactory = HibernateUtil.getConfigurationFactory();
+		ISessionFactoryNameProvider auditNameProvider = new AuditSessionFactoryNameProvider();
 		HibernateUtil.setSessionFactoryNameProvider(auditNameProvider);
-		IConfigurationFactory auditConfigurationFactory = new AuditConfigurationFactory(HibernateUtil.getConfigurationFactory());
-		HibernateUtil.setConfigurationFactory(auditConfigurationFactory);
-		this.auditConfigured = true;
+		getAuditConfigurationFactory().setSessionFactoryName(auditNameProvider.getName());
+		HibernateUtil.setConfigurationFactory(getAuditConfigurationFactory());
 		initManagerBeans();
+	}
+	
+	public void restoreToPreviousDB() {
+		HibernateUtil.setSessionFactoryNameProvider(this.previousNameProvider);
+		HibernateUtil.setConfigurationFactory(this.previousConfigurationFactory);
 	}
 	
 	public Domain getDomain( String name ) throws ManagerBeanException {
@@ -161,13 +172,19 @@ public class AuditManager implements IAuditAlias {
 		return user;
 	}
 	
-	public void insertSession( Session session ) throws ManagerBeanException {
-		sessionBean.insert( session );
+	public Session createLoginAudit( Application application, User user, String sessionId, Date date ) throws ManagerBeanException {
+		Session loginAudit = new Session();
+		loginAudit.setApplication( application );
+		loginAudit.setUser( user );
+		loginAudit.setSessionId( sessionId );
+		loginAudit.setStartDate( date );
+		sessionBean.insert( loginAudit );
+		return loginAudit;
 	}
 
-	public void closeLoginAudit( Session session ) throws ManagerBeanException {
-		session.setEndDate( new Date() );
-		sessionBean.update( session );
+	public void closeLoginAudit( Session loginAudit ) throws ManagerBeanException {
+		loginAudit.setEndDate( new Date() );
+		sessionBean.update( loginAudit );
 	}
 
 	public Action getAction( String name, Application application ) throws ManagerBeanException {

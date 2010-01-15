@@ -11,14 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 
 /**
@@ -118,34 +114,5 @@ public class Action implements ITransferObject {
 	public void setApplication(Application application) {
 		this.application = application;
 	}
- 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final Action o = (Action) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.application, o.application)
-				.append(this.name, o.name)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(application)
-			.append(id)
-			.append(name)
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
-	
+    
 }

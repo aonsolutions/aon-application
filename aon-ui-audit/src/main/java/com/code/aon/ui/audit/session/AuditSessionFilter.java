@@ -3,6 +3,8 @@ package com.code.aon.ui.audit.session;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,9 +14,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Application;
 import com.code.aon.audit.Domain;
@@ -28,7 +27,8 @@ import com.code.aon.ui.audit.AuditManager;
 public class AuditSessionFilter implements Filter {
 	
 	/** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(AuditSessionFilter.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(AuditSessionFilter.class.getName());	
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -57,29 +57,25 @@ public class AuditSessionFilter implements Filter {
 		return application;
 	}	
 	
-	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
+	private void insertLoginAudit( HttpSession session, AuthPrincipal principal ) {
 		AuditManager manager = AuditManager.getInstance();
+		manager.changeToAuditDB();
 		try {
-			AuthPrincipal principal = getPrincipal(request);
 			String applicationName = getApplicationName(principal.getContext() );
 			Application application = manager.getApplication(applicationName);
 			Domain domain = manager.getDomain(principal.getDomain());
 			DomainApplication domainApplication = manager.getDomainApplication(application, domain);
 			User user = manager.getUser( principal.getShortName(), domain );
 			if ( domain.isEnableAudit() && (domainApplication.getAuditLevel() != AuditLevel.NONE) ) {
-				Session session = new Session();
-				session.setApplication( application );
-				session.setUser( user );
-				session.setSessionId( httpSession.getId() );
-				session.setStartDate( new Date(httpSession.getCreationTime()) );
-				session.setRemoteAddress( request.getRemoteAddr() );
-				session.setRemoteHost( request.getRemoteHost() );
-				manager.insertSession( session );
-				httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );				
-				httpSession.setAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY, domainApplication );
+				Date date = new Date( session.getCreationTime() );
+				Session audit = manager.createLoginAudit(application, user, session.getId(), date );
+				session.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, audit );				
+				session.setAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY, domainApplication );
 			}
 		} catch ( Throwable th ) {
-			LOGGER.error( "Error login audit", th );
+			LOGGER.log( Level.SEVERE, "Error login audit", th );
+		} finally {
+			manager.restoreToPreviousDB();	
 		}
 	}
 
@@ -93,7 +89,7 @@ public class AuditSessionFilter implements Filter {
 			HttpSession session = request.getSession(false);
 
 			if ( (session != null) && (session.getAttribute(AuditManager.AUDIT_SESSION_PROPERTY) == null) ) {
-				insertLoginAudit(session, request );
+				insertLoginAudit(session, getPrincipal(request) );
 			}
 		}
 		filterChain.doFilter(servletRequest, servletResponse);
