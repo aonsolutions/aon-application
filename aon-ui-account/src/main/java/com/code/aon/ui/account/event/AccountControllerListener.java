@@ -1,11 +1,18 @@
 package com.code.aon.ui.account.event;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.account.Account;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.account.controller.AccountController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class AccountControllerListener extends ControllerAdapter {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(AccountControllerListener.class);
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
@@ -19,4 +26,15 @@ public class AccountControllerListener extends ControllerAdapter {
 		}
 	}
 
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		try {
+			AccountController controller = (AccountController) event.getController();
+			if (controller.getOrderColumn() != null) {
+				controller.getCriteria().addOrder(controller.getFieldName( controller.getOrderColumn() ));
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.warn("Imposible Añadir Orden.",e);
+		}
+	}
 }
