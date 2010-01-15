@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.ebackoffice</artifactId>
-	<version>4.4.2</version>
+	<version>4.5.0</version>
 	<description>AON UI EBACKOFFICE</description>
 	<name>AON UI EBACKOFFICE</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ebackoffice</artifactId>
-			<version>4.3.6</version>
+			<version>4.3.7</version>
 			<scope>compile</scope>
 		</dependency>	
 		<dependency>
@@ -28,38 +28,32 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security.bridge</artifactId>
-			<version>3.4.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.2.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>4.12.0</version>
+			<version>4.13.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.9.0</version>
+			<version>4.10.0</version>
 			<scope>compile</scope>
 		</dependency>	
 			<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>4.7.0</version>
+			<version>4.9.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
@@ -77,7 +71,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_09</version>
+			<version>1.2_14</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
