@@ -10,13 +10,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.messaging</artifactId>
-	<version>0.5.0</version>
+	<version>0.5.1</version>
 	<description>AON MESSAGING</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.5.0</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>	
 		<dependency>
