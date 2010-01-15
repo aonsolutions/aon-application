@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="aonFooter" styleClass="aon-footer">
+		<aon:form>
+			<aon:div styleClass="aon-footer-additionalInfo">
+				<aon:outputText value="#{ecConfig.company.name}" />
+				<aon:outputText value=" &#183; " />
+				<aon:outputText value="#{bundle.aon_person_document} " />
+				<aon:outputText value="#{ecConfig.company.document}" />
+				<aon:outputText value=" &#183; " />
+				<aon:outputText value="#{ecConfig.company.defaultAddress.address}" />
+				<aon:outputText value=" &#183; " />
+				<aon:outputText value="#{ecConfig.company.defaultAddress.zip} " />
+				<aon:outputText value=" &#183; " />
+				<aon:outputText value="#{ecConfig.company.defaultAddress.city}" />
+			</aon:div>
+<!--  
+				<aon:div styleClass="aon-float-right">
+					<aon:div styleClass="aon-footer-menu-item">
+						
+						<h:outputLink target="_top"
+							value="${facesContext.externalContext.requestContextPath}">
+							<h:outputText value="#{bundle.aon_home}" />
+						</h:outputLink>
+
+						<aon:commandLink style="border-right:0;" action="#"
+							rendered="#{shop.logged}" reRender="aonHeader"
+							actionListener="#{userLogin.onLogout}">
+							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+						</aon:commandLink>
+					</aon:div>
+				</aon:div>
+-->				
+
+<!-- 
+				<aon:commandButton action="#" value="privacidad-18n-"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<f:param name="info" value="#{ecConfig.activeConfig.privatePolicy}" />
+				</aon:commandButton>
+
+				<aon:commandButton action="#" value="nota legal-18n-"
+					reRender="itemContent"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<aon:actionListener method="#{shop.onInfoView}" />
+					<f:param name="info" value="#{ecConfig.activeConfig.legalNote}" />
+				</aon:commandButton>
+				<aon:commandLink action="#" value="proteccion de datos-18n-"
+					reRender="itemContent"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<aon:actionListener method="#{shop.onInfoView}" />
+					<f:param name="info"
+						value="#{ecConfig.activeConfig.dataProtection}" />
+				</aon:commandLink>
+-->
+			<aon:div styleClass="aon-footer-buttoms">
+				<aon:outputLink value="#" id="legal-note1"
+					rendered="#{!(ecConfig.activeConfig.noteTitle1=='')}"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<aon:outputText value="#{ecConfig.activeConfig.noteTitle1}" />
+					<rich:componentControl for="legalNote1Process" attachTo="legal-note1"
+						operation="show" event="onclick" />
+				</aon:outputLink>
+				<aon:outputLink value="#" id="legal-note2"
+					rendered="#{!(ecConfig.activeConfig.noteTitle2=='')}"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<aon:outputText value="#{ecConfig.activeConfig.noteTitle2}" />
+					<rich:componentControl for="legalNote2Process" attachTo="legal-note2"
+						operation="show" event="onclick" />
+				</aon:outputLink>
+				<aon:outputLink value="#" id="legal-note3"
+					rendered="#{!(ecConfig.activeConfig.noteTitle3=='')}"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<aon:outputText value="#{ecConfig.activeConfig.noteTitle3}" />
+					<rich:componentControl for="legalNote3Process" attachTo="legal-note3"
+						operation="show" event="onclick" />
+				</aon:outputLink>
+		
+			</aon:div>
+		</aon:form>
+		
+		<rich:modalPanel id="legalNote1Process" height="490" width="570"
+			zindex="2000" style="top: 0px; left:0px;">
+			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
+        	<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{ecConfig.activeConfig.noteTitle1}" />
+				</aon:div>
+			</f:facet>
+			<aon:div styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+					<aon:div id="legalNote1" styleClass="extra-info">
+						<aon:outputText value="#{ecConfig.activeConfig.legalNote1}" />
+					</aon:div>
+					<aon:div styleClass="aon-text-center">
+						<aon:outputLink id="legalNote1-hidelink" value="#">
+							<aon:outputText value="[#{bundle.aon_close}]" style="color:black;"/>	
+						</aon:outputLink>
+						<rich:componentControl for="legalNote1Process" attachTo="legalNote1-hidelink" operation="hide" event="onclick"/>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</rich:modalPanel>
+		<rich:modalPanel id="legalNote2Process" height="490" width="570"
+			zindex="2000" style="top: 0px; left:0px;">
+			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
+        	<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{ecConfig.activeConfig.noteTitle2}" />
+				</aon:div>
+			</f:facet>
+			<aon:div styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+					<aon:div id="legalNote2" styleClass="extra-info">
+						<aon:outputText value="#{ecConfig.activeConfig.legalNote2}" />
+					</aon:div>
+					<aon:div styleClass="aon-text-center">
+						<aon:outputLink id="legalNote2-hidelink" value="#">
+							<aon:outputText value="[#{bundle.aon_close}]" style="color:black;"/>	
+						</aon:outputLink>
+						<rich:componentControl for="legalNote2Process" attachTo="legalNote2-hidelink" operation="hide" event="onclick"/>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</rich:modalPanel>
+		<rich:modalPanel id="legalNote3Process" height="490" width="570"
+			zindex="2000" style="top: 0px; left:0px;">
+			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
+        	<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<h:outputText value="#{ecConfig.activeConfig.noteTitle3}" />
+					
+				</aon:div>
+			</f:facet>
+			<aon:div styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+					<aon:div id="legalNote3" styleClass="extra-info">
+						<aon:outputText escape="#{true}"  value="#{ecConfig.activeConfig.legalNote3}" />
+					</aon:div>
+					<aon:div styleClass="aon-text-center">
+						<aon:outputLink id="legalNote3-hidelink" value="#">
+							<aon:outputText value="[#{bundle.aon_close}]" style="color:black;"/>	
+						</aon:outputLink>
+						<rich:componentControl for="legalNote3Process" attachTo="legalNote3-hidelink" operation="hide" event="onclick"/>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</rich:modalPanel>
+	</aon:div>
+</ui:composition>
+
