@@ -345,8 +345,15 @@ public class EndPeriodEntriesController {
 			detail.setConcept(getConcept());
 			Double debit = (Double) data[1];
 			Double credit = (Double) data[2];
-			detail.setDebit(credit);
-			detail.setCredit(debit);
+			double balance = CommonUtil.round(credit - debit);
+			if (balance > 0) {
+				detail.setDebit(balance);
+				detail.setCredit(0);
+			} else {
+				balance = CommonUtil.round(balance * (-1));
+				detail.setCredit(balance);
+				detail.setDebit(0);
+			}
 			detail.setLine(i);
 			entryDetailBean.insert(detail);
 		}

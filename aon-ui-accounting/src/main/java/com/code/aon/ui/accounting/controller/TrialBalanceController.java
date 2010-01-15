@@ -8,13 +8,19 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.Summary;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
@@ -27,6 +33,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TrialBalanceController implements ICollectionProvider {
 
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(TrialBalanceController.class);
+	
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
@@ -34,6 +43,14 @@ public class TrialBalanceController implements ICollectionProvider {
 	private SummaryCollection summaryCollection;
 	private DataModel model;
 	private String backAction;
+	private AccountingUtil accountingUtil;
+	
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
 
 	public String getBackAction() {
 		return backAction;
@@ -60,6 +77,25 @@ public class TrialBalanceController implements ICollectionProvider {
 			p.setAccountExpression(null);
 			p.setLowerLevelVisible(false);
 			p.setNoTouchedAccountVisible(false);
+			boolean excludeClosing = false;
+			if (p.getPeriod() != null) {
+				try {
+					excludeClosing = getAccountingUtil().existsEntry(p.getPeriod(), AccountEntryType.CLOSING, p.getSecurityLevel());
+				} catch (ManagerBeanException e) {
+					LOGGER.warn("No se pudo saber si existe asiento de cierre",e);					
+				}	
+			}
+			p.setExcludeClosingEntry(excludeClosing);
+			boolean excludeOperating = false;
+			if (p.getPeriod() != null) {
+				try {
+					excludeOperating = getAccountingUtil().existsEntry(p.getPeriod(), AccountEntryType.OPERATING, p.getSecurityLevel());
+				} catch (ManagerBeanException e) {
+					LOGGER.warn("No se pudo saber si existe asiento de explotacion",e);					
+				}	
+			}
+			p.setExcludeOperatingEntry(excludeOperating);
+			p.setExcludeBalancedAccounts(false);
 			p.setRowsPerPage(20);
 			p.setAccountLevel(5);
 			setParameters(p);
@@ -202,5 +238,20 @@ public class TrialBalanceController implements ICollectionProvider {
 	@SuppressWarnings("unchecked")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
+	}
+	
+	public boolean isDateValid() {
+		if (getParameters().getPeriod() != null) {
+			return true;
+		}
+		Date from = getParameters().getFromDate();
+		Date to = getParameters().getToDate();
+		if ( from == null || to == null) {
+			return false;
+		}
+		if (to.compareTo(from) < 0 ) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -30,6 +30,16 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu reRender="SearchButton,SearchWarning" ajaxSingle="true"
+						id="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{trialBalance.parameters.period}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Account_id"
 						value="#{accountBundle.account_account}" />
 					<aon:inputText id="Account_id" value="#{trialBalance.parameters.accountExpression}"
@@ -47,42 +57,70 @@
 						value="#{trialBalance.parameters.accountAlias}"
 						size="30" />
 
-					<aon:outputLabel
-						for="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu reRender="SearchButton" ajaxSingle="true"
-						id="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{trialBalance.parameters.period}">
-						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText value="#{bundle.aon_date}" />
-					<aon:panelGrid columns="4">
+					<aon:outputText value="#{bundle.aon_date_select}" />
+					<aon:div>
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-From"
-							styleClass="aon-form-date-label" value="#{bundle.aon_date_from}" />
+							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
+							value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate 
 							id="AccountEntryDetail_accountEntry_entryDate-From"
 							value="#{trialBalance.parameters.fromDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="oninputchange" reRender="SearchButton" ajaxSingle="true" />
-							<a4j:support event="onchanged" reRender="SearchButton" ajaxSingle="true" />
+							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
 						</aon:selectInputDate>
 
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-To"
-							styleClass="aon-form-date-label" value="#{bundle.aon_date_to}" />
+							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
+							value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate 
 							id="AccountEntryDetail_accountEntry_entryDate-To"
 							value="#{trialBalance.parameters.toDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="oninputchange" reRender="SearchButton" ajaxSingle="true" />
-							<a4j:support event="onchanged" reRender="SearchButton" ajaxSingle="true" />
+							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
 						</aon:selectInputDate>
-					</aon:panelGrid>
+					</aon:div>
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu
+						id="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{trialBalance.parameters.securityLevel}">
+						<f:selectItem itemValue="" itemLabel=" " />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+
+<!-- 
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_exclude_opening"
+							value="#{trialBalance.parameters.excludeOpeningEntry}" />
+						<aon:outputLabel for="Account_exclude_opening"
+							value="#{accountingBundle.accounting_exclude_opening_entry}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_exclude_closing"
+							value="#{trialBalance.parameters.excludeClosingEntry}" />
+						<aon:outputLabel for="Account_exclude_closing"
+							value="#{accountingBundle.accounting_exclude_closing_entry}" />
+					</aon:div>
+ -->
+ 
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_zero_sum"
+							value="#{trialBalance.parameters.noTouchedAccountVisible}" />
+						<aon:outputLabel for="Account_zero_sum" 
+							value="#{accountingBundle.accounting_no_touched_account}" />
+					</aon:div>
 
 					<aon:outputLabel for="Account_level"
 						value="#{accountingBundle.accounting_level}" />
@@ -99,32 +137,21 @@
 						</aon:selectOneRadio>
 					</aon:div>
 
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="Account_zero_sum"
-							value="#{trialBalance.parameters.noTouchedAccountVisible}" />
-						<aon:outputLabel for="Account_zero_sum" styleClass="aon-bold"
-							value="#{accountingBundle.accounting_no_touched_account}" />
+					<aon:outputText value="" />
+					<aon:div id="SearchWarning">
+						<aon:outputText value="#{accountingBundle.accounting_statement_warning}"
+							style="color:red;" styleClass="aon-bold" 	
+							rendered="#{!trialBalance.dateValid}"/>
 					</aon:div>
-
-					<aon:outputLabel
-						for="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu
-						id="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{trialBalance.parameters.securityLevel}">
-						<f:selectItem itemValue="" itemLabel=" " />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
-
+					
 					<aon:outputText value="" />
 					<aon:div styleClass="aon-search-commandButton-left">
 						<aon:div styleClass="aon-search-commandButton-right">
-							<aon:commandButton id="SearchButton" 
+							<aon:commandButton id="SearchButton"   
 								value="#{bundle.aon_search}"
 								action="account_statement_account_list"
 								actionListener="#{trialBalance.onSearch}"
-								disabled="#{trialBalance.parameters.period == null and trialBalance.parameters.fromDate == null and trialBalance.parameters.toDate == null}"
+								disabled="#{!trialBalance.dateValid}"
 								reRender="#{searchReRender}"
 								accesskey="#{bundle.aon_key_search}" />
 						</aon:div>

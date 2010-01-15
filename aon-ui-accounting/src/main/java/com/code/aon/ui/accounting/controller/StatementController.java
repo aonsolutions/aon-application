@@ -155,6 +155,19 @@ public class StatementController extends BasicController {
 	}
 
 	private void initializeAmounts() throws ManagerBeanException {
+/*
+	En la parte inicial del listado se indican tres lineas:
+	 1.- Asiento de apertura:
+	 2.- Acumulados desde el asiento de apertura hasta la fecha de inicio del listado. 
+	 3.- Acumulados desde la fecha de inicio hasta la fecha fin del listado.
+	 
+	Lo que sigue a continuación es un detalle del puno 3 (una lista de AccountEntryDetail).
+	
+	Uno de los parámetros params.getPeriod ó params.getFromDate, debe tener valor 
+	valor para buscar el asiento de apertura inmediatamente inferior en fecha.
+	Este valor se almacena en this.openingEntry.
+
+*/	
 		Account account = getAccount();
 		Date from = null;
 		if (params.getFromDate() != null) {
@@ -166,7 +179,7 @@ public class StatementController extends BasicController {
 			if (!DateUtils.isSameDay(getOpeningEntry().getFromDate(), params.getFromDate())) {
 				Date to = DateUtils.addDays(getParams().getFromDate(), -1);
 				setFromOpeningEntry(utils.getPeriodBalance(getOpeningEntry().getFromDate(), to,
-						account.getId(),true,true));
+						account.getId(),true,getParams().isExcludeClosingEntry()));
 				getFromOpeningEntry().addBalance(getOpeningEntry());
 			}
 		} else {
@@ -174,16 +187,16 @@ public class StatementController extends BasicController {
 				if (!DateUtils.isSameDay(from, params.getPeriod().getInitiationDate())) {
 					from = params.getPeriod().getInitiationDate();
 					Date to = DateUtils.addDays(getParams().getFromDate(), -1);
-					setFromOpeningEntry(utils.getPeriodBalance(from, to, account.getId(),true,true));
+					setFromOpeningEntry(utils.getPeriodBalance(from, to, account.getId(),true,getParams().isExcludeClosingEntry()));
 				}
-			} else {
-//				setFromOpeningEntry(utils.getPeriodBalance(from, to, account.getId()));
-			}
+			} 
 		}
 		setPeriodBalance(utils.getPeriodBalance(params.getFromDate(), params.getToDate(), account
-				.getId(),true,true));
+				.getId(),true,getParams().isExcludeClosingEntry()));
 		if (isFromOpeningEntryPresent()) {
 			getPeriodBalance().addBalance(getFromOpeningEntry());
+		} else if (isOpeningEntryPresent()) {
+			getPeriodBalance().addBalance(getOpeningEntry());	
 		}
 	}
 

@@ -79,7 +79,18 @@
 
 					<aon:column styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputText value="&#160;" />
+							<aon:div lyou="none">
+								<aon:commandLink id="selectButton"
+									value="&#160;" style="padding-right: 16px;"
+									styleClass="aon-icon-checkAll aon-vertical-align-top"
+									actionListener="#{periodAmortization.onCheckAll}" 
+									reRender="amortizationDataList"/>
+								<aon:commandLink id="unselectButton"
+									value="&#160;" style="padding-right: 16px;"
+									styleClass="aon-icon-checkNone aon-vertical-align-top"
+									actionListener="#{periodAmortization.onUncheckAll}" 
+									reRender="amortizationDataList"/>
+							</aon:div>
 						</f:facet>
 						<aon:selectBooleanCheckbox value="#{to.checked}" />
 					</aon:column>

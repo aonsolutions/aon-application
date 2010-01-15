@@ -8,10 +8,15 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.Summary;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -20,6 +25,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ProfitAndLossReportController implements ICollectionProvider {
 
+	
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(ProfitAndLossReportController.class);
+	
 	private static final String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
 	private static final String ACCOUNTING_BUNDLE = "accountingBundle";
 	private String accountStatement;	
@@ -34,8 +43,16 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	private List<Summary> grossMarginList= new LinkedList<Summary>();
 	private Double totalSales;
 	private Double totalPurchases;
-
 	private boolean budgeted;
+	
+	private AccountingUtil accountingUtil;
+	
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
 
 	public boolean isBudgeted() {
 		return budgeted;
@@ -86,6 +103,15 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 			}
 			p.setBudgeted(isBudgeted());
 			p.setLowerLevelVisible(false);
+			boolean excludeOperating = false;
+			if (p.getPeriod() != null) {
+				try {
+					excludeOperating = getAccountingUtil().existsEntry(p.getPeriod(), AccountEntryType.OPERATING, p.getSecurityLevel());
+				} catch (ManagerBeanException e) {
+					LOGGER.warn("No se pudo saber si existe asiento de explotacion",e);					
+				}	
+			}
+			p.setExcludeOperatingEntry(excludeOperating);
 			setParameters(p);
 		}
 		return parameters;

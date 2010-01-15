@@ -361,13 +361,17 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		} else {
 			if (taxParam != null) {
 				String value = taxParam.getValue();
-				Integer id = Integer.parseInt(value);
-				IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
-				Tax tax = (Tax) taxBean.get(id);
-				if (tax != null) {
-					taxPercent = tax.getPercentage();
-					surPercent = tax.getSurcharge();
-				} 
+				try {
+					Integer id = Integer.parseInt(value);
+					IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+					Tax tax = (Tax) taxBean.get(id);
+					if (tax != null) {
+						taxPercent = tax.getPercentage();
+						surPercent = tax.getSurcharge();
+					}
+				} catch (NumberFormatException e) {
+					// Valor inválido en parámetros.
+				}
 			}
 		}
 		ApplicationParameter retParam = c.getParameter(DefaultAccounts.DEFAULT_RETENTION_PERCENT);
@@ -377,12 +381,16 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		} else {
 			if (retParam != null) {
 				String value = retParam.getValue();
-				Integer id = Integer.parseInt(value);
-				IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
-				Tax tax = (Tax) taxBean.get(id);
-				if (tax != null) {
-					retPercent = tax.getPercentage();						
-				} 
+				try {
+					Integer id = Integer.parseInt(value);
+					IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+					Tax tax = (Tax) taxBean.get(id);
+					if (tax != null) {
+						retPercent = tax.getPercentage();						
+					} 
+				} catch (NumberFormatException e) {
+					// Valor inválido en parámetros.
+				}
 			}
 		}
 
@@ -1030,6 +1038,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
 		if (isNew()) {
+			invoice.setDefaultTaxInfo(false);
 			invoice = (Invoice) invoiceBean.insert(invoice);
 		} else {
 			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
@@ -1629,7 +1638,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				list = mergeLists(list, acc.getExpensesAccounts() );
 			}
 			if (getHeader().isInvestment()) {
-				list = mergeLists(list, acc.getFixedAssetAccounts() );
+				list = mergeLists(list, acc.getFixedAssetAccountsExtended() );
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error related accounts", e);

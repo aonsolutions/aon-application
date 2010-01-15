@@ -44,13 +44,12 @@
 				
 			</ui:decorate>
 
-			<!--  aon-region-body -->
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
 				<aon:dataTable id="statementList" value="#{trialBalance.model}"
 					rows="#{trialBalance.parameters.rowsPerPage}" var="to"
 					rendered="#{trialBalance.model.rowCount > 0}">
 
-					<aon:column styleClass="#{to.lastLevel?'':'aon-row-auxiliary'}">
+					<aon:column styleClass="aon-width-150 #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
 							<aon:outputText value="#{accountBundle.account_account}" />
 						</f:facet>
@@ -67,7 +66,7 @@
 						</h:commandLink>
 					</aon:column>
 
-					<aon:column styleClass="#{to.lastLevel?'':'aon-row-auxiliary'}">
+					<aon:column styleClass="aon-width-auto #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_description}" />
 						</f:facet>
@@ -80,7 +79,7 @@
 					</aon:column>
 
 					<aon:column
-						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
+						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_debit}" />
 						</f:facet>
@@ -97,7 +96,7 @@
 					</aon:column>
 
 					<aon:column
-						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
+						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_credit}" />
 						</f:facet>
@@ -114,7 +113,7 @@
 					</aon:column>
 
 					<aon:column
-						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
+						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_debit_balance}" />
 						</f:facet>
@@ -131,7 +130,7 @@
 					</aon:column>
 
 					<aon:column
-						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
+						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_credit_balance}" />
 						</f:facet>
