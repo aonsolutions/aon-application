@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div id="financeContainer" styleClass="aon-padding-top">
+		<c:if
+			test="#{detailController.model.rowCount > 0 or financeController.model.rowCount > 0}">
+			<aon:div styleClass="aon-padding-top">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText value="#{financeBundle.finance_finances}" />
+					</f:facet>
+	
+					<ui:decorate
+						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+						<ui:param name="dataTableId" value="invoiceFinances" />
+						<ui:param name="controller" value="#{financeController}" />
+						<ui:param name="rows" value="0" />
+						<ui:param name="showNote" value="false" />
+						<ui:param name="showDataScroller" value="false" />
+						<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
+						<ui:param name="skipRemoveButton" value="#{invoiceController.readOnly}" />
+						<ui:param name="skipLineEdition" value="#{!financeController.modelToEditable}" />
+						<ui:param name="saveButtonReRender" value="Invoice_total" />
+	
+						<ui:define name="columns">
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+								<f:facet name="header">
+									<aon:outputLabel for="Finance_dueDate"
+										value="#{financeBundle.finance_finance_date}" />
+								</f:facet>
+								<aon:outputText rendered="#{formList}" value="#{to.dueDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:selectInputDate id="Finance_DueDate" rendered="#{formEdit}"
+									value="#{financeController.to.dueDate}" inputSize="8"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}" />
+								<f:facet name="footer">
+									<aon:selectInputDate id="Finance_DueDate-New"
+										rendered="#{formNew}" value="#{financeController.to.dueDate}"
+										inputSize="8" timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+								<f:facet name="header">
+									<aon:outputLabel for="Finance_PayMethod"
+										value="#{configBundle.config_pay_method}" />
+								</f:facet>
+								<aon:outputText value="#{to.payMethod.name}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu id="Finance_PayMethod"
+									value="#{financeController.to.payMethod}"
+									rendered="#{formEdit}"
+									valueChangeListener="#{financeController.onPayMethodChanged}"
+									reRender="RegistryBank_lookup">
+									<f:selectItems value="#{configCollections.payMethods}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="Finance_PayMethod-New"
+										value="#{financeController.to.payMethod}"
+										rendered="#{formNew}"
+										valueChangeListener="#{financeController.onPayMethodChanged}"
+										reRender="RegistryBank_lookup-New">
+										<f:selectItems value="#{configCollections.payMethods}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+								<f:facet name="header">
+									<aon:div>
+										<aon:outputLabel for="RegistryBank_code"
+											value="#{configBundle.config_bank}" />
+										<aon:outputText value=" - #{configBundle.config_bank_account}" />
+									</aon:div>
+								</f:facet>
+								<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
+								<aon:outputText rendered="#{formList}" value=" #{to.bankAccount}" />
+								<aon:div id="RegistryBank_lookup" styleClass="aon-lookup"
+									rendered="#{formEdit}">
+									<aon:lookupInputText id="RegistryBank_code"
+										property="#{to.bank}" reRender="RegistryBank_lookup"
+										lookup="#{bankLookup}"
+										value="#{financeController.to.bank.code}" size="3"
+										lookupChangeListener="#{financeController.onBankChanged}"
+										maxlength="4">
+										<aon:joinProperty alias="Bank_code"
+											value="#{financeController.to.bank.code}" />
+									</aon:lookupInputText>
+									<aon:lookupButton
+										windowTitle="#{configBundle.config_bank_selection}"
+										selectReRender="RegistryBank_lookup" actionType="search"
+										lookupChangeListener="#{financeController.onBankChanged}"
+										lookup="#{bankLookup}" minHeight="460" minWidth="650"
+										property="#{financeController.to.bank}">
+									</aon:lookupButton>
+									<aon:inputText id="RegistryBank_name"
+										value="#{financeController.to.bank.name}" size="30"
+										disabled="true" />
+									<aon:inputText id="RegistryBank_office"
+										value="#{financeController.to.bankAccount.office}"
+										size="3" maxlength="4">
+										<f:validateLength minimum="4" maximum="4" />
+										<a4j:support event="onchange" reRender="createBankContainer" />
+									</aon:inputText>
+									<aon:inputText id="RegistryBank_control"
+										value="#{financeController.to.bankAccount.control}"
+										size="1" maxlength="2">
+										<f:validateLength minimum="2" maximum="2" />
+										<a4j:support event="onchange" reRender="createBankContainer" />
+									</aon:inputText>
+									<aon:inputText id="RegistryBank_account"
+										value="#{financeController.to.bankAccount.account}"
+										size="8" maxlength="10">
+										<f:validateLength minimum="10" maximum="10" />
+										<a4j:support event="onchange" reRender="createBankContainer" />
+									</aon:inputText>
+									<aon:panelGroup id="createBankContainer">
+										<aon:commandButton id="createBank" value=""
+											reRender="RegistryBank_lookup"
+											rendered="#{financeController.bankCreationEnabled}"
+											ajaxSingle="true"
+											actionListener="#{financeController.onAddRBank}"
+											onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{financeController.to.invoice.registryName}?')) return false;"	
+											styleClass="aon-editDataTable-button aon-lookupButton-new" />
+									</aon:panelGroup>
+									<aon:div style="font-size:0.9em;" styleClass="aon-italic">
+										<aon:selectOneMenu id="Finance_RegistryBank"
+											style="margin-left: 50px;" reRender="RegistryBank_lookup"
+											value="#{financeController.registryBank}"
+											valueChangeListener="#{financeController.onRBankChanged}">
+											<f:selectItem value="#{null}" />
+											<f:selectItems value="#{financeController.banks}" />
+										</aon:selectOneMenu>
+									</aon:div>
+								</aon:div>
+								<f:facet name="footer">
+									<aon:div id="RegistryBank_lookup-New" styleClass="aon-lookup"
+										rendered="#{formNew}">
+										<aon:lookupInputText id="RegistryBank_code-New"
+											property="#{financeController.to.bank}"
+											reRender="RegistryBank_lookup-New" lookup="#{bankLookup}"
+											lookupChangeListener="#{financeController.onBankChanged}"
+											value="#{financeController.to.bank.code}" size="3"
+											maxlength="4">
+											<aon:joinProperty alias="Bank_code"
+												value="#{financeController.to.bank.code}" />
+										</aon:lookupInputText>
+										<aon:lookupButton
+											windowTitle="#{configBundle.config_bank_selection}"
+											selectReRender="RegistryBank_lookup-New"
+											lookupChangeListener="#{financeController.onBankChanged}"
+											actionType="search" lookup="#{bankLookup}" minHeight="460"
+											minWidth="650" property="#{financeController.to.bank}">
+										</aon:lookupButton>
+										<aon:inputText id="RegistryBank_name-New"
+											value="#{financeController.to.bank.name}" size="30"
+											disabled="true" />
+										<aon:inputText id="RegistryBank_office-New"
+											value="#{financeController.to.bankAccount.office}"
+											size="3" maxlength="4">
+											<f:validateLength minimum="4" maximum="4" />
+											<a4j:support event="onchange" reRender="createBankContainer-New" />
+										</aon:inputText>
+										<aon:inputText id="RegistryBank_control-New"
+											value="#{financeController.to.bankAccount.control}" 
+											size="1" maxlength="2">
+											<f:validateLength minimum="2" maximum="2" />
+											<a4j:support event="onchange" reRender="createBankContainer-New" />
+										</aon:inputText>
+										<aon:inputText id="RegistryBank_account-New"
+											value="#{financeController.to.bankAccount.account}" 
+											size="8" maxlength="10">
+											<f:validateLength minimum="10" maximum="10" />
+											<a4j:support event="onchange" reRender="createBankContainer-New" />
+										</aon:inputText>
+										<aon:panelGroup id="createBankContainer-New">
+											<aon:commandButton id="createBank-New" value=""
+												reRender="RegistryBank_lookup-New"
+												rendered="#{financeController.bankCreationEnabled}"
+												ajaxSingle="true"
+												actionListener="#{financeController.onAddRBank}"
+												onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{financeController.to.invoice.registryName}?')) return false;"	
+												styleClass="aon-editDataTable-button aon-lookupButton-new" />
+										</aon:panelGroup>
+										<aon:div style="font-size:0.9em;" styleClass="aon-italic">
+											<aon:selectOneMenu id="Finance_RegistryBank-New"
+												style="margin-left: 50px;"
+												valueChangeListener="#{financeController.onRBankChanged}"
+												value="#{financeController.registryBank}"
+												reRender="RegistryBank_lookup-New">
+												<f:selectItem value="#{null}" />
+												<f:selectItems value="#{financeController.banks}" />
+											</aon:selectOneMenu>
+										</aon:div>
+									</aon:div>
+								</f:facet>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_status}" />
+								</f:facet>
+								<aon:outputText value="#{to.financeStatus}" />
+								<f:facet name="footer">
+									<aon:outputText value="#{financeController.to.financeStatus}" rendered="#{formNew}"/>
+								</f:facet>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+								<f:facet name="header">
+									<aon:outputLabel for="Finance_amount"
+										value="#{bundle.aon_amount}" />
+								</f:facet>
+								<aon:outputText value="#{to.amount}" rendered="#{formList or invoiceController.recorded}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+								<aon:inputText id="Finance_amount" rendered="#{formEdit and !invoiceController.recorded}"
+									size="10" value="#{financeController.to.amount}" />
+								<f:facet name="footer">
+									<aon:div style="text-align:right;">
+										<aon:inputText id="Finance_amount-New" rendered="#{formNew}"
+											size="10" value="#{financeController.to.amount}" />
+										<aon:outputText id="Finance_total" 
+											value="#{invoiceController.toInvoiceFinanceTotal}" rendered="#{!formNew}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+									</aon:div>
+	
+								</f:facet>
+							</aon:column>
+	
+						</ui:define>
+					</ui:decorate>
+				</aon:panel>
+			</aon:div>
+		</c:if>
+	</aon:div>
+</ui:composition>
