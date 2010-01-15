@@ -21,6 +21,10 @@ public interface ICompanyConstants {
 	
 	String COMPANY_IMAGE_INVALID_CHARACTER = "company_image_invalid_character";	
 	
+	String COMPANY_EMAIL_BODY_HEADER = "company_email_body_header";
+	
+	String COMPANY_EMAIL_BODY_FOOTER = "company_email_body_footer";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

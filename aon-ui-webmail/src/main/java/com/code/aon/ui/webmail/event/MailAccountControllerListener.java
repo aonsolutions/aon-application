@@ -1,7 +1,5 @@
 package com.code.aon.ui.webmail.event;
 
-import javax.naming.Name;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -68,7 +66,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	private void updateMailAccount( MailAccount mailAccount ) throws ControllerListenerException {
 		SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_SIGNATURE);
 		try {
-			Name id = mailAccount.getSignature().getId();			
+			String id = mailAccount.getSignature().getId();			
 			Signature signature = (Signature) signatureController.getManagerBean().get( id );
 			if ( signature != null ) {
 				mailAccount.setSignature(signature);

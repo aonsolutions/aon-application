@@ -54,7 +54,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
@@ -67,6 +66,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.util.DiscountExpression;
@@ -975,7 +975,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		invoice.setWithholding(getHeader().isWithholding());
 		invoice.setTaxFree(getHeader().isTaxFree());
 		invoice.setSurcharge(getHeader().isSurcharge());
-		invoice.setDefaultTaxInfo(false);
 		return invoice;
 	}
 
@@ -1215,13 +1214,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setRegistry( supplier.getRegistry());
 					getHeader().setWithholding(supplier.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
-					getHeader().setTaxFree(supplier.isTaxFree());
+					getHeader().setTaxFree(company.isTaxFree());
 				} else if (isExpense()) {
 					Creditor creditor = (Creditor) event.getNewValue();
 					getHeader().setRegistry(creditor.getRegistry());
 					getHeader().setWithholding(creditor.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
-					getHeader().setTaxFree(creditor.isTaxFree());
+					getHeader().setTaxFree(company.isTaxFree());
 				}
 				getHeader().setDocument( getHeader().getRegistry().getDocument());
 				getHeader().setName(getHeader().getRegistry().getFullName());

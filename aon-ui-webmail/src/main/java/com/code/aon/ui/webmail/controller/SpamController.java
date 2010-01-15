@@ -7,27 +7,26 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -40,7 +39,7 @@ import com.code.aon.webmail.enumeration.SpamScoreType;
 
 public class SpamController extends BasicLdap implements WebMailConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SpamController.class);
+	private static final Logger LOGGER = Logger.getLogger(SpamController.class.getName());
 	
 	private static final String AMAVIS_ACCOUNT_OBJECT_CLASS = "amavisAccount";
 
@@ -105,15 +104,15 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 		load();
 	}
 	
-	private Name getUserDN() {
+	private DistinguishedName getUserDN() {
 		AuthPrincipal principal = Utils.getAuthPrincipal();
-		return NameResolver.getUserDN( principal.getDomain(), principal.getShortName() );
+		return AonDN.getUserDN( principal.getDomain(), principal.getShortName() );
 	}
 	
 	public void updateSpamEnabled( MailAccount mailAccount ) {
 		this.spamEnabled = false;
 		if ( mailAccount.isDefault() ) {
-			Name userDN = getUserDN();
+			DistinguishedName userDN = getUserDN();
 			this.spamEnabled = exists(userDN, AMAVIS_ACCOUNT_OBJECT_CLASS);
 		}
 	}
@@ -122,13 +121,24 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 		return this.spamEnabled;
 	}
 	
-	private Entry getSpamEntry( Name dn ) {
-		return get(dn, AMAVIS_ACCOUNT_OBJECT_CLASS, WHITE_LIST, BLACK_LIST, SUBJECT_TAG, SPAM_LEVEL );
+	private Entry getSpamEntry( DistinguishedName dn ) {
+		Entry entry = null;
+		try {
+			LdapSession session = getLdapSession();
+			String filter = LdapSession.getObjectClass(AMAVIS_ACCOUNT_OBJECT_CLASS);
+			entry = session.get(dn.toString(), filter, WHITE_LIST, BLACK_LIST, SUBJECT_TAG, SPAM_LEVEL );
+		} catch ( LdapException e ) {
+			AonUtil.addErrorMessage( "Error getting spam information" );
+			throw new AbortProcessingException( e.getMessage(), e );
+		} finally {
+			closeSession();
+		}		
+		return entry;
 	}
 	
 	private void load(){
 		addContactsToWhite = false;
-		Name userDN = getUserDN();
+		DistinguishedName userDN = getUserDN();
 		Entry entry = getSpamEntry( userDN );
 		if ( entry != null ) {
 			if ( entry.containsKey(SUBJECT_TAG) ) {
@@ -171,7 +181,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 	}
 	
 	private void save() {
-		Name userDN = getUserDN();		
+		DistinguishedName userDN = getUserDN();		
 		Entry entry = getSpamEntry( userDN );
 		if ( entry != null ) {
 			try {
@@ -214,7 +224,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			IManagerBean bean = FormUtil.getController(BEAN_CONTACT).getManagerBean();
 			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			e.printStackTrace();
 		}
 		Iterator iterContacts = contacts.iterator();
 		AonListEmail aonListEmail;
@@ -348,7 +358,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			addEmail(email, LIST_WHITE_TYPE);
 			save();
 		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 
@@ -360,7 +370,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			addEmail(email, LIST_BLACK_TYPE);
 			save();
 		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 

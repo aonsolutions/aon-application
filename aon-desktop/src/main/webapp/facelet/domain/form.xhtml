@@ -28,7 +28,7 @@
 					<c:if test="#{domain.new}" >
 						<aon:div>
 							<aon:inputText id="Domain_commonName" validator="#{domain.domainNameCheck}"
-								size="14" maxlength="#{domain.domainNameMaxLength}" required="true" disabled="#{!domain.new}"
+								size="14" maxlength="11" required="true" disabled="#{!domain.new}"
 								value="#{domain.to.commonName}" />
 							<aon:outputText value="."  styleClass="aon-bold aon-margin-left aon-margin-right" />
 							<aon:inputText id="Domain_suffix" 

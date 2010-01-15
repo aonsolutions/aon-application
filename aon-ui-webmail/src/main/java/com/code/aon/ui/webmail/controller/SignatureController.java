@@ -5,14 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.naming.Name;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -37,7 +36,7 @@ public class SignatureController extends GridController {
 
 	private static final String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SignatureController.class);
+	private static final Logger LOGGER = Logger.getLogger(SignatureController.class.getName());
 
 	private LdapDAO dao;
 	
@@ -64,17 +63,16 @@ public class SignatureController extends GridController {
 	@Override
 	public void accept(ActionEvent event) {		
 		boolean renamed = false;
-		Name oldId = null;
+		String oldId = (String) this.savedToId;
 		try {
-			Name currentId = this.dao.calculateDN(getTo());
+			String currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
 				if ( dao.exists(currentId) ) {
 					addMessageExpression(SIGNATURE_DUPLICATED);
 		            return;
 				}			
 			} else {
-				oldId = (Name) this.savedToId;				
-				if (! oldId.equals(currentId) ) {
+				if (! StringUtils.equals(oldId, currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(SIGNATURE_DUPLICATED);
 						return;
@@ -87,11 +85,11 @@ public class SignatureController extends GridController {
 				}
 			}
 		} catch (ManagerBeanException e) {
-	        LOGGER.error(">>>> accept", e);
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		} catch (DAOException e) {
-			LOGGER.error(">>>> accept", e);
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
@@ -117,7 +115,7 @@ public class SignatureController extends GridController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<MailAccount> getReferences( Name id ) {
+	private List<MailAccount> getReferences( String id ) {
 		List<MailAccount> list = null;
 		try {
 			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
@@ -125,12 +123,12 @@ public class SignatureController extends GridController {
 			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_SIGNATURE_ID), id);
 			list = (List) mailAccountBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-            LOGGER.error(">>>> getReferences", e);
+            LOGGER.severe(">>>> getReferences " + e.getMessage());
 		}		
 		return list;
 	}
 
-	private void updateReferences( Name id, Signature signature ) {
+	private void updateReferences( String id, Signature signature ) {
 		try {
 			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			for( MailAccount mailAccount : getReferences(id) ) {
@@ -138,7 +136,7 @@ public class SignatureController extends GridController {
 				mailAccountBean.update( mailAccount );
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> updateReferences", e);
+            LOGGER.severe(">>>> getReferences " + e.getMessage());
 		}					
 	}
 	

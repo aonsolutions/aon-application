@@ -14,6 +14,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -49,6 +51,8 @@ public class ItemWarehouse implements ITransferObject{
 	
 	@ManyToOne
 	@JoinColumn(name="item",nullable=false)
+    @ForeignKey(name = "FK_ITEM_WAREHOUSE_ITEM")
+    @Index(name = "IDX_ITEM_WAREHOUSE_ITEM")
 	public Item getItem() {
 		return item;
 	}
@@ -58,6 +62,8 @@ public class ItemWarehouse implements ITransferObject{
 	
 	@ManyToOne
 	@JoinColumn( name="warehouse",nullable=false )
+    @ForeignKey(name = "FK_ITEM_WAREHOUSE_WAREHOUSE")
+    @Index(name = "IDX_ITEM_WAREHOUSE_WAREHOUSE")
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}

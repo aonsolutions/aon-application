@@ -5,17 +5,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
-import javax.naming.Name;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -36,13 +36,13 @@ public class MailAccountController extends BasicController implements WebMailCon
 
 	private static final String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(MailAccountController.class);
+	private static final Logger LOGGER = Logger.getLogger(MailAccountController.class.getName());
 	
 	private LdapDAO dao;	
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	private Name accountId;
+	private String accountId;
 	
 	private boolean showMailAccountList;
 	
@@ -70,16 +70,16 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	@Override
 	public void accept(ActionEvent event) {		
+		String oldId = (String) this.savedToId;
 		try {
-			Name currentId = this.dao.calculateDN(getTo());
+			String currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
 				if ( dao.exists(currentId) ) {
 					addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 		            return;
 				}			
 			} else {
-				Name oldId = (Name) this.savedToId;				
-				if (! oldId.equals(currentId) ) {
+				if (! StringUtils.equals(oldId, currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 						return;
@@ -91,11 +91,11 @@ public class MailAccountController extends BasicController implements WebMailCon
 				}
 			}
 		} catch (ManagerBeanException e) {
-	        LOGGER.error(">>>> accept", e);
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		} catch (DAOException e) {
-			LOGGER.error(">>>> accept", e);
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
@@ -110,7 +110,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 				folderController.getFolder().getFolder().close(false);
 				folderController.setFolder(null);
 			} catch (MessagingException e) {
-				LOGGER.error( e.getMessage(), e);
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}		
 	}
@@ -125,7 +125,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 			try {
 				webmail.init((MailAccount)previous);
 			} catch (MessagingException e1) {
-				LOGGER.error( e.getMessage(), e);
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			AonUtil.addErrorMessage( e.getMessage() );
 		} finally {
@@ -185,11 +185,11 @@ public class MailAccountController extends BasicController implements WebMailCon
 		this.accountId = webmail.getServer().getAccount().getId();
 	}
 	
-	public Name getAccountId() {
+	public String getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(Name accountId) {
+	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
 
@@ -207,13 +207,13 @@ public class MailAccountController extends BasicController implements WebMailCon
 
 	public void onChangeMailAccount( ValueChangeEvent event ) {
 		resetFolderController();
-		Name newAccountId = (Name) event.getNewValue();
+		String newAccountId = (String) event.getNewValue();
 		for( int i = 0; i < this.mailAccounts.size(); i++ ) {
 			if ( ObjectUtils.equals(newAccountId, this.mailAccounts.get(i).getValue()) ) {
 				try {
 					getModel().setRowIndex(i);
 				} catch (ManagerBeanException e) {
-					LOGGER.error( e.getMessage(), e);
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 				break;
 			}
