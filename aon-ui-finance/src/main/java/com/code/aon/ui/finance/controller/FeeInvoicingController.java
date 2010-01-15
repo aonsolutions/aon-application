@@ -94,19 +94,21 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 	}
 
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
-		setParams(new InvoicingParameters());
-		getParams().setNumber(obtainMaxNumber(null));
-		getParams().setSecurityLevel(SecurityLevel.OFFICIAL);
-		getParams().setInvoiceDate(new Date());
-		getParams().setCustomer(new Customer());
-		Item item = new Item();
-		item.setProduct(new Product());
-		getParams().setItem(item);
-		getParams().setInvoiceRecordable(true);
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
-		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
-		invoicingParams.setYear(calendar.get(Calendar.YEAR));
+
+		InvoicingParameters params = new InvoicingParameters();
+		params.setCustomer(new Customer());
+		params.setItem(new Item());
+		params.getItem().setProduct(new Product());
+		params.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
+		params.setYear(calendar.get(Calendar.YEAR));
+		params.setSecurityLevel(SecurityLevel.OFFICIAL);
+		params.setInvoiceNumber(obtainMaxNumber(null));
+		params.setInvoiceDate(new Date());
+		params.setInvoiceRecordable(true);
+		setParams(params);
+
 		setProgressionPanelVisible(false);
 		setProgressionEnabled(false);
 		setProgressionValue(-1L);
@@ -116,9 +118,9 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		recordingInvoice = 0;
 	}
 
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		Series series = (Series) event.getNewValue();
-		getParams().setNumber(obtainMaxNumber(series));
+		getParams().setInvoiceNumber(obtainMaxNumber(series));
 		getParams().setSecurityLevel(obtainSeriesSecurityLevel(series));
 	}
 
