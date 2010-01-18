@@ -25,7 +25,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
-			<value>aon-smb</value>
+			<value>aon-desktop</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
