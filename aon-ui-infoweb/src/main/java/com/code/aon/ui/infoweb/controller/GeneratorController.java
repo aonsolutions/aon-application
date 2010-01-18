@@ -67,6 +67,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorController.class.getName());
 	
+	private static final int MAX_PAGE_COUNT = 8;
+	
 	private static final FileFilter CVS_FILTER = new CVSFilter();
 	
 	private VelocityUtil vu;
@@ -135,7 +137,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private Company getCompany() throws ManagerBeanException {
 		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-		List<ITransferObject> companyList = (List<ITransferObject>)companyBean.getList(null);
+		List<ITransferObject> companyList = companyBean.getList(null);
 		if (! companyList.isEmpty() ) {
 			return (Company)companyList.get(0);
 		}		
@@ -292,7 +294,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 		Criteria wipdCriteria = new Criteria();
 		wipdCriteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
-		List<ITransferObject> wipdList = (List<ITransferObject>)wipdBean.getList(wipdCriteria);
+		List<ITransferObject> wipdList = wipdBean.getList(wipdCriteria);
 		WebInfoPageDetail wipd = new WebInfoPageDetail();
 		if (wipdList.size() > 0) {
 			wipd = (WebInfoPageDetail)wipdList.get(0);
@@ -330,7 +332,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		Criteria wiprCriteria = new Criteria();
 		wiprCriteria.addEqualExpression(wiprBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
 		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DATA);
-		List<ITransferObject> wiprList = (List<ITransferObject>)wiprBean.getList(wiprCriteria);
+		List<ITransferObject> wiprList = wiprBean.getList(wiprCriteria);
 
 		for (int i = 0; i < wiprList.size(); i++) {
 			WebInfoPageResource wipr = (WebInfoPageResource)wiprList.get(i);
@@ -353,7 +355,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		wiprCriteria.addEqualExpression(wiprBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
 		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DESCRIPTION);
 		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DATA);
-		List<ITransferObject> wiprList = (List<ITransferObject>)wiprBean.getList(wiprCriteria);
+		List<ITransferObject> wiprList = wiprBean.getList(wiprCriteria);
 		String previous_link = "";
 		String next_link = "";
 		boolean primera = true;
@@ -466,7 +468,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				Criteria attachCriteria = new Criteria();
 				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), Integer.parseInt(style.getValue()));
-				List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
+				List<ITransferObject> attachList = attachBean.getList(attachCriteria);
 				if (attachList.size() > 0) {
 					RegistryAttachment ra = (RegistryAttachment)attachList.get(0);
 					filename = getImageName(ra);
@@ -540,7 +542,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		Criteria attachCriteria = new Criteria();
 		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
 		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
-		List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
+		List<ITransferObject> attachList = attachBean.getList(attachCriteria);
 		if (attachList.size() > 0) {
 			RegistryAttachment ra = (RegistryAttachment) attachList.get(0);
 			String filename = getImageName(ra, LOGO_KEY);
@@ -562,7 +564,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		IManagerBean webinfoBean = BeanManager.getManagerBean(WebInfo.class);
 		Criteria webinfoCriteria = new Criteria();
 		webinfoCriteria.addEqualExpression(webinfoBean.getFieldName(IWebInfoAlias.WEB_INFO_COMPANY_ID), company.getId());
-		List<ITransferObject> webinfoList = (List<ITransferObject>)webinfoBean.getList(webinfoCriteria);
+		List<ITransferObject> webinfoList = webinfoBean.getList(webinfoCriteria);
 		if (webinfoList.size() > 0) {
 			WebInfo wi = (WebInfo)webinfoList.get(0);
 			String description = wi.getCommercialDescription();
@@ -587,7 +589,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		Criteria attachCriteria = new Criteria();
 		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
 		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
-		List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
+		List<ITransferObject> attachList = attachBean.getList(attachCriteria);
 		for (int i=0; i<attachList.size(); i++) {
 			RegistryAttachment ra = (RegistryAttachment)attachList.get(i);
 			if ( (ra.getData() != null) && (!StringUtils.isEmpty(ra.getDescription())) ) {
@@ -664,7 +666,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		//Parseamos los estilos
 		LOGGER.info( "Writting the css" );
 		IManagerBean wisBean = BeanManager.getManagerBean(WebInfoStyle.class);
-		List<ITransferObject> wisList = (List<ITransferObject>)wisBean.getList(null);
+		List<ITransferObject> wisList = wisBean.getList(null);
 		for (int i=0;i < wisList.size();i++) {
 			WebInfoStyle wis = (WebInfoStyle)wisList.get(i);
 			String name = wis.getVariable(); 
@@ -690,7 +692,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 		IManagerBean wipBean = BeanManager.getManagerBean(WebInfoPage.class);
 		Criteria wipCriteria = new Criteria();
 		wipCriteria.addEqualExpression(wipBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
-		List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria, 0, 8);
+		wipCriteria.addOrder(wipBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION));
+		List<ITransferObject> wipList = wipBean.getList(wipCriteria, 0, MAX_PAGE_COUNT);
 		for (int i=0;i < wipList.size();i++) {
 			WebInfoPage wip = (WebInfoPage)wipList.get(i);
 			switch (wip.getType()) {
@@ -735,7 +738,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		Criteria wimCriteria = new Criteria();
 		wimCriteria.addEqualExpression(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
 		wimCriteria.addOrder(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION));
-		List<ITransferObject> wimList = (List<ITransferObject>)wimBean.getList(wimCriteria);
+		List<ITransferObject> wimList = wimBean.getList(wimCriteria, 0, MAX_PAGE_COUNT);
 		for (int i=0;i < wimList.size();i++) {
 			WebInfoPage wip = (WebInfoPage)wimList.get(i);
 			int id = wip.getId();
