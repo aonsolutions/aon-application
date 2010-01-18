@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns="http://www.esferalia.com/finance" targetNamespace="http://www.esferalia.com/finance"
+		elementFormDefault="qualified">
+	<xs:element name="config">	
+		<xs:complexType>
+		    <xs:sequence>
+		      <xs:element ref="finance" />
+		    </xs:sequence>		
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="finance">
+		<xs:complexType>
+			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

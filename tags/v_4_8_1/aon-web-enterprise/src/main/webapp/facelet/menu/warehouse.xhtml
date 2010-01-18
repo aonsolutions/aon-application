@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="warehouseMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-portlets-column,aon-portlets-column">
+	
+					<aon:panel headerClass="aon-panel-title">
+						<f:facet name="header">
+							<aon:outputText value="#{warehouseBundle.warehouse_menu_group}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="inventory_remake" 
+									action="inventoryClose" actionListener="#{inventory.onStartClosing}"
+									value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="stock" 
+									action="stock_search" actionListener="#{stock.onEditSearch}"
+									value="#{warehouseBundle.warehouse_stock_module}" />
+							</aon:div>
+						</aon:div>
+					</aon:panel>
+
+					<aon:panel headerClass="aon-panel-title">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_reports}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink disabled="true" 
+									value="#{warehouseBundle.warehouse_item_rotation_module}" />
+							</aon:div>
+						</aon:div>
+						
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<h:commandLink value="#{warehouseBundle.warehouse_order_proposal_module}"
+									target="_blank" 
+									action="#{report.onExecute}"
+									styleClass="aon-icon-pdf"
+									style="padding-left: 18px;">
+									<f:param name="reportKey" value="orderProposal" />
+								</h:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panel>
+					
+				</aon:panelGrid>
+				
+			</aon:div>
+				
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="userList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
+				<ui:param name="controller" value="#{user}" />
+				<ui:param name="skipResetButton" value="#{!currentDomain.userManagement}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
+						action="work_group" actionListener="#{workGroup.onSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-group"/>
+					<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
+						action="scope" actionListener="#{scope.onSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-ambito"/>
+				</ui:define>				
+			</ui:decorate>		
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="userDataList" value="#{user.model}"
+					var="to" rows="20" rendered="#{user.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="user_form" actionListener="#{user.onSelect}"/>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{configBundle.config_user_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{configBundle.config_user_login}" />
+						</f:facet>
+						<aon:outputText value="#{to.login}"/>
+					</aon:column>
+ 
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="userDataList" showNote="true" />
+
+			</aon:div>
+ 
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
