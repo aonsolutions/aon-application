@@ -13,7 +13,7 @@
 	<artifactId>aon.web.commercial</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMERCIAL</name>
-	<version>1.9.3</version>
+	<version>1.9.4</version>
 	<description>AON WEB COMMERCIAL</description>
 	<properties>
 		<dbVersion>4.8.1</dbVersion>
