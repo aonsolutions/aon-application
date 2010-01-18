@@ -34,7 +34,9 @@
 						<aon:inputRichText id="Signature_signature"
 							value="#{signature.to.signature}" 
 							height="400" configuration="tinyMCE"
-							converter="chromeEditorConverter" />							
+							converter="chromeEditorConverter" >
+							<f:param name="theme_advanced_buttons2" value="bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,outdent,indent,charmap,|,formatselect,fontselect,fontsizeselect,|,forecolor,backcolor,|,code"/> 
+						</aon:inputRichText>							
 					</aon:div>							
 							
 				</aon:panelGrid>
