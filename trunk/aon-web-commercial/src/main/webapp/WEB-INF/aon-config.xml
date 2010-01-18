@@ -52,7 +52,10 @@
 			showAccount="false"
 			showAttachment="true"
 			showEcommerceData="false"
-		/>		
+		/>
+ 		<product:productCategory
+ 			showCategoryGroup="false"
+ 		/>
 	</product:config>
 
 	<marketing:config version="1.1" xmlns:marketing="http://www.esferalia.com/marketing">
