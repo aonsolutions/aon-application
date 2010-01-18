@@ -9,12 +9,10 @@
 		rendered="#{!controller.new}" size="15" disabled="true" />
 	<aon:outputText value="--------" rendered="#{controller.new}" />		
 
-	<aon:outputLabel for="Registry_document"
-		value="#{bundle.aon_company_document}" />
-	<aon:inputText id="Registry_document" maxlength="16"
-		value="#{controller.to.registry.document}" size="16">
-		<f:validateLength minimum="1" maximum="16" />
-	</aon:inputText>
+	<aon:outputText for="Registry_type" value="#{bundle.aon_entity}" />
+	<aon:selectOneRadio id="Registry_type" value="#{controller.to.registry.type}">
+		<f:selectItems value="#{registryCollections.registryTypes}" />
+	</aon:selectOneRadio>
 
 	<aon:outputLabel for="Registry_name"
 		value="#{bundle.aon_company_name}" />
@@ -35,6 +33,13 @@
 	<aon:inputText id="Registry_alias" maxlength="32"
 		value="#{controller.to.registry.alias}" size="32">
 		<f:validateLength minimum="1" maximum="32" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Registry_document"
+		value="#{bundle.aon_company_document}" />
+	<aon:inputText id="Registry_document" maxlength="16"
+		value="#{controller.to.registry.document}" size="16">
+		<f:validateLength minimum="1" maximum="16" />
 	</aon:inputText>
 
 </ui:composition>

@@ -30,11 +30,6 @@
 										value="#{customerBundle.customer_module}">
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="customerSegment" 
-										action="customerSegment" actionListener="#{customerSegment.onSearch}"
-										value="#{customerBundle.customer_segment_module}" />
-								</aon:div>
 							</aon:div>
 						</aon:panel>
 
@@ -94,7 +89,7 @@
 										value="#{financeBundle.finance_invoicing_group_module}"
 										action="invoicingGroup_list" />
 								</aon:div>
-								<c:if test="#{company.EInvoice}">
+								<c:if test="#{company.EInvoice and (certificate.certificateCount>0)}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink
 											value="#{financeBundle.finance_invoice_signing_module}"
@@ -127,28 +122,23 @@
 								<aon:commandLink action="sales_accumulate_search" 
 									value="#{statBundle.stat_menu_acumulado}">
 									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onSaleType}"/>
 								</aon:commandLink>
 							</aon:div>
 						
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink action="segment_stats_search" 
-									value="#{statBundle.stat_menu_segment}" >
-									<aon:actionListener method="#{stat.onReset}"/>
-								</aon:commandLink>
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink action="category_stats_search" 
 									value="#{statBundle.stat_menu_category}" >
 									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onSaleType}"/>
 								</aon:commandLink>
 							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink disabled="true" value="Comparativa Periodos" />
-							</aon:div>
+
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink action="summary_stats_search" 
 									value="#{statBundle.stat_menu_summary}"  >
 									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onSaleType}"/>
 								</aon:commandLink>
 							</aon:div>
 							
@@ -156,6 +146,7 @@
 								<aon:commandLink action="abc_stats_search" 
 									value="#{statBundle.stat_abc_customer}" >
 									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onSaleType}"/>
 								</aon:commandLink>
 							</aon:div>
 							
@@ -163,6 +154,7 @@
 								<aon:commandLink action="abc_stats_searchProduct" 
 									value="#{statBundle.stat_abc_product}" >
 									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onSaleType}"/>
 								</aon:commandLink>
 							</aon:div>
 							
@@ -170,6 +162,7 @@
 								<aon:commandLink action="abc_stats_searchCategory" 
 									value="#{statBundle.stat_abc_category}" >
 									<aon:actionListener method="#{stat.onReset}"/>
+									<aon:actionListener method="#{stat.onSaleType}"/>
 								</aon:commandLink>
 							</aon:div>
 						</aon:div>

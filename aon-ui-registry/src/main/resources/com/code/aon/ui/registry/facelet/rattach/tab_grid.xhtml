@@ -7,37 +7,43 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:define name="columns">
-		
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
-				<f:facet name="header">
-					<aon:outputLabel for="RegistryAttach_description" value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}" rendered="#{formList}" />
-				<aon:inputText id="RegistryAttach_description" required="true"
-					value="#{controller.to.description}" maxlength="64"
-					rendered="#{formEdit}" size="40" />
-				<f:facet name="footer">
-					<aon:inputText id="RegistryAttach_description-New" required="true"
-						value="#{controller.to.description}" maxlength="64"
-						rendered="#{formNew}" size="40" />
-				</f:facet>
-			</aon:column>
- 
-			<c:if test="#{!skipCategoryColumn}"> 
-				<aon:column>
+	<ui:decorate template="/com/code/aon/faces/attachment/grid.xhtml">
+		<ui:define name="additionalColumns" >
+			<c:if test="#{!skipScopeColumn}"> 
+				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputLabel for="RegistryAttach_category" value="#{registryBundle.registry_category}" />
+						<aon:outputLabel for="#{controller.beanName}_scope"
+							value="#{bundle.aon_scope}" />
+					</f:facet>
+					<aon:outputText value="#{to.scope.description}" rendered="#{formList}" />
+					<aon:selectOneMenu id="#{controller.beanName}_scope" rendered="#{formEdit}"
+						value="#{controller.to.scope}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+					<f:facet name="footer">
+						<aon:selectOneMenu id="#{controller.beanName}_scope-New" rendered="#{formNew}"
+							value="#{controller.to.scope}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{configCollections.currentUserScopes}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+			</c:if>
+			<c:if test="#{!skipCategoryColumn}"> 
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputLabel for="#{controller.beanName}_category"
+							value="#{registryBundle.registry_category}" />
 					</f:facet>
 					<aon:outputText value="#{to.category.name}" rendered="#{formList}" />
-					<aon:selectOneMenu id="RegistryAttach_category" rendered="#{formEdit}"
+					<aon:selectOneMenu id="#{controller.beanName}_category" rendered="#{formEdit}"
 						value="#{controller.to.category}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{registryCollections.categories}" />
 					</aon:selectOneMenu>									
 					<f:facet name="footer">
-						<aon:selectOneMenu id="RegistryAttach_category-New" rendered="#{formNew}"
+						<aon:selectOneMenu id="#{controller.beanName}_category-New" rendered="#{formNew}"
 							value="#{controller.to.category}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{registryCollections.categories}" />
@@ -45,59 +51,7 @@
 					</f:facet>
 				</aon:column>
 			</c:if>
-			 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_fileupload_element}" />
-				</f:facet>
-				<aon:div id="attachFile">													
-					<h:commandLink id="download" target="_blank"
-						onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-						rendered="#{formList and (to.data != null)}"
-						actionListener="#{controller.downloadAttachment}"
-						styleClass="aon-icon aon-icon-mail-save"
-						style="line-height:16px;margin-right:0;"
-						title="#{bundle.aon_fileupload_download}">
-						<f:param name="index" value="#{to.id}" />
-						<aon:outputText value="&#160;" />
-					</h:commandLink>					
-					<a4j:region>
-						<aon:fileUpload rendered="#{formEdit}"
-							addControlLabel="#{bundle.aon_fileUpload_add}"
-							stopControlLabel="#{bundle.aon_fileUpload_stop}"
-							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-							fileUploadListener="#{controller.fileUploaded}"
-							listHeight="0px" immediateUpload="true" autoclear="true">
-							<f:facet name="label">
-								<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-							</f:facet>														
-							<a4j:support event="onuploadcomplete"
-								reRender="attachFile,RegistryAttach_description" />
-						</aon:fileUpload>
-					</a4j:region>	
-				</aon:div>
-				<f:facet name="footer">
-					<aon:div id="attachFileNew">
-						<a4j:region>
-							<aon:fileUpload rendered="#{formNew}"
-								addControlLabel="#{bundle.aon_fileUpload_add}"
-								stopControlLabel="#{bundle.aon_fileUpload_stop}"
-								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-								fileUploadListener="#{controller.fileUploaded}"
-								listHeight="0px" immediateUpload="true" autoclear="true">
-								<f:facet name="label">
-									<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-								</f:facet>																										
-								<a4j:support event="onuploadcomplete"
-									reRender="attachFileNew,RegistryAttach_description-New" />
-							</aon:fileUpload>
-						</a4j:region>
-					</aon:div>
-				</f:facet>														
-			</aon:column>
-		
 		</ui:define>
 	</ui:decorate>
+
 </ui:composition>

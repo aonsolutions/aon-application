@@ -5,7 +5,7 @@ import java.util.Date;
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.finance.enumeration.InvoiceTransactionType;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.Registry;
 
