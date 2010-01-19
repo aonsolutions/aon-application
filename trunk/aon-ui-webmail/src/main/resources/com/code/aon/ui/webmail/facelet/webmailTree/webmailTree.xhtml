@@ -12,11 +12,11 @@
 <ui:composition>
 
 	<aon:div>
-		 
+  
 		<aon:div styleClass="aon-toolbar"  id="buttonsGrid" 
-			rendered="#{webmailTree.treeLoaded}" style="padding-bottom:0;">					
+			rendered="#{webmailTree.treeLoaded}" style="padding-bottom:0;">
 							
-			<aon:commandButton
+			<aon:commandButton value="&#160;"
 				id="newFolder" reRender="createSubFolderGrid"
 				title="#{webmailBundle.webmail_newfolder}"
 				styleClass="aon-icon-commandButton aon-icon-newFolder"
@@ -26,7 +26,7 @@
 				<f:setPropertyActionListener value="#{null}" target="#{webmailFolder.newFolderName}" />
 			</aon:commandButton>
 				
-			<aon:commandButton
+			<aon:commandButton value="&#160;"
 				id="deleteFolder_n"
 				rendered="#{webmailFolder.folder.deleteable}"
 				title="#{webmailBundle.webmail_delfolder}"
@@ -35,14 +35,14 @@
 				styleClass="aon-icon-commandButton aon-icon-deleteFolder">
 			</aon:commandButton>
 			
-			<aon:commandButton
+			<aon:commandButton value="&#160;"
 				id="deleteFolder_d" disabled="true"
 				rendered="#{!webmailFolder.folder.deleteable}"
 				title="#{webmailBundle.webmail_delfolder}"
 				styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
 			</aon:commandButton>
 		
-			<aon:commandButton
+			<aon:commandButton value="&#160;"
 				id="renameFolder_n" reRender="aonStatus"
 				rendered="#{webmailFolder.folder.renameable}"
 				title="#{webmailBundle.webmail_renamefolder}"
@@ -51,7 +51,7 @@
 				<rich:componentControl for="renameFolderModalPanel" operation="show" event="onclick"/>
 			</aon:commandButton>
 			
-			<aon:commandButton
+			<aon:commandButton value="&#160;"
 				id="renameFolder_d" disabled="true"
 				rendered="#{!webmailFolder.folder.renameable}"
 				title="#{webmailBundle.webmail_renamefolder}"					
