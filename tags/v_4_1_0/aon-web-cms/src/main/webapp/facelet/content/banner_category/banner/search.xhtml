@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.banner}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
+
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="banner_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{banner.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="banner_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{banner.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="banner_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{banner.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="Banner_alias"
+						value="#{appBundle.banner_alias}" />
+					<aon:inputText id="Banner_alias" size="50"
+						valueChangeListener="#{banner.addExpression}" />
+
+					<aon:outputLabel for="Banner_label"
+						value="#{appBundle.banner_label}" />
+					<aon:inputText id="Banner_label" size="50"
+						value="#{banner.label}" />
+
+					<aon:outputLabel for="Banner_url"
+						value="#{appBundle.banner_url}" />
+					<aon:inputText id="Banner_url" size="50"
+						value="#{banner.url}" />
+
+					<aon:outputLabel for="Banner_bannerCategory_id"
+						value="#{appBundle.banner_category}"/>
+					<aon:selectOneMenu id="Banner_bannerCategory_id"  
+						valueChangeListener="#{banner.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.bannerGroupList}" />
+					</aon:selectOneMenu>
+	
+					<aon:outputLabel for="Banner_position"
+						value="#{appBundle.banner_position}" />
+					<aon:inputText id="Banner_position" size="10"
+						valueChangeListener="#{banner.addExpression}" />
+	
+				</aon:panelGrid>
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

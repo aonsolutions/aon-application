@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="taskForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarID" value="toolbar" />
+				<ui:param name="toolbarTitle" value="#{projectBundle.aon_task_inbox_module}" />
+				<ui:param name="controller" value="#{task}" />
+				<ui:define name="additionalToolbarContent">
+						<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}" 
+						rendered="#{role.monitorRole}">
+							<a4j:support event="onclick" reRender="toolbar,taskForm" />
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="monitor" value="Monitor" rendered="#{role.monitorRole}"/>
+				</ui:define>
+			</ui:decorate>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+
+				<ui:param name="controller" value="#{task}" />
+
+				<ui:define name="searchContent">
+					<aon:outputLabel for="Task_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Task_description" size="60"
+						value="#{task.description}" />
+					
+					<aon:outputLabel value="#{projectBundle.aon_initial_date}" />
+					<aon:div>
+						<aon:outputLabel for="Task_startDate-From"
+							value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="Task_startDate-From"
+							value="#{task.startDateFrom}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+
+						<aon:outputLabel for="Task_startDate-To"
+							value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="Task_startDate-To"
+							value="#{task.startDateTo}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+					</aon:div>
+					
+					<aon:outputLabel value="#{projectBundle.aon_final_date}" />
+					<aon:div>
+						<aon:outputLabel for="Task_endDate-From"
+							value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="Task_endDate-From"
+							value="#{task.endDateFrom}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+
+						<aon:outputLabel for="Task_endDate-To"
+							value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="Task_endDate-To"
+							value="#{task.endDateTo}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+					</aon:div>
+
+					<aon:outputLabel value="#{projectBundle.aon_due_date}" />
+					<aon:div>
+						<aon:outputLabel for="Task_dueDate-From"
+							value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="Task_dueDate-From"
+							value="#{task.dueDateFrom}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+
+						<aon:outputLabel for="Task_dueDate-To"
+							value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="Task_dueDate-To"
+							value="#{task.dueDateTo}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+					</aon:div>
+
+					<aon:outputLabel for="Task_workgroup"
+						value="#{projectBundle.aon_work_group}" rendered="#{task.monitor}" />
+					<aon:selectOneMenu id="Task_workgroup" value="#{task.workgroup}"
+						valueChangeListener="#{task.workGroupChange}"
+						reRender="Task_user" rendered="#{task.monitor}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.workgroups}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Task_user"
+						value="#{projectBundle.task_assigned}" rendered="#{task.monitor}" />
+					<aon:selectOneMenu id="Task_user" value="#{task.user}"
+						rendered="#{task.monitor}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{task.users}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="#{bundle.aon_status}"/>
+					<aon:div>
+						<aon:selectBooleanCheckbox id="st0" value="#{task.statusPending}" />
+						<aon:outputLabel for="st0"
+							value="#{projectBundle.task_status_pending}" />
+						<aon:selectBooleanCheckbox id="st1" value="#{task.statusInProgress}" />
+						<aon:outputLabel for="st1"
+							value="#{projectBundle.task_status_in_progress}" />
+						<aon:selectBooleanCheckbox id="st2" value="#{task.statusFinished}" />
+						<aon:outputLabel for="st2"
+							value="#{projectBundle.task_status_finished}" />
+						<h:selectBooleanCheckbox id="st3" value="#{task.statusDeleted}" />
+						<aon:outputLabel for="st3"
+							value="#{projectBundle.task_status_deleted}" />
+					</aon:div>
+
+					<aon:outputLabel for="Task_dossier"
+						value="#{projectBundle.dossier_dossier}" />
+					<aon:selectOneMenu id="Task_dossier" value="#{task.dossier}"
+						valueChangeListener="#{task.dossierSearchChange}"
+						ajaxSingle="true" reRender="customerIdContainer,Task_activity,Task_dossier">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{task.availableSearchDossiers}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Customer_id"
+						value="#{customerBundle.customer_customer}" />
+					<aon:div id="customerIdContainer" styleClass="aon-lookup">
+						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+							reRender="Customer_full_name,Task_activity,Task_dossier"
+							lookupChangeListener="#{task.customerChanged}" 
+							value="#{task.customer.id}" size="5" />
+						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+							property="#{task.customer}"
+							selectReRender="Customer_id,Customer_full_name,Task_activity,Task_dossier" 
+							actionType="search"
+							lookupChangeListener="#{task.customerChanged}"
+							lookup="#{customerLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText id="Customer_full_name"
+							value="#{(task.customer.registry.name!=null)?(task.customer.registry.fullName):('')}"
+							size="50" disabled="true" />
+					</aon:div>
+ 
+					<aon:outputLabel for="Task_activity"
+						value="#{projectBundle.activity_activity}" />
+					<aon:selectOneMenu id="Task_activity" value="#{task.activity}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{task.activities}" />
+					</aon:selectOneMenu>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+	</ui:define>
+</ui:composition>

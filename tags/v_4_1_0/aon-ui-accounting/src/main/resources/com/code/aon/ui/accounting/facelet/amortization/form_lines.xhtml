@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:outputText value="#{to.details}" />
+		<aon:editDataTable id="AmortizationDetailsList" var="detail" rows="0"
+			value="#{amortizationDetail.model}">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_date_from}" />
+				</f:facet>
+				<aon:outputText value="#{detail.fromDate}">
+					<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_date_to}" />
+				</f:facet>
+				<aon:outputText value="#{detail.toDate}">
+					<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_percentage}" />
+				</f:facet>
+				<aon:outputText value="#{detail.coefficient}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:outputText value="%" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_allocation}" />
+				</f:facet>
+				<aon:outputText value="#{detail.allocation}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_accumulated}" />
+				</f:facet>
+				<aon:outputText value="#{detail.accumulated}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_pending}" />
+				</f:facet>
+				<aon:outputText value="#{detail.pending}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{detail.status}" />
+			</aon:column>
+
+		</aon:editDataTable>
+</ui:composition>

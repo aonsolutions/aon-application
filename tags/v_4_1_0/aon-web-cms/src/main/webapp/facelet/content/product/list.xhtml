@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="list_form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.product}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" 
+							value="#{bundle.aon_reset}"
+							rendered="#{cms.roleEditor}"
+							action="product_form"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{product.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							action="product_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{product.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="generate"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateProducts}" />
+							<a4j:support 
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
+						</aon:commandButton>	
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+						<aon:commandButton id="product_categories"
+							value="#{appBundle.product_category}"
+							action="product_category_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{productCategory.onSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="brands"
+							value="#{appBundle.brand}"
+							action="brand_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{brand.onSearch}" />
+						</aon:commandButton>
+					</aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+					<aon:dataTable id="dataTable" value="#{product.model}" var="to"
+						styleClass="dr-table rich-table aon-editDataTable"
+						rows="#{product.pageLimit}"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+								
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_alias}" />
+								</f:facet>
+								<aon:outputText value="#{to.alias}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
+
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_label}" />
+								</f:facet>
+								<aon:outputText value="#{product.i18nShortLabel}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
+
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_category}" />
+								</f:facet>
+								<aon:outputText value="#{product.i18nCategory}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
+
+							<aon:column>
+								<a4j:support 
+									action="product_form"
+									actionListener="#{product.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.brand}" />
+								</f:facet>
+								<aon:outputText value="#{product.i18nBrand}"
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.product_active}" />
+								</f:facet>
+								<aon:commandLink title="#{appBundle.product_activate}" 
+									action="product_list"
+									actionListener="#{product.onActivate}" 
+									rendered="#{!to.active}">
+									<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
+										url="/images/cms/inactive.png" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.product_deactivate}" 
+									action="product_list"
+									actionListener="#{product.onDeactivate}" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
+										url="/images/cms/active.png" />
+								</aon:commandLink>
+							</aon:column>
+
+						</aon:dataTable>
+						
+						<aon:dataScroller for="dataTable"
+							rowCount="#{product.model.rowCount}" 
+							page="#{product.page}"
+							showNote="true" />					
+					
+				</aon:div>
+		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
+		
+	</ui:define>
+
+</ui:composition>

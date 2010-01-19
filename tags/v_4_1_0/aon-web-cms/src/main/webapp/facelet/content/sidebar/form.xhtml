@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="mainForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.sidebar}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{sidebar.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							reRender="mainForm"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{sidebar.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{sidebar.to!=null or sidebar.new}"
+							reRender="mainForm"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{sidebar.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!sidebar.new and !sidebar.to.default_}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{sidebar.onRemove}"
+							confirmAction="sidebar_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="sidebar_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{sidebar.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true">
+	
+					<aon:outputLabel for="sidebar_alias" style="width:100px"
+						value="#{appBundle.sidebar_alias}" />
+					<aon:inputText id="sidebar_alias"
+						required="true" size="32" maxlength="32"
+						value="#{sidebar.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+				</aon:panelGrid>
+			</aon:div>
+		
+			<rich:panel id="detail_panel" rendered="#{!sidebar.new}">
+			
+					<rich:panel id="detail_list_panel" rendered="#{sidebar_option.to == null}">
+					
+						<f:facet name="header">#{appBundle.sidebar_option} - #{appBundle.aon_listing}</f:facet>
+				
+						<aon:div styleClass="aon-finding-title-toolbar">
+							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
+								columnClasses="aon-finding-toolbar">				
+							
+								<!-- start toolbar navigation -->
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+										reRender="detail_panel" 
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{sidebar_option.onReset}" />
+									</aon:commandButton>
+							    </aon:div>
+								
+								<!-- end toolbar navigation -->
+							</aon:panelGrid>
+						</aon:div>
+						
+						<aon:dataTable id="dataTable" value="#{sidebar_option.model}" var="to"
+							rows="#{sidebar_option.pageLimit}"
+							styleClass="dr-table rich-table aon-editDataTable"
+							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+							footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+							rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+							cellpadding="0" cellspacing="0"
+							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+									dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+									dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+									
+							<aon:column>
+								<a4j:support 
+									reRender="detail_panel"
+									actionListener="#{sidebar_option.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.sidebar_option_alias}"/>
+								</f:facet>
+								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.sidebar_option_active}" />
+								</f:facet>
+								<aon:commandLink title="#{appBundle.sidebar_option_activate}" action="sidebar_form"
+									actionListener="#{sidebar_option.onActivate}"
+									reRender="dataTable" 
+									rendered="#{!to.active}">
+									<aon:graphicImage id="SidebarOption_active" alt="#{appBundle.sidebar_option_activate}"
+										url="/images/cms/inactive.png" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.sidebar_option_deactivate}" action="sidebar_form"
+									actionListener="#{sidebar_option.onDeactivate}" 
+									reRender="dataTable" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="SidebarOption_deactive" alt="#{appBundle.sidebar_option_deactivate}"
+										url="/images/cms/active.png" />
+								</aon:commandLink>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="MenuOption_position" value="#{appBundle.sidebar_option_position}" />
+								</f:facet>
+								<aon:graphicImage rendered="#{to.position == 0}"
+									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
+								<aon:commandButton id="moveUp" 
+									reRender="dataTable"
+									actionListener="#{sidebar_option.onMoveUp}" 
+									rendered="#{to.position != 0 and sidebar_option.to==null}"
+									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
+								<aon:commandButton id="moveDown"
+									reRender="dataTable" 
+									actionListener="#{sidebar_option.onMoveDown}"
+									rendered="#{to.position &lt; (sidebar_option.model.rowCount - 1)  and sidebar_option.to==null}"
+									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
+							</aon:column>
+
+						</aon:dataTable>
+							
+						<aon:dataScroller for="dataTable"
+							rowCount="#{sidebar_option.model.rowCount}" 
+							showNote="true" />					
+							
+					</rich:panel>
+					
+					<rich:panel id="detail_edit_panel" rendered="#{sidebar_option.new or sidebar_option.to != null}">
+					
+        				<f:facet name="header">#{appBundle.sidebar_option} - #{sidebar_option.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+        				
+						<aon:div styleClass="aon-finding-title-toolbar">
+							<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
+								columnClasses="aon-finding-toolbar">				
+							
+								<!-- start toolbar navigation -->
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+										reRender="detail_panel" 
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{sidebar_option.onReset}" />
+									</aon:commandButton>
+									<aon:commandButton id="save_list_form"
+										value="#{bundle.aon_save}" 
+										rendered="#{sidebar_option.to!=null or sidebar_option.new}"
+										reRender="detail_panel"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										accesskey="#{bundle.aon_key_save}">
+										<aon:actionListener method="#{sidebar_option.accept}" />
+									</aon:commandButton>
+									<aon:commandButton id="cancel_list_form"
+										value="#{bundle.aon_cancel}" 
+										rendered="#{sidebar_option.to!=null or sidebar_option.new}" immediate="#{true}"
+										reRender="detail_panel"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										accesskey="#{bundle.aon_key_cancel}">
+										<aon:actionListener method="#{sidebar_option.onCancel}" />
+									</aon:commandButton>
+									<aon:confirmButton id="remove_list_form"
+										value="#{bundle.aon_remove}" rendered="#{!sidebar_option.new}" 
+										immediate="true"
+										confirmTitle="Confirmation Dialog" 
+										confirmMessage="#{bundle.aon_remove_confirm}"
+										confirmActionListener="#{sidebar_option.onRemove}" 
+										confirmAction="sidebar_form"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										accesskey="#{bundle.aon_key_remove}"/>
+							    </aon:div>
+								
+								<!-- end toolbar navigation -->
+							</aon:panelGrid>
+						</aon:div>
+			
+						<aon:div styleClass="aon-scroll-area">
+							<aon:panelGrid id="sidebarOptionGrid" columns="2" dir="true">
+
+								<aon:outputText for="Alias" 
+									value="#{appBundle.sidebar_option_alias}" />
+								<aon:inputText id="Alias"
+									value="#{sidebar_option.to.alias}" 
+									required="true"
+									size="40" maxlength="64">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
+									
+								<aon:outputText for="Label" 
+									value="#{appBundle.sidebar_option_label}" />
+								<aon:inputText id="Label"
+									value="#{sidebar_option.toI18n.label}" 
+									required="true"
+									size="50" maxlength="64" />
+	
+								<aon:outputText for="Type" 
+									value="#{appBundle.sidebar_option_type}" />
+								<aon:selectOneMenu  
+									id="Type"
+									value="#{sidebar_option.to.type}" 
+									required="true">
+									<f:selectItems value="#{collections.sidebarTypes}" />
+									<a4j:support 
+										event="onchange"  
+										reRender="sidebarOptionGrid" />
+								</aon:selectOneMenu> 
+	
+								<aon:outputText for="Ident"
+										value="#{appBundle.sidebar_option_ident}" 
+										rendered="#{sidebar_option.visibleIdent}" />
+								<aon:div id="selectOneMenu_edit"
+									rendered="#{sidebar_option.visibleIdent}">
+									<aon:selectOneMenu id="Ident"
+										value="#{sidebar_option.to.ident}">
+										<f:selectItems value="#{sidebar_option.idents}" />
+									</aon:selectOneMenu>
+								</aon:div> 
+	
+								<aon:outputText for="Side"
+									value="#{appBundle.sidebar_option_side}" />
+								<aon:selectOneMenu id="Side"
+									value="#{sidebar_option.to.side}" >
+									<f:selectItems value="#{collections.sidebarSides}" />
+								</aon:selectOneMenu> 
+				
+							</aon:panelGrid>
+						</aon:div>
+					</rich:panel>
+
+			</rich:panel>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,386 @@
+package com.code.aon.ebackoffice;
+
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
+
+import com.code.aon.common.ITransferObject;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.Tariff;
+import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.ebackoffice.enumeration.LoginType;
+import com.code.aon.ebackoffice.enumeration.ShowPrice;
+import com.code.aon.ebackoffice.enumeration.DiscountFormat;
+import com.code.aon.ebackoffice.enumeration.SkinType;
+import com.code.aon.ebackoffice.enumeration.TaxType;
+import com.code.aon.ebackoffice.enumeration.WishList;
+
+
+/**
+ * Transfer Object that represents a eCommerce Target.
+ * 
+ * @author Esferalia Networks. EKAIN - 3/09/2009
+ */
+@Entity
+@Table(name="ec_config")
+public class Ecconfig implements ITransferObject {
+	
+	
+	private Integer id;	
+	private boolean active;
+	private String name;
+	private SkinType skin;	
+	private byte[] headerImg;
+	private byte[] leftBanner;
+	private byte[] welcomeBanner;
+	private byte[] rightBanner;
+	private boolean commerce;
+	private boolean ecommerceStatus;
+	private LoginType showLogin;
+	private ShowPrice price;
+	private TaxType taxInPrice;
+	private DiscountFormat discount;
+	private PayMethod bankTransfer;
+	private PayMethod cashOnDelivery;
+	private PayMethod visa;
+	private PayMethod paypal;
+	private PayMethod bankDraft;
+	private String series;
+	private String legalNote1;
+	private String legalNote2;
+	private String legalNote3;
+	private String noteTitle1;
+	private String noteTitle2;
+	private String noteTitle3;	
+	private Tariff tariff;
+	private String headerColor;
+	private Integer rowItems;
+	private double shippingCosts;
+	private double freeShipping;
+	private String telephone;
+	
+	
+	@Id
+	@GeneratedValue
+	@Column(nullable=false)
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
+	@Column(length = 64)
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	@Column(name = "skin", length = 1)
+	public SkinType getSkin() {
+		return skin;
+	}
+	public void setSkin(SkinType skin) {
+		this.skin = skin;
+	}
+	
+	@Lob
+	@Column(name = "header_img")
+	public byte[] getHeaderImg() {
+		return headerImg;
+	}
+	public void setHeaderImg(byte[] headerImg) {
+		this.headerImg = headerImg;
+	}
+		
+	public boolean isCommerce() {
+		return commerce;
+	}
+	public void setCommerce(boolean commerce) {
+		this.commerce = commerce;
+	}
+	
+	@Column(name = "show_login", length = 1)
+	public LoginType getShowLogin() {
+		return showLogin;
+	}
+	public void setShowLogin(LoginType showLogin) {
+		this.showLogin = showLogin;
+	}
+	
+	@Column(name = "price", length = 1)
+	public ShowPrice getPrice() {
+		return price;
+	}
+	public void setPrice(ShowPrice price) {
+		this.price = price;
+	}
+		
+	@Column(name = "tax_in_price", length = 1)
+	public TaxType getTaxInPrice() {
+		return taxInPrice;
+	}
+	
+	public void setTaxInPrice(TaxType taxInPrice) {
+		this.taxInPrice = taxInPrice;
+	}
+	
+	@Column(name = "discount", length = 1)
+	public DiscountFormat getDiscount() {
+		return discount;
+	}
+	public void setDiscount(DiscountFormat discount) {
+		this.discount = discount;
+	}		
+	
+		
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="bank_transfer")
+	@ForeignKey(name = "FK_ECCONFIG_BANK_TRANSFER")
+	@Index(name = "IDX_ECCONFIG_BANK_TRANSFER")
+	public PayMethod getBankTransfer() {
+		return bankTransfer;
+	}
+	public void setBankTransfer(PayMethod bankTransfer) {
+		this.bankTransfer = bankTransfer;
+	}
+
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="cash_on_delivery")
+	@ForeignKey(name = "FK_ECCONFIG_CASH_ON_DELIVERY")
+	@Index(name = "IDX_ECCONFIG_CASH_ON_DELIVERY")
+	public PayMethod getCashOnDelivery() {
+		return cashOnDelivery;
+	}
+	public void setCashOnDelivery(PayMethod cashOnDelivery) {
+		this.cashOnDelivery = cashOnDelivery;
+	}
+	
+	
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="visa")
+	@ForeignKey(name = "FK_ECCONFIG_VISA")
+	@Index(name = "IDX_ECCONFIG_VISA")
+	public PayMethod getVisa() {
+		return visa;
+	}
+	public void setVisa(PayMethod visa) {
+		this.visa = visa;
+	}
+	
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="paypal")
+	@ForeignKey(name = "FK_ECCONFIG_PAYPAL")
+	@Index(name = "IDX_ECCONFIG_PAYPAL")
+	public PayMethod getPaypal() {
+		return paypal;
+	}
+	public void setPaypal(PayMethod paypal) {
+		this.paypal = paypal;
+	}
+	
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="bank_draft")
+	@ForeignKey(name = "FK_ECCONFIG_BANK_DRAFT")
+	@Index(name = "IDX_ECCONFIG_BANK_DRAFT")
+	public PayMethod getBankDraft() {
+		return bankDraft;
+	}
+	public void setBankDraft(PayMethod bankDraft) {
+		this.bankDraft = bankDraft;
+	}
+	
+	@Column(length=5)
+	public String getSeries() {
+		return series;
+	}
+	public void setSeries(String series) {
+		this.series = series;
+	}
+	
+	@Lob
+	@Type(type="stringClob")
+	@Column(name = "legal_note1")
+	public String getLegalNote1() {
+		return legalNote1;
+	}
+	public void setLegalNote1(String legalNote1) {
+		this.legalNote1 = legalNote1;
+	}
+	
+	
+	@Lob
+	@Type(type="stringClob")
+	@Column(name = "legal_note2")
+	public String getLegalNote2() {
+		return legalNote2;
+	}
+	public void setLegalNote2(String legalNote2) {
+		this.legalNote2 = legalNote2;
+	}
+		
+	@Lob
+	@Type(type="stringClob")
+	@Column(name = "legal_note3")
+	public String getLegalNote3() {
+		return legalNote3;
+	}
+	public void setLegalNote3(String legalNote3) {
+		this.legalNote3 = legalNote3;
+	}
+	
+	@Column(name = "title_note1", length = 64)
+	public String getNoteTitle1() {
+		return noteTitle1;
+	}
+	public void setNoteTitle1(String noteTitle1) {
+		this.noteTitle1 = noteTitle1;
+	}
+	
+	@Column(name = "title_note2", length =64)
+	public String getNoteTitle2() {
+		return noteTitle2;
+	}
+	
+	public void setNoteTitle2(String noteTitle2) {
+		this.noteTitle2 = noteTitle2;
+	}
+	
+	@Column(name = "title_note3", length =64)
+	public String getNoteTitle3() {
+		return noteTitle3;
+	}
+	public void setNoteTitle3(String noteTitle3) {
+		this.noteTitle3 = noteTitle3;
+	}
+	
+	
+	
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="tariff")
+	@ForeignKey(name = "FK_ECCONFIG_TARIFF")
+	@Index(name = "IDX_ECCONFIG_TARIFF")
+	public Tariff getTariff() {
+		return tariff;
+	}
+	
+	public void setTariff(Tariff tariff) {
+		this.tariff = tariff;
+	}
+	
+	@Column(name = "header_color", length = 7)
+	public String getHeaderColor() {
+		return headerColor;
+	}
+	
+	public void setHeaderColor(String headerColor) {
+		this.headerColor = headerColor;
+	}
+	
+	@Column(name = "row_items")
+	public Integer getRowItems() {
+		return rowItems;
+	}
+	
+	public void setRowItems(Integer rowItems) {
+		this.rowItems = rowItems;
+	}
+	
+	@Column(length=12)
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+	
+	@Lob
+	@Column(name = "left_banner")
+	public byte[] getLeftBanner() {
+		return leftBanner;
+	}
+	public void setLeftBanner(byte[] leftBanner) {
+		this.leftBanner = leftBanner;
+	}
+	
+	@Lob
+	@Column(name = "welcome_banner")
+	public byte[] getWelcomeBanner() {
+		return welcomeBanner;
+	}
+	public void setWelcomeBanner(byte[] welcomeBanner) {
+		this.welcomeBanner = welcomeBanner;
+	}
+	
+	@Lob
+	@Column(name = "right_banner")
+	public byte[] getRightBanner() {
+		return rightBanner;
+	}
+	public void setRightBanner(byte[] rightBanner) {
+		this.rightBanner = rightBanner;
+	}
+	
+	@Column(name = "ecommerce_status")
+	public boolean isEcommerceStatus() {
+		return ecommerceStatus;
+	}
+	public void setEcommerceStatus(boolean ecommerceStatus) {
+		this.ecommerceStatus = ecommerceStatus;
+	}
+	
+	@Column(name = "shipping_costs")
+	public double getShippingCosts() {
+		return shippingCosts;
+	}
+	public void setShippingCosts(double shippingCosts) {
+		this.shippingCosts = shippingCosts;
+	}
+	
+	@Column(name = "free_shipping")
+	public double getFreeShipping() {
+		return freeShipping;
+	}
+	public void setFreeShipping(double freeShipping) {
+		this.freeShipping = freeShipping;
+	}
+	
+	
+	
+	
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	

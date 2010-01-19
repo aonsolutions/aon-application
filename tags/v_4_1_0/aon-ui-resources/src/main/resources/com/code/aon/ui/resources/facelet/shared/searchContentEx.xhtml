@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div styleClass="aon-scroll-area">
+		
+		<aon:div styleClass="aon-panelGrid-search">
+			<aon:div styleClass="aon-panelGrid-search-info">
+				<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+			</aon:div>			
+			
+			<aon:panelGrid id="#{searchContentID}" columns="2">
+				<ui:insert name="searchContent" />
+				<c:if test="#{!skipSearchButton}">
+					<aon:outputText value="" />
+					<aon:div >
+						<aon:commandButton id="#{searchButtonId}"
+							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+							action="#{searchAction}" actionListener="#{searchActionListener}"
+							reRender="#{searchReRender}" oncomplete="#{searchOnComplete}"
+							requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+							<c:if test="#{!disableSearchHotKey}" >
+								<aon:actionHotKey key="return" />
+							</c:if>
+						</aon:commandButton> 
+					</aon:div>	
+				</c:if>			
+			</aon:panelGrid>
+			
+			<c:if test="#{!skipFocusFirst}">
+				<rich:jQuery timing="onload"
+					selector="##{searchContentID} :input:visible:enabled:first"
+					query="focus()" />
+			</c:if>					
+			
+		</aon:div>		
+	</aon:div>
+	
+</ui:composition>

@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+
+		<aon:form id="eccatalogueGrid">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:include
+					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle"
+						value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue}" />
+					<ui:param name="controller" value="#{eccatalogue}" />
+					<ui:param name="skipResetButton" value="true" />
+					<ui:param name="skipRemoveButton" value="true" />
+
+				</ui:include>
+
+
+				<aon:div styleClass="aon-scroll-area">
+
+					<aon:editDataTable id="activeCatalogues" var="to" rows="50"
+						style="width:40%" value="#{eccatalogue.model}"
+						columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-dateColumn,aon-editDataTable-iconColumn, aon-editDataTable-buttonsColumn">
+
+						<aon:rowSelector toggleOnClick="#{eccatalogue.to == null}"
+							actionListener="#{eccatalogue.onSelect}" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:commandButton id="Table-select"
+								actionListener="#{eccatalogue.onSelect}"
+								rendered="#{to!=eccatalogue.to}"
+								styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputLabel
+									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_catalogue}" />
+							</f:facet>
+							<aon:outputText value="#{to.catalogue.name}" />
+
+						</aon:column>
+
+						<aon:column >
+							<f:facet name="header">
+								<aon:outputLabel
+									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_dates}" />
+							</f:facet>
+							<aon:outputText value="#{to.catalogue.startDate} / #{to.catalogue.endDate}" />
+							
+							<!--  <c:if test="#{eccatalogue.isOutOfDate}">
+							<h:graphicImage value="/css/icons/alerta.png"  />
+							</c:if>-->
+						</aon:column>
+
+		
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_visible}" />
+							</f:facet>
+							<aon:outputText value="&#160;" style="text-align:center;"
+								styleClass="#{(to.visible)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+								rendered="#{to!=eccatalogue.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==eccatalogue.to}"
+								value="#{eccatalogue.to.visible}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=eccatalogue.to}">&#160;</f:verbatim>
+
+								<aon:commandButton title="[#{bundle.aon_accept}]"
+									rendered="#{to==eccatalogue.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{eccatalogue.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==eccatalogue.to}"
+									actionListener="#{eccatalogue.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+
+							</aon:div>
+
+						</aon:column>
+
+
+
+					</aon:editDataTable>
+
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:form>
+	<aon:menuBar id="mainMenu"> 
+		<c:if test="#{!aonConfiguration.properties.hideMenuBar}">	
+			<aon:dropDownMenu value="#{appBundle.account_masters}">
+				<aon:menuItem value="#{accountingBundle.accounting_entry_module}" actionListener="#{accountEntry.onEditSearch}" action="accountEntry_search"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="account_list" value="#{accountBundle.account_module}"/>
+				<aon:menuItem action="autConcept" value="#{accountingBundle.accounting_aut_concept_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}" />
+				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}" />
+				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}" />
+				<aon:menuSeparator/>
+				<aon:menuItem action="geotreeParent_list" value="#{geozoneBundle.geozone_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="payMethod" value="#{configBundle.config_pay_methods}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="bank_search" value="#{configBundle.config_bank_module}" />
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{loan.onEditSearch}"  action="loan_search" value="#{accountingBundle.accounting_loan_module}" />
+			</aon:dropDownMenu>
+ 
+			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">
+				<aon:menuItem actionListener="#{invoiceEntry.onReset}" action="account_invoice_entry" value="#{accountingBundle.accounting_entry_invoice_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{financeEntry.onReset}" action="account_finance_entry" value="#{accountingBundle.accounting_entry_finance_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{expenseEntry.onReset}" action="account_expense_entry" value="#{accountingBundle.accounting_expense_entry_module}"/>
+				<aon:menuItem actionListener="#{salaryEntry.onReset}" action="account_salary_entry" value="#{accountingBundle.accounting_salary_entry_module}"/>
+				<aon:menuItem actionListener="#{socialInsuranceEntry.onReset}" action="account_social_insurance_entry" value="#{accountingBundle.accounting_social_insurance_entry_module}"/>
+				<aon:menuGroup value="#{accountingBundle.accounting_loan_module}">
+					<aon:menuItem actionListener="#{loanEntry.onReset}" action="account_loan_entry" value="#{accountingBundle.accounting_loan_entry_module}"/>
+					<aon:menuItem actionListener="#{loanFeeEntry.onReset}" action="account_loan_fee_entry" value="#{accountingBundle.accounting_loan_fee_entry_module}" />
+				</aon:menuGroup>
+<!-- 
+				<aon:menuGroup value="#{accountingBundle.accounting_leasing_module}">
+					<aon:menuItem actionListener="#{leasingEntry.onReset}" action="account_leasing_entry" value="#{accountingBundle.accounting_leasing_entry_module}"/>
+					<aon:menuItem actionListener="#{leasingFeeEntry.onReset}" action="account_leasing_fee_entry" value="#{accountingBundle.accounting_leasing_fee_entry_module}"/>
+				</aon:menuGroup>
+ -->
+				<aon:menuSeparator/>
+				<aon:menuGroup value="#{appBundle.account_end_period_entries}">
+					<aon:menuItem action="accountOperatingEntry" actionListener="#{endPeriodEntries.onInit}" value="#{accountingBundle.accounting_operating_entry_module}"/>
+					<aon:menuItem action="accountClosingEntry" actionListener="#{endPeriodEntries.onInit}" value="#{accountingBundle.accounting_closing_entry_module}" />
+					<aon:menuItem action="accountOpeningEntry" actionListener="#{endPeriodEntries.onInit}" value="#{accountingBundle.accounting_opening_entry_module}" />
+				</aon:menuGroup>
+			</aon:dropDownMenu>
+ 
+			<aon:dropDownMenu value="#{appBundle.account_reports}">
+				<aon:menuItem  actionListener="#{trialBalance.onReset}" action="account_statement_search" value="#{accountingBundle.accounting_statement_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{journalReport.onReset}" action="journal_search"	value="#{accountingBundle.accounting_journal_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{trialBalance.onReset}" action="trialBalance_search" value="#{accountingBundle.accounting_trial_balance_module}" />
+				<aon:menuItem actionListener="#{profitAndLossReport.onEditSearch}" action="profit_and_loss_search" value="#{accountingBundle.accounting_profit_and_loss_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="vat_report_search" actionListener="#{vatReport.onReset}" value="#{financeBundle.finance_vat_report_module}"/>
+			</aon:dropDownMenu>
+
+			<aon:dropDownMenu value="#{accountingBundle.accounting_balance}">
+				<aon:menuItem value="#{accountingBundle.accounting_balance_menu_bs}" 
+				    actionListener="#{balanceSheet.onClosingBalance}"						
+					action="balance_sheet_search">
+				</aon:menuItem>
+				<aon:menuItem 
+					value="#{accountingBundle.accounting_balance_menu_pyg}"
+				    actionListener="#{balanceSheet.onOperatingBalance}"						
+					action="balance_sheet_search">
+				</aon:menuItem>
+				<aon:menuItem 
+					value="#{accountingBundle.accounting_balance_menu_patrimony}"
+				    actionListener="#{balanceSheet.onPatrimonyBalance}"						
+					action="balance_sheet_search">
+				</aon:menuItem>
+				<aon:menuItem 
+					value="#{accountingBundle.accounting_balance_menu_custom}"
+					actionListener="#{balanceSheet.onCustomBalance}"				
+					action="balance_sheet_search">
+				</aon:menuItem>
+				<aon:menuSeparator />
+				<aon:menuItem value="#{accountingBundle.accounting_balance_menu}"
+					action="balance_list" />
+
+			</aon:dropDownMenu>
+
+<!-- 
+			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
+				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="amortizationType_list" value="#{accountingBundle.accounting_amortization_type_module}"/>				
+			</aon:dropDownMenu>
+-->
+ 
+			<aon:dropDownMenu value="#{appBundle.account_budget}">
+				<aon:menuItem actionListener="#{accountBudget.onEditSearch}" action="accountBudget_search" value="#{accountingBundle.accounting_account_budget_module}"/>
+				<aon:menuItem actionListener="#{budgetedProfitAndLossReport.onEditSearch}" action="budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_budgeted_balance_sheet_module}"/>
+				<aon:menuItem actionListener="#{budgetedProfitAndLossComparison.onEditSearch}" action="compared_budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}"/>
+			</aon:dropDownMenu>
+
+			<aon:dropDownMenu value="#{financeBundle.finance_menu_group}">
+				<aon:menuItem value="#{financeBundle.finance_charge_module}" actionListener="#{finance.onEditSearchCharge}" action="finance_search" />
+				<aon:menuItem value="#{financeBundle.finance_payment_module}" actionListener="#{finance.onEditSearchPayment}" action="finance_search" />
+				<aon:menuSeparator/>
+				<aon:menuItem action="financialStatement_search" actionListener="#{financialStatement.onReset}" value="#{accountingBundle.accounting_financial_statements}"/>
+			</aon:dropDownMenu>
+
+			<aon:dropDownMenu value="#{appBundle.account_configuration}">
+				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="accPeriod" value="#{accountingBundle.accounting_period_module}"  />
+				<aon:menuItem action="defaultParams" actionListener="#{accAppParams.onLoad}" value="#{accountingBundle.accounting_default_params_module}"/>
+				<aon:menuItem action="series" value="#{configBundle.config_series_module}"/>
+				<aon:menuItem action="tax" value="#{configBundle.config_tax_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuGroup value="#{appBundle.account_utilities}">
+					<aon:menuItem action="accountChange_form" actionListener="#{accountChange.onReset}" value="#{accountingBundle.accounting_change_account}"/>
+					<aon:menuItem action="regenerateAccount" value="#{accountingBundle.accounting_regenerate_account_module}"/>
+					<aon:menuItem action="check_form" actionListener="#{accountCheck.onInitialize}" value="#{accountingBundle.accounting_check_balance_module}"/>
+					<aon:menuSeparator/>
+<!-- 
+					<aon:menuItem action="accountLevelChange" value="#{accountingBundle.accounting_account_level_change_module}"/>
+ -->
+					<aon:menuItem actionListener="#{mbase.onInitialize}" action="mbase_form" value="IMPORTACION DESDE MBASESOR"/>
+				</aon:menuGroup>
+			</aon:dropDownMenu>
+		</c:if>
+	</aon:menuBar>
+	</aon:form>
+	
+</ui:composition>

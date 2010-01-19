@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.sport_player}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
+
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="sport_player_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{sport_player.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="sport_player_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{sport_player.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="sport_player_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{sport_player.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="SportPlayer_name"
+						value="#{appBundle.sport_player_name}" />
+					<aon:inputText id="SportPlayer_name" size="50"
+						valueChangeListener="#{sport_player.addExpression}" />
+	
+					<aon:outputLabel for="SportPlayer_sportClub_id"
+						value="#{appBundle.sport_player_sportClub}"/>
+					<aon:selectOneMenu id="SportPlayer_sportClub_id"  
+						valueChangeListener="#{sport_player.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sportClubList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="SportPlayer_sportPosition_id"
+						value="#{appBundle.sport_player_sportPosition}"/>
+					<aon:selectOneMenu id="SportPlayer_sportPosition_id"  
+						valueChangeListener="#{sport_player.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sportPositionList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="SportPlayer_number"
+						value="#{appBundle.sport_player_number}" />
+					<aon:inputText id="SportPlayer_number" size="50"
+						valueChangeListener="#{sport_player.addExpression}" />
+	
+					<aon:outputLabel for="SportPlayer_active"
+						value="#{appBundle.sport_player_active}"/>
+					<aon:selectBooleanCheckbox id="SportPlayer_active" 
+						value="true"
+						valueChangeListener="#{sport_player.addExpression}" />
+
+					<aon:outputLabel for="SportPlayer_bornPlace" style="width:100px"
+						value="#{appBundle.sport_player_bornPlace}" />
+					<aon:inputText id="SportPlayer_bornPlace"
+						size="30" maxlength="24"
+						valueChangeListener="#{sport_player.addExpression}" />
+
+					<aon:outputLabel for="SportPlayer_sportNationality_id"
+						value="#{appBundle.sport_player_sportNationality}"/>
+					<aon:selectOneMenu id="SportPlayer_sport_nationality_id"  
+						valueChangeListener="#{sport_player.addExpression}" >
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sportNationalityList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="SportPlayer_comunitary"
+						value="#{appBundle.sport_player_comunitary}"/>
+					<aon:selectOneMenu id="SportPlayer_comunitary"  
+						valueChangeListener="#{sport_player.addExpression}" >
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItem itemLabel="Y" itemValue="true" />
+						<f:selectItem itemLabel="N" itemValue="false" />
+					</aon:selectOneMenu>
+
+				</aon:panelGrid>
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

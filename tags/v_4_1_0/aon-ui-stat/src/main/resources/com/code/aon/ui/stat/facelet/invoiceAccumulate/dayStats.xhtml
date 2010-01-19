@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+			<aon:methodParam name="backAction" value="sales_stats_month"/>
+			<aon:methodParam name="backMethod" value="#{stat.onDayBackAction}" type="actionListener" />
+		    <aon:methodParam name="goAction" value="sales_stats_day"/>
+		    <aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
+			<aon:methodParam  name="customerFacelet" value="customer_stat_list_day" />
+				<c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado2}" />
+				</c:if>
+			<ui:decorate
+				template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
+				<ui:param name="statController" value="#{stat}" />
+				<ui:param name="clickable" value="#{false}" />
+				<ui:param name="statModel" value="#{stat.dayStatModel}" />
+				<ui:param name="paramName" value="day" />				
+				<ui:param name="showLastColumn" value="true" />
+				<ui:param name="categoryLabel" value="#{statBundle.stat_day}" />
+				<ui:param name="reportKeyParam" value="dayStatsList" />
+				<ui:param name="reportGraphKeyParam" value="dayStatsGraph" />
+				
+			</ui:decorate>
+			
+	</ui:define>
+</ui:composition>

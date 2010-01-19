@@ -1,0 +1,18 @@
+A|A) Resultado de la cuenta de pérdidas y ganancias||0|false|false|true|false|false
+|||1|false|false|true|false|false
+1|Ingresos y gastos imputados directamente al patrimonio neto|1.I,1.II,1.III,1.IV,1.V|2|true|false|true|false|false
+1.I|I. Por valoración de instrumentos financieros|800,89,900,991,992|3|false|false|true|false|false
+1.II|II. Por coberturas de flujos de efectivo|810,910|4|false|false|true|false|false
+1.III|III. Subvenciones| donaciones y legados recibidos|94|5|false|false|true|false|false
+1.IV|IV. Por ganancias y pérdidas actuariales y otros ajust|85,95|6|false|false|true|false|false
+1.V|V. Efecto impositivo|8300,8301,833,834,835,838|7|false|false|true|false|false
+B|B) Total Ingresos y gastos imputados directamente al patrimonio neto (I+II+III+IV+V)|1.I,1.II,1.III,1.IV,1.V|8|true|true|true|false|false
+|||9|false|false|true|false|false
+2|Transferencias a la cuenta de P Y G|2.VI,2.VII,2.VIII,2.IX|10|true|false|true|false|false
+2.VI|VI. Por valoración de instrumentos financieros|802,902,993,994|11|false|false|true|false|false
+2.VII|VII. Por coberturas de flujos de efectivo|812,912|12|false|false|true|false|false
+2.VIII|VIII. Subvenciones| donaciones y legados recibidos|84|13|false|false|true|false|false
+2.IX|IX. Efecto impositivo|8301,836,837|14|false|false|true|false|false
+C|C) Total transferencias a la cuentad de P Y G (VI+VII+VIII+IX)|2.VI,2.VII,2.VIII,2.IX|15|true|true|true|false|false
+|||16|false|false|true|false|false
+D|TOTAL DE INGRESOS Y GASTOS RECONOCIDOS (A+B+C)|A,B,C|17|true|true|true|false|false
