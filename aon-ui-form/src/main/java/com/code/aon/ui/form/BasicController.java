@@ -295,6 +295,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			accept();
 			if (isNew()) {
 				initializeModel();
+				synchronizeAddedPojo();
 				setNew(false);
 			}
 		} catch (ManagerBeanException e) {
@@ -311,6 +312,23 @@ public class BasicController extends AbstractPojoController implements IControll
 			}
 		}
 
+	}
+
+	/**
+	 * Method that synchronizes current TO with its corresponding asset in the model, so that changes made in current TO will be reflected
+	 * in the model too.
+	 */
+	@SuppressWarnings("unchecked")
+	private void synchronizeAddedPojo() throws ManagerBeanException {
+		if (getModel() instanceof PageDataModel) {
+			List<ITransferObject> list = (List<ITransferObject>)getModel().getWrappedData();
+			for (ITransferObject to : list) {
+				if (to.equals(this.getTo())) {
+					this.to = to;
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -903,18 +921,14 @@ public class BasicController extends AbstractPojoController implements IControll
 			this.orderList = new OrderByList();
 			for (String part : StringUtils.split(value, ',')) {
 				String[] parts = StringUtils.split(part);
-				try {
-					String name = getFieldName(parts[0]);
-					boolean ascending = true;
-					if (parts.length == 2) {
-						ascending = "ASC".equalsIgnoreCase(parts[1]);
-					}
-					IdentExpression identifier = ExpressionUtilities.getIdentifierExpression(name);
-					Order order = new Order(identifier, ascending);
-					this.orderList.addOrder(order);
-				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, "Error resolving alias " + parts[0], e);
+				String name = resolveAlias(parts[0]);
+				boolean ascending = true;
+				if (parts.length == 2) {
+					ascending = "ASC".equalsIgnoreCase(parts[1]);
 				}
+				IdentExpression identifier = ExpressionUtilities.getIdentifierExpression(name);
+				Order order = new Order(identifier, ascending);
+				this.orderList.addOrder(order);
 			}
 			updateOrderList();
 		}
@@ -958,15 +972,13 @@ public class BasicController extends AbstractPojoController implements IControll
 			this.initExpressions = new ArrayList<Expression>();
 			for (Map.Entry<String, Object> entry : expressions.entrySet()) {
 				try {
-					String identifier = getFieldName(entry.getKey());
+					String identifier = resolveAlias(entry.getKey());
 					Object value = entry.getValue();
 					if (value != null) {
 						Expression expression = ExpressionUtilities.getExpression(value.toString(),
 								identifier);
 						this.initExpressions.add(expression);
 					}
-				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, "Error resolving alias " + entry.getKey(), e);
 				} catch (ExpressionException e) {
 					LOGGER.log(Level.SEVERE, "Error resolving expression " + entry.getValue(), e);
 				}

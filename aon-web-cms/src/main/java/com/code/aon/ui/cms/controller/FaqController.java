@@ -16,23 +16,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.Constants;
 
-public class FaqController extends BasicI18nController implements Constants {
+public class FaqController extends BasicI18nController {
 
 	private String question;
 	
 	private int page;
-	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
 	
 	public int getPage() {
 		return page;
@@ -63,14 +52,14 @@ public class FaqController extends BasicI18nController implements Constants {
 	}
 	
 	public String getI18nAnswer() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		FaqDetail fd = (FaqDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getAnswer();
 		return label;
 	}
 
 	public String getI18nQuestion() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		FaqDetail fd = (FaqDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getQuestion();
 		return label;

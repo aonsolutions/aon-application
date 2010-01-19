@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.campaign</artifactId>
-	<version>3.0.1</version>
+	<version>4.1.0</version>
 	<description>AON CAMPAIGN</description>
 	<name>AON CAMPAIGN</name>
 	<dependencies>
@@ -23,13 +23,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>3.6.0</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
-			<version>3.1.2</version>
+			<version>4.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

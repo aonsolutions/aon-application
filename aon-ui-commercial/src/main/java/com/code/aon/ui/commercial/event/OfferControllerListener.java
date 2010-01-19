@@ -2,6 +2,7 @@ package com.code.aon.ui.commercial.event;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.commercial.controller.OfferController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -20,7 +21,10 @@ public class OfferControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		OfferController controller = (OfferController)event.getController();
 		((Offer)controller.getTo()).setStatus(OfferStatus.PENDING);
+		((Offer)controller.getTo()).setType(OfferType.STANDARD);
 		controller.setAddresses(null);
+		controller.setDefaultPayMethod(null);
+		controller.resetOfferPayMethod();
 	}
 
 	@Override
@@ -28,6 +32,7 @@ public class OfferControllerListener extends ControllerAdapter {
 		OfferController controller = (OfferController)event.getController();
 		try {
 			controller.loadAddresses(((Offer)controller.getTo()).getTarget().getRegistry().getId());
+			controller.loadDefaultPayMethod(((Offer)controller.getTo()).getTarget().getRegistry().getId());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

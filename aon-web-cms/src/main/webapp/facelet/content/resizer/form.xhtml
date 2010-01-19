@@ -12,31 +12,38 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form>
-
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.resizer_resizer}" />
-				<ui:define name="toolbarContent">
+		<h:form>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.resizer_resizer}"/>	  						
+					</aon:div>					
+					
+					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="resize"
+						<h:commandButton id="resize"
 							value="#{bundle.aon_accept}"
 							action="gallery_list" 
 							actionListener="#{resizer.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_accept}">
-						</aon:commandButton>
-						<aon:commandButton id="exit"
+						</h:commandButton>
+						<h:commandButton id="exit"
 							value="#{bundle.aon_close}"
 							action="gallery_list" 
 							actionListener="#{resizer.onCancel}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>
+						</h:commandButton>
 				    </aon:div>
-				</ui:define>
-			</ui:decorate>			
-
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div style="width:99%;">
 
@@ -80,7 +87,7 @@
 						
 				</aon:div>
 			</aon:div>
-		</aon:form>
+		</h:form>
 	</ui:define>
 
 </ui:composition>

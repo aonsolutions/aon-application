@@ -13,19 +13,52 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.link}" />
-				<ui:param name="controller" value="#{link}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-			</ui:include>		
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{link}" />
-				<ui:define name="searchContent">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.link}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
+
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="link_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{link.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{cms.roleEditor}" 
+						action="link_form"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{link.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="link_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{link.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="Link_alias"
-						value="#{appBundle.cms_alias}" />
+						value="#{appBundle.link_alias}" />
 					<aon:inputText id="Link_alias" size="50"
 						valueChangeListener="#{link.addExpression}" />
 						
@@ -52,17 +85,8 @@
 					<aon:inputText id="Link_position" size="10"
 						valueChangeListener="#{link.addExpression}" />
 	
-					<aon:outputLabel for="Link_active"
-						value="#{appBundle.cms_active}" />
-					<aon:selectOneMenu id="Link_active"
-						valueChangeListener="#{link.addExpression}">
-						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneMenu>						
-						
-				</ui:define>
-			</ui:decorate>	
+				</aon:panelGrid>
+			</aon:div>
 			
 		</aon:form>
 	</ui:define>

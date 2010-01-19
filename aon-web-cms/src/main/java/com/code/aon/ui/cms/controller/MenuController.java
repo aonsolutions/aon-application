@@ -1,8 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -20,9 +18,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 
-public class MenuController extends BasicController implements ICMSConstants {
-	
-	private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
+public class MenuController extends BasicController {
 
 	private int currentType = MenuType.SIDEBAR.ordinal();
 
@@ -31,7 +27,7 @@ public class MenuController extends BasicController implements ICMSConstants {
 			try {
 				changeMenuList();
 			} catch (ExpressionException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				e.printStackTrace();
 			}
 		}
 		return model;
@@ -128,7 +124,7 @@ public class MenuController extends BasicController implements ICMSConstants {
 	}
 	
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		MenuOptionController moc = (MenuOptionController)FormUtil.getController(MENU_OPTION);
+		MenuOptionController moc = (MenuOptionController)FormUtil.getController("menu_option");
 		IManagerBean moBean = BeanManager.getManagerBean(MenuOption.class);
 		Menu menu = (Menu) this.getTo();
 		Criteria criteria = new Criteria();

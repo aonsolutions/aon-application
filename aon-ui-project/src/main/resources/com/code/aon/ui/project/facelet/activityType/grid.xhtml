@@ -55,7 +55,7 @@
 									rendered="#{to.id==activityTypeStandalone.to.id}"
 									styleClass="aon-form-selectOneMenu-field">
 									<f:selectItem itemValue="-" value="#{null}" />
-									<f:selectItems value="#{projectCollections.dossierTypePojos}" />
+									<f:selectItems value="#{projectCollections.dossierTypes}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu
@@ -63,7 +63,7 @@
 										rendered="#{activityTypeStandalone.new}"
 										styleClass="aon-form-selectOneMenu-field">
 									<f:selectItem itemValue="-" value="#{null}" />
-										<f:selectItems value="#{projectCollections.dossierTypePojos}" />
+										<f:selectItems value="#{projectCollections.dossierTypes}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>

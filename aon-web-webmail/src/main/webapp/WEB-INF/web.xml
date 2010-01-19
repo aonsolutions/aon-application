@@ -114,21 +114,15 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.2.1/</param-value>
 	</context-param>
 	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
- 
-	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
-	<context-param>
-		<param-name>org.richfaces.LoadScriptStrategy</param-name>
-		<param-value>ALL</param-value>
-    </context-param>
-    		
+	
 	<!-- BackDoorAuthentication Filter -->
 	<filter>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
@@ -200,6 +194,7 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 
 	<!-- CID image Servlet -->
@@ -212,18 +207,6 @@
 	<servlet-mapping>
 		<servlet-name>CidServlet</servlet-name>
 		<url-pattern>*.cid</url-pattern>
-	</servlet-mapping>
-	
-	<!-- Message Content Servlet -->
-	<servlet>
-		<servlet-name>MessageServlet</servlet-name>
-		<servlet-class>
-			com.code.aon.ui.webmail.servlet.MessageServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>MessageServlet</servlet-name>
-		<url-pattern>*.msg</url-pattern>
 	</servlet-mapping>
 	
 	<!-- Resource Servlet -->
@@ -242,6 +225,22 @@
 		<url-pattern>/aonResource/*</url-pattern>
 	</servlet-mapping>
 
+	<!-- FCK Faces Servlet -->
+	<servlet>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<servlet-class>
+			com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<url-pattern>/fckfaces/*</url-pattern>
+	</servlet-mapping>
+	<context-param>
+		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
+		<param-value>/js/fckconfig.js</param-value>
+	</context-param>
+	
 	<!-- Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
@@ -256,6 +255,10 @@
 		<web-resource-collection>
 			<web-resource-name>webmail</web-resource-name>
 			<url-pattern>/webmail/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>groupware</web-resource-name>
+			<url-pattern>/groupware/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>

@@ -8,9 +8,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumCategoryDetail;
@@ -24,27 +21,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class AlbumController extends BasicI18nController implements ICMSConstants, Constants {
+public class AlbumController extends BasicI18nController {
 
-	private boolean showAlbumWindow;
-	
 	private int page;
-	
-	private boolean richTextEnabled;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}	
 	
 	public int getPage() {
 		return page;
@@ -75,7 +59,7 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = NO_VALUE_LABEL;
+		String title = "- NO VALUE -";
 		AlbumDetail ad = (AlbumDetail)getModelRowdataI18n();
 		if (ad != null) title = ad.getTitle();
 		return title;
@@ -88,21 +72,21 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Album current = (Album)getTo();
 		current.setImage(image);
 	}
 
 	public String getBack(){
-		if (FormUtil.getController(ALBUM_IMAGE).getTo()==null)
-			return HOME;
-		return ALBUM_IMAGE_FORM;
+		if (FormUtil.getController("albumImage").getTo()==null)
+			return "home";
+		return "album_image_form";
 	}
 
 	
 	public void onAlbumImageCriteria(ActionEvent event) throws ManagerBeanException {
-		AlbumImageController albumImageController = (AlbumImageController)AonUtil.getRegisteredBean(ALBUM_IMAGE);
+		AlbumImageController albumImageController = (AlbumImageController)AonUtil.getRegisteredBean("albumImage");
 		AlbumImage albumImageTo = (AlbumImage)albumImageController.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(this.getFieldName(ICMSAlias.ALBUM_ID),albumImageTo.getAlbum().getId());
@@ -135,7 +119,7 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 
 		String albumAlias = "AUTO_GENERATED";
 		
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY); 
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery"); 
 		List<Image> list = (List<Image>) controller.getModel().getWrappedData();
 		
 		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Searching category...");
@@ -159,9 +143,8 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 			albumCategoryDetail = (AlbumCategoryDetail)albumCategoryDetailBean.insert(albumCategoryDetail);
 			
 			this.status.add(0,GregorianCalendar.getInstance().getTime()+": Not exist. Category created.");
-		} else {
-			albumCategory = (AlbumCategory)albumCategoryList.get(0);
-		}
+		}else
+			albumCategory = (AlbumCategory)albumCategoryList.get(0); 
 
 		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Creating album...");
 
@@ -171,9 +154,8 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 		Criteria albumCriteria = new Criteria();
 		String alias = controller.getCurrentRelativePath();
 		alias = alias.replaceAll("[^A-Za-z0-9._-]+", "");
-		if ( alias.length()>32 ) {
+		if (alias.length()>32)
 			alias = alias.substring(0, 32);
-		}
 		
 		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Album name "+alias+".");
 		
@@ -228,16 +210,19 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 			albumImage.setAlbum(album);
 			albumImage.setImage(image.getRelativePath());
 			albumImage.setPosition(i);
-			File file = ControllerUtil.getImagePath(image.getRelativePath());
-			File thumb = ImageUtil.resize(file,ImageUtil.DEF_MAX_SIZE);
-			String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
-			albumImage.setThumbnail(path);
+			String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+image.getRelativePath(),ImageUtil.DEF_MAX_SIZE);
+			thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
+			try{
+				thumb = thumb.replaceAll(File.separator, "/");
+			}catch(Exception e){
+				thumb = thumb.replaceAll(File.separator+File.separator, "/");
+			}
+			albumImage.setThumbnail(thumb);
 			albumImage = (AlbumImage) albumImageBean.insert(albumImage);
 			
 			albumImageDetail = new AlbumImageDetail();
 			albumImageDetail.setAlbumImage(albumImage);
-			String title = FilenameUtils.getBaseName(image.getName());
-			albumImageDetail.setTitle(title);
+			albumImageDetail.setTitle(image.getName());
 			albumImageDetail.setLanguage(ControllerUtil.getCurrentLanguage());
 			albumImageDetailBean.insert(albumImageDetail);
 			
@@ -249,12 +234,4 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 		this.activeLog = true;
 	}
 
-	public boolean isShowAlbumWindow() {
-		return showAlbumWindow;
-	}
-
-	public void setShowAlbumWindow(boolean showAlbumWindow) {
-		this.showAlbumWindow = showAlbumWindow;
-	}
-	
 }

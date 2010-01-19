@@ -2,16 +2,12 @@ package com.code.aon.ui.cms.controller;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.util.AonUtil;
 
-public class AdminController implements ICMSConstants {
-	
-	private static final Logger LOGGER = Logger.getLogger(AdminController.class.getName());
+public class AdminController {
 
 	private String user_ = "esferalia";
 
@@ -36,22 +32,14 @@ public class AdminController implements ICMSConstants {
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
-	
-	public String loginAction() {
-		CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
-		return cms.isAdministrator() ? HOME : null;
-	}
 
 	public void onAccept(ActionEvent event) {
 		String crypted = hash(passwd);
 		if (user_.equals(user) && passwd_.equals(crypted)){
-			DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
+			DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
 			domainUtilities.assignAdminProfile();
-			CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
+			CmsController cms = (CmsController)AonUtil.getRegisteredBean(CmsController.NAME);
 			cms.assignAdminProfile();
-		} else {
-			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", user);
-			AonUtil.addErrorMessage(message);
 		}
 		user = "";
 		passwd = "";
@@ -74,9 +62,9 @@ public class AdminController implements ICMSConstants {
 			for (int i=0;i<messageDigest.length;i++) {
 				hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
 			}
+			String foo = messageDigest.toString();
 			md5_passwd=hexString+"";
 		}catch(NoSuchAlgorithmException nsae){
-			LOGGER.log(Level.FINE, nsae.getMessage(), nsae);
 		}
 		return md5_passwd;
 	} 

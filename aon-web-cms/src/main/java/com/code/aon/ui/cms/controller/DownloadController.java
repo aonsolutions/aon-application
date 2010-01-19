@@ -17,24 +17,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.util.AonUtil;
 
-public class DownloadController extends BasicI18nController implements ICMSConstants, Constants {
+public class DownloadController extends BasicI18nController{
 
 	private String title;
 	
 	private int page;
-	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
 	
 	public int getPage() {
 		return page;
@@ -65,7 +54,7 @@ public class DownloadController extends BasicI18nController implements ICMSConst
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = NO_VALUE_LABEL;
+		String title = "- NO VALUE -";
 		DownloadDetail downloadDetail = (DownloadDetail)getModelRowdataI18n();
 		if (downloadDetail != null) title = downloadDetail.getTitle();
 		return title;
@@ -77,7 +66,7 @@ public class DownloadController extends BasicI18nController implements ICMSConst
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(DOCUMENT);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("document");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		DownloadDetail current = (DownloadDetail)getToI18n();
 		current.setFile(image);

@@ -3,45 +3,27 @@ package com.code.aon.ui.cms.velocity;
 import java.io.File;
 
 import com.code.aon.cms.enumeration.Templates;
-import com.code.aon.ui.cms.IGeneratorLogger;
-import com.code.aon.ui.cms.controller.GeneratorController;
-import com.code.aon.ui.cms.controller.GeneratorStatusController;
-import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
-import com.code.aon.ui.util.AonUtil;
 
-public class Generator implements ICMSConstants, IVelocityConstants {
-	
-	protected GeneratorContext context;
+public class Generator {
 
-	protected IGeneratorLogger logger;
-	
-	public Generator() {
-		GeneratorController generator = (GeneratorController) AonUtil.getRegisteredBean(GENERATOR);
-		this.context = generator.getContext();
-		this.logger = this.context.getLogger();		
-	}
-	
-    protected static IGeneratorLogger getLogger() {
-    	return (GeneratorStatusController) AonUtil.getRegisteredBean(GENERATOR_STATUS);
-	}	
-	
-	public void generate(VelocityUtil vu, Templates type) {
+	public static void generate(VelocityUtil vu, Templates type) {
 		generate(vu, type, ""); 
 	}
 
-	public void generate(VelocityUtil vu, Templates type, String name) {
+	public static void generate(VelocityUtil vu, Templates type, String name) {
 		String contentTemplate = getContentTemplate(type);
-		generate(vu, type, contentTemplate, name);
+		Generator.generate(vu, type, contentTemplate, name);
 	}
 
-	public void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
-		File template = getIndexTemplate();
+	public static void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
+		String template = getIndexTemplate();
 		if (type == Templates.LANGUAGE) template = getLanguageTemplate();
 		if (type == Templates.CAPTCHA) template = getCaptchaTemplate();
 		String content = contentTemplate;
-		File page = getPage(type, name);
+		String page = getPage(type);
+		page = page.replaceAll("%NAME%", name);
 		
 	    if (template != null && content != null) {
 	        vu.put("content", content);
@@ -49,36 +31,28 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 	        vu.generate(template, page);
 	        vu.remove("current_page");
 	        vu.remove("content");
-	    } else {
-	    	logger.error("No se ha encontrado plantilla " + type.getTemplateName());
+	    }
+	    else {
+	    	VelocityUtil.addMessage("No se ha encontrado plantilla " + type.getTemplateName(), VelocityUtil.ERROR);
 	    }
 	}
 
-	private static File getIndexTemplate() {
+	private static String getIndexTemplate() {
 		String template = Templates.INDEX.getTemplateName();
-		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
-		if ( file.exists() ) {
-			return file;
-		}
-		return null;
+		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
+		else return null;
 	}
 
-	private static File getLanguageTemplate() {
+	private static String getLanguageTemplate() {
 		String template = Templates.LANGUAGE.getTemplateName();
-		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
-		if ( file.exists() ) {
-			return file;
-		}
-		return null;
+		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
+		else return null;
 	}
 
-	private static File getCaptchaTemplate() {
+	private static String getCaptchaTemplate() {
 		String template = Templates.CAPTCHA.getTemplateName();
-		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
-		if ( file.exists() ) {
-			return file;
-		}
-		return null;
+		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
+		else return null;
 	}
 
 	private static String getContentTemplate(Templates t) {
@@ -87,12 +61,11 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 		else return null;
 	}
 
-	private static File getPage(Templates t, String name) {
-		String page = t.getHtmlName().replaceAll("%NAME%", name);
-		if (t == Templates.LANGUAGE) {
-			return new File( ControllerUtil.getPreviewPath(), page );
-		}
-		return new File( ControllerUtil.getLanguagePreviewPath(), page );
+	private static String getPage(Templates t) {
+		String page = t.getHtmlName();
+		String page_full_path = ControllerUtil.getLanguagePreviewPath() + "/" + page;
+		if (t == Templates.LANGUAGE) page_full_path = ControllerUtil.getPreviewPath() + "/" + page;
+		return page_full_path;
 	}
 
 	private static String getPageHtmlName(Templates t, String name) {
@@ -102,8 +75,14 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 	}
 
 	private static boolean validateTemplate(String template) {
-		File full_path = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
-		return full_path.exists();
+		String full_path = ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
+		return validate(full_path);
+	}
+	
+	private static boolean validate(String path) {
+	    File f = new File(path);
+	    if (f.exists()) return true;
+	    else return false;
 	}
 
 }

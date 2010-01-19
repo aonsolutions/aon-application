@@ -3,11 +3,12 @@ package com.code.aon.ui.groupware.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -19,7 +20,8 @@ import com.code.aon.ui.form.BasicController;
 
 public class NoteController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(NoteController.class.getName());
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(NoteController.class);
 	
 	private List<SelectItem> users = new LinkedList<SelectItem>();
 	
@@ -53,7 +55,7 @@ public class NoteController extends BasicController {
                 users.add(item);
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error loading users of workgroup with id= " + workGroupId.toString(), e);
+            LOGGER.error("Error loading users of workgroup with id= " + workGroupId.toString(), e);
         }
     }
 }

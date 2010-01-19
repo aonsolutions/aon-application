@@ -48,6 +48,10 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	private static final String IMMEDIATE = "immediate";
 	
 	private static final String CONFIRM_RE_RENDER = "confirmReRender";
+	
+	private static final String CLOSE_HANDLER = "closeHandler";
+	
+	private static final String YES_HANDLER = "yesHandler";
 
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 
@@ -103,6 +107,11 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		String expr = "#{view.attributes['" + getStateKey(component) + "']}";
 		return ctx.getExpressionFactory().createValueExpression( ctx, expr, Object.class );
 	}
+
+	private ValueExpression getButtonClickExpression( FaceletContext ctx, String id ) {
+		String expr = "#{rich:element('" + id + "')}.click();";
+		return ctx.getExpressionFactory().createValueExpression( ctx, expr, Object.class );
+	}	
 	
 	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
@@ -131,8 +140,9 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 			mapper.setVariable(IMMEDIATE, ctx.getExpressionFactory()
 					.createValueExpression(ctx, "false", Boolean.class));
 		}
+		String panelId = getModalPanelId(ctx);
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
-				ctx, getModalPanelId(ctx), String.class);
+				ctx, panelId, String.class);
 		mapper.setVariable(CONFIRM_ID, id);
 		mapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		mapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
@@ -170,6 +180,8 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		if (cancelReRender != null) {
 			mapper.setVariable(CANCEL_RE_RENDER, getValueExpression(ctx, cancelReRender));
 		}
+		mapper.setVariable(YES_HANDLER, getButtonClickExpression(ctx, panelId + "-yes") );
+		mapper.setVariable(CLOSE_HANDLER, getButtonClickExpression(ctx, panelId + "-close") );
 	}
 
 	@Override

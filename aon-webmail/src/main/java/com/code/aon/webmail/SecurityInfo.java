@@ -1,18 +1,19 @@
 package com.code.aon.webmail;
 
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.KeyStoreException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SecurityInfo {
 	
-	private static final Logger LOGGER = Logger.getLogger(SecurityInfo.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityInfo.class);
 
 	private KeyStore keystore;
 	
@@ -38,7 +39,7 @@ public class SecurityInfo {
 				return aliases.nextElement();
 			}
 		} catch (KeyStoreException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e );
+			LOGGER.error(e.getMessage(), e );
 		}
 		return null;
 	}

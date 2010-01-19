@@ -77,16 +77,17 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{download_category.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="partial_generate" reRender="aonStatus"
+						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{download_category.to!=null and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentDownloadCategory}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>										
 				    </aon:div>
 					
@@ -99,7 +100,7 @@
 	
 
 					<aon:outputLabel for="DownloadCategory_alias" style="width:100px"
-						value="#{appBundle.cms_alias}" />
+						value="#{appBundle.download_category_alias}" />
 					<aon:inputText id="DownloadCategory_alias"
 						required="true" size="32" maxlength="32"
 						value="#{download_category.to.alias}">
@@ -130,13 +131,15 @@
 		                	immediate="#{true}"
 		                	reRender="thumbnail_preview"
 		                    actionListener="#{download_category.onDelImage}">
-							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							<aon:graphicImage url="/images/cms/inactive.png" />
 		        		</aon:commandLink>
 						<ui:include src="/facelet/content/utils/image_modal.xhtml">
 							<ui:param name="modalPanelName" value="mp" />
 							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="galleryBean" value="#{gallery}" />
 							<ui:param name="listenerBean" value="#{download_category}" />
 							<ui:param name="reRender" value="thumbnail_preview" />
+							<ui:param name="image" value="#{true}" />
 							<ui:param name="thumbnail" value="#{false}" />
 						</ui:include>
 		        	</aon:panelGroup>
@@ -164,7 +167,9 @@
 			</aon:div>
 		
 		</aon:form>
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 	</ui:define>
 
 </ui:composition>

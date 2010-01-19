@@ -2,7 +2,9 @@ package com.code.aon.ui.resources;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.net.DummyHandler;
 import com.sun.facelets.impl.DefaultResourceResolver;
@@ -17,12 +19,11 @@ import com.sun.facelets.impl.ResourceResolver;
 public class TemplateResolver extends DefaultResourceResolver 
         implements ResourceResolver {
 	
-	private static final Logger LOGGER = Logger.getLogger(TemplateResolver.class
-			.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TemplateResolver.class);
     
     /** first check the context root, then the classpath */
     public URL resolveUrl(String path) {
-        LOGGER.fine("Resolving URL " + path);
+        LOGGER.debug("Resolving URL {}", path);
         URL url = super.resolveUrl(path);
         if (url == null) {
             
@@ -35,7 +36,7 @@ public class TemplateResolver extends DefaultResourceResolver
     		try {
     			url = new URL(null, url.toExternalForm(), new DummyHandler() );
     		} catch (MalformedURLException e) {
-    			LOGGER.severe( e.getMessage() );
+    			LOGGER.error( "Error resolving url " + url, e );
     		}           
         }
         return url;

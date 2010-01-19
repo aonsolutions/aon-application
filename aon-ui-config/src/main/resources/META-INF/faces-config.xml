@@ -430,6 +430,16 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>nullableBankAccountValidatorListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.BankAccountValidationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>nullable</property-name>
+			<value>true</value>
+		</managed-property>				
+	</managed-bean>
+
   <!-- *************************************** -->
   <!-- ************ NAVIGATION *************** -->
   <!-- *************************************** -->

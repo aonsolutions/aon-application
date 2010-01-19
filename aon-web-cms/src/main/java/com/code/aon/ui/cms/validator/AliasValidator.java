@@ -1,7 +1,5 @@
 package com.code.aon.ui.cms.validator;
 
-import java.util.logging.Logger;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -10,8 +8,6 @@ import javax.faces.validator.ValidatorException;
 
 public class AliasValidator implements Validator {
 
-	private static final Logger LOGGER = Logger.getLogger(AliasValidator.class.getName());
-	
 	public AliasValidator() {
 	}
 
@@ -35,7 +31,7 @@ public class AliasValidator implements Validator {
 	public static void main(String[] args) {
 		String strValue = "A1_-12-31_23dDDFFSDFfasdfsadffsdf";
 		if (!strValue.matches("[0-9a-zA-Z_-]+")){
-			LOGGER.info("ERROR");
+			System.out.println("ERROR");
 		}
 	}
 }

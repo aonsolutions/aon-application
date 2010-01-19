@@ -16,10 +16,10 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 
-public class SidebarController extends BasicController implements ICMSConstants {
+public class SidebarController extends BasicController {
 
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		SidebarOptionController soc = (SidebarOptionController)FormUtil.getController(SIDEBAR_OPTION);
+		SidebarOptionController soc = (SidebarOptionController)FormUtil.getController("sidebar_option");
 		IManagerBean soBean = BeanManager.getManagerBean(SidebarOption.class);
 		Sidebar sidebar = (Sidebar) this.getTo();
 		Criteria criteria = new Criteria();

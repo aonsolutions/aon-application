@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
@@ -16,8 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 import org.xml.sax.SAXException;
@@ -29,14 +25,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.util.XMLHandler;
 import com.code.aon.ui.cms.util.ZipUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class TemplateController extends BasicController implements Constants {
-	
-	private static final Logger LOGGER = Logger.getLogger(TemplateController.class.getName());
 
 	private ListDataModel templates = new ListDataModel();
 	
@@ -68,7 +63,7 @@ public class TemplateController extends BasicController implements Constants {
 			checkList = new ArrayList<TemplateObject>();
 			list = getTemplateList();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 		templates = new ListDataModel(list);
 	}
@@ -103,11 +98,13 @@ public class TemplateController extends BasicController implements Constants {
 						list.add(to);
 						++count;
 					} catch (SAXException e) {
-						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					} catch (IOException e) {
-						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}finally{
-						IOUtils.closeQuietly(fis);
+						try{fis.close();}catch(Exception e){}
 						fis = null;
 					}
 				}
@@ -172,8 +169,7 @@ public class TemplateController extends BasicController implements Constants {
 	 */
 	public void onRemoveSelected(ActionEvent event){
 		for (TemplateObject to: checkList) {
-			File file = new File( ControllerUtil.getTemplatePath(), to.getId() );
-			FileUtils.deleteQuietly(file);
+			FileUtil.delete(ControllerUtil.getTemplatePath() + "/" + to.getId());
 		}
 		loadTemplates();
 	}
@@ -212,9 +208,9 @@ public class TemplateController extends BasicController implements Constants {
 		try {
 			saxParser = saxParserFactory.newSAXParser();
 		} catch (ParserConfigurationException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		} catch (SAXException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 
@@ -239,13 +235,13 @@ public class TemplateController extends BasicController implements Constants {
 	        outputStream.write(data);
 			if (item.getContentType().indexOf("zip") >= 0) {
 				ZipUtil.uncompressZipFile(file.getAbsolutePath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
-				FileUtils.deleteQuietly(file);
+				FileUtil.delete(file.getAbsolutePath());
 			}
 			this.onInit(null);
-		}catch (Throwable th) {
-			AonUtil.addErrorMessage("Error loading templates: "+th.getMessage());
+		}catch (Exception e) {
+			AonUtil.addErrorMessage("Error loading templates: "+e.getMessage());
 		}finally{
-			IOUtils.closeQuietly(outputStream);			
+	        try{outputStream.close();}catch (Exception e) {}			
 		}		
 	}
 

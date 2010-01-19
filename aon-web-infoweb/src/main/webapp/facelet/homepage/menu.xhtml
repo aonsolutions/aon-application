@@ -13,8 +13,6 @@
 					title="#{companyBundle.company_data_module}" action="company" 
 					value="#{companyBundle.company_data_module}"
 					actionListener="#{company.onLoad}" styleClass="aon-top-menu-item">
-					<f:setPropertyActionListener value="#{false}" target="#{company.showRegistryBank}" />
-					<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
 				</aon:commandLink>
 	
 				<aon:commandLink id="companyWebInfo" 
@@ -49,6 +47,7 @@
 					title="#{infowebBundle.infoweb_generate}" action="generator" 
 					value="#{infowebBundle.infoweb_generate}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
+					<aon:actionListener method="#{generator.onInit}" />
 				</aon:commandLink>
 				
 			</aon:div>

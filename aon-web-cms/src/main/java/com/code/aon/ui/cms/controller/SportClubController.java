@@ -17,7 +17,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class SportClubController extends BasicController implements ICMSConstants {
+public class SportClubController extends BasicController {
 	
 	public void onDelImage(ActionEvent event) {
 		SportClub current = (SportClub)getTo();
@@ -30,14 +30,14 @@ public class SportClubController extends BasicController implements ICMSConstant
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		SportClub current = (SportClub)getTo();
 		current.setImage(image);
 	}
 
 	public void onSelectThumbnail(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		SportClub current = (SportClub)getTo();
 		current.setLogo(image);

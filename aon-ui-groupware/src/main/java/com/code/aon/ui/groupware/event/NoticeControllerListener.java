@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.xml.soap.SOAPException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -41,7 +42,8 @@ import com.code.aon.webmail.bean.AonServer;
 
 public class NoticeControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger( NoticeControllerListener.class.getName() );
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(NoticeControllerListener.class);
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
@@ -177,15 +179,15 @@ public class NoticeControllerListener extends ControllerAdapter {
 			aonMessage.setContent(content);
 			server.sendMessage(aonMessage);
 		} catch (AddressException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (UnsupportedEncodingException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (WebmailException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -211,9 +213,9 @@ public class NoticeControllerListener extends ControllerAdapter {
 			sender.init(domain);
 			sender.send(message);
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (SOAPException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 }

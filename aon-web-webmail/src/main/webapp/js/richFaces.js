@@ -29,3 +29,40 @@ function resetStatusError() {
 		alert( e );
 	}
 }
+
+var oldOnSubmit;
+
+function startUpload() {
+	try {
+		var form = document.getElementById( "homepage:webmailForm" );
+		if ( form ) {
+			oldOnSubmit = form.onsubmit;
+			form.onsubmit = null;
+		}
+		var fileItems = document.getElementById( "homepage:webmailForm:attach_file:fileItems");
+		if ( fileItems ) {
+			fileItems.style.height = "70px";
+		} else {
+			alert( "fileItems not found !!" );
+		}
+	} catch(e) {
+		alert( e );
+	}
+}
+
+function endUpload() {
+	try {
+		var form = document.getElementById( "homepage:webmailForm" );
+		if ( form ) {
+			form.onsubmit = oldOnSubmit;
+		}
+		var fileItems = document.getElementById( "homepage:webmailForm:attach_file:fileItems");
+		if ( fileItems ) {
+			fileItems.style.height = "0px";
+		} else {
+			alert( "fileItems not found !!" );
+		}
+	} catch(e) {
+		alert( e );
+	}
+}

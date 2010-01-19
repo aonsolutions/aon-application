@@ -15,19 +15,9 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum DocumentType implements IResourceable {
 
     /**
-     * UNKNOWN
-     */
-    UNKNOWN,
-    
-    /**
      * NORMAL
      */
     NORMAL,
-    
-    /**
-     *  PROFORMA
-     */
-    PROFORMA,
     
     /**
      * SAMPLE
@@ -35,10 +25,10 @@ public enum DocumentType implements IResourceable {
     SAMPLE,
     
     /**
-     * Internet
+     * INTERNET
      */
     INTERNET;
-    
+
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.sales.i18n.messages";
 

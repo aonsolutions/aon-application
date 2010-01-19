@@ -9,7 +9,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageCrop;
 import com.code.aon.ui.util.AonUtil;
 
-public class CropperController implements ICMSConstants {
+public class CropperController {
 
 	private String cropImage = null;
 	
@@ -91,7 +91,7 @@ public class CropperController implements ICMSConstants {
 	
 	public void onCropFile(ActionEvent event) throws ManagerBeanException {
 		onInit();
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		cropImage = ((Image)controller.getModel().getRowData()).getRelativePath();
 	}
 
@@ -102,7 +102,7 @@ public class CropperController implements ICMSConstants {
 	
 	public void onAccept(ActionEvent event) {
 		ImageCrop.crop(ControllerUtil.getImagesPath()+cropImage, x1, y1, x2, y2, width, height);
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		controller.chargeImageList();
 		onInit();
 		cropImage = null;

@@ -3,154 +3,124 @@
  <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="sales_stats_year::#com#code#aon#ui#stat#facelet#salesAccumulate#yearStats.xhtml"
+    ID="sales_stats_year::#com#code#aon#ui#stat#facelet#invoiceAccumulate#yearStats.xhtml"
     NAME="output"
-    PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/yearStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#yearStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/yearStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#yearStats.xhtml"
     TITLE="sales_stats_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="sales_stats_month::#com#code#aon#ui#stat#facelet#salesAccumulate#monthStats.xhtml"
+    ID="sales_stats_month::#com#code#aon#ui#stat#facelet#invoiceAccumulate#monthStats.xhtml"
     NAME="output1"
-    PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/monthStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#monthStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/monthStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#monthStats.xhtml"
     TITLE="sales_stats_month" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="sales_stats_day::#com#code#aon#ui#stat#facelet#salesAccumulate#dayStats.xhtml"
+    ID="sales_stats_day::#com#code#aon#ui#stat#facelet#invoiceAccumulate#dayStats.xhtml"
     NAME="output2"
-    PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/dayStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#dayStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/dayStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#dayStats.xhtml"
     TITLE="sales_stats_day" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="customer_stat_list_year::#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsYear.xhtml"
+    ID="customer_stat_list_year::#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsYear.xhtml"
     NAME="output3"
-    PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/customerStatsYear.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsYear.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsYear.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsYear.xhtml"
     TITLE="customer_stat_list_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="customer_stat_list_month::#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsMonth.xhtml"
+    ID="customer_stat_list_month::#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsMonth.xhtml"
     NAME="output4"
-    PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/customerStatsMonth.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsMonth.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsMonth.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsMonth.xhtml"
     TITLE="customer_stat_list_month" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="customer_stat_list_day::#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsDay.xhtml"
+    ID="customer_stat_list_day::#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsDay.xhtml"
     NAME="output5"
-    PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/customerStatsDay.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsDay.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsDay.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsDay.xhtml"
     TITLE="customer_stat_list_day" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="sales_accumulate_search::#com#code#aon#ui#stat#facelet#invoiceAccumulate#search.xhtml"
+    NAME="output6"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#search.xhtml"
+    TITLE="sales_accumulate_search" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#dayStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/dayStats.xhtml"
-  SHAPE="304,385,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#yearStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/yearStats.xhtml"
-  SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#monthStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/monthStats.xhtml"
-  SHAPE="304,273,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#search.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/search.xhtml"
-  SHAPE="304,273,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules::1" SHAPE="32,705,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="segment_stats_day::#com#code#aon#ui#stat#facelet#customerSegmentSales#dayStats.xhtml"
+    ID="segment_stats_day::#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#dayStats.xhtml"
     NAME="output"
-    PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/dayStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#dayStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/dayStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#dayStats.xhtml"
     TITLE="segment_stats_day" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="segment_stats_month::#com#code#aon#ui#stat#facelet#customerSegmentSales#monthStats.xhtml"
+    ID="segment_stats_month::#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#monthStats.xhtml"
     NAME="output1"
-    PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/monthStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#monthStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/monthStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#monthStats.xhtml"
     TITLE="segment_stats_month" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="segment_stats_year::#com#code#aon#ui#stat#facelet#customerSegmentSales#yearStats.xhtml"
+    ID="segment_stats_year::#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#yearStats.xhtml"
     NAME="output2"
-    PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/yearStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#yearStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/yearStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#yearStats.xhtml"
     TITLE="segment_stats_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="segment_stats_search::#com#code#aon#ui#stat#facelet#customerSegmentSales#search.xhtml"
+    ID="segment_stats_search::#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#search.xhtml"
     NAME="output3"
-    PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/search.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#search.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#search.xhtml"
     TITLE="segment_stats_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="segmentcustomer_stat_list::#com#code#aon#ui#stat#facelet#customerSegmentSales#customerStats.xhtml"
+    ID="segmentcustomer_stat_list::#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#customerStats.xhtml"
     NAME="output4"
-    PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/customerStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#customerStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/customerStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#customerStats.xhtml"
     TITLE="segmentcustomer_stat_list" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#search.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/search.xhtml"
-  SHAPE="256,977,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#yearStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/yearStats.xhtml"
-  SHAPE="256,833,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#monthStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/monthStats.xhtml"
-  SHAPE="256,833,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules::2" SHAPE="32,961,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="category_product_stats::#com#code#aon#ui#stat#facelet#categoryProductSales#productStats.xhtml"
+    ID="category_product_stats::#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#productStats.xhtml"
     NAME="output"
-    PATH="/com/code/aon/ui/stat/facelet/categoryProductSales/productStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#categoryProductSales#productStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/productStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#productStats.xhtml"
     TITLE="category_product_stats" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="category_stats_year::#com#code#aon#ui#stat#facelet#categoryProductSales#yearStats.xhtml"
+    ID="category_stats_year::#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#yearStats.xhtml"
     NAME="output1"
-    PATH="/com/code/aon/ui/stat/facelet/categoryProductSales/yearStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#categoryProductSales#yearStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/yearStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#yearStats.xhtml"
     TITLE="category_stats_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="category_stats_search::#com#code#aon#ui#stat#facelet#categoryProductSales#search.xhtml"
+    ID="category_stats_search::#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#search.xhtml"
     NAME="output2"
-    PATH="/com/code/aon/ui/stat/facelet/categoryProductSales/search.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#categoryProductSales#search.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#search.xhtml"
     TITLE="category_stats_search" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#categoryProductSales#yearStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/categoryProductSales/yearStats.xhtml"
-  SHAPE="272,1377,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#categoryProductSales#search.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/categoryProductSales/search.xhtml"
-  SHAPE="272,1489,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules::3" SHAPE="32,1841,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::3" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="abc_stats_searchCategory::#com#code#aon#ui#stat#facelet#abcCategory#searchCategory.xhtml"
+    ID="abc_stats_searchCategory::#com#code#aon#ui#stat#facelet#invoiceAbcCategory#searchCategory.xhtml"
     NAME="output"
-    PATH="/com/code/aon/ui/stat/facelet/abcCategory/searchCategory.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcCategory#searchCategory.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcCategory/searchCategory.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcCategory#searchCategory.xhtml"
     TITLE="abc_stats_searchCategory" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="abc_category_stats::#com#code#aon#ui#stat#facelet#abcCategory#abcCategoryStats.xhtml"
+    ID="abc_category_stats::#com#code#aon#ui#stat#facelet#invoiceAbcCategory#abcCategoryStats.xhtml"
     NAME="output1"
-    PATH="/com/code/aon/ui/stat/facelet/abcCategory/abcCategoryStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcCategory#abcCategoryStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcCategory/abcCategoryStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcCategory#abcCategoryStats.xhtml"
     TITLE="abc_category_stats" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="product_stats::#com#code#aon#ui#stat#facelet#abcCategory#productStats.xhtml"
+    ID="product_stats::#com#code#aon#ui#stat#facelet#invoiceAbcCategory#productStats.xhtml"
     NAME="output2"
-    PATH="/com/code/aon/ui/stat/facelet/abcCategory/productStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcCategory#productStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcCategory/productStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcCategory#productStats.xhtml"
     TITLE="product_stats" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="month_stats::#com#code#aon#ui#stat#facelet#abcCategory#monthStats.xhtml"
@@ -159,123 +129,179 @@
     TARGET="rules:#com#code#aon#ui#stat#facelet#abcCategory#monthStats.xhtml"
     TITLE="month_stats" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="abc_stats_searchProduct::#com#code#aon#ui#stat#facelet#abcProduct#searchProduct.xhtml"
+    ID="abc_stats_searchProduct::#com#code#aon#ui#stat#facelet#invoiceAbcProduct#searchProduct.xhtml"
     NAME="output4"
-    PATH="/com/code/aon/ui/stat/facelet/abcProduct/searchProduct.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcProduct#searchProduct.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcProduct/searchProduct.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcProduct#searchProduct.xhtml"
     TITLE="abc_stats_searchProduct" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="abc_product_stats::#com#code#aon#ui#stat#facelet#abcProduct#abcProductStats.xhtml"
+    ID="abc_product_stats::#com#code#aon#ui#stat#facelet#invoiceAbcProduct#abcProductStats.xhtml"
     NAME="output5"
-    PATH="/com/code/aon/ui/stat/facelet/abcProduct/abcProductStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcProduct#abcProductStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcProduct/abcProductStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcProduct#abcProductStats.xhtml"
     TITLE="abc_product_stats" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="abc_product_month_stats::#com#code#aon#ui#stat#facelet#abcProduct#monthStats.xhtml"
+    ID="abc_product_month_stats::#com#code#aon#ui#stat#facelet#invoiceAbcProduct#monthStats.xhtml"
     NAME="output6"
-    PATH="/com/code/aon/ui/stat/facelet/abcProduct/monthStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcProduct#monthStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcProduct/monthStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcProduct#monthStats.xhtml"
     TITLE="abc_product_month_stats" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="abc_stats_search::#com#code#aon#ui#stat#facelet#abcCustomer#search.xhtml"
+    ID="abc_stats_search::#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#search.xhtml"
     NAME="output7"
-    PATH="/com/code/aon/ui/stat/facelet/abcCustomer/search.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcCustomer#search.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#search.xhtml"
     TITLE="abc_stats_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="customer_month_stats::#com#code#aon#ui#stat#facelet#abcCustomer#monthStats.xhtml"
+    ID="abc_customer_stats::#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#abcCustomerStats.xhtml"
     NAME="output8"
-    PATH="/com/code/aon/ui/stat/facelet/abcCustomer/monthStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#abcCustomer#monthStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/abcCustomerStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#abcCustomerStats.xhtml"
+    TITLE="abc_customer_stats" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="customer_month_stats::#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#monthStats.xhtml"
+    NAME="output9"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/monthStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#monthStats.xhtml"
     TITLE="customer_month_stats" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules::4" SHAPE="32,993,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::4" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="summary_stats_year::#com#code#aon#ui#stat#facelet#summarySales#yearStats.xhtml"
+    ID="summary_stats_year::#com#code#aon#ui#stat#facelet#invoiceSummary#yearStats.xhtml"
     NAME="output"
-    PATH="/com/code/aon/ui/stat/facelet/summarySales/yearStats.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#summarySales#yearStats.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceSummary/yearStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceSummary#yearStats.xhtml"
     TITLE="summary_stats_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="summary_stats_search::#com#code#aon#ui#stat#facelet#summarySales#search.xhtml"
+    ID="summary_stats_search::#com#code#aon#ui#stat#facelet#invoiceSummary#search.xhtml"
     NAME="output1"
-    PATH="/com/code/aon/ui/stat/facelet/summarySales/search.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#summarySales#search.xhtml"
+    PATH="/com/code/aon/ui/stat/facelet/invoiceSummary/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#invoiceSummary#search.xhtml"
     TITLE="summary_stats_search" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#summarySales#yearStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/summarySales/yearStats.xhtml"
-  SHAPE="256,2737,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#summarySales#search.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/summarySales/search.xhtml"
-  SHAPE="256,2849,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#dayStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/dayStats.xhtml"
-  SHAPE="272,833,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcCategory#abcCategoryStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcCategory/abcCategoryStats.xhtml"
-  SHAPE="304,2321,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcCategory#searchCategory.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcCategory/searchCategory.xhtml"
-  SHAPE="304,2081,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcCategory#productStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcCategory/productStats.xhtml"
-  SHAPE="304,1969,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcProduct#abcProductStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcProduct/abcProductStats.xhtml"
-  SHAPE="304,1969,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcProduct#searchProduct.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcProduct/searchProduct.xhtml"
-  SHAPE="304,2081,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcCustomer#search.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcCustomer/search.xhtml"
-  SHAPE="304,1857,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcCustomer#abcCustomerStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcCustomer/abcCustomerStats.xhtml"
-  SHAPE="304,2609,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcProduct#monthStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcProduct/monthStats.xhtml"
-  SHAPE="304,1969,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM
   NAME="rules:#com#code#aon#ui#stat#facelet#abcCategory#monthStats.xhtml"
   PATH="/com/code/aon/ui/stat/facelet/abcCategory/monthStats.xhtml"
   SHAPE="304,1969,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::5" SHAPE="32,3569,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::5" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="invoice_list::#com#code#aon#ui#stat#facelet#generic#invoiceList.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#generic#invoiceList.xhtml"
+    TITLE="invoice_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#abcCustomer#monthStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/abcCustomer/monthStats.xhtml"
-  SHAPE="304,1969,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#stat#facelet#generic#invoiceList.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml"
+  SHAPE="240,3585,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#customerSegmentSales#customerStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/customerSegmentSales/customerStats.xhtml"
-  SHAPE="304,833,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#monthStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/monthStats.xhtml"
+  SHAPE="304,337,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsDay.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/customerStatsDay.xhtml"
-  SHAPE="304,753,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#dayStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/dayStats.xhtml"
+  SHAPE="304,449,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsYear.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/customerStatsYear.xhtml"
-  SHAPE="304,305,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsYear.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsYear.xhtml"
+  SHAPE="304,561,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#salesAccumulate#customerStatsMonth.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/salesAccumulate/customerStatsMonth.xhtml"
-  SHAPE="304,641,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsDay.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsDay.xhtml"
+  SHAPE="304,785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#categoryProductSales#productStats.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/categoryProductSales/productStats.xhtml"
-  SHAPE="272,1393,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#search.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/search.xhtml"
+  SHAPE="304,897,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#customerStatsMonth.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsMonth.xhtml"
+  SHAPE="304,673,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAccumulate#yearStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAccumulate/yearStats.xhtml"
+  SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#customerStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/customerStats.xhtml"
+  SHAPE="304,2097,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#yearStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/yearStats.xhtml"
+  SHAPE="304,1649,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#search.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/search.xhtml"
+  SHAPE="304,1985,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#monthStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/monthStats.xhtml"
+  SHAPE="304,1537,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceRegistrySegment#dayStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceRegistrySegment/dayStats.xhtml"
+  SHAPE="304,1425,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#productStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/productStats.xhtml"
+  SHAPE="272,2833,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#yearStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/yearStats.xhtml"
+  SHAPE="272,3057,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceCategoryProduct#search.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/search.xhtml"
+  SHAPE="272,3169,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcCategory#productStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcCategory/productStats.xhtml"
+  SHAPE="304,4177,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcCategory#abcCategoryStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcCategory/abcCategoryStats.xhtml"
+  SHAPE="304,4065,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcCategory#searchCategory.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcCategory/searchCategory.xhtml"
+  SHAPE="304,3953,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcProduct#searchProduct.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcProduct/searchProduct.xhtml"
+  SHAPE="304,3953,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcProduct#abcProductStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcProduct/abcProductStats.xhtml"
+  SHAPE="304,4065,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcProduct#monthStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcProduct/monthStats.xhtml"
+  SHAPE="304,4177,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#monthStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/monthStats.xhtml"
+  SHAPE="304,4177,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#search.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/search.xhtml"
+  SHAPE="304,3953,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceAbcRegistry#abcCustomerStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/abcCustomerStats.xhtml"
+  SHAPE="304,4065,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceSummary#yearStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceSummary/yearStats.xhtml"
+  SHAPE="256,1249,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#invoiceSummary#search.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/invoiceSummary/search.xhtml"
+  SHAPE="256,1249,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

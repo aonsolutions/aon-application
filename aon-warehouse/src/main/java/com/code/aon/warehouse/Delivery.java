@@ -4,20 +4,25 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -25,6 +30,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IPayMethod;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -35,245 +47,487 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 /**
  * Transfer Object that represents a Delivery.
- * 
- * @author igayarre
- *
  */
 @Entity
 @Table(name="delivery")
-public class Delivery implements ITransferObject, IHeaderObject, ICalculableContainer{
+public class Delivery implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
 	private static final long serialVersionUID = 5865460388758611455L;
 
-	/**
-	 * The logger of this class
-	 */
+	/** The Constant LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(Delivery.class.getName());
 	
 	/**
-	 * Unique key
-	 */
-	private Integer id;
-	
-    /**
-     * The series
-     */
-    private String series;
-
-    /**
-     * The numer of this series
-     */
-    private int number;
-	
-	/**
-	 * Customer related to this delivery
-	 */
-	private Customer customer;
-	
-	/**
-	 * The address
-	 */
-	private RegistryAddress raddress;
-	
-	/**
-	 * The date and time
-	 */
-	private Date issueTime;
-	
-	/**
-	 * Security level
-	 */
-	private SecurityLevel securityLevel;
-	
-	/**
-	 * The delivery status 
-	 */
-	private DeliveryStatus status;
-	
-	/**
-	 * All the lines of this delivery
-	 */
-	private Set<DeliveryDetail> lines = new HashSet<DeliveryDetail>();
-	
-	/**
-	 * Constructor with default date, now
+	 * The Constructor. Sets TODAY to issueDate
 	 */
 	public Delivery() {
 		this.issueTime = new Date();
 	}
 	
+	/** The id. */
+	private Integer id;
+	
+	/** The series. */
+    private String series;
+
+	/** The number. */
+    private int number;
+	
+	/** The customer. */
+	private Customer customer;
+	
+	/** The address. */
+	private RegistryAddress raddress;
+	
+	/** The issue date. */
+	private Date issueTime;
+	
+	/** The pay method. */
+	private PayMethod payMethod;
+	
+	/** The security level. */
+	private SecurityLevel securityLevel;
+	
+	/** The status. */
+	private DeliveryStatus status;
+	
+    /** The workplace. */
+	private WorkPlace workPlace;
+
+    /** The scope. */
+	private Scope scope;
+
+    /** The number of payments. */
+    private int numberOfPayments;
+
+    /** The days to first payment. */
+    private int daysToFirstPayment;
+
+    /** The days between payments. */
+    private int daysBetweenPayments;
+
+    /** The payment days. */
+    private String paymentDays;
+
+    private int[] paymentDaysArray;
+
+	/** The bank. */
+	private Bank bank;
+	
+	/** The bank account. */
+	private BankAccount bankAccount;
+	
+	/** The detail of this delivery. */
+	private Set<DeliveryDetail> lines = new HashSet<DeliveryDetail>();
+	
 	/**
-	 * Returns the unique key
+	 * Gets the id.
 	 * 
-	 * @return unique key
+	 * @return the id
 	 */
 	@Id
 	@GeneratedValue
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
 	
 	/**
-	 * Assigns the unique key
+	 * Sets the id.
 	 * 
-	 * @param primaryKey
+	 * @param id the id
 	 */
-	public void setId(Integer primaryKey) {
-		this.id = primaryKey;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
 	/**
-	 * Retruns the number
+	 * Gets the serie.
 	 * 
-	 * @return the number.
-	 */
-	@Column(nullable=false)
-	public int getNumber() {
-		return number;
-	}
-	/**
-	 * Assigns the number
-	 * 
-	 * @param number The number to set.
-	 */
-	public void setNumber(int number) {
-		this.number = number;
-	}
-	/**
-	 * Returns the series.
-	 * 
-	 * @return the series.
+	 * @return the series
 	 */
 	@Column(length=5)
 	public String getSeries() {
 		return series;
 	}
+
 	/**
-	 * Assigns the series
+	 * Sets the series.
 	 * 
-	 * @param series The series to set.
+	 * @param series the series
 	 */
 	public void setSeries(String series) {
 		this.series = series;
 	}
+	
 	/**
-	 * Returns the customer
+	 * Gets the number.
+	 * 
+	 * @return the number
+	 */
+	@Column(nullable = false)
+	public int getNumber() {
+		return number;
+	}
+
+	/**
+	 * Sets the number.
+	 * 
+	 * @param number the number
+	 */
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+    @Transient
+    public String getReferenceCode() {
+    	String referenceCode = "" + getNumber();
+		if (!StringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
+
+	/**
+	 * Gets the customer.
 	 * 
 	 * @return the customer
 	 */
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="customer",nullable=false )
+	@ManyToOne
+	@JoinColumn( name="customer", nullable = false )
 	public Customer getCustomer() {
 		return customer;
 	}
+
 	/**
-	 * Assigns the customer
+	 * Sets the customer.
 	 * 
-	 * @param customer The customer to set.
+	 * @param customer the customer
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+
 	/**
-	 * Returns the issueTime
+	 * Gets the address
 	 * 
-	 * @return the issueTime.
+	 * @return the address.
+	 */
+	@ManyToOne
+	@JoinColumn( name="address" )
+	public RegistryAddress getRaddress() {
+		return raddress;
+	}
+
+	/**
+	 * Sets the address.
+	 * 
+	 * @param address the address
+	 */
+	public void setRaddress(RegistryAddress raddress) {
+		this.raddress = raddress;
+	}
+
+	/**
+	 * Gets the issue time.
+	 * 
+	 * @return the issue time.
 	 */
 	@Column(name="issue_time")
 	public Date getIssueTime() {
 		return issueTime;
 	}
+
 	/**
-	 * Assigns the issue time
+	 * Sets the issue time.
 	 * 
-	 * @param issueTime The issueTime to set.
+	 * @param issueTime the issue time
 	 */
 	public void setIssueTime(Date issueTime) {
 		this.issueTime = issueTime;
 	}
+
 	/**
-	 * Returns the raddress
+	 * Gets the pay method.
 	 * 
-	 * @return Returns the raddress.
+	 * @return the pay method
 	 */
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="address" )
-	public RegistryAddress getRaddress() {
-		return raddress;
+	@ManyToOne
+	@JoinColumn( name="pay_method" )
+	public PayMethod getPayMethod() {
+		return payMethod;
 	}
+
 	/**
-	 * Assigns the raddress
+	 * Sets the pay method.
 	 * 
-	 * @param raddress The raddress to set.
+	 * @param payMethod the pay method
 	 */
-	public void setRaddress(RegistryAddress raddress) {
-		this.raddress = raddress;
+	public void setPayMethod(PayMethod payMethod) {
+		this.payMethod = payMethod;
 	}
+
 	/**
-	 * Returns the securityLevel.
+	 * Gets the security level.
 	 * 
-	 * @return the securityLevel.
+	 * @return the security level
 	 */
-	@Column(name="security_level",nullable=false)
+	@Column(name="security_level")
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
+
 	/**
-	 * Assigns the security level
+	 * Sets the security level.
 	 * 
-	 * @param securityLevel The securityLevel to set.
+	 * @param securityLevel the security level
 	 */
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+
 	/**
-	 * Returns the status.
+	 * Gets the status.
 	 * 
-	 * @return the status.
+	 * @return the status
 	 */
-	@Column(nullable=false)
 	public DeliveryStatus getStatus() {
 		return status;
 	}
+
 	/**
-	 * Assigns the status
+	 * Sets the status.
 	 * 
-	 * @param status The status to set.
+	 * @param status the status
 	 */
 	public void setStatus(DeliveryStatus status) {
 		this.status = status;
 	}
-	
+
 	/**
-	 * Returns the DeliveryDetail set
+	 * Gets the workplace.
 	 * 
-	 * @return a DeliveryDetail Set
+	 * @return the workplace
+	 */
+    @ManyToOne
+    @JoinColumn(name="workplace", nullable = false)
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+
+	/**
+	 * Sets the workplace.
+	 * 
+	 * @param workplace the workplace
+	 */
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
+
+	/**
+	 * Gets the scope.
+	 * 
+	 * @return the scope
+	 */
+    @ManyToOne
+    @JoinColumn(name="scope", nullable = false)
+	public Scope getScope() {
+		return scope;
+	}
+
+	/**
+	 * Sets the scope.
+	 * 
+	 * @param scope the scope
+	 */
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+	
+    /**
+     * Gets the number of payments.
+     * 
+     * @return the number of payments
+     */
+    @Column(name = "number_of_pymnts")
+    public int getNumberOfPayments() {
+        return numberOfPayments;
+    }
+
+    /**
+     * Sets the number of payments.
+     * 
+     * @param numberOfPayments the number of payments
+     */
+    public void setNumberOfPayments(int numberOfPayments) {
+        this.numberOfPayments = numberOfPayments;
+    }
+    
+    /**
+     * Gets the days to first payment.
+     * 
+     * @return the days to first payment
+     */
+    @Column(name = "days_to_first_pymnt")
+    public int getDaysToFirstPayment() {
+        return daysToFirstPayment;
+    }
+
+    /**
+     * Sets the days to first payment.
+     * 
+     * @param daysToFirstPayment the days to first payment
+     */
+    public void setDaysToFirstPayment(int daysToFirstPayment) {
+        this.daysToFirstPayment = daysToFirstPayment;
+    }
+
+    /**
+     * Gets the days between payments.
+     * 
+     * @return the days between payments
+     */
+    @Column(name = "days_between_pymnts")
+    public int getDaysBetweenPayments() {
+        return daysBetweenPayments;
+    }
+
+    /**
+     * Sets the days between payments.
+     * 
+     * @param daysBetweenPayment the days between payments
+     */
+    public void setDaysBetweenPayments(int daysBetweenPayment) {
+        this.daysBetweenPayments = daysBetweenPayment;
+    }
+
+    /**
+     * Gets the payment days.
+     * 
+     * @return the payment days
+     */
+    @Column(name="pymnt_days", length=8)
+    public String getPaymentDays() {
+        return paymentDays;
+    }
+    
+    /** The DELIM. */
+    private final String DELIM = " ";
+    
+    /**
+     * Sets the payment days.
+     * 
+     * @param paymentDays the payment days
+     */
+    public void setPaymentDays(String paymentDays) {
+        this.paymentDays = paymentDays;
+        StringTokenizer strTknzr = new StringTokenizer(this.paymentDays,DELIM);
+    	int[] values = new int[strTknzr.countTokens()];
+    	for (int i = 0; i < values.length; i++){
+    		values[i] = Integer.parseInt(strTknzr.nextToken());
+    	}    	
+        this.paymentDaysArray = values;
+    }
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
+
+	/**
+	 * Gets the bank.
+	 * 
+	 * @return the bank
+	 */
+	@ManyToOne
+    @JoinColumn(name="bank")
+	public Bank getBank() {
+		return bank;
+	}
+
+	/**
+	 * Sets the bank.
+	 * 
+	 * @param bank the bank
+	 */
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
+	/**
+	 * Gets the bank account.
+	 * 
+	 * @return the bank account
+	 */
+	@Column(name="bank_account", length=30)
+	@Type(type="com.code.aon.config.hibernate.BankAccountType")
+	public BankAccount getBankAccount() {
+		return bankAccount;
+	}
+
+	/**
+	 * Sets the bank account.
+	 * 
+	 * @param bankAccount the bank account
+	 */
+	public void setBankAccount(BankAccount bankAccount) {
+		this.bankAccount = bankAccount;
+	}
+
+	/**
+	 * Gets the lines.
+	 * 
+	 * @return the lines
 	 */
 	@OneToMany(mappedBy = "delivery", cascade={CascadeType.REMOVE})
+	@OrderBy("line")
 	public Set<DeliveryDetail> getLines() {
 		return this.lines;
 	}
 
 	/**
-	 * Assigns the DeliveryDetail set
+	 * Sets the lines.
 	 * 
-	 * @param lines DeliveryDetail set
+	 * @param lines the lines
 	 */
 	public void setLines( Set<DeliveryDetail> lines ) {
 		this.lines = lines;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.code.aon.product.strategy.ICalculableContainer#getDate()
+	/**
+	 * Gets the date. Necessary to implement <code>ICalculableContainer</code>
+	 * 
+	 * @return the date
 	 */
 	@Transient
 	public Date getDate() {
 		return this.issueTime;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.product.strategy.ICalculableContainer#getDetailList()
+	/**
+	 * Gets the discountExpression. Necessary to implement <code>ICalculableContainer</code>
+	 * 
+	 * @return the discount expression
+	 */
+	@Transient
+	public DiscountExpression getDiscountExpression() {
+		return new DiscountExpression("0.0");
+	}
+
+	/**
+	 * Gets the payMethod. Necessary to implement <code>IPayMethod</code>
+	 * 
+	 * @return the payMethod
+	 */
+	@Transient
+	public PayMethod getPayment() {
+		return payMethod;
+	}
+
+	/**
+	 * Gets the detail list. Used in the reports
+	 * 
+	 * @return the detail list
 	 */
 	@Transient
 	@SuppressWarnings("unchecked")
@@ -290,9 +544,9 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	}
 	
 	/**
-	 * Returns the DeliveryDetail list for this Delivery
+	 * Gets the detail list ordered. Used in the reports
 	 * 
-	 * @return a list of DeliveryDetail
+	 * @return the detail list
 	 */
 	@Transient
 	@SuppressWarnings("unchecked")
@@ -310,23 +564,26 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.product.strategy.ICalculableContainer#getDiscountExpression()
-	 */
-	@Transient
-	public DiscountExpression getDiscountExpression() {
-		return new DiscountExpression("0.0");
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Delivery) {
+			Delivery s = (Delivery) obj;
+			if (s.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), s.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-    @Override
-    public boolean equals(Object obj) {
-    	if(id == null){
-    		return super.equals(obj);
-    	}
-        if (obj instanceof Delivery) {
-            return (this.id.equals(((Delivery)obj).getId()));
-        }
-        return false;
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
 
 }

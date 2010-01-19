@@ -22,9 +22,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.Constants;
 
-public class GenericPageController extends BasicI18nController implements Constants {
+public class GenericPageController extends BasicI18nController {
 
 	private String title;
 
@@ -69,7 +68,7 @@ public class GenericPageController extends BasicI18nController implements Consta
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = NO_VALUE_LABEL;
+		String title = "- NO VALUE -";
 		GenericPageDetail gpd = (GenericPageDetail)getModelRowdataI18n();
 		if (gpd != null) title = gpd.getTitle();
 		return title;

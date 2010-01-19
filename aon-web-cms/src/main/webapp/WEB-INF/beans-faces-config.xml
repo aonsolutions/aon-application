@@ -32,10 +32,6 @@
 			<value>com.code.aon.cms.ConfigDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>config</value>
-		</managed-property>												
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ConfigDetail_config_id</value>
 		</managed-property>
@@ -105,10 +101,6 @@
 			<value>com.code.aon.cms.GenericPageDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>generic_page</value>
-		</managed-property>												
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>GenericPageDetail_generic_page_id</value>
 		</managed-property>
@@ -149,10 +141,6 @@
 			<value>com.code.aon.cms.Menu</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>menu</value>
-		</managed-property>												
-		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>20</value>
 		</managed-property>
@@ -184,10 +172,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.MenuOptionDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>menu_option</value>
-		</managed-property>														
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>MenuOptionDetail_menu_option_id</value>
@@ -233,10 +217,6 @@
 			<value>com.code.aon.cms.LinkCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>link_category</value>
-		</managed-property>																		
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>LinkCategoryDetail_linkCategory_id</value>
 		</managed-property>
@@ -280,10 +260,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.LinkDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>link</value>
-		</managed-property>																				
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>LinkDetail_link_id</value>
@@ -329,10 +305,6 @@
 			<value>com.code.aon.cms.FaqCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>faq_category</value>
-		</managed-property>										
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>FaqCategoryDetail_faqCategory_id</value>
 		</managed-property>
@@ -376,10 +348,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.FaqDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>faq</value>
-		</managed-property>												
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>FaqDetail_faq_id</value>
@@ -469,10 +437,6 @@
 			<value>com.code.aon.cms.ProductCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>productCategory</value>
-		</managed-property>																								
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ProductCategoryDetail_productCategory_id</value>
 		</managed-property>
@@ -517,10 +481,6 @@
 			<value>com.code.aon.cms.ProductCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>subCategory</value>
-		</managed-property>										
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ProductCategoryDetail_productCategory_id</value>
 		</managed-property>
@@ -564,10 +524,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.ProductDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>product</value>
-		</managed-property>																										
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ProductDetail_product_id</value>
@@ -614,10 +570,6 @@
 			<value>com.code.aon.cms.ArticleCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>article_category</value>
-		</managed-property>																
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ArticleCategoryDetail_articleCategory_id</value>
 		</managed-property>
@@ -661,10 +613,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.ArticleDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>article</value>
-		</managed-property>																		
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ArticleDetail_article_id</value>
@@ -710,10 +658,6 @@
 			<value>com.code.aon.cms.BannerCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>banner_category</value>
-		</managed-property>																				
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>BannerCategoryDetail_bannerCategory_id</value>
 		</managed-property>
@@ -757,10 +701,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.BannerDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>banner</value>
-		</managed-property>																						
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>BannerDetail_banner_id</value>
@@ -806,10 +746,6 @@
 			<value>com.code.aon.cms.DownloadCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>download_category</value>
-		</managed-property>						
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>DownloadCategoryDetail_downloadCategory_id</value>
 		</managed-property>
@@ -853,10 +789,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.DownloadDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>download</value>
-		</managed-property>								
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>DownloadDetail_download_id</value>
@@ -902,10 +834,6 @@
 			<value>com.code.aon.cms.AlbumCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>album_category</value>
-		</managed-property>												
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>AlbumCategoryDetail_albumCategory_id</value>
 		</managed-property>
@@ -949,10 +877,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.AlbumDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>album</value>
-		</managed-property>										
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>AlbumDetail_album_id</value>
@@ -998,10 +922,6 @@
 			<value>com.code.aon.cms.AlbumImageDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>albumImage</value>
-		</managed-property>						
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>AlbumImageDetail_albumImage_id</value>
 		</managed-property>
@@ -1034,7 +954,7 @@
 	
 	<!-- ************** HEADER ************** -->
 	<managed-bean>
-		<managed-bean-name>cmsHeader</managed-bean-name>
+		<managed-bean-name>headers</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.HeaderController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1045,10 +965,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.HeaderDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>cmsHeader</value>
-		</managed-property>								
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>HeaderDetail_header_id</value>
@@ -1080,10 +996,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.FooterDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>footer</value>
-		</managed-property>														
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>FooterDetail_footer_id</value>
@@ -1125,13 +1037,9 @@
 			<value>com.code.aon.cms.Sidebar</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sidebar</value>
-		</managed-property>						
-		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>20</value>
@@ -1164,10 +1072,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.SidebarOptionDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sidebar_option</value>
-		</managed-property>								
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>SidebarOptionDetail_sidebar_option_id</value>
@@ -1211,10 +1115,6 @@
 			<value>com.code.aon.cms.Section</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>section</value>
-		</managed-property>								
-		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
@@ -1250,10 +1150,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.ModularPageDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>modular_page</value>
-		</managed-property>										
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ModularPageDetail_modular_page_id</value>
@@ -1299,10 +1195,6 @@
 			<value>com.code.aon.cms.ModularPageOptionDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>modular_page_option</value>
-		</managed-property>				
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ModularPageOptionDetail_modular_page_option_id</value>
 		</managed-property>
@@ -1347,10 +1239,6 @@
 			<value>com.code.aon.cms.DirectAccessGroupDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>direct_access_group</value>
-		</managed-property>		
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>DirectAccessGroupDetail_directAccessGroup_id</value>
 		</managed-property>
@@ -1394,10 +1282,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.DirectAccessDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>direct_access</value>
-		</managed-property>				
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>DirectAccessDetail_directAccess_id</value>
@@ -1469,10 +1353,6 @@
 		<managed-bean-name>gallery</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.ImageGalleryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>gallery</value>
-		</managed-property>														
 	</managed-bean>
 
 	<!-- ************** DOCUMENTS ************** -->
@@ -1480,10 +1360,6 @@
 		<managed-bean-name>document</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.DocumentGalleryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>document</value>
-		</managed-property>														
 	</managed-bean>
 
 	<!-- ************** GENERATOR CONFIG ************** -->
@@ -1506,10 +1382,6 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.cms.ArticleRelated</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>articleRelated</value>
-		</managed-property>																
 		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>10</value>
@@ -1542,10 +1414,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.ArticleDocumentDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>articleDocument</value>
-		</managed-property>																		
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ArticleDocumentDetail_articleDocument_id</value>
@@ -1605,10 +1473,6 @@
 			<value>com.code.aon.cms.ActivityDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>activity</value>
-		</managed-property>										
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ActivityDetail_activity_id</value>
 		</managed-property>
@@ -1654,10 +1518,6 @@
 			<value>com.code.aon.cms.Company</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>company</value>
-		</managed-property>								
-		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>20</value>
 		</managed-property>
@@ -1689,10 +1549,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.BulletinDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>bulletin</value>
-		</managed-property>		
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>BulletinDetail_bulletin_id</value>
@@ -1738,10 +1594,6 @@
 			<value>com.code.aon.cms.BulletinEmail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>bulletin_email</value>
-		</managed-property>				
-		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>20</value>
 		</managed-property>
@@ -1774,10 +1626,6 @@
 			<value>com.code.aon.cms.BulletinArticle</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>bulletin_article</value>
-		</managed-property>						
-		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>20</value>
 		</managed-property>
@@ -1809,10 +1657,6 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.cms.FooterBannerCategory</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>footer_banner_category</value>
-		</managed-property>																
 		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>10</value>
@@ -1955,10 +1799,6 @@
 			<value>com.code.aon.cms.SportCategoryDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_category</value>
-		</managed-property>														
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>SportCategoryDetail_sportCategory_id</value>
 		</managed-property>
@@ -2003,10 +1843,6 @@
 			<value>com.code.aon.cms.SportClub</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_club</value>
-		</managed-property>																
-		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>20</value>
 		</managed-property>
@@ -2038,10 +1874,6 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.SportPositionDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_position</value>
-		</managed-property>																		
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>SportPositionDetail_sportPosition_id</value>
@@ -2087,10 +1919,6 @@
 			<value>com.code.aon.cms.SportNationalityDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_nationality</value>
-		</managed-property>																				
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>SportNationalityDetail_sportNationality_id</value>
 		</managed-property>
@@ -2131,10 +1959,6 @@
 			<value>com.code.aon.cms.SportSeason</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_season</value>
-		</managed-property>																						
-		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
@@ -2166,10 +1990,6 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.cms.SportPlayer</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_player</value>
-		</managed-property>																						
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
@@ -2203,10 +2023,6 @@
 			<value>com.code.aon.cms.SportCareerPath</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_career_path</value>
-		</managed-property>																								
-		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>false</value>
 		</managed-property>
@@ -2239,10 +2055,6 @@
 			<value>com.code.aon.cms.SportCoach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_coach</value>
-		</managed-property>		
-		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
@@ -2274,10 +2086,6 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.cms.SportConfig</value>
 		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sport_config</value>
-		</managed-property>				
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>

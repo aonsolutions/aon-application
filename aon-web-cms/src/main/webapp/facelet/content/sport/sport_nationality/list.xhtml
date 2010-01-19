@@ -32,21 +32,21 @@
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!sport_nationality.new and cms.roleEditor}"
-							reRender="dataTableDiv,gridToolbar"
+							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{sport_nationality.onReset}" />
 						</aon:commandButton>
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{sport_nationality.to!=null}"
-							reRender="dataTableDiv, gridToolbar"
+							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{sport_nationality.onAccept}" />
 						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{sport_nationality.to!=null}"
-							reRender="dataTableDiv, gridToolbar"
+							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}"
 							accesskey="#{bundle.aon_key_cancel}">
@@ -56,18 +56,21 @@
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div id="dataTableDiv" styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area">
 
 				<aon:dataTable id="dataTable"
 					value="#{sport_nationality.model}" var="to" 
 					rows="#{sport_nationality.pageLimit}"
-					columnClasses="aon-editDataTable-iconColumn,  aon-editDataTable-textColumn,
-							   aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
-							   aon-editDataTable-buttonsColumn">
-
-					<aon:rowSelector immediate="true" reRender="dataTableDiv,gridToolbar"
-						toggleOnClick="#{sport_nationality.to == null}"
-						actionListener="#{sport_nationality.onSelect}" />
+					styleClass="dr-table rich-table aon-editDataTable"
+					headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+					footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+					rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+					cellpadding="0" cellspacing="0"
+					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
 
 					<aon:column>
 						<f:facet name="header">
@@ -82,7 +85,7 @@
 									title="[#{bundle.aon_reset}]"
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									value="" immediate="true"
-									reRender="dataTableDiv,gridToolbar"
+									reRender="dataTable,gridToolbar"
 									rendered="#{!sport_nationality.new and cms.roleEditor}"
 									actionListener="#{sport_nationality.onReset}"
 									accesskey="#{bundle.aon_key_new_line}">
@@ -93,10 +96,15 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_alias}" />
+							<aon:outputText value="#{appBundle.sport_nationality_alias}" />
 						</f:facet>
 						<aon:outputText value="#{to.alias}"
-							rendered="#{to!=sport_nationality.to}" >
+							rendered="#{to!=sport_nationality.to}" 
+							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								reRender="dataTable,gridToolbar"
+								actionListener="#{sport_nationality.onSelect}"
+								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{to.alias}"
 							id="#{to.id}_alias"
@@ -121,7 +129,12 @@
 							<aon:outputText value="#{appBundle.sport_nationality_desciption}" />
 						</f:facet>
 						<aon:outputText value="#{sport_nationality.i18nDescription}"
-							rendered="#{to!=sport_nationality.to}" >
+							rendered="#{to!=sport_nationality.to}" 
+							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								reRender="dataTable,gridToolbar"
+								actionListener="#{sport_nationality.onSelect}"
+								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{sport_nationality.toI18n.description}"
 							id="#{to.id}_description"
@@ -150,13 +163,15 @@
 					                	immediate="#{true}"
 					                	reRender="thumbnail_preview_1"
 					                    actionListener="#{sport_nationality.onDelImage}">
-										<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+										<aon:graphicImage url="/images/cms/inactive.png" />
 					        		</aon:commandLink>
 									<ui:include src="/facelet/content/utils/image_modal.xhtml">
 										<ui:param name="modalPanelName" value="mp" />
 										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+										<ui:param name="galleryBean" value="#{gallery}" />
 										<ui:param name="listenerBean" value="#{sport_nationality}" />
 										<ui:param name="reRender" value="thumbnail_preview_1" />
+										<ui:param name="image" value="#{true}" />
 										<ui:param name="thumbnail" value="#{false}" />
 									</ui:include>
 					        	</aon:panelGroup>
@@ -174,13 +189,15 @@
 					                	immediate="#{true}"
 					                	reRender="thumbnail_preview_2"
 					                    actionListener="#{sport_nationality.onDelImage}">
-										<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+										<aon:graphicImage url="/images/cms/inactive.png" />
 					        		</aon:commandLink>
 									<ui:include src="/facelet/content/utils/image_modal.xhtml">
 										<ui:param name="modalPanelName" value="mp_new" />
 										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+										<ui:param name="galleryBean" value="#{gallery}" />
 										<ui:param name="listenerBean" value="#{sport_nationality}" />
 										<ui:param name="reRender" value="thumbnail_preview_2" />
+										<ui:param name="image" value="#{true}" />
 										<ui:param name="thumbnail" value="#{false}" />
 									</ui:include>
 					        	</aon:panelGroup>
@@ -197,20 +214,20 @@
 							<aon:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
-								reRender="dataTableDiv,gridToolbar">
+								reRender="dataTable,gridToolbar">
 								<aon:actionListener method="#{sport_nationality.onAccept}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
-								reRender="dataTableDiv,gridToolbar" immediate="true">
+								reRender="dataTable,gridToolbar" immediate="true">
 								<aon:actionListener method="#{sport_nationality.onCancel}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineRemove"
 								title="[#{bundle.aon_remove}]"
 								rendered="#{cms.roleEditor}"
 								styleClass="aon-editDataTable-button aon-icon-delete"
-								reRender="dataTableDiv,gridToolbar" immediate="true"
+								reRender="dataTable,gridToolbar" immediate="true"
 								actionListener="#{sport_nationality.onRemove}" />
 						</aon:div>
 						<f:facet name="footer">
@@ -219,13 +236,13 @@
 								<aon:commandButton id="newAccept"
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									reRender="dataTableDiv,gridToolbar">
+									reRender="dataTable,gridToolbar">
 									<aon:actionListener method="#{sport_nationality.onAccept}" />
 								</aon:commandButton>
 								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									reRender="dataTableDiv,gridToolbar" immediate="true">
+									reRender="dataTable,gridToolbar" immediate="true">
 									<aon:actionListener method="#{sport_nationality.onCancel}" />
 								</aon:commandButton>
 							</aon:div>
@@ -233,7 +250,9 @@
 					</aon:column>
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="dataTable" />					
+				<aon:dataScroller for="dataTable"
+					rowCount="#{sport_nationality.model.rowCount}" 
+					showNote="true" />					
 			
 			</aon:div>
 			

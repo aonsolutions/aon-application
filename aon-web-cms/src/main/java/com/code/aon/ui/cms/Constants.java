@@ -1,7 +1,5 @@
 package com.code.aon.ui.cms;
 
-import java.io.File;
-
 public interface Constants {
 
 	public static final String
@@ -10,7 +8,7 @@ public interface Constants {
 	APLICATION_NAME				= "cms",
 	SESSION_CONFIG 				= "servlet_session_cms_config",
 	SESSION_CURRENT_LANGUAGE	= "servlet_session_cms_current_language",
-	DOMAINS_PATH				= File.separator + "home" + File.separator + "DOMAINS",
+	DOMAINS_PATH				= "/home/DOMAINS",
 	WEBSITE_PATH				= "WEBSITES",
 	RESOURCE_PATH				= "DOMAIN-RESOURCES",
 	TEMPLATE_PATH				= "templates",
@@ -24,7 +22,6 @@ public interface Constants {
 	MESSAGES_FILE				= "messages",
 	TEMPORAL_PATH				= "temp",
 	CONFIG_PATH					= "config",
-	NO_VALUE_LABEL				= "- NO VALUE -",
 
 	//RESOURCES CONSTANTS
 	OTHER_IMAGE					= "otro.png",

@@ -48,7 +48,7 @@ public class EmailSender {
 		server.connect();
 	}
 	
-	public void sendMessage( Address[] to, String subject, String content ) throws WebmailException, MessagingException {
+	public void sendMessage( Address[] to, String subject, String content ) throws WebmailException {
 		sendMessage(to, subject, content, null);
 	}
 	

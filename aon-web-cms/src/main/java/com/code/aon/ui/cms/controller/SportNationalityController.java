@@ -6,11 +6,10 @@ import com.code.aon.cms.Image;
 import com.code.aon.cms.SportNationality;
 import com.code.aon.cms.SportNationalityDetail;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class SportNationalityController extends BasicI18nController implements ICMSConstants, Constants {
+public class SportNationalityController extends BasicI18nController {
 	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
@@ -19,7 +18,7 @@ public class SportNationalityController extends BasicI18nController implements I
 	}
 
 	public String getI18nDescription() throws ManagerBeanException {
-		String description = NO_VALUE_LABEL;
+		String description = "- NO VALUE -";
 		SportNationalityDetail detail = (SportNationalityDetail)getModelRowdataI18n();
 		if (detail != null) description = detail.getDescription();
 		return description;
@@ -31,7 +30,7 @@ public class SportNationalityController extends BasicI18nController implements I
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		SportNationality current = (SportNationality)getTo();
 		current.setImage(image);

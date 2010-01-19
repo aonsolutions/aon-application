@@ -211,6 +211,12 @@ public interface ICampaignAlias {
 	*/
 	String  PROCESS_ID = PROCESS_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: Process_status
+	* Hibernate value: Process.status
+	*/
+	String  PROCESS_STATUS = PROCESS_ENTRY.getAliasNames()[2];
+
 
 
 	/** 
@@ -255,16 +261,28 @@ public interface ICampaignAlias {
 	String  PROCESS_DETAIL_POSITION = PROCESS_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: ProcessDetail_priority
+	* Hibernate value: ProcessDetail.priority
+	*/
+	String  PROCESS_DETAIL_PRIORITY = PROCESS_DETAIL_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: ProcessDetail_process_id
 	* Hibernate value: ProcessDetail.process.id
 	*/
-	String  PROCESS_DETAIL_PROCESS_ID = PROCESS_DETAIL_ENTRY.getAliasNames()[6];
+	String  PROCESS_DETAIL_PROCESS_ID = PROCESS_DETAIL_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ProcessDetail_status
+	* Hibernate value: ProcessDetail.status
+	*/
+	String  PROCESS_DETAIL_STATUS = PROCESS_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ProcessDetail_workgroup_id
 	* Hibernate value: ProcessDetail.workgroup.id
 	*/
-	String  PROCESS_DETAIL_WORKGROUP_ID = PROCESS_DETAIL_ENTRY.getAliasNames()[7];
+	String  PROCESS_DETAIL_WORKGROUP_ID = PROCESS_DETAIL_ENTRY.getAliasNames()[9];
 
 
 

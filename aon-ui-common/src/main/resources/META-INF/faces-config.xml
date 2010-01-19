@@ -60,4 +60,13 @@
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 
+	<!--  **** ROLE MANAGER **** -->
+	<managed-bean>
+		<managed-bean-name>aonRole</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.role.RoleManager
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 </faces-config>

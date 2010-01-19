@@ -4,11 +4,10 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.ActivityDetail;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 
 
-public class ActivityController extends BasicI18nController implements ICMSConstants, Constants {
+public class ActivityController extends BasicI18nController {
 
 	private int page;
 	
@@ -27,16 +26,16 @@ public class ActivityController extends BasicI18nController implements ICMSConst
 	}
 
 	public String getI18nDescription() throws ManagerBeanException {
-		String description = NO_VALUE_LABEL;
+		String description = "- NO VALUE -";
 		ActivityDetail detail = (ActivityDetail)getModelRowdataI18n();
 		if (detail != null) description = detail.getDescription();
 		return description;
 	}
 
 	public String getBack(){
-		if (FormUtil.getController(COMPANY).getTo()==null)
-			return COMPANY_LIST;
-		return COMPANY_FORM;
+		if (FormUtil.getController("company").getTo()==null)
+			return "company_list";
+		return "company_form";
 	}
 
 }

@@ -3,95 +3,60 @@ package com.code.aon.ui.cms.controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
 
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
 
-public class GeneratorStatusController implements IGeneratorLogger {
-	
-	private static final Logger LOGGER = Logger.getLogger(GeneratorStatusController.class.getName());
-	
-	private static final DateFormat TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.MEDIUM); 
+public class GeneratorStatusController  {
 
-	private boolean generated;
+	private boolean generated = false;
 
-	private boolean generatedOk;
+	private boolean generatedOk = false;
 
-	private boolean activePoll;
+	private boolean activePoll = false;
 
-	private boolean published;
+	private boolean published = false;
 
 	private List<String> status;
 
 	private List<String> errors;
 
-	public GeneratorStatusController() {
-		this.status = new ArrayList<String>();
-		this.errors = new ArrayList<String>();
-	}
-
-	public void onInit(ActionEvent event) {
-		onReset(event);
-		this.activePoll = true;
-	}
-
-	public void onReset(ActionEvent event) {
+	public void onInit(ActionEvent event){
 		this.generated = false;
 		this.generatedOk = false;
 		this.published = false;
-		this.activePoll = false;
-		this.status.clear();
-		this.errors.clear();
+		this.activePoll = true;
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
 	}
 	
 	public List<String> getStatus() {
 		return this.status;
 	}
 	
-	public int getStatusSize() {
-		return this.status.size();
-	}
-
 	public List<String> getErrors() {
 		return this.errors;
 	}
 	
-	public int getErrorsSize() {
-		return this.errors.size();
-	}
-	
-	private void addMessage(String msg) {
-		String time = TIME_FORMAT.format(new Date());
+	public void addMessage(String msg) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
 		this.status.add(0,time+" "+msg);
 	}	
 	
-	private void addErrorMessage(String msg) {
-		String time = TIME_FORMAT.format(new Date());
+	public void addErrorMessage(String msg) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
 		this.errors.add(0, time+" "+msg);
 	}	
-
-	@Override
-	public void info(String msg) {
-		addMessage(" INFO: " + msg);
-	}
-	
-	@Override
-	public void error(String msg) {
-		addErrorMessage(" ******* ERROR: " + msg + "***********");
-	}
-
-	@Override
-	public void warning(String msg) {
-		addErrorMessage(" ******* WARNING: " + msg + "***********");
-	}
 
 	public boolean isActivePoll() {
 		return this.activePoll;
@@ -111,9 +76,8 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void finalized() {
 		this.generated = true;
-		if (this.errors.size()==0) {
+		if (this.errors.size()==0)
 			this.generatedOk = true;
-		}
 		this.activePoll = false;
 	}
 
@@ -123,14 +87,12 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
 		this.activePoll = true;
-		this.status.clear();
-		this.errors.clear();
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
 		try {
-			if (FTPUtil.uploadFTP())  {
+			if (FTPUtil.uploadFTP())
 				this.published = true;
-			}
-		}catch (Throwable th) {		
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}catch (Exception e) {
 		}finally{
 			this.activePoll = false;
 		}
@@ -138,13 +100,12 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void onPublishPreview(ActionEvent event) throws ManagerBeanException {
 		this.activePoll = true;
-		this.status.clear();
-		this.errors.clear();
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
 		try {
 			if (FTPUtil.uploadPreviewFTP())
 				this.published = true;
-		}catch (Throwable th) {			
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}catch (Exception e) {
 		}finally{
 			this.activePoll = false;
 		}
@@ -156,6 +117,15 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public String getWebURL() {
 		return ControllerUtil.getWebURL();
+	}
+	
+	private static String checkMem(String data) {
+		long freeMemory = Runtime.getRuntime().freeMemory();
+		long totalMemory = Runtime.getRuntime().totalMemory();
+		long maxMemory = Runtime.getRuntime().maxMemory();
+		long memoryUsed = totalMemory-freeMemory;
+		data += "-------------> "+(memoryUsed/(1024*1024))+" of "+(maxMemory/(1024*1024))+" MB used";
+		return data;
 	}
 	
 }

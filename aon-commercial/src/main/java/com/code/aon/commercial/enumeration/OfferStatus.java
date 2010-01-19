@@ -16,16 +16,19 @@ public enum OfferStatus implements IResourceable {
 
 	/** PENDING. */
 	PENDING,
-    
-	/** ACCEPTED. */
-	ACCEPTED,
-    
-    /** DENIED. */
-    DENIED,
-	
-    /** PROCESSED. */
-    PROCESSED;
-    
+
+	/** APPROVED. */
+	APPROVED,
+
+    /** REFUSED. */
+    REFUSED,
+
+    /** BLOCKED. */
+    BLOCKED,
+
+	/** INVOICED. */
+    INVOICED;
+
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.commercial.i18n.messages";
 

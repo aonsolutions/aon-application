@@ -1,15 +1,184 @@
-<?xml version="1.0"?>
-<!DOCTYPE faces-config PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
-  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-<faces-config>
-
-	<!-- ************* SUPPLIER LOOKUP ***************** -->
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.purchase.i18n.messages</base-name>
+			<var>purchaseBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
-		<managed-bean-name>supplierLookup</managed-bean-name>
+		<managed-bean-name>purchaseCollections</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.purchase.controller.SupplierLookupController
+			com.code.aon.ui.purchase.controller.PurchaseCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ ITEM SUPPLIER ************* -->
+	<managed-bean>
+		<managed-bean-name>itemSupplier</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.purchase.controller.ItemSupplierController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.purchase.ItemSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>item.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{itemSupplierControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemSupplierControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.event.ItemSupplierControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>itemSupplierChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>itemSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ItemSupplier_item_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ****** PURCHASE ****** -->
+	<managed-bean>
+		<managed-bean-name>purchase</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.PurchaseController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.purchase.Purchase</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>purchase</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Purchase_issueDate,Purchase_series,Purchase_number</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{purchaseSearch}</value>
+				<value>#{purchaseScopeListener}</value>
+				<value>#{purchaseControllerListener}</value>
+				<value>#{purchaseDetailChildListener}</value>
+				<value>#{nullableBankAccountValidatorListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>purchaseSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.event.PurchaseSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>purchaseScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Purchase_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>purchaseControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.event.PurchaseControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>purchaseDetailChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>purchaseDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>PurchaseDetail_purchase_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ****** PURCHASE DETAIL ****** -->
+	<managed-bean>
+		<managed-bean-name>purchaseDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.PurchaseDetailController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -17,64 +186,65 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.purchase.Supplier</value>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.purchase.PurchaseDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>Supplier_Lookup</value>
+			<property-name>beanName</property-name>
+			<value>purchaseDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
+			<property-name>defaultOrder</property-name>
+			<value>PurchaseDetail_line</value>
 		</managed-property>
 		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>id</value>
-				<value>document</value>
-			</list-entries>
+			<property-name>masterControllerName</property-name>
+			<value>purchase</value>
 		</managed-property>
 		<managed-property>
-			<description>Needed for Search Select Window</description>
-			<property-name>searchPagePath</property-name>
-			<value>/facelet/sw/supplierSearch.faces</value>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>purchase.id</value>
+				</map-entry>
+			</map-entries>
 		</managed-property>
 		<managed-property>
-			<description>Needed for New Window</description>
-			<property-name>newPagePath</property-name>
-			<value>/facelet/sw/supplierNew.faces</value>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{supplierScopeListener}</value>
+				<value>#{purchaseDetailControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-
+	
 	<managed-bean>
-		<managed-bean-name>supplierScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Supplier_scope_id</value>
-		</managed-property>
+		<managed-bean-name>purchaseDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.event.PurchaseDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+   	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>supplier_sw</from-outcome>
-			<to-view-id>/facelet/sw/supplier.faces</to-view-id>
+			<from-outcome>purchase_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/purchase/facelet/purchase/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>supplier_sw_search</from-outcome>
-			<to-view-id>/facelet/sw/supplierSearch.faces</to-view-id>
+			<from-outcome>purchase_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/purchase/facelet/purchase/form.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
+		<navigation-case>
+			<from-outcome>purchase_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/purchase/facelet/purchase/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
 	
 </faces-config>

@@ -1,8 +1,9 @@
-<faces-config version="1.2"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 
+<faces-config>
 	<application>
 		<message-bundle>
 			com.code.aon.ui.common.i18n.messages
@@ -10,10 +11,6 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
-		<resource-bundle>
-			<base-name>com.code.aon.ui.webmail.i18n.application</base-name>
-			<var>appBundle</var>
-		</resource-bundle>		
 	</application>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
@@ -26,10 +23,10 @@
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
 			<value>aon-desktop</value>
-		</managed-property>
+		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.8.0</value>
+			<value>/aonResource/3.1.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -48,6 +45,27 @@
 				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
 				<value>#{aonResource.resolveLocal['/css/webmail.css']}</value>
 			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>applicationBundles</property-name>
+			<map-entries>
+				<map-entry>
+					<key>bundle</key>
+					<value>com.code.aon.ui.common.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>appBundle</key>
+					<value>com.code.aon.ui.webmail.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>securityBundle</key>
+					<value>com.code.aon.bridge.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>groupwareBundle</key>
+					<value>com.code.aon.ui.groupware.i18n.messages</value>
+				</map-entry>
+			</map-entries>
 		</managed-property>
 	</managed-bean>
 

@@ -13,38 +13,37 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.hiru_organizer_centre}"/>	  						
+				</aon:div>					
 				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.hiru_organizer_centre}"/>	  						
-					</aon:div>					
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{appBundle.aon_listing}" />
+				</aon:div>					
 					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{cms.roleEditor}"
-							action="hiru_organizer_centre_form"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{hiru_organizer_centre.onReset}" />
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{cms.roleEditor}"
+						action="hiru_organizer_centre_form"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{hiru_organizer_centre.onReset}" />
+					</aon:commandButton>
+			    </aon:div>
+				
+				<!-- end toolbar navigation -->
+			</aon:panelGrid>
+		</aon:div>
 		
-			<!--  aon-region-body -->
-			<aon:div styleClass="aon-scroll-area">
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
 
-				<aon:div styleClass="aon-toolbar aon-margin-bottom">
 					<aon:outputLabel for="OrgenizerCenter_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="OrgenizerCenter_section"  
@@ -56,59 +55,66 @@
 					<aon:commandButton id="save"
 						value="#{bundle.aon_save}" 
 						action="hiru_organizer_centre_list"
-						actionListener="#{generator_config.onSaveHiruConfig}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						styleClass="aon-content-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{generator_config.onSaveHiruConfig}" />
 					</aon:commandButton>
-				</aon:div>
-					
-				<aon:dataTable id="dataTable" value="#{hiru_organizer_centre.model}" var="to"
-					rows="#{hiru_organizer_centre.pageLimit}" rendered="#{hiru_organizer_centre.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-width-200 aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
-			
-					<aon:rowSelector
-						action="hiru_organizer_centre_form" actionListener="#{hiru_organizer_centre.onSelect}" />							
-			
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.hiru_organizer_centre_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}" styleClass="aon-editDataTable-button"/>
-					</aon:column>
+						
+					<aon:dataTable id="dataTable" value="#{hiru_organizer_centre.model}" var="to"
+						rows="#{hiru_organizer_centre.pageLimit}" 
+						styleClass="dr-table rich-table aon-editDataTable"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+				
+						<aon:column>
+							<a4j:support 
+								action="hiru_organizer_centre_form"
+								actionListener="#{hiru_organizer_centre.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.hiru_organizer_centre_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" styleClass="aon-editDataTable-button"/>
+						</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.hiru_organizer_centre_telephone}" />
-						</f:facet>
-						<aon:outputText value="#{to.telephone}" styleClass="aon-editDataTable-button"/>
-					</aon:column>
+						<aon:column>
+							<a4j:support 
+								action="hiru_organizer_centre_form"
+								actionListener="#{hiru_organizer_centre.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.hiru_organizer_centre_telephone}" />
+							</f:facet>
+							<aon:outputText value="#{to.telephone}" styleClass="aon-editDataTable-button"/>
+						</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.hiru_organizer_centre_active}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																					
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.hiru_organizer_centre_active}" />
+							</f:facet>
 							<aon:commandLink title="#{appBundle.hiru_organizer_centre_activate}" 
 								actionListener="#{hiru_organizer_centre.onActivate}"
 								reRender="dataTable"
 								rendered="#{!to.active}">
 								<aon:graphicImage alt="#{appBundle.hiru_organizer_centre_activate}"
-									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+									url="/images/cms/inactive.png" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.hiru_organizer_centre_deactivate}" 
 								actionListener="#{hiru_organizer_centre.onDeactivate}" 
 								reRender="dataTable" 
 								rendered="#{to.active}">
 								<aon:graphicImage alt="#{appBundle.hiru_organizer_centre_deactivate}"
-									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+									url="/images/cms/active.png" />
 							</aon:commandLink>
-						</aon:div>
-					</aon:column>
+						</aon:column>
 
-				</aon:dataTable>
+					</aon:dataTable>
 				
-				<aon:dataScroller2 for="dataTable" showNote="true" />
+					<rich:datascroller align="left"  for="dataTable" maxPages="20" />
 
 			</aon:div>
 		</aon:form>

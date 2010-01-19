@@ -5,23 +5,20 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-	
+
 	<aon:form>
-	<aon:menuBar id="mainMenu"> 
-		<c:if test="#{!aonConfiguration.properties.hideMenuBar}">	
-		<!--  
-			<aon:dropDownMenu value="#{customerBundle.customer_module}">
-				<aon:menuSeparator/>
-				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}">
-					<f:setPropertyActionListener value="#{true}" target="#{customer.showAccount}" />
-				</aon:menuItem>
-				<aon:menuSeparator/>
-			</aon:dropDownMenu>
-		-->
-			<aon:outputText value="&#160;" />
-			
-		</c:if>
-	</aon:menuBar>
+		<aon:menuBar id="mainMenu">
+			<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+
+				<aon:dropDownMenu value="#{appBundle.menu_masters}">
+					<aon:menuItem actionListener="#{customer.onEditSearch}"
+						action="customer_search" value="#{customerBundle.customer_module}" />
+					<aon:menuSeparator />
+					<aon:menuItem action="relationship_form"
+						value="#{registryBundle.relationship_module}" />
+				</aon:dropDownMenu>
+			</c:if>
+		</aon:menuBar>
 	</aon:form>
-	
+
 </ui:composition>

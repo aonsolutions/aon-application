@@ -23,6 +23,9 @@
 	<body id="aon-body" onload="loadInnerWindow();">
 		<aon:div styleClass="aon-login">
 			<aon:panelGrid style="width:100%;height:100%;">
+				<c:if test="#{companyDisplay.show}">
+					<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" />
+				</c:if>
 				<aon:div styleClass="aon-login-box-internal">
 					<form id="login" method="post" action="j_security_check">
 						<aon:div styleClass="aon-login-title">

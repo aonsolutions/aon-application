@@ -2,6 +2,7 @@ package com.code.aon.ui.cms.velocity.attribute;
 
 import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.enumeration.ArticleType;
+import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
@@ -20,49 +21,47 @@ public class SidebarOptionHandler {
 
 	public SidebarOptionHandler(SidebarOptionDetail sidebarOptionDetail) {
 		template = sidebarOptionDetail.getSidebar_option().getType().getTemplateName();
-		Integer ident = sidebarOptionDetail.getSidebar_option().getIdent();
-		switch ( sidebarOptionDetail.getSidebar_option().getType() ) {
-			case ALBUM_CATEGORY:
-				content = AlbumGenerator.getAlbumCategoryHandler(ident);
-				break;
-			case ARTICLE:
-				content = ArticleGenerator.getArticleHandler(ident);
-				break;
-			case ARTICLE_EVENTS_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.EVENTS);
-				break;
-			case ARTICLE_NEWS_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.NEWS);
-				break;
-			case ARTICLE_OTHER_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.OTHER);
-				break;
-			case ARTICLE_SERVICES_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.SERVICES);
-				break;
-			case BANNER:
-				content = BannerGenerator.getBannerHandler(ident);
-				break;
-			case BANNER_GROUP:
-				content = BannerGenerator.getBannerCategoryHandler(ident);
-				break;
-			case DIARY_CALENDAR:
-				content = ArticleCalendarGenerator.getDiaryCalendarHandler();
-				break; 
-			case DIRECT_ACCESS:
-				content = DirectAccessGenerator.getDirectAccessGroupHandler(ident);
-				break;
-			case DOWNLOAD_CATEGORY:
-				content = DownloadsGenerator.getDownloadsHandler(ident);
-				break;
-			case GENERIC:
-				content = GenericGenerator.getGenericHandler(ident);
-				break;
-			case LINK:
-				content = LinkGenerator.getLinkCategoryHandler(ident);
-				break;
-			case MENU:
-				content = MenuGenerator.getMenuHandler(ident);
+		if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ARTICLE)) {
+			content = ArticleGenerator.getArticleHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.BANNER_GROUP)) {
+			content = BannerGenerator.getBannerCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.BANNER)) {
+			content = BannerGenerator.getBannerHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.GENERIC)) {
+			content = GenericGenerator.getGenericHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.LINK)) {
+			content = LinkGenerator.getLinkCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.MENU)) {
+			content = MenuGenerator.getMenuHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.DIRECT_ACCESS)) {
+			content = DirectAccessGenerator.getDirectAccessGroupHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ARTICLE_EVENTS_CATEGORY)) {
+			content = ArticleGenerator.getArticleCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent(),ArticleType.EVENTS);
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ARTICLE_NEWS_CATEGORY)) {
+			content = ArticleGenerator.getArticleCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent(),ArticleType.NEWS);
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ARTICLE_OTHER_CATEGORY)) {
+			content = ArticleGenerator.getArticleCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent(),ArticleType.OTHER);
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ARTICLE_SERVICES_CATEGORY)) {
+			content = ArticleGenerator.getArticleCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent(),ArticleType.SERVICES);
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.DOWNLOAD_CATEGORY)) {
+			content = DownloadsGenerator.getDownloadsHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ALBUM_CATEGORY)) {
+			content = AlbumGenerator.getAlbumCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.DIARY_CALENDAR)) {
+			content = ArticleCalendarGenerator.getDiaryCalendarHandler();
 		}
 	}
 

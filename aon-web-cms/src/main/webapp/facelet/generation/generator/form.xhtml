@@ -35,20 +35,45 @@
 							actionListener="#{generatorApplication.onGenerate}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:commandButton>
 						<aon:commandButton id="publish_ok"
 							value="#{appBundle.aon_publish}" 
 							reRender="generatorForm"
+							rendered="#{generator_status.generated}"
 							actionListener="#{generator_status.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:commandButton>
+						<!-- 
+						<aon:commandButton id="publish_preview_ok"
+							value="#{appBundle.aon_publish} PREVIEW" 
+							reRender="generatorForm"
+							rendered="#{generator_status.generated}"
+							actionListener="#{generator_status.onPublishPreview}" 
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<a4j:support 
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
+						</aon:commandButton>
+						<h:outputLink 
+							id="preview_url"
+							rendered="#{generator_status.generated}"
+							value="#{generator_status.previewURL}" 
+							target="_blank"
+							style="line-height:18px;">
+							PREVIEW
+						</h:outputLink>
+						 -->
 						<h:outputLink 
 							id="web_url"
 							rendered="#{generator_status.published}"
@@ -57,8 +82,8 @@
 							style="line-height:18px;">
 							WEB
 						</h:outputLink>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -77,7 +102,9 @@
 			
 		</aon:form>
 		
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 
 	</ui:define>
 </ui:composition>

@@ -9,6 +9,8 @@
 
 	<aon:panelGroup id="#{confirmId}ReRender" styleClass="aon-popupWindow">
 		<c:if test="#{confirmShowWindow}">
+			<rich:hotKey key="esc" handler="#{closeHandler}"/>		
+			<rich:hotKey key="return" handler="#{yesHandler}"/>
 			<aon:subForm id="#{confirmId}Form">
 				<rich:modalPanel 
 					id="#{confirmId}"
@@ -40,7 +42,7 @@
 							<aon:div styleClass="aon-text-center">
 								<aon:commandButton id="#{confirmId}-yes" value="#{bundle.aon_yes}"
 									action="#{confirmAction}" immediate="#{immediate}"
-									reRender="#{confirmId}ReRender,#{confirmReRender}"
+									reRender="#{confirmReRender}"
 									styleClass="aon-commandButton" >
 									<c:if test="#{confirmActionListener != null}">									
 										<aon:actionListener method="#{confirmActionListener}" />

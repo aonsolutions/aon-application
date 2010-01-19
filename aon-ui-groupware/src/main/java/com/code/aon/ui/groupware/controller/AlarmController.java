@@ -3,10 +3,11 @@ package com.code.aon.ui.groupware.controller;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,7 +26,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class AlarmController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(AlarmController.class.getName());
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlarmController.class);
 	
 	private DelayTime delayTime;
 	
@@ -43,7 +45,6 @@ public class AlarmController extends BasicController {
 		super.onSelect(event);
 	}
 	
-	@SuppressWarnings("unused")
 	public void obtainInboxModel(ActionEvent event) throws ManagerBeanException{
 		try {
 			Criteria criteria = getCriteria();
@@ -76,13 +77,13 @@ public class AlarmController extends BasicController {
 				alarmBean.update(currentAlarm);
 				this.setTo(alarmBean.insert(alarm));
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error updating alarm with id=" + currentAlarm.getId(), e);
+				LOGGER.error("Error updating alarm with id=" + currentAlarm.getId(), e);
 			}			
 		}
 		try {
 			this.obtainInboxModel(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining inboxModel after delaying alarm", e);
+			LOGGER.error("Error obtaining inboxModel after delaying alarm", e);
 		}
 	}
 	
@@ -93,7 +94,6 @@ public class AlarmController extends BasicController {
 		return calendar.getTime();
 	}
 
-	@SuppressWarnings("unused")
 	public void onFinishAlarm(ActionEvent event){
 		Alarm alarm = (Alarm)this.getTo();
 		try {
@@ -103,7 +103,7 @@ public class AlarmController extends BasicController {
 			alarmBean.update(alarm);
 			this.obtainInboxModel(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error updating alarm with id=" + alarm.getId(), e);
+			LOGGER.error("Error updating alarm with id=" + alarm.getId(), e);
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class AlarmController extends BasicController {
 					return notice.getSender().getName();
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error updating alarm with id=" + alarm.getId(), e);
+				LOGGER.error("Error updating alarm with id=" + alarm.getId(), e);
 			}			
 		}
 		return null;

@@ -4,7 +4,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -33,8 +32,8 @@
 							value="#{bundle.aon_save}" 
 							actionListener="#{config.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -58,7 +57,7 @@
 									value="#{config.toI18n.sitename}" />
 	
 								<aon:outputLabel for="ConfigDetail_description"
-									value="#{bundle.aon_description}" />
+									value="#{appBundle.config_description}" />
 								<aon:inputTextarea id="ConfigDetail_description"
 									cols="60" rows="20" 
 									value="#{config.toI18n.description}"/>	
@@ -93,12 +92,13 @@
 						</aon:panelTab>
 						<aon:panelTab id="offline" label="#{appBundle.config_offline_message}">
 							<aon:panelGrid columns="2" dir="true">
-								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
-									<ui:param name="labelValue" value="#{appBundle.config_offline_message}" />
-									<ui:param name="inputTextId" value="ConfigDetail_offline_message" />
-									<ui:param name="inputTextValue" value="#{config.toI18n.offline_message}" />
-									<ui:param name="richTextEnabled" value="#{config.richTextEnabled}" />
-								</ui:include>																	
+								<aon:outputLabel for="ConfigDetail_offline_message"
+									value="#{appBundle.config_offline_message}" />
+								<aon:div style="width:600px">
+									<aon:inputRichText id="ConfigDetail_offline_message"
+										toolbarSet="Default" 
+										value="#{config.toI18n.offline_message}"/>
+								</aon:div>
 							</aon:panelGrid>
 						</aon:panelTab>
 						<aon:panelTab id="smtp" label="#{appBundle.config_smtp_server}" rendered="#{cms.administrator}">

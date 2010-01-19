@@ -11,5 +11,5 @@ public interface IBankAccountContainer {
 	public BankAccount getBankAccount();
 
 	public void setBankAccount(BankAccount bankAccount);
-	
+
 }

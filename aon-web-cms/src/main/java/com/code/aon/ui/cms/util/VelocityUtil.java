@@ -5,71 +5,77 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.IGeneratorLogger;
-import com.code.aon.ui.cms.controller.ICMSConstants;
+import com.code.aon.ui.cms.controller.GeneratorStatusController;
+import com.code.aon.ui.util.AonUtil;
 
-public class VelocityUtil extends VelocityEngine implements Constants, ICMSConstants {
+public class VelocityUtil extends VelocityEngine implements Constants {
     
-	private static final Logger LOGGER = Logger.getLogger(VelocityUtil.class.getName());
-	
 	public static final int INFO = 0;
 
 	public static final int ERROR = 1;
 
 	public static final int WARN = 2;
 
-	private File templatePath;
+	private String template_path;
 	
-	private IGeneratorLogger logger;
+	private VelocityContext context = new VelocityContext();
 	
-	private VelocityContext context;
-	
-	public void setTemplatePath(File templatePath) {
-		this.templatePath = templatePath;
-		File f = new File(templatePath, Templates.INDEX.getTemplateName());
-		if (!f.exists()) { 
-			logger.error("No se han encontrado plantillas en '" + templatePath + "'");
-		}
+	public void setTemplate_path(String template_path) {
+		this.template_path = template_path;
+		File f = new File(template_path + "/" + Templates.INDEX.getTemplateName());
+		if (!f.exists()) 
+			addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
 	}
 	
-    public VelocityContext getContext() {
+	public VelocityContext getContext() {
 		return context;
 	}
 
 	public void setContext(VelocityContext context) {
 		this.context = context;
 	}
-	
-    public void setLogger(IGeneratorLogger logger) {
-		this.logger = logger;
-	}
-    
-	public IGeneratorLogger getLogger() {
-		return logger;
-	}
 
-	public void initialize() {
-        this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, templatePath.getAbsolutePath() + "/");
+    public void initialize() {
+        this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, template_path + "/");
         this.setProperty(Velocity.INPUT_ENCODING, VELOCITY_FILE_ENCODING);
         this.setProperty(Velocity.OUTPUT_ENCODING, VELOCITY_FILE_ENCODING);
-        this.setProperty(Velocity.RUNTIME_LOG, templatePath.getAbsolutePath() + "/" + VELOCITY_LOG_FILE);
+        this.setProperty(Velocity.RUNTIME_LOG, template_path + "/" + VELOCITY_LOG_FILE);
         try {
         	this.init();
-        } catch (Throwable th) {
-        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
+    public void finalize() {
+    }
+
+	public static void addMessage(String msg, int type) {
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		if (type == INFO){
+			//AonUtil.addInfoMessage(" INFO: " + msg);
+			status.addMessage(" INFO: " + msg);
+		}else if (type == ERROR){
+			//AonUtil.addErrorMessage(" ERROR: " + msg);
+			//status.addMessage(" ERROR: " + msg);
+			status.addErrorMessage(" ******* ERROR: " + msg + "***********");
+		}else if (type == WARN){
+			//AonUtil.addWarningMessage(" WARNING: " + msg);
+			//status.addMessage(" ******* WARNING: " + msg + "***********");
+			status.addErrorMessage(" ******* WARNING: " + msg + "***********");
+		}else{
+			//AonUtil.addFatalMessage(msg);
+			status.addMessage(msg);
+		}
+	}
+
 	public void put(String key, Object value) {
 		this.context.put(key, value);
 	}
@@ -78,47 +84,57 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		this.context.remove(key);
 	}
 
-	public boolean generate(File template, File page) {
-        String pageShortName = page.getName();
+    public boolean generate(String template, String page) {
+        String pageShortName;
+        try{
+        	pageShortName = page.substring(page.lastIndexOf('/'));
+        }catch (Exception e) {
+        	pageShortName = page;
+		}
         
 		boolean error = false;
+		File fo;
         FileWriter fw = null;
         BufferedWriter writer = null;
     	try{
-	        fw = new FileWriter(page);
+	        fo = new File(page);
+	        fw = new FileWriter(fo);
 	        writer = new BufferedWriter(fw);
 	        
 	        error = generate(template, writer, pageShortName);
-		} catch(Throwable th) {
+		}
+		catch(Exception e) {
 		    error = true;
-		    logger.error("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage() + "");
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
-		} finally {
+			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
+			e.printStackTrace();
+		}
+	    finally {
 	        try {
 	            if (writer != null) {
 	                writer.flush();
 	            }
-	        } catch (Throwable th) {
-	        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
-	        }
-	        IOUtils.closeQuietly(writer);
-	        IOUtils.closeQuietly(fw);
+	        } catch (Exception e) {e.printStackTrace();}
+	        try {writer.close();} catch (Exception e) {e.printStackTrace();}
+	        try{fw.close();} catch (Exception e) {e.printStackTrace();}
+	        fo = null;
 	    }
 	    return error;
     }
 	
-    public boolean generate(File template, BufferedWriter writer, String pageShortName) {
+    public boolean generate(String template, BufferedWriter writer, String pageShortName) {
 		boolean error = false;
 
+        File fi = new File(template);
         BufferedReader reader = null;
         FileReader fr = null;
 
         try {
-			if (!template.exists()) {
+			if (!fi.exists()) {
 				error = true;
-				logger.error("Fichero de plantilla '" + template + "' no encontrado.");
-			} else {
-                fr = new FileReader(template);
+				addMessage("Fichero de plantilla '" + template + "' no encontrado.", ERROR);
+			}
+			else {
+                fr = new FileReader(fi);
 				reader = new BufferedReader(fr);
 			}
 
@@ -127,23 +143,28 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 
                     this.evaluate(context, writer, "¡AON-CMS!", reader);
 					writer.flush();
-					logger.info("Página " + pageShortName + " generada con exito");
-				} catch(Throwable th) {
-				    error = true;
-				    logger.error("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + th.getMessage());
+					addMessage("Página " + pageShortName + " generada con exito", INFO);
 				}
-			} else {
-				logger.error("No se pudo generar el fichero '" + pageShortName + "'");
+				catch(Exception e) {
+				    error = true;
+					addMessage("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + e.getMessage(), ERROR);
+				}
 			}
-		} catch(Throwable th) {
+			else {
+				addMessage("No se pudo generar el fichero '" + pageShortName + "'", ERROR);
+			}
+		}
+		catch(Exception e) {
 		    error = true;
-		    logger.error("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage());
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
-		} finally {
-			IOUtils.closeQuietly(reader);
-			IOUtils.closeQuietly(fr);
+			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
+			e.printStackTrace();
+		}
+        finally {
+            try {reader.close();} catch (Exception e) {e.printStackTrace();}
+            try {fr.close();} catch (Exception e) {e.printStackTrace();}
+            fi = null;
         }
+
 		return error;
     }
-    
 }

@@ -15,18 +15,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
 
-public class FooterController extends BasicI18nController implements ICMSConstants {
+public class FooterController extends BasicI18nController {
 
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
@@ -52,7 +42,7 @@ public class FooterController extends BasicI18nController implements ICMSConstan
 	}
 
 	public void onSelectBannerCategories(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		FooterBannerCategoryController c = (FooterBannerCategoryController)FormUtil.getController(FOOTER_BANNNER_CATEGORY);
+		FooterBannerCategoryController c = (FooterBannerCategoryController)FormUtil.getController("footer_banner_category");
 		IManagerBean moBean = BeanManager.getManagerBean(FooterBannerCategory.class);
 		Footer footer = (Footer) this.getTo();
 		Criteria criteria = new Criteria();

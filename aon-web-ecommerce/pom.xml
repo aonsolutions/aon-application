@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.web.parent</artifactId>
+		<version>1.0.7</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon.web.ecommerce</artifactId>
+	<packaging>war</packaging>
+	<version>4.1.0</version>
+	<description>AON WEB ECOMMERCE</description>
+	<name>AON WEB ECOMMERCE</name>
+	<properties>
+		<dbVersion>4.6.2</dbVersion>
+	</properties>
+	<build>
+		<finalName>aon-ecommerce</finalName>
+	</build>
+	<repositories>
+		<!-- Necesario para iReport-utils  -->
+		<repository>
+			<id>jasperforge.org</id>
+			<name>iReport Repository for Maven</name>
+			<url>http://jasperforge.org/maven2/</url>
+			<layout>default</layout>
+		</repository>	
+	</repositories>	
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.ecommerce</artifactId>
+			<version>4.1.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.resources</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.geozone</artifactId>
+			<version>4.0.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!--
+			PARA CONSTRUIR CORRECTAMENTE EL WAR 		
+		-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.0.1-FINAL</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+		            <groupId>log4j</groupId>
+		            <artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0.12</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>gnujaxp</groupId>
+					<artifactId>gnujaxp</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.9</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>gnujaxp</groupId>
+					<artifactId>gnujaxp</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!--  Necesario para imprimir barcodes con jasper -->
+		<dependency>
+			<groupId>iReport</groupId>
+			<artifactId>iReport-utils</artifactId>
+			<version>2.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+</project>

@@ -29,12 +29,17 @@ public class AddCampaignDossierController extends BasicController {
     private static final Logger LOGGER = Logger.getLogger(AddCampaignDossierController.class.getName());
 
     private Criteria mainCriteria;
-
     private String sortColumn;
-
     private boolean ascending;
-
     private ArrayList<Activity> checks = new ArrayList<Activity>();
+	private CampaignTaskManager campaignTaskManager;
+	
+	private CampaignTaskManager getCampaignTaskManager() {
+		if (campaignTaskManager == null) {
+			campaignTaskManager = new CampaignTaskManager();
+		}
+		return campaignTaskManager;
+	}
 
     public Criteria getMainCriteria() {
         return mainCriteria;
@@ -142,7 +147,7 @@ public class AddCampaignDossierController extends BasicController {
                 campaignDossier.setDossier(activity.getDossier());
                 campaignDossier = (CampaignDossier)campaignDossierBean.insert(campaignDossier);
 
-                CampaignTaskManager.addCampaignTask(campaignDossier, 0, null);
+                getCampaignTaskManager().addCampaignTask(campaignDossier, 0, null,null);
             }
             CampaignDossierController campaignDossierController = (CampaignDossierController)FormUtil.getController("campaignDossier");
             campaignDossierController.onSearch(null);

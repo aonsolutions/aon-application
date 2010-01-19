@@ -1,19 +1,16 @@
 package com.code.aon.ui.cms.controller.support;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.code.aon.cms.IPositionObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.form.IController;
 
 public class OrderedControllerSupport {
-	
-	private static final Logger LOGGER = Logger.getLogger(OrderedControllerSupport.class.getName());
 	
 	protected OrderedControllerListenerSupport orderedControllerListenerSupport = new OrderedControllerListenerSupport(); 
 	
@@ -36,7 +33,9 @@ public class OrderedControllerSupport {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void move(IController controller, IPositionObject object, int movement ) throws ManagerBeanException, ExpressionException {
+	private void move(IController controller, int movement ) throws ManagerBeanException, ExpressionException {
+		IPositionObject object = (IPositionObject) controller.getModel().getRowData();
+		
 		int oldPosition = object.getPosition();
 		int newPosition = oldPosition + movement;
 		
@@ -60,23 +59,13 @@ public class OrderedControllerSupport {
 	}
 	
     public void onMoveUp(IController controller) throws ManagerBeanException, ExpressionException {
-		IPositionObject object = (IPositionObject) controller.getModel().getRowData();
-    	onMoveUp(controller, object);
+    	move(controller, -1);
     }
 
-    public void onMoveUp(IController controller, IPositionObject object) throws ManagerBeanException, ExpressionException {
-    	move(controller, object, -1);
-    }
-    
     public void onMoveDown(IController controller) throws ManagerBeanException, ExpressionException {
-    	IPositionObject object = (IPositionObject) controller.getModel().getRowData();
-    	onMoveDown(controller, object);    	
+    	move(controller, 1);    	
     }
 
-    public void onMoveDown(IController controller, IPositionObject object) throws ManagerBeanException, ExpressionException {
-    	move(controller, object, 1);    	
-    }
-    
 	public void reorderObjects(IController controller) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		orderedControllerListenerSupport.fireBeforeUseCriteria(criteria);
@@ -100,7 +89,6 @@ public class OrderedControllerSupport {
 			orderedControllerListenerSupport.fireBeforeUseCriteria(criteria);
 			position = controller.getManagerBean().getCount(criteria);
 		}catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return position;
 	}

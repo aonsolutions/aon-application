@@ -7,11 +7,10 @@ import com.code.aon.cms.DownloadCategoryDetail;
 import com.code.aon.cms.DownloadConfig;
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class DownloadCategoryController extends BasicI18nController implements ICMSConstants, Constants {
+public class DownloadCategoryController extends BasicI18nController {
 
 	private int page;
 	
@@ -24,7 +23,7 @@ public class DownloadCategoryController extends BasicI18nController implements I
 	}
 	
 	public void onInit(ActionEvent event) {
-		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(DownloadConfig.class);
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(DownloadConfig.class);
 	}
 	
 	@SuppressWarnings("unused")
@@ -48,7 +47,7 @@ public class DownloadCategoryController extends BasicI18nController implements I
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		DownloadCategoryDetail downloadCategoryDetail = (DownloadCategoryDetail)getModelRowdataI18n();
 		if (downloadCategoryDetail != null) label = downloadCategoryDetail.getLabel();
 		return label;
@@ -61,16 +60,16 @@ public class DownloadCategoryController extends BasicI18nController implements I
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		DownloadCategory current = (DownloadCategory)getTo();
 		current.setImage(image);
 	}
 	
 	public String getBack(){
-		if (FormUtil.getController(DOWNLOAD).getTo()==null)
-			return DOWNLOAD_LIST;
-		return DOWNLOAD_FORM;
+		if (FormUtil.getController("download").getTo()==null)
+			return "download_list";
+		return "download_form";
 	}
 
 }

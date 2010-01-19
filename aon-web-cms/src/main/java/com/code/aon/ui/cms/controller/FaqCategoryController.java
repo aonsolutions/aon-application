@@ -6,11 +6,10 @@ import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
 import com.code.aon.cms.FaqConfig;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class FaqCategoryController extends BasicI18nController implements ICMSConstants, Constants {
+public class FaqCategoryController extends BasicI18nController{
 
 	private int page;
 	
@@ -23,7 +22,7 @@ public class FaqCategoryController extends BasicI18nController implements ICMSCo
 	}
 
 	public void onInit(ActionEvent event) {
-		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(FaqConfig.class);
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(FaqConfig.class);
 	}
 	
 	@SuppressWarnings("unused")
@@ -47,16 +46,16 @@ public class FaqCategoryController extends BasicI18nController implements ICMSCo
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
+		String label = "- NO VALUE -";
 		FaqCategoryDetail faqCategoryDetail = (FaqCategoryDetail)getModelRowdataI18n();
 		if (faqCategoryDetail != null) label = faqCategoryDetail.getLabel();
 		return label;
 	}
 
 	public String getBack(){
-		if (FormUtil.getController(FAQ).getTo()==null)
-			return FAQ_LIST;
-		return FAQ_FORM;
+		if (FormUtil.getController("faq").getTo()==null)
+			return "faq_list";
+		return "faq_form";
 	}
 
 }

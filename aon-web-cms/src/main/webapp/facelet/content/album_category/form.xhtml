@@ -77,16 +77,17 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{album_category.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="partial_generate" reRender="aonStatus"
+						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{album_category.to!=null and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentAlbumCategory}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid"
-								actionListener="#{generator_status.onActivePoll}"   
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>
 					</aon:div>
 					
@@ -98,7 +99,7 @@
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="AlbumCategory_alias" style="width:100px"
-						value="#{appBundle.cms_alias}" />
+						value="#{appBundle.album_category_alias}" />
 					<aon:inputText id="AlbumCategory_alias"
 						required="true" size="32" maxlength="32"
 						value="#{album_category.to.alias}">
@@ -134,7 +135,9 @@
 			</aon:div>
 		
 		</aon:form>
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 	</ui:define>
 
 </ui:composition>
