@@ -45,6 +45,16 @@ public class SignatureController extends GridController {
 	
 	private List<SelectItem> signatures;
 	
+	private boolean richTextEnabled = true;
+	
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}
+
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
