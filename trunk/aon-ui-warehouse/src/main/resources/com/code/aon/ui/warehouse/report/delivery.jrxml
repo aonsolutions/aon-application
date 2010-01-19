@@ -377,7 +377,7 @@
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="valuated">
-					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("deliveryDetail")]]></subreportExpression>
