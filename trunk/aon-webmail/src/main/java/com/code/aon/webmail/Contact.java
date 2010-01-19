@@ -108,7 +108,7 @@ public class Contact implements ILdapTransferObject {
 		this.name = name;
 	}
 
-	@Attribute(name="gn")
+	@Attribute(name="givenName")
 	public String getOutlookName() {
 		return outlookName;
 	}
