@@ -10,7 +10,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.consultant</artifactId>
 	<packaging>war</packaging>
-	<version>4.4.0</version>
+	<version>4.4.2-1</version>
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
@@ -20,6 +20,14 @@
 		<finalName>aon-consultant</finalName>
 	</build>
 	<dependencies>
+		<!-- BORRAR ESTA DEPENDENCIA PARA WARS FUTUROS. -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.csb</artifactId>
+			<version>4.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- FIN -->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
@@ -77,7 +85,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.8.0</version>
+			<version>4.9.0-1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -112,3 +120,4 @@
 		</dependency>
 	</dependencies>
 </project>
+
