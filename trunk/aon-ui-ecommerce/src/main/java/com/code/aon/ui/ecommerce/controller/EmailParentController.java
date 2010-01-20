@@ -95,27 +95,15 @@ public class EmailParentController {
 	
 	public EmailSender getEmailSender(String username) throws UnsupportedEncodingException {
 		if ( this.sender == null ) {
-//			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-//			MailAccount mailAccount = getDefaultMailAccount( user );
 			String domain = "localhost";
 			String login = "admin";
-			MailAccount mailAccount;
-			try {
-				mailAccount = WebmailUtil.getDefaultAccount(domain,login);
-			} catch (ManagerBeanException e) {
-				AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
-				throw new AbortProcessingException( e.getMessage(), e);
-			}
-			
-			
+			MailAccount mailAccount = getDefaultMailAccount();
 			
 			if ( mailAccount != null ) {
-//				Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
 				Address from = new InternetAddress(username, username);
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
 				String text = AonUtil.getMessage(WebMailConstants.BUNDLE_NAME, WebMailConstants.NOT_MAIL_ACCOUNT); 
-//				String message = MessageFormat.format(text, user.getShortName() );
 				String message = MessageFormat.format(text, login );
 				throw new AbortProcessingException( message );
 			}
@@ -123,6 +111,30 @@ public class EmailParentController {
 		return this.sender;
 	}
 	
+	private MailAccount getDefaultMailAccount() {
+//		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+//		MailAccount mailAccount = getDefaultMailAccount( user );
+		
+//		try {
+//		mailAccount = WebmailUtil.getDefaultAccount(domain,login);
+//	} catch (ManagerBeanException e) {
+//		AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
+//		// abortar??
+//		throw new AbortProcessingException( e.getMessage(), e);
+//	}
+		MailAccount	mailAccount=new MailAccount();
+		mailAccount.setHost("mail.esferalia.com");
+		mailAccount.setEmail("eagirrezabal@esferalia.com");
+		mailAccount.setOutgoingHost("mail.esferalia.com");
+		mailAccount.setOutgoingPort(25);
+		mailAccount.setOutgoingSsl(false);
+		mailAccount.setOutgoingVerification(true);
+		mailAccount.setProtocol("imap");
+		mailAccount.setMailUsername("test@esferalia.com");
+		mailAccount.setPasswordString("test");
+		return mailAccount;		
+	}
+
 	public void sendEmail( String username, String to, String subject, String content) {
 		
 		try {
@@ -195,9 +207,6 @@ public class EmailParentController {
 		body.append( "</body></html>" );
 		return body.toString();
 	}
-	
-	
-	
 	
 	
 	
