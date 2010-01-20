@@ -72,6 +72,9 @@
 			showAttachment="false"
 			showEcommerceData="false"
 		/>
+ 		<product:productCategory
+ 			showCategoryGroup="false"
+ 		/>
 	</product:config>
 
 </config>

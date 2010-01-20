@@ -10,7 +10,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.consultant</artifactId>
 	<packaging>war</packaging>
-	<version>4.4.3</version>
+	<version>4.4.4</version>
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.10.0</version>
+			<version>4.11.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
