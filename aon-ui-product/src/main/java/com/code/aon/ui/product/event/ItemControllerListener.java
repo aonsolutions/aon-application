@@ -57,8 +57,12 @@ public class ItemControllerListener extends ControllerAdapter {
 			try {
 				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 				Item item = (Item)event.getController().getTo();
-                item.getProduct().setStatus(item.getStatus());
-                Product product = (Product)productBean.insert(item.getProduct());
+				Product product = item.getProduct();
+				product.setStatus(item.getStatus());
+				if (product.getBrand() != null && product.getBrand().getId() == null) {
+					product.setBrand(null);
+				}
+                product = (Product) productBean.insert(item.getProduct());
 				item.setProduct(product);
 			} catch (ManagerBeanException e) {
                 throw new ControllerListenerException(e.getMessage(), e);
