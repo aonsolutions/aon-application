@@ -37,7 +37,9 @@
 						<aon:lookupInputText id="Stock_item_id" 
 							lookup="#{itemLookup}"
 							reRender="Stock_item_detail"
-							value="#{stockSearch.item.id}" size="5">
+							value="#{stockSearch.item.product.code}" size="10">
+							<aon:joinProperty alias="Item_product_code"
+								value="#{stockSearch.item.product.code}" />
 						</aon:lookupInputText>
 						<aon:lookupButton
 							windowTitle="#{productBundle.product_item_selection}" actionType="search"
