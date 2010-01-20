@@ -14,10 +14,24 @@
 		
 		<aon:panelGrid columns="2" style="width:100%">
 			
-			<aon:outputLabel value="El pago debera hacerse en la siguiente cuenta bancaria" />
-			<aon:outputText value="no. cuenta" />
+			<aon:outputLabel value="El pago debera hacerse en una de las siguientes cuentas bancarias" />
+			<rich:dataList rows="10">
+	            <f:selectItems value="#{cartOffer.companyBanks}" />
+	        </rich:dataList>
+	        <h:dataTable value="#{cartOffer.companyBanks}" var="item">
+	        	<h:column>
+					<aon:outputText value="#{item.bank.name}" />
+	        	</h:column>
+	        	<h:column>
+					<aon:outputText value="#{item.bankAccount.office} " />
+					<aon:outputText value="#{item.bankAccount.control} " />
+					<aon:outputText value="#{item.bankAccount.account} " />
+				</h:column>
+	        </h:dataTable>
 			
 			<!--  
+			<aon:outputText value="no. cuenta" />
+			<aon:outputText value="#{cartOffer.companyBanks}" />
 			<aon:outputLabel value="#{bundle.aon_name}" />
 			<aon:outputText value="#{shopItem.item.product.name}" />
 			-->

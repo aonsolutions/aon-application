@@ -286,8 +286,8 @@ public class ShoppingCartController extends EmailParentController{
 		try {
 			addTarget();
 			CartOfferController offerController = (CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER);
-			offerController.getOffer().setTarget(getCartTarget().getEcTarget().getTarget());
 			offerController.initialize();
+			offerController.getOffer().setTarget(getCartTarget().getEcTarget().getTarget());
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
 		}		
