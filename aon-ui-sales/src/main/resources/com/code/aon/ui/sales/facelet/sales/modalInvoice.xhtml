@@ -74,6 +74,9 @@
 											value="#{bundle.aon_date}" />
 										<aon:selectInputDate id="Sales_invoiceDate" 
 											value="#{sales.invoiceDate}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-60"
 											required="true"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"/>
