@@ -443,14 +443,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryAddress}.getZip()+" "+$F{registryAddress}.getCity()+"  ("+$F{registryAddress}.getGeozone().getName()+")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" positionType="Float" x="2" y="292" width="68" height="23"/>
+				<reportElement key="textField-118" positionType="Float" x="2" y="291" width="68" height="23"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_text_financial2}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="71" y="292" width="124" height="23" forecolor="#000000"/>
+				<reportElement key="textField-119" positionType="Float" x="71" y="291" width="124" height="23" forecolor="#000000"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -464,14 +464,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getPayment().getName():$F{payMethod}.getName())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" positionType="Float" x="2" y="315" width="68" height="23"/>
+				<reportElement key="textField-118" positionType="Float" x="2" y="314" width="68" height="23"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_text_financial3}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="315" y="292" width="124" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="315" y="291" width="124" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -485,21 +485,21 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getBank().getName():$F{bank}.getName())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" positionType="Float" x="231" y="292" width="82" height="23"/>
+				<reportElement key="textField-118" positionType="Float" x="231" y="291" width="82" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_bank}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" positionType="Float" x="231" y="315" width="82" height="23"/>
+				<reportElement key="textField-118" positionType="Float" x="231" y="314" width="82" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_bank_account}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="315" y="315" width="124" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="315" y="314" width="124" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -513,7 +513,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="71" y="315" width="124" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="71" y="314" width="124" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -534,7 +534,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_destination}.toUpperCase()+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" positionType="Float" x="2" y="269" width="68" height="23"/>
+				<reportElement key="textField-118" positionType="Float" x="2" y="268" width="68" height="23"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>

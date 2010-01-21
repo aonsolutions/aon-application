@@ -1,5 +1,7 @@
 package com.code.aon.purchase;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,22 +12,32 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.ql.Criteria;
+import com.code.aon.supplier.ItemSupplier;
+import com.code.aon.supplier.dao.ISupplierAlias;
 
 @Entity
 @Table(name="purchase_detail")
 public class PurchaseDetail implements ITransferObject, ICalculable {
 
 	private static final long serialVersionUID = -8755960049183396137L;
+	private final static Logger LOGGER = LoggerFactory.getLogger(PurchaseDetail.class);
 
 	private Integer id;
 	private Purchase purchase;
@@ -135,7 +147,27 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 	public void setTransfered(double transfered) {
 		this.transfered = transfered;
 	}
-
+	
+	@Transient
+    public String getItemSupplierCode() {
+    	try {
+			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_ITEM_ID),getItem().getId());
+			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_SUPPLIER_ID),getPurchase().getSupplier().getId());
+			List<ITransferObject> lista;
+			lista = itemSupplierBean.getList(criteria);
+			if (lista.size() > 0) {
+				String code = ((ItemSupplier) lista.get(0)).getCode();
+				return (StringUtils.isNotEmpty(code)) ? code : getItem()
+						.getProduct().getCode();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("can't get ItemSupplier.code",e);
+		}
+		return getItem().getProduct().getCode();
+	}   		
+   
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
