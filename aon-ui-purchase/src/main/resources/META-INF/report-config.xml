@@ -56,8 +56,7 @@
 	
 	<report id="purchaseForm" description="Listado Detallado de purchase">
 		<template path="/com/code/aon/ui/purchase/report/purchaseForm.jasper" />
-		<bean key="com.code.aon.purchase.Purchase" />
-		<criteria provider="#{purchase}"/>
+		<collection provider="#{purchase}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
