@@ -344,4 +344,24 @@
 		</params>
 	</report>
 	
+	<report id="noFeeCustomersReport" description="No Fee Customer's report ">
+		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
+		<collection provider="#{customerFee.noFeeCustomersList}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="title" value="#{customerFee.getReportTitle}" />
+		</params>
+	</report>
+	
 </report-config>
