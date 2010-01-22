@@ -97,6 +97,13 @@
 										actionListener="#{feePrint.onEditSearch}"
 										action="feePrint_search" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="no_fee_customers"
+										value="#{financeBundle.finance_fee_no_fee_customer_module}"
+										actionListener="#{customerFee.onNoFeeCustomers}"
+										action="noFeeCustomer_list" >
+									</aon:commandLink>
+								</aon:div>
 							</aon:div>
 						</aon:panel>
 
