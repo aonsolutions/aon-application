@@ -12,17 +12,8 @@
 		<criteria provider="#{customer}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{customer.getReportTitle}" />
 		</params>
 	</report>
@@ -32,17 +23,8 @@
 		<criteria provider="#{customer}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{customer.getReportTitle}" />
 		</params>
 	</report>
@@ -53,17 +35,8 @@
 		<criteria provider="#{creditor}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{creditor.getReportTitle}" />
 		</params>
 	</report>
@@ -73,17 +46,8 @@
 		<criteria provider="#{customer}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{creditor.getReportTitle}" />
 		</params>
 	</report>
@@ -94,17 +58,8 @@
 		<criteria provider="#{supplier}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{supplier.getReportTitle}" />
 		</params>
 	</report>
@@ -114,17 +69,8 @@
 		<criteria provider="#{supplier}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{supplier.getReportTitle}" />
 		</params>
 	</report>
@@ -138,14 +84,6 @@
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{seller.getReportTitle}" />
 		</params>
 	</report>
@@ -155,17 +93,8 @@
 		<criteria provider="#{seller}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="email" value="#{company.obtainEmail}" />
-			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="title" value="#{seller.getReportTitle}" />
 		</params>
 	</report>
