@@ -57,7 +57,7 @@ function messageHTML($php_from, $php_namefrom, $php_to, $php_nameto, $php_subjec
 
 function authMail($php_from, $php_namefrom, $php_to, $php_nameto, $php_subject, $php_message) {
         /*  Configuration  */
-        $php_smtpServer = "213.172.45.246"; //ip accepted as well
+        $php_smtpServer = "smtp.aonsolutions.es"; //ip accepted as well
         $php_port = "25"; // should be 25 by default
         $php_timeout = "30"; //typical timeout. try 45 for slow servers
         $php_username = "correo@aonsolutions.es"; //the login for your smtp
