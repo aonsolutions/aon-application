@@ -571,6 +571,10 @@
 				<value>#{accountEntryDetailControllerListener}</value>
 			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AccountEntryDetail_id</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryDetailControllerValidatorListener</managed-bean-name>
