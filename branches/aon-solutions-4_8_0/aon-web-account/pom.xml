@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>4.4.1</version>
+	<version>4.4.1.1</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.13.0</version>
+			<version>4.13.0.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
