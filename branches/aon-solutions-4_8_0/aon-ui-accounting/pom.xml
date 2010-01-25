@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.accounting</artifactId>
-	<version>4.13.0</version>
+	<version>4.13.0.1</version>
 	<description>AON UI ACCOUNT</description>
 	<name>AON UI ACCOUNT</name>
 	<dependencies>
