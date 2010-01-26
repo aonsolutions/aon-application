@@ -15,6 +15,20 @@
 				<ui:param name="toolbarTitle" value="#{productBundle.product_module}" />
 				<ui:param name="controller" value="#{item}" />
 				<ui:define name="additionalToolbarContent">
+					<h:commandLink id="itemReportExcel" value="&#160;" 
+						target="_new" action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="itemList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+					<h:commandLink id="customerDetailReportPdf" value="#{bundle.aon_listing}"
+						target="_new" action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="itemList" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
 				</ui:define>
 			</ui:decorate>
 			
