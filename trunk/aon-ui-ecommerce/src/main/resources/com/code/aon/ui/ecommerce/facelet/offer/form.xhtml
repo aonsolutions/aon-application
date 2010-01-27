@@ -8,7 +8,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		
+		<aon:form id="shopOffer">
 			<aon:div styleClass="menu" />
 			<aon:div styleClass="back-button" >
 			
@@ -29,15 +29,13 @@
 					<aon:actionListener method="#{shop.refreshView}" />
 				</h:commandButton>
 
-				<h:commandButton style="border-right:0;" 
-					value="#{securityBundle.aon_login_user_logout}"
-					action="shop_from"
-					rendered="true"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel">
-					<aon:actionListener method="#{shop.refreshView}" />
+				<aon:commandButton id="aonToolbar-back" value="#{securityBundle.aon_login_user_logout}"
+					action="shop_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					accesskey="#{bundle.aon_key_cancel}" >
 					<aon:actionListener method="#{userLogin.onLogout}" />
 					<aon:actionListener method="#{cartOffer.onCloseSession}" />
-				</h:commandButton>
+				</aon:commandButton>
 			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
@@ -156,6 +154,6 @@
 -->
 			</aon:panel>
 
-		
+		</aon:form>		
 	</ui:define>
 </ui:composition>

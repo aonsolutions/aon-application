@@ -28,7 +28,7 @@
 				</f:facet>
 				<aon:panelGrid columns="2" style="width:100%;border:000 2px solid;">
 					<aon:outputLabel for="ectarget_email"
-						value="#{bundle.aon_login_user}" />
+						value="#{bundle.aon_login_user} *" />
 					<aon:div>
 						<aon:inputText id="ectarget_email" required="true"
 							value="#{shoppingCart.cartTarget.ecTarget.login}" size="20"
@@ -38,14 +38,14 @@
 					</aon:div>
 
 					<aon:outputLabel for="ectarget_password"
-						value="#{bundle.aon_login_passwd}" />
+						value="#{bundle.aon_login_passwd} *" />
 					<aon:inputText id="ectarget_password" required="true"
 						value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"
 						maxlength="32" />
 
 					<aon:outputLabel for="ectarget_password_retype"
 						value="#{ecommerceBundle.aon_ecommerce_user_passwd_retype}" />
-					<aon:inputText id="ectarget_password_retype" required="true"
+					<aon:inputText id="ectarget_password_retype"
 						value="#{shoppingCart.newPasswd}" size="20" maxlength="32">
 						<a4j:support event="onblur" reRender="login-panel"
 							focus="ectarget_password"
