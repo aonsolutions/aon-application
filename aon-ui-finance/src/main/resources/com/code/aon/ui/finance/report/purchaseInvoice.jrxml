@@ -277,7 +277,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Arial Narrow" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_checking}]]></textFieldExpression>
 			</textField>
@@ -346,7 +346,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="10" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
@@ -361,7 +361,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="10" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
 			</textField>
@@ -376,7 +376,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="10" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_phone} + ": " + $P{phone}.getValue()]]></textFieldExpression>
 			</textField>
@@ -391,7 +391,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="10" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_company_document} + ": " + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
@@ -406,7 +406,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
 			</textField>

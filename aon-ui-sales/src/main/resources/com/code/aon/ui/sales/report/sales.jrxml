@@ -1,44 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"  ?>
-<!-- Created with iReport - A designer for JasperReports -->
-<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport
-		 name="sales"
-		 columnCount="1"
-		 printOrder="Vertical"
-		 orientation="Portrait"
-		 pageWidth="595"
-		 pageHeight="842"
-		 columnWidth="537"
-		 columnSpacing="0"
-		 leftMargin="29"
-		 rightMargin="29"
-		 topMargin="20"
-		 bottomMargin="20"
-		 whenNoDataType="NoPages"
-		 isFloatColumnFooter="true"
-		 isTitleNewPage="false"
-		 isSummaryNewPage="false">
-	<property name="ireport.scriptlethandling" value="0" />
-	<property name="ireport.encoding" value="UTF-8" />
-	<import value="java.util.*" />
-	<import value="net.sf.jasperreports.engine.*" />
-	<import value="net.sf.jasperreports.engine.data.*" />
-
-	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
-	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
-	<parameter name="nestedReports" isForPrompting="true" class="java.util.Map"/>
-	<parameter name="PriceStrategy" isForPrompting="false" class="com.code.aon.product.strategy.IPriceStrategy"/>
-	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
-	<parameter name="phone" isForPrompting="false" class="com.code.aon.registry.RegistryMedia"/>
-	<parameter name="fax" isForPrompting="false" class="com.code.aon.registry.RegistryMedia"/>
-	<parameter name="address" isForPrompting="false" class="com.code.aon.registry.RegistryAddress"/>
-	<parameter name="recordData" isForPrompting="false" class="com.code.aon.registry.RecordData"/>
-	<parameter name="printRecordData" isForPrompting="false" class="java.lang.Boolean"/>
-	<parameter name="printHeader" isForPrompting="false" class="java.lang.Boolean"/>
-	<parameter name="email" isForPrompting="false" class="com.code.aon.registry.RegistryMedia"/>
-	<parameter name="web" isForPrompting="false" class="com.code.aon.registry.RegistryMedia"/>
-	<parameter name="defaultPayMethod" isForPrompting="true" class="java.lang.Boolean"/>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sales" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="logoImageFile" class="java.io.InputStream"/>
+	<parameter name="nestedReports" class="java.util.Map"/>
+	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
+	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
+	<parameter name="phone" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
+	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
+	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false"/>
+	<parameter name="recordData" class="com.code.aon.registry.RecordData" isForPrompting="false"/>
+	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
+	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
+	<parameter name="defaultPayMethod" class="java.lang.Boolean"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="id" class="java.lang.Integer"/>
@@ -54,758 +34,523 @@
 	<field name="workPlace" class="com.code.aon.company.WorkPlace"/>
 	<field name="securityLevel" class="com.code.aon.common.enumeration.SecurityLevel"/>
 	<field name="status" class="com.code.aon.sales.enumeration.SalesStatus"/>
-
-	<variable name="currentSales" class="com.code.aon.sales.Sales" resetType="Report" calculation="Nothing">
+	<variable name="currentSales" class="com.code.aon.sales.Sales">
 		<variableExpression><![CDATA[(com.code.aon.sales.Sales)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
-
-		<group  name="offerGroup" >
-			<groupExpression><![CDATA[$F{id}]]></groupExpression>
-			<groupHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-			</groupHeader>
-			<groupFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-			</groupFooter>
-		</group>
-		<background>
-			<band height="802"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="-24"
-						y="353"
-						width="9"
-						height="444"
-						key="textField-71">
-							<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+	<group name="offerGroup">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="802" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-71" x="-24" y="353" width="9" height="444">
+					<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement rotation="Left">
-						<font size="7"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". " + ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())]]></textFieldExpression>
-				</textField>
-				<line direction="TopDown">
-					<reportElement
-						x="-25"
-						y="241"
-						width="4"
-						height="1"
-						key="line-6"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="553"
-						y="241"
-						width="4"
-						height="1"
-						key="line-7"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="-25"
-						y="539"
-						width="4"
-						height="1"
-						key="line-8"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="553"
-						y="539"
-						width="4"
-						height="1"
-						key="line-9"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-			</band>
-		</background>
-		<title>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</title>
-		<pageHeader>
-			<band height="83"  isSplitAllowed="true" >
-				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="0"
-						width="71"
-						height="54"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="image-1"
-						positionType="Float">
-							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-						</reportElement>
-					<box></box>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-					<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
-				</image>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="388"
-						y="5"
-						width="59"
-						height="13"
-						key="textField-73"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement rotation="Left">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". " + ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-6" x="-25" y="241" width="4" height="1"/>
+			</line>
+			<line>
+				<reportElement key="line-7" x="553" y="241" width="4" height="1"/>
+			</line>
+			<line>
+				<reportElement key="line-8" x="-25" y="539" width="4" height="1"/>
+			</line>
+			<line>
+				<reportElement key="line-9" x="553" y="539" width="4" height="1"/>
+			</line>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="83" splitType="Stretch">
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true">
+				<reportElement key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="71" height="54" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<graphicElement fill="Solid"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-73" x="388" y="5" width="59" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_series} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="388"
-						y="18"
-						width="59"
-						height="13"
-						key="textField-74"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_series} + ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-74" x="388" y="18" width="59" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="447"
-						y="5"
-						width="82"
-						height="13"
-						key="textField-76"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-76" x="447" y="5" width="82" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{series} != null && !"".equals($F{series})?$F{series} + "/":"") + $F{number}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="447"
-						y="18"
-						width="82"
-						height="13"
-						key="textField-77"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{series} != null && !"".equals($F{series})?$F{series} + "/":"") + $F{number}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField-77" x="447" y="18" width="82" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{issueDate}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="85"
-						y="27"
-						width="136"
-						height="12"
-						key="textField-81">
-							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{issueDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-81" x="85" y="27" width="136" height="12">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="85"
-						y="15"
-						width="136"
-						height="12"
-						key="textField-82">
-							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-82" x="85" y="15" width="136" height="12">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="85"
-						y="3"
-						width="136"
-						height="12"
-						key="textField-83">
-							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-83" x="85" y="3" width="136" height="12">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="85"
-						y="39"
-						width="136"
-						height="12"
-						key="textField-89">
-							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-89" x="85" y="39" width="136" height="12">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="210"
-						y="51"
-						width="121"
-						height="12"
-						key="textField-130">
-							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-130" x="210" y="51" width="121" height="12">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{web}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="85"
-						y="51"
-						width="125"
-						height="12"
-						forecolor="#000000"
-						key="textField-131">
-							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{web}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-131" x="85" y="51" width="125" height="12" forecolor="#000000">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["e: "+$P{email}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="388"
-						y="31"
-						width="59"
-						height="13"
-						key="textField-74"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["e: "+$P{email}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-74" x="388" y="31" width="59" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica" size="10" isBold="false" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_client} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="448"
-						y="31"
-						width="82"
-						height="13"
-						key="textField-76"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_client} + ":"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-76" x="448" y="31" width="82" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{customer}.getId()]]></textFieldExpression>
-				</textField>
-			</band>
-		</pageHeader>
-		<columnHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnHeader>
-		<detail>
-			<band height="571"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="2"
-						y="3"
-						width="69"
-						height="23"
-						key="textField-112"/>
-					<box></box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_client}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="71"
-						y="3"
-						width="317"
-						height="23"
-						key="textField-113"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{customer}.getId()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="571" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-112" x="2" y="3" width="69" height="23"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_client}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-113" x="71" y="3" width="317" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getFullName()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="2"
-						y="26"
-						width="69"
-						height="23"
-						key="textField-114"/>
-					<box></box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_address}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="71"
-						y="25"
-						width="317"
-						height="23"
-						key="textField-115"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getFullName()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-114" x="2" y="26" width="69" height="23"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_address}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-115" x="71" y="25" width="317" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{shippingAddress}.getAddress()==null?"":$F{shippingAddress}.getAddress() + " ") + ($F{shippingAddress}.getAddress2()==null?"":$F{shippingAddress}.getAddress2() + " ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="390"
-						y="3"
-						width="58"
-						height="23"
-						key="textField-118"/>
-					<box></box>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_cif}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="447"
-						y="3"
-						width="89"
-						height="23"
-						key="textField-119"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{shippingAddress}.getAddress()==null?"":$F{shippingAddress}.getAddress() + " ") + ($F{shippingAddress}.getAddress2()==null?"":$F{shippingAddress}.getAddress2() + " ")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" x="390" y="3" width="58" height="23"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_cif}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-119" x="447" y="3" width="89" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getDocument()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="70"
-						y="112"
-						width="79"
-						height="23"
-						key="textField-118"/>
-					<box></box>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_workplace}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="149"
-						y="112"
-						width="121"
-						height="23"
-						key="textField-119"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getDocument()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" x="70" y="112" width="79" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_workplace}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-119" x="149" y="112" width="121" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{workPlace}.getDescription()]]></textFieldExpression>
-				</textField>
-				<subreport  isUsingCache="true">
-					<reportElement
-						x="2"
-						y="165"
-						width="536"
-						height="36"
-						key="subreport-1"
-						positionType="Float"/>
-					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<subreportParameter  name="PriceStrategy">
-						<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("salesDetail")]]></subreportExpression>
-				</subreport>
-				<subreport  isUsingCache="true">
-					<reportElement
-						x="2"
-						y="201"
-						width="536"
-						height="41"
-						key="subreport-4"
-						positionType="Float"/>
-					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<subreportParameter  name="PriceStrategy">
-						<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter  name="sales">
-						<subreportParameterExpression><![CDATA[$V{currentSales}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentSales},$V{currentSales}.getCustomer()))]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("salesVatBreakDown")]]></subreportExpression>
-				</subreport>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="173"
-						y="87"
-						width="169"
-						height="25"
-						key="textField-134"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{workPlace}.getDescription()]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="2" y="165" width="536" height="36"/>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<subreportParameter name="PriceStrategy">
+					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("salesDetail")]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-4" positionType="Float" x="2" y="201" width="536" height="41"/>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<subreportParameter name="PriceStrategy">
+					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="sales">
+					<subreportParameterExpression><![CDATA[$V{currentSales}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentSales},$V{currentSales}.getCustomer()))]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("salesVatBreakDown")]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-134" x="173" y="87" width="169" height="25"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="14" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sales}.toUpperCase()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="390"
-						y="26"
-						width="58"
-						height="23"
-						key="textField-118"/>
-					<box></box>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_phone}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="448"
-						y="26"
-						width="89"
-						height="23"
-						key="textField-119"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sales}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" x="390" y="26" width="58" height="23"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_phone}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-119" x="448" y="26" width="89" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getPhone().getValue()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="71"
-						y="49"
-						width="317"
-						height="23"
-						key="textField-119"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getPhone().getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-119" x="71" y="49" width="317" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{shippingAddress}.getZip()+" "+$F{shippingAddress}.getCity()+"  ("+$F{shippingAddress}.getGeozone().getName()+")"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="2"
-						y="251"
-						width="69"
-						height="23"
-						key="textField-118"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_text_financial1}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="2"
-						y="274"
-						width="68"
-						height="23"
-						key="textField-118"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_text_financial2}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="71"
-						y="274"
-						width="124"
-						height="23"
-						forecolor="#000000"
-						key="textField-119"
-						positionType="Float"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{shippingAddress}.getZip()+" "+$F{shippingAddress}.getCity()+"  ("+$F{shippingAddress}.getGeozone().getName()+")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" positionType="Float" x="2" y="251" width="69" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_text_financial1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" positionType="Float" x="2" y="274" width="68" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_text_financial2}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-119" positionType="Float" x="71" y="274" width="124" height="23" forecolor="#000000"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getPayment().getName():$F{payMethod}.getName())]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="2"
-						y="297"
-						width="68"
-						height="23"
-						key="textField-118"
-						positionType="Float"/>
-					<box></box>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_text_financial3}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="315"
-						y="274"
-						width="124"
-						height="23"
-						key="textField-119"
-						positionType="Float"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getPayment().getName():$F{payMethod}.getName())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" positionType="Float" x="2" y="297" width="68" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_text_financial3}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-119" positionType="Float" x="315" y="274" width="124" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBank().getName():$F{bank}.getName())]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="231"
-						y="274"
-						width="82"
-						height="23"
-						key="textField-118"
-						positionType="Float"/>
-					<box></box>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_bank}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="231"
-						y="297"
-						width="82"
-						height="23"
-						key="textField-118"
-						positionType="Float"/>
-					<box></box>
-					<textElement textAlignment="Right" verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_bank_account}+ ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="315"
-						y="297"
-						width="124"
-						height="23"
-						key="textField-119"
-						positionType="Float"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBank().getName():$F{bank}.getName())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" positionType="Float" x="231" y="274" width="82" height="23"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_bank}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" positionType="Float" x="231" y="297" width="82" height="23"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_bank_account}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-119" positionType="Float" x="315" y="297" width="124" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="71"
-						y="297"
-						width="124"
-						height="23"
-						key="textField-119"
-						positionType="Float"/>
-					<box leftPadding="3" bottomPadding="2">					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-119" positionType="Float" x="71" y="297" width="124" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid"/>
 					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Bottom">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ?  " "+$F{customer}.getRegistry().getPayMethod().getNumberOfPayments()+" ":" "+ $F{numberOfPayments}+" " )]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="2"
-						y="112"
-						width="68"
-						height="23"
-						key="textField-118"/>
-					<box></box>
-					<textElement verticalAlignment="Bottom">
-						<font size="8" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{sales_sale_origin}.toUpperCase()+ ":"]]></textFieldExpression>
-				</textField>
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="103"  isSplitAllowed="true" >
-			</band>
-		</columnFooter>
-		<pageFooter>
-			<band height="26"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="521"
-						y="0"
-						width="13"
-						height="14"
-						key="textField-15"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ?  " "+$F{customer}.getRegistry().getPayMethod().getNumberOfPayments()+" ":" "+ $F{numberOfPayments}+" " )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" x="2" y="112" width="68" height="23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{sales_sale_origin}.toUpperCase()+ ":"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="103" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="26" splitType="Stretch">
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-15" x="521" y="0" width="13" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="462"
-						y="0"
-						width="57"
-						height="14"
-						key="textField-16"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-16" x="462" y="0" width="57" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
-				</textField>
-			</band>
-		</pageFooter>
-		<summary>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</summary>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
 </jasperReport>
