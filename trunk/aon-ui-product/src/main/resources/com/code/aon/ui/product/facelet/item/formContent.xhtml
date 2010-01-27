@@ -179,7 +179,7 @@
 		</aon:div>
 
 		<aon:outputLabel for="Item_sales_price" value="#{bundle.aon_sales_price}" />
-		<aon:inputText id="Item_sales_price" value="#{controller.salesPrice}"
+		<aon:inputText id="Item_sales_price" value="#{controller.to.salesPrice}"
 			reRender="Item_price"
 			valueChangeListener="#{controller.onSalesPriceChanged}"
 			size="10">
