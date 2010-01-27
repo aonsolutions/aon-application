@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.ecommerce</artifactId>
 	<packaging>war</packaging>
-	<version>4.1.8</version>
+	<version>4.2.0</version>
 	<description>AON WEB ECOMMERCE</description>
 	<name>AON WEB ECOMMERCE</name>
 	<properties>
@@ -33,19 +33,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.ecommerce</artifactId>
-			<version>4.1.7</version>
+			<version>4.2.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.1.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>4.0.2</version>
+			<version>4.0.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!--
