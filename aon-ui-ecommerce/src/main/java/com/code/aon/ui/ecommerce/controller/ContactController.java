@@ -63,13 +63,14 @@ public class ContactController extends EmailParentController{
 		}
 		
 		String to=null;
-		try {
-			to = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getCompany().getEmail().getValue();
-		} catch (ManagerBeanException e1) {
-			String msg = "En los Datos de la Empresa no esta indicado el email";
-			AonUtil.addErrorMessage(msg);
-			new AbortProcessingException(msg,e1);
-		}
+//		try {
+//			to = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getCompany().getEmail().getValue();
+//		} catch (ManagerBeanException e1) {
+//			String msg = "En los Datos de la Empresa no esta indicado el email";
+//			AonUtil.addErrorMessage(msg);
+//			new AbortProcessingException(msg,e1);
+//		}
+		to = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getActiveConfig().getEmail();
 		String from = getEmail();
 		String subject = "AON-ECOMMERCE - formulario de contacto.";
 		StringBuffer content = new StringBuffer();

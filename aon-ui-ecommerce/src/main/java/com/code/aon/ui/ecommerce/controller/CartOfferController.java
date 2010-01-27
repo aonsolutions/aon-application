@@ -122,6 +122,10 @@ public class CartOfferController extends EmailParentController {
 			e.printStackTrace();
 		}
 		
+		if(getOffer().getBank().getId()==null){
+			getOffer().setBank(null);
+		}
+		
 		PaypalController paypalBean = (PaypalController) AonUtil
 				.getRegisteredBean(IECommerceConstants.PAYPAL_CONTROLLER);
 		CreditCardController qbBean = (CreditCardController) AonUtil
