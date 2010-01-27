@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -19,6 +20,7 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.enumeration.ProductStatus;
 
 @Entity
@@ -152,6 +154,18 @@ public class Item implements ITransferObject {
 
 	public void setInternet(boolean internet) {
 		this.internet = internet;
+	}
+	
+	@Transient
+	public double getSalesPrice() {
+		double price = this.getPrice();
+		Product product = this.getProduct();
+		double vatPercent = (product.getVat() != null) ? product.getVat().getPercentage() : 0;
+		double retentionPercent = (product.getRetention() != null) ? product.getRetention().getPercentage() : 0;
+		return CommonUtil.round(price* (1 + vatPercent / 100 - retentionPercent / 100));
+	}
+	
+	public void setSalesPrice(double salesPrice) {
 	}
 
 	@Override
