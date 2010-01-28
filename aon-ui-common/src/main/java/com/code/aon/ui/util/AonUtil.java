@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -13,12 +12,16 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.common.role.RoleManager;
 
 /**
  * AonUtil includes some common methods.
@@ -35,7 +38,7 @@ public class AonUtil {
 	public static final String AON_ERROR = "aon_error";
 
 	/** Obtains a suitable Logger. */
-	private static final Logger LOGGER = Logger.getLogger(AonUtil.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(AonUtil.class);
 
 	/**
 	 * Gets the bean registered in <code>faces-bean-config.xml</code> with
@@ -61,6 +64,16 @@ public class AonUtil {
 	 */
 	public static ConfigurationController getConfigurationController() {
 		return AonUtil.getConfigurationController("aonConfiguration");
+
+	}
+
+	/**
+	 * Gets the Role Manager Controller
+	 * 
+	 * @return the Role Manager Controller
+	 */
+	public static RoleManager getRoleManager() {
+		return (RoleManager) AonUtil.getRegisteredBean("aonRole");
 
 	}
 
@@ -100,7 +113,7 @@ public class AonUtil {
 		try {
 			return BeanManager.getManagerBean(clazz);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(clazz + " has not valid IManagerBean registered!");
+			LOGGER.error(clazz + " has not valid IManagerBean registered!", e);
 		}
 		return null;
 	}

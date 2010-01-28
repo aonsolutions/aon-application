@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.account.bridge</artifactId>
-	<version>4.1.4</version>
+	<version>4.1.2</version>
 	<description>AON UI ACCOUNT BRIDGE</description>
 	<name>AON UI ACCOUNT BRIDGE</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.1.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -29,25 +29,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.accounting</artifactId>
-			<version>4.5.1</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.account.bridge</artifactId>
-			<version>4.2.3</version>
+			<version>4.2.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>4.1.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>4.3.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

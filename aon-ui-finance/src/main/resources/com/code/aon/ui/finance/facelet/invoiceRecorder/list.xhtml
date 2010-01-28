@@ -6,7 +6,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -55,8 +54,8 @@
 				<aon:div id="invoiceRecorderDataDiv">
 					<aon:dataTable id="invoiceRecorderData" value="#{invoiceRecorder.model}"
 						var="to" rows="20" rendered="#{invoiceRecorder.model.rowCount > 0}"
-						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							 aon-editDataTable-textColumn aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							 aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
 						<aon:column>
 							<f:facet name="header">
@@ -103,21 +102,6 @@
 							</f:facet>
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
-
-						<c:if test="#{company.EInvoice}">
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_signature}" />
-								</f:facet>
-								<aon:graphicImage rendered="#{to.signed}"
-									styleClass="aon-vertical-align-top aon-margin-left" title="#{financeBundle.finance_signed}"
-									url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/signed.png']}"/>
-								<aon:graphicImage rendered="#{!to.signed}"
-									styleClass="aon-vertical-align-top aon-margin-left" alt="#{financeBundle.finance_sign_pending}"
-									url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/not-signed.png']}"/>
-							</aon:column>
-						</c:if>
-
 					</aon:dataTable>
 					<aon:dataScroller2 for="invoiceRecorderData" showNote="true" />
 				</aon:div>

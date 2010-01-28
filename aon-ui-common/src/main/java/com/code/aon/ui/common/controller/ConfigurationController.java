@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -27,6 +25,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -49,7 +49,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	
 	private static final long serialVersionUID = -1159615075844874762L;
 	
-	private static final Logger LOGGER = Logger.getLogger(ConfigurationController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 	
 	private static final DateFormat FORMATTER = new SimpleDateFormat("EEEE, dd MMMM yyyy");
 	
@@ -157,10 +157,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 					this.version = StringUtils.trim(value);
 					LOGGER.info(version);
 				} else {
-					LOGGER.warning("Imposible determinar la versión");
+					LOGGER.warn("Imposible determinar la versión");
 				}
 			} catch (Throwable e) {
-				LOGGER.warning("Imposible determinar la versión" + e.getMessage());
+				LOGGER.warn("Imposible determinar la versión");
 			}
 		}
 		return version;
@@ -207,7 +207,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		        return list;
 	        }
         } catch (IOException e) {
-        	LOGGER.log(Level.SEVERE, "Error searching files: " + CONFIG_SHCHEMA, e);
+        	LOGGER.error("Error searching files: " + CONFIG_SHCHEMA, e);
         }		
         return null;
 	}	
@@ -218,7 +218,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		try {
 			config = ec.getResource(AON_CONFIG_XML);
 		} catch (MalformedURLException e) {
-			LOGGER.log(Level.SEVERE, AON_CONFIG_XML + " not found", e);
+			LOGGER.error(AON_CONFIG_XML + " not found", e);
 			return null;
 		}
 		
@@ -240,7 +240,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 			document = builder.parse(config.toString());
 		} catch (Throwable th) {
 			AonUtil.addErrorMessageFromBundle( DEFAULT_BUNDLE, CONFIGURATION_ERROR, AON_CONFIG_XML, th.getMessage() );
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			LOGGER.error(th.getMessage(), th);
 		} finally {
 			if ( errorHandler.isValidationError() ) {
 				AonUtil.addErrorMessageFromBundle( DEFAULT_BUNDLE, CONFIGURATION_ERROR, AON_CONFIG_XML, errorHandler.getException().getMessage() );
@@ -298,19 +298,19 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		public void error(SAXParseException exception) throws SAXException {
 			this.validationError = true;
 			this.exception = exception;
-			LOGGER.log( Level.SEVERE, exception.getMessage(), exception );
+			LOGGER.error( exception.getMessage(), exception );
 		}
 
 		@Override
 		public void fatalError(SAXParseException exception) throws SAXException {
 			this.validationError = true;
 			this.exception = exception;
-			LOGGER.log( Level.SEVERE, exception.getMessage(), exception );
+			LOGGER.error( exception.getMessage(), exception );
 		}
 
 		@Override
 		public void warning(SAXParseException exception) throws SAXException {
-			LOGGER.log( Level.WARNING, exception.getMessage(), exception );
+			LOGGER.error( exception.getMessage(), exception );
 		}
 
 		/**

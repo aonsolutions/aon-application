@@ -22,7 +22,7 @@
 					<aon:commandButton id="paymentPopup" 
 						value="#{(finance.payment) ? (financeBundle.finance_to_pay) : (financeBundle.finance_to_charge)}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item aon-icon-payment"
+						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{finance.onFinancePaymentShow}"
 						reRender="showFinancePaymentWindow">
 						<f:setPropertyActionListener target="#{finance.showFinancePaymentWindow}"
@@ -31,7 +31,7 @@
 					<aon:commandButton id="returnPopup" 
 						value="#{financeBundle.finance_to_return}"
 						immediate="#{true}" rendered="#{finance.paid}"
-						styleClass="aon-finding-toolbar-item aon-icon-return"
+						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{finance.onFinanceReturnShow}"
 						reRender="showFinanceReturnWindow">
 						<f:setPropertyActionListener target="#{finance.showFinanceReturnWindow}"
@@ -40,14 +40,14 @@
 					<aon:commandButton id="settle" 
 						value="#{financeBundle.finance_to_settle}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item aon-icon-settle"
+						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{finance.onSettleFinance}" />
 					<aon:commandButton id="fraction" 
 						value="#{financeBundle.finance_to_fraction}"
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
-						styleClass="aon-finding-toolbar-item aon-icon-fraction"
+						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
-					<h:commandLink value="#{financeBundle.finance_show_invoice}"
+						<h:commandLink value="#{financeBundle.finance_show_invoice}"
 						target="_blank" action="#{report.onExecute}" actionListener="#{finance.onShowInvoice}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="invoicePrint" />
@@ -269,6 +269,10 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
+			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
+			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />				
 	</ui:define>
 </ui:composition>

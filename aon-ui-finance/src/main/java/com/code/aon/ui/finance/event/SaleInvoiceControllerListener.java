@@ -107,15 +107,15 @@ public class SaleInvoiceControllerListener extends ControllerAdapter {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
 		CustomerFee customerFee = new CustomerFee();
 		customerFee.setCustomer(obtainCustomer(invoiceDetail.getInvoice().getRegistry()));
-		customerFee.setItem(invoiceDetail.getItem());
 		customerFee.setDescription(invoiceDetail.getDescription());
-		customerFee.setQuantity(invoiceDetail.getQuantity());
-		customerFee.setPrice(invoiceDetail.getPrice());
 		customerFee.setDiscountExpression(invoiceDetail.getDiscountExpression());
 		customerFee.setInitialDate(invoiceDetail.getInvoice().getIssueDate());
 		customerFee.setFinalDate(invoiceDetail.getInvoice().getIssueDate());
 		customerFee.setBillingDate(invoiceDetail.getInvoice().getIssueDate());
+		customerFee.setItem(invoiceDetail.getItem());
 		customerFee.setPeriod(BillingPeriod.NO_PERIOD);
+		customerFee.setPrice(invoiceDetail.getPrice());
+		customerFee.setQuantity(invoiceDetail.getQuantity());
 		customerFee.setSecurityLevel(invoiceDetail.getInvoice().getSecurityLevel());
 		customerFee.setWorkPlace(invoiceDetail.getWorkPlace());
 		customerFeeBean.insert(customerFee);

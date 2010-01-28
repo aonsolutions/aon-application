@@ -82,9 +82,6 @@ public class RichLookupBean {
 	
 	/** The minimum height. */
 	private String minHeight;
-
-	/** The window close focus. */
-	private String windowCloseFocus;
 	
 	private IControllerListener controllerListener;
 
@@ -735,16 +732,11 @@ public class RichLookupBean {
 	public String getMinHeight() {
 		return minHeight;
 	}
-	
-	public String getWindowCloseFocus() {
-		return windowCloseFocus;
-	}
 
 	public void updateWindowProperties() {
 		if ( (this.component != null) && (this.component instanceof HtmlLookupButton) ) {
 			HtmlLookupButton lookupButton = (HtmlLookupButton) this.component;
 			this.windowTitle = lookupButton.getWindowTitle();
-			this.windowCloseFocus = lookupButton.getWindowCloseFocus();
 			this.minWidth = lookupButton.getMinWidth();
 			this.minHeight = lookupButton.getMinHeight();
 		}

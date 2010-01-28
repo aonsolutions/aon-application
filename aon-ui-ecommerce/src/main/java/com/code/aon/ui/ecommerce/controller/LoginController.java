@@ -131,7 +131,7 @@ public class LoginController extends EmailParentController{
 
 	public void onLoginRequest(ActionEvent event){
 		if(getLogin()==null || getLogin()=="" ){
-			AonUtil.addInfoMessage("Debe indicar su email.");
+			AonUtil.addInfoMessage("Debe indicar su usuario (debe ser un email válido).");
 			throw new AbortProcessingException();
 		}
 		if(!EmailUtils.validateEmailAddress(getLogin())){

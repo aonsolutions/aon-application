@@ -7,63 +7,66 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:panelGroup id="#{aon_cb_id}ReRender" styleClass="aon-popupWindow">
-		<c:if test="#{aon_cb_showWindow}">
-			<rich:modalPanel 
-				id="#{aon_cb_id}"
-				rendered="#{aon_cb_showWindow}" showWhenRendered="true"
-				minWidth="260" height="130">
-
-				<f:facet name="header">
-					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{aon_cb_confirmTitle}"/>
-					</aon:div>
-				</f:facet>
-				<f:facet name="controls">
-					<aon:commandButton id="#{aon_cb_id}-close" requestDelay="100"
-						reRender="#{aon_cb_id}ReRender" immediate="true" ajaxSingle="true"
-						type="button" styleClass="aon-popupWindow-close" >
-						<aon:actionHotKey key="esc" />
-						<f:setPropertyActionListener target="#{aon_cb_showWindow}" value="false" />						
-						<rich:componentControl for="#{aon_cb_id}" event="onclick"
-							disableDefault="true" operation="hide"/>								
-					</aon:commandButton>	
-				</f:facet>
-
-				<aon:div  styleClass="aon-popupWindow-content">
-					<aon:div styleClass="aon-popupWindow-content-internal">
-					
-						<aon:div styleClass="aon-message-big aon-icon-big-info">								
-							<aon:outputText value="#{aon_cb_confirmMessage}" />
-						</aon:div>					
-					
-						<aon:div styleClass="aon-text-center">
-							<aon:commandButton id="#{aon_cb_id}-yes" value="#{bundle.aon_yes}"
-								action="#{aon_cb_confirmAction}" immediate="#{aon_cb_immediate}"
-								reRender="#{aon_cb_reRender}" requestDelay="100"
-								onclick="#{aon_cb_confirmOnClick}" oncomplete="#{aon_cb_confirmOnComplete}"
-								styleClass="aon-commandButton" >
-								<aon:actionHotKey key="return" />
-								<c:if test="#{confirmActionListener != null}">									
-									<aon:actionListener method="#{confirmActionListener}" />
-								</c:if>
-								<f:setPropertyActionListener target="#{aon_cb_showWindow}" value="false" />	
-							</aon:commandButton>
-							<aon:commandButton id="#{aon_cb_id}-no" value="#{bundle.aon_no}"
-								action="#{aon_cb_cancelAction}" immediate="true" ajaxSingle="true"
-								reRender="#{aon_cb_id}ReRender,#{aon_cb_cancelReRender}"
-								styleClass="aon-commandButton" >
-								<c:if test="#{aon_cb_cancelActionListener != null}">									
-									<aon:actionListener method="#{aon_cb_cancelActionListener}" />
-								</c:if>
-								<f:setPropertyActionListener target="#{aon_cb_showWindow}" value="false" />								
-								<rich:componentControl for="#{aon_cb_id}" event="onclick"
-									disableDefault="true" operation="hide"/>
-							</aon:commandButton>
-						</aon:div>					
+	<aon:panelGroup id="#{confirmId}ReRender" styleClass="aon-popupWindow">
+		<c:if test="#{confirmShowWindow}">
+			<aon:subForm id="#{confirmId}Form">
+				<rich:modalPanel 
+					id="#{confirmId}"
+					rendered="#{confirmShowWindow}" showWhenRendered="true"
+					minWidth="260" height="130">
+	
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="#{confirmTitle}"/>
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:commandButton id="#{confirmId}-close"
+							reRender="#{confirmId}ReRender" immediate="true"
+							type="button" styleClass="aon-popupWindow-close" >
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />						
+							<rich:componentControl for="#{confirmId}" event="onclick"
+								disableDefault="true" operation="hide"/>								
+						</aon:commandButton>	
+					</f:facet>
+	
+					<aon:div  styleClass="aon-popupWindow-content">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+						
+							<aon:div styleClass="aon-message-big aon-icon-big-info">								
+								<aon:outputText value="#{confirmMessage}" />						
+							</aon:div>					
+						
+							<aon:div styleClass="aon-text-center">
+								<aon:commandButton id="#{confirmId}-yes" value="#{bundle.aon_yes}"
+									action="#{confirmAction}" immediate="#{immediate}"
+									reRender="#{confirmReRender}"
+									styleClass="aon-commandButton" >
+									<aon:actionHotKey key="return" />
+									<c:if test="#{confirmActionListener != null}">									
+										<aon:actionListener method="#{confirmActionListener}" />
+									</c:if>
+									<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />								
+									<rich:componentControl for="#{confirmId}" event="onclick"
+										disableDefault="true" operation="hide"/>
+								</aon:commandButton>
+								<aon:commandButton id="#{confirmId}-no" value="#{bundle.aon_no}"
+									action="#{cancelAction}" immediate="true"
+									reRender="#{confirmId}ReRender,#{cancelReRender}"
+									styleClass="aon-commandButton" >
+									<c:if test="#{cancelActionListener != null}">									
+										<aon:actionListener method="#{cancelActionListener}" />
+									</c:if>
+									<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />								
+									<rich:componentControl for="#{confirmId}" event="onclick"
+										disableDefault="true" operation="hide"/>
+								</aon:commandButton>
+							</aon:div>					
+						</aon:div>		
 					</aon:div>		
-				</aon:div>		
-			</rich:modalPanel>	
+				</rich:modalPanel>	
+			</aon:subForm>
 		</c:if>
 	</aon:panelGroup>
 

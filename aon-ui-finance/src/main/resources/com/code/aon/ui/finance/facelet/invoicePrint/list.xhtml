@@ -60,7 +60,7 @@
 				<aon:dataTable id="invoicePrintData" value="#{invoicePrint.model}"
 					var="to" rows="20" rendered="#{invoicePrint.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn">
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
 					<h:column>
 						<f:facet name="header">
@@ -107,6 +107,10 @@
 								<h:outputText value="#{bundle.aon_status}" />
 							</h:panelGroup>
 						</f:facet>
+						<c:if test="#{company.EInvoice}">
+							<aon:outputText
+								value="#{to.signed ?(financeBundle.finance_signed):(financeBundle.finance_sign_pending)}, " />
+						</c:if>
 						<aon:outputText value="#{to.status}" />
 					</h:column>
 
@@ -118,21 +122,6 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
-
-					<c:if test="#{company.EInvoice}">
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_signature}" />
-							</f:facet>
-							<aon:graphicImage rendered="#{to.signed}"
-								styleClass="aon-vertical-align-top aon-margin-left" title="#{financeBundle.finance_signed}"
-								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/signed.png']}"/>
-							<aon:graphicImage rendered="#{!to.signed}"
-								styleClass="aon-vertical-align-top aon-margin-left" alt="#{financeBundle.finance_sign_pending}"
-								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/not-signed.png']}"/>
-						</aon:column>
-					</c:if>
-
 				</aon:dataTable>
 
 				<aon:dataScroller2 for="invoicePrintData" showNote="true" />

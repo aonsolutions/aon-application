@@ -24,8 +24,7 @@
 					<aon:form>
 						<aon:commandButton id="#{lookupId}-close" type="button"
 							reRender="#{lookupId}ReRender" styleClass="aon-popupWindow-close"
-							actionListener="#{lookup.onCloseWindow}"
-							focus="#{lookup.windowCloseFocus}" immediate="true">
+							actionListener="#{lookup.onCloseWindow}" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<rich:componentControl for="#{lookupId}" event="onclick"
 								disableDefault="true" operation="hide" />

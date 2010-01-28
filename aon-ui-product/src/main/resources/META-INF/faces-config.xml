@@ -387,29 +387,6 @@
 		</managed-property>
 	</managed-bean>
 	
-	<managed-bean>
-		<managed-bean-name>catalogueLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>catalogueLookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.product.Catalogue</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Catalogue_id</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/product/facelet/lookup/catalogue/list.xhtml</value>
-		</managed-property>
-		
-	</managed-bean>
-	
 	<!-- ****** TARIFF ****** -->
 	<managed-bean>
 		<managed-bean-name>tariff</managed-bean-name>

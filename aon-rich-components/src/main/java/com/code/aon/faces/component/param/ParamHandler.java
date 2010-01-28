@@ -8,14 +8,19 @@ import javax.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
-import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagConfig;
 import com.sun.facelets.tag.TagHandler;
 
-public class ParamHandler extends TagHandler implements IRichFacesTags {
+public class ParamHandler extends TagHandler {
+
+	public static final String NAME = "name";	
+	
+	public static final String VALUE = "value";
+	
+	public static final String DEFAULT = "default";
 
     private final TagAttribute name;
 

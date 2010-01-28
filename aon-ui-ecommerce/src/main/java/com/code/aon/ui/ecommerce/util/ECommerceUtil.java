@@ -2,9 +2,13 @@ package com.code.aon.ui.ecommerce.util;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
 
+import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -51,20 +55,21 @@ public class ECommerceUtil implements IECommerceConstants{
 		//**************************************
 		//**************************************
 		//**************************************
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		if(config.getActiveConfig().getBankDraft()!=null){
-			payMethods.add(new SelectItem(config.getActiveConfig().getBankDraft(), config.getActiveConfig().getBankDraft().getName()));
+			payMethods.add(new SelectItem(config.getActiveConfig().getBankDraft(), config.getActiveConfig().getBankDraft().getType().getName(locale)));
 		}
 		if(config.getActiveConfig().getBankTransfer()!=null){
-			payMethods.add(new SelectItem(config.getActiveConfig().getBankTransfer(), config.getActiveConfig().getBankTransfer().getName()));
+			payMethods.add(new SelectItem(config.getActiveConfig().getBankTransfer(), config.getActiveConfig().getBankTransfer().getType().getName(locale)));
 		}
 		if(config.getActiveConfig().getCashOnDelivery()!=null){
-			payMethods.add(new SelectItem(config.getActiveConfig().getCashOnDelivery(), config.getActiveConfig().getCashOnDelivery().getName()));
+			payMethods.add(new SelectItem(config.getActiveConfig().getCashOnDelivery(), config.getActiveConfig().getCashOnDelivery().getType().getName(locale)));
 		}
 		if(config.getActiveConfig().getPaypal()!=null){
-			payMethods.add(new SelectItem(config.getActiveConfig().getPaypal(), config.getActiveConfig().getPaypal().getName()));
+			payMethods.add(new SelectItem(config.getActiveConfig().getPaypal(), config.getActiveConfig().getPaypal().getType().getName(locale)+" ("+config.getActiveConfig().getPaypal().getName()+")"));
 		}
-		if(config.getActiveConfig().getVisa()!=null){
-			payMethods.add(new SelectItem(config.getActiveConfig().getVisa(), config.getActiveConfig().getVisa().getName()));
+		if(config.getActiveConfig().getCreditCard()!=null){
+			payMethods.add(new SelectItem(config.getActiveConfig().getCreditCard(), config.getActiveConfig().getCreditCard().getType().getName(locale)));
 		}
 		
 		return payMethods;
@@ -83,5 +88,27 @@ public class ECommerceUtil implements IECommerceConstants{
 //		}
 //		return accountPeriods;
 //	}
+	
+private static final String DOMAIN_RESOLVER = "domainResolver";
+	
+	public static String getDomain(){
+//		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+//		return user.getDomain();
+		DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER);
+    	String domain = resolver.getDomain();
+		return domain;
+	}
+	
+	public static String getUrl(){
+		StringBuffer url = new StringBuffer( "http://" );
+		url.append( getDomain() );
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		if ( request.getRemotePort() != 80 ) {
+			url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+		}
+		url.append( "/aon-ecommerce" );
+		return url.toString();	
+	}
 
 }

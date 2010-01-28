@@ -6,6 +6,7 @@ public enum ViewEnum {
 	ITEM_LIST("items"),
 	ITEM_DETAIL("detail"),
 	SHOPPING_CART("cart"),
+	PAYMETHOD("paymethod"),
 	WELCOME("welcome");
 
 	private String outcome;
