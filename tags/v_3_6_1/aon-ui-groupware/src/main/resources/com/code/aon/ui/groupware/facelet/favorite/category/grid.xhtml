@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="favoriteCategoryList">
+
+			<aon:div ajaxRendered="true" layout="none">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_favorite}" />
+					<ui:param name="toolbarDescription" value="#{groupwareBundle.aon_favorite_category}" />					
+					<ui:param name="controller" value="#{favoriteCategory}" />
+					
+					<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="favorite_list"
+							value="#{bundle.aon_back}" rendered="#{favoriteCategory.to==null}"
+							immediate="true" action="favorite"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"/>												 
+					</ui:define>				
+				</ui:decorate>					
+
+				<!--  aon-region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+					
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{favoriteCategory}" />
+						<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+						<ui:define name="columns">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{groupwareBundle.favorite_category_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.description}" rendered="#{formList}" />
+								<aon:inputText styleClass="aon-form-input-text " required="true"
+									rendered="#{formEdit}" size="100"
+									value="#{favoriteCategory.to.description}" maxlength="64" />
+								<f:facet name="footer">
+									<aon:inputText styleClass="aon-form-input-text" required="true"
+										rendered="#{formNew}" size="100"
+										value="#{favoriteCategory.to.description}" maxlength="64" />
+								</f:facet>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

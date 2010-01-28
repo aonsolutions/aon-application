@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="albumCategorySearch">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.album_category}" />
+				<ui:param name="controller" value="#{album_category}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+			</ui:include>		
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{album_category}" />
+				<ui:define name="searchContent">
+		
+					<aon:outputLabel for="AlbumCategory_alias"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="AlbumCategory_alias" size="50"
+						valueChangeListener="#{album_category.addExpression}" />
+						
+					<aon:outputLabel for="AlbumCategory_details_label"
+						value="#{appBundle.cms_label}" />
+					<aon:inputText id="AlbumCategory_details_label" size="50"
+						valueChangeListener="#{controller.addExpression}" />						
+						
+					<aon:outputLabel for="AlbumCategory_section_id"
+						value="#{appBundle.cms_section}" />
+					<aon:selectOneMenu id="AlbumCategory_section_id"
+						valueChangeListener="#{album_category.addIdEqualExpression}"
+						value="#{collections.section}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>						
+	
+					<aon:outputLabel for="AlbumCategory_position"
+						value="#{appBundle.album_category_position}" />
+					<aon:inputText id="AlbumCategory_position" size="10"
+						valueChangeListener="#{album_category.addExpression}" />
+
+					<aon:outputLabel for="AlbumCategory_active"
+						value="#{appBundle.cms_active}" />
+					<aon:selectOneMenu id="AlbumCategory_active"
+						valueChangeListener="#{album_category.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>	
+					
+				</ui:define>
+			</ui:decorate>	
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

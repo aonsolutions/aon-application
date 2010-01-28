@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>aon.entity.parent</artifactId>
+		<groupId>com.code.aon</groupId>
+		<version>1.0.1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon.webmail</artifactId>
+	<packaging>jar</packaging>
+	<name>AON WEBMAIL</name>
+	<version>3.6.1</version>
+	<description>AON WEBMAIL</description>
+	<dependencies>
+		<dependency>
+		   <groupId>com.code.aon</groupId>
+		   <artifactId>aon.common</artifactId>
+		   <version>3.4.0</version>
+		   <scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.common.ldap</artifactId>
+			<version>1.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging-api</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.1</version>
+		</dependency>		
+	</dependencies>
+</project>
