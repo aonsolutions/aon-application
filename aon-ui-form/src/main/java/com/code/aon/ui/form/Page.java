@@ -2,7 +2,6 @@ package com.code.aon.ui.form;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.common.ITransferObject;
@@ -34,7 +33,7 @@ public class Page implements Serializable {
 	 * @param l the list
 	 */
 	public Page(List<ITransferObject> l, int start) {
-		setList(new LinkedList<ITransferObject>(l));
+		setList(l);
 	    this.start = start;
 	}
 
@@ -90,6 +89,15 @@ public class Page implements Serializable {
 	 */
 	public int getStart() {
 	    return start;
+	}
+
+	/**
+	 * Checks if is empty.
+	 * 
+	 * @return true, if is empty
+	 */
+	public boolean isEmpty() {
+		return (objects == null) || (getSize() == 0);
 	}
 	
 	static {
