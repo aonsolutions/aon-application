@@ -1,6 +1,7 @@
 package com.code.aon.ql;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,22 +17,34 @@ import com.code.aon.ql.ast.CriterionVisitor;
  */
 public class OrderByList implements Criterion {
 
+	private static final long serialVersionUID = 4969072459805125924L;
+
 	private List<Order> orders;
 	
 	/**
 	 * Default Constructor.
 	 */
 	public OrderByList() {
-		this.orders = new ArrayList<Order>();
+		this.orders = new ArrayList<Order>(4);
 	}
-
+	
+	/**
+	 * Instantiates a new order by list.
+	 * 
+	 * @param orders the orders
+	 */
+	public OrderByList( Collection<Order> orders ) {
+		this();
+		setOrders(orders);
+	}	
+	
 	/**
 	 * Adds the given <code>Order</code> to the order list.
 	 * 
 	 * @param order
 	 *            The item to be added to the list.
 	 */
-	public void addOrder(Order order) {
+	public void add(Order order) {
 		if (! this.orders.contains(order) ) {
 			this.orders.add(order);			
 		}
@@ -41,11 +54,61 @@ public class OrderByList implements Criterion {
 	 * Returns the <code>Order</code> list.
 	 * @return The <code>Order</code> list.
 	 */
-	public List<Order> getOrders() {
+	public Collection<Order> getOrders() {
 		return orders;
 	}
 	
-    /* (non-Javadoc)
+	/**
+	 * Sets the orders.
+	 * 
+	 * @param orders the new orders
+	 */
+	public void setOrders( Collection<Order> orders ) {
+		this.orders.clear();
+		this.orders.addAll( orders );
+	}
+	
+	/**
+	 * Gets the order.
+	 * 
+	 * @param id the id
+	 * 
+	 * @return the order
+	 */
+	public Order get( String id ) {
+		for( Order order : this.orders ) {
+			if ( order.getExpression().getName().equals(id) ) {
+				return order;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Removes the order.
+	 * 
+	 * @param id the id
+	 * 
+	 * @return the order
+	 */
+	public boolean remove( String id ) {
+		Order order = get(id);
+		if ( order != null ) {
+			return this.orders.remove(order);
+		}
+		return false;
+	}
+	
+    /**
+     * Returns the number of order.
+     *
+     * @return the number of order
+     */
+	public int size() {
+		return orders.size();
+	}
+
+	/* (non-Javadoc)
      * @see com.code.aon.ql.ast.Criterion#accept(com.code.aon.ql.ast.CriterionVisitor)
      */
     public void accept(CriterionVisitor visitor) {
@@ -55,7 +118,7 @@ public class OrderByList implements Criterion {
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-        Iterator<Order> i = orders.iterator();
+        Iterator<Order> i = getOrders().iterator();
         boolean hasNext = i.hasNext();
         while (hasNext) {
         	buf.append( i.next() );
@@ -65,5 +128,27 @@ public class OrderByList implements Criterion {
         }		
 		return buf.toString();
 	}
-    
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
+		if((obj == null) || (obj.getClass() != this.getClass())) {
+			return false;
+		}
+		OrderByList obl = (OrderByList) obj;
+		if ( size() == obl.size() ) {
+			Iterator<Order> it = obl.getOrders().iterator();
+			for( Order order : getOrders() ) {
+				Order order2 = it.next();
+				if (! order.equals(order2) ) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
 }

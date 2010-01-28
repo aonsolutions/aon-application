@@ -16,6 +16,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
  */
 public class Criteria implements Criterion {
 
+	private static final long serialVersionUID = -716927155526751780L;
+
 	private Expression expression;
 
 	private OrderByList orderByList;
@@ -219,7 +221,7 @@ public class Criteria implements Criterion {
 		if (this.orderByList == null) {
 			this.orderByList = new OrderByList();
 		}
-		this.orderByList.addOrder(order);
+		this.orderByList.add(order);
 	}
 
 	/**
@@ -229,6 +231,15 @@ public class Criteria implements Criterion {
 	 */
 	public void addOrder(String identifier) {
 		this.addOrder(identifier, true);
+	}
+	
+	/**
+	 * Checks for orders.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean hasOrders() {
+		return getOrderByList() != null;
 	}
 	
     /**
