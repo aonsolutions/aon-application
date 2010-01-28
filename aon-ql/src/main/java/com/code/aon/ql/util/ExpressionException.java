@@ -9,6 +9,8 @@ package com.code.aon.ql.util;
  */
 public class ExpressionException extends Exception {
 
+	private static final long serialVersionUID = 840796588610856591L;
+
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.
      */

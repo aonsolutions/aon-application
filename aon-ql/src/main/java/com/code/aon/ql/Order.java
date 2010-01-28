@@ -13,6 +13,8 @@ import com.code.aon.ql.ast.IdentExpression;
  */
 public class Order implements Criterion {
 
+	private static final long serialVersionUID = 3072972067229394951L;
+
 	private IdentExpression expression;
 	
 	private boolean ascending;

@@ -13,7 +13,9 @@ import com.code.aon.ql.ast.NotNullExpression;
  */
 public class NotNullExpressionImpl implements NotNullExpression {
 
-    /**
+	private static final long serialVersionUID = -8277166566312336943L;
+	
+	/**
      * The expression.
      */
     private Expression expression;

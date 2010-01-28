@@ -14,6 +14,8 @@ import com.code.aon.ql.ast.CriterionVisitor;
  */
 public class BetweenExpressionImpl implements BetweenExpression {
 
+	private static final long serialVersionUID = -1426664682016291666L;
+
 	/**
 	 * The <code>Expression</code> that is desired to evaluate.
 	 */

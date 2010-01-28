@@ -15,6 +15,8 @@ import com.code.aon.ql.ast.CriterionVisitor;
  */
 public class ProjectionList implements Criterion {
 
+	private static final long serialVersionUID = 9043236236680871406L;
+
 	private List<Projection> projections;
 	
 	/**

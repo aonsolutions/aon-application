@@ -12,6 +12,8 @@ import com.code.aon.ql.ast.RelationalExpression;
  */
 class RelationalExpressionImpl extends AbstractBinaryExpressionImpl implements RelationalExpression {
 
+	private static final long serialVersionUID = 8072237133711671470L;
+
 	/**
 	 * Supported relational operator.
 	 * 
