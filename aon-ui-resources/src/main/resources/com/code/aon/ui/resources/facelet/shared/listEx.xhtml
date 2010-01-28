@@ -5,7 +5,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:dataTable id="#{dataTableId}" var="to" 
+	<aon:dataTable id="#{dataTableId}" var="to" sortMode="#{sortMode}"
 		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
 		columnClasses=", #{columnClasses}">
 
