@@ -91,7 +91,7 @@ public class SqlRenderer implements CriterionVisitor {
 	 */
 	public void visitOrderByList(OrderByList orderByList) {
 		write(ORDER_BY);
-		Iterator i = orderByList.getOrders().iterator();
+		Iterator<Order> i = orderByList.getOrders().iterator();
 		while (i.hasNext()) {
 			Order order = (Order) i.next();
 			order.accept(this);

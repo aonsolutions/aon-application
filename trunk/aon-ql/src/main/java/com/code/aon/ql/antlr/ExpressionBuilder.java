@@ -258,7 +258,7 @@ public class ExpressionBuilder extends antlr.TreeParser implements QLTokenTypes 
 	 * @return Expression
 	 * @throws RecognitionException
 	 */
-	public final Expression pattern(AST _t, @SuppressWarnings("unused") String ident)
+	public final Expression pattern(AST _t, String ident)
 			throws RecognitionException {
 		Expression expression;
 
