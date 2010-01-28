@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="invoicePrintList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_print_module}" />
+				<ui:param name="controller" value="#{invoicePrint}" />
+				<ui:param name="skipResetButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:confirmButton value="&#160;" id="sendEmail"
+						confirmTitle="#{financeBundle.finance_send_email}"
+						confirmMessage="#{financeBundle.finance_sign_email_confirm}"
+						confirmActionListener="#{invoiceSigner.onShowSignWindow}"
+						reRender="showSignWindow"
+						cancelActionListener="#{invoicePrint.onSendInvoicesByEmail}"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
+					</aon:confirmButton>											
+					<h:commandLink value="&#160;" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="invoicePrint" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>											
+					<h:commandLink value="#{financeBundle.finance_invoice_module}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="invoicePrint" />
+					</h:commandLink>
+
+					<h:commandLink value="&#160;" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="receipt" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>											
+					<h:commandLink value="#{financeBundle.finance_receipts}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+						<f:param name="reportKey" value="receipt" />
+					</h:commandLink>
+				</ui:define>				
+				
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="invoicePrintData" value="#{invoicePrint.model}"
+					var="to" rows="20" rendered="#{invoicePrint.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						</f:facet>
+						<h:outputText value="#{to.referenceCode}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:panelGroup>
+								<h:outputText value="#{bundle.aon_date}" />
+							</h:panelGroup>
+						</f:facet>
+						<h:outputText value="#{to.issueDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</h:outputText>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:panelGroup>
+								<h:outputText value="#{customerBundle.customer_customer}" />
+							</h:panelGroup>
+						</f:facet>
+						<h:outputText
+							value="#{to.registryName}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:panelGroup>
+								<h:outputText value="#{bundle.aon_company_document}" />
+							</h:panelGroup>
+						</f:facet>
+						<h:outputText
+							value="#{to.registryDocument}" />
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:panelGroup>
+								<h:outputText value="#{bundle.aon_status}" />
+							</h:panelGroup>
+						</f:facet>
+						<c:if test="#{company.EInvoice}">
+							<aon:outputText
+								value="#{to.signed ?(financeBundle.finance_signed):(financeBundle.finance_sign_pending)}, " />
+						</c:if>
+						<aon:outputText value="#{to.status}" />
+					</h:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_total}" />
+						</f:facet>
+						<aon:outputText value="#{invoicePrint.invoiceTotalPrice}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="invoicePrintData" showNote="true" />
+			</aon:div>
+			
+		</aon:form>
+
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
+			<aon:methodParam name="signActionListener" value="#{invoicePrint.onSendInvoicesBySignedEmail}" type="actionListener" />
+		</ui:include>
+	</ui:define>
+
+</ui:composition>

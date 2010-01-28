@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns="http://www.esferalia.com/customer" targetNamespace="http://www.esferalia.com/customer"
+		elementFormDefault="qualified">
+	<xs:element name="config">	
+		<xs:complexType>
+		    <xs:sequence>
+		      <xs:element ref="customer" />
+		    </xs:sequence>		
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="customer">
+		<xs:complexType>
+			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showProjectData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showFinanceFeeData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
+			<xs:attribute name="showTariff" type="xs:boolean" use="required"/>
+			<xs:attribute name="showSegment" type="xs:boolean" use="required"/>
+			<xs:attribute name="showNote" type="xs:boolean" use="required"/>
+			<xs:attribute name="showRelationship" type="xs:boolean" use="required"/>
+			<xs:attribute name="showRecordData" type="xs:boolean" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
