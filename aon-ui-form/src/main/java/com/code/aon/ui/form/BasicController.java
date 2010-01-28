@@ -9,9 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -21,6 +18,8 @@ import javax.faces.model.DataModelListener;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -63,7 +62,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	/** Represent a manager of listeners */
 	protected ControllerListenerSupport controllerListenerSupport;
 
-	private int pageLimit = PageDataModel.LIMIT;
+	private int pageLimit = ExtendedPageDataModel.LIMIT;
 
 	private int selectedIndex;
 
@@ -197,7 +196,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			if (isQueryOnStartUP()) {
 				initializeModel();
 			} else {
-				this.model = new PageDataModel(this, getPageLimit());
+				this.model = new ExtendedPageDataModel(this);
 				addDataModelListeners();
 			}
 			
@@ -321,7 +320,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	@SuppressWarnings("unchecked")
 	private void synchronizeAddedPojo() throws ManagerBeanException {
-		if (getModel() instanceof PageDataModel) {
+		if (getModel() instanceof ExtendedPageDataModel) {
 			List<ITransferObject> list = (List<ITransferObject>)getModel().getWrappedData();
 			for (ITransferObject to : list) {
 				if (to.equals(this.getTo())) {
@@ -649,14 +648,10 @@ public class BasicController extends AbstractPojoController implements IControll
 			controllerListenerSupport.fireBeforeModelInitialized(evt);
 			LOGGER.debug(">>>> before InitializeModel");
 			if (model == null) {
-				int count = getManagerBean().getCount(getCriteria());
-				model = new PageDataModel(this, count, getPageLimit());
+				model = new ExtendedPageDataModel(this);
 				addDataModelListeners();
-			} else {
-				PageDataModel pdm = (PageDataModel) model;
-				pdm.setWrappedData(search(0, getPageLimit()));
-				pdm.resize(getManagerBean().getCount(getCriteria()));
 			}
+			((ExtendedPageDataModel) model).update( 0, getPageLimit() ); 
 			selectedIndex = -1;
 			LOGGER.debug("initializeModel RowCount {}",model.getRowCount());
 			controllerListenerSupport.fireAfterModelInitialized(evt);
@@ -868,8 +863,8 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 
 	private void setRowData(ITransferObject to) throws ManagerBeanException {
-		if (getModel() instanceof PageDataModel) {
-			((PageDataModel) getModel()).setRowData(getSelectedIndex(), to);
+		if (getModel() instanceof ExtendedPageDataModel) {
+			((ExtendedPageDataModel) getModel()).setRowData(getSelectedIndex(), to);
 		} else {
 			List<ITransferObject> list = getWrappedList();
 			list.set(getSelectedIndex(), to);
@@ -907,7 +902,8 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	private void updateOrderList() {
 		if (orderList != null) {
-			this.criteria.setOrderByList(orderList);
+			OrderByList list = new OrderByList( orderList.getOrders() );
+			this.criteria.setOrderByList( list );
 		}
 	}
 
@@ -930,7 +926,7 @@ public class BasicController extends AbstractPojoController implements IControll
 				}
 				IdentExpression identifier = ExpressionUtilities.getIdentifierExpression(name);
 				Order order = new Order(identifier, ascending);
-				this.orderList.addOrder(order);
+				this.orderList.add(order);
 			}
 			updateOrderList();
 		}
