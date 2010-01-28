@@ -12,7 +12,9 @@ import com.code.aon.ql.ast.Expression;
  */
 abstract class AbstractBinaryExpressionImpl implements BinaryExpression {
 
-    /**
+	private static final long serialVersionUID = 291169328179498002L;
+
+	/**
      * The left expression.
      */
     private Expression left;

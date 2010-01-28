@@ -14,7 +14,9 @@ import com.code.aon.ql.ast.LogicalAndExpression;
 class LogicalAndExpressionImpl extends AbstractBinaryExpressionImpl implements
         LogicalAndExpression {
 
-    /**
+	private static final long serialVersionUID = 4254468602868315742L;
+
+	/**
      * Constructor for the given expressions.
      * 
      * @param left

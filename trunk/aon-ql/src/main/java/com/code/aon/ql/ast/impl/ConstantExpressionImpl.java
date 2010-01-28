@@ -12,7 +12,9 @@ import com.code.aon.ql.ast.CriterionVisitor;
  */
 public class ConstantExpressionImpl implements ConstantExpression {
 
-    /**
+	private static final long serialVersionUID = -3168973329223554784L;
+
+	/**
      * The wrapped constant.
      */
     private Object data;

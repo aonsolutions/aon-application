@@ -13,6 +13,8 @@ import com.code.aon.ql.ast.NullExpression;
  */
 public class NullExpressionImpl implements NullExpression {
 	
+	private static final long serialVersionUID = 7146386156582127736L;
+
 	/**
 	 * The expression.
 	 */

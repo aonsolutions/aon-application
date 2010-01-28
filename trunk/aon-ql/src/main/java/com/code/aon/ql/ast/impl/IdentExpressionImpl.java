@@ -12,7 +12,9 @@ import com.code.aon.ql.ast.IdentExpression;
  */
 public class IdentExpressionImpl implements IdentExpression {
 
-    /**
+	private static final long serialVersionUID = -1923369214010672968L;
+	
+	/**
      * The identifier.
      */
     private String name;

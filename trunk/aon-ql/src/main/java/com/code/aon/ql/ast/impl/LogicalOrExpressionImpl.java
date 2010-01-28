@@ -13,7 +13,9 @@ import com.code.aon.ql.ast.CriterionVisitor;
 class LogicalOrExpressionImpl extends AbstractBinaryExpressionImpl implements
         com.code.aon.ql.ast.LogicalOrExpression {
 
-    /**
+	private static final long serialVersionUID = -5767893537504056621L;
+
+	/**
      * Constructor for the given expressions.
      * 
      * @param left
