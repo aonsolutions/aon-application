@@ -52,9 +52,11 @@
 					<ui:insert name="endFormListContent"/>				
 				</aon:div>
 				<aon:div rendered="#{formEdit}">			
+					<ui:insert name="beforeEditLineButtons"/>
+
 					<c:if test="#{!skipSaveButton}">		
 						<aon:commandButton
-							id="#{dataTableId}-save" title="#{bundle.aon_accept} (#{bundle.aon_key_save_line_accelerator})"
+							id="#{dataTableId}-save" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
 							action="#{saveAction}" actionListener="#{saveActionListener}"
 							reRender="#{dataTableId}Div#{(saveButtonReRender != null)?',':''}#{saveButtonReRender}"
 							styleClass="aon-editDataTable-button aon-icon-accept"
@@ -83,6 +85,8 @@
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div>
+						<ui:insert name="beforeNewLineButtons"/>
+
 						<aon:outputText rendered="#{!formNew}" value="&#160;" />
 						<c:if test="#{!skipSaveButton}">		
 							<aon:commandButton
