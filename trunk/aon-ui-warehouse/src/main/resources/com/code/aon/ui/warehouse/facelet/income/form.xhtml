@@ -38,6 +38,15 @@
 							<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
+						<h:commandLink id="income" value="#{bundle.aon_report}"
+							target="_new" rendered="#{!income.new}"
+							action="#{report.onExecute}" 
+							disabled="#{incomeDetail.to != null}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							<f:param name="reportKey" value="incomeForm" />
+							<f:param name="outputFormat" value="PDF" />
+						</h:commandLink>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
