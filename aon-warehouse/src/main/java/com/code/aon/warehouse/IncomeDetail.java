@@ -1,5 +1,7 @@
 package com.code.aon.warehouse;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,10 +12,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -21,6 +28,9 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.ql.Criteria;
+import com.code.aon.supplier.ItemSupplier;
+import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.warehouse.enumeration.IncomeDetailSource;
 import com.code.aon.warehouse.enumeration.IncomeDetailType;
 
@@ -29,6 +39,7 @@ import com.code.aon.warehouse.enumeration.IncomeDetailType;
 public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	
 	private static final long serialVersionUID = 3100497435533821492L;
+	private final static Logger LOGGER = LoggerFactory.getLogger(IncomeDetail.class);
 
 	private Integer id;
 	private Income income;
@@ -151,6 +162,26 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	public boolean isEntry() {
 		return true;
 	}
+	
+	@Transient
+    public String getItemSupplierCode() {
+    	try {
+			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_ITEM_ID),getItem().getId());
+			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_SUPPLIER_ID),getIncome().getSupplier().getId());
+			List<ITransferObject> lista;
+			lista = itemSupplierBean.getList(criteria);
+			if (lista.size() > 0) {
+				String code = ((ItemSupplier) lista.get(0)).getCode();
+				return (StringUtils.isNotEmpty(code)) ? code : getItem()
+						.getProduct().getCode();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("can't get ItemSupplier.code",e);
+		}
+		return getItem().getProduct().getCode();
+	}  
 
 	@Override
 	public boolean equals(Object obj) {
