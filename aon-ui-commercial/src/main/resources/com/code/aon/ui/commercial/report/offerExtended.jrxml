@@ -170,7 +170,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
 			</textField>
@@ -185,7 +185,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
@@ -200,7 +200,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
 			</textField>
@@ -215,7 +215,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
 			</textField>
@@ -230,7 +230,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{web}.getValue()]]></textFieldExpression>
 			</textField>
@@ -245,7 +245,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["e: "+$P{email}.getValue()]]></textFieldExpression>
 			</textField>
@@ -289,7 +289,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title1}]]></textFieldExpression>
 			</textField>
@@ -305,7 +305,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title2}]]></textFieldExpression>
 			</textField>
@@ -321,7 +321,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title3}]]></textFieldExpression>
 			</textField>
@@ -337,7 +337,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title4}]]></textFieldExpression>
 			</textField>
@@ -350,7 +350,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_supplier1}+" "+$P{company}.getName()+" "+$R{offer_text_supplier2}+" "+$P{company}.getAlias()+$R{offer_text_supplier3}+" "+$P{company}.getDocument()+" "+$R{offer_text_supplier4}+" "+ ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())+" "+$R{offer_text_supplier5}+" "+($P{address}.getAddress()==null?"":$P{address}.getAddress()) + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2())+ ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())+" "+($P{address}.getZip()==null?"":$P{address}.getZip() + " ")+" de "+($P{address}.getCity()==null?"":$P{address}.getCity())+"("+$P{address}.getGeozone().getName()+")."]]></textFieldExpression>
 			</textField>
@@ -363,7 +363,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_order1}+" "+$P{company}.getAlias()+" "+$R{offer_text_order2}]]></textFieldExpression>
 			</textField>
@@ -561,7 +561,7 @@
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-88" positionType="Float" x="283" y="216" width="97" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_sign}]]></textFieldExpression>
 			</textField>
@@ -577,7 +577,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title5}]]></textFieldExpression>
 			</textField>
@@ -593,7 +593,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_acceptance}]]></textFieldExpression>
 			</textField>
@@ -606,7 +606,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_financial1}]]></textFieldExpression>
 			</textField>
@@ -619,7 +619,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($P{defaultPayMethod}.booleanValue() ?  $R{offer_text_financial2}+" "+ $P{targetPayMethod}.getPayment().getName()+" "+$R{offer_text_financial3}+" "+$P{targetPayMethod}.getNumberOfPayments()+" "+$R{offer_text_financial4}+" "+$R{offer_bank}+" "+ $P{targetPayMethod}.getBank().getName()+" "+$R{offer_bank_account}+" "+$P{targetPayMethod}.getBankAccount().getValue() :$R{offer_text_financial2}+" "+$F{payMethod}.getName()+" "+$R{offer_text_financial3}+" "+ $F{numberOfPayments}+" "+$R{offer_text_financial4}+" "+$R{offer_bank}+" "+$F{bank}.getName()+" "+$R{offer_bank_account}+" "+$F{bankAccount}.getEntity()+" "+$F{bankAccount}.getOffice()+" "+$F{bankAccount}.getControl()+" "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
 			</textField>
@@ -629,14 +629,14 @@
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-105" positionType="Float" x="134" y="215" width="41" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_dni}]]></textFieldExpression>
 			</textField>
@@ -646,7 +646,7 @@
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
 			</textField>
@@ -656,7 +656,7 @@
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 			</textField>
@@ -666,21 +666,21 @@
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-109" positionType="Float" x="134" y="249" width="41" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_fecha}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-110" positionType="Float" x="4" y="215" width="32" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_mr}]]></textFieldExpression>
 			</textField>
@@ -699,14 +699,14 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title7}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-111" positionType="Float" x="4" y="248" width="32" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_charge}]]></textFieldExpression>
 			</textField>
@@ -719,7 +719,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title6}]]></textFieldExpression>
 			</textField>
@@ -732,7 +732,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="8" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_title8}]]></textFieldExpression>
 			</textField>
