@@ -29,8 +29,10 @@
 		</aon:div>
 		<!-- end toolbar navigation -->
 		<aon:div style="width:98%;">
-			<aon:dataTable id="#{lookup.beanName}Data" var="to"
-				value="#{lookup.model}" rows="15" rowKeyVar="rowKey" stateVar="state">
+			<aon:dataTable id="#{lookup.beanName}Data"
+				var="to" value="#{lookup.model}"
+				rows="#{lookup.pageLimit}" sortMode="multi"
+				rowKeyVar="rowKey" stateVar="state">
 				
 				<aon:rowSelector actionListener="#{lookup.onListSelect}"
 					reRender="#{lookup.component.selectReRender}"
