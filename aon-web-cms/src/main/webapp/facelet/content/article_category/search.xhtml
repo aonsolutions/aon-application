@@ -12,7 +12,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="list">
+		<aon:form id="articleCategorySearch">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.article_category}" />
@@ -27,17 +27,31 @@
 					<aon:outputLabel for="ArticleCategory_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="ArticleCategory_alias" size="50"
-						valueChangeListener="#{article_category.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="ArticleCategory_details_label"
+						value="#{appBundle.cms_label}" />
+					<aon:inputText id="ArticleCategory_details_label" size="50"
+						valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="ArticleCategory_section_id"
+						value="#{appBundle.cms_section}" />
+					<aon:selectOneMenu id="ArticleCategory_section_id"
+						valueChangeListener="#{controller.addIdEqualExpression}"
+						value="#{collections.section}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
 	
 					<aon:outputLabel for="ArticleCategory_position"
 						value="#{appBundle.article_category_position}" />
 					<aon:inputText id="ArticleCategory_position" size="10"
-						valueChangeListener="#{article_category.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 						
 					<aon:outputLabel for="ArticleCategory_active"
 						value="#{appBundle.article_category_active}" />
 					<aon:selectOneMenu id="ArticleCategory_active"
-						valueChangeListener="#{article_category.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-"	itemValue="#{null}" />
 						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />

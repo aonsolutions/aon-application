@@ -46,10 +46,10 @@
 
 				<aon:div styleClass="aon-toolbar aon-margin-bottom">
 					<aon:outputLabel for="OrgenizerCenter_section"
-						value="#{appBundle.section}"/>
+						value="#{appBundle.cms_section_default}"/>
 					<aon:selectOneMenu id="OrgenizerCenter_section"  
-						value="#{generator_config.sectionId}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						value="#{generator_config.section}">
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
@@ -73,14 +73,14 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.hiru_organizer_centre_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.name}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.name}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.hiru_organizer_centre_telephone}" />
 						</f:facet>
-						<aon:outputText value="#{to.telephone}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.telephone}" />
 					</aon:column>
 
 					<aon:column>

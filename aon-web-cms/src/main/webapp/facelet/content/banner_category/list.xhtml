@@ -12,7 +12,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="list">
+		<aon:form id="bannerCategoryList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.banner_category}" />
@@ -35,7 +35,7 @@
 				<aon:dataTable id="dataTable" value="#{banner_category.model}" var="to"
 					rows="#{banner_category.pageLimit}" rendered="#{banner_category.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
+							aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
 			
 					<aon:rowSelector
 						action="banner_category_form" actionListener="#{banner_category.onSelect}" />							
@@ -49,21 +49,21 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.banner_category_label}" />
+							<aon:outputText value="#{appBundle.cms_label}" />
 						</f:facet>
 						<aon:outputText value="#{banner_category.i18nLabel}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.section}" />
+							<aon:outputText value="#{appBundle.cms_section}" />
 						</f:facet>
 						<aon:outputText value="#{to.section.alias}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.banner_category_position}" />
+							<aon:outputText value="#{appBundle.cms_position}" />
 						</f:facet>
 						<aon:outputText value="#{to.position}" />
 					</aon:column>

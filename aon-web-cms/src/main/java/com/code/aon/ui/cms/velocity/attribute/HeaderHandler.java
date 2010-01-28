@@ -1,7 +1,8 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import com.code.aon.cms.Header;
 import com.code.aon.cms.HeaderDetail;
 import com.code.aon.cms.enumeration.LanguageMenuType;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
@@ -17,7 +18,7 @@ public class HeaderHandler {
 
 	private LanguageMenuType languageType;
 	
-	private ArrayList<MenuOptionHandler> menu;
+	private List<MenuOptionHandler> menu;
 
 	private BannerCategoryHandler bannerCategory;
 
@@ -27,17 +28,19 @@ public class HeaderHandler {
 	
 	private String content;
 	
-	public HeaderHandler(HeaderDetail header) {
-		css = header.getHeader().getCss();
-		javascript = header.getHeader().getJavascript();
-		language = header.getHeader().isLanguage_menu();
-		languageType = header.getHeader().getLanguage_menu_type();
-		menu = MenuGenerator.getMenuOptionList(header.getHeader().getMenu());
-		if (header.getHeader().getBannerCategory()!=null)
-			bannerCategory = (BannerCategoryHandler)BannerGenerator.getBannerCategoryHandler(header.getHeader().getBannerCategory().getId());
-		sitename = header.getSitename();
-		image = header.getImage();
-		content = header.getContent();
+	public HeaderHandler(HeaderDetail headerDetail) {
+		Header header = headerDetail.getHeader();
+		css = header.getCss();
+		javascript = header.getJavascript();
+		language = header.isLanguage_menu();
+		languageType = header.getLanguage_menu_type();
+		menu = MenuGenerator.getMenuOptionList(header.getMenu());
+		if (header.getBannerCategory()!=null) {
+			bannerCategory = BannerGenerator.getBannerCategoryHandler(header.getBannerCategory());
+		}
+		sitename = headerDetail.getSitename();
+		image = headerDetail.getImage();
+		content = headerDetail.getContent();
 	}
 
 	public String getCss() {
@@ -64,7 +67,7 @@ public class HeaderHandler {
 		return languageType == LanguageMenuType.FLAGS;
 	}
 
-	public ArrayList<MenuOptionHandler> getMenu() {
+	public List<MenuOptionHandler> getMenu() {
 		return menu;
 	}
 

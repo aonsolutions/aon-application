@@ -1,6 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +17,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
 import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -78,20 +78,45 @@ public class SidebarOptionController extends BasicI18nController implements IOrd
 
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
 		SidebarOption mo = (SidebarOption)getTo();
-		List<SelectItem> idents = new LinkedList<SelectItem>();
-		if (mo.getType().equals(SidebarType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getGenericPageList();
-		else if (mo.getType().equals(SidebarType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getMenuSideList();
-		else if (mo.getType().equals(SidebarType.LINK)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getLinkCategoryList();
-		else if (mo.getType().equals(SidebarType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerList();
-		else if (mo.getType().equals(SidebarType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerGroupList();
-		else if (mo.getType().equals(SidebarType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleList();
-		else if (mo.getType().equals(SidebarType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessGroupList();
-		else if (mo.getType().equals(SidebarType.ARTICLE_EVENTS_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(SidebarType.ARTICLE_NEWS_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(SidebarType.ARTICLE_OTHER_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(SidebarType.ARTICLE_SERVICES_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
-		else if (mo.getType().equals(SidebarType.DOWNLOAD_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDownloadCategoryList();
-		else if (mo.getType().equals(SidebarType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getAlbumCategoryList();
+		List<SelectItem> idents;
+		CollectionsController collections = (CollectionsController) AonUtil.getRegisteredBean(COLLECTIONS);
+		switch ( mo.getType() ) {
+			case ALBUM_CATEGORY:
+				idents = collections.getAlbumCategoryList();
+				break;				
+			case ARTICLE:
+				idents = collections.getArticleList();
+				break;
+			case ARTICLE_EVENTS_CATEGORY:
+			case ARTICLE_NEWS_CATEGORY:
+			case ARTICLE_OTHER_CATEGORY:
+			case ARTICLE_SERVICES_CATEGORY:
+				idents = collections.getArticleCategoryList();
+				break; 
+			case BANNER:
+				idents = collections.getBannerList();
+				break;
+			case BANNER_GROUP:
+				idents = collections.getBannerGroupList();
+				break;
+			case GENERIC:
+				idents = collections.getGenericPageList();
+				break;
+			case DIRECT_ACCESS:
+				idents = collections.getDirectAccessGroupList();
+				break;
+			case DOWNLOAD_CATEGORY:
+				idents = collections.getDownloadCategoryList();
+				break;				
+			case LINK:
+				idents = collections.getLinkCategoryList();
+				break;
+			case MENU:
+				idents = collections.getMenuSideList();
+				break;
+			default:
+				idents = Collections.emptyList();
+		}
 		return idents;
 	}
 

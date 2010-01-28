@@ -3,13 +3,13 @@ package com.code.aon.common.dao;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -24,7 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DAOConstantsReader {
 
-    private static final Logger LOGGER = Logger.getLogger(DAOConstantsReader.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(DAOConstantsReader.class);
 
     private static final String BEAN_ELEMENT = "bean";
 	private static final String ALIAS_ELEMENT = "alias";
@@ -51,9 +51,9 @@ public class DAOConstantsReader {
 			saxParser.parse( in, reader );
 			in.close();
 		} catch ( IOException ioe ) {
-            LOGGER.log(Level.SEVERE, "Error reading " + resource, ioe);
+            LOGGER.error("Error reading " + resource, ioe);
 		} catch ( SAXException saxe ) {
-			LOGGER.log(Level.SEVERE, "Error parsing " + resource, saxe);			
+			LOGGER.error("Error parsing " + resource, saxe);			
 		}
 	}
 
@@ -70,9 +70,9 @@ public class DAOConstantsReader {
 		try {
 			saxParser = spf.newSAXParser();
 		} catch (ParserConfigurationException pce) {
-			LOGGER.log(Level.SEVERE, "Error creating a SAX Parser", pce);
+			LOGGER.error("Error creating a SAX Parser", pce);
 		} catch (SAXException sxe) {
-			LOGGER.log(Level.SEVERE, "Error creating a SAX Parser", sxe);			
+			LOGGER.error("Error creating a SAX Parser", sxe);			
 		}
 		return saxParser;
 	}
@@ -85,17 +85,17 @@ public class DAOConstantsReader {
 	 */
 	private static class SAXDAOConstantsReader extends DefaultHandler {
 
-        private static final Logger LOG = Logger.getLogger(SAXDAOConstantsReader.class.getName());
+        private final static Logger LOG = LoggerFactory.getLogger(SAXDAOConstantsReader.class);
 
         private DAOConstantsEntry entry;
 		private String sqlName;		
 		
 		public void startDocument() throws SAXException {
-            LOG.fine( "startDocument" );
+            LOG.debug( "startDocument" );
 		}
 
 		public void endDocument() throws SAXException {
-			LOG.fine( "endDocument" );
+			LOG.debug( "endDocument" );
 		}
 
 		private void startBean( Attributes attributes ) {
@@ -103,7 +103,7 @@ public class DAOConstantsReader {
 			try {
 				Class.forName( name );
 			} catch (ClassNotFoundException e) {
-				LOG.log(Level.SEVERE, "Error cargando la clase " +name, e);				
+				LOG.error("Error cargando la clase " +name, e);				
 			}
 			String parentName = attributes.getValue(PARENT_ATTRIBUTE);
 			if ( (parentName != null) && (parentName.length() > 0) ) {
@@ -111,7 +111,7 @@ public class DAOConstantsReader {
 				try {
 					Class.forName( parentName );
 				} catch (ClassNotFoundException e) {
-					LOG.log(Level.SEVERE, "Error cargando la clase padre " + parentName, e);				
+					LOG.error("Error cargando la clase padre " + parentName, e);				
 				}
 			}
 			this.entry = new DAOConstantsEntry( name, parentName);
@@ -172,15 +172,15 @@ public class DAOConstantsReader {
 		}
 
 		public void warning(SAXParseException exception) throws SAXException {
-			LOG.log(Level.SEVERE, "warning", exception);
+			LOG.warn("warning", exception);
 		}
 
 		public void error(SAXParseException exception) throws SAXException {
-			LOG.log(Level.SEVERE, "error", exception);
+			LOG.error("error", exception);
 		}
 
 		public void fatalError(SAXParseException exception) throws SAXException	{
-			LOG.log(Level.SEVERE, "fatalError", exception);
+			LOG.error("fatalError", exception);
 		}
 
 	}

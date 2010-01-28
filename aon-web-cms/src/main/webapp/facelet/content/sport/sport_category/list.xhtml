@@ -96,8 +96,7 @@
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
 						<aon:outputText value="#{to.alias}"
-							rendered="#{to!=sport_category.to}" 
-							styleClass="aon-editDataTable-button">
+							rendered="#{to!=sport_category.to}" >
 						</aon:outputText>	
 						<aon:inputText value="#{to.alias}"
 							id="#{to.id}_alias"
@@ -122,8 +121,7 @@
 							<aon:outputText value="#{appBundle.sport_category_desciption}" />
 						</f:facet>
 						<aon:outputText value="#{sport_category.i18nDescription}"
-							rendered="#{to!=sport_category.to}" 
-							styleClass="aon-editDataTable-button">
+							rendered="#{to!=sport_category.to}" >
 						</aon:outputText>	
 						<aon:inputText value="#{sport_category.toI18n.description}"
 							id="#{to.id}_description"

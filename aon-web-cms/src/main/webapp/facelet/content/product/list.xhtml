@@ -43,13 +43,13 @@
 							<aon:actionListener method="#{product.onEditSearch}" />
 						</aon:commandButton>
 						<aon:commandButton id="generate" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" 
+							value="#{appBundle.aon_generate}" immediate="true"
 							rendered="#{cms.roleEditor}"
+							actionListener="#{generator.onGenerateProducts}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generator.onGenerateProducts}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" reRender="poll,grid" ajaxSingle="true"
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>	
@@ -62,7 +62,7 @@
 						</aon:commandButton>
 						<aon:commandButton id="product_categories"
 							value="#{appBundle.product_category}"
-							action="product_category_list"
+							action="productCategory_list"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item-no-icon">
 							<aon:actionListener method="#{productCategory.onSearch}" />
@@ -95,32 +95,28 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}"
-							styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{to.alias}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.product_label}" />
 						</f:facet>
-						<aon:outputText value="#{product.i18nShortLabel}"
-							styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{product.i18nShortLabel}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.product_category}" />
 						</f:facet>
-						<aon:outputText value="#{product.i18nCategory}"
-							styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{product.i18nCategory}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.brand}" />
 						</f:facet>
-						<aon:outputText value="#{product.i18nBrand}"
-							styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{product.i18nBrand}" />
 					</aon:column>
 
 					<aon:column>

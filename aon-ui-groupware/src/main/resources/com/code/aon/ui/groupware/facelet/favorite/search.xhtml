@@ -15,8 +15,9 @@
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{favorite}" />
 				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{favorite.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="favorite_list" />		
 
 					<aon:outputLabel for="Favorite_description"
 						value="#{bundle.aon_description}" />

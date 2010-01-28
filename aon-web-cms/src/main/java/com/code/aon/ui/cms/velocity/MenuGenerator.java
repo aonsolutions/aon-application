@@ -20,60 +20,54 @@ import com.code.aon.ui.cms.velocity.attribute.MenuOptionHandler;
 
 public class MenuGenerator extends Generator {
 	
-	public static ArrayList<MenuOptionHandler> getMenuOptionList(Menu menu) {
-		ArrayList<MenuOptionHandler> list = new ArrayList<MenuOptionHandler>();
-		try {
-			IManagerBean moBean = BeanManager.getManagerBean(MenuOption.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(moBean.getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), menu.getId());
-			criteria.addEqualExpression(moBean.getFieldName(ICMSAlias.MENU_OPTION_ACTIVE), true);
-			criteria.addOrder(moBean.getFieldName(ICMSAlias.MENU_OPTION_POSITION));
-			List<ITransferObject> l = (List<ITransferObject>)moBean.getList(criteria);
-			if (l.isEmpty())
-				getLogger().warning("El menu "+menu.getAlias()+" no tiene opciones");
-			for (int i = 0; i < l.size(); i++) {
-				MenuOption mo = (MenuOption)l.get(i);
-				IManagerBean modBean = BeanManager.getManagerBean(MenuOptionDetail.class);
-				Criteria criteria_detail = new Criteria();
-				criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_MENU_OPTION_ID), mo.getId());
-				criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> ld = (List<ITransferObject>)modBean.getList(criteria_detail);
-				if (ld.isEmpty()) {
-					getLogger().warning("La opcion de menu "+mo.getAlias()+" no esta internacionalizada");
-				}else{
-					MenuOptionDetail mod = (MenuOptionDetail)ld.get(0);
-					MenuOptionHandler moh = new MenuOptionHandler(mod);
-					list.add(moh);
+	public static List<MenuOptionHandler> getMenuOptionList(Menu menu) {
+		List<MenuOptionHandler> list = new ArrayList<MenuOptionHandler>();
+		if ( menu != null ) {
+			try {
+				IManagerBean moBean = BeanManager.getManagerBean(MenuOption.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(moBean.getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), menu.getId());
+				criteria.addEqualExpression(moBean.getFieldName(ICMSAlias.MENU_OPTION_ACTIVE), true);
+				criteria.addOrder(moBean.getFieldName(ICMSAlias.MENU_OPTION_POSITION));
+				List<ITransferObject> l = (List<ITransferObject>)moBean.getList(criteria);
+				if (l.isEmpty())
+					getLogger().warning("El menu "+menu.getAlias()+" no tiene opciones");
+				for (int i = 0; i < l.size(); i++) {
+					MenuOption mo = (MenuOption)l.get(i);
+					IManagerBean modBean = BeanManager.getManagerBean(MenuOptionDetail.class);
+					Criteria criteria_detail = new Criteria();
+					criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_MENU_OPTION_ID), mo.getId());
+					criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+					List<ITransferObject> ld = (List<ITransferObject>)modBean.getList(criteria_detail);
+					if (ld.isEmpty()) {
+						getLogger().warning("La opcion de menu "+mo.getAlias()+" no esta internacionalizada");
+					}else{
+						MenuOptionDetail mod = (MenuOptionDetail)ld.get(0);
+						MenuOptionHandler moh = new MenuOptionHandler(mod);
+						list.add(moh);
+					}
 				}
+			} catch (ManagerBeanException e) {
+				getLogger().error(e.getMessage());
 			}
-		} catch (ManagerBeanException e) {
-			getLogger().error(e.getMessage());
 		}
-		
 		return list;
 	}
 	
-	public static ArrayList<MenuOptionHandler> getMenuOptionList(Integer id) {
-		try {
-			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
-			Menu menu = (Menu) menuBean.get(id);
-			if ( menu == null ) {
-				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
-			} else {
-				return getMenuOptionList(menu);
-			}
-		} catch (ManagerBeanException e) {
-			getLogger().error(e.getMessage());
+	public static List<MenuOptionHandler> getMenuOptionList(Integer id, String message) {
+		MenuHandler mh = getMenuHandler(id, message);
+		if ( mh != null ) {
+			return mh.getList();
 		}
 		return null; 
 	}
 	
-	public static MenuHandler getMenuHandler(Integer id) {
+	public static MenuHandler getMenuHandler(Integer id, String message) {
 		try {
 			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
 			Menu menu = (Menu) menuBean.get(id);
 			if ( menu == null ) {
-				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
+				getLogger().error( message + " REFERENCIA A UN MENU ("+ id +") INEXISTENTE");
 			}else{
 				MenuHandler mh = new MenuHandler(menu);
 				return mh;
@@ -91,7 +85,7 @@ public class MenuGenerator extends Generator {
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
 			for (int i=0; i < l.size(); i++) {
 				Menu menu = (Menu)l.get(i);
-				ArrayList<MenuOptionHandler> menu_list = getMenuOptionList(menu);
+				List<MenuOptionHandler> menu_list = getMenuOptionList(menu);
 				if (menu_list != null && menu_list.size() > 0) {  
 					vu.put(MENU_LIST_KEY, menu_list);
 					logger.info(" Generando Menu " + menu.getAlias() + ".");

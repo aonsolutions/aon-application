@@ -11,7 +11,8 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="main_form">
+	
+		<aon:form id="articleCategoryForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.article_category}" />
@@ -20,13 +21,13 @@
 				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_articleCategory" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" 
+						value="#{appBundle.aon_generate}" immediate="true"
+						actionListener="#{generator.onGenerateCurrentArticleCategory}"
 						rendered="#{!article_category.new and cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
-						<aon:actionListener method="#{generator.onGenerateCurrentArticleCategory}" />
 						<a4j:support 
-							event="onclick" reRender="poll,grid" 
+							event="onclick" reRender="poll,grid" ajaxSingle="true"
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>	
@@ -52,18 +53,18 @@
 						value="#{article_category.toI18n.label}" />
 
 					<aon:outputLabel for="ArticleCategory_section"
-						value="#{appBundle.section}"/>
+						value="#{appBundle.cms_section}"/>
 					<aon:selectOneMenu id="ArticleCategory_section"  
-						value="#{article_category.to.section.id}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						value="#{article_category.to.section}">
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ArticleCategory_elementSection"
-						value="#{appBundle.section} (Only Elements)"/>
+						value="#{appBundle.cms_section_elements}"/>
 					<aon:selectOneMenu id="ArticleCategory_elementSection"  
-						value="#{article_category.to.elementSection.id}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						value="#{article_category.to.elementSection}">
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 

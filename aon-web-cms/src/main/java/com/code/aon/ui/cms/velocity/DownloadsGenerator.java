@@ -139,23 +139,19 @@ public class DownloadsGenerator extends Generator {
 		return list;
 	}
 	
-	public static Object getDownloadsHandler(Integer ident) {
-		List<ITransferObject> l;
+	public static DownloadCategoryHandler getDownloadsHandler(Integer ident, String message) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), ident);
-			l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.isEmpty()){
-				getLogger().error("CATEGORIA DE DESCARGAS "+ident+" REFERENCIADA NO EXISTE !!!");
+			DownloadCategory dc = (DownloadCategory) bean.get(ident);
+			if ( dc == null) {
+				getLogger().error( message + " REFERENCIA A UNA CATEGORIA DE DESCARGAS ("+ident+") INEXISTENTE");
 				return null;
 			}
-			DownloadCategory dc = (DownloadCategory) l.get(0);
 			bean = BeanManager.getManagerBean(DownloadCategoryDetail.class);
-			criteria = new Criteria();
+			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_DOWNLOAD_CATEGORY_ID), ident);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			l = (List<ITransferObject>)bean.getList(criteria);
+			List<ITransferObject> l = bean.getList(criteria);
 			if  (l.isEmpty()) {
 				getLogger().warning("La categoria de descarga " + dc.getAlias() + " no esta internacionalizada.");
 			}else{
@@ -165,8 +161,6 @@ public class DownloadsGenerator extends Generator {
 			}
 		} catch (ManagerBeanException e) {
 			getLogger().error(e.getMessage());
-		}finally{
-			l = null;
 		}
 		return null;
 	}

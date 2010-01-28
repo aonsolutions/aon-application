@@ -94,6 +94,7 @@ import com.code.aon.cms.SportPlayer;
 import com.code.aon.cms.SportCareerPath;
 import com.code.aon.cms.SportCoach;
 import com.code.aon.cms.SportConfig;
+import com.code.aon.cms.ActivityConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -205,40 +206,64 @@ public interface ICMSAlias {
 	String  CONFIG_ONLINE = CONFIG_ENTRY.getAliasNames()[9];
 
 	/** 
+	* Alias value: Config_preview_ftp_password
+	* Hibernate value: Config.preview_ftp_password
+	*/
+	String  CONFIG_PREVIEW_FTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Config_preview_ftp_path
+	* Hibernate value: Config.preview_ftp_path
+	*/
+	String  CONFIG_PREVIEW_FTP_PATH = CONFIG_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Config_preview_ftp_server
+	* Hibernate value: Config.preview_ftp_server
+	*/
+	String  CONFIG_PREVIEW_FTP_SERVER = CONFIG_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Config_preview_ftp_user
+	* Hibernate value: Config.preview_ftp_user
+	*/
+	String  CONFIG_PREVIEW_FTP_USER = CONFIG_ENTRY.getAliasNames()[13];
+
+	/** 
 	* Alias value: Config_preview_host
 	* Hibernate value: Config.preview_host
 	*/
-	String  CONFIG_PREVIEW_HOST = CONFIG_ENTRY.getAliasNames()[10];
+	String  CONFIG_PREVIEW_HOST = CONFIG_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Config_smtp_auth
 	* Hibernate value: Config.smtp_auth
 	*/
-	String  CONFIG_SMTP_AUTH = CONFIG_ENTRY.getAliasNames()[11];
+	String  CONFIG_SMTP_AUTH = CONFIG_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Config_smtp_password
 	* Hibernate value: Config.smtp_password
 	*/
-	String  CONFIG_SMTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[12];
+	String  CONFIG_SMTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Config_smtp_server
 	* Hibernate value: Config.smtp_server
 	*/
-	String  CONFIG_SMTP_SERVER = CONFIG_ENTRY.getAliasNames()[13];
+	String  CONFIG_SMTP_SERVER = CONFIG_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Config_smtp_user
 	* Hibernate value: Config.smtp_user
 	*/
-	String  CONFIG_SMTP_USER = CONFIG_ENTRY.getAliasNames()[14];
+	String  CONFIG_SMTP_USER = CONFIG_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Config_template
 	* Hibernate value: Config.template
 	*/
-	String  CONFIG_TEMPLATE = CONFIG_ENTRY.getAliasNames()[15];
+	String  CONFIG_TEMPLATE = CONFIG_ENTRY.getAliasNames()[19];
 
 
 
@@ -2830,6 +2855,24 @@ public interface ICMSAlias {
 	*/
 	String  ACTIVITY_ID = ACTIVITY_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: Activity_section_id
+	* Hibernate value: Activity.section.id
+	*/
+	String  ACTIVITY_SECTION_ID = ACTIVITY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Activity_details_description
+	* Hibernate value: Activity.details.description
+	*/
+	String  ACTIVITY_DETAILS_DESCRIPTION = ACTIVITY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Activity_details_language_id
+	* Hibernate value: Activity.details.language.id
+	*/
+	String  ACTIVITY_DETAILS_LANGUAGE_ID = ACTIVITY_ENTRY.getAliasNames()[4];
+
 
 
 	/** 
@@ -2885,6 +2928,12 @@ public interface ICMSAlias {
 	* Hibernate value: CompanyActivity.id
 	*/
 	String  COMPANY_ACTIVITY_ID = COMPANY_ACTIVITY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CompanyActivity_company_name
+	* Hibernate value: CompanyActivity.company.name
+	*/
+	String  COMPANY_ACTIVITY_COMPANY_NAME = COMPANY_ACTIVITY_ENTRY.getAliasNames()[3];
 
 
 
@@ -3049,16 +3098,28 @@ public interface ICMSAlias {
 	String  DIARY_CATEGORIES = DIARY_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Diary_elementSection_id
+	* Hibernate value: Diary.elementSection.id
+	*/
+	String  DIARY_ELEMENT_SECTION_ID = DIARY_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Diary_id
 	* Hibernate value: Diary.id
 	*/
-	String  DIARY_ID = DIARY_ENTRY.getAliasNames()[1];
+	String  DIARY_ID = DIARY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Diary_pastEvents
 	* Hibernate value: Diary.pastEvents
 	*/
-	String  DIARY_PAST_EVENTS = DIARY_ENTRY.getAliasNames()[2];
+	String  DIARY_PAST_EVENTS = DIARY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Diary_section_id
+	* Hibernate value: Diary.section.id
+	*/
+	String  DIARY_SECTION_ID = DIARY_ENTRY.getAliasNames()[4];
 
 
 
@@ -3749,6 +3810,25 @@ public interface ICMSAlias {
 	* Hibernate value: SportConfig.section.id
 	*/
 	String  SPORT_CONFIG_SECTION_ID = SPORT_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActivityConfig entity.
+	*/ 
+	DAOConstantsEntry ACTIVITY_CONFIG_ENTRY = DAOConstants.getDAOConstant(ActivityConfig.class);
+
+	/** 
+	* Alias value: ActivityConfig_id
+	* Hibernate value: ActivityConfig.id
+	*/
+	String  ACTIVITY_CONFIG_ID = ACTIVITY_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActivityConfig_section_id
+	* Hibernate value: ActivityConfig.section.id
+	*/
+	String  ACTIVITY_CONFIG_SECTION_ID = ACTIVITY_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }

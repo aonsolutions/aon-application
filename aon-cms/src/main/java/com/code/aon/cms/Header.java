@@ -195,7 +195,7 @@ public class Header implements ITransferObject {
 		append("javascript", StringUtils.abbreviate(javascript, 32)).
 		append("language_menu", language_menu).
 		append("language_menu_type", language_menu_type).
-		append("menu", menu.getId()).
+		append("menu", (menu != null) ? menu.getId() : "null").
 		toString();
 	}	
 

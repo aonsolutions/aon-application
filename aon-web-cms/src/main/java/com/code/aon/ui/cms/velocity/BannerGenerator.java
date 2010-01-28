@@ -87,20 +87,17 @@ public class BannerGenerator extends Generator {
 		}
 	}
 	
-	public static Object getBannerHandler(Integer ident) {
+	public static Object getBannerHandler(Integer ident, String message) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Banner.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_ID), ident);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.isEmpty()){
-				getLogger().warning("BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
+			Banner a = (Banner) bean.get(ident);
+			if ( a == null ){
+				getLogger().error( message + " REFERENCIA UN BANNER ("+ident+") INEXISTENTE");
 				return null;
 			}
-			Banner a = (Banner)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(BannerDetail.class);
-				criteria = new Criteria();
+				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_DETAIL_BANNER_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
@@ -118,25 +115,31 @@ public class BannerGenerator extends Generator {
 		return null;
 	}
 
-	public static Object getBannerCategoryHandler(Integer ident) {
+	public static BannerCategoryHandler getBannerCategoryHandler(Integer ident, String message) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(BannerCategory.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_CATEGORY_ID), ident);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.isEmpty()){
-				getLogger().warning("CATEGORIA DE BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
+			BannerCategory bannerCategory = (BannerCategory) bean.get(ident);
+			if (bannerCategory == null){
+				getLogger().error( message + " REFERENCIA UNA CATEGORIA DE BANNER ("+ident+") INEXISTENTE");
 				return null;
 			}
-			BannerCategory a = (BannerCategory)l.get(0);
-			if (a.isActive()) {
+			return getBannerCategoryHandler(bannerCategory);
+		} catch (ManagerBeanException e) {
+			getLogger().error(e.getMessage());
+		}
+		return null;
+	}
+
+	public static BannerCategoryHandler getBannerCategoryHandler(BannerCategory bannerCategory) {
+		try {
+			if (bannerCategory.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(BannerCategoryDetail.class);
-				criteria = new Criteria();
+				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_BANNER_CATEGORY_ID), ident);
+				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_BANNER_CATEGORY_ID), bannerCategory.getId());
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning("La categoria de banner " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("La categoria de banner " + bannerCategory.getAlias() + " no esta internacionalizado.");
 				}else{
 					BannerCategoryDetail ad = (BannerCategoryDetail)ld.get(0);
 					BannerCategoryHandler ah = new BannerCategoryHandler(ad);
@@ -148,5 +151,5 @@ public class BannerGenerator extends Generator {
 		}
 		return null;
 	}
-
+	
 }

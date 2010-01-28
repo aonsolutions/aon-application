@@ -12,62 +12,38 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="list">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.album_category}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="album_category_form"
-							rendered="#{cms.roleEditor}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{album_category.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="album_category_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{album_category.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="exit"
-							value="#{bundle.aon_close}"
-							action="#{album_category.getBack}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+		<aon:form id="albumCategoryList">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.album_category}" />
+				<ui:param name="controller" value="#{album_category}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="#{album_category.getBack}" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>	
 
 			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="sectionGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				<aon:panelGrid id="sectionGrid" columns="2" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-toolbar">				
 					
 						<aon:outputLabel for="AlbumCategory_section"
-							value="#{appBundle.section}"/>
+							styleClass="aon-margin-right" value="#{appBundle.cms_section_default}"/>
 							
-						<aon:selectOneMenu id="AlbumCategory_section"  
-							value="#{generator_config.sectionId}">
-							<f:selectItem itemLabel="-" itemValue="-1" />
-							<f:selectItems value="#{collections.sectionList}" />
-						</aon:selectOneMenu>
-						
 						<aon:div styleClass="aon-finding-toolbar-item-group">					
+
+							<aon:selectOneMenu id="AlbumCategory_section"  
+								value="#{generator_config.section}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+						
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}"
 								action="album_category_list" 
@@ -84,7 +60,7 @@
 				<aon:dataTable id="dataTable" rows="#{album_category.pageLimit}" var="to" 
 					value="#{album_category.model}" rendered="#{album_category.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
+							aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
 			
 					<aon:rowSelector
 						action="album_category_form" actionListener="#{album_category.onSelect}" />							
@@ -93,15 +69,21 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.alias}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.album_category_label}" />
 						</f:facet>
-						<aon:outputText value="#{album_category.i18nLabel}"
-							styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{album_category.i18nLabel}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_section}" />
+						</f:facet>
+						<aon:outputText value="#{to.section.alias}" />
 					</aon:column>
 
 					<aon:column>

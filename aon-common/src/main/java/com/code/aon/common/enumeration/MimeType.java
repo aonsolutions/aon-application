@@ -142,7 +142,27 @@ public enum MimeType implements IResourceable {
     /**
      * CSS file MIME Type.
      */
-    MIME_CSS ("text/css", "css");
+    MIME_CSS ("text/css", "css"),
+
+    /**
+     * MS Word 2007 XML Document file MIME Type.
+     */
+    MIME_MS_WORD_2007 ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"),
+    
+    /**    
+    * MS Excel 2007 XML Workbook file MIME Type.
+    */
+   MIME_MS_EXCEL_2007 ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"),
+   
+   /**
+    * MS PowerPoint 2007 XML Presentation file MIME Type.
+    */
+   MIME_MS_POWER_POINT_2007 ("application/vnd.openxmlformats-officedocument.presentationml.presentation", "pptx"),
+    
+   /**
+    * Signed PDF file MIME Type.
+    */
+   MIME_SIGNED_PDF ("application/pdf", "pdf");
     
     /**
      * IE for JPEG file MIME Type.

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.cms.ActivityConfig;
 import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.DownloadConfig;
@@ -31,22 +32,26 @@ public class GeneratorConfigController {
 	
 	private static final Logger LOGGER = Logger.getLogger(GeneratorConfigController.class.getName());
 
-	private Integer sectionId;
+	private Section section;
 	
 	
-	public Integer getSectionId() {
-		return sectionId;
+	public Section getSection() {
+		return section;
 	}
 
-	public void setSectionId(Integer sectionId) {
-		this.sectionId = sectionId;
+	public void setSection(Section section) {
+		this.section = section;
 	}
 
 	public static Section defaultSection() throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(Section.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SECTION_DEFAULT_), true);
-		return (Section)bean.getList(criteria).iterator().next();
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			return (Section) list.get(0);
+		}
+		return null;
 	}
 
 	public static Section currentSection(Class pojoClass) throws ManagerBeanException{
@@ -68,9 +73,9 @@ public class GeneratorConfigController {
 		ISectionContainer config = null;
 		try {
 			config = (ISectionContainer)GeneratorConfigController.currentConfig(c);
-			sectionId = config.getSection().getId();
+			section = config.getSection();
 		} catch (Throwable th) {
-			sectionId = -1;
+			section = null;
 		}
 	}
 	
@@ -80,11 +85,6 @@ public class GeneratorConfigController {
 			if (config == null){
 				config = (ITransferObject)c.newInstance();
 			}
-			Section section = new Section();
-			if (sectionId != -1)
-				section.setId(sectionId);
-			else
-				section = null;
 			((ISectionContainer)config).setSection(section);
 			IManagerBean bean = BeanManager.getManagerBean(c);
 			bean.insertOrUpdate(config);
@@ -126,5 +126,9 @@ public class GeneratorConfigController {
 	public void onSaveSportConfig(ActionEvent event) throws ManagerBeanException{
 		onSaveConfig(SportConfig.class);
 	}
-	
+
+	public void onSaveActivityConfig(ActionEvent event) throws ManagerBeanException{
+		onSaveConfig(ActivityConfig.class);
+	}
+
 }

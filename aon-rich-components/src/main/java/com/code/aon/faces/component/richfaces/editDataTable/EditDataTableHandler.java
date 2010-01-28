@@ -1,6 +1,7 @@
 package com.code.aon.faces.component.richfaces.editDataTable;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.el.ELException;
 import javax.faces.FacesException;
@@ -28,7 +29,8 @@ public class EditDataTableHandler extends AonComponentHandler {
 			throws IOException, FacesException, ELException {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);
 		root.getAttributes().put( EDIT_DATA_TABLE_ID, getId(ctx) );
-		FormHandler.getDataTableMap(root).put( getId(ctx), (UIData) c );		
+		Map<String,UIData> dataTableMap = (Map<String, UIData>) root.getAttributes().get( FormHandler.CURRENT_FORM_DATA_TABLE_MAP );
+		dataTableMap.put( getId(ctx), (UIData) c );		
 		super.applyNextHandler(ctx, c);
 	}
 

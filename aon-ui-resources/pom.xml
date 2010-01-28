@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.resources</artifactId>
-	<version>3.7.0</version>
+	<version>3.6.1</version>
 	<description>AON UI RESOURCES</description>
 	<name>AON UI RESOURCES</name>
 	<dependencies>

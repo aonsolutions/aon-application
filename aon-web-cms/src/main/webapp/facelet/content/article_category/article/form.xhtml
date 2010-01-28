@@ -24,20 +24,19 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_article" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" 
-						rendered="#{article.to!=null and cms.roleEditor}"
+						value="#{appBundle.aon_generate}" immediate="true"
+						rendered="#{!article.new and cms.roleEditor}"
+						actionListener="#{generator.onGenerateCurrentArticle}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
-						<aon:actionListener method="#{generator.onGenerateCurrentArticle}" />
 						<a4j:support 
-							event="onclick" reRender="poll,grid" 
+							event="onclick" reRender="poll,grid" ajaxSingle="true"
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>	
 					<aon:commandButton id="categories"
 						value="#{appBundle.article_category}"
-						action="article_category_list"
-						immediate="#{true}"
+						action="article_category_list" immediate="true"
 						styleClass="aon-finding-toolbar-item-no-icon">
 						<aon:actionListener method="#{article_category.onSearch}" />
 					</aon:commandButton>				

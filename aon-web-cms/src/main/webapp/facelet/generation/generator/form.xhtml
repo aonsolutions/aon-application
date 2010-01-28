@@ -30,22 +30,22 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="generate"
-							value="#{appBundle.aon_generate}" 
+							value="#{appBundle.aon_generate}" immediate="true"
 							reRender="generatorForm"
 							actionListener="#{generatorApplication.onGenerate}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" reRender="poll,grid" ajaxSingle="true"
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
 						<aon:commandButton id="publish_ok"
-							value="#{appBundle.aon_publish}" 
+							value="#{appBundle.aon_publish}" immediate="true"
 							reRender="generatorForm"
 							actionListener="#{generator_status.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" reRender="poll,grid" ajaxSingle="true"
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
@@ -55,7 +55,7 @@
 							value="#{generator_status.webURL}" 
 							target="_blank"
 							style="line-height:18px;">
-							WEB
+							<aon:outputText value="WEB" />
 						</h:outputLink>
 						<aon:commandButton id="home"
 							value="#{bundle.aon_home}"

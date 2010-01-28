@@ -1,6 +1,9 @@
 package com.code.aon.ui.cms.velocity;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.controller.ICMSConstants;
@@ -9,7 +12,7 @@ import com.code.aon.ui.cms.util.VelocityUtil;
 
 public class CommonGenerator extends Generator implements ICMSConstants {
 
-	public void generateBasicPages() {
+	public void generateBasicPages() throws IOException {
 		File previewPath = ControllerUtil.getPreviewPath();
 		if (!previewPath.exists()) {
 			previewPath.mkdirs();
@@ -18,15 +21,10 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		if (!languagePreviewPath.exists()) {
 			languagePreviewPath.mkdirs();
 		}
-		generateLanguagePage();
 		generateEmailSendPage();
 		generateSearchPage();
-		generateCaptchaPage();		
-	}
-	
-	private void generateLanguagePage() {
-		VelocityUtil vu = context.initVelocityUtil();		
-		generate(vu, Templates.LANGUAGE);
+		generateLanguagePage();		
+		generatePage( Templates.CAPTCHA );		
 	}
 
 	private void generateEmailSendPage() {
@@ -45,10 +43,17 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		context.changeDefaultSection(vu);
 		generate(vu, Templates.SEARCH);
 	}
-
-	private void generateCaptchaPage() {
+	
+	private void generateLanguagePage() {
 		VelocityUtil vu = context.initVelocityUtil();		
-		generate(vu, Templates.CAPTCHA);
+		generate(vu, Templates.LANGUAGE);
+	}	
+
+	private void generatePage( Templates template) throws IOException {
+		File file = Generator.getTemplateFile(template);
+		if ( (file != null) && file.exists() ) {
+			FileUtils.copyFile( file, Generator.getPage(template) );
+		}
 	}
 
 }

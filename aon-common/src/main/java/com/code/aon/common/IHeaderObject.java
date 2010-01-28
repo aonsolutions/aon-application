@@ -1,5 +1,9 @@
 package com.code.aon.common;
 
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.enumeration.SecurityLevel;
 
 /**
@@ -45,4 +49,12 @@ public interface IHeaderObject {
 	 * @return The security level.
 	 */
 	public SecurityLevel getSecurityLevel();
+	
+    /**
+     * Gets the reference code.
+     * 
+     * @return the reference code
+     */
+    public String getReferenceCode();
+
 }

@@ -2,24 +2,21 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>
-	
-	<c:if test="#{aonConfiguration.bean.supplier.showSegment}">	
-		<aon:outputLabel for="Supplier_supplierSegment_id"
-			value="#{bundle.aon_segment}" />
-		<aon:selectOneMenu id="Supplier_supplierSegment_id"
-			value="#{supplierCollections.supplierSegment}"
-			valueChangeListener="#{controller.addIdEqualExpression}">
-			<f:selectItem itemLabel="-" value="#{null}"/>		
-			<f:selectItems value="#{supplierCollections.supplierSegments}" />
-		</aon:selectOneMenu>
-	</c:if>
+		
+	<aon:outputLabel for="Supplier_supplierSegment_id"
+		value="#{bundle.aon_segment}" />
+	<aon:selectOneMenu id="Supplier_supplierSegment_id"
+		value="#{supplierCollections.supplierSegment}"
+		valueChangeListener="#{controller.addIdEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}"/>		
+		<f:selectItems value="#{supplierCollections.supplierSegments}" />
+	</aon:selectOneMenu>
 		
 	<aon:outputLabel for="Supplier_status"
 		value="#{bundle.aon_status}" />

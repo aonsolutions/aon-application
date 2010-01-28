@@ -109,7 +109,7 @@ public class AlarmController extends BasicController {
 	
 	public String getSender() {
 		Alarm alarm = (Alarm)this.getTo();
-		if ( (alarm.getSource() == AlarmSource.NOTICE) && (alarm.getSourceId() != null) ) {
+		if ( alarm.getSource() == AlarmSource.NOTICE ) {
 			try {			
 				IManagerBean noticeBean = BeanManager.getManagerBean(Notice.class);
 				Notice notice = (Notice) noticeBean.get(alarm.getSourceId());

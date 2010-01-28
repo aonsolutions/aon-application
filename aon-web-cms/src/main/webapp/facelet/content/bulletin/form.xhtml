@@ -185,8 +185,7 @@
 											<aon:outputText value="#{appBundle.bulletin_article_article}"/>
 										</f:facet>
 										<aon:outputText value="#{to.article.alias}"
-											rendered="#{to!=bulletin_article.to}" 
-											styleClass="aon-editDataTable-button">
+											rendered="#{to!=bulletin_article.to}" >
 											<a4j:support 
 												reRender="gridDataTable,gridToolbar"
 												actionListener="#{bulletin_article.onSelect}"
@@ -217,8 +216,7 @@
 											<aon:outputText for="position" value="#{appBundle.bulletin_article_position}" />
 										</f:facet>
 										<aon:outputText value="#{to.position}"
-											rendered="#{to!=bulletin_article.to}" 
-											styleClass="aon-editDataTable-button">
+											rendered="#{to!=bulletin_article.to}">
 											<a4j:support 
 												reRender="gridDataTable,gridToolbar"
 												actionListener="#{bulletin_article.onSelect}"

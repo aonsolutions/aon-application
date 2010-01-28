@@ -44,13 +44,13 @@
 							<aon:actionListener method="#{direct_access.onEditSearch}" />
 						</aon:commandButton>
 						<aon:commandButton id="generate" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" 
+							value="#{appBundle.aon_generate}" immediate="true"
 							rendered="#{cms.roleEditor}"
+							actionListener="#{generator.onGenerateDirectAccess}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generator.onGenerateDirectAccess}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" reRender="poll,grid" ajaxSingle="true"
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>	
@@ -90,29 +90,28 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.alias}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.direct_access_label}" />
 						</f:facet>
-						<aon:outputText value="#{direct_access.i18nLabel}"
-							styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{direct_access.i18nLabel}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.direct_access_group}" />
 						</f:facet>
-						<aon:outputText value="#{to.directAccessGroup.alias}" styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{to.directAccessGroup.alias}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.direct_access_position}" />
 						</f:facet>
-						<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{to.position}" />
 					</aon:column>
 					
 					<aon:column>

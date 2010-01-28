@@ -3,7 +3,6 @@ package com.code.aon.common.velocity;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -12,6 +11,8 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.tools.generic.log.CommonsLogLogSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 
@@ -23,8 +24,8 @@ import com.code.aon.common.AonException;
  */
 public class VelocityHelper {
 
-	private static Logger LOGGER = Logger.getLogger(VelocityHelper.class.getName());
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(VelocityHelper.class);
+	
 	private VelocityEngine engine;
 
 	private VelocityContext baseContext;
@@ -161,7 +162,7 @@ public class VelocityHelper {
 	 * @param value
 	 */
 	public void putInBaseContext(String key, Object value) {
-		LOGGER.finest("putInContext " + key + "=" + value);
+		LOGGER.debug("putInContext {}={}", key, value);
 		if (value == null) {
 			throw new IllegalStateException("value must not be null for " + key);
 		}
@@ -178,7 +179,7 @@ public class VelocityHelper {
 	 * @param expected
 	 */
 	public void removeFromBaseContext(String key, Object expected) {
-		LOGGER.finest("removeFromContext " + key + "=" + expected);
+		LOGGER.debug("removeFromContext {}={}", key, expected);
 		Object replaced = getBaseContext().remove(key);
 		if (replaced == null) {
 			throw new IllegalStateException(key + " did not exist in template context.");
