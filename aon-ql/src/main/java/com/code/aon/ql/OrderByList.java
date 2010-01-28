@@ -54,7 +54,7 @@ public class OrderByList implements Criterion {
 	 * Returns the <code>Order</code> list.
 	 * @return The <code>Order</code> list.
 	 */
-	public Collection<Order> getOrders() {
+	public List<Order> getOrders() {
 		return orders;
 	}
 	
