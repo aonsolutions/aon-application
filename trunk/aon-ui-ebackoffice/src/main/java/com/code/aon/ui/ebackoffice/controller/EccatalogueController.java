@@ -179,13 +179,7 @@ public class EccatalogueController extends LinesController {
 
 	}
 	
-	public boolean isOutofDate(){
-		
-		Date toDate =((Eccatalogue)this.getTo()).getCatalogue().getEndDate();
-		Calendar d =new GregorianCalendar();
-		return toDate.before(d.getTime());
-				
-	}
+
 	
 	
 
