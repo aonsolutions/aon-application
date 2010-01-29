@@ -23,7 +23,7 @@
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:commandButton id="deliveryTransfer"
 								value="#{financeBundle.finance_invoice_deliveries}"
-								immediate="#{true}" rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
+								immediate="#{true}" rendered="#{!saleInvoice.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 								actionListener="#{saleInvoice.onDeliveryTransferShow}"
 								reRender="showDeliveryTransferWindow">
@@ -100,6 +100,13 @@
 						<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
 							value="#{saleInvoice.to.number}" disabled="#{!saleInvoice.new}"
 							required="true" size="7" />
+						<aon:commandButton value="&#160;"
+							title="#{financeBundle.finance_invoice_find_next_number}"
+							styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
+ 							style="aon-margin-left" rendered="#{saleInvoice.new}"
+							actionListener="#{saleInvoice.onFindNextFreeNumber}"
+							reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
+						</aon:commandButton>															
 
 						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left aon-margin-right"
 							value="#{saleInvoice.to.securityLevel}" disabled="#{saleInvoice.readOnly}">
