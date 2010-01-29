@@ -39,6 +39,10 @@
 			<value>seller</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Seller_registry_surname,Seller_registry_name</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -128,6 +132,19 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sellerAddressControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>sellerAddressControllerListener</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!--  **** SELLER MEDIA **** -->
@@ -175,6 +192,10 @@
 		<managed-property>
 			<property-name>foreignPojo</property-name>
 			<value>com.code.aon.seller.Seller</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Seller_registry_surname,Seller_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
