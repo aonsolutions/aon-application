@@ -152,12 +152,12 @@
 						title="#{warehouseBundle.warehouse_item_stock_module}"
 						style="border: #808080 1px solid;"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						reRender="itemStockContainer"
-						actionListener="#{itemStock.onShowPanel}">
-							<aon:set  var="#{itemStock.item}" value="#{item.to}" /> 
+						actionListener="#{itemStock.onShowPanel}"
+						reRender="itemStockContainer">
+						<aon:set var="#{itemStock.alternativesVisible}" value="#{false}" />
+						<aon:set var="#{itemStock.item}" value="#{item.to}" /> 
 					</aon:commandButton>
 				</c:if>
-
 			</c:if>
 			<aon:outputText value="&#160;" />
 		</aon:div>
@@ -179,7 +179,7 @@
 		</aon:div>
 
 		<aon:outputLabel for="Item_sales_price" value="#{bundle.aon_sales_price}" />
-		<aon:inputText id="Item_sales_price" value="#{controller.salesPrice}"
+		<aon:inputText id="Item_sales_price" value="#{controller.to.salesPrice}"
 			reRender="Item_price"
 			valueChangeListener="#{controller.onSalesPriceChanged}"
 			size="10">

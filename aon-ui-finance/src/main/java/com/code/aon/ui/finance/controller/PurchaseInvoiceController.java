@@ -1,53 +1,32 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.faces.event.ActionEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.invoicing.InvoicingException;
-import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
-import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
-import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
-import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingDAO;
-import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.warehouse.Income;
-import com.code.aon.warehouse.IncomeDetail;
-import com.code.aon.warehouse.bridge.IncomeTransferManager;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.IncomeStatus;
 
 public class PurchaseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseInvoiceController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(PurchaseInvoiceController.class.getName());
 	
 	private RegistryValidationManager vm;
-	private IncomeTransferManager incomeTransferManager;
-	private boolean showIncomeTransferWindow;
+	//private DeliveryTransferManager deliveryTransferManager;
+	//private boolean showDeliveryTransferWindow;
 
 	public PurchaseInvoiceController() {
 		setInvoiceAddressControllerName(PURCHASE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -79,102 +58,102 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		return getRegistryValidationManager().isBlocked(supplier);
 	}
 
-	public IncomeTransferManager getIncomeTransferManager() {
-		if (incomeTransferManager == null) {
-			incomeTransferManager = new IncomeTransferManager(); 
+	/*public DeliveryTransferManager getDeliveryTransferManager() {
+		if (deliveryTransferManager == null) {
+			deliveryTransferManager = new DeliveryTransferManager(); 
 		}
-		return incomeTransferManager;
+		return deliveryTransferManager;
 	}
 
-	public void setIncomeTransferManager(IncomeTransferManager incomeTransferManager) {
-		this.incomeTransferManager = incomeTransferManager;
+	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
+		this.deliveryTransferManager = deliveryTransferManager;
 	}
 
-	public boolean isShowIncomeTransferWindow() {
-		return showIncomeTransferWindow;
+	public boolean isShowDeliveryTransferWindow() {
+		return showDeliveryTransferWindow;
 	}
 
-	public void setShowIncomeTransferWindow(boolean value) {
-		this.showIncomeTransferWindow = value;
+	public void setShowDeliveryTransferWindow(boolean value) {
+		this.showDeliveryTransferWindow = value;
 	}
 	
-	public void onIncomeTransferShow(ActionEvent event) throws ManagerBeanException {
-		List<ITransferObject> invoicedIncomeList = new LinkedList<ITransferObject>();
-		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+	public void onDeliveryTransferShow(ActionEvent event) throws ManagerBeanException {
+		List<ITransferObject> invoicedDeliveryList = new LinkedList<ITransferObject>();
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
 		criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
 		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
-			if (!invoicedIncomeList.contains(incomeDetail.getIncome())) {
-				invoicedIncomeList.add(incomeDetail.getIncome());
-				getIncomeTransferManager().setIncomeRowChecked(incomeDetail.getIncome(), true);
+			DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
+			if (!invoicedDeliveryList.contains(deliveryDetail.getDelivery())) {
+				invoicedDeliveryList.add(deliveryDetail.getDelivery());
+				getDeliveryTransferManager().setDeliveryRowChecked(deliveryDetail.getDelivery(), true);
 			}
 		}
 
-		getIncomeTransferManager().setInvoicedIncomeList(invoicedIncomeList);
+		getDeliveryTransferManager().setInvoicedDeliveryList(invoicedDeliveryList);
 
-		List<ITransferObject> incomeList = new LinkedList<ITransferObject>();
-		incomeList.addAll(invoicedIncomeList);
-		IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
+		List<ITransferObject> deliveryList = new LinkedList<ITransferObject>();
+		deliveryList.addAll(invoicedDeliveryList);
+		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		criteria = new Criteria();
-		criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), getInvoice().getRegistry().getId());
-		criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_STATUS), IncomeStatus.PENDING);
-		criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SECURITY_LEVEL), getInvoice().getSecurityLevel());
-		criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_ISSUE_TIME));
-		criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_SERIES));
-		criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_NUMBER));
-		incomeList.addAll(incomeBean.getList(criteria));
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getInvoice().getRegistry().getId());
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+		deliveryList.addAll(deliveryBean.getList(criteria));
 
-		getIncomeTransferManager().setIncomeList(incomeList);
+		getDeliveryTransferManager().setDeliveryList(deliveryList);
 	}
 
-	public void onIncomeTransfer(ActionEvent event) throws ManagerBeanException {
-		Iterator<ITransferObject> iterator = getIncomeTransferManager().getInvoicedIncomeList().iterator();
+	public void onDeliveryTransfer(ActionEvent event) throws ManagerBeanException {
+		Iterator<ITransferObject> iterator = getDeliveryTransferManager().getInvoicedDeliveryList().iterator();
 		while (iterator.hasNext()) {
-			Income income = (Income)iterator.next();
-			if (!getIncomeTransferManager().getCheckedIncome().contains(income)) {
-				removeInvoicedIncome(income);
+			Delivery delivery = (Delivery)iterator.next();
+			if (!getDeliveryTransferManager().getCheckedDelivery().contains(delivery)) {
+				removeInvoicedDelivery(delivery);
 			}
-			getIncomeTransferManager().getCheckedIncome().remove(income);
+			getDeliveryTransferManager().getCheckedDelivery().remove(delivery);
 		}
 
-		InvoicingEngineFactory.register(InvoicingEngineFactory.INCOME_ENGINE_KEY, new IncomeInvoicingEngine());
+		InvoicingEngineFactory.register(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY, new DeliveryInvoicingEngine());
 		try {
-			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.INCOME_ENGINE_KEY);
-			engine.setInvoicingDAO(new IncomeInvoicingDAO());
+			IInvoicingEngine engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY);
+			engine.setInvoicingDAO(new DeliveryInvoicingDAO());
 			engine.setInvoicingFeedBack(new ProgressionInvoicingFeedBack());
-			((IncomeInvoicingEngine)engine).invoiceIncomeList(getInvoice(), getIncomeTransferManager().getCheckedIncome());
+			((DeliveryInvoicingEngine)engine).invoiceDeliveryList(getInvoice(), getDeliveryTransferManager().getCheckedDelivery());
 		} catch (InvoicingException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 
-		IController detailController = FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
+		IController detailController = FormUtil.getController(IFinanceConstants.SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}
 
-	private void removeInvoicedIncome(Income income) throws ManagerBeanException {
+	private void removeInvoicedDelivery(Delivery delivery) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
-		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
-			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
+			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
 			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
 				invoiceDetailBean.remove(invoiceDetail);
 			}
 		}
-	}
+	}*/
 	
 	@Override
 	public IAttachment generateReportAttachment( ITransferObject to ) {
@@ -191,7 +170,7 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 				return (IAttachment) list.get(0);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error getting invoice pdf file " + to, e );
+			LOGGER.log(Level.SEVERE, "Error getting invoice pdf file " + to, e );
 		}
 		return null;
 	}

@@ -3,12 +3,11 @@ package com.code.aon.ui.finance.controller;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
@@ -23,7 +22,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceSignerController extends BasicController implements IFinanceConstants {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceSignerController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoiceSignerController.class.getName());
 	
 	private Set<Integer> checks = new HashSet<Integer>();
 
@@ -117,10 +116,10 @@ public class InvoiceSignerController extends BasicController implements IFinance
 						HibernateUtil.rollbackTransaction(sessionName);
 					} catch (DAOException daoe) {
 						String msg =  "Unable to rollback transaction!";
-						LOGGER.error(msg, e);
+						LOGGER.log(Level.SEVERE, msg, e);
 					}
 					String msg =  "Error recording invoice:  " + id;
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				} finally {
@@ -161,10 +160,10 @@ public class InvoiceSignerController extends BasicController implements IFinance
 						HibernateUtil.rollbackTransaction(sessionName);
 					} catch (DAOException daoe) {
 						String msg =  "Unable to rollback transaction!";
-						LOGGER.error(msg, e);
+						LOGGER.log(Level.SEVERE, msg, e);
 					}
 					String msg =  "Error recording invoice:  " + id;
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				} finally {

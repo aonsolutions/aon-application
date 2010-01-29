@@ -10,66 +10,87 @@
 	<ui:define name="content">
 		<aon:form id="itemList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{productBundle.product_module}" />
 				<ui:param name="controller" value="#{item}" />
-			</ui:include>
-
-			<aon:div id="itemData" styleClass="aon-scroll-area">
-				<aon:dataTable id="itemDataList" value="#{item.model}"
-					rows="20" var="to" rendered="#{item.model.rowCount > 0}">
-
-					<aon:rowSelector action="item_form" 
-						actionListener="#{item.onSelect}" />
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.product.code}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.product.name} #{to.detail}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{productBundle.product_category}" />
-						</f:facet>
-						<aon:outputText value="#{to.product.category.name}" />
-					</aon:column>
-
-					<c:if test="#{aonConfiguration.bean.product.showBrand}">
-						<aon:column>
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink id="itemReportExcel" value="&#160;" 
+						target="_new" action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="itemList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+					<h:commandLink id="customerDetailReportPdf" value="#{bundle.aon_listing}"
+						target="_new" action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="itemList" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{item}" />
+					<ui:define name="columns">
+	
+						<aon:column alias="Item.product.code"
+							styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{productBundle.product_brand}" />
+								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
-							<aon:outputText value="#{to.product.brand.name}" />
+							<aon:outputText value="#{to.product.code}" />
 						</aon:column>
-					</c:if>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
-						</f:facet>
-						<aon:outputText value="#{to.status}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_taxable_base}" />
-						</f:facet>
-						<aon:outputText value="#{to.price}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-				</aon:dataTable>
-				<aon:dataScroller2 for="itemDataList" showNote="true" />
+	
+						<aon:column alias="Item.product.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.product.name} #{to.detail}" />
+						</aon:column>
+	
+						<aon:column alias="Item.product.category.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_category}" />
+							</f:facet>
+							<aon:outputText value="#{to.product.category.name}" />
+						</aon:column>
+	
+						<c:if test="#{aonConfiguration.bean.product.showBrand}">
+							<aon:column alias="Item.product.brand.name"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{productBundle.product_brand}" />
+								</f:facet>
+								<aon:outputText value="#{to.product.brand.name}" />
+							</aon:column>
+						</c:if>
+	
+						<aon:column alias="Item.status"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+	
+						<aon:column alias="Item.price"
+							styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_taxable_base}" />
+							</f:facet>
+							<aon:outputText value="#{to.price}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+					</ui:define>
+				</ui:decorate>	
 			</aon:div>
 		</aon:form>
 	</ui:define>

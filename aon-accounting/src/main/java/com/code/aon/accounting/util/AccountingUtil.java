@@ -106,9 +106,31 @@ public class AccountingUtil {
 	public Balance getOpeningEntryBalance(Date date, String accountId) throws ManagerBeanException {
 		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING);
 	}
+	public Balance getOpeningEntryBalance(Period period, String accountId) throws ManagerBeanException {
+		if (period == null) {
+			throw new IllegalArgumentException("period param must not be null.");
+		}
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPENING);
+	}
+
+	public Balance getOperatingEntryBalance(Date date, String accountId) throws ManagerBeanException {
+		return getAccountEntryBalance(date, accountId, AccountEntryType.OPERATING);
+	}
+	public Balance getOperatingEntryBalance(Period period, String accountId) throws ManagerBeanException {
+		if (period == null) {
+			throw new IllegalArgumentException("period param must not be null.");
+		}
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPERATING);
+	}
 
 	public Balance getClosingEntryBalance(Date date, String accountId) throws ManagerBeanException {
 		return getAccountEntryBalance(date, accountId, AccountEntryType.CLOSING);
+	}
+	public Balance getClosingEntryBalance(Period period, String accountId) throws ManagerBeanException {
+		if (period == null) {
+			throw new IllegalArgumentException("period param must not be null.");
+		}
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.CLOSING);
 	}
 
 	public Balance getAccountEntryBalance(Date date, String accountId, AccountEntryType type)
@@ -198,7 +220,7 @@ public class AccountingUtil {
 			substractAmounts(balance, fromDate, accountId, AccountEntryType.OPENING);
 		}
 		if (excludeClosingEntry) {
-			substractAmounts(balance, fromDate, accountId, AccountEntryType.CLOSING);
+			substractAmounts(balance, toDate, accountId, AccountEntryType.CLOSING);
 		}
 		double bal = CommonUtil.round(debit - credit);
 		if (bal > 0) {
@@ -247,9 +269,12 @@ public class AccountingUtil {
 				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
 		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
 				accountEntryType);
-		criteria.addEqualExpression(entryBean
-				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+		if (securityLevel != null) {
+			criteria.addEqualExpression(entryBean
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+		}
 		List<ITransferObject> list = entryBean.getList(criteria);
 		return (list.size() > 0);
 	}
+
 }

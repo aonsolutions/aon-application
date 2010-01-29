@@ -22,7 +22,7 @@
 	</xs:element>
 	<xs:element name="invoice">
 		<xs:complexType>
-			<xs:attribute name="showWarehouseData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showDeliveryData" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
