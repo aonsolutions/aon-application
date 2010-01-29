@@ -997,14 +997,14 @@ public class TaskController extends BasicController implements ITaskController {
 	private void addOrder() throws ManagerBeanException {
 		OrderByList list = new OrderByList();
 		if (getOrderColumn() == null) {
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS),false));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
-//			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS),false));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS), true));
+			list.add(new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS),false));
+			list.add(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
+//			list.add(new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS),false));
+			list.add(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS), true));
 		} else {
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()),isOrderAscending()));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS),true));
+			list.add(new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()),isOrderAscending()));
+			list.add(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
+			list.add(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS),true));
 		}
 		getCriteria().setOrderByList(list);
 
