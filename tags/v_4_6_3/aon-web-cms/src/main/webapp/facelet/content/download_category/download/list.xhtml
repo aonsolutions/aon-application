@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="downloadList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.download}" />
+				<ui:param name="controller" value="#{download}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_home}"
+						action="home" 
+						immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+					<aon:commandButton id="generate" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" immediate="true"
+						rendered="#{cms.roleEditor}"
+						actionListener="#{generator.onGenerateDownloads}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<a4j:support 
+							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>	
+					<aon:commandButton id="categories"
+						value="#{appBundle.download_category}"
+						action="download_category_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{download_category.onInit}" />
+						<aon:actionListener method="#{download_category.onSearch}" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
+		
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+					
+				<aon:dataTable id="dataTable" rows="#{download.pageLimit}" var="to"
+					value="#{download.model}" rendered="#{download.model.rowCount > 0}" 
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
+			
+					<aon:rowSelector
+						action="download_form" actionListener="#{download.onSelect}" />
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.download_title}"/>
+						</f:facet>
+						<aon:outputText value="#{download.i18nTitle}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText for="LinkCategory_position" 
+								value="#{appBundle.download_position}" />
+						</f:facet>
+						<aon:outputText value="#{to.position}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.download_active}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																															
+							<aon:commandLink title="#{appBundle.download_activate}" 
+								action="download_list"
+								actionListener="#{download.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="LinkCategory_active" alt="#{appBundle.download_activate}"
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.download_deactivate}" 
+								action="download_list"
+								actionListener="#{download.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="LinkCategory_deactive" alt="#{appBundle.download_deactivate}"
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:column>
+
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
+
+			</aon:div>
+		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

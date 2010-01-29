@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="genericPageForm">
+		
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.generic_page}" />
+				<ui:param name="controller" value="#{generic_page}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="generate_nodular" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" immediate="true"
+						actionListener="#{generator.onGenerateCurrentGenericPage}" 
+						rendered="#{generic_page.to!=null and (!generic_page.new) and cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<a4j:support 
+							event="onclick" reRender="poll,grid" ajaxSingle="true" 
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>	
+				</ui:define>				
+			</ui:decorate>		
+
+			<aon:div styleClass="aon-scroll-area">
+	
+				<aon:panelTabSet id="menuTabSet">
+
+					<aon:panelTab id="general" label="#{appBundle.aon_content}">
+						<aon:panelGrid id="generalGrid" columns="2" dir="true">
+						
+							<aon:outputLabel for="Alias"
+								value="#{appBundle.cms_alias}" />
+							<aon:inputText id="Alias"
+								required="true" size="32" maxlength="32"
+								value="#{generic_page.to.alias}">
+								<f:validator validatorId="AliasValidator" />
+							</aon:inputText>
+		                    	
+							<aon:outputLabel for="GenericPageDetail_title"
+								value="#{appBundle.generic_page_title}" />
+							<aon:inputTextarea id="GenericPageDetail_title"
+								required="true" rows="3" cols="80" 
+								value="#{generic_page.toI18n.title}" >
+								<f:validateLength maximum="255" />
+							</aon:inputTextarea>										
+
+							<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+								<ui:param name="inputTextId" value="GenericPageDetail_content" />
+								<ui:param name="inputTextValue" value="#{generic_page.toI18n.content}" />
+								<ui:param name="richTextEnabled" value="#{generic_page.richTextEnabled}" />
+							</ui:include>
+
+							<aon:outputLabel for="GenericPage_menu"
+								value="#{appBundle.generic_page_menu}" />
+							<aon:selectOneMenu id="GenericPage_menu" 
+								value="#{generic_page.to.menu}">
+								<f:selectItems value="#{generic_page.menus}" />
+							</aon:selectOneMenu> 
+
+							<aon:outputLabel for="GenericPage_section"
+								value="#{appBundle.cms_section}"/>
+							<aon:selectOneMenu id="GenericPage_section"  
+								value="#{generic_page.to.section}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+														
+						</aon:panelGrid>
+					</aon:panelTab>
+
+					<aon:panelTab id="tags"
+						label="#{appBundle.aon_meta_tags}">
+						<aon:panelGrid columns="2" dir="true">
+						
+							<aon:outputLabel for="GenericPage_description"
+								value="#{bundle.aon_description}" />
+							<aon:inputTextarea id="GenericPage_description" style="width:300px;height:60px"
+								value="#{generic_page.toI18n.description}" />
+
+							<aon:outputLabel for="GenericPage_keywords" 
+								value="#{appBundle.generic_page_keywords}" />
+							<aon:inputTextarea id="GenericPage_keywords" style="width:300px;height:60px"
+								value="#{generic_page.toI18n.keywords}" />
+		
+						</aon:panelGrid>
+					</aon:panelTab>
+
+				</aon:panelTabSet>
+
+			</aon:div>
+		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
