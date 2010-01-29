@@ -718,6 +718,10 @@
 			<value>com.code.aon.customer.Customer</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Customer_registry_surname,Customer_registry_name</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/customer/facelet/lookup/customer/list.xhtml</value>
 		</managed-property>
