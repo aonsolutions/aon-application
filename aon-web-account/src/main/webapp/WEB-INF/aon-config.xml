@@ -24,9 +24,6 @@
 			showNote="false"
 			showRelationship="false"
 			showRecordData="false"
-			showTaxInfoData="true"
-			showAddInfo="false"
-			showDirStaff="false"
 		/>
 	</customer:config>
 
@@ -39,8 +36,6 @@
 			showFinanceData="true" 
 			showAccount="true"
 			showSegment="false"
-			showTaxInfoData="true"
-			showAddInfo="false"
 		/>
 	</supplier:config>
 
@@ -48,13 +43,9 @@
 		<finance:creditor
 			showFinanceData="true" 
 			showAccount="true"
-			showTaxInfoData="true"
-			showAddInfo="false"
-			showSegment="false"
 		/>
 		<finance:invoice
-			showWarehouseData="false" 
+			showDeliveryData="false" 
 		/>
 	</finance:config>
 </config>
-
