@@ -22,7 +22,7 @@
 				<ui:define name="searchContent">
 						
 					<aon:outputLabel for="Customer_id"
-						value="#{customerBundle.customer_customer}" />
+						value="#{financeBundle.finance_invoicing_group}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 							reRender="Customer_full_name"
@@ -35,7 +35,7 @@
 							property="#{invoicingGroupSearch.customer}">
 						</aon:lookupButton>
 						<aon:inputText id="Customer_full_name"
-							value="#{(invoicingGroupSearch.customer.registry.name!=null)?(invoicingGroupSearch.customer.registry.fullName):('')}"
+							value="#{(invoicingGroupSearch.customer.registry.fullName!=null)?(invoicingGroupSearch.customer.registry.fullName):('')}"
 							size="50" disabled="true" />							
 					</aon:div>					
 					
