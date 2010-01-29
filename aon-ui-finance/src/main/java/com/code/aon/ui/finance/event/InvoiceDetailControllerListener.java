@@ -42,7 +42,8 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		event.getController().initializeModel();
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		controller.initializeModel();
 	}
 
 	@Override

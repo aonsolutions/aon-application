@@ -7,7 +7,8 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="creditorForm">
+		<aon:form>
+
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_creditor_module}" />
 				<ui:param name="controller" value="#{creditor}" />
@@ -17,7 +18,9 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{creditor}" />
 				<ui:define name="searchContent">
+
 					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/searchContent.xhtml" />
+
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

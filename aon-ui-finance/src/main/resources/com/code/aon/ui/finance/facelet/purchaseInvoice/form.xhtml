@@ -19,14 +19,14 @@
 					<ui:param name="controller" value="#{purchaseInvoice}" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
-							<aon:commandButton id="incomeTransfer"
+						<c:if test="#{aonConfiguration.bean.invoice.showDeliveryData}">
+							<aon:commandButton id="deliveryTransfer"
 								value="#{financeBundle.finance_invoice_deliveries}"
 								immediate="#{true}" rendered="#{!purchaseInvoice.new and !purchaseInvoice.recorded}"
 								styleClass="aon-finding-toolbar-item aon-icon-sincronize"
-								actionListener="#{purchaseInvoice.onIncomeTransferShow}"
-								reRender="showIncomeTransferWindow">
-								<f:setPropertyActionListener target="#{purchaseInvoice.showIncomeTransferWindow}"
+								actionListener="#{purchaseInvoice.onDeliveryTransferShow}"
+								reRender="showDeliveryTransferWindow">
+								<f:setPropertyActionListener target="#{purchaseInvoice.showDeliveryTransferWindow}"
 									value="#{true}" />
 							</aon:commandButton>
 						</c:if>
@@ -66,7 +66,7 @@
 						</h:commandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or purchaseInvoice.to.signed or (!certificate.signable)}" />
+							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or purchaseInvoice.to.signed or (certificate.certificateCount==0)}" />
 							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or (!purchaseInvoice.to.signed)}" />
 							<ui:param name="signButtonReRender" value="purchaseInvoiceForm,showNewMessageWindow" />
 						</ui:include>							
@@ -270,6 +270,5 @@
 			<aon:methodParam name="signActionListener" value="#{purchaseInvoiceSigner.onSign}" type="actionListener" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/income/modalTransfer.xhtml" />
 	</ui:define>
 </ui:composition>
