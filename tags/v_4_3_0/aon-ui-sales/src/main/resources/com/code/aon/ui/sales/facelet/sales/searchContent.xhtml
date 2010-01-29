@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+
+	<aon:outputLabel for="Sales_customer_id"
+		value="#{customerBundle.customer_customer}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Sales_customer_id"  
+			value="#{salesSearch.customer.id}"
+			lookup="#{customerLookup}"
+			reRender="Sales_customer_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{customerBundle.customer_selection}" 
+			minHeight="460" minWidth="650" 
+			property="#{salesSearch.customer}" lookup="#{customerLookup}" 
+			selectReRender="Sales_customer_id,Sales_customer_full_name" 
+			actionType="search">
+		</aon:lookupButton>
+		<aon:inputText id="Sales_customer_full_name"
+			value="#{(salesSearch.customer.registry.fullName!=null)?(salesSearch.customer.registry.fullName):('')}"
+			disabled="true" size="50" />							
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Sales_issueDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Sales_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="Sales_issueDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Sales_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+							
+	<aon:outputLabel for="Sales_securityLevel"
+		value="#{bundle.aon_security_level}" />
+	<aon:selectOneMenu id="Sales_securityLevel"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commonCollections.securityLevels}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Sales_documentType"
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="Sales_documentType"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{salesCollections.documentTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{salesSearch.salesStatuses}">
+		<f:selectItems value="#{salesCollections.salesStatuses}"/>
+	</aon:selectManyCheckbox>							
+
+</ui:composition>

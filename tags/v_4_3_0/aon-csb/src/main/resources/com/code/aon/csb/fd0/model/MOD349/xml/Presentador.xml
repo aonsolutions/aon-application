@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Presentador">
+
+ <field name="type" value="0" format="Numeric" pattern="9(1)" />
+ <field name="modelo" value="190" format="Numeric" pattern="9(3)" />
+ <field name="ejercicio" value="bean" bean="PRESENTER" property="year" format="Numeric" pattern="9(4)" />
+ <field name="nif" value="bean" bean="PRESENTER" property="code" format="Nif" pattern="X(9)" />
+ <field name="nombre" value="bean" bean="PRESENTER" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="siglas" value="bean" bean="PRESENTER" property="streetType" format="Alphabetic" pattern="X(2)" />
+ <field name="nombre" value="bean" bean="PRESENTER" property="streetName" format="Alphabetic" pattern="X(20)" />
+ <field name="numero" value="bean" bean="PRESENTER" property="streetNumber" format="Numeric" pattern="X(5)" />
+ <field name="escalera" value="bean" bean="PRESENTER" property="streetStair" format="AlphaNumeric" pattern="X(2)" />
+ <field name="piso" value="bean" bean="PRESENTER" property="streetStorey" format="AlphaNumeric" pattern="X(2)" />
+ <field name="puerta" value="bean" bean="PRESENTER" property="streetDoor" format="AlphaNumeric" pattern="X(2)" />
+ <field name="cpostal" value="bean" bean="PRESENTER" property="postalCode" format="Numeric" pattern="X(5)" />
+ <field name="municipio" value="bean" bean="PRESENTER" property="county" format="AlphaNumeric" pattern="X(12)" />
+ <field name="provincia" value="bean" bean="PRESENTER" property="province" format="Numeric" pattern="9(2)" />
+ <field name="total_declarantes" value="bean" bean="LOT" property="numDeponents" format="Numeric" pattern="9(5)" />
+ <field name="total_declarados" value="bean" bean="LOT" property="numDeclareds" format="Numeric" pattern="9(9)" />
+ <field name="tipo_soporte" value="D" format="Alphabetic" pattern="X(1)" />
+ <field name="telfcont" value="bean" bean="PRESENTER" property="relPhone" format="Numeric" pattern="9(9)" />
+ <field name="perscont" value="bean" bean="PRESENTER" property="relName" format="AlphaNumeric" pattern="X(40)" />
+ <field name="periodo" value="bean" bean="PRESENTER" property="period" format="AlphaNumeric" pattern="X(2)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(75)" />
+ 
+</register>

@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{targetItem}" />
+		<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+		<ui:define name="columns">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="TargetItem_item_id" value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
+					rendered="#{formList}" />
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<aon:lookupInputText id="TargetItem_item_id"
+						lookup="#{itemLookup}" required="true"
+						reRender="TargetItem_item_detail"
+						value="#{targetItem.to.item.id}" size="5">
+					</aon:lookupInputText>
+					<aon:lookupButton
+						windowTitle="#{productBundle.product_item_selection}" actionType="search"
+						selectReRender="targetItemData"
+						lookup="#{itemLookup}" minHeight="460" minWidth="650"
+						property="#{targetItem.to.item}">
+					</aon:lookupButton>
+					<aon:inputText id="TargetItem_item_detail"
+						value="#{(to.item.product.name!=null)?(to.item.product.name):('')}"
+						size="60" disabled="true" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+						<aon:lookupInputText id="TargetItem_item_id-New"
+							lookup="#{itemLookup}" required="true"
+							reRender="TargetItem_item_detail-New"
+							value="#{targetItem.to.item.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="TargetItem_item_id_lookup-New"
+							windowTitle="#{productBundle.product_item_selection}" actionType="search"
+							selectReRender="TargetItem_item_id-New,TargetItem_item_detail-New"
+							lookup="#{itemLookup}" minHeight="460" minWidth="650"
+							property="#{targetItem.to.item}">
+						</aon:lookupButton>
+						<aon:inputText id="TargetItem_item_detail-New"
+							value="#{(targetItem.to.item.product.name!=null)?(targetItem.to.item.product.name):('')}"
+							size="60" disabled="true" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="TargetItem_status" value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.status}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="TargetItem_status" rendered="#{formEdit}"
+					required="true" value="#{to.status}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
+				</aon:selectOneMenu>								
+				<f:facet name="footer">
+					<aon:selectOneMenu id="TargetItem_status-New" rendered="#{formNew}"
+						required="true" value="#{targetItem.to.status}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
+					</aon:selectOneMenu>								
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>
