@@ -1,3 +1,4 @@
+
 <!DOCTYPE hibernate-configuration PUBLIC
 	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
@@ -6,21 +7,6 @@
 
 	<session-factory>
 		
-		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
-		<property name="connection.service">jboss.admin:service=AonLdap</property>
-		<property name="connection.datasource">java:comp/env/jdbc/AonSMB</property>
-		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-		<property name="show_sql">true</property>
-
-		<!-- C3P0 Stuff -->
-		<property name="c3p0.acquire_increment">1</property>
-		<property name="c3p0.idle_test_period">1900</property>
-		<property name="c3p0.timeout">3600</property>
-		<property name="c3p0.max_size">30</property>
-		<property name="c3p0.min_size">1</property>
-		<property name="c3p0.max_statements">0</property>
-		<property name="c3p0.preferredTestQuery">select 1;</property>
-
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-ACCOUNT Mapping files -->
@@ -32,7 +18,6 @@
 		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
-		<mapping class="com.code.aon.accounting.AccountEntryLink"/>		
 		<mapping class="com.code.aon.accounting.AccountHelper"/>
 		<mapping class="com.code.aon.accounting.AccountSummary"/>
 		<mapping class="com.code.aon.accounting.Amortization"/>
@@ -43,30 +28,28 @@
 		<mapping class="com.code.aon.accounting.Loan"/>
 		<mapping class="com.code.aon.accounting.Leasing"/>
 		<mapping class="com.code.aon.accounting.Period"/>
-
+		
 		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
+		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
+		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
+		<mapping class="com.code.aon.account.bridge.CreditorAccount"/>
+		<mapping class="com.code.aon.account.bridge.ProductAccount"/>
+		<mapping class="com.code.aon.account.bridge.TaxAccount"/>
+		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
+		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
+		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
+		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
+		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>
-		<mapping class="com.code.aon.account.bridge.CreditorAccount"/>
-		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
-		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
-		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
-		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
-		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
-		<mapping class="com.code.aon.account.bridge.ProductAccount"/>
-		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
-		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
-		<mapping class="com.code.aon.account.bridge.TaxAccount"/>
 
 		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialSegment"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
 		<mapping class="com.code.aon.commercial.Offer"/>
-		<mapping class="com.code.aon.commercial.OfferAttachment"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
-		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
@@ -149,7 +132,9 @@
 
 		<!-- AON-SALES Mapping files -->	
 		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesAttachment"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
+		<mapping class="com.code.aon.sales.SalesType"/>
 
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
