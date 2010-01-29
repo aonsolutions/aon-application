@@ -10,20 +10,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.geozone</artifactId>
-	<version>4.0.3</version>
+	<version>4.0.4</version>
 	<description>AON UI GEOZONE</description>
 	<name>AON UI GEOZONE</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.geozone</artifactId>
-			<version>4.0.1</version>
+			<version>4.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
