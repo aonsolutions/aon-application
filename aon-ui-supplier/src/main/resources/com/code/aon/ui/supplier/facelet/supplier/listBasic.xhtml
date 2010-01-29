@@ -5,23 +5,24 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:column>
+	<aon:column alias="Supplier.id"
+		styleClass="aon-editDataTable-numberColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_id}" />
 		</f:facet>
 		<h:outputText value="#{to.id}" />
 	</aon:column>
 
-	<aon:column>
+	<aon:column alias="Supplier.registry.surname,Supplier.registry.name"
+		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_name}" />
+			<aon:outputText value="#{bundle.aon_company_name}" />
 		</f:facet>
-		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.registry.fullName}"/>
-		</aon:div>
+		<aon:outputText value="#{to.registry.fullName}" />
 	</aon:column>
 
-	<aon:column>
+	<aon:column alias="Supplier.registry.alias"
+		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_alias}" />
 		</f:facet>

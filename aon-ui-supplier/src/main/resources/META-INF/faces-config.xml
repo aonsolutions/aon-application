@@ -505,7 +505,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/list.xhtml</value>
+			<value>/com/code/aon/ui/supplier/facelet/supplier/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
