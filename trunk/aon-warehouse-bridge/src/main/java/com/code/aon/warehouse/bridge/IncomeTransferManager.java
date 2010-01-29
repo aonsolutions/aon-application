@@ -24,6 +24,7 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
 public class IncomeTransferManager {
 
 	private IPriceStrategy priceStrategy;
+	private Integer selectedIncomeId;
 	private List<ITransferObject> incomeList;
 	private List<ITransferObject> detailList;
 	private DataModel incomeModel;
@@ -36,6 +37,14 @@ public class IncomeTransferManager {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public Integer getSelectedIncomeId() {
+		return selectedIncomeId;
+	}
+
+	public void setSelectedIncomeId(Integer selectedIncomeId) {
+		this.selectedIncomeId = selectedIncomeId;
 	}
 
 	public List<ITransferObject> getIncomeList() {
@@ -92,6 +101,7 @@ public class IncomeTransferManager {
 	public void onSelectIncome(ActionEvent event) {
 		if (incomeModel.isRowAvailable()) {
 			Income income = (Income)incomeModel.getRowData();
+			setSelectedIncomeId(income.getId());
 			setDetailList(obtainIncomeDetailList(income));
 			setDetailModel(null);
 		}
@@ -128,9 +138,6 @@ public class IncomeTransferManager {
 		if (incomeModel.isRowAvailable()) {
 			Income income = (Income)incomeModel.getRowData();
 			setIncomeRowChecked(income, rowChecked);
-
-			setDetailList(obtainIncomeDetailList(income));
-			setDetailModel(null);
 		}
 	}
 
@@ -163,7 +170,7 @@ public class IncomeTransferManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void checkAllDeliveries(ActionEvent event) {
+	public void checkAllIncomes(ActionEvent event) {
 		Iterator iterator = incomeList.iterator();
 		while (iterator.hasNext()) {
 			Income income = (Income)iterator.next();
@@ -173,7 +180,7 @@ public class IncomeTransferManager {
 		}
 	}
 
-	public void checkNoneDeliveries(ActionEvent event) {
+	public void checkNoneIncomes(ActionEvent event) {
 		clearCheckedIncome();
 	}
 
