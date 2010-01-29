@@ -115,21 +115,21 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 				getIncomeTransferManager().setIncomeRowChecked(incomeDetail.getIncome(), true);
 			}
 		}
-
 		getIncomeTransferManager().setInvoicedIncomeList(invoicedIncomeList);
 
 		List<ITransferObject> incomeList = new LinkedList<ITransferObject>();
 		incomeList.addAll(invoicedIncomeList);
-		IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
-		criteria = new Criteria();
-		criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), getInvoice().getRegistry().getId());
-		criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_STATUS), IncomeStatus.PENDING);
-		criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SECURITY_LEVEL), getInvoice().getSecurityLevel());
-		criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_ISSUE_TIME));
-		criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_SERIES));
-		criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_NUMBER));
-		incomeList.addAll(incomeBean.getList(criteria));
-
+		if (!isReadOnly()) {
+			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), getInvoice().getRegistry().getId());
+			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_STATUS), IncomeStatus.PENDING);
+			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_ISSUE_TIME));
+			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_SERIES));
+			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_NUMBER));
+			incomeList.addAll(incomeBean.getList(criteria));
+		}
 		getIncomeTransferManager().setIncomeList(incomeList);
 	}
 
