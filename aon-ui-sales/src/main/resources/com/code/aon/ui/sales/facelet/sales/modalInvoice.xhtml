@@ -52,7 +52,7 @@
 									</aon:commandButton>
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width:80%;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
 										<aon:outputLabel for="Sales_invoiceSeries"
 											value="#{bundle.aon_series}" />
@@ -73,13 +73,12 @@
 										<aon:outputLabel for="Sales_invoiceDate"
 											value="#{bundle.aon_date}" />
 										<aon:selectInputDate id="Sales_invoiceDate" 
-											value="#{sales.invoiceDate}"
+											value="#{sales.invoiceDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
 											jointPoint="bottom-right"
 											direction="top-right"
-											verticalOffset="-60"
-											required="true"
-											timeZone="#{timeZoneController.timeZone}"
-											popupDateFormat="#{bundle.aon_date_pattern}"/>
+											verticalOffset="-60" />
 
 										<aon:outputLabel for="Sales_invoiceWarehouse" 
 											value="#{warehouseBundle.warehouse_warehouse}" />
