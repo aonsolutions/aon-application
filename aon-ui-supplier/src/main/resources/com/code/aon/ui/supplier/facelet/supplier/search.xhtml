@@ -7,7 +7,8 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="supplierForm">
+		<aon:form>
+
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
 				<ui:param name="controller" value="#{supplier}" />

@@ -13,10 +13,8 @@
 	<xs:element name="supplier">
 		<xs:complexType>
 			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
-			<xs:attribute name="showTaxInfoData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSegment" type="xs:boolean" use="required"/>
-			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
