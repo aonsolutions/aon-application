@@ -25,6 +25,8 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.Stock;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 public class DeliveryDetailController extends LinesController {
 
@@ -100,6 +102,35 @@ public class DeliveryDetailController extends LinesController {
 			}
 			deliveryDetail.setPrice(price);
 		}
+	}
+
+	public double getStock() throws ManagerBeanException {
+		double stock = 0;
+		DeliveryDetail to = (DeliveryDetail)getTo();
+		if (to != null && to.getItem() != null && to.getItem().getId() != null) {
+			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), to.getItem().getId());
+			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), to.getWarehouse().getId());
+			Iterator<?> iterator = stockBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				stock = ((Stock)iterator.next()).getQuantity();
+			}
+
+			if (!isNew()) {
+				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(to.getId());
+				if (to.getItem().equals(deliveryDetail.getItem())) {
+					stock += deliveryDetail.getQuantity();
+				}
+			}
+		}
+		return stock;
+	}
+
+	public boolean isStockWarning() throws ManagerBeanException {
+		DeliveryDetail to = (DeliveryDetail)getTo();
+		return (to.getItem().getProduct().isInventoriable() && (getStock() < to.getQuantity()));
 	}
 
 	public double getAmount() {
