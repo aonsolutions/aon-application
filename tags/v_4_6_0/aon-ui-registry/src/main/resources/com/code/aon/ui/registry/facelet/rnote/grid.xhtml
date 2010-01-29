@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="registryNoteData">
+
+		<aon:panelGrid columns="7" style="width: 100%;"
+			columnClasses="aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-150,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-150,						
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-150,
+						aon-panelGrid-even aon-width-auto">
+			<aon:outputLabel for="Rnote_fromDate" value="#{bundle.aon_date_from}"/>
+			<aon:selectInputDate renderAsPopup="true" id="Rnote_fromDate"
+				popupDateFormat="#{bundle.aon_date_pattern}"
+				value="#{controller.fromDate}" enableManualInput="true" />
+			
+			<aon:outputLabel for="Rnote_toDate" value="#{bundle.aon_date_to}"/>
+			<aon:selectInputDate renderAsPopup="true" id="Rnote_toDate"
+				popupDateFormat="#{bundle.aon_date_pattern}"
+				value="#{controller.toDate}" enableManualInput="true" />
+
+			<aon:outputLabel for="Rnote_noteType2ss"
+				value="#{bundle.aon_type}" />
+			<aon:selectOneMenu id="Rnote_noteType2ss" 
+				forceId="#{true}"
+				value="#{controller.noteType}">
+				<f:selectItem itemDisabled="true" itemLabel="-" itemValue="#{null}" />
+				<f:selectItems value="#{registryCollections.noteTypes}" />
+			</aon:selectOneMenu>
+
+			<aon:commandButton 
+				value="#{bundle.aon_search}"
+				styleClass="aon-finding-toolbar-item aon-icon-search"
+				actionListener="#{controller.onCustomSearch}" />
+
+		</aon:panelGrid>
+
+		<aon:div styleClass="aon-margin-top">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+				<ui:param name="columnClasses"
+					value="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, 
+					aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+
+				<ui:define name="columns">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_description}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}"
+							rendered="#{to!=controller.to}" />
+						<aon:inputText id="RegistryNote_description-Edit"
+							rendered="#{to==controller.to}"
+							maxlength="64" size="50"
+							value="#{controller.to.description}" />
+						<f:facet name="footer">
+							<aon:inputText id="RegistryNote_description-New"
+								rendered="#{controller.new}"
+								maxlength="64" size="50"
+								value="#{controller.to.description}" />
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<h:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.noteDate}"
+							rendered="#{to.id!=controller.to.id}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:selectInputDate renderAsPopup="true"
+							popupDateFormat="#{bundle.aon_date_pattern}"
+							rendered="#{to.id==controller.to.id}" value="#{controller.to.noteDate}"
+							enableManualInput="true" />
+						<f:facet name="footer">
+							<aon:selectInputDate renderAsPopup="true"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								rendered="#{controller.new}" value="#{controller.to.noteDate}"
+								enableManualInput="true" />
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.notetype}"
+							rendered="#{to.id!=controller.to.id}" />
+						<aon:selectOneMenu id="RegistryNote_notetype-Edit"
+							value="#{controller.to.notetype}" rendered="#{to==controller.to}">
+							<f:selectItems value="#{registryCollections.noteTypes}" />
+						</aon:selectOneMenu>
+						<f:facet name="footer">
+							<aon:selectOneMenu id="RegistryNote_notetype-New"
+								rendered="#{controller.new}"
+								value="#{controller.to.notetype}">
+								<f:selectItems value="#{registryCollections.noteTypes}" />
+							</aon:selectOneMenu>
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{registryBundle.registry_observation}" />
+						</f:facet>
+						<aon:outputText value="#{to.shortComments}"
+							rendered="#{to.id!=controller.to.id}" title="#{to.comments}" />
+						<aon:inputTextarea id="RegistryNote_comments-Edit"
+							rendered="#{to==controller.to}"
+							rows="5" value="#{controller.to.comments}" />
+						<f:facet name="footer">
+							<aon:inputTextarea id="RegistryNote_comments-New"
+								rendered="#{controller.new}"
+								rows="5" 
+								value="#{controller.to.comments}" />
+						</f:facet>
+					</aon:column>
+
+				</ui:define>
+			</ui:decorate>
+
+		</aon:div>
+
+	</aon:div>
+
+</ui:composition>

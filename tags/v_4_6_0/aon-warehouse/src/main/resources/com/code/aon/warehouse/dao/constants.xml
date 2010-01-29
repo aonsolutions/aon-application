@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.warehouse.DeliveryDetail">
+		<alias names="delivery_id,description,discountExpression,id,item_id,line,price,quantity,salesDetail_id,source,type,warehouse_id,item_product_type"/>
+		<hibernate names="delivery.id,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,source,type,warehouse.id,item.product.type"/>
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.IncomeDetail">
+		<alias names="income_id,description,discountExpression,id,item_id,line,price,quantity,purchaseDetail_id,source,type,warehouse_id,item_product_type"/>
+		<hibernate names="income.id,description,discountExpression,id,item.id,line,price,quantity,purchaseDetail.id,source,type,warehouse.id,item.product.type"/>
+	</bean>
+
+	<bean class="com.code.aon.warehouse.InventoryDetail">
+		<alias names="id,inventory_id,item_id,actualQuantity,realQuantity,cost,item_product_name,item_product_category_id,item_product_category_name"/>
+		<hibernate names="id,inventory.id,item.id,actualQuantity,realQuantity,cost,item.product.name,item.product.category.id,item.product.category.name"/>
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.ItemWarehouse">
+		<alias names="id,item_id,warehouse_id,stockMin,stockMax,location,item_product_name,item_product_category_id,item_product_category_name"/>
+		<hibernate names="id,item.id,warehouse.id,stockMin,stockMax,location,item.product.name,item.product.category_id,item.product.category.name"/>
+	</bean>
+
+	<bean class="com.code.aon.warehouse.DeliveryDetailLabour">
+		<alias names="deliveryDetail_id,employee_id,id,quantity,deliveryDetail_delivery_customer_id,deliveryDetail_delivery_issueTime"/>
+		<hibernate names="deliveryDetail.id,employee.id,id,quantity,deliveryDetail.delivery.customer.id,deliveryDetail.delivery.issueTime"/>
+	</bean>
+</dao>

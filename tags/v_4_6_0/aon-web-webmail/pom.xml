@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>aon.web.parent</artifactId>
+		<groupId>com.code.aon</groupId>
+		<version>1.0.4</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon-web-webmail</artifactId>
+	<packaging>war</packaging>
+	<name>AON WEB WEBMAIL</name>
+	<version>4.6.0</version>
+	<description>AON WEB WEBMAIL</description>
+	<build>
+		<finalName>aon-webmail</finalName>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.webmail</artifactId>
+			<version>4.5.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.groupware</artifactId>
+			<version>3.4.1</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>			
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.config</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>Esendex</artifactId>
+					<groupId>com.esendex</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>wsdl4j</artifactId>
+					<groupId>wsdl4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>axis</artifactId>
+					<groupId>axis</groupId>
+				</exclusion>				
+			</exclusions>			
+		</dependency>
+	</dependencies>
+</project>

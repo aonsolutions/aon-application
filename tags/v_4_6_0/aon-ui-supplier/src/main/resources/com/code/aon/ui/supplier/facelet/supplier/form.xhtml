@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="supplierForm">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
+				<ui:param name="controller" value="#{supplier}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{supplier.new}">
+					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/formNewContent.xhtml">
+						<ui:param name="controller" value="#{supplier}"/>
+					</ui:include>				
+				</c:if>							
+				<c:if test="#{!supplier.new}">
+					<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-odd aon-width-150,
+							aon-panelGrid-even aon-width-auto,
+							aon-panelGrid-odd aon-width-120,
+							aon-panelGrid-even aon-width-auto">
+	
+						<ui:include
+							src="/com/code/aon/ui/supplier/facelet/supplier/formContent.xhtml">
+							<ui:param name="controller" value="#{supplier}" />
+						</ui:include>
+					</aon:panelGrid>				
+					<c:if test="#{aonConfiguration.bean.supplier.showAccount}">				
+						<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
+							columns="2" style="width: 100%;"
+							columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+	
+							<aon:outputLabel for="Supplier_account" value="#{accountBundle.account_accounting}" />
+							<h:panelGrid columns="2" id="accountContainer">
+								<ui:include
+									src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
+									<ui:param name="id" value="Supplier_account" />
+									<ui:param name="entity" value="#{supplierAccount.account}" />
+									<ui:param name="ELExpression" value="supplierAccount.account" />
+								</ui:include>
+	
+								<aon:commandButton
+									value="#{accountBundle.account_synchronize}"
+									title="#{accountBundle.account_synchronize}"
+									style="border: #808080 1px solid;"
+									styleClass="aon-finding-toolbar-item aon-icon-refresh"
+									rendered="#{supplierAccount.accountSynchronizable}"
+									reRender="accountContainer"
+									actionListener="#{supplierAccount.onAccountSynchronize}">
+								</aon:commandButton>
+	
+								<aon:commandButton
+									value="#{accountBundle.account_new_account}" 
+									title="#{accountBundle.account_new_account}"
+									style="border: #808080 1px solid;"
+									styleClass="aon-finding-toolbar-item aon-icon-reset"
+									rendered="#{supplierAccount.account == null}"
+									reRender="accountContainer"
+									actionListener="#{supplierAccount.onNewAccount}">
+								</aon:commandButton>
+							</h:panelGrid>
+						</aon:panelGrid>
+					</c:if>
+				
+					<aon:panelTabSet selectedTab="#{supplier.selectedTab}">
+						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
+							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+								<ui:param name="controller" value="#{supplierAddress}" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+								<ui:param name="controller" value="#{supplierMedia}" />
+							</ui:include>
+						</aon:panelTab>
+ 
+ 						<c:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
+							<aon:panelTab id="finance"
+								label="#{registryBundle.registry_finance_data_module}">
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText
+											value="#{registryBundle.registry_banks_module}" />
+									</f:facet>
+									<ui:include
+										src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+										<ui:param name="controller" value="#{supplierRbank}" />
+									</ui:include>
+								</aon:panel>
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+									</f:facet>
+									<ui:include
+										src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
+										<ui:param name="controller" value="#{supplierRPayMethod}" />
+									</ui:include>
+								</aon:panel>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
+							<aon:panelTab id="segment"
+								label="#{registryBundle.registry_segment_module}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
+										<ui:param name="controller" value="#{supplierSegment}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.supplier.showAddInfo}">
+							<aon:panelTab id="addInfo"
+								label="#{registryBundle.registry_addInfo}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
+										<ui:param name="controller" value="#{supplierAddInfo}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
+					</aon:panelTabSet>
+				</c:if>
+			</aon:div>
+		</aon:form>
+		<c:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		</c:if>
+	</ui:define>
+</ui:composition>

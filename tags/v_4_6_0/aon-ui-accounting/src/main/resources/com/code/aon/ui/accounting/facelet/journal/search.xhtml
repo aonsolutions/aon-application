@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_journal_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{journalReport.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="journal_list" />
+
+					<aon:outputLabel for="reportDate"
+						value="#{accountingBundle.accounting_report_date}" />
+					<aon:selectInputDate id="reportDate"
+						value="#{journalReport.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu
+						id="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{journalReport.period}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:panelGrid columns="4">
+						<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_entryDate-From"
+							value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate 
+							id="AccountEntryDetail_accountEntry_entryDate-From"
+							value="#{journalReport.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_entryDate-To"
+							value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate 
+							id="AccountEntryDetail_accountEntry_entryDate-To"
+							value="#{journalReport.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:panelGrid>
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu value="#{journalReport.securityLevel}" 
+						id="AccountEntryDetail_accountEntry_securityLevel">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_journal"
+						value="#{bunlde.aon_order}" />
+					<aon:selectOneMenu value="#{journalReport.journal}" 
+						id="AccountEntryDetail_accountEntry_journal">
+						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_id}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="#{true}" />
+					</aon:selectOneMenu>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

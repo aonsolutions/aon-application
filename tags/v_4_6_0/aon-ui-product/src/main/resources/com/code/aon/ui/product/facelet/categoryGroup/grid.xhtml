@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<!--  aon-region-body -->
+	<aon:div styleClass="aon-scroll-area">
+
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+			<ui:param name="controller" value="#{productCategory}" />
+			<ui:param name="columnClasses"
+				value="aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text" />
+
+			<ui:define name="columns">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.name}"
+						rendered="#{to.id!=productCategory.to.id}" />
+					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+
+						<aon:inputText id="productCategory_id"
+							reRender="Expense_new_description,ExpenseDetail_price_new"
+							value="#{productCategory.category.id}" required="true" size="10"
+							maxlength="64" />
+						<aon:lookupButton windowTitle="#{productBundle.product_category}"
+							selectReRender="productCategory_id,productCategory_description"
+							lookup="#{categoryLookup}" property="#{productCategory.category}">
+						</aon:lookupButton>
+						<!-- <aon:lookupButton
+								windowTitle="#{productBundle.product_category_new}" 
+								selectReRender="productCategory_new_id,productCategory_new_description"
+								lookup="#{categoryLookup}" minHeight="220" minWidth="520"
+								property="#{productCategory.category}" actionType="new">
+							</aon:lookupButton> -->
+						<aon:inputText id="productCategory_description"
+							value="#{productCategory.category.name}" required="true"
+							size="40" maxlength="64" />
+					</aon:div>
+					<f:facet name="footer">
+						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+
+							<aon:inputText id="productCategory_new_id"
+								reRender="Expense_new_description,ExpenseDetail_price_new"
+								value="#{productCategory.category.id}" required="true" size="10"
+								maxlength="64" />
+							<aon:lookupButton windowTitle="#{productBundle.product_category}"
+								selectReRender="productCategory_new_id,productCategory_new_description"
+								lookup="#{categoryLookup}"
+								property="#{productCategory.category}">
+							</aon:lookupButton>
+						<!--  	 <aon:lookupButton
+								windowTitle="#{productBundle.product_category_new}" 
+								selectReRender="productCategory_new_id,productCategory_new_description"
+								lookup="#{categoryLookup}" minHeight="220" minWidth="520"
+								property="#{productCategory.category}" actionType="new">
+							</aon:lookupButton> -->
+							<aon:inputText id="productCategory_new_description"
+								value="#{productCategory.category.name}" required="true"
+								size="40" maxlength="64" />
+						</aon:div>
+					</f:facet>
+				</aon:column>
+
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
+
+</ui:composition>
