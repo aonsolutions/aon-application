@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
+	xmlns="http://www.esferalia.com/config" >
+	
+	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="false" 
+			showCompanyOtherData="false"
+			showPanelTabSet="false" 
+			showDigitalCertificate="true"
+		/>
+	</company:config>
+
+</config>

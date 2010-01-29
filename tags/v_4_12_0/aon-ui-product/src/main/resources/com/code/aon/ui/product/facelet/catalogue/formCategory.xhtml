@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{catalogueCategory}" />
+		<ui:param name="columnClasses"
+			value="aon-editDataTable-textColumn,
+					aon-editDataTable-numberColumn aon-width-100,
+					aon-editDataTable-numberColumn aon-width-80" />
+		<ui:define name="columns">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{productBundle.product_category}" />
+				</f:facet>
+				<aon:outputText value="#{to.category.name}"
+					rendered="#{to!=catalogueCategory.to}" />
+				<aon:selectOneMenu value="#{catalogueCategory.to.category}"
+					rendered="#{to==catalogueCategory.to}" required="#{true}">
+					<f:selectItems value="#{productCollections.categories}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu value="#{catalogueCategory.to.category}"
+						rendered="#{catalogueCategory.new}" required="#{true}">
+						<f:selectItems value="#{productCollections.categories}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}"
+					rendered="#{to.id!=catalogueCategory.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+				</aon:outputText>
+				<aon:inputText value="#{catalogueCategory.to.quantity}" 
+					rendered="#{to.id==catalogueCategory.to.id}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText value="#{catalogueCategory.to.quantity}"
+						rendered="#{catalogueCategory.new}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_discount}" />
+				</f:facet>
+				<aon:outputText value="#{to.discount}" 
+					rendered="#{to.id!=catalogueCategory.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText value="#{catalogueCategory.to.discount}"
+					rendered="#{to.id==catalogueCategory.to.id}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText value="#{catalogueCategory.to.discount}"
+						rendered="#{catalogueCategory.new}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+</ui:composition>

@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<!--  aon-region-body -->
+	<aon:div styleClass="aon-scroll-area">
+
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+			<ui:param name="controller" value="#{expenseAccountDetail}" />
+			<ui:param name="columnClasses"
+				value="aon-editDataTable-textColumn aon-width-60,aon-editDataTable-numberColumn aon-width-80,aon-editDataTable-numberColumn aon-width-80,aon-editDataTable-numberColumn aon-width-80" />
+			<ui:define name="columns">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="Expense_description"
+							value="#{bundle.aon_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.expense.description}"
+						rendered="#{formList}" />
+
+					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+						<aon:inputText id="Expense_id" lookupChangeListener="#{expenseAccountDetail.onItemChanged}"
+							value="#{expenseAccountDetail.to.expense.id}" required="true"
+							reRender="ExpenseDetail_description,ExpenseDetail_price,ExpenseDetail_amount,ExpenseDetail_quantity"
+							size="10" maxlength="64" />
+						<aon:lookupButton
+							windowTitle="#{commercialBundle.commercial_expenses_name}"
+							selectReRender="ExpenseDetail_description,ExpenseDetail_amount,ExpenseDetail_price,ExpenseDetail_quantity"
+							lookup="#{expenseLookup}" lookupChangeListener="#{expenseAccountDetail.onItemChanged}"
+							property="#{expenseAccountDetail.to.expense}">
+						</aon:lookupButton>
+						<aon:lookupButton
+							windowTitle="#{commercialBundle.commercial_expenses_name_new}"
+							selectReRender="ExpenseDetail_description,ExpenseDetail_quantity,ExpenseDetail_amount,ExpenseDetail_price" lookupChangeListener="#{expenseAccountDetail.onItemChanged}"
+							lookup="#{expenseLookup}" minHeight="220" minWidth="520"
+							property="#{expenseAccountDetail.to.expense}" actionType="new">
+						</aon:lookupButton>
+						<aon:inputText id="ExpenseDetail_description"
+							value="#{expenseAccountDetail.to.expense.description}"
+							required="true" size="40" maxlength="64" />
+					</aon:div>
+
+					<f:facet name="footer">
+						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+
+							<aon:inputText id="Expense_new_id"
+								reRender="Expense_new_description,ExpenseDetail_price_new" lookupChangeListener="#{expenseAccountDetail.onItemChanged}"
+								value="#{expenseAccountDetail.to.expense.id}" required="true"
+								size="10" maxlength="64" />
+							<aon:lookupButton
+								windowTitle="#{commercialBundle.commercial_expenses_name}" lookupChangeListener="#{expenseAccountDetail.onItemChanged}"
+								selectReRender="Expense_new_id,Expense_new_description,ExpenseDetail_quantity_new,ExpenseDetail_price_new,ExpenseDetail_amount_new"
+								lookup="#{expenseLookup}"
+								property="#{expenseAccountDetail.to.expense}">
+							</aon:lookupButton>
+							<aon:lookupButton
+								windowTitle="#{commercialBundle.commercial_expenses_name_new}" lookupChangeListener="#{expenseAccountDetail.onItemChanged}"
+								selectReRender="Expense_new_id,Expense_new_description,ExpenseDetail_quantity_new,ExpenseDetail_amount_new,ExpenseDetail_price_new,ExpenseDetail_amount_new"
+								lookup="#{expenseLookup}" minHeight="220" minWidth="520"
+								property="#{expenseAccountDetail.to.expense}" actionType="new">
+							</aon:lookupButton>
+							<aon:inputText id="Expense_new_description"
+								value="#{expenseAccountDetail.to.expense.description}"
+								required="true" size="40" maxlength="64" />
+						</aon:div>
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel 
+							value="#{bundle.aon_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.price}" rendered="#{formList}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					<aon:inputText id="ExpenseDetail_price"  required="true"   reRender="ExpenseDetail_amount"
+						rendered="#{formEdit}" size="7"   valueChangeListener="#{expenseAccountDetail.onUnitPriceChanged}" 
+						value="#{expenseAccountDetail.to.price}" maxlength="32" />
+					<f:facet name="footer">
+						<aon:inputText  id="ExpenseDetail_price_new" required="true" reRender="ExpenseDetail_amount_new"
+							rendered="#{formNew}" size="7"  valueChangeListener="#{expenseAccountDetail.onUnitPriceChanged}" 
+							value="#{expenseAccountDetail.to.price}" maxlength="32" />
+					</f:facet>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel
+							value="#{bundle.aon_quantity}" />
+					</f:facet>
+					<aon:outputText value="#{to.quantity}" rendered="#{formList}" />
+					<aon:inputText id="ExpenseDetail_quantity" required="true"
+						rendered="#{formEdit}" size="7" valueChangeListener="#{expenseAccountDetail.onQuantityChanged}" 
+					  reRender="ExpenseDetail_amount"
+						value="#{expenseAccountDetail.to.quantity}" maxlength="32" />
+					<f:facet name="footer">
+						<aon:inputText id="ExpenseDetail_quantity_new"  required="true" reRender="ExpenseDetail_amount_new"
+							rendered="#{formNew}" size="7" valueChangeListener="#{expenseAccountDetail.onQuantityChanged}" 
+							value="#{expenseAccountDetail.to.quantity}" maxlength="32" />
+					</f:facet>
+				</aon:column>
+
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel 
+							value="Total" />
+					</f:facet>
+					<aon:outputText value="#{to.amount}" rendered="#{formList}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					<aon:outputText id="ExpenseDetail_amount"  required="true"
+						rendered="#{formEdit}" size="7"
+						value="#{expenseAccountDetail.to.amount}" maxlength="32"  >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					<f:facet name="footer">
+					<aon:div style="text-align:right;">
+						<aon:outputText  id="ExpenseDetail_amount_new" required="true"
+							 size="7" rendered="#{formNew}"
+							value="#{expenseAccountDetail.to.amount}" maxlength="32" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText id="Offer_taxableBase"  style="font-weight:bold"
+							value="#{expenseAccountDetail.totalAmount}" rendered="#{!formNew}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:div>
+					
+					
+						
+					</f:facet>
+				</aon:column>
+				
+			</ui:define>
+		</ui:decorate>
+
+	</aon:div>
+
+</ui:composition>
