@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showDeliveryTransferWindow">
 		<c:if test="#{saleInvoice.showDeliveryTransferWindow}">
 			<rich:modalPanel id="deliveryTransferModalPanel" minHeight="580"
-				minWidth="740" rendered="#{saleInvoice.showDeliveryTransferWindow}"
+				minWidth="760" rendered="#{saleInvoice.showDeliveryTransferWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -37,9 +37,21 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
+								<aon:div styleClass="aon-toolbar" rendered="#{!saleInvoice.readOnly}">
+									<aon:commandButton id="deliveryTransfer-selectAll"
+										value="#{bundle.aon_check_all}"
+										rendered="#{saleInvoice.deliveryTransferManager.deliveryModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+										actionListener="#{saleInvoice.deliveryTransferManager.checkAllDeliveries}" 
+										reRender="deliveryData" />	
+									<aon:commandButton id="deliveryTransfer-selectNone"
+										value="#{bundle.aon_uncheck_all}"
+										rendered="#{saleInvoice.deliveryTransferManager.deliveryModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+										actionListener="#{saleInvoice.deliveryTransferManager.checkNoneDeliveries}" 
+										reRender="deliveryData" />	
 									<aon:commandButton id="deliveryTransfer-accept"
-										value="#{financeBundle.finance_invoice_to_import}"
+										value="#{financeBundle.finance_invoice_to_transfer}"
 										rendered="#{saleInvoice.deliveryTransferManager.deliveryModel.rowCount > 0}"
 										reRender="showDeliveryTransferWindow,invoiceDetails,menuExt"
 										actionListener="#{saleInvoice.onDeliveryTransfer}"
@@ -68,31 +80,28 @@
 
 									<aon:dataTable id="deliveryData" value="#{saleInvoice.deliveryTransferManager.deliveryModel}"
 										var="to" rows="10" rendered="#{saleInvoice.deliveryTransferManager.deliveryModel.rowCount > 0}"
-										columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-											aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+										columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+											aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
 
-										<aon:rowSelector immediate="true"
-											actionListener="#{saleInvoice.deliveryTransferManager.onSelectDelivery}" reRender="detailDataContainer" 
-											eventsQueue="deliverySelector" ignoreDupResponses="true" requestDelay="1000" />
-
-										<aon:column>
+										<aon:column styleClass="#{saleInvoice.deliveryTransferManager.selectedDeliveryId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="&#160;" />
 											</f:facet>
 											<aon:selectBooleanCheckbox id="DeliveryCheck"
 												value="#{saleInvoice.deliveryTransferManager.deliveryRowChecked}"
+												rendered="#{!saleInvoice.readOnly}"
 												valueChangeListener="#{saleInvoice.deliveryTransferManager.deliveryRowSelected}"
 												reRender="detailDataContainer" ajaxSingle="true" />	
-										</aon:column>
+ 										</aon:column>
 			
-										<aon:column>
+										<aon:column styleClass="#{saleInvoice.deliveryTransferManager.selectedDeliveryId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 											</f:facet>
 											<aon:outputText value="#{to.referenceCode}" />
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{saleInvoice.deliveryTransferManager.selectedDeliveryId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_date}" />
 											</f:facet>
@@ -102,7 +111,7 @@
 											</aon:outputText>
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{saleInvoice.deliveryTransferManager.selectedDeliveryId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<h:outputText value="#{customerBundle.customer_customer}" />
 											</f:facet>
@@ -111,7 +120,7 @@
 											</aon:outputText>
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{saleInvoice.deliveryTransferManager.selectedDeliveryId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_total}" />
 											</f:facet>
@@ -119,6 +128,19 @@
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
 										</aon:column>
+
+										<aon:column styleClass="#{saleInvoice.deliveryTransferManager.selectedDeliveryId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:commandButton value="&#160;" immediate="true"
+												title="#{financeBundle.finance_invoice_see_delivery_details}"
+												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
+												actionListener="#{saleInvoice.deliveryTransferManager.onSelectDelivery}"
+												reRender="deliveryData,detailDataContainer" ajaxSingle="true">
+											</aon:commandButton>															
+ 										</aon:column>
+			
 									</aon:dataTable>
 					
 									<aon:dataScroller2 for="deliveryData" showNote="true" />
