@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Transferencia">
+
+ <field name="type" value="2" format="AlphaNumeric" pattern="X(1)" />
+ <field name="cod_presenter" value="bean" bean="LOT" property="presenterCode" format="Numeric" pattern="9(5)" />
+ <field name="cod_aplicacion" value="TRA" format="AlphaNumeric" pattern="X(3)" />
+ <field name="cod_proceso" value="bean" bean="LOT" property="aplicationCode" format="Numeric" pattern="9(2)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(9)" />
+ <field name="cod_emisor" value="bean" bean="RELATION" property="emitterCode" format="Numeric" pattern="9(5)" />
+ <field name="numero_orden" value="bean" bean="RELATION" property="orderNumber" format="Numeric" pattern="9(5)" />
+ <field name="numero_transferencia" value="bean" bean="TRANSFER" property="numberCode" format="Numeric" pattern="9(5)" />
+ <field name="ccc" value="bean" bean="TRANSFER_ACCOUNT" property="ccc" format="CCC" pattern="ESDC" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="importe" value="bean" bean="TRANSFER" property="amount" format="Numeric" pattern="9(13)V99" />
+ <field name="nombre_beneficiario_1" value="bean" bean="TRANSFER" property="recipientNamePart1" format="AlphaNumeric" pattern="X(36)" />
+ <field name="nombre_beneficiario_2" value="bean" bean="TRANSFER" property="recipientNamePart2" format="AlphaNumeric" pattern="X(36)" />
+ <field name="nombre_beneficiario_3" value="bean" bean="TRANSFER" property="recipientNamePart3" format="AlphaNumeric" pattern="X(36)" />
+ <field name="domicilio_beneficiario" value="bean" bean="TRANSFER" property="recipientAddress" format="AlphaNumeric" pattern="X(36)" />
+ <field name="plaza_beneficiario" value="bean" bean="TRANSFER" property="recipientCounty" format="AlphaNumeric" pattern="X(36)" />
+ <field name="provincia_beneficiario" value="bean" bean="TRANSFER" property="recipientCountry" format="AlphaNumeric" pattern="X(36)" />
+ <field name="concepto_1" value="bean" bean="TRANSFER" property="conceptPart1" format="AlphaNumeric" pattern="X(36)" />
+ <field name="concepto_2" value="bean" bean="TRANSFER" property="conceptPart2" format="AlphaNumeric" pattern="X(36)" />
+ <field name="accountOf_1" value="bean" bean="TRANSFER" property="accountOfPart1" format="AlphaNumeric" pattern="X(36)" />
+ <field name="accountOf_2" value="bean" bean="TRANSFER" property="accountOfPart2" format="AlphaNumeric" pattern="X(36)" />
+ <field name="tipo" value="bean" bean="TRANSFER" property="type" format="AlphaNumeric" pattern="X(1)" />
+ <field name="ref_beneficiario" value="bean" bean="TRANSFER" property="recipientReference" format="AlphaNumeric" pattern="X(12)" />
+ <field name="clave_autentificacion" value="bean" bean="TRANSFER" property="authKey" format="Numeric" pattern="9(6)" />
+ <field name="nif_beneficiario" value="bean" bean="TRANSFER" property="recipientDocument" format="AlphaNumeric" pattern="X(9)" />
+ <field name="ref_para_beneficiario" value="bean" bean="TRANSFER" property="recipientForReference" format="AlphaNumeric" pattern="X(13)" />
+ <field name="ident_beneficiario" value="bean" bean="TRANSFER" property="recipientIdent" format="AlphaNumeric" pattern="X(18)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(21)" />
+ 
+</register>

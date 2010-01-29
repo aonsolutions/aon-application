@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="balanceForm">
+
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_balance_sheet}" />
+				<ui:param name="skipResetButton" value="true" />
+
+				<ui:define name="toolbarActions">
+					<aon:methodParam name="searchActionListener" value="#{balanceSheet.onReset}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="balance_sheet_search" />
+				</ui:define>
+
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink value="&#160;" target="_blank"
+						action="#{report.onExecute}"
+						title="#{bundle.aon_listing} MS Excel"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="officialBalance" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="officialBalance" />
+					</h:commandLink>
+
+				</ui:define>
+
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:editDataTable id="balanceDetailData"
+					value="#{balanceSheet.balanceModel}" var="to" rows="150"
+					columnClasses="aon-editDataTable-textColumn,
+								   aon-editDataTable-numberColumn,
+								   aon-editDataTable-numberColumn">
+
+					<f:facet name="header">
+						<rich:columnGroup>
+							<rich:column colspan="4">
+								<aon:outputText
+									value="#{balanceSheet.balance.name} (#{balanceSheet.parameters.period.id})" />
+							</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+
+					<rich:columnGroup rendered="#{to.title}">
+						<rich:column colspan="4"
+							style="font-weight:bold;background-color: #555555; color: white;text-align: center; font-size: 1.2em;">
+							<aon:outputText 
+								style="padding-left: #{to.level * 15}px;"
+								value="#{to.detail.description}&#160;" />
+						</rich:column>
+					</rich:columnGroup>
+
+					<aon:column rendered="#{!to.title}">
+						<f:facet name="header">
+						</f:facet>
+						
+						<h:commandLink immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							rendered="#{!to.detail.internalCalculation and to.detail.accounts != null and to.detail.accounts != '' and to.amount != 0}"
+							actionListener="#{balanceSheet.onAccountStatement}"
+							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
+							title="#{accountingBundle.accounting_statement_module}"
+							action="account_statement_account_list">
+<!-- 
+							action="account_statement_list">
+ -->
+							<aon:outputText 
+								value="#{to.detail.description}&#160;" />
+						</h:commandLink>
+						<aon:outputText 
+							rendered="#{to.detail.internalCalculation or to.detail.accounts == null or to.detail.accounts == '' or to.amount == 0}"
+							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
+							value="#{to.detail.description}&#160;" />
+						
+						<aon:div rendered="#{balanceSheet.flagAccounts}">
+							<aon:outputText 
+								style="font-size: 0.9em;font-style: italic;margin-left: 50px;"
+								value="#{to.detail.accounts}&#160;" />
+						</aon:div>
+					</aon:column>
+
+					<aon:column rendered="#{!to.title}">
+						<f:facet name="header">
+							<aon:outputText value="#{balanceSheet.parameters.period.id}" />
+						</f:facet>
+						<aon:outputText value="#{to.amount}"
+							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}">
+							<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column rendered="#{!to.title}">
+						<f:facet name="header">
+							<aon:outputText value="#{balanceSheet.previousPeriod.id}" />
+						</f:facet>
+						<aon:outputText value="#{to.previousAmount}"
+							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}">
+							<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
+						</aon:outputText>
+					</aon:column>
+				</aon:editDataTable>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

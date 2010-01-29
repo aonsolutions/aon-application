@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS ENTITY="JSFProcess">
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:" SHAPE="32,17,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::0" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="home::#homepage.xhtml" NAME="output" PATH="/homepage.xhtml"
+    TARGET="rules:#homepage.xhtml" TITLE="home"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::1" SHAPE="32,129,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::1" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="logout::#home.jsf" NAME="output" PATH="/home.jsf"
+    TARGET="rules:#home.jsf" TITLE="logout"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::2" SHAPE="32,241,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::2" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="index::#index.xhtml" NAME="output" PATH="/index.xhtml"
+    TARGET="rules:#index.xhtml" TITLE="index"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::3" SHAPE="32,353,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::3" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="user_list::#facelet#user#list.xhtml" NAME="output"
+    PATH="/facelet/user/list.xhtml"
+    TARGET="rules:#facelet#user#list.xhtml" TITLE="user_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="user_form::#facelet#user#form.xhtml" NAME="output1"
+    PATH="/facelet/user/form.xhtml"
+    TARGET="rules:#facelet#user#form.xhtml" TITLE="user_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="user_search::#facelet#user#search.xhtml" NAME="output2"
+    PATH="/facelet/user/search.xhtml"
+    TARGET="rules:#facelet#user#search.xhtml" TITLE="user_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="user_changepassword_form::#facelet#user#changePassword.xhtml"
+    NAME="output3" PATH="/facelet/user/changePassword.xhtml"
+    TARGET="rules:#facelet#user#changePassword.xhtml" TITLE="user_changepassword_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="changepassword_form::#facelet#user#changePasswordContent.xhtml"
+    NAME="output4" PATH="/facelet/user/changePasswordContent.xhtml"
+    TARGET="rules:#facelet#user#changePasswordContent.xhtml" TITLE="changepassword_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="user_change_form::#facelet#user#changeUser.xhtml" NAME="output5"
+    PATH="/facelet/user/changeUser.xhtml"
+    TARGET="rules:#facelet#user#changeUser.xhtml" TITLE="user_change_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="changeuser_form::#facelet#user#changeUserContent.xhtml"
+    NAME="output6" PATH="/facelet/user/changeUserContent.xhtml"
+    TARGET="rules:#facelet#user#changeUserContent.xhtml" TITLE="changeuser_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::4" SHAPE="32,593,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::4" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="user::#facelet#user#list.xhtml" NAME="output"
+    PATH="/facelet/user/list.xhtml"
+    TARGET="rules:#facelet#user#list.xhtml" TITLE="user"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="work_group::#facelet#workGroup#grid.xhtml" NAME="output1"
+    PATH="/facelet/workGroup/grid.xhtml"
+    TARGET="rules:#facelet#workGroup#grid.xhtml" TITLE="work_group"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="scope::#facelet#scope#grid.xhtml" NAME="output2"
+    PATH="/facelet/scope/grid.xhtml"
+    TARGET="rules:#facelet#scope#grid.xhtml" TITLE="scope"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="application_list::#facelet#profile#application#list.xhtml"
+    NAME="output3" PATH="/facelet/profile/application/list.xhtml"
+    TARGET="rules:#facelet#profile#application#list.xhtml" TITLE="application_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="profile_list::#facelet#profile#list.xhtml" NAME="output4"
+    PATH="/facelet/profile/list.xhtml"
+    TARGET="rules:#facelet#profile#list.xhtml" TITLE="profile_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="profile_form::#facelet#profile#form.xhtml" NAME="output5"
+    PATH="/facelet/profile/form.xhtml"
+    TARGET="rules:#facelet#profile#form.xhtml" TITLE="profile_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="user_profile_form::#facelet#profile#user#form.xhtml"
+    NAME="output6" PATH="/facelet/profile/user/form.xhtml"
+    TARGET="rules:#facelet#profile#user#form.xhtml" TITLE="user_profile_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sms::#facelet#messaging#sms#form.xhtml" NAME="output7"
+    PATH="/facelet/messaging/sms/form.xhtml"
+    TARGET="rules:#facelet#messaging#sms#form.xhtml" TITLE="sms"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="fax::#facelet#messaging#fax#form.xhtml" NAME="output8"
+    PATH="/facelet/messaging/fax/form.xhtml"
+    TARGET="rules:#facelet#messaging#fax#form.xhtml" TITLE="fax"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::5" SHAPE="32,2193,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::5" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="corporate_identity::#facelet#corporateIdentity#form.xhtml"
+    NAME="output" PATH="/facelet/corporateIdentity/form.xhtml"
+    TARGET="rules:#facelet#corporateIdentity#form.xhtml" TITLE="corporate_identity"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#corporateIdentity#form.xhtml"
+  PATH="/facelet/corporateIdentity/form.xhtml" SHAPE="240,2209,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#index.xhtml"
+  PATH="/index.xhtml" SHAPE="240,257,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#workGroup#grid.xhtml"
+  PATH="/facelet/workGroup/grid.xhtml" SHAPE="304,609,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#profile#list.xhtml"
+  PATH="/facelet/profile/list.xhtml" SHAPE="304,1201,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#user#list.xhtml" PATH="/facelet/user/list.xhtml" SHAPE="304,369,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#scope#grid.xhtml"
+  PATH="/facelet/scope/grid.xhtml" SHAPE="304,977,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#messaging#fax#form.xhtml"
+  PATH="/facelet/messaging/fax/form.xhtml" SHAPE="304,1649,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#home.jsf"
+  PATH="/home.jsf" SHAPE="240,145,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#user#changePasswordContent.xhtml"
+  PATH="/facelet/user/changePasswordContent.xhtml" SHAPE="304,2097,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#profile#application#list.xhtml"
+  PATH="/facelet/profile/application/list.xhtml" SHAPE="304,1089,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#profile#user#form.xhtml"
+  PATH="/facelet/profile/user/form.xhtml" SHAPE="304,1425,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#messaging#sms#form.xhtml"
+  PATH="/facelet/messaging/sms/form.xhtml" SHAPE="304,1537,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#profile#form.xhtml"
+  PATH="/facelet/profile/form.xhtml" SHAPE="304,1313,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#homepage.xhtml"
+  PATH="/homepage.xhtml" SHAPE="240,33,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#user#form.xhtml" PATH="/facelet/user/form.xhtml" SHAPE="304,1761,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#user#search.xhtml"
+  PATH="/facelet/user/search.xhtml" SHAPE="304,1873,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#user#changePassword.xhtml"
+  PATH="/facelet/user/changePassword.xhtml" SHAPE="304,1985,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#user#changeUser.xhtml"
+  PATH="/facelet/user/changeUser.xhtml" SHAPE="304,673,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#user#changeUserContent.xhtml"
+  PATH="/facelet/user/changeUserContent.xhtml" SHAPE="304,1153,0,0"/>
+</PROCESS>

@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="campaignList">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{campaignBundle.aon_process_monitor}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+<!-- 
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							actionListener="#{campaign.onReset}" action="campaign_form"
+							accesskey="#{bundle.aon_key_new}" />
+ -->
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							actionListener="#{campaign.onEditSearch}"
+							action="campaign_search" accesskey="#{bundle.aon_key_search}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div id="campaignData" styleClass="aon-scroll-area">
+				<aon:dataTable id="campaignDataList" value="#{campaign.model}"
+					rows="20" var="to" 
+					rendered="#{campaign.model.rowCount > 0}">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandButton
+							styleClass="aon-icon-commandButton aon-icon-rowSelector"
+							actionListener="#{campaign.onSelect}"
+							action="campaign_form">
+						</aon:commandButton>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_description}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{campaignBundle.aon_initial_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.startDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{campaignBundle.aon_final_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.endDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{campaignBundle.process_process}" />
+						</f:facet>
+						<aon:outputText value="#{to.process.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{projectBundle.activity_activity_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.activityType.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" />
+					</aon:column>
+
+				</aon:dataTable>
+				<aon:dataScroller2 for="campaignDataList" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

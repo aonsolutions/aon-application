@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="commercialTrackingSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_tracking_module}" />
+				<ui:param name="controller" value="#{commercialTracking}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{commercialTracking.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="commercialTracking_list" />				
+				
+					<aon:outputText value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputLabel for="CommercialTracking_date-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="CommercialTracking_date-From"
+							valueChangeListener="#{commercialTracking.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+			
+						<aon:outputLabel for="CommercialTracking_date-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="CommercialTracking_date-To"
+							valueChangeListener="#{commercialTracking.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+					</aon:div>
+			
+					<aon:outputLabel for="CommercialTracking_seller_id"
+						value="#{salesBundle.sales_seller}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="CommercialTracking_seller_id"
+							lookup="#{sellerLookup}"
+							reRender="CommercialTracking_seller_name"
+							value="#{commercialTrackingSearch.seller.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="CommercialTracking_seller_lookup"
+							windowTitle="#{appBundle.aon_lookup_seller}"
+							selectReRender="CommercialTracking_seller_id,CommercialTracking_seller_name"
+							lookup="#{sellerLookup}" minHeight="440"
+							property="#{commercialTrackingSearch.seller}">
+						</aon:lookupButton>
+						<aon:inputText id="CommercialTracking_seller_name"
+							value="#{(commercialTrackingSearch.seller.registry.name!=null)?(commercialTrackingSearch.seller.registry.fullName):('')}"
+							size="60" disabled="true" />
+					</aon:div>
+			
+					<aon:outputLabel for="CommercialTracking_target_id"
+						value="#{target.bundle.commercial_target}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="CommercialTracking_target_id"
+							lookup="#{targetLookup}"
+							reRender="CommercialTracking_target_name"
+							value="#{commercialTrackingSearch.target.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="CommercialTracking_target_lookup"
+							windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
+							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
+							lookup="#{targetLookup}" minHeight="460" minWidth="650"
+							property="#{commercialTrackingSearch.target}">
+						</aon:lookupButton>
+						<aon:inputText id="CommercialTracking_target_name"
+							value="#{(commercialTrackingSearch.target.registry.name!=null)?(commercialTrackingSearch.target.registry.fullName):('')}"
+							size="60" disabled="true" />
+					</aon:div>
+			
+					<aon:outputLabel for="CommercialTracking_next_activity_id"
+						value="#{commercialBundle.commercial_tracking_activity}" />
+					<aon:selectOneMenu id="CommercialTracking_next_activity_id"
+						value="#{commercialCollections.activity}" 
+						valueChangeListener="#{commercialTracking.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{commercialCollections.activities}" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel for="CommercialTracking_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="CommercialTracking_status"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{commercialTracking.addEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{commercialCollections.commercialTrackingStatuses}" />
+					</aon:selectOneMenu>					
+					
+					<aon:outputLabel for="CommercialTracking_comments"
+						value="#{bundle.aon_comment}" />
+					<aon:inputText id="CommercialTracking_comments" size="75"
+						valueChangeListener="#{commercialTracking.addExpression}" />
+
+				</ui:define>
+			
+			</ui:decorate>
+							 
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />		
+	</ui:define>
+		
+</ui:composition>

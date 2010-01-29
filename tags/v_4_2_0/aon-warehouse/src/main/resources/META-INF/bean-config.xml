@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="">
+		<pojo>com.code.aon.warehouse.Delivery</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.DeliveryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.warehouse.DeliveryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.warehouse.event.DeliveryDetailBeanListener</listener>
+		</listeners>
+	</bean>
+	
+</bean-config>
