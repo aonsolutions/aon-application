@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div id="#{supplier_id}Container" rendered="#{renderedAttr}">
+		<a4j:region>
+			<aon:inputText id="#{supplier_id}" value="#{supplierEntity}"
+				disabled="#{disabled}" required="#{required}" size="5">
+				<!--
+				El siguiente a4j:support activa el acelerador F2, para mostrar la ventana 
+				de seleccion.
+			 -->
+				<a4j:support event="onkeyup"
+					onsubmit="if(event.keyCode != 113) return false;"
+					eventsQueue="#{supplier_id}KeyUp" ignoreDupResponses="true"
+					requestDelay="100" actionListener="#{supplierWizard.onShow}"
+					immediate="true" reRender="#{supplier_id}Container"
+					oncomplete="searchFieldForFocus('#{supplier_id}searchName')">
+				</a4j:support>
+
+				<a4j:support eventsQueue="#{supplier_id}OnChange"
+					actionListener="#{supplierWizard.onLookup}"
+					ignoreDupResponses="true" requestDelay="100" event="onchange"
+					reRender="#{supplier_id}Name,#{reRenderAttr}">
+					<a4j:actionparam name="supplierActionParam"
+						value="#{supplierELExpression}"
+						assignTo="#{supplierWizard.valueExpression}">
+					</a4j:actionparam>
+					<a4j:actionparam name="lookupActionParam"
+						value="#{onLookupELExpression}"
+						assignTo="#{supplierWizard.extendedAttributesValueExpression}">
+					</a4j:actionparam>
+					<a4j:actionparam name="valueChangeListener"
+						value="#{valueChangeListener}"
+						assignTo="#{supplierWizard.valueChangeListener}">
+					</a4j:actionparam>
+				</a4j:support>
+			</aon:inputText>
+		</a4j:region>
+		<a4j:commandButton styleClass="aon-lookupButton" value=""
+			disabled="#{disabled}"
+			actionListener="#{supplierWizard.onShow}" immediate="true"
+			oncomplete="searchFieldForFocus('#{supplier_id}searchName')"
+			reRender="#{supplier_id}Container" />
+		<aon:div id="#{supplier_id}Name" style="display:inline">
+			<aon:outputText rendered="#{supplierEntity.registry.name != null}"
+				value="#{supplierEntity.registry.fullName}" />
+			<aon:outputText rendered="#{supplierEntity.registry.name == null}"
+				value="---------------------------------" />
+		</aon:div>
+		<rich:modalPanel id="#{supplier_id}supplierPanel" minHeight="600"
+			rendered="#{supplierWizard.visible}" showWhenRendered="true"
+			minWidth="650" top="50" left="100" height="600" width="650"
+			zindex="2000" resizeable="true">
+
+			<a4j:support event="onkeyup"
+				onsubmit="if(event.keyCode != 27) return false;"
+				eventsQueue="#{supplier_id}EscKeyUp" ignoreDupResponses="true"
+				requestDelay="100" actionListener="#{supplierWizard.onClose}"
+				immediate="true" reRender="#{supplier_id}Container"
+				oncomplete="searchFieldForFocus('#{supplier_id}')">
+			</a4j:support>
+
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<h:outputText value="#{supplierBundle.supplier_selection}" />
+				</aon:div>
+			</f:facet>
+			<f:facet name="controls">
+				<a4j:commandButton type="button" styleClass="aon-popupWindow-close"
+						actionListener="#{supplierWizard.onClose}" immediate="true"
+						reRender="#{supplier_id}Container"
+						oncomplete="searchFieldForFocus('#{supplier_id}')">
+				</a4j:commandButton>
+			</f:facet>
+			<a4j:region>
+				<aon:panelGrid columns="2">
+					<aon:outputText value="#{supplierBundle.supplier_name}" />
+					<aon:inputText value="#{supplierWizard.name}" size="40">
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="#{supplier_id}nm" ignoreDupResponses="true"
+							requestDelay="100"
+							actionListener="#{supplierWizard.inputChanged}" />
+					</aon:inputText>
+
+					<aon:outputText value="#{supplierBundle.supplier_surname}" />
+					<aon:inputText value="#{supplierWizard.surname}" size="40">
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="#{supplier_id}sn" ignoreDupResponses="true"
+							requestDelay="100"
+							actionListener="#{supplierWizard.inputChanged}" />
+					</aon:inputText>
+
+					<aon:outputText value="#{supplierBundle.supplier_alias}" />
+					<aon:inputText value="#{supplierWizard.alias}" size="20">
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="#{supplier_id}ac" ignoreDupResponses="true"
+							requestDelay="100"
+							actionListener="#{supplierWizard.inputChanged}" />
+					</aon:inputText>
+
+					<aon:outputText value="#{supplierBundle.supplier_document}" />
+					<aon:div>
+						<aon:inputText value="#{supplierWizard.document}" size="15">
+							<a4j:support event="onchange" ajaxSingle="true"
+								eventsQueue="#{supplier_id}ic" ignoreDupResponses="true"
+								requestDelay="100"
+								actionListener="#{supplierWizard.inputChanged}" />
+						</aon:inputText>
+						<a4j:commandButton value="#{bundle.aon_search}"
+							style="margin-left: 5px;"
+							actionListener="#{supplierWizard.onSearch}"
+							accesskey="#{bundle.aon_key_search}"
+							eventsQueue="#{supplier_id}SearchQueue" ignoreDupResponses="true"
+							requestDelay="100" reRender="#{supplier_id}tableContainer"
+							oncomplete="selectFirstRow('#{supplier_id}table')">
+						</a4j:commandButton>
+					</aon:div>
+				</aon:panelGrid>
+			</a4j:region>
+
+			<rich:separator height="2px;"
+				style="margin-top: 5px;margin-bottom: 5px;" />
+
+			<aon:div id="#{supplier_id}tableContainer">
+				<aon:div styleClass="aon-form-note"
+					rendered="#{supplierWizard.model.rowCount == 0}">
+					<aon:div styleClass="aon-form-note-internal">
+						<aon:panelGroup>
+							<aon:outputText value="#{bundle.aon_search_no_results}" />
+						</aon:panelGroup>
+					</aon:div>
+				</aon:div>
+				<aon:editDataTable id="#{supplier_id}table"
+					value="#{supplierWizard.model}" var="cust"
+					rendered="#{supplierWizard.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-iconColumn,
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn">
+					<h:column>
+						<aon:commandButton id="#{supplier_id}RowSelector"
+							styleClass="aon-editDataTable-button aon-icon-rowSelector"
+							actionListener="#{supplierWizard.onSelectToRegistry}" 
+							immediate="true" ajaxSingle="true" 
+							eventsQueue="#{supplier_id}SelectQueue" requestDelay="100" 
+							ignoreDupResponses="true" onkeyup="tableKeyUp(event.keyCode)"
+							reRender="#{supplier_id}Container,#{reRenderAttr}">
+							<a4j:actionparam name="supplierActionParam"
+								value="#{supplierELExpression}"
+								assignTo="#{supplierWizard.valueExpression}">
+							</a4j:actionparam>
+							<a4j:actionparam name="lookupActionParam"
+								value="#{onLookupELExpression}"
+								assignTo="#{supplierWizard.extendedAttributesValueExpression}">
+							</a4j:actionparam>
+							<a4j:actionparam name="valueChangeListener"
+								value="#{valueChangeListener}"
+								assignTo="#{supplierWizard.valueChangeListener}">
+							</a4j:actionparam>
+						</aon:commandButton>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<aon:outputText value="#{supplierBundle.supplier_code}" />
+						</f:facet>
+						<aon:outputText value="#{cust.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<aon:outputText value="#{supplierBundle.supplier_document}" />
+						</f:facet>
+						<aon:outputText value="#{cust.registry.document}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<aon:outputText value="#{supplierBundle.supplier_name}" />
+						</f:facet>
+						<aon:outputText value="#{cust.registry.fullName}" />
+					</h:column>
+				</aon:editDataTable>
+
+				<aon:panelGrid columns="2" style="border: 0;" cellpadding="5"
+					columnClasses="aon-dataScroller-text,aon-dataScroller-buttons">
+
+					<aon:div style="padding-left: 2em;">
+						<a4j:commandButton immediate="true"
+							eventsQueue="#{supplier_id}PreviousQueue" requestDelay="100"
+							ignoreDupResponses="true" reRender="#{supplier_id}tableContainer"
+							styleClass="aon-dataScroller-button aon-dataScroller-button-previous"
+							rendered="#{supplierWizard.previousPageAvailable}"
+							actionListener="#{supplierWizard.previousPage}"
+							oncomplete="selectFirstRow('#{supplier_id}table')" />
+
+						<a4j:commandButton immediate="true"
+							eventsQueue="#{supplier_id}NextQueue" ignoreDupResponses="true"
+							requestDelay="100" reRender="#{supplier_id}tableContainer"
+							styleClass="aon-dataScroller-button aon-dataScroller-button-next"
+							rendered="#{supplierWizard.nextPageAvailable}"
+							actionListener="#{supplierWizard.nextPage}"
+							oncomplete="selectFirstRow('#{supplier_id}table')" />
+					</aon:div>
+
+				</aon:panelGrid>
+
+			</aon:div>
+		</rich:modalPanel>
+
+		<a4j:loadScript src="/js/extendedInput.js" />
+
+	</aon:div>
+</ui:composition>
