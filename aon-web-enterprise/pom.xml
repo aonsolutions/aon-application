@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.7.0</version>
+			<version>4.8.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>			
 		<dependency>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -101,7 +101,7 @@
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.10.0</version>
+			<version>4.11.0</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
