@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div styleClass="aon-margin-bottom aon-margin-top">
+		<aon:div styleClass="aon-form-group-title">
+			<aon:div styleClass="aon-form-group-title-internal">
+				<aon:outputText value="#{webmailBundle.webmail_contactGroup_data}"/>
+			</aon:div>
+		</aon:div>
+
+		<aon:panelGrid columns="2" dir="true">
+		
+			<aon:outputLabel for="GroupContact_displayName"
+				value="#{webmailBundle.webmail_contact_displayName}" />
+			<aon:inputText id="GroupContact_displayName"
+				maxlength="128" size="77" required="true"
+				value="#{contact.to.displayName}" />
+	
+			<aon:outputLabel for="GroupContact_contacts"
+				value="#{webmailBundle.webmail_email}" />
+			<aon:pickList id="GroupContact_contacts"
+				copyAllControlLabel = "#{webmailBundle.webmail_copyAll}"
+				copyControlLabel = "#{webmailBundle.webmail_copy}"
+				removeControlLabel = "#{webmailBundle.webmail_remove}" 
+				removeAllControlLabel ="#{webmailBundle.webmail_removeAll}"
+				styleClass="aon-margin-top"
+				sourceListWidth="250px" targetListWidth="250px"
+				converter="#{contact.groupContactConverter}"
+				value="#{contact.to.contacts}" required="true">
+		        <f:selectItems value="#{contact.availableContacts}"/>
+			</aon:pickList>
+
+		</aon:panelGrid>
+		
+	</aon:div>
+
+</ui:composition>
