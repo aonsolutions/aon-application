@@ -116,7 +116,7 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	public List<Integer> getSegmentsIds() {
 		List<Integer> ids = new LinkedList<Integer>();
 		for(String segment : getSegments()) {
-			if (! StringUtils.isBlank(segment)) {
+			if (!StringUtils.isBlank(segment)) {
 				ids.add(Integer.valueOf(segment));
 			}
 		}
@@ -141,7 +141,7 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		return preffix;
 	}
 	
-	private String resolveAlias(String alias) throws ManagerBeanException {
+	protected String resolveAlias(String alias) throws ManagerBeanException {
 		return getController().resolveAlias(getPreffix() + alias);
 	}
 	
