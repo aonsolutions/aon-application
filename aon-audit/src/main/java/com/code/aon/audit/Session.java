@@ -15,14 +15,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 
 /**
@@ -48,12 +44,6 @@ public class Session implements ITransferObject {
 	@Index(name="IDX_SESSION_SESSION_ID")
     private String sessionId;
 
-	@Column(name = "REMOTE_ADDRESS", nullable = false, length = 15)
-    private String remoteAddress;
-
-	@Column(name = "REMOTE_HOST", nullable = false, length = 64)
-    private String remoteHost;
-	
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="APPLICATION_ID", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_SESSION_APPLICATION")
@@ -192,81 +182,6 @@ public class Session implements ITransferObject {
 	 */
 	public void setEndDate(Date end) {
 		this.endDate = end;
-	}
-
-	/**
-	 * Gets the remote address.
-	 * 
-	 * @return the remote address
-	 */
-	public String getRemoteAddress() {
-		return remoteAddress;
-	}
-
-	/**
-	 * Sets the remote address.
-	 * 
-	 * @param remoteAddress the new remote address
-	 */
-	public void setRemoteAddress(String remoteAddress) {
-		this.remoteAddress = remoteAddress;
-	}
-
-	/**
-	 * Gets the remote host.
-	 * 
-	 * @return the remote host
-	 */
-	public String getRemoteHost() {
-		return remoteHost;
-	}
-
-	/**
-	 * Sets the remote host.
-	 * 
-	 * @param remoteHost the new remote host
-	 */
-	public void setRemoteHost(String remoteHost) {
-		this.remoteHost = remoteHost;
 	}	
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final Session o = (Session) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.application, o.application)
-				.append(this.endDate, o.endDate)
-				.append(this.remoteAddress, o.remoteAddress)
-				.append(this.remoteHost, o.remoteHost)
-				.append(this.sessionId, o.sessionId)
-				.append(this.startDate, o.startDate)
-				.append(this.user, o.user)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(application)
-			.append(endDate)
-			.append(id)
-			.append(remoteAddress)
-			.append(remoteHost)
-			.append(sessionId)
-			.append(startDate)
-			.append(user)
-			.toHashCode();
-	}
 
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}	
-	
 }

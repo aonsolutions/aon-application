@@ -13,13 +13,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 
 /**
@@ -168,34 +164,4 @@ public class Domain implements ITransferObject {
 	public void setApplications( List<DomainApplication> applications ) {
 		this.applications = applications;
 	}	
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final Domain o = (Domain) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.enableAudit, o.enableAudit)
-				.append(this.name, o.name)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(enableAudit)
-			.append(id)
-			.append(name)
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
-	
 }
