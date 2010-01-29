@@ -4,8 +4,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -69,7 +69,7 @@
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
 						value="#{loanFeeEntry.header.feePeriod}">
-						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
 					</aon:selectOneMenu>
 
@@ -90,31 +90,20 @@
 
 					<aon:outputLabel for="Account_description"
 						value="#{bundle.aon_concept}" />
-<!-- 
 					<aon:inputText id="Account_description" required="true"
 						value="#{loanFeeEntry.header.description}" size="60" />
- -->
-					<rich:comboBox id="Account_concept"
-						suggestionValues="#{accountingCollections.conceptsDescriptions}"
-						value="#{loanFeeEntry.header.description}" required="true"
-						maxlength="32" width="200" 
-						directInputSuggestions="true"
-						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
-						buttonDisabledStyle="display:none;"
-						buttonInactiveStyle="display:none;"
-						buttonStyle="display:none;"/>
 
 					<aon:outputLabel for="Account_amortization"
 						value="#{accountingBundle.accounting_amortization}" />
 					<aon:inputText id="Account_amortization" required="true"
-						focus="Account_interest" reRender="Account_fee,loanFeeAmount"
+						focus="Account_interest" reRender="Account_fee"
 						value="#{loanFeeEntry.header.amortization}" size="10" />
 
 					<aon:outputLabel for="Account_interest"
 						value="#{accountingBundle.accounting_interest}" />
 					<aon:div>
 					<aon:inputText id="Account_interest" required="true"
-						focus="Account_expenses" reRender="Account_fee,loanFeeAmount"
+						focus="Account_expenses" reRender="Account_fee"
 						value="#{loanFeeEntry.header.interest}" size="10" />
 						<aon:selectOneMenu id="Account_interest_account" 
 							value="#{loanFeeEntry.header.interestAccount}"
@@ -127,7 +116,7 @@
 						value="#{accountingBundle.accounting_expenses}"/>
 					<aon:div>
 						<aon:inputText id="Account_expenses" required="true"
-							focus="save" reRender="Account_fee,loanFeeAmount"
+							focus="save" reRender="Account_fee"
 							value="#{loanFeeEntry.header.expenses}" size="10" />
 						<aon:selectOneMenu id="Account_expenses_account" 
 							value="#{loanFeeEntry.header.expensesAccount}"
@@ -180,19 +169,12 @@
 								value="#{loanFeeEntry.header.loan.registryBank.fullName}" />
 
 							<aon:outputText value="#{bundle.aon_amount}" />
-							<aon:outputText
-								value="#{loanFeeEntry.header.loan.amount}">
+							<aon:outputText value="#{loanFeeEntry.header.loan.amount}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 
 							<aon:outputText value="#{accountingBundle.accounting_expenses}" />
 							<aon:outputText value="#{loanFeeEntry.header.loan.expenses}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-
-							<aon:outputText value="#{accountingBundle.accounting_fee_amount}" />
-							<aon:outputText id="loanFeeAmount" value="#{loanFeeEntry.header.loan.feeAmount}"
-								style="color:#{loanFeeEntry.header.sameAmount?'black;':'red;'}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 

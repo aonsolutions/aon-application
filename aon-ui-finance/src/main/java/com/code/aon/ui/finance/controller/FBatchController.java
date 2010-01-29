@@ -236,7 +236,9 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-            criteria.addGreaterThanExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
+            Expression amountExpr = ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
+            Expression expensesExpr = ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_EXPENSES), new Double(0));
+            criteria.addExpression(ExpressionUtilities.getOrExpression(amountExpr, expensesExpr));
             Expression pendingExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
             Expression returnedExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
             criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));

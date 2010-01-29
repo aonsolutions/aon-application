@@ -18,10 +18,10 @@
 				<ui:param name="controller" value="#{task}" />
 				<ui:define name="additionalToolbarContent">
 						<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}" 
-						rendered="#{role.monitorRole}">
+						rendered="#{aonRole.taskMonitor}">
 							<a4j:support event="onclick" reRender="toolbar,taskForm" />
 						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="monitor" value="Monitor" rendered="#{role.monitorRole}"/>
+						<aon:outputLabel for="monitor" value="Monitor" rendered="#{aonRole.taskMonitor}"/>
 				</ui:define>
 			</ui:decorate>
 

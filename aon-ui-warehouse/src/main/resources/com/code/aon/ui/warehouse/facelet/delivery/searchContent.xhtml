@@ -54,13 +54,9 @@
 		<f:selectItems value="#{commonCollections.securityLevels}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="Delivery_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Delivery_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{deliverySearch.deliveryStatuses}">
 		<f:selectItems value="#{warehouseCollections.deliveryStatuses}" />
-	</aon:selectOneMenu>
+	</aon:selectManyCheckbox>							
 
 </ui:composition>

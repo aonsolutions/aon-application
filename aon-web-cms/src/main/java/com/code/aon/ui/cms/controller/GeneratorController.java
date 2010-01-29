@@ -24,7 +24,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.velocity.ActivityGenerator;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
@@ -103,8 +102,6 @@ public class GeneratorController implements Constants, ICMSConstants {
 			new ProductGenerator().generate();
 			//Generar sports
 			new SportGenerator().generate();
-			//Generar actividades
-			new ActivityGenerator().generate();			
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -338,16 +335,6 @@ public class GeneratorController implements Constants, ICMSConstants {
 		}						
 	}
 
-	public void onGenerateActivity(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		try {
-			initGenerator();
-			new ActivityGenerator().generate();
-			finalizeGenerator();
-		} catch ( Throwable th ) {
-			generatorError(th);
-		}
-	}
-
 	private void initSession() {
 		this.initTransState = HibernateUtil.mustBeginTransaction();
 		this.initSessionState = HibernateUtil.mustCloseSession();
@@ -383,10 +370,10 @@ public class GeneratorController implements Constants, ICMSConstants {
 			if ( jsPath.exists() ) {
 				FileUtils.copyDirectoryToDirectory(jsPath, ControllerUtil.getPreviewPath());
 			}
-			new CommonGenerator().generateBasicPages();			
 		} catch (IOException e) {
 			generatorError(e);
 		}
+		new CommonGenerator().generateBasicPages();
 	}
 
 	private void finalizeGenerator() {

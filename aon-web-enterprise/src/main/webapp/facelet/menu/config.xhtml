@@ -41,6 +41,11 @@
 										value="#{configBundle.config_series_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="warehouse" 
+										action="warehouse"
+										value="#{warehouseBundle.warehouse_warehouse_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="tax" 
 										action="tax" 
 										value="#{configBundle.config_tax_module}" />
@@ -49,6 +54,11 @@
 									<aon:commandLink id="payMethod" 
 										action="payMethod" 
 										value="#{configBundle.config_paymethod_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="segment" 
+										action="segment_form" 
+										value="#{registryBundle.registry_segment_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="geotreeParent" 

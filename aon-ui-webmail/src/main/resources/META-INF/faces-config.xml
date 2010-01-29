@@ -14,6 +14,14 @@
    <!-- ************ MANAGED BEANS ************** -->
    <!-- ***************************************** -->
 	<managed-bean>
+        <managed-bean-name>login</managed-bean-name>
+        <managed-bean-class>
+            com.code.aon.ui.webmail.controller.LoginController
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+	<managed-bean>
         <managed-bean-name>webmail</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.controller.WebMailController
@@ -23,7 +31,7 @@
 	
 	<!-- ************** TREE ************** -->
 	<managed-bean>
-        <managed-bean-name>webmailTree</managed-bean-name>
+        <managed-bean-name>tree</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.tree.FoldersTreeBean
         </managed-bean-class>
@@ -33,7 +41,7 @@
 	<!-- ************** END TREE ************** -->
 	
 	<managed-bean>
-        <managed-bean-name>webmailFolder</managed-bean-name>
+        <managed-bean-name>folder</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.controller.FolderController
         </managed-bean-class>
@@ -41,7 +49,7 @@
     </managed-bean>
 	
 	<managed-bean>
-        <managed-bean-name>webmailMessage</managed-bean-name>
+        <managed-bean-name>message</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.controller.MessageController
         </managed-bean-class>
@@ -49,7 +57,7 @@
     </managed-bean>
 	
 	<managed-bean>
-        <managed-bean-name>webmailAttach</managed-bean-name>
+        <managed-bean-name>attach</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.controller.AttachController
         </managed-bean-class>
@@ -57,7 +65,7 @@
     </managed-bean>
 
 	<managed-bean>
-        <managed-bean-name>webmailSearch</managed-bean-name>
+        <managed-bean-name>search</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.controller.SearchController
         </managed-bean-class>
@@ -161,61 +169,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* CONTACT ***************** -->
-	<managed-bean>
-		<managed-bean-name>contact</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.webmail.controller.ContactController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.webmail.Contact</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>contact</value>
-		</managed-property>								
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Contact_displayName</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{contactControllerListener}</value>
-			</list-entries>
-		</managed-property>				
-	</managed-bean>	
 
-	<managed-bean>
-		<managed-bean-name>contactControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.webmail.event.ContactControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
-	
 	<!-- ***************************************** -->
     <!-- ************** CONVERTER ****************** -->
     <!-- ***************************************** -->
     <converter>
-		<converter-id>longString</converter-id>
-		<converter-class>
-			com.code.aon.ui.webmail.converter.LongStringConverter
-		</converter-class>
+            <converter-id>longString</converter-id>
+            <converter-class>
+                com.code.aon.ui.webmail.converter.LongStringConverter
+            </converter-class>
     </converter>
-
-   	<!-- ************* LDAP NAME CONVERTER ***************** -->
-	<converter>
-		<converter-for-class>javax.naming.Name</converter-for-class>
-		<converter-class>com.code.aon.ui.webmail.converter.LdapNameConverter</converter-class>
-	</converter>
 
   <!-- ======================================================================= -->	
   <!-- =========================== Navigation Rules ========================== -->	
@@ -237,56 +200,43 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>folder</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/webmailFolder/folderView.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/folderView.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>message</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/webmailMessage/messageView.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/messageView.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>messageNew</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/webmailMessage/messageNew.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/messageNew.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>messageSearch</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/webmailSearch/messageSearch.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/messageSearch.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>signature_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/signature/list.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/signature/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>signature_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/signature/form.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/signature/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mailAccount_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/mailAccount/list.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/mailAccount/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>mailAccount_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/mailAccount/form.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/mailAccount/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>spam</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/spam/list.xhtml</to-view-id>
+			<to-view-id>/webmail/facelet/spam/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Contact ================= -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contact_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/contact/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>contact_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/webmail/facelet/contact/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-	        <from-outcome>contact_search</from-outcome>
-	        <to-view-id>/com/code/aon/ui/webmail/facelet/contact/search.xhtml</to-view-id>
-	    </navigation-case>
-	</navigation-rule>	
+	
+  <!-- =================== Application Menu Navigation Rules ================= -->	
 
 </faces-config>

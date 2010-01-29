@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.warehouse</artifactId>
-	<version>4.0.0</version>
+	<version>4.3.0</version>
 	<description>AON UI WAREHOUSE</description>
 	<name>AON UI WAREHOUSE</name>
 	<dependencies>
@@ -24,12 +24,6 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
 			<version>4.1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.commercial</artifactId>
-			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -53,13 +47,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>4.3.0</version>
+			<version>4.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance.bridge</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -83,31 +77,31 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.sales</artifactId>
-			<version>4.1.0</version>
+			<version>4.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.1.5</version>
+			<version>4.2.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.3.2</version>
+			<version>4.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.3.0</version>
+			<version>4.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>
-			<version>4.1.0</version>
+			<version>4.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

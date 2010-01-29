@@ -1,6 +1,8 @@
 package com.code.aon.ui.form;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import com.code.aon.ui.util.AonUtil;
 
@@ -10,7 +12,7 @@ import com.code.aon.ui.util.AonUtil;
 public class FormUtil {
 
 	/** Obtains a suitable Logger. */
-	private static final Logger LOGGER = Logger.getLogger(FormUtil.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(FormUtil.class);
 
 	/**
 	 * Gets the controller registered in <code>faces-bean-config.xml</code>
@@ -26,7 +28,7 @@ public class FormUtil {
 		if (o instanceof IController) {
 			return (IController) o;
 		}
-		LOGGER.severe(o + " is not a instance of 'com.code.aon.ui.form.IController'");
+		LOGGER.error("{} is not a instance of 'com.code.aon.ui.form.IController'",o);
 		return null;
 	}
 

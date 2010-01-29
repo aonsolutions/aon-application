@@ -28,6 +28,7 @@
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		

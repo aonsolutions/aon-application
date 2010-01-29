@@ -47,6 +47,7 @@
 					title="#{infowebBundle.infoweb_generate}" action="generator" 
 					value="#{infowebBundle.infoweb_generate}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
+					<aon:actionListener method="#{generator.onInit}" />
 				</aon:commandLink>
 				
 			</aon:div>

@@ -1,6 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +17,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -73,48 +73,21 @@ public class ModularPageOptionController extends BasicI18nController implements 
 
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
 		ModularPageOption mo = (ModularPageOption)getTo();
-		List<SelectItem> idents;
-		CollectionsController collections = (CollectionsController) AonUtil.getRegisteredBean(COLLECTIONS);
-		switch ( mo.getType() ) {
-			case ACTIVITY:
-				idents = collections.getActivityList();
-				break;
-			case ALBUM_CATEGORY:
-				idents = collections.getAlbumCategoryList();
-				break;				
-			case ARTICLE:
-				idents = collections.getArticleList();
-				break;
-			case ARTICLE_EVENTS:
-			case ARTICLE_NEWS:
-			case ARTICLE_OTHER:
-			case ARTICLE_SERVICES:
-				idents = collections.getArticleCategoryList();
-				break; 
-			case BANNER:
-				idents = collections.getBannerList();
-				break;
-			case BANNER_GROUP:
-				idents = collections.getBannerGroupList();
-				break;
-			case GENERIC:
-				idents = collections.getGenericPageList();
-				break;
-			case DIRECT_ACCESS:
-				idents = collections.getDirectAccessList();
-				break;
-			case DIRECT_ACCESS_GROUP:
-				idents = collections.getDirectAccessGroupList();
-				break;
-			case DOWNLOADS:
-				idents = collections.getDownloadCategoryList();
-				break;				
-			case LINK_CATEGORY:
-				idents = collections.getLinkCategoryList();
-				break;
-			default:
-				idents = Collections.emptyList();
-		}
+		List<SelectItem> idents = new LinkedList<SelectItem>();
+		if (mo.getType().equals(ModularPageOptionType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getGenericPageList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerGroupList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_NEWS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_SERVICES)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_OTHER)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessGroupList();
+		else if (mo.getType().equals(ModularPageOptionType.DOWNLOADS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDownloadCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessList();
+		else if (mo.getType().equals(ModularPageOptionType.LINK_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getLinkCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ACTIVITY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getActivityList();
+		else if (mo.getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getAlbumCategoryList();
 		return idents;
 	}
 

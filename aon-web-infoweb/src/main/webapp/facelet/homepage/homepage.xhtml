@@ -65,6 +65,7 @@
 							styleClass="aon-icon-commandButton"
 							actionListener="#{companyWebInfo.onInit}" 
 							action="generator">
+							<aon:actionListener method="#{generator.onInit}" />
 						</aon:commandButton> 
 		                <aon:outputText value="#{infowebBundle.infoweb_pages}"/>
 		                <aon:outputText value="#{infowebBundle.infoweb_template}"/>

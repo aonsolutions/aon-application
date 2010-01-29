@@ -15,9 +15,14 @@ public interface ICompanyController extends IController {
 	boolean isPrintRecordData();
 	void setPrintRecordData(boolean printRecordData);
 
+	boolean isSmartCard();
+	void setSmartCard(boolean smartCard);
+	
 	boolean obtainPrintHeader() throws ManagerBeanException;
 
 	boolean obtainPrintRecordData() throws ManagerBeanException;
+	
+	boolean obtainSmartCard() throws ManagerBeanException;
 
 	ApplicationParameter obtainApplicationParameter(String printHeaderParam)  throws ManagerBeanException;
 

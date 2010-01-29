@@ -18,13 +18,13 @@
 				<ui:param name="controller" value="#{dailyTracking}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:selectBooleanCheckbox id="monitor"
-						value="#{dailyTracking.monitor}" rendered="#{role.monitorRole}">
+						value="#{dailyTracking.monitor}" rendered="#{aonRole.taskMonitor}">
 						<a4j:support event="onclick" reRender="searchPanel"
 							actionListener="#{dailyTracking.onSwicthMonitor}">
 						</a4j:support>
 					</aon:selectBooleanCheckbox>
 					<aon:outputLabel for="monitor" value="Monitor"
-						rendered="#{role.monitorRole}" />
+						rendered="#{aonRole.taskMonitor}" />
 				</ui:define>
 			</ui:decorate>
 			<aon:div id="searchPanel">

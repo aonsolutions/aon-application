@@ -69,6 +69,9 @@ public class Registry implements ITransferObject {
 	/** The medias. */
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
 
+    /** The segments. */
+	private Set<RegistrySegment> segments = new HashSet<RegistrySegment>();
+
 	/**
 	 * Gets the id.
 	 * 
@@ -243,6 +246,25 @@ public class Registry implements ITransferObject {
 		this.medias.add( media );
 	}
 	
+	/**
+	 * Gets the segments.
+	 * 
+	 * @return the segments
+	 */
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistrySegment> getSegments() {
+		return segments;
+	}
+
+	/**
+	 * Sets the segments.
+	 * 
+	 * @param segments the new segments
+	 */
+	public void setSegments(Set<RegistrySegment> segments) {
+		this.segments = segments;
+	}
+
     @Transient
     public String getFullName() {
     	return ((getName() == null) ? "" : getName()) + " " + ((getSurname() == null) ? "" : getSurname());

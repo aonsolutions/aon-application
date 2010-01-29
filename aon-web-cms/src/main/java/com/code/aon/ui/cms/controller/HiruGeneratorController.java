@@ -2,8 +2,11 @@ package com.code.aon.ui.cms.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Config;
@@ -14,94 +17,102 @@ import com.code.aon.ui.cms.hiru.XmlBuilderException;
 import com.code.aon.ui.cms.hiru.XmlBuilderListener;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
-import com.code.aon.ui.util.AonUtil;
 
-public class HiruGeneratorController implements XmlBuilderListener, ICMSConstants {
+public class HiruGeneratorController implements XmlBuilderListener {
 	
+	private static final Logger LOGGER = Logger.getLogger(HiruGeneratorController.class.getName());
+
 	private String url;
 	
+	private String destinationFolder;
+
 	private File sourceFolder;
+
+	private String server;
+	
+	private String user;
+	
+	private String password;
 	
 	private boolean generated;
 
-	private GeneratorStatusController status;
+	private boolean published;
+
+	private boolean activePoll;
+
+	private List<String> messages;
 	
 	public HiruGeneratorController(){
+		Config config = ControllerUtil.getCurrentConfig();
 		url = ControllerUtil.getWebURL()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
+		destinationFolder = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
 		sourceFolder = new File( ControllerUtil.getDocumentsPath(), "hiru" );
-		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
+		server = config.getFtp_server();
+		user = config.getFtp_user();
+		password = config.getFtp_password();
 	}
 	
 	public void onGenerateXmlFiles(ActionEvent event) throws ManagerBeanException{
-		try {
-			initGenerator();
-			generate();
-			finalizeGenerator();
-			this.generated = true;
-		} catch ( Throwable th ) {
-			generatorError(th);
-		}		
-	}
-	
-	private void generate() throws FileNotFoundException, XmlBuilderException {
 		XmlBuilder b = new XmlBuilder(sourceFolder, url);
 		b.addXmlBuilderListener(this);
-		b.generate();		
+		try {
+			b.generate();
+			this.generated = true;
+		} catch (FileNotFoundException e) {
+			throw new ManagerBeanException(e);
+		} catch (XmlBuilderException e) {
+			throw new ManagerBeanException(e);
+		}finally{
+			this.activePoll = false;
+		}
 	}
 	
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
+		this.activePoll = true;
+		this.messages = new ArrayList<String>();
 		try {
-			initGenerator();
-			Config config = ControllerUtil.getCurrentConfig();	
-			String destinationFolder = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
-			String server = config.getFtp_server();
-			String user = config.getFtp_user();
-			String password = config.getFtp_password();			
-			FTPUtil.uploadFTP(destinationFolder, sourceFolder, server, user, password);
-			finalizeGenerator();
-		} catch ( Throwable th ) {
-			generatorError(th);
-		}		
+			if (FTPUtil.uploadFTP(destinationFolder,
+					sourceFolder,
+					server,
+					user,
+					password))
+				this.published = true;
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}finally{
+			this.activePoll = false;
+		}
 	}
 
 	public void onInit(ActionEvent event){
 		this.generated = false;
+		this.published = false;
+		this.activePoll = true;
+		this.messages = new ArrayList<String>();
+	}
+	
+	public List<String> getMessages() {
+		return this.messages;
+	}
+	
+	public boolean isActivePoll() {
+		return this.activePoll;
 	}
 
 	public boolean isGenerated() {
 		return this.generated;
 	}
-	
-	@Override
+
+	public boolean isPublished() {
+		return this.published;
+	}
+
+	public void onActivePoll(ActionEvent event){
+		this.activePoll = true;
+	}
+
 	public void addMessage(String message) {
-		status.info(message);
+		this.messages.add(message);
 	}
 
-	private void initGenerator(){
-		System.gc();
-		status.onInit(null);
-	}
-
-	private void finalizeGenerator() {
-		finalizeGenerator(false);
-	}
-	
-	private void finalizeGenerator( boolean withErrors ) {
-		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
-		if ( withErrors ) {
-			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_ERROR) );
-		} else {
-			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_FINISHED) );
-		}		
-		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
-		status.finalized();
-		System.gc();
-	}
-
-	private void generatorError( Throwable th ) {
-		status.error( th.getMessage() );
-		finalizeGenerator( true );
-		throw new AbortProcessingException(th.getMessage(), th);		
-	}	
-	
 }

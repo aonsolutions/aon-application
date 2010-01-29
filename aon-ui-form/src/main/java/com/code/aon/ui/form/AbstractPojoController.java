@@ -1,20 +1,13 @@
 package com.code.aon.ui.form;
 
-import java.beans.PropertyDescriptor;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Logger;
-
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Cascade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -24,7 +17,7 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class AbstractPojoController {
 
-	private static final Logger LOGGER = Logger.getLogger(AbstractPojoController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPojoController.class);
 
 	/** Clave para identificar el mensaje de error. (El valor es ""aon_error"") */
 	public static final String AON_ERROR = "aon_error";
@@ -98,7 +91,7 @@ public class AbstractPojoController {
 			this.managerBean = BeanManager.getManagerBean(getPojo());
 			if (this.managerBean == null) {
 				String msg = "Unknown IManagerBean for " + getPojo();
-				LOGGER.severe(msg);
+				LOGGER.error(msg);
 				throw new ManagerBeanException(msg);
 			}
 		}
@@ -113,7 +106,7 @@ public class AbstractPojoController {
 	 * @throws ManagerBeanException
 	 */
 	public String getFieldName(String alias) throws ManagerBeanException {
-		LOGGER.fine("Getting field name for[" + alias + "]");
+		LOGGER.debug("Getting field name for[{}]",alias);
 		return getManagerBean().getFieldName(alias);
 	}
 

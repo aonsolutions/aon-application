@@ -91,7 +91,8 @@
 							<aon:outputText value="#{appBundle.sport_season_desciption}" />
 						</f:facet>
 						<aon:outputText value="#{to.description}"
-							rendered="#{to!=sport_season.to}" >
+							rendered="#{to!=sport_season.to}" 
+							styleClass="aon-editDataTable-button">
 							<a4j:support 
 								reRender="dataTableDiv,gridToolbar"
 								actionListener="#{sport_season.onSelect}"

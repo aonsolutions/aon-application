@@ -1,7 +1,7 @@
 package com.code.aon.ui.campaign.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.dao.ICampaignAlias;
 import com.code.aon.common.ManagerBeanException;
@@ -13,7 +13,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class CampaignDossierControllerListener extends ControllerAdapter {
 
-    private static final Logger LOGGER = Logger.getLogger(CampaignDossierControllerListener.class.getName()); 
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(CampaignDossierControllerListener.class); 
 
     @Override
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -27,8 +28,9 @@ public class CampaignDossierControllerListener extends ControllerAdapter {
             criteria.addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_CUSTOMER_DOCUMENT));
             criteria.addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_DOSSIER_NUMBER));
             controller.setCriteria(criteria);
+            controller.setExtendedModel(null);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error obtaining criteria for CampaignDossier model.", e);
+            LOGGER.error("Error obtaining criteria for CampaignDossier model.", e);
         }
     }
 

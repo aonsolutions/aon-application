@@ -30,25 +30,25 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="generate"
 							rendered="#{cms.roleEditor or cms.rolePublisher}"
-							value="#{appBundle.aon_generate}" immediate="true"
+							value="#{appBundle.aon_generate}" 
 							reRender="generatorForm"
 							actionListener="#{hiru_generator.onGenerateXmlFiles}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick" reRender="poll,grid" ajaxSingle="true"
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								event="onclick"
+								actionListener="#{hiru_generator.onActivePoll}"  
+								reRender="poll,grid_messages" />
 						</aon:commandButton>
 						<aon:commandButton id="publish"
-							value="#{appBundle.aon_publish}" immediate="true"
+							value="#{appBundle.aon_publish}" 
 							reRender="generatorForm"
 							rendered="#{hiru_generator.generated and cms.rolePublisher}"
 							actionListener="#{hiru_generator.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick" reRender="poll,grid" ajaxSingle="true"
+								event="onclick"
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								reRender="poll,grid_messages" />
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -57,9 +57,22 @@
 			</aon:div>
 
 		</aon:form>
-		
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
-
+	    <a4j:region>
+	        <h:form>
+	            <a4j:poll id="poll" interval="2000" enabled="#{hiru_generator.activePoll}" reRender="poll,grid_messages"/>
+	        </h:form>
+	    </a4j:region>
+		<aon:form>
+			<rich:panel bodyClass="inpanelBody" id="grid_messages">
+	        	<f:facet name="header">
+	        		<aon:outputText value="Console Log"/>
+	            </f:facet>
+		        <rich:dataList id="dataList_Messages" var="msg" value="#{hiru_generator.messages}" rows="20">
+					<aon:outputText style="color:red;" value="#{msg}"/>
+				</rich:dataList>
+				<rich:datascroller align="left" for="dataList_Messages" maxPages="20" />
+			</rich:panel>
+		</aon:form>
 	</ui:define>
 </ui:composition>
 

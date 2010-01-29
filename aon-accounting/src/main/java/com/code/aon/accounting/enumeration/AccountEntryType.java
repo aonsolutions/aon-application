@@ -10,30 +10,71 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum AccountEntryType implements IResourceable {
 	
+	/** OPENING ENTRY. */
 	OPENING,
-	CLOSING,
-	OPERATING,
-	MANUAL,
-	SALES_INVOICE,
-	PURCHASE_INVOICE,
-	EXPENSE_INVOICE,
-	INVESTMENT_INVOICE,
-	EXPENSES,
-	SALARY,
-	TAX,
-	LOAN,
-	LEASING,
-	PAYMENT,
-	COLLECTION,
-	STOCK_VARIATION,
-	AMORTIZATION,
-	SOCIAL_INSURANCE,
-	LOAN_FEE,
-	LEASING_FEE,
-	RETURNED_PAYMENT,
-	RETURNED_COLLECTION,
-	SOCIAL_INSURANCE_ADJUST;
 	
+	/** CLOSING ENTRY. */
+	CLOSING,
+	
+	/** OPERATING ENTRY. */
+	OPERATING,
+	
+	/** STANDARD ENTRY. */
+	MANUAL,
+	
+	/** SALES INVOICE. */
+	SALES_INVOICE,
+	
+	/** PURCHASE INVOICE. */
+	PURCHASE_INVOICE,
+	
+	/** EXPENSE INVOICE. */
+	EXPENSE_INVOICE,
+	
+	/** INVESTMENT INVOICE. */
+	INVESTMENT_INVOICE,
+	
+	/** EXPENSES. */
+	EXPENSES,
+	
+	/** SALARY. */
+	SALARY,
+	
+	/** TAX. */
+	TAX,
+	
+	/** LOAN. */
+	LOAN,
+	
+	/** LEASING. */
+	LEASING,
+	
+	/** PAYMENT. */
+	PAYMENT,
+	
+	/** COLLECTION. */
+	COLLECTION,
+	
+	/** STOCK VARIATION. */
+	STOCK_VARIATION,
+	
+	/** The AMORTIZATION. */
+	AMORTIZATION,
+	
+	/** The SOCIAL INSURANCE. */
+	SOCIAL_INSURANCE,
+	
+	/** The LOAN FEE. */
+	LOAN_FEE,
+	
+	/** The LEASING FEE. */
+	LEASING_FEE,
+	
+	/** RETURNED_PAYMENT */
+	RETURNED_PAYMENT,
+	
+	/** RETURNED_COLLECTION */
+	RETURNED_COLLECTION;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";

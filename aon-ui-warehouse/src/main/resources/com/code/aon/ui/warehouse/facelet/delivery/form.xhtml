@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -18,6 +19,15 @@
 					<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
+						<aon:commandButton id="salesTransfer"
+							value="#{warehouseBundle.warehouse_delivery_sales}"
+							immediate="#{true}" rendered="#{!delivery.new and delivery.pending}"
+							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+							actionListener="#{delivery.onSalesTransferShow}"
+							reRender="showSalesTransferWindow">
+							<f:setPropertyActionListener target="#{delivery.showSalesTransferWindow}"
+								value="#{true}" />
+						</aon:commandButton>
 						<aon:commandButton id="invoice"
 							value="#{warehouseBundle.warehouse_delivery_to_invoice}"
 							immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
@@ -98,14 +108,14 @@
 								disabled="#{!delivery.pending}" size="5" 
 								lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{delivery.customerData}" 
-								reRender="Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_defaultPayMethod,payMethodDiv"
+								reRender="Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{!delivery.pending}" minHeight="460" minWidth="650"
 								property="#{delivery.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{delivery.customerData}" 
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_defaultPayMethod,payMethodDiv"
+								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 
@@ -279,6 +289,7 @@
 							<ui:param name="showDataScroller" value="false" />
 							<ui:param name="skipResetButton" value="#{!delivery.pending}" />
 							<ui:param name="skipLineEdition" value="#{!delivery.pending}" />
+							<ui:param name="skipSaveButton" value="#{deliveryDetail.salesSource}" />
 							<ui:param name="rowSelectorReRender" value="menuExt" />
 							<ui:param name="resetButtonReRender" value="menuExt" />
 							<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -473,6 +484,22 @@
 									</f:facet>
 								</aon:column>
 
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+									<f:facet name="header">
+										<aon:outputLabel value="INFO" />
+									</f:facet>
+									<aon:div rendered="#{to.salesDetail != null and to.salesDetail.id != null}" 
+										style="display:inline;cursor:pointer;">
+										<aon:outputText value="&#160;"
+											styleClass="aon-icon-transfer" style="padding-left:20px" />
+										<rich:toolTip value="#{controller.lineSourceInfo}" />
+									</aon:div>
+									<aon:div rendered="#{delivery.invoiced}" style="display:inline;cursor:pointer;">
+										<aon:outputText value="&#160;"
+											styleClass="aon-icon-predetermine" style="padding-left:20px" />
+										<rich:toolTip value="#{controller.lineStatusInfo}" />
+									</aon:div>
+								</aon:column>
 							</ui:define>
 						</ui:decorate>
 					</aon:panel>
@@ -482,6 +509,7 @@
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalTransfer.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalInvoice.xhtml" />
 	</ui:define>
 </ui:composition>

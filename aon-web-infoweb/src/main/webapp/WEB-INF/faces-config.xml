@@ -24,10 +24,10 @@
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
 			<value>aon-desktop</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.6.1</value>
+			<value>/aonResource/4.0.0</value>
 		</managed-property>		
 	</managed-bean>
 	

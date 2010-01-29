@@ -4,12 +4,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -32,7 +33,8 @@ import com.code.aon.ui.form.BasicController;
 
 public class DailyTrackingController extends BasicController {
 
-	private static final Logger LOGGER = Logger.getLogger(DailyTrackingController.class.getName());
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(DailyTrackingController.class);
 
 	private List<SelectItem> dossiers = new LinkedList<SelectItem>();
 	private List<SelectItem> allDossiers;
@@ -155,7 +157,7 @@ public class DailyTrackingController extends BasicController {
 				dossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers related with customer with id= "
+			LOGGER.error("Error loading dossiers related with customer with id= "
 					+ customerId.toString(), e);
 		}
 	}
@@ -181,7 +183,7 @@ public class DailyTrackingController extends BasicController {
 				allDossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading all dossiers!", e);
+			LOGGER.error("Error loading all dossiers!", e);
 		}
 	}
 
@@ -197,7 +199,7 @@ public class DailyTrackingController extends BasicController {
 				((DailyTracking) this.getTo()).setCustomer(customer);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading customer with id= " + id, e);
+			LOGGER.error("Error loading customer with id= " + id, e);
 		}
 	}
 
@@ -233,7 +235,7 @@ public class DailyTrackingController extends BasicController {
 				activities.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading activities related with dossier with id= "
+			LOGGER.error("Error loading activities related with dossier with id= "
 					+ dossierId.toString(), e);
 		}
 	}
@@ -267,7 +269,7 @@ public class DailyTrackingController extends BasicController {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading users related with workgroup with id= "
+			LOGGER.error("Error loading users related with workgroup with id= "
 					+ workgroupId, e);
 		}
 	}
@@ -280,7 +282,7 @@ public class DailyTrackingController extends BasicController {
 						dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE),
 						event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM date expression", e);
+				LOGGER.error("Error adding FROM date expression", e);
 			}
 		}
 	}
@@ -293,37 +295,10 @@ public class DailyTrackingController extends BasicController {
 						dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE),
 						event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO date expression", e);
+				LOGGER.error("Error adding TO date expression", e);
 			}
 		}
 	}
-
-	/*
-	 * public void addEqualExpression(ValueChangeEvent event) throws
-	 * ManagerBeanException, ExpressionException { if (event.getNewValue() !=
-	 * null && !"".equals(event.getNewValue())) { Object value =
-	 * event.getNewValue(); Criteria criteria = getCriteria();
-	 * criteria.addExpression(getFieldName(event.getComponent().getId()),
-	 * value.toString()); setCriteria(criteria); } }
-	 * 
-	 * public void addCustomerExpression(ValueChangeEvent event) { if
-	 * (event.getNewValue() != null &&
-	 * !"".equals(event.getNewValue().toString().trim())) { try { IManagerBean
-	 * dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
-	 * getCriteria().addEqualExpression(
-	 * dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID),
-	 * new Integer(event.getNewValue().toString())); } catch
-	 * (ManagerBeanException e) { LOGGER.log(Level.SEVERE,
-	 * "Error adding customer Expression", e); } } }
-	 * 
-	 * public void addCustomerPojoExpression(ValueChangeEvent event) { if
-	 * (event.getNewValue() != null && !event.getNewValue().equals("")) { try {
-	 * Customer c = (Customer) event.getNewValue();
-	 * getCriteria().addEqualExpression(
-	 * getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID), new
-	 * Integer(c.getId().toString())); } catch (ManagerBeanException e) {
-	 * LOGGER.log(Level.SEVERE, "Error adding customer expression", e); } } }
-	 */
 
 	public void reloadDossiers(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
@@ -341,24 +316,6 @@ public class DailyTrackingController extends BasicController {
 		activities = new LinkedList<SelectItem>();
 	}
 
-	/*
-	 * @SuppressWarnings("unchecked") private Expression
-	 * obtainWorkGroupExpression(Integer workgroupId) { try { IManagerBean
-	 * userWorkGroupBean = BeanManager.getManagerBean(UserWorkGroup.class);
-	 * IManagerBean dailyTrackingBean =
-	 * BeanManager.getManagerBean(DailyTracking.class); Criteria criteria = new
-	 * Criteria(); criteria.addEqualExpression(userWorkGroupBean
-	 * .getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workgroupId);
-	 * Iterator iter = userWorkGroupBean.getList(criteria).iterator();
-	 * Expression exp = null; while (iter.hasNext()) { UserWorkGroup
-	 * userWorkGroup = (UserWorkGroup) iter.next();
-	 * ExpressionUtilities.getOrExpression(exp,
-	 * ExpressionUtilities.getEqualExpression(
-	 * dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID),
-	 * userWorkGroup.getUser().getId())); } return exp; } catch
-	 * (ManagerBeanException e) { LOGGER.log(Level.SEVERE,
-	 * "Error adding workgroup Expression", e); } return null; }
-	 */
 	public Date getTrackingDateFrom() {
 		return trackingDateFrom;
 	}
@@ -441,7 +398,7 @@ public class DailyTrackingController extends BasicController {
 			}
 			getCriteria().addOrder(getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE),false);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error adding custom expression", e);
+			LOGGER.error("Error adding custom expression", e);
 		}
 	}
 }

@@ -5,48 +5,33 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-
 /**
- * Enumeration to identify the different status of a purchaseDetail.
+ * Enummeration to identify the different status of a PurchaseDetail.
  * 
- * @author Consulting & Development. Joseba Urkiri - 22-may-2006
- * @version 1.0
- * 
- * @since 1.0
  */
 public enum PurchaseDetailStatus implements IResourceable {
 
-    /**
-     * Pending.
-     */
+	/** PENDING. */
 	PENDING,
     
-    /**
-     * Settled.
-     */
-	SETTLED,
+	/** PARTIAL_SETTLED. */
+	PARTIAL_SETTLED,
+
+	/** SETTLED. */
+	SETTLED;
     
-    /**
-     * Closed.
-     */
-	CLOSED;
-    
-    /**
-     * Message file base path.
-     */
+	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.purchase.i18n.messages";
     
-    /**
-     * Message key prefix. 
-     */
-    private static final String MSG_KEY_PREFIX = "aon_enum_purchaseDetailstatus_";
+    /** Message key prefix. */
+    private static final String MSG_KEY_PREFIX = "aon_enum_purchase_detail_status_";
 
     /**
-     * Returns a <code>String</code> with the translation <code>Locale</code>
+     * Returns a <code>String</code> with the transalation <code>Locale</code>
      * for the locale.
      * 
-     * @param locale
-     *            Required Locale.
+     * @param locale Required Locale.
+     * 
      * @return String a <code>String</code>.
      */
     public String getName(Locale locale) {

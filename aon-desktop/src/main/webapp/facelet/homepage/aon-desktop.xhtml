@@ -289,12 +289,10 @@
 					<aon:div>
 						<c:if test="#{company.withLogo}">
 							<aon:div styleClass="aon-company-logo">
-								<a4j:mediaOutput
-									mimeType="#{company.logoMimeType}" 
-									cacheable="false" element="img" 
-									value="#{company.aonFile.key}" 
-									style="#{desktop.bigLogo?'width:200px':''}"
+								<a4j:mediaOutput element="img" cacheable="false" 
+									value="#{company.aonFile.key}"
 									createContent="#{company.createLogoContent}">
+									<f:param value="#{company.timeStamp}" name="time" />
 								</a4j:mediaOutput>
 							</aon:div>
 						</c:if>

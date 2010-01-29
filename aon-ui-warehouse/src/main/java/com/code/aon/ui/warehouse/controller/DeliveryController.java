@@ -22,6 +22,7 @@ import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -34,9 +35,17 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
+import com.code.aon.sales.bridge.DeliveryManager;
+import com.code.aon.sales.bridge.SalesTransferManager;
+import com.code.aon.sales.dao.ISalesAlias;
+import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -48,11 +57,16 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
  */
 public class DeliveryController extends BasicController {
 
+	private final String DELIVERY_DETAIL_CONTROLLER = "deliveryDetail";
+	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
+
 	private List<SelectItem> addresses;
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private CustomerValidationManager cvm;
+	private SalesTransferManager salesTransferManager;
+	private boolean showSalesTransferWindow;
 	private boolean showInvoiceWindow;
 	private String invoiceSeries;
 	private int invoiceNumber;
@@ -99,6 +113,25 @@ public class DeliveryController extends BasicController {
 		return cvm;
 	}
 
+	public SalesTransferManager getSalesTransferManager() {
+		if (salesTransferManager == null) {
+			salesTransferManager = new SalesTransferManager(); 
+		}
+		return salesTransferManager;
+	}
+
+	public void setSalesTransferManager(SalesTransferManager salesTransferManager) {
+		this.salesTransferManager = salesTransferManager;
+	}
+
+	public boolean isShowSalesTransferWindow() {
+		return showSalesTransferWindow;
+	}
+
+	public void setShowSalesTransferWindow(boolean value) {
+		this.showSalesTransferWindow = value;
+	}
+	
 	public boolean isShowInvoiceWindow() {
 		return showInvoiceWindow;
 	}
@@ -205,6 +238,7 @@ public class DeliveryController extends BasicController {
 			Customer customer = (Customer)event.getNewValue();
 			isBlocked(customer);
 			((Delivery)this.getTo()).setCustomer(customer);
+			((Delivery)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
 		} else {
@@ -286,6 +320,37 @@ public class DeliveryController extends BasicController {
 		return getPriceStrategy().getTotalPrice(delivery, delivery.getCustomer());
 	}
 
+	public void onSalesTransferShow(ActionEvent event) throws ManagerBeanException {
+		Delivery to = (Delivery)this.getTo();
+
+		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SHIPPING_ADDRESS_ID), to.getRaddress().getId());
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_STATUS), SalesStatus.PENDING);
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
+		criteria.addOrder(salesBean.getFieldName(ISalesAlias.SALES_ISSUE_DATE));
+		criteria.addOrder(salesBean.getFieldName(ISalesAlias.SALES_SERIES));
+		criteria.addOrder(salesBean.getFieldName(ISalesAlias.SALES_NUMBER));
+
+		getSalesTransferManager().setSalesList(salesBean.getList(criteria));
+	}
+
+	public void onSalesTransfer(ActionEvent event) throws ManagerBeanException {
+		Iterator<SalesDetail> iterator = getSalesTransferManager().getCheckedDetails().iterator();
+		while (iterator.hasNext()) {
+			SalesDetail salesDetail = iterator.next();
+			if (salesDetail.getTransfered() > 0) {
+				DeliveryManager deliveryManager = new DeliveryManager();
+				deliveryManager.transferDeliveryDetail((Delivery)this.getTo(), salesDetail, getWarehouse());
+			}
+		}
+
+		IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER);
+		detailController.onSearch(null);
+	}
+
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
 		setInvoiceSeries(to.getSeries());
@@ -304,9 +369,18 @@ public class DeliveryController extends BasicController {
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
+		setShowInvoiceWindow(false);
+
 		Delivery to = (Delivery)this.getTo();
 		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
-		invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+
+		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+		invoiceController.clearCriteria();
+		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		invoiceController.onSearch(null);
+		invoiceController.getModel().setRowIndex(0);
+		invoiceController.onSelect(null);
 	}
 
 }

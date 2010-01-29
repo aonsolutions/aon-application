@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -11,6 +14,7 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.IOUtils;
@@ -27,9 +31,9 @@ import com.code.aon.product.Catalogue;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.LinesController;
 
-public class EccatalogueController extends BasicController {
+public class EccatalogueController extends LinesController {
 	private static final Logger LOGGER = Logger
 			.getLogger(EccatalogueController.class.getName());
 
@@ -37,10 +41,7 @@ public class EccatalogueController extends BasicController {
 	private AonFile icon;
 	private List<SelectItem> catalogues;
 	private List<SelectItem> catalogueTypes;
-	private List<SelectItem> catalogueIcons;
-	
 
-	
 	public List<SelectItem> getCatalogueTypes() {
 		if (catalogueTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
@@ -55,8 +56,6 @@ public class EccatalogueController extends BasicController {
 		return catalogueTypes;
 	}
 	
-	
-
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
 		catalogues = null;
 		if (catalogues == null) {
@@ -117,6 +116,9 @@ public class EccatalogueController extends BasicController {
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}
+	public void deleteImage(ActionEvent e)   {
+		setImage(null);
+	}
 
 	public void uploadIcon(UploadEvent event) {
 		try {
@@ -136,6 +138,10 @@ public class EccatalogueController extends BasicController {
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
+	}
+	
+	public void deleteIcon(ActionEvent e)   {
+		setIcon(null);
 	}
 
 	public void paintImage(OutputStream out, Object data) throws IOException {
@@ -173,6 +179,14 @@ public class EccatalogueController extends BasicController {
 			out.write(image.getData());
 		}
 
+	}
+	
+	public boolean isOutofDate(){
+		
+		Date toDate =((Eccatalogue)this.getTo()).getCatalogue().getEndDate();
+		Calendar d =new GregorianCalendar();
+		return toDate.before(d.getTime());
+				
 	}
 	
 	

@@ -10,14 +10,23 @@
 
 		<aon:form id="contactForm">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_domains}" />
 				<ui:param name="controller" value="#{domain}" />
-				<ui:param name="saveOnClick" value="Richfaces.showModalPanel('waitProccess')" />
-				<ui:param name="saveOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />
-				<ui:param name="removeOnClick" value="Richfaces.showModalPanel('waitProccess')" />
-				<ui:param name="removeOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />
-			</ui:include>
+				<ui:param name="skipSaveButton" value="#{domain.new}" />
+				<ui:define name="beforeToolbarContent">
+					<c:if test="#{domain.new}">				
+						<aon:commandButton id="#{toolbarID}-save"
+							value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
+							action="#{saveAction}"
+							actionListener="#{saveActionListener}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" 
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+			     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+			     	</c:if>			     	
+		     	</ui:define>				
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
@@ -28,7 +37,7 @@
 					<c:if test="#{domain.new}" >
 						<aon:div>
 							<aon:inputText id="Domain_commonName" validator="#{domain.domainNameCheck}"
-								size="14" maxlength="11" required="true" disabled="#{!domain.new}"
+								size="14" required="true" disabled="#{!domain.new}"
 								value="#{domain.to.commonName}" />
 							<aon:outputText value="."  styleClass="aon-bold aon-margin-left aon-margin-right" />
 							<aon:inputText id="Domain_suffix" 
@@ -42,8 +51,13 @@
 
 					<aon:outputLabel for="Domain_organizationName"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="Domain_organizationName" required="true"
+					<aon:inputText id="Domain_organizationName"
 						size="95" value="#{domain.to.organizationName}" />
+
+					<aon:outputLabel for="Domain_host"
+						value="#{appBundle.desktop_domain_host}" />
+					<aon:inputText id="Domain_host" size="40" maxlength="256"
+						value="#{domain.to.host}" />
 
 					<aon:outputLabel for="Domain_mail"
 						value="#{webmailBundle.webmail_contact_email}" />
@@ -54,12 +68,6 @@
 						value="#{webmailBundle.webmail_contact_cellular_phone}" />
 					<aon:inputText id="Domain_mobile" size="40"
 						value="#{domain.to.mobile}" />
-
-					<!-- 
-					<aon:outputLabel for="Domain_host"
-						value="#{appBundle.desktop_domain_host}" />
-					<aon:inputText id="Domain_host" size="40" maxlength="256"
-						value="#{domain.to.host}" />
 
 					<aon:outputLabel for="Domain_status"
 						value="#{bundle.aon_status}" />
@@ -80,8 +88,7 @@
 						value="#{appBundle.desktop_domain_domainManagement}" />
 	                <aon:selectBooleanCheckbox id="Domain_domainManagement"
 						disabled="true" value="#{domain.to.domainManagement}"/>
-					-->
-					
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

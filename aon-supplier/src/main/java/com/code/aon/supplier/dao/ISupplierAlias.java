@@ -2,13 +2,50 @@ package com.code.aon.supplier.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.aon.supplier.ItemSupplier;
 import com.code.aon.supplier.Supplier;
-import com.code.aon.supplier.SupplierSegment;
 
 /** 
 * Interface for holding entity properties constants.
 */ 
 public interface ISupplierAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for ItemSupplier entity.
+	*/ 
+	DAOConstantsEntry ITEM_SUPPLIER_ENTRY = DAOConstants.getDAOConstant(ItemSupplier.class);
+
+	/** 
+	* Alias value: ItemSupplier_code
+	* Hibernate value: ItemSupplier.code
+	*/
+	String  ITEM_SUPPLIER_CODE = ITEM_SUPPLIER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ItemSupplier_id
+	* Hibernate value: ItemSupplier.id
+	*/
+	String  ITEM_SUPPLIER_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ItemSupplier_item_id
+	* Hibernate value: ItemSupplier.item.id
+	*/
+	String  ITEM_SUPPLIER_ITEM_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ItemSupplier_priority
+	* Hibernate value: ItemSupplier.priority
+	*/
+	String  ITEM_SUPPLIER_PRIORITY = ITEM_SUPPLIER_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ItemSupplier_supplier_id
+	* Hibernate value: ItemSupplier.supplier.id
+	*/
+	String  ITEM_SUPPLIER_SUPPLIER_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[4];
 
 
 
@@ -72,35 +109,16 @@ public interface ISupplierAlias {
 	String  SUPPLIER_STATUS = SUPPLIER_ENTRY.getAliasNames()[8];
 
 	/** 
-	* Alias value: Supplier_supplierSegment_id
-	* Hibernate value: Supplier.supplierSegment.id
-	*/
-	String  SUPPLIER_SUPPLIER_SEGMENT_ID = SUPPLIER_ENTRY.getAliasNames()[9];
-
-	/** 
 	* Alias value: Supplier_withholding
 	* Hibernate value: Supplier.withholding
 	*/
-	String  SUPPLIER_WITHHOLDING = SUPPLIER_ENTRY.getAliasNames()[10];
-
-
+	String  SUPPLIER_WITHHOLDING = SUPPLIER_ENTRY.getAliasNames()[9];
 
 	/** 
-	* DAOConstantsEntry for SupplierSegment entity.
-	*/ 
-	DAOConstantsEntry SUPPLIER_SEGMENT_ENTRY = DAOConstants.getDAOConstant(SupplierSegment.class);
-
-	/** 
-	* Alias value: SupplierSegment_description
-	* Hibernate value: SupplierSegment.description
+	* Alias value: Supplier_transaction
+	* Hibernate value: Supplier.transaction
 	*/
-	String  SUPPLIER_SEGMENT_DESCRIPTION = SUPPLIER_SEGMENT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: SupplierSegment_id
-	* Hibernate value: SupplierSegment.id
-	*/
-	String  SUPPLIER_SEGMENT_ID = SUPPLIER_SEGMENT_ENTRY.getAliasNames()[1];
+	String  SUPPLIER_TRANSACTION = SUPPLIER_ENTRY.getAliasNames()[10];
 
 
 }

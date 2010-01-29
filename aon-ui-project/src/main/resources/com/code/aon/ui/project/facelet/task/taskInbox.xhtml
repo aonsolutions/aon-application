@@ -40,13 +40,13 @@
 					actionListener="#{dailyTracking.onReset}" />
 
 				<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
-					rendered="#{role.monitorRole}">
+					rendered="#{aonRole.taskMonitor}">
 					<a4j:support event="onclick" reRender="toolbar,taskTableContainer"
 						actionListener="#{task.onSwicthMonitor}">
 					</a4j:support>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="monitor" value="Monitor"
-					rendered="#{role.monitorRole}" />
+					rendered="#{aonRole.taskMonitor}" />
 			</ui:define>
 		</ui:decorate>
 		<!--  aon-region-body -->
@@ -88,6 +88,7 @@
 
 						<aon:graphicImage url="/css/images/icons/aon-task-start.gif"
 							style="cursor:pointer" alt="#{projectBundle.task_start}"
+							title="#{projectBundle.task_start}"
 							rendered="#{to.pending and task.myListTask}">
 							<a4j:support event="onclick"
 								onclick="if (!confirm('#{projectBundle.task_start}?')) return false;"
@@ -97,6 +98,7 @@
 
 						<aon:graphicImage url="/css/images/icons/aon-task-stop.gif"
 							style="cursor:pointer" alt="#{projectBundle.task_stop}"
+							title="#{projectBundle.task_stop}"
 							rendered="#{task.myListTask and to.inProgress}">
 							<a4j:support event="onclick"
 								onclick="if (!confirm('#{projectBundle.task_stop}?')) return false;"
@@ -107,7 +109,7 @@
 						<aon:graphicImage url="/css/images/icons/aon-task-reopen.gif"
 							style="cursor:pointer"
 							rendered="#{task.myListTask and !to.sourceProcess and to.finished}"
-							alt="#{projectBundle.task_reopen}">
+							alt="#{projectBundle.task_reopen}" title="#{projectBundle.task_reopen}">
 							<a4j:support event="onclick"
 								onclick="if (!confirm('#{projectBundle.task_reopen}?')) return false;"
 								actionListener="#{task.onListReopenTask}"
@@ -128,7 +130,7 @@
 						</f:facet>
 						<aon:graphicImage
 							url="/css/images/icons/aon-task-priority-#{to.priority}.gif"
-							alt="#{to.priority}" />
+							alt="#{to.priority}" title="#{to.priority}"/>
 					</aon:column>
 
 					<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -143,7 +145,26 @@
 						</f:facet>
 						<aon:graphicImage
 							url="/css/images/icons/aon-task-status-#{to.status}.gif"
-							alt="#{to.status}" />
+							alt="#{to.status}" title="#{to.status}" />
+					</aon:column>
+
+					<aon:column rendered="#{!task.monitor}"
+						styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="F" />
+						</f:facet>
+
+						<aon:graphicImage url="/css/images/icons/aon-icon-task-finish.png"
+							alt="#{projectBundle.task_finish}"
+							title="#{projectBundle.task_finish}"
+							rendered="#{!task.monitor and !task.new and !to.finished and !to.deleted}"
+							style="#{!task.monitor?'cursor:pointer':''}">
+							<a4j:support rendered="#{!task.monitor}" event="onclick"
+								onclick="if (!confirm('#{projectBundle.task_finish}?')) return false;"
+								actionListener="#{task.onFinishTaskFromList}"
+								reRender="taskDataList,toolbar,chooseContainer" />
+						</aon:graphicImage>
+
 					</aon:column>
 
 					<aon:column rendered="#{!task.monitor}"
@@ -160,6 +181,7 @@
 
 						<aon:graphicImage url="/css/images/icons/aon-user-icon.gif"
 							alt="#{projectBundle.task_user_task} #{to.user.name}"
+							tiitle="#{projectBundle.task_user_task} #{to.user.name}"
 							rendered="#{task.myListTask}"
 							style="#{!task.monitor?'cursor:pointer':''}">
 							<a4j:support rendered="#{!task.monitor}" event="onclick"
@@ -170,6 +192,7 @@
 
 						<aon:graphicImage url="/css/images/icons/aon-group-icon.gif"
 							alt="#{projectBundle.task_group_task} #{to.workGroup.description}"
+							title="#{projectBundle.task_group_task} #{to.workGroup.description}"
 							rendered="#{!task.myListTask}"
 							style="#{!task.monitor?'cursor:pointer':''}">
 							<a4j:support rendered="#{!task.monitor}" event="onclick"
@@ -218,6 +241,7 @@
 							rendered="#{to.comments != null and to.comments!=''	}">
 							<aon:graphicImage url="/css/images/icons/aon-task-comment.gif" />
 							<rich:toolTip value="#{to.comments}" showEvent="onclick"
+								style="width: 400px;"
 								hideDelay="2000">
 								<f:facet name="defaultContent">
 									<aon:outputText value="#{bundle.aon_in_progress}" />
@@ -264,7 +288,8 @@
 						</f:facet>
 
 						<aon:graphicImage url="/css/images/icons/aon-task-periodical.gif"
-							alt="#{to.repeatPeriod}" rendered="#{to.repeatable}">
+							alt="#{to.repeatPeriod}" title="#{to.repeatPeriod}"  
+							rendered="#{to.repeatable}">
 						</aon:graphicImage>
 					</aon:column>
 
@@ -323,4 +348,7 @@
 			</aon:div>
 		</aon:div>
 	</aon:form>
+
+	<ui:include src="/com/code/aon/ui/project/facelet/task/finishTaskPanel.xhtml" />
+	
 </ui:composition>

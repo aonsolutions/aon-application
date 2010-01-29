@@ -14,8 +14,6 @@ public class DefaultAccounts {
 	public static final String SALARY_CHARGED_RETENTION_ACCOUNT = "ACC_SALARY_CHARGED_RET_ACC";
 	public static final String CASH_ACCOUNT = "ACC_DEFAULT_CASH_ACC";
 	public static final String SALARY_ACCOUNT = "ACC_DEFAULT_SALARY_ACC";
-	public static final String ALLOWANCE_ACCOUNT = "ACC_DEFAULT_ALLOWANCE_ACC";
-	public static final String COMPENSATION_ACCOUNT = "ACC_DEFAULT_COMPENSATION_ACC";
 	public static final String PENDING_SALARY_ACCOUNT = "ACC_DEFAULT_PENDING_SALARY_ACC";
 	public static final String SOCIAL_INSURANCE_ACCOUNT = "ACC_DEFAULT_SOCIAL_INSURANCE_ACC";
 	public static final String COMPANY_SOCIAL_INSURANCE_ACCOUNT = "ACC_DEFAULT_COMPANY_SOC_INS_ACC";

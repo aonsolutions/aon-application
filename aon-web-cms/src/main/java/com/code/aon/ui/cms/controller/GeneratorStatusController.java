@@ -85,12 +85,12 @@ public class GeneratorStatusController implements IGeneratorLogger {
 	
 	@Override
 	public void error(String msg) {
-		addErrorMessage(" <b>ERROR: " + msg + "</b>");
+		addErrorMessage(" ******* ERROR: " + msg + "***********");
 	}
 
 	@Override
 	public void warning(String msg) {
-		addErrorMessage(" <i>WARNING: " + msg + "</i>");
+		addErrorMessage(" ******* WARNING: " + msg + "***********");
 	}
 
 	public boolean isActivePoll() {

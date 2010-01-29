@@ -2,11 +2,11 @@ package com.code.aon.ui.campaign.controller;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
@@ -27,81 +27,85 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.project.util.CampaignTaskManager;
 
 public class CampaignController extends BasicController {
-
-    private static final Logger LOGGER = Logger.getLogger(CampaignController.class.getName());
-
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CampaignController.class);
+    
+	private CampaignTaskManager campaignTaskManager;
+	private boolean statusPending = true;
+	private boolean statusInProgress = true;
+	private boolean statusFinished = false;
+	private boolean statusDeleted = false;
+	
+	private CampaignTaskManager getCampaignTaskManager() {
+		if (campaignTaskManager == null) {
+			campaignTaskManager = new CampaignTaskManager();
+		}
+		return campaignTaskManager;
+	}
+	
+	public void onStart(ActionEvent event) {
+		this.onEditSearch(event);
+		this.onSearch(event);
+	}
+	
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		setStatusPending(true);
+		setStatusInProgress(true);
+		setStatusFinished(false);
+		setStatusDeleted(false);
+	}
     public void onSearch(ActionEvent event) {
         try {
             String alias = getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_STATUS);
-            Expression pendingExpression = ExpressionUtilities.getEqualExpression(alias, CampaignStatus.PENDING);
-            Expression inProgressExpression = ExpressionUtilities.getEqualExpression(alias, CampaignStatus.IN_PROGRESS);
-            Expression expression = ExpressionUtilities.getOrExpression(pendingExpression, inProgressExpression);
-
-            Criteria criteria = new Criteria();
-            criteria.addExpression(expression);
-            setCriteria(criteria);
-
+			if (isStatusDeleted() || isStatusFinished() || isStatusInProgress()
+					|| isStatusPending()) {
+				Expression[] exps = { null, null, null, null };
+				int count = 0;
+				int inCaseCount1 = -1;
+				if (isStatusDeleted()) {
+					exps[0] = ExpressionUtilities.getEqualExpression(alias,CampaignStatus.DELETED);
+					count++;
+					inCaseCount1 = 0;
+				}
+				if (isStatusFinished()) {
+					exps[1] = ExpressionUtilities.getEqualExpression(alias,CampaignStatus.FINISHED);
+					count++;
+					inCaseCount1 = 1;
+				}
+				if (isStatusInProgress()) {
+					exps[2] = ExpressionUtilities.getEqualExpression(alias,CampaignStatus.IN_PROGRESS);
+					count++;
+					inCaseCount1 = 2;
+				}
+				if (isStatusPending()) {
+					exps[3] = ExpressionUtilities.getEqualExpression(alias,CampaignStatus.PENDING);
+					count++;
+					inCaseCount1 = 3;
+				}
+				Expression expToAdd = null;
+				if (count == 1) {
+					expToAdd = exps[inCaseCount1];
+				} else {
+					// Si count > 1 hay que hacer una OR Expression
+					boolean ready = false;
+					for (int i = 0; i < exps.length; i++) {
+						if (exps[i] != null) {
+							if (!ready) {
+								expToAdd = exps[i];
+								ready = true;
+							} else {
+								expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exps[i]);
+							}
+						}
+					}
+				}
+				getCriteria().addExpression(expToAdd);
+			}
             super.onSearch(null);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error initializing Campaign Model", e);
+            LOGGER.error("Error initializing Campaign Model", e);
         }
-    }
-
-    public void addStartDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
-            try {
-                IManagerBean campaignBean = BeanManager.getManagerBean(Campaign.class);
-                getCriteria().addGreaterThanOrEqualExpression(campaignBean.getFieldName(ICampaignAlias.CAMPAIGN_START_DATE), event.getNewValue());
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding FROM start date expression", e);
-            }
-        }
-    }
-    
-    public void addStartDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
-            try {
-                IManagerBean campaignBean = BeanManager.getManagerBean(Campaign.class);
-                getCriteria().addLessThanOrEqualExpression(campaignBean.getFieldName(ICampaignAlias.CAMPAIGN_START_DATE), event.getNewValue());
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding TO start date expression", e);
-            }
-        }
-    }
-
-    public void addEndDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
-            try {
-                IManagerBean campaignBean = BeanManager.getManagerBean(Campaign.class);
-                getCriteria().addGreaterThanOrEqualExpression(campaignBean.getFieldName(ICampaignAlias.CAMPAIGN_END_DATE), event.getNewValue());
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding FROM end date expression", e);
-            }
-        }
-    }
-    
-    public void addEndDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
-            try {
-                IManagerBean campaignBean = BeanManager.getManagerBean(Campaign.class);
-                getCriteria().addLessThanOrEqualExpression(campaignBean.getFieldName(ICampaignAlias.CAMPAIGN_END_DATE), event.getNewValue());
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding TO end date expression", e);
-            }
-        }
-    }
-
-    public void addEqualExpression(ValueChangeEvent event) {
-    	try {
-            if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
-                Object value = event.getNewValue();
-                Criteria criteria = getCriteria();
-                criteria.addExpression(getFieldName(event.getComponent().getId()), value.toString());
-                setCriteria(criteria);
-            }
-    	} catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error adding Criteria", e);
-		}
     }
 
     public boolean isPending() {
@@ -120,7 +124,7 @@ public class CampaignController extends BasicController {
         return ((Campaign)this.getTo()).getStatus().equals(CampaignStatus.DELETED);
     }
 
-    public void onStartCampaign(ActionEvent event) {
+	public void onStartCampaign(ActionEvent event) {
         Campaign campaign = (Campaign)this.getTo();
         if (campaign.getType().equals(CampaignType.AUTOMATIC)) {
             startCampaign(campaign);
@@ -147,13 +151,13 @@ public class CampaignController extends BasicController {
                 campaignDossier.setDossier(activity.getDossier());
                 campaignDossier = (CampaignDossier)campaignDossierBean.insert(campaignDossier);
 
-                CampaignTaskManager.addCampaignTask(campaignDossier, 0, null);
+                getCampaignTaskManager().addCampaignTask(campaignDossier, 0, null, null);
             }
             CampaignDossierController campaignDossierController = (CampaignDossierController)FormUtil.getController("campaignDossier");
             campaignDossierController.setSortColumn(null);
             campaignDossierController.onSearch(null);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error creating campaign dossier in campaign with id=" + campaign.getId(), e);
+            LOGGER.error("Error creating campaign dossier in campaign with id=" + campaign.getId(), e);
         }
     }
 
@@ -173,10 +177,10 @@ public class CampaignController extends BasicController {
             Iterator iterator = campaignDossierList.iterator();
             while (iterator.hasNext()) {
                 CampaignDossier campaignDossier = (CampaignDossier)iterator.next();
-                CampaignTaskManager.finishCampaignTask(campaignDossier);
+                getCampaignTaskManager().finishCampaignTask(campaignDossier);
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error finishing campaign with id=" + campaign.getId(), e);
+            LOGGER.error("Error finishing campaign with id=" + campaign.getId(), e);
         }
     }
 
@@ -200,10 +204,10 @@ public class CampaignController extends BasicController {
             Iterator iterator = campaignDossierList.iterator();
             while (iterator.hasNext()) {
                 CampaignDossier campaignDossier = (CampaignDossier)iterator.next();
-                CampaignTaskManager.removeCampaignTask(campaignDossier);
+                getCampaignTaskManager().removeCampaignTask(campaignDossier);
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error removing campaign with id=" + campaign.getId(), e);
+            LOGGER.error("Error removing campaign with id=" + campaign.getId(), e);
         }
     }
 
@@ -212,4 +216,35 @@ public class CampaignController extends BasicController {
         accept(null);
     }
 
+	public boolean isStatusPending() {
+		return statusPending;
+	}
+
+	public void setStatusPending(boolean statusPending) {
+		this.statusPending = statusPending;
+	}
+
+	public boolean isStatusInProgress() {
+		return statusInProgress;
+	}
+
+	public void setStatusInProgress(boolean statusInProgress) {
+		this.statusInProgress = statusInProgress;
+	}
+
+	public boolean isStatusFinished() {
+		return statusFinished;
+	}
+
+	public void setStatusFinished(boolean statusFinished) {
+		this.statusFinished = statusFinished;
+	}
+
+	public boolean isStatusDeleted() {
+		return statusDeleted;
+	}
+
+	public void setStatusDeleted(boolean statusDeleted) {
+		this.statusDeleted = statusDeleted;
+	}
 }

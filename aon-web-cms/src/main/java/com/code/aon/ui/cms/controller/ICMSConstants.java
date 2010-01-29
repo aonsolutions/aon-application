@@ -13,7 +13,6 @@ public interface ICMSConstants {
 	
 	String
 	
-	ACTIVITY					= "activity",
 	ALBUM						= "album",
 	ALBUM_IMAGE					= "albumImage",
 	ALBUM_CATEGORY				= "album_category",
@@ -78,7 +77,7 @@ public interface ICMSConstants {
 	HOME					= "home",
 	ALBUM_FORM				= ALBUM + FORM,
 	ALBUM_LIST				= ALBUM + LIST,
-	ALBUM_IMAGE_FORM		= ALBUM_IMAGE + FORM,
+	ALBUM_IMAGE_FORM		= "album_image_form",
 	ARTICLE_FORM			= ARTICLE + FORM,
 	ARTICLE_LIST			= ARTICLE + LIST,
 	BANNNER_FORM			= BANNNER + FORM,

@@ -9,14 +9,14 @@
 		<f:facet name="header">
 			<aon:outputText value=" " />
 		</f:facet>
-		<aon:commandButton title="#{bundle.aon_accept}"
+		<aon:commandButton title="#{bundle.aon_accept} (#{bundle.aon_key_save_line_accelerator})"
 			actionListener="#{controller.onAccept}"
 			reRender="#{reRenderAttr}"
 			onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 			styleClass="aon-editDataTable-button aon-icon-accept"
 			rendered="#{to.id==controller.to.id}"
 			accesskey="#{bundle.aon_key_save_line}" />
-		<aon:commandButton title="#{bundle.aon_cancel}"
+		<aon:commandButton title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
 			actionListener="#{controller.onCancel}" immediate="#{true}"
 			reRender="#{reRenderAttr}"
 			onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
@@ -25,14 +25,14 @@
 			rendered="#{to.id==controller.to.id}" />
 		<f:facet name="footer">
 			<aon:div>
-				<aon:commandButton title="#{bundle.aon_accept}"
+				<aon:commandButton title="#{bundle.aon_accept} (#{bundle.aon_key_save_line_accelerator})"
 					actionListener="#{controller.onAccept}"
 					onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 					reRender="#{reRenderAttr}"
 					styleClass="aon-editDataTable-button aon-icon-accept" value=""
 					accesskey="#{bundle.aon_key_save_line}"
 					rendered="#{controller.new}" />
-				<aon:commandButton title="#{bundle.aon_cancel}"
+				<aon:commandButton title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
 					actionListener="#{controller.onCancel}" immediate="#{true}"
 					reRender="#{reRenderAttr}"
 					onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"

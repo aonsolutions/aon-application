@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.enumeration.Templates;
@@ -48,7 +47,7 @@ public class MonthContent {
 	}
 
 	public void assign(int day, ArticleDetail articleDetail){
-		List<ArticleDetail> list = (List<ArticleDetail>)this.values[day-1];
+		ArrayList<ArticleDetail> list = (ArrayList<ArticleDetail>)this.values[day-1];
 		if (list==null){
 			list = new ArrayList<ArticleDetail>();
 			this.values[day-1] = list;
@@ -59,7 +58,7 @@ public class MonthContent {
 	public void assign(Date date, ArticleDetail articleDetail){
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
-		List<ArticleDetail> list = (List<ArticleDetail>)this.values[calendar.get(Calendar.DATE)-1];
+		ArrayList<ArticleDetail> list = (ArrayList<ArticleDetail>)this.values[calendar.get(Calendar.DATE)-1];
 		if (list==null){
 			list = new ArrayList<ArticleDetail>();
 			this.values[calendar.get(Calendar.DATE)-1] = list;

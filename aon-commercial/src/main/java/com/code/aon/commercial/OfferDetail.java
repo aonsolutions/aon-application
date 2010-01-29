@@ -10,11 +10,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
@@ -241,24 +244,43 @@ public class OfferDetail implements ITransferObject, ICalculable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final OfferDetail o = (OfferDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)				
+				.append(this.discountExpression, o.discountExpression)
+				.append(this.item, o.item)				
+				.append(this.line, o.line)
+				.append(this.offer, o.offer)				
+				.append(this.price, o.price)
+				.append(this.quantity, o.quantity)				
+				.append(this.status, o.status)
+				.isEquals();
 		}
-		if (obj instanceof OfferDetail) {
-			OfferDetail o = (OfferDetail) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(description)	
+			.append(discountExpression)			
+			.append(id)			
+			.append(item)
+			.append(line)
+			.append(offer)
+			.append(price)
+			.append(quantity)
+			.append(status)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

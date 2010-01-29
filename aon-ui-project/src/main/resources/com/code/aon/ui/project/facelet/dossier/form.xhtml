@@ -50,7 +50,15 @@
 	</aon:div>
 	<aon:div styleClass="aon-scroll-area">
 
-		<aon:panelGrid columns="6" dir="true">
+		<aon:panelGrid columns="8" dir="true" style="width: 100%;"
+			columnClasses="aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-150
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-150
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-auto
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-odd aon-width-150">
 
 			<aon:outputLabel for="Dossier_dossierType_id"
 				value="#{bundle.aon_type}" />
@@ -64,12 +72,12 @@
 				value="#{projectBundle.dossier_number} / #{bundle.aon_alias}" />
 			<aon:inputText id="Dossier_number" required="true" size="18"
 				maxlength="15" value="#{dossier.to.number}" />
-			<!-- 
+
 			<aon:outputLabel for="Dossier_location"
 				value="#{projectBundle.dossier_location}" />
 			<aon:inputText id="Dossier_location" size="25" maxlength="20"
 				value="#{dossier.to.location}" />
- -->
+
 			<aon:outputLabel for="Dossier_status"
 				value="#{bundle.aon_status}" />
 			<aon:selectOneMenu id="Dossier_status" value="#{dossier.to.status}">

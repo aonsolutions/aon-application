@@ -59,14 +59,14 @@
 									rendered="#{to.id==accPeriod.to.id}"
 									value="#{accPeriod.to.initiationDate}"
 									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}" />
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 								<f:facet name="footer">
 									<aon:selectInputDate required="true"
 										id="Period_initiationDate-NEW" rendered="#{accPeriod.new}"
 										value="#{accPeriod.to.initiationDate}"
 										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}" />
+										popupDateFormat="#{bundle.aon_date_pattern}"/>
 								</f:facet>
 							</aon:column>
 
@@ -81,39 +81,19 @@
 										pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
-								<aon:selectInputDate required="true" id="Period_deadline-EDIT"
-									rendered="#{to.id==accPeriod.to.id}"
+								<aon:selectInputDate required="true"
+									id="Period_deadline-EDIT" rendered="#{to.id==accPeriod.to.id}"
 									value="#{accPeriod.to.deadline}"
 									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}" />
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
 								<f:facet name="footer">
-									<aon:selectInputDate required="true" id="Period_deadline-NEW"
-										rendered="#{accPeriod.new}" value="#{accPeriod.to.deadline}"
+									<aon:selectInputDate required="true"
+										id="Period_deadline-NEW" rendered="#{accPeriod.new}"
+										value="#{accPeriod.to.deadline}"
 										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}" />
+										popupDateFormat="#{bundle.aon_date_pattern}"/>
 								</f:facet>
 							</aon:column>
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText id="Period_status-LABEL"
-										value="#{bundle.aon_status}" />
-								</f:facet>
-								<aon:outputText value="#{to.status}" rendered="#{formList}"/>
-								<aon:selectOneMenu id="Period_status-EDIT"
-									rendered="#{formEdit}" value="#{accPeriod.to.status}">
-									<f:selectItems
-										value="#{accountingCollections.accountPeriodStatuses}" />
-								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu id="Period_status-NEW" rendered="#{formNew}"
-										value="#{accPeriod.to.status}">
-										<f:selectItems
-											value="#{accountingCollections.accountPeriodStatuses}" />
-									</aon:selectOneMenu>
-								</f:facet>
-							</aon:column>
-
 						</ui:define>
 					</ui:decorate>
 				</aon:div>

@@ -2,8 +2,6 @@ package com.code.aon.ui.webmail.bean;
 
 public interface WebMailConstants {
 
-	String BUNDLE_NAME = "webmailBundle";	
-	
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
@@ -19,15 +17,15 @@ public interface WebMailConstants {
 	// ************************************************************
 	// BEAN
 	// ************************************************************
-	String BEAN_LOGIN = "webmailLogin";
+	String BEAN_LOGIN = "login";
 	String BEAN_USER = "user";
 	String BEAN_MAIL_ACCOUNT = "mailAccount";
 	String BEAN_WEBMAIL = "webmail";
-	String BEAN_TREE = "webmailTree";
-	String BEAN_FOLDER = "webmailFolder";
-	String BEAN_MESSAGE = "webmailMessage";
-	String BEAN_ATTACH = "webmailAttach";
-	String BEAN_SEARCH = "webmailSearch";
+	String BEAN_TREE = "tree";
+	String BEAN_FOLDER = "folder";
+	String BEAN_MESSAGE = "message";
+	String BEAN_ATTACH = "attach";
+	String BEAN_SEARCH = "search";
 	String BEAN_INPUTFILE = "inputFile";
 	String BEAN_CONTACT = "contact";
 	String BEAN_SIGNATURE = "signature";
@@ -37,18 +35,6 @@ public interface WebMailConstants {
 	String BEAN_SPAM = "spam";
 	String BEAN_LOGGED_USER = "loggedUser";
 	
-	// ************************************************************
-	// LDAP
-	// ************************************************************
-
-	String WEBMAIL_CONFIG = "aonWebmailConfig";
-	String REJECTED_EXTENSIONS = "webmailRejectedExtension";
-	String MAX_ATTACHMENT_SIZE = "webmailMaxAttachmentSize";
-
-	// ************************************************************
-	// MESSAGE ID
-	// ************************************************************	
+	String RESOURCE_BUNDLE = "com.code.aon.ui.webmail.i18n.messages";
 	
-	String CONTACT_DUPLICATED = "webmail_contact_duplicated";
-	String CONTACT_USED = "webmail_contact_used";
 }

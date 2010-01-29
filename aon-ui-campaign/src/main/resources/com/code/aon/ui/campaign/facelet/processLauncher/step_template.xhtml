@@ -44,6 +44,24 @@
 				</aon:panelGrid>
 			</aon:div>
 			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width: 100%;margin-bottom: 10px;">
+					<h:panelGrid columns="6" styleClass="aon-text-center" style="width: 800px;"
+						columnClasses="aon-width-200,aon-width-200,aon-width-200,aon-width-200">
+						<aon:div style="border: solid 1px black;width: 100%;color: #{processWizard.currentStep==0?'black;':'#CCCCCC;'}">
+							<aon:outputText value="#{campaignBundle.process_wizard_step0}" />
+						</aon:div>
+						<aon:div style="border: solid 1px black;width: 100%;color: #{processWizard.currentStep==1?'black;':'#CCCCCC;'}">
+							<aon:outputText value="#{campaignBundle.process_wizard_step1}" />
+						</aon:div>
+						<aon:div style="border: solid 1px black;width: 100%;color: #{processWizard.currentStep==2?'black;':'#CCCCCC;'}">
+							<aon:outputText value="#{campaignBundle.process_wizard_step2}" />
+						</aon:div>
+						<aon:div style="border: solid 1px black;width: 100%;color: #{processWizard.currentStep==3?'black;':'#CCCCCC;'}">
+							<aon:outputText value="#{campaignBundle.process_wizard_step3}" />
+						</aon:div>
+					</h:panelGrid>
+				</aon:div>
+
 				<ui:insert name="step_content" />
 			</aon:div>
 		</aon:form>

@@ -1,10 +1,10 @@
 package com.code.aon.ebackoffice.event;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
-import org.apache.commons.validator.EmailValidator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -15,11 +15,11 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.ebackoffice.Ectarget;
-import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
+import com.code.aon.ebackoffice.util.EmailUtils;
 
 public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final Logger LOGGER = Logger
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EcconfigBeanVetoListener.class.getName());
 
 	@Override
@@ -34,6 +34,11 @@ public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				e.printStackTrace();
 			} 
     		
+		}		
+		
+		if(!EmailUtils.validateEmailAddress(((Ecconfig)evt.getTo()).getEmail())){
+    		throw new ManagerBeanVetoListenerException(
+			"El email es incorrecto.");
 		}
 		
 	}
@@ -52,6 +57,10 @@ public class EcconfigBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     		
 		}
 		
+		if(!EmailUtils.validateEmailAddress(((Ecconfig)evt.getTo()).getEmail())){
+    		throw new ManagerBeanVetoListenerException(
+			"El email es incorrecto.");
+		}	
 		
 	}
 

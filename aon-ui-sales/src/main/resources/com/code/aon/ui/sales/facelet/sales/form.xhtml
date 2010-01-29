@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -21,10 +22,19 @@
 						<aon:commandButton id="delivery"
 							value="#{salesBundle.sales_to_delivery}"
 							immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
-							styleClass="aon-finding-toolbar-item aon-icon-settle" 
+							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
 							actionListener="#{sales.onDeliveryShow}"
 							reRender="showDeliveryWindow">
 							<f:setPropertyActionListener target="#{sales.showDeliveryWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+						<aon:commandButton id="invoice"
+							value="#{salesBundle.sales_to_invoice}"
+							immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
+							styleClass="aon-finding-toolbar-item aon-icon-favorite"
+							actionListener="#{sales.onInvoiceShow}"
+							reRender="showInvoiceWindow">
+							<f:setPropertyActionListener target="#{sales.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
 						<h:commandLink id="sales" value="#{bundle.aon_report}"
@@ -90,14 +100,14 @@
 								disabled="#{!sales.pending}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{sales.customerData}" 
-								reRender="Customer_full_name,Customer_registry_document,SalesAddress,Sales_defaultPayMethod,payMethodDiv"
+								reRender="Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true"  />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{!sales.pending}" minHeight="460" minWidth="650" 
 								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,Sales_defaultPayMethod,payMethodDiv"								
+								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv"								
 								actionType="search">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 
@@ -287,7 +297,8 @@
 							<ui:param name="showNote" value="false" />
 							<ui:param name="showDataScroller" value="false" />
 							<ui:param name="skipResetButton" value="#{!sales.pending}" />
-							<ui:param name="skipLineEdition" value="#{!sales.pending}" />
+							<ui:param name="skipLineEdition" value="#{!sales.pending or !salesDetail.pending}" />
+							<ui:param name="skipSaveButton" value="#{salesDetail.offerSource}" />
 							<ui:param name="rowSelectorReRender" value="menuExt" />
 							<ui:param name="resetButtonReRender" value="menuExt" />
 							<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -482,6 +493,24 @@
 									</f:facet>
 								</aon:column>
 
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+									<f:facet name="header">
+										<aon:outputLabel value="INFO" />
+									</f:facet>
+									<aon:div rendered="#{to.offerDetail != null and to.offerDetail.id != null}" 
+										style="display:inline;cursor:pointer;">
+										<aon:outputText value="&#160;"
+											styleClass="aon-icon-transfer" style="padding-left:20px" />
+										<rich:toolTip value="#{controller.lineSourceInfo}" />
+									</aon:div>
+									<aon:div rendered="#{!controller.pending}" 
+										style="display:inline;cursor:pointer;">
+										<aon:outputText value="&#160;"
+											styleClass="#{controller.settled ? 'aon-icon-predetermine' : 'aon-icon-predetermine2'}" 
+											style="padding-left:20px" />
+										<rich:toolTip value="#{controller.lineStatusInfo}" />
+									</aon:div>
+								</aon:column>
 							</ui:define>
 						</ui:decorate>
 					</aon:panel>
@@ -493,5 +522,6 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalDelivery.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalInvoice.xhtml" />
 	</ui:define>
 </ui:composition>

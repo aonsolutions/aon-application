@@ -10,20 +10,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.registry</artifactId>
-	<version>4.3.2</version>
+	<version>4.3.0</version>
 	<description>AON UI REGISTRY</description>
 	<name>AON UI REGISTRY</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.2.1</version>
+			<version>4.1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.1.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -41,19 +41,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.1.1</version>
+			<version>4.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>4.0.1</version>
+			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.13.3</version>
+			<version>4.13.1</version>
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>

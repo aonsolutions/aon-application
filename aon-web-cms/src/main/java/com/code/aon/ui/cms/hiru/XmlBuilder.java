@@ -217,7 +217,7 @@ public class XmlBuilder {
 				generateElement(hd,atts,"","","url_eu",value);
 				value = object.getInitDate()==null?"":sdf.format(object.getInitDate());
 				generateElement(hd,atts,"","","hasi",value);
-				value = object.getEndDate()==null?"":sdf.format(object.getEndDate());
+				value = object.getInitDate()==null?"":sdf.format(object.getInitDate());
 				generateElement(hd,atts,"","","bukatu",value);
 				value = objectDetailEs.getInfo()==null?"":objectDetailEs.getInfo();
 				generateElement(hd,atts,"","","info_es",value);

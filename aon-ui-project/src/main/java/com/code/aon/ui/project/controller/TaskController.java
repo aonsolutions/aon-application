@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -18,6 +16,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.ActivityProcess;
 import com.code.aon.campaign.Campaign;
@@ -58,7 +58,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TaskController extends BasicController implements ITaskController {
 
-	private static final Logger LOGGER = Logger.getLogger(TaskController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
 
 	private static final String ASCENDING = "asc";
 	private static final String DESCENDING = "desc";
@@ -98,7 +98,7 @@ public class TaskController extends BasicController implements ITaskController {
 			PRIORITY_ALIAS = taskBean.getFieldName(IProjectAlias.TASK_PRIORITY);
 			PERCENT_ALIAS = taskBean.getFieldName(IProjectAlias.TASK_PERCENT);
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error obtining field alias", e);
+			LOGGER.error("Error obtining field alias", e);
 		}
 	}
 
@@ -141,9 +141,16 @@ public class TaskController extends BasicController implements ITaskController {
 	private ProcessTransitionType processTransitionType;
 	private DataModel transitionModel;
 	private ProcessDetailTransition transitionSelected;
-
 	private boolean transitionCorrect = true;
-
+	private CampaignTaskManager campaignTaskManager;
+	
+	private CampaignTaskManager getCampaignTaskManager() {
+		if (campaignTaskManager == null) {
+			campaignTaskManager = new CampaignTaskManager();
+		}
+		return campaignTaskManager;
+	}
+	
 	public ProcessTransitionType getProcessTransitionType() {
 		return processTransitionType;
 	}
@@ -234,7 +241,7 @@ public class TaskController extends BasicController implements ITaskController {
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error loading all dossiers!";
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -350,7 +357,7 @@ public class TaskController extends BasicController implements ITaskController {
 		try {
 			return isFreeTask((Task) this.getModel().getRowData());
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error getting Task Model", e);
+			LOGGER.error("Error getting Task Model", e);
 		}
 		return false;
 	}
@@ -362,7 +369,7 @@ public class TaskController extends BasicController implements ITaskController {
 			criteria.addNotNullExpression(getFieldName(IProjectAlias.TASK_USER_ID));
 			return (getManagerBean().getList(criteria).size() == 0);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining task with id= " + task.getId(), e);
+			LOGGER.error("Error obtaining task with id= " + task.getId(), e);
 		}
 		return false;
 	}
@@ -402,7 +409,7 @@ public class TaskController extends BasicController implements ITaskController {
 				dossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers related with customer with id= "
+			LOGGER.error("Error loading dossiers related with customer with id= "
 					+ customerId.toString(), e);
 		}
 	}
@@ -451,7 +458,7 @@ public class TaskController extends BasicController implements ITaskController {
 		} catch (ManagerBeanException e) {
 			String msg = "Error loading activities related with dossier with id= "
 					+ dossierId.toString();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -496,7 +503,7 @@ public class TaskController extends BasicController implements ITaskController {
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error loading users of workgroup with id= " + workGroupId.toString();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -506,14 +513,13 @@ public class TaskController extends BasicController implements ITaskController {
 		Task task = (Task) this.getTo();
 		if (task.isSourceProcess()) {
 			try {
-				ActivityProcess activityProcess = CampaignTaskManager
-						.getCurrentActivityProcess(task);
+				ActivityProcess activityProcess = getCampaignTaskManager().getCurrentActivityProcess(task);
 				if (activityProcess != null) {
 					return activityProcess.getCampaign();
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "Error getting campaign from task with id= " + task.getId();
-				LOGGER.log(Level.SEVERE, msg, e);
+				LOGGER.error(msg, e);
 				addMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -531,7 +537,7 @@ public class TaskController extends BasicController implements ITaskController {
 			return null;
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -550,7 +556,7 @@ public class TaskController extends BasicController implements ITaskController {
 			return null;
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -558,7 +564,7 @@ public class TaskController extends BasicController implements ITaskController {
 
 	private Task getPreviousTask(Task task) throws ManagerBeanException {
 		if (task.isSourceProcess()) {
-			return CampaignTaskManager.getPreviousTask(task);
+			return getCampaignTaskManager().getPreviousTask(task);
 		}
 		return null;
 	}
@@ -572,7 +578,7 @@ public class TaskController extends BasicController implements ITaskController {
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error removing task. " + e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -591,7 +597,7 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	private void finishTaskAlarm(Task task) throws ManagerBeanException {
-		CampaignTaskManager.finishTaskAlarm(task);
+		getCampaignTaskManager().finishTaskAlarm(task);
 	}
 
 	public void onAssumeTask(ActionEvent event) {
@@ -603,7 +609,7 @@ public class TaskController extends BasicController implements ITaskController {
 			}
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -615,7 +621,7 @@ public class TaskController extends BasicController implements ITaskController {
 			assumeTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -637,7 +643,7 @@ public class TaskController extends BasicController implements ITaskController {
 			onRefresh(event);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -656,7 +662,7 @@ public class TaskController extends BasicController implements ITaskController {
 			releaseTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -669,7 +675,7 @@ public class TaskController extends BasicController implements ITaskController {
 			releaseTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -691,7 +697,7 @@ public class TaskController extends BasicController implements ITaskController {
 			onRefresh(event);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -706,13 +712,13 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	private void createNextTask(Task task) throws ManagerBeanException {
-		ActivityProcess activityProcess = CampaignTaskManager.getCurrentActivityProcess(task);
+		ActivityProcess activityProcess = getCampaignTaskManager().getCurrentActivityProcess(task);
 		if (activityProcess != null) {
 			CampaignDossier campaignDossier = new CampaignDossier();
 			campaignDossier.setCampaign(activityProcess.getCampaign());
 			campaignDossier.setDossier(task.getDossier());
-			CampaignTaskManager.addCampaignTask(campaignDossier, activityProcess.getProcessDetail()
-					.getPosition() + 1, getTransitionSelected());
+			getCampaignTaskManager().addCampaignTask(campaignDossier, activityProcess.getProcessDetail()
+					.getPosition() + 1, getTransitionSelected(),task);
 		}
 	}
 
@@ -740,12 +746,17 @@ public class TaskController extends BasicController implements ITaskController {
 		// Se calculan los dias de diferencia.
 		int days = (int) (dueDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
 		// Se suma el periodo indicado.
-		Date newStartDate = DateUtils.add(startDate, task.getRepeatPeriod().getField(), task
-				.getRepeatPeriod().getValue());
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		c.add(task.getRepeatPeriod().getField(), task.getRepeatPeriod().getValue());
+		Date newStartDate = c.getTime();
 		// Se asigna la nueva fecha.
 		newTask.setStartDate(newStartDate);
 		// Se calcula y asigna la nueva fecha de vencimiento.
-		newTask.setDueDate(DateUtils.add(newStartDate, Calendar.DAY_OF_MONTH, days));
+		c = Calendar.getInstance();
+		c.setTime(newStartDate);
+		c.add(Calendar.DAY_OF_MONTH, days);
+		newTask.setDueDate(c.getTime());
 		ensureTask(newTask);
 		IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
 		return (Task) taskBean.insert(newTask);
@@ -772,7 +783,7 @@ public class TaskController extends BasicController implements ITaskController {
 			startTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -785,7 +796,7 @@ public class TaskController extends BasicController implements ITaskController {
 			startTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -804,7 +815,7 @@ public class TaskController extends BasicController implements ITaskController {
 			stopTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -816,7 +827,7 @@ public class TaskController extends BasicController implements ITaskController {
 			stopTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -835,7 +846,7 @@ public class TaskController extends BasicController implements ITaskController {
 			reopenTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -847,7 +858,7 @@ public class TaskController extends BasicController implements ITaskController {
 			reopenTask(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -972,12 +983,12 @@ public class TaskController extends BasicController implements ITaskController {
 			addOrder();
 		} catch (ManagerBeanException e) {
 			String msg = "Error adding custom expression" + e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		} catch (ExpressionException e) {
 			String msg = "Error adding custom expression" + e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -986,18 +997,14 @@ public class TaskController extends BasicController implements ITaskController {
 	private void addOrder() throws ManagerBeanException {
 		OrderByList list = new OrderByList();
 		if (getOrderColumn() == null) {
-			list
-					.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS),
-							false));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),
-					false));
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS),
-					false));
-			list.addOrder(new Order(ExpressionUtilities
-					.getIdentifierExpression(TASK_DUE_DATE_ALIAS), false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS),false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
+//			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS),false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS), true));
 		} else {
-			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()),
-					isOrderAscending()));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()),isOrderAscending()));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS),true));
 		}
 		getCriteria().setOrderByList(list);
 
@@ -1151,7 +1158,7 @@ public class TaskController extends BasicController implements ITaskController {
 			return this.getModel().isRowAvailable()
 					&& isMyTask((Task) this.getModel().getRowData());
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error getting Task Model", e);
+			LOGGER.error("Error getting Task Model", e);
 		}
 		return false;
 	}
@@ -1161,23 +1168,22 @@ public class TaskController extends BasicController implements ITaskController {
 				task.getUser().getId());
 	}
 
-	public void onFinishSelected(ActionEvent event) {
+	public void onFinishTaskFromList(ActionEvent event) {
 		try {
-			boolean message = false;
-			Iterator<Task> iter = checks.iterator();
-			while (iter.hasNext()) {
-				Task task = iter.next();
+			onSelect(event);
+			Task task = (Task) this.getTo();
+			setTransitionModel(null);
+			setTransitionCorrect(true);
+			setTransitionSelected(null);
+			setFinishPanelVisible(false);
+			if (task.isSourceProcess() && getCampaignTaskManager().hasTransitions(task)) {
+				setFinishPanelVisible(true);
+			} else {
 				finishTask(task);
-				if (!message && !isMyTask(task)) {
-					addMessage("Existen Tareas que no se han podido finalizar por estar asumidas por otros Usuarios.");
-					message = true;
-				}
 			}
-			resetChecks();
-			onRefresh(event);
 		} catch (ManagerBeanException e) {
-			String msg = "Error finishing task. " + e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			String msg = e.getMessage();
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -1190,7 +1196,7 @@ public class TaskController extends BasicController implements ITaskController {
 			setTransitionSelected(null);
 			setFinishPanelVisible(false);
 			Task task = (Task) this.getTo();
-			if (task.isSourceProcess() && CampaignTaskManager.hasTransitions(task)) {
+			if (task.isSourceProcess() && getCampaignTaskManager().hasTransitions(task)) {
 				setFinishPanelVisible(true);
 				return null;
 			}
@@ -1199,7 +1205,7 @@ public class TaskController extends BasicController implements ITaskController {
 			return "task_list";
 		} catch (ManagerBeanException e) {
 			String msg = "Error finishing task. " + e.getMessage();
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -1436,7 +1442,7 @@ public class TaskController extends BasicController implements ITaskController {
 		} catch (ManagerBeanException e) {
 			String msg = "Error obtaining dossier from task";
 			addMessage(msg);
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			throw new AbortProcessingException(msg);
 		}
 
@@ -1456,7 +1462,7 @@ public class TaskController extends BasicController implements ITaskController {
 		} catch (ManagerBeanException e) {
 			String msg = "Error obtaining activity from task";
 			addMessage(msg);
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			throw new AbortProcessingException(msg);
 		}
 
@@ -1464,7 +1470,7 @@ public class TaskController extends BasicController implements ITaskController {
 		Date dueDate = task.getDueDate();
 		if (dueDate.compareTo(startDate) < 0) {
 			String msg = "Fecha Inicio no puede ser posterior a Fecha Vencimiento.";
-			LOGGER.log(Level.SEVERE, msg);
+			LOGGER.error(msg);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -1504,7 +1510,7 @@ public class TaskController extends BasicController implements ITaskController {
 			AonUtil.addInfoMessage("" + i + "tarea(s) creadas.");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al crear la tarea para los usuarios. [" + e.getMessage() + "]";
-			LOGGER.log(Level.SEVERE, msg, e);
+			LOGGER.error(msg, e);
 			addMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -1521,7 +1527,7 @@ public class TaskController extends BasicController implements ITaskController {
 	private void initializeTransitionModel() throws ManagerBeanException {
 		Task task = (Task) getTo();
 		if (task != null) {
-			transitionModel = new ListDataModel(CampaignTaskManager.getTransitions(task));
+			transitionModel = new ListDataModel(getCampaignTaskManager().getTransitions(task));
 		}
 	}
 
@@ -1539,7 +1545,7 @@ public class TaskController extends BasicController implements ITaskController {
 			setTransitionCorrect(true);
 			setFinishPanelVisible(false);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
 		}

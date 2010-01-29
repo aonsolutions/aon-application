@@ -3,11 +3,12 @@ package com.code.aon.ui.project.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,7 +26,7 @@ import com.code.aon.ui.form.FormUtil;
 
 public class DossierController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(DossierController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(DossierController.class);
 	
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
 	
@@ -39,7 +40,7 @@ public class DossierController extends BasicController {
 			getCriteria().addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID), customer.getId());
 			this.onSearch(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossiers related with customer with id= " + customer.getId(), e);
+			LOGGER.error("Error loading dossiers related with customer with id= " + customer.getId(), e);
 		}
 	}
 
@@ -53,7 +54,8 @@ public class DossierController extends BasicController {
 		Expression e1 =  ExpressionUtilities.getEqualExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID), dossier.getDossierType().getId());
 		Expression e2 =  ExpressionUtilities.getNullExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID));
 		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2)); 
-		
+		criteria.addOrder( activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID), false );
+		criteria.addOrder( activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DESCRIPTION));
 		Iterator iter = activityTypeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			ActivityType type = (ActivityType)iter.next();

@@ -37,12 +37,9 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="invoice-accept"
 										value="#{warehouseBundle.warehouse_delivery_to_invoice}"
-										reRender="showInvoiceWindow,deliveryForm"
 										actionListener="#{delivery.onInvoice}"
+										action="saleInvoice_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
-										<f:setPropertyActionListener
-											target="#{delivery.showInvoiceWindow}"
-											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="invoice-cancel"
 										value="#{bundle.aon_cancel}"
