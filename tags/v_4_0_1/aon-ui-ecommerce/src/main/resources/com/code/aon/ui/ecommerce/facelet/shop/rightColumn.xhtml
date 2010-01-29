@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+<!--  
+		SEARCH BOX
+-->
+		<aon:div id="search-box" styleClass="search-box">
+			<aon:inputText id="Item_product_name"
+				value="#{shopItemsSearch.search}" maxLength="64" >
+				<a4j:support event="onclick" reRender="Item_product_name" focus="Item_product_name">
+					<aon:actionListener method="#{shopItemsSearch.onTextInput}" />
+				</a4j:support>
+				<a4j:support event="onblur" reRender="Item_product_name">
+					<aon:actionListener method="#{shopItemsSearch.onTextOutput}" />
+				</a4j:support>
+			</aon:inputText>
+			<aon:commandButton id="search_bottom" value="&#160;"
+				styleClass="aon-icon-commandButton-right aon-icon-search"
+				title="#{bundle.aon_search}" accesskey="#{bundle.aon_key_accept}"
+				reRender="itemContent, search-box">
+				<aon:actionListener method="#{shopItemsSearch.onSearch}" />
+			</aon:commandButton>
+		</aon:div>
+<!--  
+		LOGIN BOX
+-->
+		<c:if test="#{ecConfig.onDemandLogin}">
+			<aon:div id="login-box" styleClass="login-box">
+				<aon:div id="login-box-header" styleClass="box-header">
+					<aon:div id="login-box-icon" styleClass="login-box-header-icon"></aon:div>
+					<aon:commandLink action="registry_form">
+						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
+					</aon:commandLink>
+				</aon:div>
+			
+				<aon:panelGrid columns="2" dir="true" rendered="#{shop.logged}">
+					<aon:outputLabel for="User" value="#{ecommerceBundle.aon_ecommerce_user_registered}" />
+					<aon:outputLabel value="&#160;" />
+					<aon:outputText id="User" value="#{userLogin.login}" />
+					<aon:outputLabel value="&#160;" />
+				</aon:panelGrid>
+				<aon:commandButton style="border-right:0;" 
+					value="#{securityBundle.aon_login_user_logout}"
+					action="#"
+					rendered="#{shop.logged}"
+					actionListener="#{userLogin.onLogout}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept">
+				</aon:commandButton>
+	
+				<aon:panelGrid columns="2" dir="true" rendered="#{! shop.logged}">
+					<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_ecommerce_user_name}" />
+					<aon:inputText id="Login" value="#{userLogin.login}" />
+	
+					<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_ecommerce_user_passwd}" />
+					<aon:inputSecret id="Password" value="#{userLogin.password}" />
+				</aon:panelGrid>
+				
+				<aon:commandButton id="login-buttom" 
+					value="#{bundle.aon_accept}"
+					action="#"
+					rendered="#{! shop.logged}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept">
+					<aon:actionListener method="#{userLogin.onLogin}" />
+				</aon:commandButton>
+			</aon:div>
+		</c:if>
+<!--  
+		LIST INFO BOX
+-->
+		<aon:div id="list-info-box" 
+			styleClass="list-info-box" 
+			rendered="#{!(shoppingCart.model.rowCount==0)}">
+			<aon:div id="list-info-box-header" styleClass="box-header">
+				<aon:div id="list-info-box-icon" styleClass="list-info-box-header-icon"></aon:div>
+				<aon:commandLink action="shop_from" disabled="#{shoppingCart.quantity==0}">
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_cart_summary}" />
+					<aon:actionListener method="#{shop.onViewCart}" />
+				</aon:commandLink>
+			</aon:div>
+			
+			<aon:panelGrid columns="2" dir="true" styleClass="none">
+				<aon:outputLabel for="cart_quantity" value="#{ecommerceBundle.aon_ecommerce_list_size}" />
+				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
+	
+				<aon:outputLabel for="cart_total" value="#{ecommerceBundle.aon_ecommerce_total}" />
+				<aon:outputText id="cart_total" value="#{shoppingCart.total}">
+					<f:convertNumber pattern="#,##0.00" />
+				 </aon:outputText>
+			</aon:panelGrid>
+			
+			<aon:commandButton id="recicler-buttom" 
+				value="#{bundle.aon_remove}"
+				action="#"
+				rendered="#{!(shoppingCart.model.rowCount==0)}"
+				reRender="right-panel"
+				styleClass="aon-finding-toolbar-item aon-icon-remove">
+				<aon:actionListener method="#{shoppingCart.onCartClean}" />
+			</aon:commandButton>
+		</aon:div>
+<!--  
+		HELPDESK BOX
+-->
+		<aon:div id="helpdesk-box" styleClass="helpdesk-box">
+			<aon:div id="helpdesk-box-header" styleClass="box-header">
+				<aon:div id="helpdesk-box-icon" styleClass="helpdesk-box-header-icon"></aon:div>
+				<aon:commandLink action="ec_contact_form">
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_contact}" />
+				</aon:commandLink>
+			</aon:div>
+			
+			<aon:panelGrid columns="2" dir="true" styleClass="none">
+				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_telephone}" />
+				<aon:outputText value="#{ecConfig.activeConfig.telephone}" />
+
+				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_contact_email}" />
+				<aon:outputText value="#{ecConfig.activeConfig.email}" />
+				
+				<aon:outputLabel value="&#160;" />
+				<aon:commandButton rendered="true"
+					value="#{ecommerceBundle.aon_ecommerce_contact_form}" 
+					action="ec_contact_form" immediate="true"
+					styleClass="aon-finding-toolbar-item aon-icon-letter">
+<!--  
+					<aon:actionListener method="#{ecEmail.onEmail}" />
+-->
+				</aon:commandButton>
+			</aon:panelGrid>
+		</aon:div>
+<!--  
+		BANNER
+-->		
+		<aon:div id="right-banner-image" styleClass="right-banner-image">
+			<a4j:mediaOutput id="image-right" element="img" style="margin:0 auto;"
+				rendered="#{ecConfig.rightBanner}"
+				cacheable="false" value="#{ecConfig.activeConfig.id}"
+				createContent="#{ecConfig.paintRightBanner}" />
+		</aon:div>
+
+</ui:composition>
