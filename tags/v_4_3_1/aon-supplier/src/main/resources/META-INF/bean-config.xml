@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="">
+		<pojo>com.code.aon.supplier.ItemSupplier</pojo>
+		<listeners>
+	        <listener>com.code.aon.supplier.event.ItemSupplierBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Listener para controlar valores en supplier">
+		<pojo>com.code.aon.supplier.Supplier</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.supplier.event.SupplierBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+</bean-config>

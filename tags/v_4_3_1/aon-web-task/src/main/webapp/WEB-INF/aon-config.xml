@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
+	xmlns="http://www.esferalia.com/config" >
+	
+	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="false" 
+			showCompanyOtherData="true"
+			showPanelTabSet="false" 
+			showDigitalCertificate="false"
+		/>
+	</company:config>
+
+	<customer:config version="1.0" xmlns:customer="http://www.esferalia.com/customer">
+		<customer:customer
+			showFinanceData="false" 
+			showProjectData="true"
+			showFinanceFeeData="false" 
+			showAccount="false"
+			showTariff="false" 
+			showSegment="false"
+			showNote="false"
+			showRelationship="false"
+			showRecordData="false"
+			showTaxInfoData="false"
+			showAddInfo="false"
+		/>
+	</customer:config>
+
+</config>

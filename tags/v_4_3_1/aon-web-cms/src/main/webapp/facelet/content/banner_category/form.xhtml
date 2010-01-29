@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="main_form">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.banner_category}" />
+				<ui:param name="controller" value="#{banner_category}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="BannerCategory_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="BannerCategory_alias"
+						required="true" size="32" maxlength="32"
+						value="#{banner_category.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+
+					<aon:outputLabel for="BannerCategoryDetail_label"
+						value="#{appBundle.article_category_label}" />
+					<aon:inputText id="BannerCategoryDetail_label"
+						size="50" maxlength="64"
+						value="#{banner_category.toI18n.label}" />
+
+					<aon:outputLabel for="BannerCategory_section"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="BannerCategory_section"  
+						value="#{banner_category.to.section.id}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="BannerCategory_position"
+						value="#{appBundle.banner_category_position}"/>
+					<aon:inputText id="BannerCategory_position"
+						required="true" size="10" maxlength="8"
+						value="#{banner_category.to.position}" />
+					
+					<aon:outputLabel for="BannerCategory_active"
+						value="#{appBundle.cms_active}"/>
+					<aon:selectBooleanCheckbox id="BannerCategory_active" 
+						value="#{banner_category.to.active}" />
+					
+				</aon:panelGrid>
+			</aon:div>
+		
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
