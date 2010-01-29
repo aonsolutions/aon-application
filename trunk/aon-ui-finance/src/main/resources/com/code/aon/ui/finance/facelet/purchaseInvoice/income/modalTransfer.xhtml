@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showIncomeTransferWindow">
 		<c:if test="#{purchaseInvoice.showIncomeTransferWindow}">
 			<rich:modalPanel id="incomeTransferModalPanel" minHeight="580"
-				minWidth="740" rendered="#{purchaseInvoice.showIncomeTransferWindow}"
+				minWidth="760" rendered="#{purchaseInvoice.showIncomeTransferWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -37,9 +37,21 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
+								<aon:div styleClass="aon-toolbar" rendered="#{!purchaseInvoice.readOnly}">
+									<aon:commandButton id="incomeTransfer-selectAll"
+										value="#{bundle.aon_check_all}"
+										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+										actionListener="#{purchaseInvoice.incomeTransferManager.checkAllIncomes}" 
+										reRender="incomeData" />	
+									<aon:commandButton id="incomeTransfer-selectNone"
+										value="#{bundle.aon_uncheck_all}"
+										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+										actionListener="#{purchaseInvoice.incomeTransferManager.checkNoneIncomes}" 
+										reRender="incomeData" />	
 									<aon:commandButton id="incomeTransfer-accept"
-										value="#{financeBundle.finance_invoice_to_import}"
+										value="#{financeBundle.finance_invoice_to_transfer}"
 										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
 										reRender="showIncomeTransferWindow,invoiceDetails,menuExt"
 										actionListener="#{purchaseInvoice.onIncomeTransfer}"
@@ -68,31 +80,28 @@
 
 									<aon:dataTable id="incomeData" value="#{purchaseInvoice.incomeTransferManager.incomeModel}"
 										var="to" rows="10" rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
-										columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-											aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+										columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+											aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
 
-										<aon:rowSelector immediate="true"
-											actionListener="#{purchaseInvoice.incomeTransferManager.onSelectIncome}" reRender="detailDataContainer" 
-											eventsQueue="incomeSelector" ignoreDupResponses="true" requestDelay="1000" />
-
-										<aon:column>
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="&#160;" />
 											</f:facet>
 											<aon:selectBooleanCheckbox id="IncomeCheck"
 												value="#{purchaseInvoice.incomeTransferManager.incomeRowChecked}"
+												rendered="#{!purchaseInvoice.readOnly}"
 												valueChangeListener="#{purchaseInvoice.incomeTransferManager.incomeRowSelected}"
 												reRender="detailDataContainer" ajaxSingle="true" />	
 										</aon:column>
 			
-										<aon:column>
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 											</f:facet>
 											<aon:outputText value="#{to.referenceCode}" />
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_date}" />
 											</f:facet>
@@ -102,7 +111,7 @@
 											</aon:outputText>
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<h:outputText value="#{supplierBundle.supplier_supplier}" />
 											</f:facet>
@@ -111,13 +120,25 @@
 											</aon:outputText>
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_total}" />
 											</f:facet>
 											<aon:outputText value="#{purchaseInvoice.incomeTransferManager.incomeTotalPrice}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
+										</aon:column>
+
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:commandButton value="&#160;" immediate="true"
+												title="#{financeBundle.finance_invoice_see_delivery_details}"
+												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
+												actionListener="#{purchaseInvoice.incomeTransferManager.onSelectIncome}"
+												reRender="incomeData,detailDataContainer" ajaxSingle="true">
+											</aon:commandButton>															
 										</aon:column>
 									</aon:dataTable>
 					
