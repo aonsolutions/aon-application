@@ -331,8 +331,8 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Item_product_code</value>
-		</managed-property>		
+			<value>Item_product_name</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/product/facelet/lookup/item/list.xhtml</value>
