@@ -24,6 +24,7 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
 public class DeliveryTransferManager {
 
 	private IPriceStrategy priceStrategy;
+	private Integer selectedDeliveryId;
 	private List<ITransferObject> deliveryList;
 	private List<ITransferObject> detailList;
 	private DataModel deliveryModel;
@@ -36,6 +37,14 @@ public class DeliveryTransferManager {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public Integer getSelectedDeliveryId() {
+		return selectedDeliveryId;
+	}
+
+	public void setSelectedDeliveryId(Integer selectedDeliveryId) {
+		this.selectedDeliveryId = selectedDeliveryId;
 	}
 
 	public List<ITransferObject> getDeliveryList() {
@@ -92,6 +101,7 @@ public class DeliveryTransferManager {
 	public void onSelectDelivery(ActionEvent event) {
 		if (deliveryModel.isRowAvailable()) {
 			Delivery delivery = (Delivery)deliveryModel.getRowData();
+			setSelectedDeliveryId(delivery.getId());
 			setDetailList(obtainDeliveryDetailList(delivery));
 			setDetailModel(null);
 		}
@@ -128,9 +138,6 @@ public class DeliveryTransferManager {
 		if (deliveryModel.isRowAvailable()) {
 			Delivery delivery = (Delivery)deliveryModel.getRowData();
 			setDeliveryRowChecked(delivery, rowChecked);
-
-			setDetailList(obtainDeliveryDetailList(delivery));
-			setDetailModel(null);
 		}
 	}
 
