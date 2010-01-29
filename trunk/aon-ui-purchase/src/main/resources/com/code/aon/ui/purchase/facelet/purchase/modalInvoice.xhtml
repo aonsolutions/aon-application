@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showInvoiceWindow">
 		<c:if test="#{purchase.showInvoiceWindow}">
-			<rich:modalPanel id="invoiceModalPanel" minHeight="220"
+			<rich:modalPanel id="invoiceModalPanel" minHeight="240"
 				minWidth="520" rendered="#{purchase.showInvoiceWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -51,8 +51,8 @@
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
 										<aon:outputLabel for="Purchase_invoiceRefCode"
 											value="#{financeBundle.finance_invoice_number}" />
@@ -63,10 +63,12 @@
 										<aon:outputLabel for="Purchase_invoiceDate"
 											value="#{bundle.aon_date}" />
 										<aon:selectInputDate id="Purchase_invoiceDate" 
-											value="#{purchase.invoiceDate}"
-											required="true"
+											value="#{purchase.invoiceDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
-											popupDateFormat="#{bundle.aon_date_pattern}"/>
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-80" />
 
 										<aon:outputLabel for="Purchase_invoiceWarehouse" 
 											value="#{warehouseBundle.warehouse_warehouse}" />
