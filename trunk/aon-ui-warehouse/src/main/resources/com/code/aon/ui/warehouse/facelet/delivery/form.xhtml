@@ -305,7 +305,7 @@
 							<ui:param name="showDataScroller" value="false" />
 							<ui:param name="skipResetButton" value="#{!delivery.pending}" />
 							<ui:param name="skipLineEdition" value="#{!delivery.pending}" />
-							<ui:param name="skipSaveButton" value="#{deliveryDetail.salesSource}" />
+							<ui:param name="skipSaveButton" value="true" />
 							<ui:param name="rowSelectorReRender" value="menuExt" />
 							<ui:param name="resetButtonReRender" value="menuExt" />
 							<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -348,7 +348,7 @@
 												value="#{deliveryDetail.to.item.product.code}"
 												lookup="#{itemLookup}" 
 												lookupChangeListener="#{deliveryDetail.onItemChanged}" 
-												reRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"  
+												reRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount,#{dataTableId}-save2"  
 												ajaxSingle="false" required="true" size="10"
 												onblur="toUpperCase(this);" focus="DeliveryDetail_item_product_name">
 												<aon:joinProperty alias="Item_product_code"	value="#{deliveryDetail.to.item.product.code}" />
@@ -358,7 +358,7 @@
 												minHeight="460" minWidth="650" 
 												property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
 												lookupChangeListener="#{deliveryDetail.onItemChanged}"
-												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"
+												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount,#{dataTableId}-save2"
 												actionType="search">
 											</aon:lookupButton>
 											<aon:lookupButton
@@ -366,7 +366,7 @@
 												minHeight="360" minWidth="780"
 												property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
 												lookupChangeListener="#{deliveryDetail.onItemChanged}" 
-												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"
+												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount,#{dataTableId}-save2"
 												actionType="new">
 											</aon:lookupButton>
 											<c:if test="#{aonConfiguration.bean.product.showStock}">
@@ -404,7 +404,7 @@
 													value="#{deliveryDetail.to.item.product.code}"
 													lookup="#{itemLookup}" 
 													lookupChangeListener="#{deliveryDetail.onItemChanged}" 
-													reRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"  
+													reRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New,#{dataTableId}-new-save2"  
 													ajaxSingle="false" required="true" size="10"
 													onblur="toUpperCase(this);" focus="DeliveryDetail_item_product_name-New">
 													<aon:joinProperty alias="Item_product_code"	value="#{deliveryDetail.to.item.product.code}" />
@@ -414,7 +414,7 @@
 													minHeight="460" minWidth="650" 
 													property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
 													lookupChangeListener="#{deliveryDetail.onItemChanged}"
-													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"
+													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New,#{dataTableId}-new-save2"
 													actionType="search">
 												</aon:lookupButton>
 												<aon:lookupButton
@@ -422,7 +422,7 @@
 													minHeight="360" minWidth="780"
 													property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
 													lookupChangeListener="#{deliveryDetail.onItemChanged}" 
-													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"
+													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New,#{dataTableId}-new-save2"
 													actionType="new">
 												</aon:lookupButton>
 												<c:if test="#{aonConfiguration.bean.product.showStock}">
@@ -467,13 +467,13 @@
 									<aon:inputText id="DeliveryDetail_quantity" 
 										value="#{controller.to.quantity}" rendered="#{formEdit}"
 										valueChangeListener="#{controller.onQuantityChanged}" 
-										reRender="DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" 
+										reRender="DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount,#{dataTableId}-save2" 
 										required="true" size="5" focus="DeliveryDetail_price" />
 									<f:facet name="footer">
 										<aon:inputText id="DeliveryDetail_quantity-New" 
 											value="#{controller.to.quantity}" rendered="#{formNew}" 
 											valueChangeListener="#{controller.onQuantityChanged}" 
-											reRender="DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New" 
+											reRender="DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New,#{dataTableId}-new-save2" 
 											required="true" size="5" focus="DeliveryDetail_price-New" />
 									</f:facet>
 								</aon:column>
@@ -561,6 +561,28 @@
 									</aon:div>
 								</aon:column>
 							</ui:define>
+
+							<ui:define name="beforeEditLineButtons">
+								<aon:commandButton
+									id="#{dataTableId}-save2" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+									action="#{saveAction}" actionListener="#{saveActionListener}"
+									rendered="#{!controller.salesSource}"
+									onclick="if ('#{controller.stockWarning}' == 'true' &amp;&amp; !confirm('#{warehouseBundle.warehouse_delivery_not_enough_stock_msg}')) return false;"
+									reRender="#{dataTableId}Div#{(saveButtonReRender != null)?',':''}#{saveButtonReRender}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									accesskey="#{bundle.aon_key_save_line}" />
+							</ui:define>
+							<ui:define name="beforeNewLineButtons">
+								<aon:commandButton
+									id="#{dataTableId}-new-save2" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+									action="#{newSaveAction}" actionListener="#{newSaveActionListener}"
+									rendered="#{formNew}"
+									onclick="if ('#{controller.stockWarning}' == 'true' &amp;&amp; !confirm('#{warehouseBundle.warehouse_delivery_not_enough_stock_msg}')) return false;"
+									reRender="#{dataTableId}Div#{(newSaveButtonReRender != null)?',':''}#{newSaveButtonReRender}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									accesskey="#{bundle.aon_key_save_line}" />
+							</ui:define>
+
 						</ui:decorate>
 					</aon:panel>
 				</aon:div>
