@@ -26,6 +26,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 public class PurchaseTransferManager {
 
 	private IPriceStrategy priceStrategy;
+	private Integer selectedPurchaseId;
 	private List<ITransferObject> purchaseList;
 	private List<ITransferObject> detailList;
 	private DataModel purchaseModel;
@@ -38,6 +39,14 @@ public class PurchaseTransferManager {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public Integer getSelectedPurchaseId() {
+		return selectedPurchaseId;
+	}
+
+	public void setSelectedPurchaseId(Integer selectedPurchaseId) {
+		this.selectedPurchaseId = selectedPurchaseId;
 	}
 
 	public List<ITransferObject> getPurchaseList() {
@@ -85,6 +94,7 @@ public class PurchaseTransferManager {
 
 	public void onSelectPurchase(ActionEvent event) {
 		Purchase purchase = (Purchase)purchaseModel.getRowData();
+		setSelectedPurchaseId(purchase.getId());
 		setDetailList(obtainPurchaseDetailList(purchase));
 		setDetailModel(null);
 	}
@@ -129,12 +139,10 @@ public class PurchaseTransferManager {
 		Purchase purchase = (Purchase)purchaseModel.getRowData();
 		setPurchaseRowChecked(purchase, rowChecked);
 
-		setDetailList(obtainPurchaseDetailList(purchase));
-		setDetailModel(null);
 		if (rowChecked) {
-			checkAllDetails(null);
+			checkAllDetails(obtainPurchaseDetailList(purchase));
 		} else {
-			checkNoneDetails(null);
+			checkNoneDetails(obtainPurchaseDetailList(purchase));
 		}
 	}
 
@@ -167,18 +175,21 @@ public class PurchaseTransferManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void checkAllPurchase(ActionEvent event) {
+	public void checkAllPurchases(ActionEvent event) {
 		Iterator iterator = purchaseList.iterator();
 		while (iterator.hasNext()) {
 			Purchase purchase = (Purchase)iterator.next();
-			if (!purchaseChecks.contains(purchase)) {
-				purchaseChecks.add(purchase);
-			}
+			setPurchaseRowChecked(purchase, true);
+			checkAllDetails((purchase.getId().equals(selectedPurchaseId)) ? detailList : obtainPurchaseDetailList(purchase));
 		}
 	}
 
-	public void checkNonePurchase(ActionEvent event) {
+	public void checkNonePurchases(ActionEvent event) {
+		if (detailList != null) {
+			checkNoneDetails(detailList);
+		}
 		clearCheckedPurchase();
+		clearCheckedDetails();
 	}
 
 	/**
@@ -229,8 +240,8 @@ public class PurchaseTransferManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void checkAllDetails(ActionEvent event) {
-		Iterator iterator = detailList.iterator();
+	private void checkAllDetails(List<ITransferObject> purchaseDetailList) {
+		Iterator iterator = purchaseDetailList.iterator();
 		while (iterator.hasNext()) {
 			PurchaseDetail detail = (PurchaseDetail)iterator.next();
 			if (!detailChecks.contains(detail)) {
@@ -241,8 +252,8 @@ public class PurchaseTransferManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void checkNoneDetails(ActionEvent event) {
-		Iterator iterator = detailList.iterator();
+	private void checkNoneDetails(List<ITransferObject> purchaseDetailList) {
+		Iterator iterator = purchaseDetailList.iterator();
 		while (iterator.hasNext()) {
 			PurchaseDetail detail = (PurchaseDetail)iterator.next();
 			if (detailChecks.contains(detail)) {
