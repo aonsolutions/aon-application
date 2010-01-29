@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Index;
@@ -40,7 +41,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Entity
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
-@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REIGSTRY", columnNames={"name","surname"})})
+@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name","surname"})})
 public class Registry implements ITransferObject {
 	
 	private static final long serialVersionUID = 8635760095705923309L;
@@ -53,6 +54,7 @@ public class Registry implements ITransferObject {
 	private RegistryType type;
 	private Set<RegistryAddress> addresses = new HashSet<RegistryAddress>();
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
+	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
 	private Set<RegistrySegment> segments = new HashSet<RegistrySegment>();
 	
 	@Transient
@@ -143,8 +145,16 @@ public class Registry implements ITransferObject {
 	}
 	
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryPayMethod> getPayMethods() {
+		return this.payMethods;
+	}
+	public void setPayMethods(Set<RegistryPayMethod> payMethods) {
+		this.payMethods = payMethods;
+	}
+
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistrySegment> getSegments() {
-		return segments;
+		return this.segments;
 	}
 	public void setSegments(Set<RegistrySegment> segments) {
 		this.segments = segments;
@@ -152,7 +162,7 @@ public class Registry implements ITransferObject {
 
     @Transient
     public String getFullName() {
-    	return ((getName() == null) ? "" : getName()) + " " + ((getSurname() == null) ? "" : getSurname());
+    	return ((StringUtils.isEmpty(getSurname())) ? "" : getSurname() + ", ") + ((StringUtils.isEmpty(getName())) ? "" : getName());
     }
 
 	@Transient
