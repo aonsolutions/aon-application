@@ -5,21 +5,24 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:column>
+	<aon:column alias="Creditor.id"
+		styleClass="aon-editDataTable-numberColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_id}" />
 		</f:facet>
-		<aon:outputText value="#{to.id}"/>
+		<aon:outputText value="#{to.id}" />
 	</aon:column>
 
-	<aon:column>
+	<aon:column alias="Creditor.registry.document"
+		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_document}" />
 		</f:facet>
-		<aon:outputText value="#{to.registry.document}"/>
+		<aon:outputText value="#{to.registry.document}" />
 	</aon:column>
 
-	<aon:column styleClass="aon-width-auto aon-text-left">
+	<aon:column alias="Creditor.registry.surname,Creditor.registry.name"
+		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_name}" />
 		</f:facet>
