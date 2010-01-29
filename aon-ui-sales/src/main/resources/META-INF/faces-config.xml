@@ -199,7 +199,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/sales/facelet/lookup/seller/list.xhtml</value>
+			<value>/com/code/aon/ui/sales/facelet/seller/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>

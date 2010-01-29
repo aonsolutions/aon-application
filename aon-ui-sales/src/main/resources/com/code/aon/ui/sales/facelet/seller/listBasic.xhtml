@@ -5,27 +5,28 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:column>
+	<aon:column alias="Seller.id"
+		styleClass="aon-editDataTable-numberColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_id}" />
 		</f:facet>
 		<aon:outputText value="#{to.id}"/>
 	</aon:column>
 
-	<aon:column>
+	<aon:column alias="Seller.registry.document"
+		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_document}" />
 		</f:facet>
-		<aon:outputText value="#{to.registry.document}"/>
+		<aon:outputText value="#{to.registry.document}" />
 	</aon:column>
-
-	<aon:column styleClass="aon-width-auto aon-text-left">
+	
+	<aon:column alias="Seller.registry.surname,Seller.registry.name"
+		styleClass="aon-editDataTable-textColumn aon-nowrap">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_name}" />
 		</f:facet>
-		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.registry.fullName}"/>
-		</aon:div>
+		<aon:outputText value="#{to.registry.fullName}"/>
 	</aon:column>
 
 </ui:composition>
