@@ -10,8 +10,8 @@
 
 	<aon:panelGroup id="showFbatchRecordWindow">
 		<c:if test="#{fbatch.showFbatchRecordWindow}">
-			<rich:modalPanel id="fbatchRecordModalPanel" minHeight="220"
-				minWidth="460" rendered="#{fbatch.showFbatchRecordWindow}"
+			<rich:modalPanel id="fbatchRecordModalPanel" minHeight="240"
+				minWidth="520" rendered="#{fbatch.showFbatchRecordWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -64,7 +64,10 @@
 										<aon:selectInputDate id="FinanceBatch_recordDate" 
 											value="#{fbatch.recordDate}"
 											timeZone="#{timeZoneController.timeZone}"
-											popupDateFormat="#{bundle.aon_date_pattern}"/>
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-125" />
 
 									</aon:panelGrid>
 								</aon:div>
