@@ -13,23 +13,50 @@ public class InvoiceEntryHeader implements ITransferObject {
 	
 	private static final long serialVersionUID = 7455764834130396589L;
 
+	/** The type. */
 	private InvoiceType type;
+
+	/** The type. */
 	private boolean investment;
+
+	/** The type. */
 	private InvoiceTransactionType transaction;
+
+	/** The registry. */
 	private Registry registry;
+	
+	/** The name. */
 	private String name;
+	
+	/** The document. */
 	private String document;
+	
+	/** The date. */
 	private Date date;
+	
+	/** The date. */
 	private Date taxDate;
+
+	/** The period. */
 	private Period period;
+	
+	/** The series. */
 	private String series;
+	
+	/** The number. */
 	private int number;
+	
+	/** The reference code. */
 	private String referenceCode;
+	
     private boolean taxFree;
     private boolean surcharge;
     private boolean withholding;
+
+    /** The concept. */
 	private Account account;
-	private Account retentionAccount;
+	
+	/** The security level. */
 	private SecurityLevel securityLevel;
 	
 	private Integer accountEntryId;
@@ -111,13 +138,6 @@ public class InvoiceEntryHeader implements ITransferObject {
 	}
 	public void setAccount(Account account) {
 		this.account = account;
-	}
-
-	public Account getRetentionAccount() {
-		return retentionAccount;
-	}
-	public void setRetentionAccount(Account retentionAccount) {
-		this.retentionAccount = retentionAccount;
 	}
 
 	public SecurityLevel getSecurityLevel() {

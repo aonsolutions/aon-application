@@ -6,9 +6,6 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-ecommerce/aon-ui-ecommerce">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ebackoffice/aon-ebackoffice">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="aon-web-ecommerce"/>
         <property name="java-output-path"/>
     </wb-module>

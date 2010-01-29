@@ -12,12 +12,11 @@ public interface IECommerceConstants {
 	static final String OFFER_DETAIL_CONTROLLER = "cartOfferDetail";
 	static final String LOGIN_CONTROLLER = "userLogin";
 	static final String CONFIG_CONTROLLER = "ecConfig";
+	static final String PAYPAL_CONTROLLER = "paypal";
+	static final String CREDIT_CARD_CONTROLLER = "creditCard";
 	
 	/* ACTION */
 	static final String SHOP_ACTION = "shop_form";
-	//static final String ITEMS_ACTION = "shopItems_grid";
-	//static final String ITEM_DETAIL_ACTION = "shopItem_grid";
-	//static final String ITEMS_ACTION = "shopItems_form";
 	static final String REGISTRY_ACTION = "registry_form";
 	static final String OFFER_ACTION = "cartOffer_form";
 	static final String PAYMETHOD_ACTION = "paymethod_form";
@@ -27,5 +26,8 @@ public interface IECommerceConstants {
 	static final String ITEM_NAME_ALIAS = "Item_product_name";
 	static final String CATEGORY_ALIAS = "Item_product_category_id";
 	static final String CATALOGUE_ALIAS = "Item_product_category_id";
+	
+	/* preview enabled from aon-ebackoffice */
+	static final String AON_EBACKOFFICE = "aonEbackoffice";
 	
 }

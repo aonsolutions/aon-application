@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showInvoiceWindow">
+		<c:if test="#{purchase.showInvoiceWindow}">
+			<rich:modalPanel id="invoiceModalPanel" minHeight="220"
+				minWidth="520" rendered="#{purchase.showInvoiceWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{purchaseBundle.purchase_to_invoice}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showInvoiceWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{purchase.showInvoiceWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="invoiceForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="invoice-accept"
+										value="#{purchaseBundle.purchase_to_invoice}"
+										actionListener="#{purchase.onInvoice}"
+										action="saleInvoice_form"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+									</aon:commandButton>
+									<aon:commandButton id="invoice-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showInvoiceWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{purchase.showInvoiceWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+										<aon:outputLabel for="Purchase_invoiceRefCode"
+											value="#{financeBundle.finance_invoice_number}" />
+										<aon:inputText id="Income_invoiceRefCode"
+											value="#{purchase.invoiceRefCode}" 
+											required="true" size="15" />
+
+										<aon:outputLabel for="Purchase_invoiceDate"
+											value="#{bundle.aon_date}" />
+										<aon:selectInputDate id="Purchase_invoiceDate" 
+											value="#{purchase.invoiceDate}"
+											required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+										<aon:outputLabel for="Purchase_invoiceWarehouse" 
+											value="#{warehouseBundle.warehouse_warehouse}" />
+										<aon:selectOneMenu id="Purchase_invoiceWarehouse" 
+											value="#{purchase.invoiceWarehouse}">
+											<f:selectItems value="#{warehouseCollections.warehouses}" />
+										</aon:selectOneMenu>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

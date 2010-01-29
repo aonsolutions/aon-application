@@ -1,39 +1,31 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountEntryLink;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.SocialInsuranceEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
@@ -56,9 +48,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 
 	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
-	private Balance socialInsuranceBalance;
-	private List<AccountEntryDetail> socialInsuranceDetail;
-	private Account socialInsuranceAccount;
 
 	private AccountingUtil getAccountingUtil() {
 		if (accountingUtil == null) {
@@ -72,13 +61,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 			accountBridgeUtil = new AccountBridgeUtil();
 		}
 		return accountBridgeUtil;
-	}
-
-	public Account getSocialInsuranceAccount() throws ManagerBeanException {
-		if (socialInsuranceAccount == null) {
-			socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT); 
-		}
-		return socialInsuranceAccount;  
 	}
 
 	public boolean isNew() {
@@ -115,7 +97,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 	
 	private void reset() throws ManagerBeanException {
 		this.isNew = true;
-		socialInsuranceAccount = null;
 		this.header = initializeHeader();
 	}
 	
@@ -124,8 +105,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		header.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
 		header.setDate(new Date());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
-		setSocialInsuranceBalance(null);
-		setSocialInsuranceDetail(null);
 		return header;
 	}
 	
@@ -162,14 +141,11 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 					entry = (AccountEntry) entryBean.update(entry);
 				}
 				insertEntryDetails(entry);
-				AccountEntry adjust = null;
-				if ( getHeader().isPaymentAdjustable()) {
-					adjust = adjustSocialInsuranceEntry(entry);	
-				}
+				updateSalaryAccount(entry);
 				setAccountEntry(entry);
+
 				this.isNew = false;
-				
-				loadAccountEntryController(entry,adjust);
+				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -205,12 +181,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				if (getHeader().getAdjustEntryLink() != null) {
-					IManagerBean linkBean = BeanManager.getManagerBean(AccountEntryLink.class);
-					linkBean.remove(getHeader().getAdjustEntryLink());
-					deleteAccountEntryDetails(getHeader().getAdjustEntryLink().getEntryTo());
-					deleteAccountEntry(getHeader().getAdjustEntryLink().getEntryTo());
-				}
 				deleteAccountEntryDetails(getAccountEntry());
 				deleteAccountEntry(getAccountEntry());
 				
@@ -243,7 +213,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
-			Account socialInsuranceAccount = getSocialInsuranceAccount();
+			Account socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
 			Account bankAccount = null;
 			if (header.getRegistryBank() != null && header.getRegistryBank().getId() != null) {
 				bankAccount = getAccountBridgeUtil().obtainRBankAccount(header.getRegistryBank());
@@ -258,90 +228,130 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 			detail.setConcept(getHeader().getConcept());
 			detail.setDebit(getHeader().getAmount());
 			accountEntryDetailBean.insert(detail);
-			
-			if (getHeader().getRecharge() != 0) {
-				detail = new AccountEntryDetail();
-				detail.setAccount(getHeader().getRechargeAccount());
-				detail.setAccountEntry(entry);
-				detail.setBalancingAccount(bankAccount);
-				detail.setConcept(getHeader().getConcept());
-				detail.setDebit(getHeader().getRecharge());
-				accountEntryDetailBean.insert(detail);
-			}
-			
+			// Segundo Apunte
 			detail = new AccountEntryDetail();
 			detail.setAccount(bankAccount);
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(socialInsuranceAccount);
 			detail.setConcept(getHeader().getConcept());
-			detail.setCredit(getHeader().getTotal());
+			detail.setCredit(getHeader().getAmount());
 			accountEntryDetailBean.insert(detail);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateSalaryAccount(AccountEntry entry) throws Exception {
+		Calendar currentFrom = new GregorianCalendar();
+		currentFrom.setTime(entry.getEntryDate());
+		currentFrom.set(Calendar.DATE, 1);
+		Calendar currentTo = new GregorianCalendar();
+		currentTo.setTime(entry.getEntryDate());
+		currentTo.set(Calendar.DATE, 1);
+		currentTo.add(Calendar.MONTH, 1);
+		currentTo.add(Calendar.DATE, -1);
 
-	private AccountEntry adjustSocialInsuranceEntry(AccountEntry entry) throws ManagerBeanException  {
-		double dif = CommonUtil.round(getSocialInsuranceBalance().getCreditBalance() - getHeader().getAmount()); 
-		AccountEntry adjustEntry = null;
-		IManagerBean linkBean = BeanManager.getManagerBean(AccountEntryLink.class);
-		if ( dif != 0 ) {
-			boolean mustInsertLink = false;
-			if (!isNew()) {
-				if (getHeader().getAdjustEntryLink() != null) {
-					deleteAccountEntryDetails(getHeader().getAdjustEntryLink().getEntryTo());
-					adjustEntry = getHeader().getAdjustEntryLink().getEntryTo();
+		Calendar previousFrom = new GregorianCalendar();
+		previousFrom.setTime(entry.getEntryDate());
+		previousFrom.set(Calendar.DATE, 1);
+		previousFrom.add(Calendar.MONTH, -1);
+		Calendar previousTo = new GregorianCalendar();
+		previousTo.setTime(entry.getEntryDate());
+		previousTo.set(Calendar.DATE, 1);
+		previousTo.add(Calendar.DATE, -1);
+
+		AccountEntry acumEntry = new AccountEntry();
+		int acumEntryId = 0; 
+		double acumAmount = 0;
+		boolean found = false; 
+		Account socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
+		Account companySocialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT);
+
+		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addGreaterThanOrEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), currentFrom.getTime());
+		criteria.addLessThanOrEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), currentTo.getTime());
+		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.SOCIAL_INSURANCE);
+		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), socialInsuranceAccount.getId());
+		Iterator iterator = entryDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			AccountEntryDetail entryDetail = (AccountEntryDetail)iterator.next();
+			acumAmount += CommonUtil.round(entryDetail.getDebit() - entryDetail.getCredit());
+		}
+
+		criteria = new Criteria();
+		criteria.addGreaterThanOrEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), previousFrom.getTime());
+		criteria.addLessThanOrEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), previousTo.getTime());
+		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.SALARY);
+		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), socialInsuranceAccount.getId());
+		iterator = entryDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			AccountEntryDetail entryDetail = (AccountEntryDetail)iterator.next();
+			acumAmount += CommonUtil.round(entryDetail.getDebit() - entryDetail.getCredit());
+		}
+
+		criteria = new Criteria();
+		criteria.addGreaterThanOrEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), previousFrom.getTime());
+		criteria.addLessThanOrEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), previousTo.getTime());
+		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), AccountEntryType.SALARY);
+		criteria.addOrder(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE));
+		iterator = entryBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			acumEntry = (AccountEntry)iterator.next();
+			acumEntryId = acumEntry.getId();
+		} else {
+			acumEntry.setEntryDate(previousTo.getTime());
+			acumEntry.setAccountPeriod(getAccountingUtil().obtainPeriod(previousTo.getTime()).getId());
+			acumEntry.setJournal(null);
+			acumEntry.setType(AccountEntryType.SALARY);
+			acumEntry.setSecurityLevel(getHeader().getSecurityLevel());
+			acumEntry = (AccountEntry)entryBean.insert(acumEntry);
+			acumEntryId = acumEntry.getId();
+		}
+
+		criteria = new Criteria();
+		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), acumEntryId);
+		Expression expr1 = ExpressionUtilities.getEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), companySocialInsuranceAccount.getId());
+		Expression expr2 = ExpressionUtilities.getEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), socialInsuranceAccount.getId());
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		iterator = entryDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			AccountEntryDetail entryDetail = (AccountEntryDetail)iterator.next();
+			if (entryDetail.getAccount().equals(companySocialInsuranceAccount)) {
+				if (entryDetail.getCredit() > 0) {
+					entryDetail.setCredit(CommonUtil.round(entryDetail.getCredit() + acumAmount));
 				} else {
-					adjustEntry = new AccountEntry();
-					mustInsertLink = true;
+					entryDetail.setDebit(CommonUtil.round(entryDetail.getDebit() + acumAmount));
 				}
 			} else {
-				adjustEntry = new AccountEntry();
-				mustInsertLink = true;
+				if (entryDetail.getDebit() > 0) {
+					entryDetail.setDebit(CommonUtil.round(entryDetail.getDebit() + acumAmount));
+				} else {
+					entryDetail.setCredit(CommonUtil.round(entryDetail.getCredit() + acumAmount));
+				}
 			}
-			Account companySocialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT);
-			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			
-			adjustEntry.setEntryDate(getSocialInsuranceBalance().getToDate()); 
-			adjustEntry.setType(AccountEntryType.SOCIAL_INSURANCE_ADJUST);
-			adjustEntry.setSecurityLevel(entry.getSecurityLevel() );
-			adjustEntry.setAccountPeriod(entry.getAccountPeriod());
-			adjustEntry = (AccountEntry) entryBean.insert(adjustEntry);
-			String concept = StringUtils.abbreviate("AJUSTE " + getHeader().getConcept(),32);
-			
-			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccountEntry(adjustEntry);
-			detail.setAccount(getSocialInsuranceAccount());
-			detail.setLine(0);
-			detail.setConcept(concept);
-			detail.setDebit(dif);
-			detail.setBalancingAccount(companySocialInsuranceAccount);
-			entryDetailBean.insert(detail);
-			
-			detail = new AccountEntryDetail();
-			detail.setAccountEntry(adjustEntry);
-			detail.setAccount(companySocialInsuranceAccount);
-			detail.setLine(1);
-			detail.setConcept(concept);
-			detail.setCredit(dif);
-			detail.setBalancingAccount(getSocialInsuranceAccount());
-			entryDetailBean.insert(detail);
+			entryDetailBean.update(entryDetail);
+			found = true;
+		} 
+		if (!found) {
+			AccountEntryDetail entryDetail = new AccountEntryDetail();
+			entryDetail.setAccount(companySocialInsuranceAccount);
+			entryDetail.setAccountEntry(acumEntry);
+			entryDetail.setBalancingAccount(socialInsuranceAccount);
+			entryDetail.setConcept(getHeader().getConcept());
+			entryDetail.setDebit(acumAmount);
+			entryDetailBean.insert(entryDetail);
 
-			if (mustInsertLink) {
-				AccountEntryLink link = new AccountEntryLink();
-				link.setEntryFrom(entry);
-				link.setEntryTo(adjustEntry);
-				linkBean.insert(link);
-			}
-		} else {
-			if (!isNew()) {
-				linkBean.remove(getHeader().getAdjustEntryLink());
-				deleteAccountEntryDetails(getHeader().getAdjustEntryLink().getEntryTo());
-				deleteAccountEntry(getHeader().getAdjustEntryLink().getEntryTo());
-			}
+			entryDetail = new AccountEntryDetail();
+			entryDetail.setAccount(socialInsuranceAccount);
+			entryDetail.setAccountEntry(acumEntry);
+			entryDetail.setBalancingAccount(companySocialInsuranceAccount);
+			entryDetail.setConcept(getHeader().getConcept());
+			entryDetail.setCredit(acumAmount);
+			entryDetailBean.insert(entryDetail);
 		}
-		return adjustEntry;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -360,16 +370,10 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		accountEntryBean.remove(accountEntry);
 	}
 	
-	private void loadAccountEntryController(AccountEntry entry,AccountEntry adjust) throws ManagerBeanException {
+	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
 		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
-		Expression expr1 = ExpressionUtilities.getEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
-		if (adjust == null) {
-			criteria.addExpression(expr1);
-		} else {
-			Expression expr2 = ExpressionUtilities.getEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), adjust.getId());
-			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-		}
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 		entryController.setCriteria(criteria);
 		entryController.onSearch(null);
 		entryController.getModel().setRowIndex(0);
@@ -378,33 +382,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 
 	@Override
 	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
-		if (entry == null ) {
-			throw new IllegalArgumentException("entry must not be null.");
-		}
-		AccountEntryLink adjustEntryLink = null;
-		IManagerBean linkBean = BeanManager.getManagerBean(AccountEntryLink.class);
-		Criteria criteria = new Criteria();
-		if (entry.getType() == AccountEntryType.SOCIAL_INSURANCE_ADJUST) {
-			String alias = linkBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_LINK_ENTRY_TO_ID);
-			criteria.addEqualExpression(alias, entry.getId());
-			List<ITransferObject> list = linkBean.getList(criteria);
-			if (list == null || list.size() == 0) {
-				throw new ManagerBeanException("Imposible encontrar el apunte de Seg. Social vinculado.");
-			}
-			adjustEntryLink = (AccountEntryLink)list.get(0);			
-			entry = adjustEntryLink.getEntryFrom();
-		} else {
-			String alias = linkBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_LINK_ENTRY_FROM_ID);
-			criteria.addEqualExpression(alias, entry.getId());
-			List<ITransferObject> list = linkBean.getList(criteria);
-			if (list != null && list.size() > 0) {
-				adjustEntryLink = ( (AccountEntryLink)list.get(0) );
-			}
-		}
-		loadSocialInsuranceEntry(entry,adjustEntryLink);
-	}
-	
-	private void loadSocialInsuranceEntry(AccountEntry entry, AccountEntryLink adjustEntryLink) throws ManagerBeanException{
 		onReset(null);
 		setNew(false);
 		setAccountEntry(entry);
@@ -421,21 +398,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		header.setConcept(accountEntryDetail.getConcept());
 		header.setSecurityLevel(entry.getSecurityLevel());
 		header.setAmount(accountEntryDetail.getCredit());
-
-		AccountEntryDetail rechargeDetail  = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "6*");
-		if (rechargeDetail != null) {
-			header.setRechargeAccount(rechargeDetail.getAccount());
-			double a = rechargeDetail.getDebit()==0?rechargeDetail.getCredit():rechargeDetail.getDebit();
-			header.setRecharge(a);
-		}
-		
-		if (adjustEntryLink != null) {
-			Date date = adjustEntryLink.getEntryTo().getEntryDate();
-			Month month = Month.getMonthByValue(CommonUtil.getMonth(date));
-			header.setMonth(month);
-			header.setPaymentAdjustable(true);
-			header.setAdjustEntryLink(adjustEntryLink);
-		}
 		setHeader(header);
 	}
 
@@ -444,87 +406,4 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		return "account_social_insurance_entry";
 	}
 	
-	public boolean isPaymentAdjustDisabled() {
-		boolean a = 
-		(!getHeader().isPaymentAdjustable() ||
-			getHeader().getMonth() == null );
-		return a;
-	}
-	
-	public void onChangeMonth(ValueChangeEvent event) {
-		setSocialInsuranceBalance(null);
-		setSocialInsuranceDetail(null);
-	}
-	
-	public Balance getSocialInsuranceBalance() {
-		try {
-			if (socialInsuranceBalance == null) {
-				int year = Integer.parseInt( getHeader().getPeriod().getId() );
-				Date fromDate = CommonUtil.getDate(year, getHeader().getMonth().getValue(), 1);
-				int days = CommonUtil.daysInMonth(fromDate);
-				Date toDate = CommonUtil.getDate(year, getHeader().getMonth().getValue(), days);
-				
-				IManagerBean bean = BeanManager.getManagerBean(AccountEntryDetail.class);
-				IManagerBean linkBean = BeanManager.getManagerBean(AccountEntryLink.class);
-				String dateAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
-				String typeAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE);
-				String periodAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD);
-				String accountAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
-				String accountEntryFromAlias = linkBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_LINK_ENTRY_FROM_ID);
-				Criteria c = new Criteria();
-				c.addEqualExpression(periodAlias, getHeader().getPeriod().getId() );
-				c.addBetweenExpression(dateAlias, fromDate,toDate);
-				c.addEqualExpression(accountAlias, getSocialInsuranceAccount().getId() );
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(typeAlias, AccountEntryType.SOCIAL_INSURANCE_ADJUST));
-				Balance balance = new Balance();
-				balance.setAccount(getSocialInsuranceAccount().getId());
-				balance.setDescription(getSocialInsuranceAccount().getDescription());
-				balance.setFromDate(fromDate);
-				balance.setToDate(toDate);
-				List<ITransferObject> list = bean.getList(c);
-				socialInsuranceDetail = new LinkedList<AccountEntryDetail>();
-				for (ITransferObject to :list) {
-					AccountEntryDetail detail = (AccountEntryDetail) to;
-					boolean add = true;
-					if (detail.getAccountEntry().getType() == AccountEntryType.SOCIAL_INSURANCE) {
-						// Si existe un apunte de seguridad social en el periodo, es ncesario saber si 
-						// el apunte de ajuste generado por él, es del mismo periodo, para tenerlo en 
-						// cuenta.
-						Criteria c1 = new Criteria();
-						c1.addEqualExpression(accountEntryFromAlias, detail.getAccountEntry().getId());
-						List<ITransferObject> links = linkBean.getList(c1);
-						if (links != null && links.size() > 0) {
-							AccountEntryLink link =  (AccountEntryLink) links.get(0);
-							AccountEntry linked = link.getEntryTo();
-							Date date = linked.getEntryDate();
-							add = 
-								((DateUtils.isSameDay(fromDate, date) || fromDate.before(date) ) && 
-								 (DateUtils.isSameDay(toDate, date) || toDate.after(date) ));
-						} 
-					}
-					if (add) {	
-						balance.addBalance(detail);
-						socialInsuranceDetail.add(detail);
-					}
-				}
-				setSocialInsuranceBalance( balance );
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible obtener el saldo de la cuenta.";
-			AonUtil.addErrorMessage(msg);
-		}
-		return socialInsuranceBalance;
-	}
-	public void setSocialInsuranceBalance(Balance balance) {
-		this.socialInsuranceBalance = balance;
-	}	
-
-	public List<AccountEntryDetail> getSocialInsuranceDetail() {
-		return socialInsuranceDetail;
-	}
-
-	public void setSocialInsuranceDetail(List<AccountEntryDetail> socialInsuranceDetail) {
-		this.socialInsuranceDetail = socialInsuranceDetail;
-	}
 }
-

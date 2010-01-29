@@ -185,7 +185,8 @@ public class BasicI18nController extends BasicController implements I18NControll
 				List<ITransferObject> list = beanI18n.getList(criteria);
 				if (list.size() > 0) {
 					setToI18n(list.get(0));
-				} else {
+				}
+				else {
 					setToI18n(beanI18n.createNewTo());
 				}
 			}
@@ -325,7 +326,7 @@ public class BasicI18nController extends BasicController implements I18NControll
 
 	public ITransferObject getModelRowdataI18n() {
 		try {
-			if ( this.model.isRowAvailable() ) {
+			if (this.model.getRowData() != null) {
 				IManagerBean beanI18n = getManagerBeanI18n();
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(beanI18n.getFieldName(language_alias), ControllerUtil.getCurrentLanguage().getId());

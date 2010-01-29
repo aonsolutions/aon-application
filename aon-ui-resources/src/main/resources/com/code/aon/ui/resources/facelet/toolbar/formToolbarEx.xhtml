@@ -2,12 +2,14 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
 			<c:if test="#{!skipSaveButton}">		
 				<aon:commandButton id="#{toolbarID}-save"
+					title="#{bundle.aon_key_save_accelerator}"
 					value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
 					action="#{saveAction}"
 					actionListener="#{saveActionListener}"
@@ -17,6 +19,7 @@
 			</c:if>
 			<c:if test="#{!skipCancelButton}">			
 				<aon:confirmButton id="#{toolbarID}-cancel"
+					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_cancel}" reRender="#{cancelButtonReRender}"
 					rendered="#{formNew}" immediate="true" 
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -28,6 +31,7 @@
 			</c:if>								
 			<c:if test="#{!skipRemoveButton}">				
 				<aon:confirmButton id="#{toolbarID}-remove"
+					title="#{bundle.aon_key_remove_accelerator}"
 					value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -41,6 +45,7 @@
 			</c:if>
 			<c:if test="#{!skipSearchButton}">			
 				<aon:commandButton id="#{toolbarID}-search" 
+					title="#{bundle.aon_key_search_accelerator}"
 					value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					action="#{searchAction}" actionListener="#{searchActionListener}"
@@ -49,6 +54,7 @@
 			</c:if>
 			<c:if test="#{!skipResetButton}">								
 				<aon:commandButton id="#{toolbarID}-reset"
+					title="#{bundle.aon_key_new_accelerator}"
 					value="#{bundle.aon_reset}" reRender="#{resetButtonReRender}"
 					rendered="#{!formNew}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
@@ -57,6 +63,7 @@
 			</c:if>															
 			<c:if test="#{!skipBackButton}">								
 				<aon:commandButton id="#{toolbarID}-back"
+					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_back}" reRender="#{backButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -70,6 +77,12 @@
 			<c:if test="#{(!skipSpin) and (controller != null)}">
 				<aon:spin id="#{controller.beanName}Spin" controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
 			</c:if>
+			
+			<c:if test="#{!skipFocusFirst}">
+				<rich:jQuery timing="onload"
+					selector=":input:visible:enabled:not(:button):first"
+					query="focus()" />
+			</c:if>								
 		</ui:define>
 	</ui:decorate>
 	

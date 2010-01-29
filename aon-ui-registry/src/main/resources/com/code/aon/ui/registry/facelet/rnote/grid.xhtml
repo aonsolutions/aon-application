@@ -9,14 +9,7 @@
 
 	<aon:div id="registryNoteData">
 
-		<aon:panelGrid columns="7" style="width: 100%;"
-			columnClasses="aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-150,
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-150,						
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-150,
-						aon-panelGrid-even aon-width-auto">
+		<aon:panelGrid columns="6" >
 			<aon:outputLabel for="Rnote_fromDate" value="#{bundle.aon_date_from}"/>
 			<aon:selectInputDate renderAsPopup="true" id="Rnote_fromDate"
 				popupDateFormat="#{bundle.aon_date_pattern}"
@@ -35,15 +28,17 @@
 				<f:selectItem itemDisabled="true" itemLabel="-" itemValue="#{null}" />
 				<f:selectItems value="#{registryCollections.noteTypes}" />
 			</aon:selectOneMenu>
-
-			<aon:commandButton 
-				value="#{bundle.aon_search}"
-				styleClass="aon-finding-toolbar-item aon-icon-search"
-				actionListener="#{controller.onCustomSearch}" />
-
 		</aon:panelGrid>
 
-		<aon:div styleClass="aon-margin-top">
+		<aon:div>
+			<aon:commandButton 
+				value="#{bundle.aon_search}"
+				actionListener="#{controller.onCustomSearch}" />
+		</aon:div>
+		
+		<rich:spacer width="1" height="10" />
+
+		<aon:div styleClass="aon-table-hack">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">

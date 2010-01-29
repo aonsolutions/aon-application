@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div id="itemSupplierContainer">
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+			<ui:param name="controller" value="#{itemSupplier}" />
+			<ui:param name="skipLineEdition" value="true" />
+
+			<ui:define name="beginFormListContent">
+				<aon:commandButton immediate="true" value="&#160;"
+					styleClass="aon-icon-commandButton aon-icon-rowSelector"
+					actionListener="#{itemSupplier.onSelect}">
+				</aon:commandButton>
+			</ui:define>
+
+
+			<ui:define name="columns">
+				<aon:column styleClass="aon-editDataTable-iconColumn">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:div styleClass="aon-nowrap">
+						<aon:commandButton immediate="true" value="&#160;"
+							styleClass="aon-icon-commandButton aon-icon-file-upload"
+							actionListener="#{itemSupplier.onMoveUp}"
+							reRender="itemSupplierContainer"
+							rendered="#{formList and itemSupplier.model.rowIndex != 0}">
+						</aon:commandButton>
+
+						<aon:commandButton immediate="true" value="&#160;"
+							styleClass="aon-icon-commandButton aon-icon-file-download"
+							actionListener="#{itemSupplier.onMoveDown}"
+							reRender="itemSupplierContainer"
+							rendered="#{formList and itemSupplier.model.rowIndex &lt; (itemSupplier.model.rowCount-1)}">
+						</aon:commandButton>
+					</aon:div>
+					<f:facet name="footer">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+				</aon:column>
+
+				<aon:column
+					styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
+					<f:facet name="header">
+						<aon:outputLabel for="itemSupplier_Supplier_id"
+							value="#{supplierBundle.supplier_supplier}" />
+					</f:facet>
+					<aon:outputText value="#{to.supplier.registry.fullName}"
+						styleClass="#{itemSupplier.model.rowIndex == 0?'aon-bold':''}"
+						rendered="#{formList}" />
+					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+						<a4j:region>
+							<aon:lookupInputText id="Supplier_id"
+								value="#{itemSupplier.to.supplier.registry.id}" size="5"
+								lookupProperty="registry" lookup="#{supplierLookup}"
+								lookupChangeListener="#{itemSupplier.onSupplierChanged}"
+								reRender="Supplier_full_name" ajaxSingle="false" required="true" />
+							<aon:lookupButton
+								windowTitle="#{supplierBundle.supplier_selection}"
+								minHeight="460" minWidth="650"
+								property="#{itemSupplier.to.supplier.registry}"
+								lookupProperty="registry" lookup="#{supplierLookup}"
+								lookupChangeListener="#{itemSupplier.onSupplierChanged}"
+								selectReRender="Supplier_id,Supplier_full_name"
+								actionType="search">
+							</aon:lookupButton>
+							<aon:lookupButton windowTitle="#{supplierBundle.supplier_new}"
+								minWidth="650" minHeight="600"
+								property="#{itemSupplier.to.supplier.registry}"
+								lookupProperty="registry" lookup="#{supplierLookup}"
+								lookupChangeListener="#{itemSupplier.onSupplierChanged}"
+								selectReRender="Supplier_id,Supplier_full_name" actionType="new">
+							</aon:lookupButton>
+							<aon:inputText id="Supplier_full_name"
+								value="#{itemSupplier.to.supplier.registry.fullName}"
+								disabled="true" size="60" />
+						</a4j:region>
+					</aon:div>
+					<f:facet name="footer">
+						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+							<a4j:region>
+								<aon:lookupInputText id="Supplier_id-New"
+									value="#{itemSupplier.to.supplier.registry.id}" size="5"
+									lookupProperty="registry" lookup="#{supplierLookup}"
+									lookupChangeListener="#{itemSupplier.onSupplierChanged}"
+									reRender="Supplier_full_name-New" ajaxSingle="false"
+									required="true" />
+								<aon:lookupButton
+									windowTitle="#{supplierBundle.supplier_selection}"
+									minHeight="460" minWidth="650"
+									property="#{itemSupplier.to.supplier.registry}"
+									lookupProperty="registry" lookup="#{supplierLookup}"
+									lookupChangeListener="#{itemSupplier.onSupplierChanged}"
+									selectReRender="Supplier_id-New,Supplier_full_name-New"
+									actionType="search">
+								</aon:lookupButton>
+								<aon:lookupButton windowTitle="#{supplierBundle.supplier_new}"
+									minWidth="650" minHeight="600"
+									property="#{itemSupplier.to.supplier.registry}"
+									lookupProperty="registry" lookup="#{supplierLookup}"
+									lookupChangeListener="#{itemSupplier.onSupplierChanged}"
+									selectReRender="Supplier_id-New,Supplier_full_name-New"
+									actionType="new">
+								</aon:lookupButton>
+								<aon:inputText id="Supplier_full_name-New"
+									value="#{itemSupplier.to.supplier.registry.fullName}"
+									disabled="true" size="60" />
+							</a4j:region>
+						</aon:div>
+					</f:facet>
+				</aon:column>
+
+				<aon:column
+					styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+					<f:facet name="header">
+						<aon:outputLabel for="itemSupplier_Code"
+							value="#{purchaseBundle.purchase_item_supplier_code}" />
+					</f:facet>
+					<aon:outputText value="#{to.code}" rendered="#{formList}" />
+					<aon:inputText id="itemSupplier_Code"
+						value="#{itemSupplier.to.code}" rendered="#{formEdit}" size="25"
+						maxlength="32" />
+					<f:facet name="footer">
+						<aon:inputText id="itemSupplier_Code-New"
+							value="#{itemSupplier.to.code}" maxlength="15"
+							rendered="#{formNew}" size="15" />
+					</f:facet>
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
+</ui:composition>

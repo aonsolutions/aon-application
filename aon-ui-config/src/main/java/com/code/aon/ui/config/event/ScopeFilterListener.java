@@ -1,17 +1,18 @@
 package com.code.aon.ui.config.event;
 
-import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -31,37 +32,47 @@ public class ScopeFilterListener extends ControllerAdapter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			User user = UserUtils.getInstance().getLoggedUser();
-			Expression exp = null;
-			if (user != null) {
-				Iterator iter = obtainUserScopeList(user).iterator();
-				while(iter.hasNext()){
-					UserScope userScope = (UserScope)iter.next();
-					exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getExpression(userScope.getScope().getId().toString(), event.getController().getFieldName(this.aliasName)));
-				}
-			}
-			if(exp != null){
-				event.getController().getCriteria().addExpression(exp);
-			}else{
-				Expression nullExp = ExpressionUtilities.getNullExpression(event.getController().getFieldName(this.aliasName));
-				event.getController().getCriteria().addExpression(nullExp);
-			}
+			Expression exp = getExpression( event.getController().getFieldName(this.aliasName) );
+			event.getController().getCriteria().addExpression(exp);
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error adding scopeFilter",e);
-		} catch (ExpressionException e) {
 			throw new ControllerListenerException("Error adding scopeFilter",e);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private List obtainUserScopeList(User user) throws ManagerBeanException {
+	private static List<ITransferObject> obtainUserScopeList(User user) throws ManagerBeanException {
 		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), user.getId());
 		return userScopeBean.getList(criteria);
+	}
+	
+	private static String getLeftJoinAlias( String alias ) {
+		String ljAlias = alias;
+		int index = StringUtils.lastIndexOf(alias, '.');
+		if ( index != -1 ) {
+			ljAlias = StringUtils.substring(alias, 0, index) + "<" + StringUtils.substring(alias, index+1); 
+		}
+		return ljAlias;
+	}
+	
+	public static Expression getExpression( String resolvedAlias ) throws ManagerBeanException {
+		User user = UserUtils.getInstance().getLoggedUser();
+		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
+		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
+		if (user != null) {
+			List<ITransferObject> list = obtainUserScopeList(user);
+			if (! list.isEmpty() ) {
+				String ljAlias = getLeftJoinAlias(resolvedAlias);
+				for( ITransferObject to : list ) {
+					UserScope userScope = (UserScope) to;
+					Expression scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, userScope.getScope().getId());
+					exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
+				}
+			}
+		}
+		return exp;
 	}
 
 }

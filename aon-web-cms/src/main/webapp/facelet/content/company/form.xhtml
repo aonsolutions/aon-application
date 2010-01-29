@@ -11,25 +11,84 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-
-		<aon:form id="companyForm">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.company}" />
-				<ui:param name="controller" value="#{company}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
-				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="activities_link"
-						value="#{appBundle.activity}"
-						action="activity_list"
-						actionListener="#{activity.onSearch}"
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item-no-icon">
-						<aon:actionListener method="#{activity.onInit}" />
-					</aon:commandButton>
-				</ui:define>
-			</ui:decorate>		
+		<aon:form id="main_form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.company}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{company.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{!company.new and cms.roleEditor}"
+							action="company_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{company.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{company.to!=null or company.new}"
+							action="company_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{company.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!company.new and cms.roleEditor}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{company.onRemove}"
+							confirmAction="company_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="company_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{company.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
+							action="company_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{company.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{company.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="activities_link"
+							value="#{appBundle.activity}"
+							action="activity_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item-no-icon">
+							<aon:actionListener method="#{activity.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
@@ -112,57 +171,47 @@
 		        	
 				</aon:panelGrid>
 
-				<aon:div id="detail_panel">
-					<aon:div styleClass="aon-form-group" rendered="#{!company.new}">
-						<aon:div styleClass="aon-form-group-title">
-							<aon:div styleClass="aon-form-group-title-internal">
-								<aon:outputLabel for="dataTableCurrent" value="#{appBundle.activity}" />
-							</aon:div>
-						</aon:div>
-
-						<aon:panelGrid id="activities" columns="2" styleClass="none"  
-							columnClasses="aon-vertical-align-top, aon-vertical-align-top">
-							<aon:dataTable id="dataTableCurrent" rows="10"
-								value="#{company.currentActivitiesModel}" var="to"
-								columnClasses="aon-editDataTable-textColumn aon-width-300">
-								<aon:column>
-									<f:facet name="header">
-										<aon:div>
-											<aon:outputText value="ACTUALES" />
-										</aon:div>	
-									</f:facet>
-									<a4j:support 
-										actionListener="#{company.removeCurrentActivity}"
-										reRender="activities" 
-										event="onclick" />
-						            <aon:outputText value="#{to.activity.alias}" styleClass="aon-editDataTable-button aon-icon-delete"/>
-								</aon:column>
-								<aon:dataScroller2 for="dataTableCurrent" />
-					        </aon:dataTable>
-					        
-					        <aon:div styleClass="aon-margin-left">
-								<aon:dataTable id="dataTableAvailable" rows="10"
-									value="#{company.activityModel}" var="to"								
-									columnClasses="aon-editDataTable-textColumn aon-width-300">
-									<aon:column>
-										<f:facet name="header">
-											<aon:div>
-												<aon:outputText value="DISPONIBLES" />
-											</aon:div>	
-										</f:facet>
-										<a4j:support 
-											actionListener="#{company.addCurrentActivity}"
-											reRender="activities" 
-											event="onclick" />
-							            <aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button aon-icon-accept"/>
-									</aon:column>
-						        </aon:dataTable>
-						        <aon:dataScroller2 for="dataTableAvailable" />
-							</aon:div>
-												        
-						</aon:panelGrid>
-					</aon:div>
-				</aon:div>
+				<rich:panel id="detail_list_panel" rendered="#{!company.new}">
+					<f:facet name="header">#{appBundle.activity}</f:facet>
+					<aon:panelGrid id="activities" columns="2" 
+						styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
+						<aon:dataTable id="dataTable_1" value="#{company.currentActivitiesModel}" var="to"
+							limit="1000"
+							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+									aon-editDataTable-textColumn">
+							<aon:column>
+								<f:facet name="header">
+									<aon:div>
+										<aon:outputText value="ACTUALES" />
+									</aon:div>	
+								</f:facet>
+								<a4j:support 
+									actionListener="#{company.removeCurrentActivity}"
+									reRender="activities" 
+									event="onclick" />
+					            <h:outputText value="#{to.activity.alias}" styleClass="aon-editDataTable-button aon-icon-delete"/><br/>
+							</aon:column>
+				        </aon:dataTable>
+				        
+						<aon:dataTable id="dataTable_2" value="#{company.activityModel}" var="to"
+							limit="1000"
+							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+									aon-editDataTable-textColumn">
+							<aon:column>
+								<f:facet name="header">
+									<aon:div>
+										<aon:outputText value="DISPONIBLES" />
+									</aon:div>	
+								</f:facet>
+								<a4j:support 
+									actionListener="#{company.addCurrentActivity}"
+									reRender="activities" 
+									event="onclick" />
+					            <h:outputText value="#{to.alias}" styleClass="aon-editDataTable-button aon-icon-accept"/><br/>
+							</aon:column>
+				        </aon:dataTable>
+					</aon:panelGrid>
+				</rich:panel>
 			</aon:div>
 		</aon:form>
 	</ui:define>

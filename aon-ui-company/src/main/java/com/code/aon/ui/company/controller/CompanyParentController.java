@@ -546,6 +546,30 @@ public class CompanyParentController extends BasicController implements ICompany
 		return this.getFax();
 	}
 	
+	/**
+	 * Obtains the web.
+	 * 
+	 * @return the registry media
+	 */
+	public RegistryMedia obtainWeb(){
+		if(this.getWeb() == null){
+			this.onLoad();
+		}
+		return this.getWeb();
+	}
+	
+	/**
+	 * Obtains the email.
+	 * 
+	 * @return the registry media
+	 */
+	public RegistryMedia obtainEmail(){
+		if(this.getEmail()== null){
+			this.onLoad();
+		}
+		return this.getEmail();
+	}
+	
 	public boolean isPrintHeader() {
 		return printHeader;
 	}

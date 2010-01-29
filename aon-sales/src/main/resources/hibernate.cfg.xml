@@ -12,11 +12,11 @@
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>	
 	
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+
 		<!-- AON-SALES Mapping files -->	
 		<mapping class="com.code.aon.sales.Sales"/>		
-		<mapping class="com.code.aon.sales.SalesAttachment"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
-		<mapping class="com.code.aon.sales.SalesType"/>
 
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
@@ -33,7 +33,6 @@
 		<mapping class="com.code.aon.product.Brand"/>
 		
 		<!-- AON-REGISTRY Mapping files -->	
-		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
@@ -41,15 +40,28 @@
 		<mapping class="com.code.aon.registry.Category"/>
 		
 		<!-- AON-COMPANY Mapping files -->		
+		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
 
+		<!-- AON-COMMERCIAL Mapping files -->		
+		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.CommercialSegment"/>
+		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetSegment"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
+
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
 		
 		<!-- AON-CONFIG Mapping files -->		
+		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Scope"/>			
 		<mapping class="com.code.aon.config.Tariff"/>

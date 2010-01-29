@@ -45,18 +45,16 @@ public class DomainUtilities {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
-		File file = new File( ControllerUtil.getConfigPath(), PAGETYPE );
-		if ( file.exists() ) {
-			InputStream stream = null;
-			try{
-				stream = new FileInputStream(file);
-				propDomainPageType.load(stream);
-			}catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			}finally{
-				IOUtils.closeQuietly(stream);
-				stream= null;
-			}
+		String file = ControllerUtil.getConfigPath()+File.separator+PAGETYPE;
+		InputStream stream = null;
+		try{
+			stream = new FileInputStream(file);
+			propDomainPageType.load(stream);
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}finally{
+			IOUtils.closeQuietly(stream);
+			stream= null;
 		}
 	}
 
@@ -139,18 +137,16 @@ public class DomainUtilities {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
-		File file = new File( ControllerUtil.getConfigPath(), MODULARPAGEOPTIONTYPE );
-		if ( file.exists() ) {
-			InputStream stream = null;
-			try {
-				stream = new FileInputStream(file);
-				propDomainModularPageOptionType.load(stream);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			} finally {
-				IOUtils.closeQuietly(stream);
-				stream= null;
-			}			
+		String file = ControllerUtil.getConfigPath()+File.separator+MODULARPAGEOPTIONTYPE;
+		InputStream stream = null;
+		try{
+			stream = new FileInputStream(file);
+			propDomainModularPageOptionType.load(stream);
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}finally{
+			IOUtils.closeQuietly(stream);
+			stream= null;
 		}
 	}
 	
@@ -164,7 +160,7 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefModularPageOptionType.get(type.toString())))
 					return true;
 			}
-		} catch (Throwable th) {
+		}catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		return false;
@@ -186,18 +182,16 @@ public class DomainUtilities {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
-		File file = new File( ControllerUtil.getConfigPath(), MENU );
-		if ( file.exists() ) {
-			InputStream stream = null;
-			try {
-				stream = new FileInputStream(file);
-				propDomainMenu.load(stream);
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			} finally {
-				IOUtils.closeQuietly(stream);
-				stream= null;
-			}
+		String file = ControllerUtil.getConfigPath()+File.separator+MENU;
+		InputStream stream = null;
+		try{
+			stream = new FileInputStream(file);
+			propDomainMenu.load(stream);
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		}finally{
+			IOUtils.closeQuietly(stream);
+			stream= null;
 		}
 	}
 	

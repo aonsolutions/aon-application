@@ -19,7 +19,7 @@
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					actionListener="#{stat.onReset}" action="#{backAction}"
 					accesskey="#{bundle.aon_key_cancel}">
-					<aon:actionListener method="#{backMethod}"/>						
+					<aon:actionListener method="#{backMethod}" />
 				</aon:commandButton>
 				<a4j:htmlCommandLink id="export2pdf" value="PDF" title="Listado Pdf"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -56,9 +56,9 @@
 
 				<f:facet name="header">
 					<aon:div>
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="2" style="align:center" >
 							<aon:div>
-								<aon:outputText value="#{windowTitle} " />
+								<aon:outputText value="#{windowTitle}" />
 							</aon:div>
 							<ui:insert name="extendedHeader" />
 						</h:panelGrid>
@@ -68,29 +68,44 @@
 					<f:facet name="header">
 						<aon:outputText value="#{categoryLabel}" />
 					</f:facet>
-					<h:commandLink styleClass="aon-dataTable-link-noicon"
-						value="#{to.name}" action="#{goAction}"
-						actionListener="#{goMethod}">
-						<f:param name="#{paramName}" value="#{to.key}" />
-					</h:commandLink>
+
+					<c:if test="#{clickable}">
+						<h:commandLink styleClass="aon-dataTable-link-noicon"
+							value="#{to.name}" action="#{goAction}"
+							actionListener="#{goMethod}">
+							<f:param name="#{paramName}" value="#{to.key}" />
+						</h:commandLink>
+					</c:if>
+
+					<c:if test="#{!clickable}">
+						<aon:outputText value="#{to.name}">
+							<f:param name="#{paramName}" value="#{to.key}" />
+						</aon:outputText>
+					</c:if>
+
 					<f:facet name="footer">
-						<aon:outputText value="#{statBundle.report_totals}">							
-					</aon:outputText>
+						<aon:outputText value="#{statBundle.report_totals}">
+						</aon:outputText>
 					</f:facet>
 				</aon:column>
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_amount}" />
+						<c:if test="#{stat.invoiceType==1}">
+							<aon:outputText value="#{statBundle.stat_sales_amount}" />
+						</c:if>
+						<c:if test="#{stat.invoiceType==0}">
+							<aon:outputText value="#{statBundle.stat_purchases_amount}" />
+						</c:if>				
 					</f:facet>
-					<aon:outputText  value="#{to.amount}">
+					<aon:outputText value="#{to.amount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 
 					<f:facet name="footer">
-						<aon:outputText value="#{stat.totalAmount}"  style="float:right" >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
+						<aon:outputText value="#{stat.totalAmount}" style="float:right">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
 					</f:facet>
 				</aon:column>
 
@@ -105,7 +120,7 @@
 					<f:facet name="footer">
 						<aon:outputText value="#{stat.numInvoices}" style="float:right">
 							<f:convertNumber type="number" maxFractionDigits="0"></f:convertNumber>
-							</aon:outputText>
+						</aon:outputText>
 					</f:facet>
 				</aon:column>
 
@@ -115,22 +130,22 @@
 					</f:facet>
 					<aon:outputText value="#{to.averageAmount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-				
+					</aon:outputText>
+
 					<f:facet name="footer">
 						<aon:outputText value="#{stat.promAmount}" style="float:right">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
+						</aon:outputText>
 					</f:facet>
 				</aon:column>
 
 				<aon:column rendered="#{showLastColumn}">
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_showClients}" />
+						<aon:outputText value="#{lastColumnName}" />
 					</f:facet>
 					<h:commandLink styleClass="aon-dataTable-link-noicon"
-						actionListener="#{stat.onCustomerStats}" action="#{customerFacelet}"
-						value="Ver Clientes">
+						actionListener="#{lastColumnAction}"
+						action="#{customerFacelet}" value="#{lastColumnName}">
 						<f:param name="#{paramName}" value="#{to.key}" />
 						<!-- <f:param name="yearmonth" value="#{to.extra}" /> -->
 					</h:commandLink>

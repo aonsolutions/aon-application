@@ -2,6 +2,7 @@ package com.code.aon.ui.cms.controller;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,30 +31,18 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.email.Emailer;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
-import com.code.aon.ui.cms.velocity.GeneratorContext;
-import com.code.aon.ui.cms.velocity.IVelocityConstants;
+import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class BulletinController extends BasicI18nController implements ICMSConstants, Constants, IVelocityConstants {
+public class BulletinController extends BasicI18nController implements ICMSConstants {
 
 	private int page;
-	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
 	
 	public int getPage() {
 		return page;
@@ -62,6 +51,7 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 	public void setPage(int page) {
 		this.page = page;
 	}
+
 
 	private Date publishDate = new Date();
 	
@@ -131,7 +121,8 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		status.onInit(event);
 		
-		GeneratorContext context = new GeneratorContext();
+		VelocityUtil vu = new VelocityUtil();
+		
 		BufferedWriter buff = null;
 		List<ITransferObject> list;
 		List<ITransferObject> listBulletinArticle;
@@ -185,39 +176,44 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 					++i;
 				}
 
-				VelocityUtil vu = context.initVelocityUtil();
+				CommonGenerator.getCommonGenerator().init(vu);
+				vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+				vu.initialize();
 				
-				File template = new File( ControllerUtil.getCurrentVmTemplatePath(), Templates.BULLETIN.getTemplateName() );  
-			    if (!template.exists()){
-			    	status.error("No se ha encontrado plantilla " 
-			    			+ Templates.BULLETIN.getTemplateName());
+				String template = ControllerUtil.getCurrentVmTemplatePath() 
+					+ "/" 
+					+ Templates.BULLETIN.getTemplateName();
+			    File f = new File(template);
+			    if (!f.exists()){
+			    	VelocityUtil.addMessage("No se ha encontrado plantilla " 
+			    			+ Templates.BULLETIN.getTemplateName(), VelocityUtil.ERROR);
 			    }else{
 			    	StringWriter writer = new StringWriter();
 			    	buff = new BufferedWriter(writer);
-			        vu.put(TITLE_KEY, bulletinDetail.getTitle());
-			        vu.put(CONTENT_KEY, bulletinDetail.getContent());
-			        vu.put(ARTICLES_KEY, article_content);
+			        vu.put("title", bulletinDetail.getTitle());
+			        vu.put("content", bulletinDetail.getContent());
+			        vu.put("articles", article_content);
 					vu.generate(template, buff, "Bulletin");
-			        vu.remove(ARTICLES_KEY);
-			        vu.remove(CONTENT_KEY);
-			        vu.remove(TITLE_KEY);
+			        vu.remove("articles");
+			        vu.remove("content");
+			        vu.remove("title");
 			        
-			        status.info("Enviando mails...");
+			        VelocityUtil.addMessage("Enviando mails...",VelocityUtil.INFO);
 
 					Emailer emailer = new Emailer();
 					emailer.sendEmail(emails,
 							bulletinDetail.getTitle(),
 							writer.toString());
 					
-					status.info("Mails enviados");
+					VelocityUtil.addMessage("Mails enviados",VelocityUtil.INFO);
 
 			    }
 			}
 		} catch (AuthenticationFailedException e) {
-			status.error("Error de autentificacion.");
+			VelocityUtil.addMessage("Error de autentificacion.",VelocityUtil.ERROR);
 		} catch (Throwable th) {
-			status.error(th.getMessage());
-		} finally {
+			VelocityUtil.addMessage(th.getMessage(),VelocityUtil.ERROR);
+		}finally {
 			article_content = null;
 			list = null;
 			article_list = null;
@@ -229,12 +225,5 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 	}
 	
 	// END SENDER
-	
-	public String getI18nTitle() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
-		BulletinDetail bd = (BulletinDetail) getModelRowdataI18n();
-		if (bd != null) label = bd.getTitle();
-		return label;
-	}	
 	
 }

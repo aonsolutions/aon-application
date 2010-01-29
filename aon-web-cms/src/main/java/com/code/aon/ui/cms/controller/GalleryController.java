@@ -12,9 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -34,10 +32,10 @@ public abstract class GalleryController extends BasicController implements IGall
 	
 	private boolean showThumbnailImageWindow;
 	
-	private File currentPath = recoverFilesPath();
+	private String currentPath = recoverFilesPath();
 
 	private String getRelativePath(String path) {
-		String base = recoverFilesPath().getAbsolutePath(); 
+		String base = new File(recoverFilesPath()).getAbsolutePath(); 
 		if (path.startsWith(base)) {
 			if (path.length() == base.length()) return "/";
 			else return path.substring(base.length()).replace('\\', '/');
@@ -47,15 +45,17 @@ public abstract class GalleryController extends BasicController implements IGall
 
 	public void chargeImageList() {
 		ArrayList<Image> list = new ArrayList<Image>();
-		if (!currentPath.exists()) currentPath.mkdirs();
-		File files[] = currentPath.listFiles(getFilenameFilter());
+		File currentDir = new File(this.currentPath);
+		if (!currentDir.exists()) currentDir.mkdirs();
+		File dir = new File(this.currentPath);
+		File files[] = dir.listFiles(getFilenameFilter());
 		for (int i=0; i < files.length; i++) {
-			File file = files[i];
-			if (!file.isDirectory()) {
+			File temp = files[i];
+			if (!temp.isDirectory()) {
 				Image img = new Image();
-				img.setName(file.getName());
-				img.setFile(file);
-				img.setRelativePath(getRelativePath(file.getAbsolutePath()));
+				img.setName(temp.getName());
+				img.setPath(temp.getAbsolutePath());
+				img.setRelativePath(getRelativePath(temp.getAbsolutePath()));
 				list.add(img);
 			}
 		}
@@ -65,14 +65,14 @@ public abstract class GalleryController extends BasicController implements IGall
 	}
 
 	public String getCurrentRelativePath() {
-		return getRelativePath(currentPath.getAbsolutePath());
+		return getRelativePath(new File(currentPath).getAbsolutePath());
 	}
 	
-	public File getCurrentPath() {
+	public String getCurrentPath() {
 		return currentPath;
 	}
 
-	public void setCurrentPath(File currentPath) {
+	public void setCurrentPath(String currentPath) {
 		this.currentPath = currentPath;
 	}
 
@@ -84,7 +84,8 @@ public abstract class GalleryController extends BasicController implements IGall
 	}
 
 	public void onDeleteFile(ActionEvent event) throws ManagerBeanException {
-		File file = ((Image)getModel().getRowData()).getFile();
+		String image = ((Image)getModel().getRowData()).getPath();
+		File file = new File(image);
 		file.delete();
 		chargeImageList();
 	}
@@ -129,25 +130,26 @@ public abstract class GalleryController extends BasicController implements IGall
 	}
 
 	public void createFolder( ActionEvent event ) throws IOException {
-		if (! StringUtils.isEmpty(folderName) ){
-			File file = new File( currentPath, folderName );
+		if (folderName!=null){
+			String folder = File.separator+getFolderName();
+			File file = new File( currentPath+File.separator+folder);
 			if (!file.exists()){
 				file.mkdir();
 			}
-			setCurrentPath( file );
-			chargeImageList();			
 			folderName = null;
 		}
 	}
 
 	public void deleteFolder( ActionEvent event ) throws IOException {
-		FileUtils.deleteDirectory(currentPath);
+		File file = new File( currentPath );
+		file.delete();
 		currentPath = recoverFilesPath();
 		chargeImageList();
 	}
 
 	public boolean isEmptyDir(){
-		if (currentPath.listFiles().length==0)
+		File file = new File( currentPath );
+		if (file.listFiles().length==0)
 			return true;
 		return false;
 	}

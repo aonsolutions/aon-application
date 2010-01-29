@@ -1,7 +1,7 @@
 package com.code.aon.ui.form.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -17,7 +17,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
  */
 public class ControllerSearchListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(ControllerSearchListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ControllerSearchListener.class);
 	
 	private Criteria criteria;
 	
@@ -40,9 +40,9 @@ public class ControllerSearchListener extends ControllerAdapter {
 				criteria = getController().getCriteria();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
+			LOGGER.error("Error initializing Task Model", e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
+			LOGGER.error("Error initializing Task Model", e);
 		}
 	}
 
@@ -52,7 +52,7 @@ public class ControllerSearchListener extends ControllerAdapter {
 		try {			
 			init();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
+			LOGGER.error("Error initializing Task Model", e);
 		}
 	}
 

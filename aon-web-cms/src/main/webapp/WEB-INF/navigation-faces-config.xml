@@ -6,12 +6,12 @@
 <faces-config>
   
   <!-- ===================================================== HOMEPAGE -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>home</from-outcome>
-			<to-view-id>/homepage.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>home</from-outcome>
+      <to-view-id>/facelet/homepage/main.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 
   <!-- ===================================================== LOGOUT -->
    <navigation-rule>
@@ -141,15 +141,15 @@
       <to-view-id>/facelet/content/product/brand/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>productCategory_list</from-outcome>
+      <from-outcome>product_category_list</from-outcome>
       <to-view-id>/facelet/content/product/product_category/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>productCategory_form</from-outcome>
+      <from-outcome>product_category_form</from-outcome>
       <to-view-id>/facelet/content/product/product_category/form.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>productCategory_search</from-outcome>
+      <from-outcome>product_category_search</from-outcome>
       <to-view-id>/facelet/content/product/product_category/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
@@ -158,11 +158,11 @@
   <!-- ======================================= HEADER -->
   <navigation-rule>
     <navigation-case>
-      <from-outcome>cmsHeader_list</from-outcome>
+      <from-outcome>header_list</from-outcome>
       <to-view-id>/facelet/content/header/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>cmsHeader_form</from-outcome>
+      <from-outcome>header_form</from-outcome>
       <to-view-id>/facelet/content/header/form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
@@ -290,15 +290,15 @@
       <to-view-id>/facelet/content/album_category/album/search.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>albumImage_list</from-outcome>
+      <from-outcome>album_image_list</from-outcome>
       <to-view-id>/facelet/content/album_category/album/album_image//list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>albumImage_form</from-outcome>
+      <from-outcome>album_image_form</from-outcome>
       <to-view-id>/facelet/content/album_category/album/album_image/form.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>albumImage_search</from-outcome>
+      <from-outcome>album_image_search</from-outcome>
       <to-view-id>/facelet/content/album_category/album/album_image/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
@@ -388,6 +388,10 @@
     <navigation-case>
       <from-outcome>gallery_list</from-outcome>
       <to-view-id>/facelet/content/gallery/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>gallery_form</from-outcome>
+      <to-view-id>/facelet/content/gallery/form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 

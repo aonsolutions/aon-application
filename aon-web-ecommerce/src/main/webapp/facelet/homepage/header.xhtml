@@ -53,6 +53,7 @@
 				</aon:div>
 				<aon:div id="header-image">
 					<a4j:mediaOutput id="header-image-right" element="img"
+						rendered="#{ecConfig.headerImage}"
 						cacheable="false" value="#{ecConfig.activeConfig.id}"
 						createContent="#{ecConfig.paintHeader}" />
 				</aon:div>

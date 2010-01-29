@@ -66,8 +66,8 @@
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
 						value="#{salaryEntry.header.period}">
-						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
-						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod" focus="date"/>
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="date" value="#{bundle.aon_date}" />
@@ -100,71 +100,33 @@
 						value="#{accountingBundle.accounting_gross_salary}" />
 					<aon:inputText id="Account_gross_salary" required="true"
 						value="#{salaryEntry.header.grossSalary}" size="15"
-						ajaxSingle="true" reRender="save,Account_net_salary,Account_employee_social_insurance,Account_accrued_total"
-						focus="Account_Allowance" />
-
-					<aon:outputLabel for="Account_Allowance"
-						value="#{accountingBundle.accounting_allowance}" />
-					<aon:inputText id="Account_Allowance" required="true"
-						value="#{salaryEntry.header.allowance}" size="15"
-						ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance,Account_accrued_total"
-						focus="Account_Compensation" />
-
-					<aon:outputLabel for="Account_Compensation"
-						value="#{accountingBundle.accounting_compensation}" />
-					<aon:inputText id="Account_Compensation" required="true"
-						value="#{salaryEntry.header.compensation}" size="15"
-						ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance,Account_accrued_total"
-						focus="Account_retention" />
-
-					<aon:outputLabel for="Account_accrued_total"
-						value="#{accountingBundle.accounting_accrued_total}" />
-					<aon:inputText id="Account_accrued_total" disabled="true" styleClass="aon-bold"
-						value="#{salaryEntry.header.accruedTotal}" size="15"/>
+						ajaxSingle="true" reRender="save,Account_net_salary" />
 
 					<aon:outputLabel for="Account_retention"
 						value="#{bundle.aon_retention}" />
 					<aon:inputText id="Account_retention" required="true"
 						value="#{salaryEntry.header.retention}" size="15"
-						ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance" 
-						focus="Account_employee_social_insurance1"/>
+						ajaxSingle="true" reRender="Account_net_salary" />
 
-					<aon:outputLabel for="Account_employee_social_insurance1"
+					<aon:outputLabel for="Account_employee_social_insurance"
 						value="#{accountingBundle.accounting_employee_social_insurance}" />
-					<aon:div>
-						<aon:inputText id="Account_employee_social_insurance" disabled="true" styleClass="aon-bold"
-							value="#{salaryEntry.header.employeeSocialInsurance1}" size="15"/>
-						<aon:outputText value="=" styleClass="aon-margin-left aon-margin-right" />
-						<aon:inputText id="Account_employee_social_insurance1" required="true"
-							value="#{salaryEntry.header.employeeSocialInsurance1}" size="10"
-							ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance" 
-							focus="Account_employee_social_insurance2"/>
-						<aon:outputText value="+" styleClass="aon-margin-left aon-margin-right" />
-						<aon:inputText id="Account_employee_social_insurance2" required="true"
-							value="#{salaryEntry.header.employeeSocialInsurance2}" size="10"
-							ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance" 
-							focus="Account_employee_social_insurance3"/>
-						<aon:outputText value="+" styleClass="aon-margin-left aon-margin-right" />
-						<aon:inputText id="Account_employee_social_insurance3" required="true"
-							value="#{salaryEntry.header.employeeSocialInsurance3}" size="10"
-							ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance" 
-							focus="Account_employee_social_insurance4"/>
-						<aon:outputText value="+" styleClass="aon-margin-left aon-margin-right" />
-						<aon:inputText id="Account_employee_social_insurance4" required="true"
-							value="#{salaryEntry.header.employeeSocialInsurance4}" size="10"
-							ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance" 
-							focus="Account_company_social_insurance"/>
-					</aon:div>
-
-					<aon:outputLabel for="Account_net_salary"
-						value="#{accountingBundle.accounting_net_salary}" />
-					<aon:inputText id="Account_net_salary" disabled="true" styleClass="aon-bold"
-						value="#{salaryEntry.header.netSalary}" size="15"/>
+					<aon:inputText id="Account_employee_social_insurance" required="true"
+						value="#{salaryEntry.header.employeeSocialInsurance}" size="15"
+						ajaxSingle="true" reRender="Account_net_salary" />
 
 					<aon:outputLabel for="Account_company_social_insurance"
 						value="#{accountingBundle.accounting_company_social_insurance}" />
 					<aon:inputText id="Account_company_social_insurance" required="true"
 						value="#{salaryEntry.header.companySocialInsurance}" size="15" />
+
+					<aon:outputLabel for="Account_net_salary"
+						value="#{accountingBundle.accounting_net_salary}" />
+					<aon:outputText id="Account_net_salary"
+					 	styleClass="aon-bold"
+						value="#{salaryEntry.header.netSalary}"
+						size="15">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
 
 				</aon:panelGrid>
 			</aon:div>

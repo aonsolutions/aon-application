@@ -207,6 +207,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
+			// Primer Apunte
 			AccountEntryDetail detail = new AccountEntryDetail();
 			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SALARY_ACCOUNT));
 			detail.setAccountEntry(entry);
@@ -214,40 +215,20 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 			detail.setConcept(getHeader().getConcept());
 			detail.setDebit(getHeader().getGrossSalary());
 			accountEntryDetailBean.insert(detail);
-			
-			if (getHeader().getAllowance() != 0) {
-				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.ALLOWANCE_ACCOUNT));
-				detail.setAccountEntry(entry);
-				detail.setBalancingAccount(null);
-				detail.setConcept(getHeader().getConcept());
-				detail.setDebit(getHeader().getAllowance());
-				accountEntryDetailBean.insert(detail);
-			}
 
-			if (getHeader().getAllowance() != 0) {
-				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPENSATION_ACCOUNT));
-				detail.setAccountEntry(entry);
-				detail.setBalancingAccount(null);
-				detail.setConcept(getHeader().getConcept());
-				detail.setDebit(getHeader().getCompensation());
-				accountEntryDetailBean.insert(detail);
-			}
-			
-			if (getHeader().getCompanySocialInsurance() != 0) {
-				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT));
-				detail.setAccountEntry(entry);
-				detail.setBalancingAccount(null);
-				detail.setConcept(getHeader().getConcept());
-				detail.setDebit(getHeader().getCompanySocialInsurance());
-				accountEntryDetailBean.insert(detail);
-			}
+			// Segundo Apunte
+			detail = new AccountEntryDetail();
+			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT));
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(null);
+			detail.setConcept(getHeader().getConcept());
+			detail.setDebit(getHeader().getCompanySocialInsurance());
+			accountEntryDetailBean.insert(detail);
 
+			// Tercer Apunte
 			if (getHeader().getRetention() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getHeader().getConcept());
@@ -255,6 +236,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 				accountEntryDetailBean.insert(detail);
 			}
 
+			// Cuarto Apunte
 			detail = new AccountEntryDetail();
 			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT));
 			detail.setAccountEntry(entry);
@@ -342,19 +324,12 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		header.setSecurityLevel(entry.getSecurityLevel());
 		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "640*");
 		header.setGrossSalary((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
-		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "461*");
-		header.setCompensation((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
-		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "629*");
-		header.setAllowance((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
 		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "475*");
 		header.setRetention((accountEntryDetail != null)?accountEntryDetail.getCredit():0);
 		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "642*");
 		header.setCompanySocialInsurance((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
 		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "476*");
-		header.setEmployeeSocialInsurance1((accountEntryDetail != null)?accountEntryDetail.getCredit() - header.getCompanySocialInsurance():0);
-		header.setEmployeeSocialInsurance2(0);
-		header.setEmployeeSocialInsurance3(0);
-		header.setEmployeeSocialInsurance4(0);
+		header.setEmployeeSocialInsurance((accountEntryDetail != null)?accountEntryDetail.getCredit() - header.getCompanySocialInsurance():0);
 		setHeader(header);
 	}
 

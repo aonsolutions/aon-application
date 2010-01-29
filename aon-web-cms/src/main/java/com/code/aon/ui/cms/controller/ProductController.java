@@ -29,16 +29,6 @@ public class ProductController extends BasicI18nController implements ICMSConsta
 	
 	private int page;
 	
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}	
-	
 	public int getPage() {
 		return page;
 	}

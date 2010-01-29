@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -27,11 +28,15 @@ import com.code.aon.campaign.enumeration.CampaignStatus;
 import com.code.aon.campaign.enumeration.CampaignType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.customer.Customer;
 import com.code.aon.groupware.enumeration.Priority;
+import com.code.aon.project.Activity;
+import com.code.aon.project.ActivityType;
 import com.code.aon.project.Dossier;
+import com.code.aon.project.DossierType;
 import com.code.aon.project.Task;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
@@ -53,31 +58,31 @@ public class ProcessLauncherWizard implements Serializable {
 			"process_wizard_step2", "process_wizard_step3" };
 
 	private int currentStep;
-
 	private Process process;
-
 	private String description;
-
 	private Date startDate;
-
 	private Date endDate;
-
 	private WorkGroup workGroup;
-
 	private CampaignType type;
-
 	private CampaignStatus status;
-
 	private List<CampaignDossier> dossiers;
 	private DataModel dossiersModel;
 
 	private Customer customer;
 	private Dossier dossier;
-
-	private boolean newDossier;
-	private boolean existingDossier;
+	private DossierType dossierType;
+	private ActivityType activityType;
+	private String dossierNumber;
 
 	private List<SelectItem> availableDossiers;
+	private CampaignTaskManager campaignTaskManager;
+	
+	private CampaignTaskManager getCampaignTaskManager() {
+		if (campaignTaskManager == null) {
+			campaignTaskManager = new CampaignTaskManager();
+		}
+		return campaignTaskManager;
+	}
 
 	public int getCurrentStep() {
 		return currentStep;
@@ -159,25 +164,28 @@ public class ProcessLauncherWizard implements Serializable {
 		this.dossier = dossier;
 	}
 
-	public boolean isNewDossier() {
-		return newDossier;
+	public String getDossierNumber() {
+		return dossierNumber;
 	}
 
-	public void setNewDossier(boolean newDossier) {
-		this.newDossier = newDossier;
-		this.existingDossier = !this.newDossier;
-		setDossier(new Dossier());
-		getDossier().setNumber("<<new>>");
+	public void setDossierNumber(String dossierNumber) {
+		this.dossierNumber = dossierNumber;
 	}
 
-	public boolean isExistingDossier() {
-		return existingDossier;
+	public DossierType getDossierType() {
+		return dossierType;
 	}
 
-	public void setExistingDossier(boolean existingDossier) {
-		this.existingDossier = existingDossier;
-		this.newDossier = !this.existingDossier;
-		setDossier(null);
+	public void setDossierType(DossierType dossierType) {
+		this.dossierType = dossierType;
+	}
+
+	public ActivityType getActivityType() {
+		return activityType;
+	}
+
+	public void setActivityType(ActivityType activityType) {
+		this.activityType = activityType;
 	}
 
 	public List<SelectItem> getAvailableDossiers() {
@@ -253,10 +261,12 @@ public class ProcessLauncherWizard implements Serializable {
 		setType(CampaignType.MANUAL);
 		setStatus(CampaignStatus.IN_PROGRESS);
 		setCustomer(new Customer());
+		setDossier(null);
+		setDossierType(null);
+		setDossierNumber(null);
 		setDossiers(null);
 		setDossiersModel(null);
 		setAvailableDossiers(null);
-		setExistingDossier(true);
 	}
 
 	private String determineStep() {
@@ -331,20 +341,60 @@ public class ProcessLauncherWizard implements Serializable {
 	}
 
 	public void addExistingDossier(ActionEvent event) {
-		addDossier();
-		setDossier(null);
+		try {
+			if (getDossier() != null) {
+				addDossier(getDossier());	
+			} else {
+				if (getActivityType() == null) {
+					IManagerBean dossierBean = BeanManager.getManagerBean(Dossier.class);
+					Criteria criteria = new Criteria();
+					if (getCustomer() != null && getCustomer().getId() != null) {
+						criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID), getCustomer().getId());
+					}
+					if (getDossierType() != null && getDossierType().getId() != null) {
+						criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_DOSSIER_TYPE_ID), getDossierType().getId());
+					}
+					if (!StringUtils.isBlank(getDossierNumber())) {
+						criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_NUMBER), getDossierNumber());
+					}
+					criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_STATUS), DossierStatus.ACTIVE);
+					List<ITransferObject> list = dossierBean.getList(criteria);
+					for (ITransferObject to:list) {
+						Dossier d = (Dossier) to;
+						addDossier(d);
+					}
+				} else {
+					IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.ACTIVITY_ACTIVITY_TYPE_ID), getActivityType().getId());
+					if (getCustomer() != null && getCustomer().getId() != null) {
+						criteria.addEqualExpression("Activity.dossier.customer.id", getCustomer().getId());
+					}
+					List<ITransferObject> list = activityBean.getList(criteria);
+					for (ITransferObject to:list) {
+						Activity a = (Activity) to;
+						addDossier(a.getDossier());
+					}
+				}
+			}
+		}catch (ManagerBeanException e) {
+			String msg = "Imposible realizar la búsqueda de expedientes";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public void addNewDossier(ActionEvent event) {
-		Dossier dossier = getDossier();
+		Dossier dossier = new Dossier();
 		dossier.setCustomer(getCustomer());
-		addDossier();
-		setDossier(new Dossier());
+		dossier.setDossierType(getDossierType());
+		dossier.setNumber(getDossierNumber());
+		addDossier(dossier);
 	}
 
-	private void addDossier() {
+	private void addDossier(Dossier dossier) {
 		CampaignDossier cd = new CampaignDossier();
-		cd.setDossier(getDossier());
+		cd.setDossier(dossier);
 		if (validate(cd)) {
 			getDossiers().add(cd);
 			setCustomer(new Customer());
@@ -364,12 +414,12 @@ public class ProcessLauncherWizard implements Serializable {
 			return false;
 		}
 		if (StringUtils.isEmpty(cd.getDossier().getNumber())) {
-			String msg = "Proyecto no puede estar vacio!";
+			String msg = "Expediente no puede estar vacio!";
 			AonUtil.addErrorMessage(msg);
 			return false;
 		}
 		if (cd.getDossier().getDossierType() == null) {
-			String msg = "Tipo de Proyecto no puede estar vacio!";
+			String msg = "Tipo de Expediente no puede estar vacio!";
 			AonUtil.addErrorMessage(msg);
 			return false;
 		}
@@ -392,14 +442,15 @@ public class ProcessLauncherWizard implements Serializable {
 			IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
 			IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
 			IManagerBean activityProcessBean = BeanManager.getManagerBean(ActivityProcess.class);
-			
+
 			Criteria criteria = new Criteria();
 			String alias = processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_PROCESS_ID);
-			criteria.addEqualExpression( alias , getProcess().getId());
-			criteria.addOrder(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION));
+			criteria.addEqualExpression(alias, getProcess().getId());
+			criteria.addOrder(processDetailBean
+					.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION));
 			List list = processDetailBean.getList(criteria);
 			ProcessDetail pd = (ProcessDetail) list.get(0);
-			
+
 			Campaign c = new Campaign();
 			c.setActivityType(null);
 			c.setDescription(getDescription());
@@ -409,10 +460,10 @@ public class ProcessLauncherWizard implements Serializable {
 			c.setStatus(getStatus());
 			c.setType(CampaignType.MANUAL);
 			c.setWorkGroup(getWorkGroup());
-			c = (Campaign) campaignBean.insert( c );
+			c = (Campaign) campaignBean.insert(c);
 			int i = 0;
-			for (CampaignDossier cd: dossiers) {
-				if (cd.getDossier().getId() == null ) {
+			for (CampaignDossier cd : dossiers) {
+				if (cd.getDossier().getId() == null) {
 					Dossier d = cd.getDossier();
 					d.setStatus(DossierStatus.ACTIVE);
 					d = (Dossier) dossierBean.insert(d);
@@ -420,18 +471,20 @@ public class ProcessLauncherWizard implements Serializable {
 				}
 				cd.setCampaign(c);
 				campaignDossierBean.insert(cd);
-				
+
 				Task task = new Task();
 				task.setDescription(pd.getDescription() + " [" + c.getDescription() + "]");
 				task.setDossier(cd.getDossier());
-	            task.setDueDate(CampaignTaskManager.calculateDueDate(cd.getCampaign(), pd.getDateReference(), pd.getDays()));
-	            task.setPercent(0);
-	            task.setPriority(Priority.NORMAL);
+				Date dueDate = getCampaignTaskManager().calculateDueDate(cd.getCampaign(), pd
+						.getDateReference(), pd.getDays());
+				task.setDueDate(dueDate);
+				task.setPercent(0);
+				task.setPriority(Priority.NORMAL);
 				task.setRepeatPeriod(TaskPeriod.NONE);
-	            task.setSource(TaskSource.PROCESS);
-	            task.setStartDate(new Date());
-	            task.setStatus(TaskStatus.PENDING);
-	            task.setWorkGroup(pd.getWorkgroup());
+				task.setSource(TaskSource.PROCESS);
+				task.setStartDate(new Date());
+				task.setStatus(TaskStatus.PENDING);
+				task.setWorkGroup(pd.getWorkgroup());
 				taskBean.insert(task);
 				i++;
 
@@ -441,7 +494,7 @@ public class ProcessLauncherWizard implements Serializable {
 				ap.setProcessDetail(pd);
 				ap.setTask(task);
 				activityProcessBean.insert(ap);
-				
+
 			}
 			AonUtil.addInfoMessage("Proceso lanzado correctamente. " + i + " tareas creadas");
 		} catch (ManagerBeanException e) {

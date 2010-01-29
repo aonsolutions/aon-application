@@ -28,16 +28,16 @@
 							<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_identification}" />
 						</f:facet>
 						<aon:div style="padding-bottom:20px;">
-							<aon:outputText value="#{ecommerceBundle.aon_ecommerce_login_request}" />
+							<aon:outputText value="#{bundle.aon_login_label}" />
 						</aon:div>
 						<aon:panelGrid columns="2" dir="true">
 							<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_ecommerce_user_name}" />
 							<aon:inputText id="Login" required="false" 
-								value="#{userLogin.login}" size="15" />
+								value="#{userLogin.login}" />
 	
 							<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_ecommerce_user_passwd}" />
-							<aon:inputText id="Password" required="false" 
-								value="#{userLogin.password}" size="15" />
+							<aon:inputSecret id="Password" required="false"
+								value="#{userLogin.password}" />
 	
 							<aon:commandLink id="login-request-buttom" 
 								value="#{ecommerceBundle.aon_ecommerce_login_request}"

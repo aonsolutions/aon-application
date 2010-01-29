@@ -71,13 +71,6 @@
 								<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/tab_grid.xhtml" />
 							</aon:panelTab>
 						</c:if>
-						<c:if test="#{aonConfiguration.bean.commercial.showEcommerceTab}">
-							<aon:panelTab id="ecommerceTarget"
-								label="#{commercialBundle.commercial_target_ecommerce}">
-								<ui:include
-									src="/com/code/aon/ui/ebackoffice/facelet/ecTarget/tab_grid.xhtml" />
-							</aon:panelTab>
-						</c:if>
 						
 					</aon:panelTabSet>
 				</c:if>

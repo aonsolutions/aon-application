@@ -44,6 +44,10 @@ public class CheckIndividual extends Check{
 			exceptions.add( new Fd0Exception( exceptionInfo+": "+getMessage("ERROR_INDIVIDUAL_7") ,individual.toString()) );
 			status = false;
 		}
+		if (individual.getAccountUserPCode().intValue() > 99999) {
+			exceptions.add( new Fd0Exception( exceptionInfo+": "+getMessage("ERROR_INDIVIDUAL_8") ,individual.toString()) );
+			status = false;
+		}
 		return status;
 	}
 	

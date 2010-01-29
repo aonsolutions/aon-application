@@ -29,7 +29,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.8.0</value>
+			<value>/aonResource/3.11.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -93,21 +93,11 @@
 
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 <!--  
--->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>menu_products</from-outcome>
 			<to-view-id>/facelet/menu/products.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
-
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>menu_commercial</from-outcome>
-			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
-		</navigation-case>
-	</navigation-rule>
-	
-	
-	
+-->
 </faces-config>

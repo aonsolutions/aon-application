@@ -28,14 +28,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.config.Scope;
 import com.code.aon.config.User;
-import com.code.aon.config.UserScope;
-import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.WorkGroup;
 import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.db.hibernate.ReplicateConfigurationPatcher;
 import com.code.aon.desktop.AccessPolicy;
 import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
@@ -82,8 +76,10 @@ public class DomainController extends BasicController implements IDesktopConstan
 		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
 		this.currentDomain = auc.getDomain();
 		String[] parts = StringUtils.split(this.currentDomain, ".");
-		if ( ArrayUtils.getLength(parts) > 0 ) {
-			this.domainSuffix = parts[parts.length-1]; 
+		if ( ArrayUtils.getLength(parts) > 2 ) {
+			this.domainSuffix = parts[parts.length-2] + "." + parts[parts.length-1]; 
+		} else {
+			this.domainSuffix = this.currentDomain;
 		}
 		manager = new DBManager();
 	}
@@ -107,7 +103,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 				url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
 			}
 			url.append( selectedApplication.getContext() );
-			return url.toString();				
+			return url.toString();
 		}
 		return null;
 	}
@@ -313,30 +309,27 @@ public class DomainController extends BasicController implements IDesktopConstan
 	private SessionFactory getSessionFactory( DBConnnection dbConnection ) {
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
 		configuration.setProperties( dbConnection.getHibernateProperties() );
-   		configuration.configure();
-		
-		// Parche para que funciona bien el replicate en mysql
-		String factoryName = HibernateUtil.getSessionFactoryName();
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(factoryName);
-		ReplicateConfigurationPatcher rcp = new ReplicateConfigurationPatcher(sessionFactory);
-   		rcp.completeConfiguration(configuration);
-   		
+   		configuration.configure();    			
    		configuration.buildMappings();
 		return configuration.buildSessionFactory();
 	}
 	
-	public void replicateUsers( DBConnnection dbc, List<ITransferObject> users ) throws AonException {
-		LOGGER.info( "Replicating users in " + dbc );
-		replicateObjects( getSessionFactory(dbc), users, ReplicationMode.EXCEPTION);
+	@SuppressWarnings("unchecked")
+	private void replicateUsers( DBConnnection dbc ) throws AonException {
+		IManagerBean userBean = BeanManager.getManagerBean(User.class);
+		List<ITransferObject> users = userBean.getList(null);
+		replicateUsers(dbc, (List) users);
 	}
 
-	public void replicateObjects( SessionFactory factory, List<ITransferObject> list, ReplicationMode mode ) throws AonException {
+	public void replicateUsers( DBConnnection dbc, List<User> users ) throws AonException {
+		LOGGER.info( "Replicating users in " + dbc );
+		SessionFactory factory = getSessionFactory(dbc);
 		Session session = null;
 		try {
 			session = factory.openSession();
 			session.beginTransaction();
-			for( ITransferObject to : list ) {
-				session.replicate(to, mode );
+			for( ITransferObject user : users ) {
+				session.replicate(user, ReplicationMode.EXCEPTION );
 			}
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
@@ -351,56 +344,11 @@ public class DomainController extends BasicController implements IDesktopConstan
 		}
 	}
 	
-	public void createUsers( DBConnnection dbc, String domain ) throws AonException {
-		synchronize(dbc, domain);
+	public void createUsers( DBConnnection dbConnection, String domain ) throws AonException {
+		replicateUsers( dbConnection );
 		Name currentUsersDN = NameResolver.getUsersDN(getCurrentDomain());
 		Name usersDN = NameResolver.getUsersDN(domain);
 		addReferral(usersDN, currentUsersDN, ORGANIZATIONAL_UNIT);
-	}
-	
-	private void replicateEntity( SessionFactory factory, Class<?> entity, ReplicationMode mode ) throws AonException {
-		IManagerBean bean = BeanManager.getManagerBean( entity );
-		List<ITransferObject> list = bean.getList(null);
-		replicateObjects( factory, list, mode);		
-	}
-
-	private void synchronize( DBConnnection dbc, String domain ) throws AonException {
-		SessionFactory factory = getSessionFactory(dbc);
-		replicateEntity(factory, Scope.class, ReplicationMode.OVERWRITE);
-		replicateEntity(factory, WorkGroup.class, ReplicationMode.OVERWRITE);
-		replicateEntity(factory, User.class, ReplicationMode.OVERWRITE);
-		replicateEntity(factory, UserScope.class, ReplicationMode.OVERWRITE);
-		replicateEntity(factory, UserWorkGroup.class, ReplicationMode.OVERWRITE);
-	}
-	
-	private String getCurrentDomainDN() {
-		BasicLdap ldap = new BasicLdap();
-		Name currentDomainDN = NameResolver.getDomainDN(this.currentDomain);
-		try {
-			Name value = ldap.getLdapSession().getFullDN(currentDomainDN);
-			return value.toString();
-		} catch ( LdapException e ) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-			ldap.closeSession();
-		}		
-		return null;
-	}
-	
-	public void synchronize( ActionEvent event ) throws ManagerBeanException {
-		IManagerBean bean = getManagerBean();
-		Criteria criteria = new Criteria();
-		String parentDomain = bean.getFieldName(IDesktopAlias.DOMAIN_PARENT_DOMAIN);
-		criteria.addEqualExpression(parentDomain, getCurrentDomainDN());
-		for( ITransferObject to : bean.getList(criteria) ) {
-			String domain = ((Domain) to).getCommonName();
-			try {
-				DBConnnection dbc = getDBConnection(domain);
-				synchronize( dbc, domain );
-			} catch (Throwable th) {
-				AonUtil.addErrorMessage( "Error sincronizando el dominio " + domain );
-			}
-		}
 	}
 	
 }

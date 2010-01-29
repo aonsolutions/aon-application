@@ -53,7 +53,8 @@ public class DossierController extends BasicController {
 		Expression e1 =  ExpressionUtilities.getEqualExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID), dossier.getDossierType().getId());
 		Expression e2 =  ExpressionUtilities.getNullExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID));
 		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2)); 
-		
+		criteria.addOrder( activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID), false );
+		criteria.addOrder( activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DESCRIPTION));
 		Iterator iter = activityTypeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			ActivityType type = (ActivityType)iter.next();

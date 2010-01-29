@@ -21,7 +21,6 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
  * 
  * @author Consulting & Development. Joseba Urkiri - 6-jun-2006
  * @since 1.0
- * 
  */
 public class DeliveryControllerListener extends ControllerAdapter {
 	
@@ -31,6 +30,8 @@ public class DeliveryControllerListener extends ControllerAdapter {
 		((Delivery)controller.getTo()).setStatus(DeliveryStatus.PENDING);
 		controller.setAddresses(null);
 		controller.setWarehouse(null);
+		controller.setDefaultPayMethod(null);
+		controller.resetDeliveryPayMethod();
 	}
 
 	@Override
@@ -38,49 +39,30 @@ public class DeliveryControllerListener extends ControllerAdapter {
 		DeliveryController controller = (DeliveryController)event.getController();
 		try {
 			controller.loadAddresses(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
+	        controller.setWarehouse(obtainWarehouseId((Delivery)controller.getTo()));
+			controller.loadDefaultPayMethod(((Delivery)controller.getTo()).getCustomer().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
-        controller.setWarehouse(obtainWarehouseId((Delivery)controller.getTo()));
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-/*
-		try {
-			IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-			Delivery delivery = (Delivery) event.getController().getTo();
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID),delivery.getId());
-			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
-			if (iter.hasNext()) {
-				DeliveryDetail deliveryDetail = (DeliveryDetail) iter.next();
-				Sales sales = deliveryDetail.getSalesDetail().getSales();
-				sales.setDiscountExpression(new DiscountExpression("0.0"));
-				sales.setIssueDate(deliveryDetail.getDelivery().getIssueTime());
-				sales.setNumber(deliveryDetail.getDelivery().getNumber());
-				sales.setPayMethod(null);
-				sales.setSecurityLevel(deliveryDetail.getDelivery().getSecurityLevel());
-				sales.setSeries(deliveryDetail.getDelivery().getSeries());
-				sales.setCustomer(deliveryDetail.getDelivery().getCustomer());
-				sales.setShippingAddress(delivery.getRaddress());
-				salesBean.update(sales);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-*/
-	}
-
 	@SuppressWarnings("unchecked")
 	private Warehouse obtainWarehouseId(Delivery delivery) throws ControllerListenerException {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
-			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
-			if (iter.hasNext()) {
-				return ((DeliveryDetail)iter.next()).getWarehouse();
+			Iterator iterator = deliveryDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return ((DeliveryDetail)iterator.next()).getWarehouse();
+			} else {
+				IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+				criteria = new Criteria();
+				criteria.addOrder(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_NAME));
+				Iterator<?> iter = warehouseBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					return (Warehouse)iter.next();
+				}
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());

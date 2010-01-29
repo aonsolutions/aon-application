@@ -35,8 +35,6 @@ import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
-import com.code.aon.product.Item;
-import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -98,9 +96,6 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		getParams().setSecurityLevel(SecurityLevel.OFFICIAL);
 		getParams().setInvoiceDate(new Date());
 		getParams().setCustomer(new Customer());
-		Item item = new Item();
-		item.setProduct(new Product());
-		getParams().setItem(item);
 		getParams().setInvoiceRecordable(true);
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());

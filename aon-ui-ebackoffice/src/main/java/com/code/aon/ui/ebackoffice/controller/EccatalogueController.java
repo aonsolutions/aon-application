@@ -4,18 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -25,18 +25,15 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.PayMethod;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ebackoffice.Eccatalogue;
 import com.code.aon.ebackoffice.enumeration.CatalogueType;
 import com.code.aon.product.Catalogue;
-import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.LinesController;
 
-public class EccatalogueController extends BasicController {
+public class EccatalogueController extends LinesController {
 	private static final Logger LOGGER = Logger
 			.getLogger(EccatalogueController.class.getName());
 
@@ -58,7 +55,7 @@ public class EccatalogueController extends BasicController {
 		}
 		return catalogueTypes;
 	}
-
+	
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
 		catalogues = null;
 		if (catalogues == null) {
@@ -119,9 +116,13 @@ public class EccatalogueController extends BasicController {
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}
+	public void deleteImage(ActionEvent e)   {
+		setImage(null);
+	}
 
 	public void uploadIcon(UploadEvent event) {
 		try {
+			
 			UploadItem item = event.getUploadItem();
 			AonFile f = new AonFile();
 			File file = item.getFile();
@@ -132,9 +133,15 @@ public class EccatalogueController extends BasicController {
 			}
 			f.setFileName(item.getFileName());
 			setIcon(f);
+			
+			
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
+	}
+	
+	public void deleteIcon(ActionEvent e)   {
+		setIcon(null);
 	}
 
 	public void paintImage(OutputStream out, Object data) throws IOException {
@@ -162,16 +169,26 @@ public class EccatalogueController extends BasicController {
 		}
 	}
 	public void paintIconn(OutputStream out, Object data) throws IOException {
-		if (icon != null && icon.getData() != null) {
+		if (icon != null) {
 			out.write(icon.getData());
 		}
 	}
 
 	public void paintImagee(OutputStream out, Object data) throws IOException {
-		if (icon != null && image.getData() != null) {
+		if (image != null) {
 			out.write(image.getData());
 		}
 
 	}
+	
+	public boolean isOutofDate(){
+		
+		Date toDate =((Eccatalogue)this.getTo()).getCatalogue().getEndDate();
+		Calendar d =new GregorianCalendar();
+		return toDate.before(d.getTime());
+				
+	}
+	
+	
 
 }

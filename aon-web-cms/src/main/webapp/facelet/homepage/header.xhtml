@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="aonHeader" styleClass="aon-header">
-		<aon:panelGrid columns="3" width="100%"
+		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
 			<aon:div>
 				<aon:outputConnectionStatus id="aonStatus"
@@ -23,8 +23,6 @@
 				<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
 					styleClass="aon-applicationName" style="font-size:0.9em;margin-top:0.3em;"
 					rendered="#{aonConfiguration.applicationVersion != null}" />
-				<aon:outputText value="(#{config.currentConfig.domain})"
-					styleClass="aon-applicationName" />					
 			</aon:div>
 
 			<aon:div>
@@ -40,30 +38,30 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-nowrap">
-				<aon:div style="white-space:nowrap;">
+				<aon:div styleClass="aon-nowrap" rendered="#{loggedUser.logged}">
 					<aon:outputText value="#{loggedUser.companyName}" />
 					<aon:outputText value=" / " />
 					<aon:outputText value="#{loggedUser.loggedUserName}"
 						styleClass="aon-bold" />
-				</aon:div>
+				</aon:div>					
 			</aon:div>
 		</aon:panelGrid>
 
 		<aon:form>
 			<aon:div styleClass="aon-header-additionalInfo">
 				<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
-					<aon:div styleClass="aon-float-right">
-						<aon:div styleClass="aon-header-menu-item">
-							<h:outputLink target="_top"
-								value="${facesContext.externalContext.requestContextPath}">
-								<h:outputText value="#{bundle.aon_home}" />
-							</h:outputLink>
+				<aon:div styleClass="aon-float-right">
+					<aon:div styleClass="aon-header-menu-item">
+						<h:outputLink target="_top"
+							value="${facesContext.externalContext.requestContextPath}">
+							<h:outputText value="#{bundle.aon_home}" />
+						</h:outputLink>
 						<aon:commandLink style="border-right:0;" action="logout"
-								actionListener="#{aonConfiguration.logout}">
-								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+							actionListener="#{aonConfiguration.logout}">
+							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 						</aon:commandLink>
-						</aon:div>
 					</aon:div>
+				</aon:div>
 				</c:if>
 				<aon:outputText value="#{aonConfiguration.currentDate}" />
 			</aon:div>

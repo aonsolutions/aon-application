@@ -19,6 +19,7 @@ import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
@@ -32,6 +33,8 @@ public class ConfigCollectionsController {
 	private List<SelectItem> taxTypes;
 	
 	private List<SelectItem> payMethodTypes;
+
+	private List<SelectItem> invoiceTransactionTypes;
 
 	public List<SelectItem> getSeries() throws ManagerBeanException{
 		return getSeries(false);		
@@ -339,6 +342,26 @@ public class ConfigCollectionsController {
 	}
 
 	public void setPayMethod( PayMethod payMethod ) {
+	}
+
+	public List<SelectItem> getInvoiceTransactionTypes() {
+		if (invoiceTransactionTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			invoiceTransactionTypes = new LinkedList<SelectItem>();
+			for (InvoiceTransactionType type:InvoiceTransactionType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				invoiceTransactionTypes.add(item);
+			}
+		}
+		return invoiceTransactionTypes;
+	}
+
+	public InvoiceTransactionType getInvoiceTransactionType() {
+		return null;
+	}
+
+	public void setInvoiceTransactionType( InvoiceTransactionType invoiceTransactionType ) {
 	}
 
 }

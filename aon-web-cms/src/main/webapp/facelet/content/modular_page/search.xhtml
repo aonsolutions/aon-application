@@ -12,48 +12,71 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="modulaPageSearch">
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.modular_page}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.modular_page}" />
-				<ui:param name="controller" value="#{modular_page}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-			</ui:include>		
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="modular_page_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{modular_page.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="modular_page_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{modular_page.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="modular_page_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{modular_page.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{modular_page}" />
-				<ui:define name="searchContent">
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="ModularPage_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="ModularPage_alias" size="50"
 						valueChangeListener="#{modular_page.addExpression}" />
 	
-					<aon:outputLabel for="ModularPage_details_title"
+					<aon:outputLabel for="ModularPage_title"
 						value="#{appBundle.modular_page_label}" />
-					<aon:inputText id="ModularPage_details_title" size="50"
-						valueChangeListener="#{modular_page.addExpression}" />
+					<aon:inputText id="ModularPage_title" size="50"
+						value="#{modular_page.title}" />
 
 					<aon:outputLabel for="ModularPage_section_id"
-						value="#{appBundle.cms_section}"/>
+						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="ModularPage_section_id"  
-						valueChangeListener="#{controller.addIdEqualExpression}"
-						value="#{collections.section}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						valueChangeListener="#{modular_page.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 	
-					<aon:outputLabel for="ModularPage_active"
-						value="#{appBundle.cms_active}" />
-					<aon:selectOneMenu id="ModularPage_active"
-						valueChangeListener="#{controller.addExpression}">
-						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneMenu>		
-					
-				</ui:define>
-			</ui:decorate>
+				</aon:panelGrid>
+			</aon:div>
 			
 		</aon:form>
 	</ui:define>

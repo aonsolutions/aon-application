@@ -9,38 +9,28 @@
 	<ui:define name="content">
 
 		<aon:form id="alarmForm">
-
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{groupwareBundle.aon_alarm}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{alarm.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
-							action="home" actionListener="#{alarm.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:commandButton id="alarm_delay" value="#{groupwareBundle.alarm_delay}"
-							styleClass="aon-finding-toolbar-item aon-icon-alarms-postpone"
-							action="home" actionListener="#{alarm.onDelayAlarm}"/>	
-						<aon:commandButton id="alarm_finish" value="#{groupwareBundle.alarm_finish}"
-							styleClass="aon-finding-toolbar-item aon-icon-alarms-finish"
-							action="home" actionListener="#{alarm.onFinishAlarm}"/>	
-							
-						<aon:spin controller="#{alarm}" action="alarm_form" rendered="#{!alarm.new}" />
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle"
+					value="#{groupwareBundle.aon_alarm}" />
+				<ui:param name="toolbarDescription"
+					value="#{alarm.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+						action="home" actionListener="#{alarm.onCancel}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" />
+					<aon:commandButton id="alarm_delay" value="#{groupwareBundle.alarm_delay}"
+						styleClass="aon-finding-toolbar-item aon-icon-alarms-postpone"
+						action="home" actionListener="#{alarm.onDelayAlarm}"/>	
+					<aon:commandButton id="alarm_finish" value="#{groupwareBundle.alarm_finish}"
+						styleClass="aon-finding-toolbar-item aon-icon-alarms-finish"
+						action="home" actionListener="#{alarm.onFinishAlarm}"/>	
 						
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
+					<aon:spin controller="#{alarm}" action="alarm_form" rendered="#{!alarm.new}" />
+				</ui:define>				
+			</ui:decorate>		
 
 			<aon:div styleClass="aon-scroll-area">
 

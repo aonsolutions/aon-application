@@ -45,7 +45,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="dataTable" value="#{bulletin.model}" var="to"
 					rows="#{bulletin.pageLimit}" rendered="#{bulletin.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 							
 					<aon:rowSelector
 						action="bulletin_form" actionListener="#{bulletin.onSelect}" />
@@ -54,27 +54,17 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}"/>
 						</f:facet>
-						<aon:outputText value="#{to.alias}" />
+						<aon:outputText value="#{to.alias}"
+							styleClass="aon-editDataTable-button" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.article_title}" />
-						</f:facet>
-						<aon:outputText value="#{bulletin.i18nTitle}">
-							<aon:abbreviateConverter maxWidth="60" />
-						</aon:outputText>
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
 							<aon:outputText value="#{appBundle.bulletin_publishDate}"/>
 						</f:facet>
-						<aon:outputText value="#{to.publish_date}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>						
-					</aon:column>					
+						<aon:outputText value="#{to.publish_date}"
+							styleClass="aon-editDataTable-button" />
+					</aon:column>
 
 				</aon:dataTable>
 					

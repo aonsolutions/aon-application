@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
@@ -18,6 +16,8 @@ import javax.faces.validator.ValidatorException;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -41,7 +41,7 @@ import com.sun.faces.util.MessageFactory;
 
 public class NoticeController extends BasicController implements IAonObjectClasses, ILdapConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(NoticeController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(NoticeController.class);
 	
 	public static final Integer SELECT_ONE_VALUE = -1;
 	
@@ -146,20 +146,18 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		User recipient = notice.getRecipient();
 		if ( (recipient != null) && (recipient.getId() != null) ) {
 			return getUser(recipient.getId());
-		} else {
-			WorkGroup wg = notice.getWorkGroup();
-			if ( wg != null ) {
-				if ( wg.getId() == null ) {
-					return getAllUsers();
-				} else if (! SELECT_ONE_VALUE.equals(wg.getId()) ) {
-					return getWorkGroupUsers(wg.getId());
-				}
+		} 
+		WorkGroup wg = notice.getWorkGroup();
+		if ( wg != null ) {
+			if ( wg.getId() == null ) {
+				return getAllUsers();
+			} else if (! SELECT_ONE_VALUE.equals(wg.getId()) ) {
+				return getWorkGroupUsers(wg.getId());
 			}
 		}
 		return Collections.emptyList();
 	}
     
-    @SuppressWarnings("unchecked")
     public void loadUsers( Integer workGroupId ) {
     	resetUsers();
         try {
@@ -169,7 +167,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
                 users.add(item);
 	    	}
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error loading users of workgroup with id= " + workGroupId, e);
+            LOGGER.error("Error loading users of workgroup with id= " + workGroupId, e);
         }
     }
 
@@ -180,12 +178,11 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroup.getId());
 	        return managerBean.getCount(criteria) > 0;
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error counting users of the workgroup " + workGroup.getId(), e);
+            LOGGER.error("Error counting users of the workgroup " + workGroup.getId(), e);
         }    	
         return false;
     }
     
-    @SuppressWarnings("unchecked")
     public void loadWorkGroups() {
         try {    	
 			this.workGroups = new LinkedList<SelectItem>();
@@ -202,7 +199,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 				}
 			}
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error loading workgroups", e);
+            LOGGER.error("Error loading workgroups", e);
         }
     }    
     
@@ -220,7 +217,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 				}			
 			}
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error retrieving emails", e);
+            LOGGER.error("Error retrieving emails", e);
         }
 	}
 
@@ -235,7 +232,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 				}
 			}
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error retrieving cellulars", e);
+            LOGGER.error("Error retrieving cellulars", e);
         }
 	}
 
@@ -260,7 +257,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 					email = email + ", "+ name +" <"+alternativeEmail+">";
 				}
 			} else {
-                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username);
+                LOGGER.error("Error obteniendo propiedades del usuario " + username);
 			}
 		}
 		if (email == null) {
@@ -271,7 +268,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 				Entry domainEntry = ldap.get(domainDN, DOMAIN, MEMBER_ATTRIBUTE);
 				List<Object> alternativeDomain = null;
 				if ( (domainEntry != null) && (domainEntry.containsKey(MEMBER_ATTRIBUTE)) ) {
-					alternativeDomain = (List<Object>)domainEntry.get(MEMBER_ATTRIBUTE);
+					alternativeDomain = domainEntry.get(MEMBER_ATTRIBUTE);
 					for (int i=0;i<alternativeDomain.size();i++) {
 						String altdomain = ""+alternativeDomain.get(i);
 						altdomain = altdomain.substring(3, altdomain.indexOf(","));

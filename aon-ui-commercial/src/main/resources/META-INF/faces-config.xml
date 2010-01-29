@@ -139,7 +139,6 @@
 				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
 				<value>#{targetSegmentListener}</value>
-				<value>#{targetEctargetListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -279,63 +278,6 @@
 				<map-entry>
 					<key>CommercialTracking_target_id</key>
 					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<!--  **** ECTARGET **** -->
-<managed-bean>
-	<managed-bean-name>targetEctargetListener</managed-bean-name>
-	<managed-bean-class>
-		com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-	<managed-bean-scope>none</managed-bean-scope>
-	<managed-property>
-		<property-name>childBean</property-name>
-		<value>ectarget</value>
-	</managed-property>
-	<managed-property>
-		<property-name>aliasMap</property-name>
-		<map-entries>
-			<map-entry>
-				<key>Ectarget_target_id</key>
-				<value>id</value>
-			</map-entry>
-		</map-entries>
-	</managed-property>
-</managed-bean>
-
-
-	<managed-bean>
-		<managed-bean-name>ectarget</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.controller.EctargetController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.ebackoffice.Ectarget</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>ectarget</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>target</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>target.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -604,23 +546,6 @@
 				<value>#{nullableBankAccountValidatorListener}</value>
 			</list-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>optionalListenerClasses</property-name>
-			<value>#{offerOptionalListeners}</value>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>internetOfferControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.event.InternetOfferControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>offerOptionalListeners</managed-bean-name>
-		<managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>

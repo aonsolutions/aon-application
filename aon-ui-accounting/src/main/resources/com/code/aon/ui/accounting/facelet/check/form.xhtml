@@ -38,7 +38,7 @@
 				<aon:selectOneMenu reRender="SearchButton" ajaxSingle="true" required="true"
 					id="accountPeriod" value="#{accountCheck.params.period}">
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-					<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+					<f:selectItems value="#{accountingCollections.accountPeriods}" />
 				</aon:selectOneMenu>
 	
 				<aon:outputText value="#{accountingBundle.accounting_check_list}" />

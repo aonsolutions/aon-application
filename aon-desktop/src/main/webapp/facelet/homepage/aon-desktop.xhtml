@@ -160,8 +160,8 @@
 											<aon:outputLink value="#{desktop.updateApplicationURL}" target="_blank">
 												<aon:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon/aon-icon-warning.png']}" />											
 												<aon:outputText value="#{appBundle.desktop_update_message}"
-													style="font-family:arial;font-size:9pt;color:#e55302 !important;"
-													styleClass="aon-bold aon-vertical-align-middle aon-margin-left" /> 
+													style="font-family:arial;font-size:11pt;color:#e55302 !important;"
+													styleClass="aon-bold aon-vertical-align-top aon-margin-left" /> 
 											</aon:outputLink>									
 										</aon:div>
 									</aon:panelCollapsible>
@@ -287,17 +287,15 @@
 					</aon:div>
 
 					<aon:div>
-						<c:if test="#{company.withLogo}">
-							<aon:div styleClass="aon-company-logo">
-								<a4j:mediaOutput
-									mimeType="#{company.logoMimeType}" 
-									cacheable="false" element="img" 
-									value="#{company.aonFile.key}" 
-									style="#{desktop.bigLogo?'width:200px':''}"
-									createContent="#{company.createLogoContent}">
-								</a4j:mediaOutput>
-							</aon:div>
-						</c:if>
+						<aon:div styleClass="aon-company-logo">
+							<a4j:mediaOutput element="img" cacheable="false"
+								rendered="#{company.withLogo}" 
+								value="#{company.aonFile.key}"
+								createContent="#{company.createLogoContent}">
+								<f:param value="#{company.timeStamp}" name="time" />
+							</a4j:mediaOutput>
+
+						</aon:div>
 						<!--  soporte -->
 						<aon:div styleClass="aon-support">
 							<aon:div styleClass="aon-support-title">

@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
@@ -38,18 +39,35 @@
 						actionListener="#{shoppingCart.refreshPrice}"
 						ignoreDupResponses="true" />
 				</aon:inputText>
+<!--  
+				<rich:inputNumberSpinner value="#{to.quantity}" 
+					enableManualInput="true" inputSize="2" 
+					cycled="false" minValue="1" style="width:5px;height:5px;">
+					<f:convertNumber pattern="#,##0" />
+					<a4j:support event="onblur" reRender="shopForm"
+						actionListener="#{shoppingCart.refreshPrice}"
+						ignoreDupResponses="true" />
+					<a4j:support event="onclick" reRender="shopForm"
+						actionListener="#{shoppingCart.refreshPrice}"
+						ignoreDupResponses="true" />
+				</rich:inputNumberSpinner>
+-->				
 			</aon:column>
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_price}" />
 				</f:facet>
-				<aon:outputText value="#{to.item.price}" />
+				<aon:outputText value="#{to.item.price}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
 			</aon:column>
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_amount}" />
 				</f:facet>
-				<aon:outputText value="#{to.total}" />
+				<aon:outputText value="#{to.total}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
 				<f:facet name="footer">
 					<aon:outputText value="#{shoppingCart.total}">
 						<f:convertNumber pattern="#,##0.00" />
@@ -79,5 +97,8 @@
 		</aon:dataTable>
 
 	</aon:div>
-
+	
+	<!-- si la navegacion viene desde paypal -->
+	<c:if test="#{ecConfig.paypalReturn}" />
+	
 </ui:composition>

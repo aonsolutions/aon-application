@@ -7,31 +7,34 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.product.Item;
+import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 
 /**
  * Transfer Object that represents a line of a purchase.
- * 
- * @author Joseba Urkiri
  */
 @Entity
 @Table(name="purchase_detail")
-public class PurchaseDetail implements ITransferObject {
+public class PurchaseDetail implements ITransferObject, ICalculable {
+
+	private static final long serialVersionUID = -8755960049183396137L;
 
 	/** The id. */
 	private Integer id;
 	
-	/** The purchase which contains this line. */
+	/** The purchase. */
 	private Purchase purchase;
 	
-	/** The line number. */
-	private int line;
+	/** The line. */
+	private Integer line;
 	
 	/** The item. */
 	private Item item;
@@ -45,16 +48,22 @@ public class PurchaseDetail implements ITransferObject {
 	/** The price. */
 	private double price;
 	
-	/** The taxes (canon). */
-	private double taxes;
-	
-	/** The status. */
-	private PurchaseDetailStatus status;
-	
-	/** The discount expression. */
+    /** The discount expression. */
     private DiscountExpression discountExpression;
+    
+    /** The taxes. */
+    private double taxes;
 
-	/**
+    /** The status. */
+    private PurchaseDetailStatus status;
+
+    /** The delivered. */
+    private double delivered;
+
+    /** The transfered. */
+    private double transfered;
+
+    /**
 	 * Gets the id.
 	 * 
 	 * @return the id
@@ -62,26 +71,26 @@ public class PurchaseDetail implements ITransferObject {
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
+    /**
+     * Sets the id.
+     * 
+     * @param id the id
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
 	/**
 	 * Gets the purchase.
 	 * 
 	 * @return the purchase
 	 */
 	@ManyToOne
-	@JoinColumn( name="purchase", nullable = false, updatable=false)
+	@JoinColumn( name="purchase", nullable = false, updatable=false )
 	public Purchase getPurchase() {
 		return purchase;
 	}
@@ -95,24 +104,23 @@ public class PurchaseDetail implements ITransferObject {
 		this.purchase = purchase;
 	}
 	
-	/**
-	 * Gets the line.
-	 * 
-	 * @return the line
-	 */
-	@Column(nullable=false)
-	public int getLine() {
-		return line;
-	}
+    /**
+     * Gets the line.
+     * 
+     * @return the line
+     */
+    public Integer getLine() {
+        return line;
+    }
 
-	/**
-	 * Sets the line.
-	 * 
-	 * @param line the line
-	 */
-	public void setLine(int line) {
-		this.line = line;
-	}
+    /**
+     * Sets the line.
+     * 
+     * @param line the line
+     */
+    public void setLine(Integer line) {
+        this.line = line;
+    }
 
 	/**
 	 * Gets the item.
@@ -120,26 +128,26 @@ public class PurchaseDetail implements ITransferObject {
 	 * @return the item
 	 */
 	@ManyToOne
-	@JoinColumn( name="item", nullable = false, updatable=false)
-	public Item getItem() {
-		return item;
-	}
+	@JoinColumn( name="item", nullable=false )
+    public Item getItem() {
+        return item;
+    }
 
-	/**
-	 * Sets the item.
-	 * 
-	 * @param item the item
-	 */
-	public void setItem(Item item) {
-		this.item = item;
-	}
-	
+    /**
+     * Sets the item.
+     * 
+     * @param item the item
+     */
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
     /**
      * Gets the description.
      * 
      * @return the description
      */
-    @Column(name="description")
+	@Column(length=1024)
     public String getDescription() {
         return description;
     }
@@ -158,7 +166,6 @@ public class PurchaseDetail implements ITransferObject {
      * 
      * @return the quantity
      */
-    @Column(name="quantity")
     public double getQuantity() {
         return quantity;
     }
@@ -172,24 +179,43 @@ public class PurchaseDetail implements ITransferObject {
         this.quantity = quantity;
     }
 
-	/**
-	 * Gets the price.
-	 * 
-	 * @return the price
-	 */
-	@Column(name="price")
-	public double getPrice() {
-		return price;
-	}
+    /**
+     * Gets the price.
+     * 
+     * @return the price
+     */
+    public double getPrice() {
+        return price;
+    }
+
+    /**
+     * Sets the price.
+     * 
+     * @param price the price
+     */
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
 	/**
-	 * Sets the price.
+	 * Gets the discount expression.
 	 * 
-	 * @param price the price
+	 * @return the discount expression
 	 */
-	public void setPrice(double price) {
-		this.price = price;
-	}
+	@Column(name="discount_expr")
+	@Type(type="com.code.aon.product.util.DiscountExpressionUserType")
+    public DiscountExpression getDiscountExpression() {
+        return discountExpression;
+    }
+
+    /**
+     * Sets the discount expression.
+     * 
+     * @param discountExpression the discount expression
+     */
+    public void setDiscountExpression(DiscountExpression discountExpression) {
+        this.discountExpression = discountExpression;
+    }
 
 	/**
 	 * Gets the taxes.
@@ -210,11 +236,10 @@ public class PurchaseDetail implements ITransferObject {
 	}
 
 	/**
-	 * Gets the status.
-	 * 
-	 * @return the status
-	 */
-	@Column(name="status")
+     * Gets the status.
+     * 
+     * @return the status
+     */
 	public PurchaseDetailStatus getStatus() {
 		return status;
 	}
@@ -222,29 +247,60 @@ public class PurchaseDetail implements ITransferObject {
 	/**
 	 * Sets the status.
 	 * 
-	 * @param status the status
+	 * @param status the status 
 	 */
 	public void setStatus(PurchaseDetailStatus status) {
 		this.status = status;
 	}
-	
+
 	/**
-     * Gets the discount expression.
-     * 
-     * @return the discount expression
-     */
-    @Column(name ="discount_expr")
-    @Type(type = "com.code.aon.product.util.DiscountExpressionUserType")
-    public DiscountExpression getDiscountExpression() {
-        return discountExpression;
+	 * Gets the delivered.
+	 * 
+	 * @return the delivered
+	 */
+	public double getDelivered() {
+		return delivered;
+	}
+
+	/**
+	 * Sets the delivered.
+	 * 
+	 * @param delivered the delivered
+	 */
+	public void setDelivered(double delivered) {
+		this.delivered = delivered;
+	}
+
+	@Transient
+	public double getTransfered() {
+		transfered = transfered > (quantity - delivered) ? (quantity - delivered) : transfered;
+		return transfered;
+	}
+
+	public void setTransfered(double transfered) {
+		this.transfered = transfered;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof PurchaseDetail) {
+			PurchaseDetail p = (PurchaseDetail) obj;
+			if (p.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), p.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
 
-    /**
-     * Sets the discount expression.
-     * 
-     * @param discountExpression the discount expression
-     */
-    public void setDiscountExpression(DiscountExpression discountExpression) {
-        this.discountExpression = discountExpression;
-    }
 }

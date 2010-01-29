@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="signature">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_webmail_signature}" />
+				<ui:param name="controller" value="#{signature}" />
+				<ui:param name="skipSearchButton" value="true" />
+			</ui:include>			
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true"  width="100%" columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even">
+	
+					<aon:outputLabel for="Signature_name"
+						value="#{appBundle.aon_webmail_signature_name}" />
+					<aon:inputText id="Signature_name"
+						size="60" maxlength="45" required="true"
+						value="#{signature.to.name}"/>
+					
+					<aon:outputLabel for="Signature_signature"
+						value="#{appBundle.aon_webmail_signature_signature}" />
+					<aon:div style="width:98%">
+						<aon:inputRichText id="Signature_signature" height="400" toolbarSet="AonWebMail"
+							value="#{signature.to.signature}" />
+					</aon:div>
+							
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

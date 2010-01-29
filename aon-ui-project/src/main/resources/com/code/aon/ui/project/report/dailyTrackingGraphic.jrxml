@@ -1,34 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"  ?>
-<!-- Created with iReport - A designer for JasperReports -->
-<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport
-		 name="dailyTrackingGraphic"
-		 columnCount="1"
-		 printOrder="Vertical"
-		 orientation="Landscape"
-		 pageWidth="842"
-		 pageHeight="595"
-		 columnWidth="782"
-		 columnSpacing="0"
-		 leftMargin="30"
-		 rightMargin="30"
-		 topMargin="20"
-		 bottomMargin="20"
-		 whenNoDataType="NoPages"
-		 isTitleNewPage="false"
-		 isSummaryNewPage="false">
-	<property name="ireport.scriptlethandling" value="0" />
-	<property name="ireport.encoding" value="UTF-8" />
-	<import value="java.util.*" />
-	<import value="net.sf.jasperreports.engine.*" />
-	<import value="net.sf.jasperreports.engine.data.*" />
-
-	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
-	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
-	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
-	<parameter name="fromDate" isForPrompting="false" class="java.util.Date"/>
-	<parameter name="toDate" isForPrompting="false" class="java.util.Date"/>
-	<queryString><![CDATA[select 
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dailyTrackingGraphic" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="logoImageFile" class="java.io.InputStream"/>
+	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
+	<parameter name="fromDate" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="toDate" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select
   dailytrack0_.id as id
 , user1_.id as userId
 , user1_.name as userName
@@ -43,17 +26,17 @@
 , activity9_.id as activityId
 , activityty11_.description as activityDescription
 , dossiertyp8_.id as dossierTypeId
-, dossiertyp8_.description as dossierTypeDescription 
-from daily_tracking dailytrack0_ 
-inner join user user1_ on dailytrack0_.user=user1_.id 
-inner join job_type jobtype2_ on dailytrack0_.job_type=jobtype2_.id 
-left outer join customer customer3_ on dailytrack0_.customer=customer3_.registry 
-left outer join registry registry5_ on customer3_.registry=registry5_.id 
-left outer join dossier dossier6_ on dailytrack0_.dossier=dossier6_.id 
-left outer join dossier_type dossiertyp8_ on dossier6_.dossier_type=dossiertyp8_.id 
-left outer join activity activity9_ on dailytrack0_.activity=activity9_.id 
-left outer join activity_type activityty11_ on activity9_.activity_type=activityty11_.id]]></queryString>
-
+, dossiertyp8_.description as dossierTypeDescription
+from daily_tracking dailytrack0_
+inner join user user1_ on dailytrack0_.user=user1_.id
+inner join job_type jobtype2_ on dailytrack0_.job_type=jobtype2_.id
+left outer join customer customer3_ on dailytrack0_.customer=customer3_.registry
+left outer join registry registry5_ on customer3_.registry=registry5_.id
+left outer join dossier dossier6_ on dailytrack0_.dossier=dossier6_.id
+left outer join dossier_type dossiertyp8_ on dossier6_.dossier_type=dossiertyp8_.id
+left outer join activity activity9_ on dailytrack0_.activity=activity9_.id
+left outer join activity_type activityty11_ on activity9_.activity_type=activityty11_.id]]>
+	</queryString>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="userId" class="java.lang.Integer"/>
 	<field name="userName" class="java.lang.String"/>
@@ -69,383 +52,289 @@ left outer join activity_type activityty11_ on activity9_.activity_type=activity
 	<field name="activityDescription" class="java.lang.String"/>
 	<field name="dossierTypeId" class="java.lang.Integer"/>
 	<field name="dossierTypeDescription" class="java.lang.String"/>
-
-	<variable name="totalDuration" class="java.lang.Double" resetType="Report" calculation="Sum">
+	<variable name="totalDuration" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{duration}]]></variableExpression>
 	</variable>
-	<variable name="userMap" class="java.util.HashMap" resetType="Report" calculation="Sum">
+	<variable name="userMap" class="java.util.HashMap" calculation="Sum">
 		<variableExpression><![CDATA[$V{userMap}.get($F{userId})]]></variableExpression>
 	</variable>
-
-		<group  name="reportGroup" >
-			<groupExpression><![CDATA[$F{id}]]></groupExpression>
-			<groupHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-			</groupHeader>
-			<groupFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-			</groupFooter>
-		</group>
-		<background>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</background>
-		<title>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</title>
-		<pageHeader>
-			<band height="66"  isSplitAllowed="true" >
-				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Blank" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="5"
-						y="4"
-						width="83"
-						height="59"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="image-1"
-						positionType="Float"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+	<group name="reportGroup">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="66" splitType="Stretch">
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank">
+				<reportElement key="image-1" positionType="Float" mode="Opaque" x="5" y="4" width="83" height="59" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<graphicElement stretchType="NoStretch" fill="Solid" >
+				</box>
+				<graphicElement fill="Solid">
 					<pen lineWidth="0.0" lineStyle="Solid"/>
-</graphicElement>
-					<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
-				</image>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="215"
-						y="8"
-						width="565"
-						height="17"
-						key="textField-13"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</graphicElement>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-13" x="215" y="8" width="565" height="17"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{daily_tracking_graphic}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="215"
-						y="25"
-						width="564"
-						height="12"
-						key="textField-14"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{daily_tracking_graphic}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-14" x="215" y="25" width="564" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="569"
-						y="45"
-						width="40"
-						height="18"
-						key="textField-27">
-							<printWhenExpression><![CDATA[new Boolean($P{fromDate} != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-27" x="569" y="45" width="40" height="18">
+					<printWhenExpression><![CDATA[new Boolean($P{fromDate} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date_from} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="609"
-						y="45"
-						width="59"
-						height="18"
-						key="textField-28">
-							<printWhenExpression><![CDATA[new Boolean($P{fromDate} != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date_from} + ":"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-28" x="609" y="45" width="59" height="18">
+					<printWhenExpression><![CDATA[new Boolean($P{fromDate} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="678"
-						y="45"
-						width="40"
-						height="18"
-						key="textField-29">
-							<printWhenExpression><![CDATA[new Boolean($P{toDate} != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-29" x="678" y="45" width="40" height="18">
+					<printWhenExpression><![CDATA[new Boolean($P{toDate} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date_to} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="718"
-						y="45"
-						width="59"
-						height="18"
-						key="textField-30">
-							<printWhenExpression><![CDATA[new Boolean($P{toDate} != null)]]></printWhenExpression>
-						</reportElement>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date_to} + ":"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-30" x="718" y="45" width="59" height="18">
+					<printWhenExpression><![CDATA[new Boolean($P{toDate} != null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
-				</textField>
-			</band>
-		</pageHeader>
-		<columnHeader>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnHeader>
-		<detail>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnFooter>
-		<pageFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</pageFooter>
-		<lastPageFooter>
-			<band height="489"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="766"
-						y="473"
-						width="13"
-						height="14"
-						key="textField-15"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="489" splitType="Stretch">
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-15" x="766" y="473" width="13" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="708"
-						y="473"
-						width="57"
-						height="14"
-						key="textField-16"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-16" x="708" y="473" width="57" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="-1"
-						y="473"
-						width="262"
-						height="14"
-						key="textField-17"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-17" x="-1" y="473" width="262" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
-				</textField>
-				<line direction="TopDown">
-					<reportElement
-						x="5"
-						y="473"
-						width="772"
-						height="0"
-						forecolor="#999999"
-						key="line-1"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<pie3DChart>
-					<chart evaluationTime="Report"  hyperlinkTarget="Self" >
-					<reportElement
-						x="5"
-						y="5"
-						width="383"
-						height="229"
-						key="element-1"/>
-					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-</box>
-						<chartTitle color="#000000" >
-								<titleExpression><![CDATA[$R{daily_tracking_graphic_by_customer}]]></titleExpression>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="5" y="473" width="772" height="1" forecolor="#999999"/>
+			</line>
+			<pie3DChart>
+				<chart evaluationTime="Report">
+					<reportElement key="element-1" x="5" y="5" width="383" height="229"/>
+					<box>
+						<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					</box>
+					<chartTitle color="#000000">
+						<titleExpression><![CDATA[$R{daily_tracking_graphic_by_customer}]]></titleExpression>
 					</chartTitle>
-						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
-					</chartLegend>
-					</chart>
-					<pieDataset>
-						<dataset resetType="None" incrementType="Report" >
-						</dataset>
-						<keyExpression><![CDATA[$F{customerId}==null?new Integer(Integer.MIN_VALUE):$F{customerId}]]></keyExpression>
-						<valueExpression><![CDATA[$F{duration}]]></valueExpression>
-						<labelExpression><![CDATA[$F{customerName}]]></labelExpression>
-				<sectionHyperlink >
-				</sectionHyperlink>
-					</pieDataset>
-					<pie3DPlot >
-						<plot orientation="Horizontal" />
-					</pie3DPlot>
-				</pie3DChart>
-				<pie3DChart>
-					<chart  hyperlinkTarget="Self" >
-					<reportElement
-						x="393"
-						y="5"
-						width="383"
-						height="229"
-						key="element-2"/>
-					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-</box>
-						<chartTitle color="#000000" >
-								<titleExpression><![CDATA[$R{daily_tracking_graphic_by_user}]]></titleExpression>
+					<chartSubtitle/>
+					<chartLegend textColor="#000000" backgroundColor="#FFFFFF"/>
+				</chart>
+				<pieDataset>
+					<dataset resetType="None" incrementType="Report"/>
+					<keyExpression><![CDATA[$F{customerId}==null?new Integer(Integer.MIN_VALUE):$F{customerId}]]></keyExpression>
+					<valueExpression><![CDATA[$F{duration}]]></valueExpression>
+					<labelExpression><![CDATA[$F{customerName}]]></labelExpression>
+				</pieDataset>
+				<pie3DPlot depthFactor="0.2" labelFormat="{0} ({2})">
+					<plot orientation="Horizontal"/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+				</pie3DPlot>
+			</pie3DChart>
+			<pie3DChart>
+				<chart>
+					<reportElement key="element-2" x="393" y="5" width="383" height="229"/>
+					<box>
+						<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					</box>
+					<chartTitle color="#000000">
+						<titleExpression><![CDATA[$R{daily_tracking_graphic_by_user}]]></titleExpression>
 					</chartTitle>
-						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
-					</chartLegend>
-					</chart>
-					<pieDataset>
-						<dataset incrementType="Group" incrementGroup="reportGroup" >
-						</dataset>
-						<keyExpression><![CDATA[$F{userId}]]></keyExpression>
-						<valueExpression><![CDATA[$F{duration}]]></valueExpression>
-						<labelExpression><![CDATA[$F{userName}]]></labelExpression>
-				<sectionHyperlink >
-				</sectionHyperlink>
-					</pieDataset>
-					<pie3DPlot >
-						<plot orientation="Horizontal" />
-					</pie3DPlot>
-				</pie3DChart>
-				<pie3DChart>
-					<chart evaluationTime="Report"  hyperlinkTarget="Self" >
-					<reportElement
-						x="5"
-						y="238"
-						width="383"
-						height="229"
-						key="element-3"/>
-					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-</box>
-						<chartTitle color="#000000" >
-								<titleExpression><![CDATA[$R{daily_tracking_graphic_by_dossier}]]></titleExpression>
+					<chartSubtitle/>
+					<chartLegend textColor="#000000" backgroundColor="#FFFFFF"/>
+				</chart>
+				<pieDataset>
+					<dataset incrementType="Group" incrementGroup="reportGroup"/>
+					<keyExpression><![CDATA[$F{userId}]]></keyExpression>
+					<valueExpression><![CDATA[$F{duration}]]></valueExpression>
+					<labelExpression><![CDATA[$F{userName}]]></labelExpression>
+				</pieDataset>
+				<pie3DPlot depthFactor="0.2" labelFormat="{0} ({2})">
+					<plot orientation="Horizontal"/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+				</pie3DPlot>
+			</pie3DChart>
+			<pie3DChart>
+				<chart evaluationTime="Report">
+					<reportElement key="element-3" x="5" y="238" width="383" height="229"/>
+					<box>
+						<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					</box>
+					<chartTitle color="#000000">
+						<titleExpression><![CDATA[$R{daily_tracking_graphic_by_dossier}]]></titleExpression>
 					</chartTitle>
-						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
-					</chartLegend>
-					</chart>
-					<pieDataset>
-						<dataset resetType="None" incrementType="Report" >
-						</dataset>
-						<keyExpression><![CDATA[$F{dossierId}==null?new Integer(Integer.MIN_VALUE):$F{dossierId}]]></keyExpression>
-						<valueExpression><![CDATA[$F{duration}]]></valueExpression>
-						<labelExpression><![CDATA[$F{dossierNumber}]]></labelExpression>
-				<sectionHyperlink >
-				</sectionHyperlink>
-					</pieDataset>
-					<pie3DPlot >
-						<plot orientation="Horizontal" />
-					</pie3DPlot>
-				</pie3DChart>
-				<pie3DChart>
-					<chart evaluationTime="Report"  hyperlinkTarget="Self" >
-					<reportElement
-						x="393"
-						y="238"
-						width="383"
-						height="229"
-						key="element-4"/>
-					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
-</box>
-						<chartTitle color="#000000" >
-								<titleExpression><![CDATA[$R{daily_tracking_graphic_by_job_type}]]></titleExpression>
+					<chartSubtitle/>
+					<chartLegend textColor="#000000" backgroundColor="#FFFFFF"/>
+				</chart>
+				<pieDataset>
+					<dataset resetType="None" incrementType="Report"/>
+					<keyExpression><![CDATA[$F{dossierId}==null?new Integer(Integer.MIN_VALUE):$F{dossierId}]]></keyExpression>
+					<valueExpression><![CDATA[$F{duration}]]></valueExpression>
+					<labelExpression><![CDATA[$F{dossierNumber}]]></labelExpression>
+				</pieDataset>
+				<pie3DPlot depthFactor="0.2" labelFormat="{0} ({2})">
+					<plot orientation="Horizontal"/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+				</pie3DPlot>
+			</pie3DChart>
+			<pie3DChart>
+				<chart evaluationTime="Report">
+					<reportElement key="element-4" x="393" y="238" width="383" height="229"/>
+					<box>
+						<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					</box>
+					<chartTitle color="#000000">
+						<titleExpression><![CDATA[$R{daily_tracking_graphic_by_job_type}]]></titleExpression>
 					</chartTitle>
-						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
-					</chartLegend>
-					</chart>
-					<pieDataset>
-						<dataset resetType="None" incrementType="Report" >
-						</dataset>
-						<keyExpression><![CDATA[$F{jobTypeId}==null?new Integer(Integer.MIN_VALUE):$F{jobTypeId}]]></keyExpression>
-						<valueExpression><![CDATA[$F{duration}]]></valueExpression>
-						<labelExpression><![CDATA[$F{jobTypeDescription}]]></labelExpression>
-				<sectionHyperlink >
-				</sectionHyperlink>
-					</pieDataset>
-					<pie3DPlot >
-						<plot orientation="Horizontal" />
-					</pie3DPlot>
-				</pie3DChart>
-			</band>
-		</lastPageFooter>
-		<summary>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</summary>
+					<chartSubtitle/>
+					<chartLegend textColor="#000000" backgroundColor="#FFFFFF"/>
+				</chart>
+				<pieDataset>
+					<dataset resetType="None" incrementType="Report"/>
+					<keyExpression><![CDATA[$F{jobTypeId}==null?new Integer(Integer.MIN_VALUE):$F{jobTypeId}]]></keyExpression>
+					<valueExpression><![CDATA[$F{duration}]]></valueExpression>
+					<labelExpression><![CDATA[$F{jobTypeDescription}]]></labelExpression>
+				</pieDataset>
+				<pie3DPlot depthFactor="0.2" labelFormat="{0} ({2})">
+					<plot orientation="Horizontal"/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+				</pie3DPlot>
+			</pie3DChart>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
 </jasperReport>

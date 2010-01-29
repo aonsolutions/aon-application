@@ -3,7 +3,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
@@ -14,13 +13,11 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
-				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_social_insurance_entry_module}" />
-				<ui:param name="toolbarDescription"
-					value="#{socialInsuranceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_social_insurance_entry_module}" />
+				<ui:param name="toolbarDescription" value="#{socialInsuranceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save"
+					<aon:commandButton id="save" 
 						value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
@@ -35,7 +32,7 @@
 						rendered="#{!socialInsuranceEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset" />
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						accesskey="#{bundle.aon_key_remove}"
+						accesskey="#{bundle.aon_key_remove}" 
 						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
 						action="accountEntry_search"
 						actionListener="#{socialInsuranceEntry.onRemove}"
@@ -44,60 +41,53 @@
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
-						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
-						action="accountEntry_form" rendered="#{!socialInsuranceEntry.new}"
+						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
+						action="accountEntry_form"
+						rendered="#{!socialInsuranceEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
-						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"/>
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
-						action="accountEntry_search"
-						rendered="#{socialInsuranceEntry.new}"
+						action="accountEntry_search" rendered="#{socialInsuranceEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
-
+						
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div id="entryContainer" styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" style="width: 100%"
-					columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
+				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
 						value="#{socialInsuranceEntry.header.period}">
-						<f:selectItems
-							value="#{accountingCollections.enabledAccountPeriods}" />
-						<a4j:support event="onchange" ajaxSingle="true"
-							reRender="AccountEntry_accountPeriod,Account_salaryEntry" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />
+					<aon:outputLabel for="Account_date"
+						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="Account_date" required="true"
 						value="#{socialInsuranceEntry.header.date}"
 						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" ajaxSingle="true"
-						reRender="Account_salaryEntry">
-					</aon:selectInputDate>
+						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="Account_registryBank"
 						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="Account_registryBank"
 						value="#{socialInsuranceEntry.header.registryBank}">
-						<f:selectItem
-							itemLabel="#{accountingBundle.accounting_def_cash_acc}"
-							value="#{null}" />
+						<f:selectItem itemLabel="#{accountingBundle.accounting_def_cash_acc}" value="#{null}" />
 						<f:selectItems value="#{companyCollections.companyBanks}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_concept"
 						value="#{bundle.aon_concept}" />
 					<aon:inputText id="Account_concept" required="true"
-						value="#{socialInsuranceEntry.header.concept}" size="50"
-						maxLength="32" />
+						value="#{socialInsuranceEntry.header.concept}" size="50" maxLength="32" />
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
@@ -106,154 +96,12 @@
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneRadio>
 
-					<aon:outputLabel for="Account_amount" value="#{bundle.aon_amount}" />
-					<aon:inputText id="Account_amount" reRender="Account_total"
+					<aon:outputLabel for="Account_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Account_amount"
 						value="#{socialInsuranceEntry.header.amount}" size="15"
-						ajaxSingle="true" focus="Account_recharge" />
+						ajaxSingle="true" />
 
-					<aon:outputLabel for="Account_recharge"
-						value="#{accountingBundle.accounting_recharge}" />
-					<aon:div>
-						<aon:inputText id="Account_recharge" reRender="Account_total"
-							value="#{socialInsuranceEntry.header.recharge}" size="15"
-							ajaxSingle="true" focus="Account_recharge_account" />
-						<aon:selectOneMenu id="Account_recharge_account"
-							value="#{socialInsuranceEntry.header.rechargeAccount}"
-							style="width: 380px; margin-left: 10px;">
-							<f:selectItems value="#{accountCollections.expensesAccounts}" />
-						</aon:selectOneMenu>
-					</aon:div>
-
-					<aon:outputLabel for="Account_total"
-						value="#{accountingBundle.accounting_recharge}" />
-					<aon:inputText id="Account_total"
-						value="#{socialInsuranceEntry.header.total}" size="15"
-						disabled="true" />
-
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="Account_paymentAdjustable"
-							reRender="Account_month,StatementContainer" ajaxSingle="true"
-							disabled="#{!socialInsuranceEntry.new and socialInsuranceEntry.header.adjustEntryLink != null}"
-							value="#{socialInsuranceEntry.header.paymentAdjustable}" />
-						<aon:outputLabel for="Account_paymentAdjustable"
-							value="#{accountingBundle.accounting_payment_adjustable}" />
-					</aon:div>
-
-					<aon:outputLabel for="Account_month"
-						value="#{accountingBundle.accounting_payment_adjust_month}" />
-					<aon:selectOneMenu id="Account_month"
-						disabled="#{!socialInsuranceEntry.header.paymentAdjustable}"
-						valueChangeListener="#{socialInsuranceEntry.onChangeMonth}"
-						reRender="StatementContainer" ajaxSingle="true"
-						value="#{socialInsuranceEntry.header.month}">
-						<f:selectItems value="#{commonCollections.months}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText value="&#160;" />
-					<aon:div id="StatementContainer">
-						<c:if test="#{!socialInsuranceEntry.paymentAdjustDisabled}">
-						
-							<aon:panelGroup styleClass="aon-italic">
-								<aon:outputText value="(&#160;" />
-								<aon:outputText
-									value="#{socialInsuranceEntry.socialInsuranceBalance.fromDate}">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-								<aon:outputText value="&#160;-&#160;" />
-								<aon:outputText
-									value="#{socialInsuranceEntry.socialInsuranceBalance.toDate}">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-								<aon:outputText value="&#160;)&#160;" />
-							</aon:panelGroup>
-							<aon:outputText
-								value="#{socialInsuranceEntry.socialInsuranceAccount.fullDescription}" />
-							<aon:outputText styleClass="aon-italic"
-								value="&#160;#{accountingBundle.accounting_debit_balance}:&#160;" />
-							<aon:outputText styleClass="aon-bold"
-								value="#{socialInsuranceEntry.socialInsuranceBalance.unpaidBalance}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-							<aon:outputText styleClass="aon-italic"
-								value="&#160;#{accountingBundle.accounting_credit_balance}:&#160;" />
-							<aon:outputText styleClass="aon-bold"
-								value="#{socialInsuranceEntry.socialInsuranceBalance.creditBalance}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-
-							<aon:editDataTable id="entryDetailTable" var="to"
-								style="margin-top: 10px;"
-								value="#{socialInsuranceEntry.socialInsuranceDetail}" rows="100">
-
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
-									<f:facet name="header">
-										<aon:outputText value="#{accountBundle.account_account}" />
-									</f:facet>
-									<aon:div style="width: 90%;" styleClass="aon-nowrap">
-										<aon:outputText value="#{to.account.id}" />
-										<aon:panelGroup styleClass="aon-italic"
-											style="font-size: 0.8em; margin-left: 10px;">
-											<aon:outputText value="#{to.account.description}">
-												<aon:abbreviateConverter maxWidth="50" />
-											</aon:outputText>
-										</aon:panelGroup>
-									</aon:div>
-								</aon:column>
-
-								<aon:column
-									styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-150">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_concept}" />
-									</f:facet>
-									<aon:outputText value="#{to.concept}" styleClass="aon-nowrap"
-										rendered="#{to!=accountEntryDetail.to}" />
-								</aon:column>
-
-								<aon:column
-									styleClass="aon-editDataTable-numberColumn aon-width-80">
-									<f:facet name="header">
-										<aon:outputText value="#{accountingBundle.accounting_debit}" />
-									</f:facet>
-									<aon:outputText value="#{to.debit}"
-										rendered="#{to!=accountEntryDetail.to}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:column>
-
-								<aon:column
-									styleClass="aon-editDataTable-numberColumn aon-width-80">
-									<f:facet name="header">
-										<aon:outputText value="#{accountingBundle.accounting_credit}" />
-									</f:facet>
-									<aon:outputText value="#{to.credit}"
-										rendered="#{to!=accountEntryDetail.to}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:column>
-
-								<aon:column
-									styleClass="aon-editDataTable-textColumn aon-width-150">
-									<f:facet name="header">
-										<aon:outputText
-											value="#{accountingBundle.accounting_balancing_account}" />
-									</f:facet>
-
-									<aon:div style="width: 90%;"
-										rendered="#{to!=accountEntryDetail.to}" ajaxRendered="true">
-										<aon:outputText value="#{to.balancingAccount.id}" />
-										<rich:toolTip value="#{to.balancingAccount.description}"
-											hideEvent="onmouseout" showDelay="200">
-										</rich:toolTip>
-									</aon:div>
-
-								</aon:column>
-
-							</aon:editDataTable>
-						</c:if>
-					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

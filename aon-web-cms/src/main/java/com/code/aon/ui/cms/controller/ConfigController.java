@@ -24,8 +24,6 @@ public class ConfigController extends BasicI18nController{
 	private static final Logger LOGGER = Logger.getLogger(ConfigController.class.getName());
 	
 	private Config currentConfig;
-
-	private boolean richTextEnabled;
 	
 	public ConfigController() {
 		try {
@@ -40,14 +38,17 @@ public class ConfigController extends BasicI18nController{
 	}
 	
 	private void init() throws ManagerBeanException {
-		LOGGER.info( "CARGANDO CONFIGURACION...");
+		LOGGER.info(">>>>>> CARGANDO CONFIGURACION...");
 		IManagerBean configBean = BeanManager.getManagerBean(Config.class);
 		List<ITransferObject> list = configBean.getList(null);
-		LOGGER.info( "Number of Config: " + list.size());
+		LOGGER.info(">>>>>>>>>>>>>>>>> CONFIGS: " + list.size());
 		if (list.size() > 0) {
 			setCurrentConfig((Config)list.get(0));
 		}
-		LOGGER.info( "CurrentConfig: " + currentConfig);
+		LOGGER.info(">>>>>> DOMINIO: " + currentConfig.getDomain());
+		LOGGER.info(">>>>>> TEMPLATE: " + currentConfig.getTemplate());
+		LOGGER.info(">>>>>> PREVIEW: " + currentConfig.getPreview_host());
+		LOGGER.info(">>>>>> HOST: " + currentConfig.getHost());
 	}
 
 	public Config getCurrentConfig() {
@@ -77,12 +78,4 @@ public class ConfigController extends BasicI18nController{
 		session.setAttribute(Constants.SESSION_CONFIG, currentConfig);
 	}
 
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
 }

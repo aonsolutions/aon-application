@@ -185,28 +185,12 @@ public class BasicAccountListener extends ControllerAdapter {
 
 	public void onNewAccount(ActionEvent event) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(getPojo());
-			ITransferObject newTo = (ITransferObject) Class.forName(getPojo()).newInstance();
-			IAccount toAccount = (IAccount) newTo;
 			IController c = FormUtil.getController(getMasterController());
-			toAccount.setLinkedTo(c.getTo());
-			toAccount.setAccount(getAccountBridgeUtil().obtainIRegistryAccount((IRegistry) c.getTo()));
-			newTo = bean.insert(newTo);
-			setTo(toAccount);
-			setAccount(toAccount.getAccount());
+			IRegistry registry = (IRegistry) c.getTo();
+			IAccount iaccount = getAccountBridgeUtil().obtainIRegistryAccount(registry);
+			setTo(iaccount);
+			setAccount(iaccount==null?null:iaccount.getAccount());
 		} catch (ManagerBeanException e) {
-			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (InstantiationException e) {
-			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (IllegalAccessException e) {
-			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (ClassNotFoundException e) {
 			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);

@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -17,74 +18,58 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.sales.SalesDetail;
+import com.code.aon.warehouse.enumeration.DeliveryDetailSource;
+import com.code.aon.warehouse.enumeration.DeliveryDetailType;
 
 /**
  * Transfer Object that represents a Delivery Detail line.
- * 
- * @author igayarre
- *
  */
 @Entity
 @Table(name="delivery_detail")
-public class DeliveryDetail implements ITransferObject, ICalculable, IStockable{
+public class DeliveryDetail implements ITransferObject, ICalculable, IStockable {
 	
 	private static final long serialVersionUID = -5085790386141702008L;
 
-	/**
-	 * Unique key
-	 */
+	/** The id. */
 	private Integer id;
-	
-	/**
-	 * The Delivery that contains the line
-	 */
+
+	/** The delivery. */
 	private Delivery delivery;
 	
-    /**
-     * The line number
-     */
-    private int line;
+	/** The line. */
+    private Integer line;
 	
-	/**
-	 * The Item referenced in the line
-	 */
+	/** The item. */
 	private Item item;
 	
-	/**
-	 * The description of the line
-	 */
+	/** The description. */
 	private String description;
 	
-	/**
-	 * Warehouse linked
-	 */
+	/** The warehouse. */
 	private Warehouse warehouse;
 	
-	/**
-	 * Quantity of Items
-	 */
+	/** The quantity. */
 	private double quantity;
 	
-	/**
-	 * The price
-	 */
+	/** The price. */
 	private double price;
 	
-	/**
-	 * Discount to apply
-	 */
+	/** The discount expression. */
 	private DiscountExpression discountExpression;
 	
-	/**
-	 * The Sales Detail line linked
-	 */
+    /** The type. */
+    private DeliveryDetailType type;
+
+    /** The source. */
+    private DeliveryDetailSource source;
+
+    /** The sales detail. */
 	private SalesDetail salesDetail;
 	
-	
-	/**
-	 * Returns the unique key
+    /**
+	 * Gets the id.
 	 * 
-	 * @return unique key
+	 * @return the id
 	 */
 	@Id
 	@GeneratedValue
@@ -93,130 +78,152 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable{
 		return id;
 	}
 	
-	/**
-	 * Assigns the unique key
-	 * 
-	 * @param primaryKey
-	 */
+    /**
+     * Sets the id.
+     * 
+     * @param id the id
+     */
 	public void setId(Integer primaryKey) {
 		this.id = primaryKey;
 	}
 	
 	/**
-	 * Returns the Delivery
+	 * Gets the delivery.
 	 * 
-	 * @return Returns the delivery.
-	 * 
+	 * @return the delivery
 	 */
 	@ManyToOne
-	@JoinColumn( name="delivery",nullable=false )
+	@JoinColumn( name="delivery", nullable=false, updatable=false )
 	public Delivery getDelivery() {
 		return delivery;
 	}
-	/**
-	 * Assigns the Delivery
-	 * 
-	 * @param delivery The delivery to set.
-	 */
+
+    /**
+     * Sets the delivery.
+     * 
+     * @param delivery the delivery
+     */
 	public void setDelivery(Delivery delivery) {
 		this.delivery = delivery;
 	}
 	
-	/**
-	 * Returns the line number
-	 * 
-	 * @return Returns the line.
-	 * 
-	 */
-	@Column(nullable=false)	
-	public int getLine() {
+    /**
+     * Gets the line.
+     * 
+     * @return the line
+     */
+	public Integer getLine() {
 		return line;
 	}
-	/**
-	 * Assigns the line number
-	 * 
-	 * @param line The line to set.
-	 */
-	public void setLine(int line) {
+
+    /**
+     * Sets the line.
+     * 
+     * @param line the line
+     */
+	public void setLine(Integer line) {
 		this.line = line;
 	}
+
 	/**
-	 * Returns the Item 
+	 * Gets the item.
 	 * 
-	 * @return Returns the item.
+	 * @return the item
 	 */
 	@ManyToOne
-	@JoinColumn( name="item",nullable=false )
+	@JoinColumn( name="item", nullable=false )
 	public Item getItem() {
 		return item;
 	}
-	/**
-	 * Assgins a Item to this detail
-	 * 
-	 * @param item The item to set.
-	 */
+
+    /**
+     * Sets the item.
+     * 
+     * @param item the item
+     */
 	public void setItem(Item item) {
 		this.item = item;
 	}
-	/**
-	 * Returns the description of this line
-	 * 
-	 * @return Returns the description.
-	 * 
-	 */
+
+    /**
+     * Gets the description.
+     * 
+     * @return the description
+     */
+	@Column(length=1024)
 	public String getDescription() {
 		return description;
 	}
-	/**
-	 * Assigns the description
-	 * 
-	 * @param description The description to set.
-	 */
+
+    /**
+     * Sets the description.
+     * 
+     * @param description the description
+     */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 	
 	/**
-	 * Returns the quantity
+	 * Gets the warehouse
 	 * 
-	 * @return Returns the quantity.
+	 * @return the warehouse.
 	 */
-	@Column
+	@ManyToOne
+	@JoinColumn( name="warehouse", nullable = false )
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+
+	/**
+	 * Sets the warehouse.
+	 * 
+	 * @param warehouse the warehouse
+	 */
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+
+    /**
+     * Gets the quantity.
+     * 
+     * @return the quantity
+     */
 	public double getQuantity() {
 		return quantity;
 	}
-	/**
-	 * Assigns the quantity of Items
-	 * 
-	 * @param quantity The quantity to set.
-	 */
+
+    /**
+     * Sets the quantity.
+     * 
+     * @param quantity the quantity
+     */
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 	
-	/**
-	 * Returns the price
-	 * 
-	 * @return Returns the price.
-	 */
+    /**
+     * Gets the price.
+     * 
+     * @return the price
+     */
 	public double getPrice() {
 		return price;
 	}
 
-	/**
-	 * Assigns the price of the line
-	 * 
-	 * @param price The price to set.
-	 */
+    /**
+     * Sets the price.
+     * 
+     * @param price the price
+     */
 	public void setPrice(double price) {
 		this.price = price;
 	}
 	
 	/**
-	 * Return the discount expression
+	 * Gets the discount expression.
 	 * 
-	 * @return discount expression applied
-	 * @see com.code.aon.product.strategy.ICalculable#getDiscountExpression()
+	 * @return the discount expression
 	 */
 	@Column(name ="discount_expr")
     @Type(type = "com.code.aon.product.util.DiscountExpressionUserType")
@@ -224,108 +231,111 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable{
 		return discountExpression;
 	}
 
-	/**
-	 * Assigns the discount expression
+    /**
+     * Sets the discount expression.
      * 
-     * @param discountExpression
+     * @param discountExpression the discount expression
      */
 	public void setDiscountExpression(DiscountExpression discountExpression) {
 		this.discountExpression = discountExpression;
 	}
 
 	/**
-	 * Returns the SalesDetail linked by this line
+     * Gets the type.
+     * 
+     * @return the type
+     */
+	public DeliveryDetailType getType() {
+		return type;
+	}
+
+	/**
+	 * Sets the type.
 	 * 
-	 * @return Returns the salesDetail.
+	 * @param type the type
 	 */
+	public void setType(DeliveryDetailType type) {
+		this.type = type;
+	}
+
+	/**
+     * Gets the source.
+     * 
+     * @return the source
+     */
+	public DeliveryDetailSource getSource() {
+		return source;
+	}
+
+	/**
+	 * Sets the source.
+	 * 
+	 * @param source the source
+	 */
+	public void setSource(DeliveryDetailSource source) {
+		this.source = source;
+	}
+
+	/**
+     * Gets the sales detail.
+     * 
+     * @return the sales detail
+     */
 	@ManyToOne
 	@JoinColumn( name="sales_detail" )
 	public SalesDetail getSalesDetail() {
 		return salesDetail;
 	}
+
 	/**
-	 * Assigns the SalesDetail 
+	 * Sets the offer detail.
 	 * 
-	 * @param salesDetail The salesDetail to set.
+	 * @param offerDetail the offer detail
 	 */
 	public void setSalesDetail(SalesDetail salesDetail) {
 		this.salesDetail = salesDetail;
 	}
+
 	/**
-	 * Returns the warehouse
+	 * Gets the taxes. Necessary to implement <code>ICalculable</code>
 	 * 
-	 * @return the warehouse.
+	 * @return the taxes
 	 */
-	@ManyToOne
-	@JoinColumn( name="warehouse", updatable = false )
-	public Warehouse getWarehouse() {
-		return warehouse;
+	@Transient
+	public double getTaxes() throws ManagerBeanException {
+		return 0;
 	}
+
 	/**
-	 * Assigns the warehouse to set.
+	 * Gets the taxes. Necessary to implement <code>IStockable</code>
 	 * 
-	 * @param warehouse The warehouse to set.
-	 */
-	public void setWarehouse(Warehouse warehouse) {
-		this.warehouse = warehouse;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.code.aon.warehouse.IStockable#isEntry()
+	 * @return the entry
 	 */
 	@Transient
 	public boolean isEntry() {
 		return false;
 	}
 
-	/**
-	 * Returns the total amount once applied the price, quantity and discounts. 
-	 * 
-	 * @return amount
-	 */
-	@Transient
-	public double getAmount() {
-		double total = getPrice() * getQuantity();
-		if(getDiscountExpression() != null){
-			double discounts[] = getDiscountExpression().getDiscounts();
-			for(int i = 0;i<discounts.length;i++){
-				total = round(total - (discounts[i] * total / 100), 2);
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof DeliveryDetail) {
+			DeliveryDetail s = (DeliveryDetail) obj;
+			if (s.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), s.getId())) {
+				return true;
 			}
 		}
-		return total;
-	}
-	
-	/**
-	 * Rounds the double value
-	 * 
-	 * @param value to round
-	 * @param precision of decimals
-	 * @return value rounded
-	 */
-	@Transient
-	private double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
-
-	/**
-	 * @return taxes. Taxes applied to the deliveryDetail
-	 */
-	//TODO implementar método
-	@Transient
-	public double getTaxes() throws ManagerBeanException {
-		return 0;
+		return false;
 	}
 
-    @Override
-    public boolean equals(Object obj) {
-    	if(id == null){
-    		return super.equals(obj);
-    	}
-        if (obj instanceof DeliveryDetail) {
-            return (this.id.equals(((DeliveryDetail)obj).getId()));
-        }
-        return false;
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
 
 }

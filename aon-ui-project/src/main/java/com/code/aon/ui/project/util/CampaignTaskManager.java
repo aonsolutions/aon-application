@@ -12,12 +12,15 @@ import com.code.aon.campaign.CampaignDossier;
 import com.code.aon.campaign.Process;
 import com.code.aon.campaign.ProcessDetail;
 import com.code.aon.campaign.ProcessDetailTransition;
-import com.code.aon.campaign.ProcessTransitionType;
 import com.code.aon.campaign.dao.ICampaignAlias;
+import com.code.aon.campaign.enumeration.CampaignStatus;
 import com.code.aon.campaign.enumeration.DateReference;
+import com.code.aon.campaign.enumeration.ProcessDetailStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -36,22 +39,18 @@ import com.code.aon.ui.config.util.UserUtils;
 
 public class CampaignTaskManager {
 
-	/*
-	 * PUBLIC METHODS
-	 */
-
-	public static void addCampaignTask(CampaignDossier campaignDossier, int position,
-			ProcessDetailTransition pdt) throws ManagerBeanException {
+	public void addCampaignTask(CampaignDossier campaignDossier, int position,
+			ProcessDetailTransition pdt, Task previousTask) throws ManagerBeanException {
 		ProcessDetail processDetail;
 		if (pdt == null) {
 			processDetail = getProcessDetail(campaignDossier.getCampaign().getProcess(), position);
 		} else {
 			processDetail = pdt.getNextProcessDetail();
 		}
-		ActivityType activityType = getActivityType(campaignDossier.getCampaign().getActivityType());
+		ActivityType activityType = campaignDossier.getCampaign().getActivityType();
 		if (processDetail != null) {
 			Activity activity = null;
-			if (activityType != null) {
+			if (activityType != null && activityType.getId() != null) {
 				activity = getActivity(campaignDossier.getDossier(), activityType);
 			}
 
@@ -67,7 +66,6 @@ public class CampaignTaskManager {
 			task.setStartDate(new Date());
 			task.setDueDate(calculateDueDate(campaignDossier.getCampaign(), processDetail
 					.getDateReference(), processDetail.getDays()));
-			task.setPriority(Priority.NONE);
 			task.setStatus(TaskStatus.PENDING);
 			task.setPercent(0);
 			task.setWorkGroup(processDetail.getWorkgroup() != null ? processDetail.getWorkgroup()
@@ -76,6 +74,23 @@ public class CampaignTaskManager {
 			task.setDossier(campaignDossier.getDossier());
 			task.setActivity(activity);
 			task.setRepeatPeriod(TaskPeriod.NONE);
+
+			if (previousTask != null) {
+				task.setComments( previousTask.getComments() );
+				task.setPriority( previousTask.getPriority() );
+				User sender = previousTask.getSender();
+				if (sender != null && sender.getId() != null) {
+					task.setSender( previousTask.getSender() );
+				}
+			}
+			if (processDetail.getPriority() == null) {
+				if (task.getPriority() == null) {
+					task.setPriority( Priority.NORMAL );	
+				}	
+			} else {
+				task.setPriority( processDetail.getPriority());
+			}
+			
 			task = addTask(task);
 
 			ActivityProcess activityProcess = new ActivityProcess();
@@ -96,25 +111,50 @@ public class CampaignTaskManager {
 				alarm.setPriority(Priority.NONE);
 				addAlarm(alarm);
 			}
+		} else {
+			finishCampaignIfNeeded( campaignDossier.getCampaign() );
 		}
 	}
 
-	public static void finishCampaignTask(CampaignDossier campaignDossier)
+	private void finishCampaignIfNeeded(Campaign campaign) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(CampaignDossier.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_CAMPAIGN_ID), campaign.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		boolean finished = true;
+		for (ITransferObject to : list ) {
+			CampaignDossier cd = (CampaignDossier) to;
+			Task task  = getCurrentTask(cd);
+			if (task != null) {
+				finished = false;
+				break;
+			}
+		}
+		if (finished) {
+			IManagerBean b  = BeanManager.getManagerBean(Campaign.class);	
+			campaign.setStatus(CampaignStatus.FINISHED);
+			b.update(campaign);
+		}
+		
+	}
+
+	public Task finishCampaignTask(CampaignDossier campaignDossier)
 			throws ManagerBeanException {
-		Task currentTask = CampaignTaskManager.getCurrentTask(campaignDossier);
+		Task currentTask = getCurrentTask(campaignDossier);
 		if (currentTask != null) {
 			currentTask.setEndDate(new Date());
 			currentTask.setStatus(TaskStatus.FINISHED);
 			currentTask.setUser(UserUtils.getInstance().getLoggedUser());
-			updateTask(currentTask);
+			currentTask = updateTask(currentTask);
 
 			finishTaskAlarm(currentTask);
 		}
+		return currentTask;
 	}
 
-	public static void removeCampaignTask(CampaignDossier campaignDossier)
+	public void removeCampaignTask(CampaignDossier campaignDossier)
 			throws ManagerBeanException {
-		Task currentTask = CampaignTaskManager.getCurrentTask(campaignDossier);
+		Task currentTask = getCurrentTask(campaignDossier);
 		if (currentTask != null) {
 			currentTask.setEndDate(new Date());
 			currentTask.setStatus(TaskStatus.DELETED);
@@ -125,8 +165,8 @@ public class CampaignTaskManager {
 		}
 	}
 
-	public static void finishTaskAlarm(Task task) throws ManagerBeanException {
-		Alarm taskAlarm = CampaignTaskManager.getTaskAlarm(task);
+	public void finishTaskAlarm(Task task) throws ManagerBeanException {
+		Alarm taskAlarm = getTaskAlarm(task);
 		if (taskAlarm != null) {
 			taskAlarm.setStatus(AlarmStatus.FINISHED);
 			taskAlarm.setUser(UserUtils.getInstance().getLoggedUser());
@@ -135,7 +175,7 @@ public class CampaignTaskManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Task getCurrentTask(CampaignDossier campaignDossier) throws ManagerBeanException {
+	public Task getCurrentTask(CampaignDossier campaignDossier) throws ManagerBeanException {
 		List activityProcesses = getActivityProcesses(campaignDossier);
 		Iterator iterator = activityProcesses.iterator();
 		while (iterator.hasNext()) {
@@ -150,7 +190,7 @@ public class CampaignTaskManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Task getPreviousTask(Task task) throws ManagerBeanException {
+	public Task getPreviousTask(Task task) throws ManagerBeanException {
 		ActivityProcess currentActivityProcess = getCurrentActivityProcess(task);
 		CampaignDossier campaignDossier = new CampaignDossier();
 		campaignDossier.setCampaign(currentActivityProcess.getCampaign());
@@ -168,7 +208,7 @@ public class CampaignTaskManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ProcessDetail getCurrentProcessDetail(CampaignDossier campaignDossier)
+	public ProcessDetail getCurrentProcessDetail(CampaignDossier campaignDossier)
 			throws ManagerBeanException {
 		List activityProcesses = getActivityProcesses(campaignDossier);
 		Iterator iterator = activityProcesses.iterator();
@@ -184,7 +224,7 @@ public class CampaignTaskManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Integer getProcessDetailPosition(ProcessDetail processDetail)
+	public Integer getProcessDetailPosition(ProcessDetail processDetail)
 			throws ManagerBeanException {
 		if (processDetail != null && processDetail.getId() != null) {
 			IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
@@ -200,7 +240,7 @@ public class CampaignTaskManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ActivityProcess getCurrentActivityProcess(Task task) throws ManagerBeanException {
+	public ActivityProcess getCurrentActivityProcess(Task task) throws ManagerBeanException {
 		IManagerBean activityProcessBean = BeanManager.getManagerBean(ActivityProcess.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(activityProcessBean
@@ -213,12 +253,8 @@ public class CampaignTaskManager {
 		return null;
 	}
 
-	/*
-	 * GETTER METHODS
-	 */
-
 	@SuppressWarnings("unchecked")
-	private static List getActivityProcesses(CampaignDossier campaignDossier)
+	private List getActivityProcesses(CampaignDossier campaignDossier)
 			throws ManagerBeanException {
 		Campaign campaign = campaignDossier.getCampaign();
 		Activity activity = null;
@@ -243,22 +279,24 @@ public class CampaignTaskManager {
 		return activityProcessBean.getList(criteria);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static ProcessDetail getProcessDetail(Process process, int position)
+	private ProcessDetail getProcessDetail(Process process, int position)
 			throws ManagerBeanException {
 		IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(processDetailBean
 				.getFieldName(ICampaignAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
+		criteria.addEqualExpression(processDetailBean
+				.getFieldName(ICampaignAlias.PROCESS_DETAIL_STATUS), ProcessDetailStatus.ACTIVE);
 		criteria.addOrder(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION));
-		List processDetailList = processDetailBean.getList(criteria);
-		if (processDetailList.size() > position) {
-			return (ProcessDetail) processDetailList.get(position);
+		criteria.addGreaterThanOrEqualExpression(processDetailBean.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION), position);
+		List<ITransferObject>  list = processDetailBean.getList(criteria);
+		if (list.size() > 0) {
+			return (ProcessDetail) list.get(0);
 		}
 		return null;
 	}
 
-	private static Activity getActivity(Dossier dossier, ActivityType activityType)
+	private Activity getActivity(Dossier dossier, ActivityType activityType)
 			throws ManagerBeanException {
 		IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
 		Criteria criteria = new Criteria();
@@ -269,20 +307,20 @@ public class CampaignTaskManager {
 		return (Activity) activityBean.getList(criteria).get(0);
 	}
 
-	private static ActivityType getActivityType(ActivityType activityType)
-			throws ManagerBeanException {
-		if (activityType != null) {
-			IManagerBean activityTypeBean = BeanManager.getManagerBean(ActivityType.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(activityTypeBean
-					.getFieldName(IProjectAlias.ACTIVITY_TYPE_ID), activityType.getId());
-			return (ActivityType) activityTypeBean.getList(criteria).get(0);
-		}
-		return null;
-	}
+//	private ActivityType getActivityType(ActivityType activityType)
+//			throws ManagerBeanException {
+//		if (activityType != null) {
+//			IManagerBean activityTypeBean = BeanManager.getManagerBean(ActivityType.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(activityTypeBean
+//					.getFieldName(IProjectAlias.ACTIVITY_TYPE_ID), activityType.getId());
+//			return (ActivityType) activityTypeBean.getList(criteria).get(0);
+//		}
+//		return null;
+//	}
 
 	@SuppressWarnings("unchecked")
-	private static Alarm getTaskAlarm(Task task) throws ManagerBeanException {
+	private Alarm getTaskAlarm(Task task) throws ManagerBeanException {
 		IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(alarmBean.getFieldName(IGroupWareAlias.ALARM_STATUS),
@@ -302,7 +340,7 @@ public class CampaignTaskManager {
 	 * CALCULATE METHODS
 	 */
 
-	public static Date calculateDueDate(Campaign campaign, DateReference reference, int days) {
+	public Date calculateDueDate(Campaign campaign, DateReference reference, int days) {
 		Date dueDate = new Date();
 		if (reference.equals(DateReference.FROM_START_DATE)) {
 			dueDate = campaign.getStartDate();
@@ -317,7 +355,7 @@ public class CampaignTaskManager {
 		return dueCalendar.getTime();
 	}
 
-	private static Date calculateAlertDate(Date dueDate, int alertDays) {
+	private Date calculateAlertDate(Date dueDate, int alertDays) {
 		Calendar alertCalendar = new GregorianCalendar();
 		alertCalendar.setTime(dueDate);
 		alertCalendar.add(Calendar.DATE, 0 - alertDays);
@@ -328,18 +366,18 @@ public class CampaignTaskManager {
 	 * ADD METHODS
 	 */
 
-	private static Task addTask(Task task) throws ManagerBeanException {
+	private Task addTask(Task task) throws ManagerBeanException {
 		IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
 		return (Task) taskBean.insert(task);
 	}
 
-	private static ActivityProcess addActivityProcess(ActivityProcess activityProcess)
+	private ActivityProcess addActivityProcess(ActivityProcess activityProcess)
 			throws ManagerBeanException {
 		IManagerBean activityProcessBean = BeanManager.getManagerBean(ActivityProcess.class);
 		return (ActivityProcess) activityProcessBean.insert(activityProcess);
 	}
 
-	private static Alarm addAlarm(Alarm alarm) throws ManagerBeanException {
+	private Alarm addAlarm(Alarm alarm) throws ManagerBeanException {
 		IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
 		return (Alarm) alarmBean.insert(alarm);
 	}
@@ -348,19 +386,19 @@ public class CampaignTaskManager {
 	 * UPDATE METHODS
 	 */
 
-	private static Task updateTask(Task task) throws ManagerBeanException {
+	private Task updateTask(Task task) throws ManagerBeanException {
 		IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
 		return (Task) taskBean.update(task);
 	}
 
-	private static Alarm updateAlarm(Alarm alarm) throws ManagerBeanException {
+	private Alarm updateAlarm(Alarm alarm) throws ManagerBeanException {
 		IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
 		return (Alarm) alarmBean.update(alarm);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static boolean hasTransitions(Task task) throws ManagerBeanException {
-		ActivityProcess ap = CampaignTaskManager.getCurrentActivityProcess(task);
+	public boolean hasTransitions(Task task) throws ManagerBeanException {
+		ActivityProcess ap = getCurrentActivityProcess(task);
 		CampaignDossier cd = new CampaignDossier();
 		cd.setCampaign(ap.getCampaign());
 		cd.setDossier(task.getDossier());
@@ -375,8 +413,8 @@ public class CampaignTaskManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<ProcessDetailTransition> getTransitions(Task task) throws ManagerBeanException {
-		ActivityProcess ap = CampaignTaskManager.getCurrentActivityProcess(task);
+	public List<ProcessDetailTransition> getTransitions(Task task) throws ManagerBeanException {
+		ActivityProcess ap = getCurrentActivityProcess(task);
 		CampaignDossier cd = new CampaignDossier();
 		cd.setCampaign(ap.getCampaign());
 		cd.setDossier(task.getDossier());

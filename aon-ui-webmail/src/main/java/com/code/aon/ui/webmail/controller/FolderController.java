@@ -7,26 +7,23 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ArrayDataModel;
-import javax.faces.model.DataModel;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.richfaces.event.DropEvent;
 
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.bean.AonMessage;
+import com.code.aon.ui.webmail.bean.AonMessageSortableList;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonFolder;
-import com.code.aon.webmail.bean.AonMessage;
-import com.code.aon.webmail.bean.AonMessageSortableList;
-import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
 public class FolderController implements WebMailConstants {
@@ -35,28 +32,14 @@ public class FolderController implements WebMailConstants {
 	
 	private AonFolder folder;
 	
-	private ArrayDataModel model;
-	
 	private WebMailController webMailController;
 	
 	private FoldersTreeBean treeController;
 	
 	private int currentPage = 1;
 	
-	public FolderController() {
-		this.model = new ArrayDataModel();
-	}
-
 	public int getCurrentPage() {
 		return currentPage;
-	}
-	
-	public DataModel getModel() {
-		AonMessage[] list = getFolder().getMessageList();
-		if (! ObjectUtils.equals(list, this.model.getWrappedData()) ) {
-			this.model.setWrappedData(list);
-		}
-		return this.model;
 	}
 
 	public void setCurrentPage(int currentPage) {
@@ -66,6 +49,14 @@ public class FolderController implements WebMailConstants {
 	public void resetCurrentPage() {
 		setCurrentPage( 1 );
 	}
+	
+   @PostConstruct
+   public void initBean() {
+	   getWebMailController().setFolderController(this);
+	   getTreeController().setFolderController(this);
+	   // Nos aseguramos que esta creado el managed bean de Login
+	   AonUtil.getRegisteredBean(BEAN_LOGIN);
+   }	
 
 	/**
 	 * @return the folder
@@ -117,46 +108,38 @@ public class FolderController implements WebMailConstants {
 
     public void deleteCheckedMessages(ActionEvent event) {
     	try{
-   			deleteMessages(folder.getSelectedMessages(), false);
+   			deleteMessages(folder.getSelectedMessages());
+   			resetCurrentPage();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
     }
 
-    public void purgeCheckedMessages(ActionEvent event) {
+    public void deleteAllMessages(ActionEvent event) {
     	try{
-   			deleteMessages(folder.getSelectedMessages(), true);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-    }
-    
-    public void purgeAllMessages(ActionEvent event) {
-    	try {
-	    	deleteMessages(folder.getMessageList(), true);
+	    	deleteMessages(folder.getMessageList());
+	    	resetCurrentPage();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
     }
 
-    protected void deleteMessages(AonMessage[] messages, boolean purge) throws MessagingException {
-    	AonServer server = getWebMailController().getServer();
-		if ( purge ) {
-			folder.deleteMessages(messages);
+    private void deleteMessages(AonMessage[] messagesLst) throws MessagingException {
+		if ((folder.getFolder().getFullName().equals(AonFolder.TRASH_FOLDER_NAME))
+				|| (folder.getFolder().getFullName().equals(AonFolder.SPAM_FOLDER_NAME))){
+			folder.deleteMessages(messagesLst);
 			try {
 				folder.refresh();
 			} catch (WebmailException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
-		} else {
-	    	AonFolder treeDest = getTreeController().recoverTreeNode(server.getTrashFolderName());
-	    	moveMessages(treeDest, messages);
+		}else{
+	    	AonFolder dest = getWebMailController().getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
+	    	AonFolder treeDest = getTreeController().recoverTreeNode(dest);
+	    	moveSelectedMessages(treeDest);
 	    	getTreeController().loadTree();
 		}
-    	resetCurrentPage();		
     }
 
 	// *************************************************************************
@@ -287,7 +270,7 @@ public class FolderController implements WebMailConstants {
 			if (this.folder.getMessageCount()==0){
 				this.folder.deleteFolder(true);
 				this.folder = null;
-		    	getTreeController().initTree(getWebMailController().getServer());
+		    	getTreeController().initTree();
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -306,7 +289,8 @@ public class FolderController implements WebMailConstants {
     // SENDER OR DESTINY COLUMN
     //*************************************************************
 	public boolean isSentItemColumn(){
-		if (folder.isSentFolder() || folder.isDraftFolder())
+		if (folder.getFolder().getFullName().equals(AonFolder.SENT_FOLDER_NAME) ||
+				folder.isDraftFolder())
 			return true;
 		return false;
 	}
@@ -315,11 +299,8 @@ public class FolderController implements WebMailConstants {
 	// DESTINY FOLDER SELECTION POPUP
 	//********************************************************************************************
     public void moveSelectedMessages(AonFolder dest){
-    	moveMessages(dest, folder.getSelectedMessages());
-    }
-
-    public void moveMessages(AonFolder dest, AonMessage[] messages){
 		try {
+			AonMessage[] messages = folder.getSelectedMessages();
 			if (! ArrayUtils.isEmpty(messages) ) {
 				folder.moveMessages(messages, dest);
 			}
@@ -329,11 +310,10 @@ public class FolderController implements WebMailConstants {
 			} catch (WebmailException e) {
 			}
 		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+			e.printStackTrace();
 		}
     }
-    
+
     // *******************************************************
     // ORDER BY
     // *******************************************************
@@ -371,15 +351,6 @@ public class FolderController implements WebMailConstants {
 		}
 	}
 
-	public void orderBySize(ActionEvent event) {
-		try{
-			orderBy(AonMessageSortableList.SIZE_COLUMN);
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-	}
-	
 	public void orderByDate(ActionEvent event) {
 		try{
 			orderBy(AonMessageSortableList.DATE_COLUMN);
@@ -396,7 +367,7 @@ public class FolderController implements WebMailConstants {
 			String name = getFolder().getName();
 			if ( AonFolder.INBOX_FOLDER_NAME.equals(name) ) {
 				try {
-					if ( getFolder().getMessageCount() != getFolder().getMessageListCount() ) {
+					if ( getFolder().getMessageCount() != getFolder().getModel().getRowCount() ) {
 						getFolder().refresh();
 						return true;
 					}
@@ -427,7 +398,7 @@ public class FolderController implements WebMailConstants {
 	}
 
     public void changeSelectedMessage(ActionEvent event) throws MessagingException {
-    	AonMessage aonMessage = getSelectedMessage();
+    	AonMessage aonMessage = getFolder().getSelectedMessage();
     	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
     	if ( getFolder().isDraftFolder() ) {
     		IMAPFolder imapFolder = (IMAPFolder) getFolder().getFolder();
@@ -460,8 +431,4 @@ public class FolderController implements WebMailConstants {
 		this.treeController = treeController;
 	}
 	
-    public AonMessage getSelectedMessage() {
-    	return (AonMessage) getModel().getRowData();
-    }
-    
 }

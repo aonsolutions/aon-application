@@ -1,7 +1,5 @@
 package com.code.aon.ebackoffice;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,13 +17,11 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
-import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.ShowPrice;
-import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.SkinType;
 import com.code.aon.ebackoffice.enumeration.TaxType;
-import com.code.aon.ebackoffice.enumeration.WishList;
 
 
 /**
@@ -50,11 +46,11 @@ public class Ecconfig implements ITransferObject {
 	private boolean ecommerceStatus;
 	private LoginType showLogin;
 	private ShowPrice price;
-	private TaxType taxInType;
+	private TaxType taxInPrice;
 	private DiscountFormat discount;
 	private PayMethod bankTransfer;
 	private PayMethod cashOnDelivery;
-	private PayMethod visa;
+	private PayMethod creditCard;
 	private PayMethod paypal;
 	private PayMethod bankDraft;
 	private String series;
@@ -70,6 +66,7 @@ public class Ecconfig implements ITransferObject {
 	private double shippingCosts;
 	private double freeShipping;
 	private String telephone;
+	private String email;
 	
 	
 	@Id
@@ -138,12 +135,12 @@ public class Ecconfig implements ITransferObject {
 	}
 		
 	@Column(name = "tax_in_price", length = 1)
-	public TaxType getTaxInType() {
-		return taxInType;
+	public TaxType getTaxInPrice() {
+		return taxInPrice;
 	}
 	
-	public void setTaxInType(TaxType taxInType) {
-		this.taxInType = taxInType;
+	public void setTaxInPrice(TaxType taxInPrice) {
+		this.taxInPrice = taxInPrice;
 	}
 	
 	@Column(name = "discount", length = 1)
@@ -182,11 +179,11 @@ public class Ecconfig implements ITransferObject {
 	@JoinColumn(name="visa")
 	@ForeignKey(name = "FK_ECCONFIG_VISA")
 	@Index(name = "IDX_ECCONFIG_VISA")
-	public PayMethod getVisa() {
-		return visa;
+	public PayMethod getCreditCard() {
+		return creditCard;
 	}
-	public void setVisa(PayMethod visa) {
-		this.visa = visa;
+	public void setCreditCard(PayMethod creditCard) {
+		this.creditCard = creditCard;
 	}
 	
 	@OneToOne (fetch=FetchType.EAGER)
@@ -364,6 +361,14 @@ public class Ecconfig implements ITransferObject {
 	}
 	public void setFreeShipping(double freeShipping) {
 		this.freeShipping = freeShipping;
+	}
+	
+	@Column(length=64)
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	

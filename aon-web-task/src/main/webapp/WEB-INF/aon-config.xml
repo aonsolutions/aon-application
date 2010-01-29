@@ -24,6 +24,8 @@
 			showNote="false"
 			showRelationship="false"
 			showRecordData="false"
+			showTaxInfoData="false"
+			showAddInfo="false"
 		/>
 	</customer:config>
 

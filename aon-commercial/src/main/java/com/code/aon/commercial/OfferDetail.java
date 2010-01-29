@@ -2,7 +2,6 @@ package com.code.aon.commercial;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -82,7 +81,7 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	 * 
 	 * @return the offer
 	 */
-	@ManyToOne (fetch=FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn( name="offer", nullable=false , updatable=false)
 	public Offer getOffer() {
 		return offer;
@@ -120,7 +119,7 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	 * 
 	 * @return the item
 	 */
-	@ManyToOne (fetch=FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn( name="item" )
 	public Item getItem() {
 		return item;
@@ -159,7 +158,6 @@ public class OfferDetail implements ITransferObject, ICalculable {
      * 
      * @return the quantity
      */
-    @Column(nullable=false)
     public double getQuantity() {
         return quantity;
     }
@@ -178,7 +176,6 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	 * 
 	 * @return the price
 	 */
-    @Column(nullable=false)
 	public double getPrice() {
 		return price;
 	}

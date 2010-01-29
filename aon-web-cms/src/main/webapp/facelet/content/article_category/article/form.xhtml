@@ -24,19 +24,20 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_article" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" immediate="true"
-						rendered="#{!article.new and cms.roleEditor}"
-						actionListener="#{generator.onGenerateCurrentArticle}"
+						value="#{appBundle.aon_generate}" 
+						rendered="#{article.to!=null and cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateCurrentArticle}" />
 						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							event="onclick" reRender="poll,grid" 
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>	
 					<aon:commandButton id="categories"
 						value="#{appBundle.article_category}"
-						action="article_category_list" immediate="true"
+						action="article_category_list"
+						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item-no-icon">
 						<aon:actionListener method="#{article_category.onSearch}" />
 					</aon:commandButton>				
@@ -44,25 +45,212 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				
-				<aon:panelTabSet selectedTab="#{article.selectedTab}">
- 
+
+				<aon:panelTabSet id="tabPanelTypesForm"> 
 					<aon:panelTab id="content" label="#{appBundle.aon_content}">
-						<ui:include src="/facelet/content/article_category/article/formContent.xhtml" />
+
+						<aon:panelGrid id="main_panel" columns="2" dir="true" style="width:100%">
+			
+							<aon:outputLabel for="Article_alias" style="width:100px"
+								value="#{appBundle.cms_alias}" />
+							<aon:inputText id="Article_alias"
+								required="true" size="32" maxlength="32"
+								value="#{article.to.alias}">
+								<f:validator validatorId="AliasValidator" />
+							</aon:inputText>
+			
+							<aon:outputLabel for="Article_category"
+								value="#{appBundle.article_category}"/>
+							<aon:selectOneMenu id="Article_category"  
+								required="true"
+								value="#{article.to.articleCategory.id}">
+								<f:selectItem itemLabel="-" itemValue="" />
+								<f:selectItems value="#{collections.articleCategoryList}" />
+							</aon:selectOneMenu>
+				
+							<aon:outputLabel for="Article_type"
+								value="#{appBundle.article_type_}"/>
+							<aon:selectOneMenu id="Article_type"  
+								required="true"
+								value="#{article.to.articleType}">
+								<f:selectItem itemLabel="-" itemValue="" />
+								<f:selectItems value="#{collections.articleTypes}" />
+								<a4j:support 
+									event="onchange" 
+									ajaxSingle="true" 
+									reRender="dates_initDate,dates_endDate" />
+							</aon:selectOneMenu>
+		
+							<aon:outputLabel for="ArticleDetail_publishDate"
+								value="#{appBundle.article_publishDate}" />
+							<aon:selectInputDate id="ArticleDetail_publishDate" required="true"  
+								 value="#{article.to.publishDate}"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
+									
+							<aon:outputLabel for="ArticleDetail_expireDate"
+								value="#{appBundle.article_expireDate}" />
+							<aon:selectInputDate id="ArticleDetail_expireDate" 
+								 value="#{article.to.expireDate}"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
+		
+							<aon:outputLabel for="ArticleDetail_title"
+								value="#{appBundle.article_title}" />
+							<aon:inputText id="ArticleDetail_title"
+								required="true" size="80" maxlength="255"
+								value="#{article.toI18n.title}" />
+		
+							<aon:outputLabel for="ArticleDetail_subtitle"
+								value="#{appBundle.article_subtitle}" />
+							<aon:inputText id="ArticleDetail_subtitle"
+								size="80" maxlength="255"
+								value="#{article.toI18n.subtitle}" />
+		
+							<aon:outputLabel for="ArticleDetail_initDate"
+								value="#{appBundle.article_initDate}" />
+							<aon:div id="dates_initDate">		
+								<aon:selectInputDate id="ArticleDetail_initDate"
+									 value="#{article.to.initDate}"
+									 popupDateFormat="#{bundle.aon_date_pattern}"
+									 rendered="#{article.diary}">
+									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:selectInputDate>
+								<aon:outputText rendered="#{!article.diary}" value="Not allowed" />
+							</aon:div>
+								
+							<aon:outputLabel for="ArticleDetail_endDate"
+								value="#{appBundle.article_endDate}" />
+							<aon:div id="dates_endDate">		
+								<aon:selectInputDate id="ArticleDetail_endDate"
+									 value="#{article.to.endDate}"
+									 popupDateFormat="#{bundle.aon_date_pattern}"
+									 rendered="#{article.diary}">
+									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:selectInputDate>	
+								<aon:outputText rendered="#{!article.diary}" value="Not allowed" />
+							</aon:div>
+		
+							<aon:outputLabel for="Article_richTextEnabled"
+								value="#{appBundle.generic_page_richtext_enabled}" />
+							<aon:selectBooleanCheckbox id="Article_richTextEnabled"
+								value="#{article.richTextEnabled}">
+								<a4j:support 
+									ajaxSingle="true"
+									event="onclick"  
+									reRender="article_richtext" />
+							</aon:selectBooleanCheckbox>
+				
+							<aon:outputLabel for="ArticleDetail_content" 
+								style="width:100px"
+								value="#{appBundle.article_content}" />
+							<aon:div id="article_richtext">		
+								<aon:div sytle="width:100%" rendered="#{article.richTextEnabled}">
+									<aon:inputRichText style="width:800px" 
+										id="ArticleDetail_content" required="true"
+										value="#{article.toI18n.content}" />
+								</aon:div>
+								<aon:inputTextarea id="ArticleDetail_content-TA"
+									rendered="#{!article.richTextEnabled}" 
+									rows="20" style="width:98%" required="true"
+									value="#{article.toI18n.content}"/>
+							</aon:div>
+		
+							<aon:outputLabel 
+								value="#{appBundle.albumImage_image}" />
+							<h:panelGrid columns="2" id="thumbnail_preview">
+								<aon:panel styleClass="aon-margin-top" style="height:120;width:170" >
+									<f:facet name="header">
+										<aon:outputLabel value="#{appBundle.cms_source_size}" />
+									</f:facet>
+									<aon:graphicImage 
+										url="#{article.to.image}.thumbnail" 
+										alt="#{article.to.image}"/>
+					                <aon:commandLink
+					                	immediate="#{true}"
+					                	reRender="thumbnail_preview"
+					                    actionListener="#{article.onDelImage}">
+										<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+					        		</aon:commandLink>
+									<ui:include src="/facelet/content/utils/image_modal.xhtml">
+										<ui:param name="modalPanelName" value="mp" />
+										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+										<ui:param name="listenerBean" value="#{article}" />
+										<ui:param name="reRender" value="thumbnail_preview" />
+										<ui:param name="thumbnail" value="#{false}" />
+									</ui:include>
+								</aon:panel>
+		   
+								<aon:panel styleClass="aon-margin-top" style="height:120;width:170" >
+									<f:facet name="header">
+										<aon:outputLabel value="#{appBundle.cms_thumbnail}" />
+									</f:facet>
+									<aon:graphicImage
+										url="#{article.to.thumbnail}.thumbnail" 
+										alt="#{article.to.thumbnail}"/>
+					                <aon:commandLink
+					                	immediate="#{true}"
+					                	reRender="thumbnail_preview"
+					                    actionListener="#{article.onDelThumbnail}">
+										<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+					        		</aon:commandLink>
+									<ui:include src="/facelet/content/utils/image_modal.xhtml">
+										<ui:param name="modalPanelName" value="mp_thumbnail" />
+										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+										<ui:param name="listenerBean" value="#{article}" />
+										<ui:param name="reRender" value="thumbnail_preview" />
+										<ui:param name="thumbnail" value="#{true}" />
+									</ui:include>
+								</aon:panel>
+							</h:panelGrid>
+								
+							<aon:outputLabel for="ArticleDetail_image_info"
+								value="#{appBundle.article_image_info}" />
+							<aon:inputText id="ArticleDetail_image_info"
+								size="90" maxlength="255"
+								value="#{article.toI18n.image_info}" />
+		
+							<aon:outputLabel for="ArticleDetail_alt"
+								value="#{appBundle.article_alt}" />
+							<aon:inputText id="ArticleDetail_alt"
+								size="64" maxlength="64"
+								value="#{article.toI18n.alt}" />
+		
+							<aon:outputLabel for="ArticleDetail_alt_thumbnail"
+								value="#{appBundle.article_alt_thumbnail}" />
+							<aon:inputText id="ArticleDetail_alt_thumbnail"
+								size="64" maxlength="64"
+								value="#{article.toI18n.alt_thumbnail}" />	
+																					        	
+							<aon:outputLabel for="Article_position"
+								value="#{appBundle.article_position}"/>
+							<aon:inputText id="Article_position"
+								required="true" size="10" maxlength="8"
+								value="#{article.to.position}" />
+							
+							<aon:outputLabel for="Article_active"
+								value="#{appBundle.article_active}"/>
+							<aon:selectBooleanCheckbox id="Article_active" 
+								value="#{article.to.active}" />
+		
+						</aon:panelGrid>
+					</aon:panelTab>
+					
+					<aon:panelTab id="meta_tags" label="#{appBundle.article_related_list}" rendered="#{!article.new}">
+						<ui:include src="/facelet/content/article_category/article/gridArticleRelated.xhtml" />													
 					</aon:panelTab>
 
-					<aon:panelTab id="article_related"
-						rendered="#{!article.new}" label="#{appBundle.article_related_list}">
-						<ui:include src="/facelet/content/article_category/article/gridArticleRelated.xhtml" />												
-					</aon:panelTab>
-
-					<aon:panelTab id="document_related"
-						rendered="#{!article.new}" label="#{appBundle.document_related_list}">
+					<aon:panelTab id="files" label="#{appBundle.document_related_list}" rendered="#{!article.new}">
 						<ui:include src="/facelet/content/article_category/article/gridDocumentRelated.xhtml" />
 					</aon:panelTab>
 
-				</aon:panelTabSet>		
-							
+				</aon:panelTabSet>					
 			</aon:div>
 		</aon:form>
 

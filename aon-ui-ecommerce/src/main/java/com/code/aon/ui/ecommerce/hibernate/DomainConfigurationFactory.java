@@ -7,6 +7,8 @@ import javax.naming.Name;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.dao.hibernate.DefaultConfigurationFactory;
@@ -23,9 +25,11 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class DomainConfigurationFactory extends DefaultConfigurationFactory implements IAonObjectClasses, ILdapConstants {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DomainConfigurationFactory.class.getName());
+	
 	private static final IConfigurationFactory SINGLETON = new DomainConfigurationFactory();
 
-    private static final String DOMAIN_RESOLVER = "domainResolver";
+    public static final String DOMAIN_RESOLVER = "domainResolver";
     	
     /**
      * Instantiates a new default configuration factory.
@@ -53,6 +57,7 @@ public class DomainConfigurationFactory extends DefaultConfigurationFactory impl
     private Properties getProperties( String domain, String context ) {
     	Properties properties = new Properties();
     	String application = getApplicationId(context);
+    	LOGGER.info( "Domain: " + domain + " Application: " + application );
     	BasicLdap ldap = new BasicLdap();
     	Name domainApplicationDN = NameResolver.getDomainApplicationDN(domain, application);
 		Entry domainApplication = ldap.get( domainApplicationDN, DOMAIN_APPLICATION );
@@ -70,9 +75,13 @@ public class DomainConfigurationFactory extends DefaultConfigurationFactory impl
 					properties.put(Environment.URL, url);
 					String driverClassName = dataSource.getAsString(DRIVER_CLASS_NAME_ATTRIBUTE);
 					properties.put(Environment.DRIVER, driverClassName);
+				} else {
+					LOGGER.error( "DataSource not found: " + dataSourceDN );
 				}
 			}
-		}    	
+		} else {
+			LOGGER.error( "Domain Application not found: " + domainApplicationDN );
+		}
     	return properties;
     }
     

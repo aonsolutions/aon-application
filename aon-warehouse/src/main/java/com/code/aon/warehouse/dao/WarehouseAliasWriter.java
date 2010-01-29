@@ -37,7 +37,7 @@ public class WarehouseAliasWriter {
 			InventoryDetail.class.getName(),
 			Stock.class.getName(),
 			Warehouse.class.getName() };
-		HibernateUtil.getSessionFactory();
+		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.warehouse.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

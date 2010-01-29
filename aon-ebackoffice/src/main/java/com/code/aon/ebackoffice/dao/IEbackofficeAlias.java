@@ -2,9 +2,11 @@ package com.code.aon.ebackoffice.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
-import com.code.aon.ebackoffice.Ectarget;
-import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.ebackoffice.Eccatalogue;
+import com.code.aon.ebackoffice.Ecconfig;
+import com.code.aon.ebackoffice.EcOfferPayment;
+import com.code.aon.ebackoffice.EcPaymethod;
+import com.code.aon.ebackoffice.Ectarget;
 
 /** 
 * Interface for holding entity properties constants.
@@ -14,45 +16,63 @@ public interface IEbackofficeAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Ectarget entity.
+	* DAOConstantsEntry for Eccatalogue entity.
 	*/ 
-	DAOConstantsEntry ECTARGET_ENTRY = DAOConstants.getDAOConstant(Ectarget.class);
+	DAOConstantsEntry ECCATALOGUE_ENTRY = DAOConstants.getDAOConstant(Eccatalogue.class);
 
 	/** 
-	* Alias value: Ectarget_id
-	* Hibernate value: Ectarget.id
+	* Alias value: Eccatalogue_id
+	* Hibernate value: Eccatalogue.id
 	*/
-	String  ECTARGET_ID = ECTARGET_ENTRY.getAliasNames()[0];
+	String  ECCATALOGUE_ID = ECCATALOGUE_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Ectarget_lastAccess
-	* Hibernate value: Ectarget.lastAccess
+	* Alias value: Eccatalogue_catalogue
+	* Hibernate value: Eccatalogue.catalogue
 	*/
-	String  ECTARGET_LAST_ACCESS = ECTARGET_ENTRY.getAliasNames()[1];
+	String  ECCATALOGUE_CATALOGUE = ECCATALOGUE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Ectarget_login
-	* Hibernate value: Ectarget.login
+	* Alias value: Eccatalogue_catalogue_id
+	* Hibernate value: Eccatalogue.catalogue.id
 	*/
-	String  ECTARGET_LOGIN = ECTARGET_ENTRY.getAliasNames()[2];
+	String  ECCATALOGUE_CATALOGUE_ID = ECCATALOGUE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Ectarget_password
-	* Hibernate value: Ectarget.password
+	* Alias value: Eccatalogue_catalogue_endDate
+	* Hibernate value: Eccatalogue.catalogue.endDate
 	*/
-	String  ECTARGET_PASSWORD = ECTARGET_ENTRY.getAliasNames()[3];
+	String  ECCATALOGUE_CATALOGUE_END_DATE = ECCATALOGUE_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Ectarget_target_id
-	* Hibernate value: Ectarget.target.id
+	* Alias value: Eccatalogue_catalogue_startDate
+	* Hibernate value: Eccatalogue.catalogue.startDate
 	*/
-	String  ECTARGET_TARGET_ID = ECTARGET_ENTRY.getAliasNames()[4];
+	String  ECCATALOGUE_CATALOGUE_START_DATE = ECCATALOGUE_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Ectarget_type
-	* Hibernate value: Ectarget.type
+	* Alias value: Eccatalogue_catalogueImg
+	* Hibernate value: Eccatalogue.catalogueImg
 	*/
-	String  ECTARGET_TYPE = ECTARGET_ENTRY.getAliasNames()[5];
+	String  ECCATALOGUE_CATALOGUE_IMG = ECCATALOGUE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Eccatalogue_catalogueIcon
+	* Hibernate value: Eccatalogue.catalogueIcon
+	*/
+	String  ECCATALOGUE_CATALOGUE_ICON = ECCATALOGUE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Eccatalogue_type
+	* Hibernate value: Eccatalogue.type
+	*/
+	String  ECCATALOGUE_TYPE = ECCATALOGUE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Eccatalogue_visible
+	* Hibernate value: Eccatalogue.visible
+	*/
+	String  ECCATALOGUE_VISIBLE = ECCATALOGUE_ENTRY.getAliasNames()[8];
 
 
 
@@ -104,191 +124,271 @@ public interface IEbackofficeAlias {
 	String  ECCONFIG_ECOMMERCE_STATUS = ECCONFIG_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Ecconfig_email
+	* Hibernate value: Ecconfig.email
+	*/
+	String  ECCONFIG_EMAIL = ECCONFIG_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Ecconfig_freeShipping
 	* Hibernate value: Ecconfig.freeShipping
 	*/
-	String  ECCONFIG_FREE_SHIPPING = ECCONFIG_ENTRY.getAliasNames()[7];
+	String  ECCONFIG_FREE_SHIPPING = ECCONFIG_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Ecconfig_headerColor
 	* Hibernate value: Ecconfig.headerColor
 	*/
-	String  ECCONFIG_HEADER_COLOR = ECCONFIG_ENTRY.getAliasNames()[8];
+	String  ECCONFIG_HEADER_COLOR = ECCONFIG_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Ecconfig_headerImg
 	* Hibernate value: Ecconfig.headerImg
 	*/
-	String  ECCONFIG_HEADER_IMG = ECCONFIG_ENTRY.getAliasNames()[9];
+	String  ECCONFIG_HEADER_IMG = ECCONFIG_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Ecconfig_id
 	* Hibernate value: Ecconfig.id
 	*/
-	String  ECCONFIG_ID = ECCONFIG_ENTRY.getAliasNames()[10];
+	String  ECCONFIG_ID = ECCONFIG_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Ecconfig_leftBanner
 	* Hibernate value: Ecconfig.leftBanner
 	*/
-	String  ECCONFIG_LEFT_BANNER = ECCONFIG_ENTRY.getAliasNames()[11];
+	String  ECCONFIG_LEFT_BANNER = ECCONFIG_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Ecconfig_legalNote1
 	* Hibernate value: Ecconfig.legalNote1
 	*/
-	String  ECCONFIG_LEGAL_NOTE1 = ECCONFIG_ENTRY.getAliasNames()[12];
+	String  ECCONFIG_LEGAL_NOTE1 = ECCONFIG_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Ecconfig_legalNote2
 	* Hibernate value: Ecconfig.legalNote2
 	*/
-	String  ECCONFIG_LEGAL_NOTE2 = ECCONFIG_ENTRY.getAliasNames()[13];
+	String  ECCONFIG_LEGAL_NOTE2 = ECCONFIG_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Ecconfig_legalNote3
 	* Hibernate value: Ecconfig.legalNote3
 	*/
-	String  ECCONFIG_LEGAL_NOTE3 = ECCONFIG_ENTRY.getAliasNames()[14];
+	String  ECCONFIG_LEGAL_NOTE3 = ECCONFIG_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Ecconfig_name
 	* Hibernate value: Ecconfig.name
 	*/
-	String  ECCONFIG_NAME = ECCONFIG_ENTRY.getAliasNames()[15];
+	String  ECCONFIG_NAME = ECCONFIG_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Ecconfig_noteTitle1
 	* Hibernate value: Ecconfig.noteTitle1
 	*/
-	String  ECCONFIG_NOTE_TITLE1 = ECCONFIG_ENTRY.getAliasNames()[16];
+	String  ECCONFIG_NOTE_TITLE1 = ECCONFIG_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Ecconfig_noteTitle2
 	* Hibernate value: Ecconfig.noteTitle2
 	*/
-	String  ECCONFIG_NOTE_TITLE2 = ECCONFIG_ENTRY.getAliasNames()[17];
+	String  ECCONFIG_NOTE_TITLE2 = ECCONFIG_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Ecconfig_noteTitle3
 	* Hibernate value: Ecconfig.noteTitle3
 	*/
-	String  ECCONFIG_NOTE_TITLE3 = ECCONFIG_ENTRY.getAliasNames()[18];
+	String  ECCONFIG_NOTE_TITLE3 = ECCONFIG_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Ecconfig_paypal_id
 	* Hibernate value: Ecconfig.paypal.id
 	*/
-	String  ECCONFIG_PAYPAL_ID = ECCONFIG_ENTRY.getAliasNames()[19];
+	String  ECCONFIG_PAYPAL_ID = ECCONFIG_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: Ecconfig_price
 	* Hibernate value: Ecconfig.price
 	*/
-	String  ECCONFIG_PRICE = ECCONFIG_ENTRY.getAliasNames()[20];
+	String  ECCONFIG_PRICE = ECCONFIG_ENTRY.getAliasNames()[21];
 
 	/** 
 	* Alias value: Ecconfig_rightBanner
 	* Hibernate value: Ecconfig.rightBanner
 	*/
-	String  ECCONFIG_RIGHT_BANNER = ECCONFIG_ENTRY.getAliasNames()[21];
+	String  ECCONFIG_RIGHT_BANNER = ECCONFIG_ENTRY.getAliasNames()[22];
 
 	/** 
 	* Alias value: Ecconfig_rowItems
 	* Hibernate value: Ecconfig.rowItems
 	*/
-	String  ECCONFIG_ROW_ITEMS = ECCONFIG_ENTRY.getAliasNames()[22];
+	String  ECCONFIG_ROW_ITEMS = ECCONFIG_ENTRY.getAliasNames()[23];
 
 	/** 
 	* Alias value: Ecconfig_series
 	* Hibernate value: Ecconfig.series
 	*/
-	String  ECCONFIG_SERIES = ECCONFIG_ENTRY.getAliasNames()[23];
+	String  ECCONFIG_SERIES = ECCONFIG_ENTRY.getAliasNames()[24];
 
 	/** 
 	* Alias value: Ecconfig_shippingCosts
 	* Hibernate value: Ecconfig.shippingCosts
 	*/
-	String  ECCONFIG_SHIPPING_COSTS = ECCONFIG_ENTRY.getAliasNames()[24];
+	String  ECCONFIG_SHIPPING_COSTS = ECCONFIG_ENTRY.getAliasNames()[25];
 
 	/** 
 	* Alias value: Ecconfig_showLogin
 	* Hibernate value: Ecconfig.showLogin
 	*/
-	String  ECCONFIG_SHOW_LOGIN = ECCONFIG_ENTRY.getAliasNames()[25];
+	String  ECCONFIG_SHOW_LOGIN = ECCONFIG_ENTRY.getAliasNames()[26];
 
 	/** 
 	* Alias value: Ecconfig_skin
 	* Hibernate value: Ecconfig.skin
 	*/
-	String  ECCONFIG_SKIN = ECCONFIG_ENTRY.getAliasNames()[26];
+	String  ECCONFIG_SKIN = ECCONFIG_ENTRY.getAliasNames()[27];
 
 	/** 
 	* Alias value: Ecconfig_tariff_id
 	* Hibernate value: Ecconfig.tariff.id
 	*/
-	String  ECCONFIG_TARIFF_ID = ECCONFIG_ENTRY.getAliasNames()[27];
+	String  ECCONFIG_TARIFF_ID = ECCONFIG_ENTRY.getAliasNames()[28];
 
 	/** 
-	* Alias value: Ecconfig_taxInType
-	* Hibernate value: Ecconfig.taxInType
+	* Alias value: Ecconfig_taxInPrice
+	* Hibernate value: Ecconfig.taxInPrice
 	*/
-	String  ECCONFIG_TAX_IN_TYPE = ECCONFIG_ENTRY.getAliasNames()[28];
+	String  ECCONFIG_TAX_IN_PRICE = ECCONFIG_ENTRY.getAliasNames()[29];
 
 	/** 
 	* Alias value: Ecconfig_telephone
 	* Hibernate value: Ecconfig.telephone
 	*/
-	String  ECCONFIG_TELEPHONE = ECCONFIG_ENTRY.getAliasNames()[29];
+	String  ECCONFIG_TELEPHONE = ECCONFIG_ENTRY.getAliasNames()[30];
 
 	/** 
 	* Alias value: Ecconfig_visa_id
 	* Hibernate value: Ecconfig.visa.id
 	*/
-	String  ECCONFIG_VISA_ID = ECCONFIG_ENTRY.getAliasNames()[30];
+	String  ECCONFIG_VISA_ID = ECCONFIG_ENTRY.getAliasNames()[31];
 
 	/** 
 	* Alias value: Ecconfig_welcomeBanner
 	* Hibernate value: Ecconfig.welcomeBanner
 	*/
-	String  ECCONFIG_WELCOME_BANNER = ECCONFIG_ENTRY.getAliasNames()[31];
+	String  ECCONFIG_WELCOME_BANNER = ECCONFIG_ENTRY.getAliasNames()[32];
 
 
 
 	/** 
-	* DAOConstantsEntry for Eccatalogue entity.
+	* DAOConstantsEntry for EcOfferPayment entity.
 	*/ 
-	DAOConstantsEntry ECCATALOGUE_ENTRY = DAOConstants.getDAOConstant(Eccatalogue.class);
+	DAOConstantsEntry EC_OFFER_PAYMENT_ENTRY = DAOConstants.getDAOConstant(EcOfferPayment.class);
 
 	/** 
-	* Alias value: Eccatalogue_catalogueIcon
-	* Hibernate value: Eccatalogue.catalogueIcon
+	* Alias value: EcOfferPayment_authorizationNumber
+	* Hibernate value: EcOfferPayment.authorizationNumber
 	*/
-	String  ECCATALOGUE_CATALOGUE_ICON = ECCATALOGUE_ENTRY.getAliasNames()[0];
+	String  EC_OFFER_PAYMENT_AUTHORIZATION_NUMBER = EC_OFFER_PAYMENT_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Eccatalogue_catalogueImg
-	* Hibernate value: Eccatalogue.catalogueImg
+	* Alias value: EcOfferPayment_id
+	* Hibernate value: EcOfferPayment.id
 	*/
-	String  ECCATALOGUE_CATALOGUE_IMG = ECCATALOGUE_ENTRY.getAliasNames()[1];
+	String  EC_OFFER_PAYMENT_ID = EC_OFFER_PAYMENT_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Eccatalogue_catalogue_id
-	* Hibernate value: Eccatalogue.catalogue.id
+	* Alias value: EcOfferPayment_offer_id
+	* Hibernate value: EcOfferPayment.offer.id
 	*/
-	String  ECCATALOGUE_CATALOGUE_ID = ECCATALOGUE_ENTRY.getAliasNames()[2];
+	String  EC_OFFER_PAYMENT_OFFER_ID = EC_OFFER_PAYMENT_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Eccatalogue_id
-	* Hibernate value: Eccatalogue.id
+	* Alias value: EcOfferPayment_status
+	* Hibernate value: EcOfferPayment.status
 	*/
-	String  ECCATALOGUE_ID = ECCATALOGUE_ENTRY.getAliasNames()[3];
+	String  EC_OFFER_PAYMENT_STATUS = EC_OFFER_PAYMENT_ENTRY.getAliasNames()[3];
+
+
 
 	/** 
-	* Alias value: Eccatalogue_type
-	* Hibernate value: Eccatalogue.type
+	* DAOConstantsEntry for EcPaymethod entity.
+	*/ 
+	DAOConstantsEntry EC_PAYMETHOD_ENTRY = DAOConstants.getDAOConstant(EcPaymethod.class);
+
+	/** 
+	* Alias value: EcPaymethod_id
+	* Hibernate value: EcPaymethod.id
 	*/
-	String  ECCATALOGUE_TYPE = ECCATALOGUE_ENTRY.getAliasNames()[4];
+	String  EC_PAYMETHOD_ID = EC_PAYMETHOD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EcPaymethod_password
+	* Hibernate value: EcPaymethod.password
+	*/
+	String  EC_PAYMETHOD_PASSWORD = EC_PAYMETHOD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EcPaymethod_paymethod_id
+	* Hibernate value: EcPaymethod.paymethod.id
+	*/
+	String  EC_PAYMETHOD_PAYMETHOD_ID = EC_PAYMETHOD_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: EcPaymethod_signature
+	* Hibernate value: EcPaymethod.signature
+	*/
+	String  EC_PAYMETHOD_SIGNATURE = EC_PAYMETHOD_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EcPaymethod_userName
+	* Hibernate value: EcPaymethod.userName
+	*/
+	String  EC_PAYMETHOD_USER_NAME = EC_PAYMETHOD_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Ectarget entity.
+	*/ 
+	DAOConstantsEntry ECTARGET_ENTRY = DAOConstants.getDAOConstant(Ectarget.class);
+
+	/** 
+	* Alias value: Ectarget_id
+	* Hibernate value: Ectarget.id
+	*/
+	String  ECTARGET_ID = ECTARGET_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Ectarget_lastAccess
+	* Hibernate value: Ectarget.lastAccess
+	*/
+	String  ECTARGET_LAST_ACCESS = ECTARGET_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Ectarget_login
+	* Hibernate value: Ectarget.login
+	*/
+	String  ECTARGET_LOGIN = ECTARGET_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Ectarget_password
+	* Hibernate value: Ectarget.password
+	*/
+	String  ECTARGET_PASSWORD = ECTARGET_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Ectarget_target_id
+	* Hibernate value: Ectarget.target.id
+	*/
+	String  ECTARGET_TARGET_ID = ECTARGET_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Ectarget_type
+	* Hibernate value: Ectarget.type
+	*/
+	String  ECTARGET_TYPE = ECTARGET_ENTRY.getAliasNames()[5];
 
 
 }

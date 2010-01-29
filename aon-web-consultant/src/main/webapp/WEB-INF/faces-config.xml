@@ -26,7 +26,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.7.0</value>
+			<value>/aonResource/3.11.0</value>
 		</managed-property>
 	</managed-bean>
 
@@ -56,5 +56,24 @@
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
+
+   	<!-- ************************************************** -->
+   	<!-- ************* OPTIONAL LISTENERS ***************** -->
+   	<!-- ************************************************** -->
+	
+	<!-- ************ CUSTOMER LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>customerOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>
+				com.code.aon.ui.form.event.IControllerListener
+			</value-class>
+			<!-- aon-ui-project-->
+			<value>#{customerDossierListener}</value>
+		</list-entries>
+	</managed-bean>
+	
 
 </faces-config>

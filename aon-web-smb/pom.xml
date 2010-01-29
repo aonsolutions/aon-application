@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.smb</artifactId>
 	<packaging>war</packaging>
-	<version>4.2.5</version>
+	<version>4.2.0</version>
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
@@ -20,11 +20,21 @@
 	<build>
 		<finalName>aon-smb</finalName>
 	</build>
+<!-- 	Necesario para iReport-utils	
+	<repositories>
+		<repository>
+			<id>jasperforge.org</id>
+			<name>iReport Repository for Maven</name>
+			<url>http://jasperforge.org/maven2/</url>
+			<layout>default</layout>
+		</repository>	
+	</repositories>
+ -->
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.2.0</version>
+			<version>4.1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -48,7 +58,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.9.0</version>
+			<version>3.8.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -72,7 +82,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>4.2.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -84,13 +94,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.1.0</version>
+			<version>4.0.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>4.6.0</version>
+			<version>4.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -209,6 +219,34 @@
 			<artifactId>jsf-facelets</artifactId>
 			<version>1.1.14</version>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.9</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>gnujaxp</groupId>
+					<artifactId>gnujaxp</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-digester</groupId>
+					<artifactId>commons-digester</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

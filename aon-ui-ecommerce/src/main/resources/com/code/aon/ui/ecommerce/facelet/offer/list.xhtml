@@ -4,10 +4,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
 		<aon:div styleClass="aon-scroll-area">
+			<c:if test="#{ecConfig.paypalReturn}" />
 			<aon:dataTable id="cartList" value="#{shoppingCart.model}" rows="20"
 				var="to" style="width:100%"
 				columnClasses="
@@ -39,7 +41,9 @@
 					<f:facet name="header">
 						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_price}" />
 					</f:facet>
-					<aon:outputText value="#{to.item.price}" />
+					<aon:outputText value="#{to.item.price}" >
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
 				</aon:column>
 				<aon:column>
 					<f:facet name="header">
@@ -47,7 +51,9 @@
 					</f:facet>
 					<aon:outputText value="#{to.total}" />
 					<f:facet name="footer">
-						<aon:outputText value="#{shoppingCart.total} &#160; (#{ecommerceBundle.aon_ecommerce_vat_included})" />
+						<aon:outputText value="#{shoppingCart.cart.total} &#160; (#{ecommerceBundle.aon_ecommerce_vat_included})" >
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
 					</f:facet>
 				</aon:column>
 			</aon:dataTable>

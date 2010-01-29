@@ -16,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -29,6 +28,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.util.XMLHandler;
 import com.code.aon.ui.cms.util.ZipUtil;
 import com.code.aon.ui.form.BasicController;
@@ -172,8 +172,7 @@ public class TemplateController extends BasicController implements Constants {
 	 */
 	public void onRemoveSelected(ActionEvent event){
 		for (TemplateObject to: checkList) {
-			File file = new File( ControllerUtil.getTemplatePath(), to.getId() );
-			FileUtils.deleteQuietly(file);
+			FileUtil.delete(ControllerUtil.getTemplatePath() + "/" + to.getId());
 		}
 		loadTemplates();
 	}
@@ -239,7 +238,7 @@ public class TemplateController extends BasicController implements Constants {
 	        outputStream.write(data);
 			if (item.getContentType().indexOf("zip") >= 0) {
 				ZipUtil.uncompressZipFile(file.getAbsolutePath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
-				FileUtils.deleteQuietly(file);
+				FileUtil.delete(file.getAbsolutePath());
 			}
 			this.onInit(null);
 		}catch (Throwable th) {

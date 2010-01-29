@@ -14,8 +14,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -45,9 +43,6 @@ public class Period implements ITransferObject {
 	 */
 	private Date deadline;
 
-
-	private AccountPeriodStatus status;
-	
 	/**
 	 * Gets the ID of this account.
 	 * 
@@ -109,25 +104,6 @@ public class Period implements ITransferObject {
 	 */
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
-	}
-
-	/**
-	 * Gets the type.
-	 * 
-	 * @return the type
-	 */
-	@Column(name="status")
-	public AccountPeriodStatus getStatus() {
-		return status;
-	}
-
-	/**
-	 * Sets the type.
-	 * 
-	 * @param type the type
-	 */
-	public void setStatus(AccountPeriodStatus status) {
-		this.status = status;
 	}
 
 

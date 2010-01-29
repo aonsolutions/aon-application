@@ -29,7 +29,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.4.0</value>
+			<value>/aonResource/3.11.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -65,6 +65,14 @@
 
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>menu_product</from-outcome>
+			<to-view-id>/facelet/menu/product.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_commercial</from-outcome>
+			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>menu_sales</from-outcome>
 			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
 		</navigation-case>
@@ -89,5 +97,109 @@
 			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
+	
+   	<!-- ************************************************** -->
+   	<!-- ************* OPTIONAL LISTENERS ***************** -->
+   	<!-- ************************************************** -->
+	
+	<!-- ************ ACCOUNT LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>accountOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.accounting -->
+			<value>#{accountControllerListener}</value>
+			<!--  aon.ui.account.bridge -->
+			<value>#{accountControllerCascadeListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ CREDITOR LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>creditorOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.account.bridge -->
+			<value>#{creditorAccount}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ CUSTOMER LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>customerOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.finance -->
+			<value>#{customerFeeChildListener}</value>
+			<!--  aon.ui.account.bridge -->
+			<value>#{customerAccount}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ ITEM LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>itemOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.account.bridge -->
+			<value>#{productAccountListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ SUPPLIER LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>supplierOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.account.bridge -->
+			<value>#{supplierAccount}</value>
+		</list-entries>
+	</managed-bean>
+	
+	<!-- ************ TAX LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>taxOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.account.bridge -->
+			<value>#{taxAccountListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ COMPANY LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>companyOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.company -->
+			<value>#{companyCertificateChildListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ SALE INVOICE DETAIL LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceDetailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.finance -->
+			<value>#{invoiceDetailDirectSalesListener}</value>
+		</list-entries>
+	</managed-bean>
 
 </faces-config>

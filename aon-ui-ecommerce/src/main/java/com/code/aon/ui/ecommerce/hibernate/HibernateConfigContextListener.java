@@ -14,6 +14,7 @@ public class HibernateConfigContextListener implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
 		HibernateUtil.setConfigurationFactory( DomainConfigurationFactory.getInstance() );
+		HibernateUtil.setSessionFactoryNameProvider( new DomainSessionNameProvider() );
 	}
 
 	/**
