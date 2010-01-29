@@ -3,6 +3,8 @@ package com.code.aon.ui.registry.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -14,8 +16,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,7 +27,7 @@ import com.code.aon.ui.form.LinesController;
 
 public class RecordDataController extends LinesController {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(RecordDataController.class);
+	private static final Logger LOGGER = Logger.getLogger(RecordDataController.class.getName());
 	
 	private RegistryAttachment attach;
 
@@ -71,7 +71,7 @@ public class RecordDataController extends LinesController {
 				attach.setCategory(null);
 			}
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}	
@@ -88,7 +88,7 @@ public class RecordDataController extends LinesController {
 			response.flushBuffer();
 			ctx.responseComplete();
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 			throw new AbortProcessingException(e);
 		}
 	}

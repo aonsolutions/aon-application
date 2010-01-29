@@ -16,14 +16,10 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.Registry;
-import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.Relationship;
-import com.code.aon.registry.Segment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
@@ -202,21 +198,6 @@ public class RegistryCollectionsController {
 		return noteTypes;
 	}
 	
-    @SuppressWarnings("unchecked")
-    public List<SelectItem> getSegments() throws ManagerBeanException{
-    	List<SelectItem> segments = new LinkedList<SelectItem>();
-    	IManagerBean segmentBean = BeanManager.getManagerBean(Segment.class);
-    	Criteria criteria = new Criteria();
-    	criteria.addOrder(segmentBean.getFieldName(IRegistryAlias.SEGMENT_NAME));
-    	Iterator iter = segmentBean.getList(criteria).iterator();
-    	while(iter.hasNext()){
-    		Segment segment = (Segment)iter.next();
-    		SelectItem item = new SelectItem(segment.getId(), segment.getName());
-    		segments.add(item);
-    	}
-    	return segments;
-    }
-    
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getUsers() throws ManagerBeanException {
 		List<SelectItem> users = new LinkedList<SelectItem>();
@@ -277,19 +258,4 @@ public class RegistryCollectionsController {
 	public void setCategory( Category category ) {
 	}	
 
-    @SuppressWarnings("unchecked")
-    public List<String> getAddInfoAttributes() throws ManagerBeanException{
-    	List<String> addInfos = new LinkedList<String>();
-    	IManagerBean addInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
-    	Criteria criteria = new Criteria();
-    	criteria.addOrder(addInfoBean.getFieldName(IRegistryAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
-		Projection projection = Projection.group(addInfoBean.getFieldName(IRegistryAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
-		Iterator iter = addInfoBean.getList(new ProjectionList(projection), criteria).iterator();
-    	while(iter.hasNext()){
-    		String addInfo = (String)iter.next();
-    		addInfos.add(addInfo);
-    	}
-    	return addInfos;
-    }
-    
 }

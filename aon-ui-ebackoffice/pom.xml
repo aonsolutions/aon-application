@@ -14,14 +14,12 @@
 	<description>AON UI EBACKOFFICE</description>
 	<name>AON UI EBACKOFFICE</name>
 	<dependencies>
-	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ebackoffice</artifactId>
-			<version>4.3.2</version>
+			<version>4.3.3</version>
 			<scope>compile</scope>
 		</dependency>	
-		
 		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.security</artifactId>
@@ -34,7 +32,6 @@
 			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
@@ -89,32 +86,5 @@
 			<version>1.2_12</version>
 		    <scope>provided</scope>
 		</dependency>
-<!-- 		<dependency>
-    		<groupId>jmimemagic</groupId>
-    		<artifactId>jmimemagic</artifactId>
-    		<version>0.1.2</version>
-			<exclusions>
-				<exclusion>
-				      <groupId>xerces</groupId>
-				      <artifactId>xerces</artifactId>
-				</exclusion>
-				<exclusion>
-				      <groupId>xerces</groupId>
-				      <artifactId>xercesImpl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xmlParserAPIs</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>	 -->
 	</dependencies>
 </project>

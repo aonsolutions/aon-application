@@ -61,15 +61,15 @@
 									</a4j:support>
 								</aon:selectOneMenu>
 
-								<aon:outputText
+								<aon:outputText rendered="#{ecconfig.ecParam}"
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_commerce}" />
 
-								<aon:selectBooleanCheckbox disabled="#{ecconfig.login}"
+								<aon:selectBooleanCheckbox disabled="#{ecconfig.login}" rendered="#{ecconfig.ecParam}"
 									value="#{ecconfig.to.commerce}" />
 
-								<aon:outputLabel for="Offer_series-New"
+								<aon:outputLabel for="Offer_series-New" rendered="#{ecconfig.ecParam}"
 									value="#{bundle.aon_series}/#{bundle.aon_number}" />
-								<aon:selectOneMenu id="Offer_series-New"
+								<aon:selectOneMenu id="Offer_series-New" rendered="#{ecconfig.ecParam}"
 									value="#{ecconfig.to.series}" style="width:130px"
 									valueChangeListener="#{offer.onSeriesChanged}">
 									<f:selectItem itemLabel=" " itemValue="#{null}" />
@@ -344,7 +344,7 @@
 						</aon:panelTab>
 
 
-						<aon:panelTab id="tab3" style="height:300px"
+						<aon:panelTab id="tab3" style="height:300px" rendered="#{ecconfig.ecParam}"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod}">
 
 							<aon:panel height="60" style="width: 50%;"
