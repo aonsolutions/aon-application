@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.generic_page}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
+
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="generic_page_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{generic_page.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="generic_page_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{generic_page.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="generic_page_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{generic_page.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="GenericPage_alias"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="GenericPage_alias" size="50"
+						valueChangeListener="#{generic_page.addExpression}" />
+
+					<aon:outputLabel for="GenericPage_title"
+						value="#{appBundle.generic_page_title}" />
+					<aon:inputText id="GenericPage_title" size="50"
+						value="#{generic_page.title}" />
+
+					<aon:outputLabel for="GenericPage_section_id"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="GenericPage_section_id"  
+						valueChangeListener="#{generic_page.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+	
+				</aon:panelGrid>
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

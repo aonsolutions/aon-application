@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+
+	<!--  *********  Asset Stat Print  ********* -->
+	<report id="yearStatsList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
+		<collection provider="#{stat.yearStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	<report id="monthStatsList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
+		<collection provider="#{stat.monthStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	<report id="dayStatsList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
+		<collection provider="#{stat.dayStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+
+		</params>
+	</report>
+
+	<report id="customerStatsList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
+		<collection provider="#{stat.customerStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+
+	<report id="customerStatsGraph" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/yearStatGraph.jasper" />
+		<collection provider="#{stat.customerStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+
+		</params>
+	</report>
+
+	<report id="yearStatsGraph" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/yearStatGraph.jasper" />
+		<collection provider="#{stat.yearStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+
+		</params>
+	</report>
+
+	<report id="monthStatsGraph" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/monthStatGraph.jasper" />
+		<collection provider="#{stat.monthStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+
+		</params>
+	</report>
+
+	<report id="dayStatsGraph" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/dayStatGraph.jasper" />
+		<collection provider="#{stat.dayStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />			
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+
+    <report id="abcStatsList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
+		<collection provider="#{stat.abcStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
+	<report id="abcStatsGraph" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/monthStatGraph.jasper" />
+		<collection provider="#{stat.abcStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+
+		</params>
+	</report>
+	
+	<report id="productStatsGraph" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/yearStatGraph.jasper" />
+		<collection provider="#{stat.abcStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+
+		</params>
+	</report>
+	
+		<report id="invoiceList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/invoiceList.jasper" />
+		<collection provider="#{stat.invoices}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+
+		</params>
+	</report>
+	
+</report-config>
