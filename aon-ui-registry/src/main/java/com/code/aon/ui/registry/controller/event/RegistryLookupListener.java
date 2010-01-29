@@ -9,7 +9,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.geozone.GeoZone;
+import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
@@ -88,7 +88,12 @@ public class RegistryLookupListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		setMainAddress( new RegistryAddress() );
 		getMainAddress().setAddressType( AddressType.MAIN );
-		getMainAddress().setGeozone( new GeoZone() );
+		try {
+			getMainAddress().setGeozone( CompanyUtil.getCompanyGeoZone() );
+		} catch( ManagerBeanException e ) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+
 		setPhone( new RegistryMedia() );
 		initRegistryMedia(phone, MediaType.FIXED_PHONE);
 		setFax( new RegistryMedia() );
