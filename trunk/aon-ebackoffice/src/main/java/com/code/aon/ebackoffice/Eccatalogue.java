@@ -1,5 +1,9 @@
 package com.code.aon.ebackoffice;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -83,17 +87,26 @@ public class Eccatalogue implements ITransferObject {
 		this.type = type;
 	}
 	
-	@Transient
-	public String getCapitalLetter(){
-		return this.catalogue.getName().substring(0, 1);
-	}
-	
-	
 	public boolean isVisible() {
 		return visible;
 	}
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+	
+	@Transient
+	public String getCapitalLetter(){
+		return this.catalogue.getName().substring(0, 1);
+	}
+	
+	@Transient
+	public boolean isOutofDate(){
+		if (catalogue.getEndDate()==null)return false;
+		else{
+		Date toDate =catalogue.getEndDate();
+		Calendar d =new GregorianCalendar();
+		return toDate.before(d.getTime());
+		}
 	}
 }
 	
