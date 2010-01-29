@@ -5,7 +5,6 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -63,40 +62,21 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{seller}" />
-					<ui:param name="columnClasses" value="
-						aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn" />
 					<ui:define name="columns">
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}"/>
-					</aon:column>
 
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.name}"/>
-					</aon:column>
+					<ui:include
+						src="/com/code/aon/ui/sales/facelet/seller/listBasic.xhtml" />
 
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.registry_surname}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.surname}"/>
-					</aon:column>
-
- 					<aon:column>
+ 					<aon:column alias="Seller.registry.alias"
+ 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_company_alias}" />
 						</f:facet>
 						<aon:outputText value="#{to.registry.alias}"/>
 					</aon:column>
 
- 					<aon:column>
+ 					<aon:column alias="Seller.description"
+ 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_description}" />
 						</f:facet>
