@@ -41,38 +41,18 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	
 	private static final long serialVersionUID = 4701123719465168619L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The Registry. */
 	private Registry registry;
-	
-    /** The tariff to be applied to the customer. */
     private Tariff tariff;
-
-    /** The surcharge. */
     private boolean surcharge;
-    
-    /** The withholding. */
     private boolean withholding;
-
-    /** The transaction type. */
     private InvoiceTransactionType transaction;
-
-    /** The status. */
     private CustomerStatus status;
-    
-    /** The scope. */
     private Scope scope;
+    private boolean eInvoice;
+    private boolean deliveryGrouped = true;
+    private boolean deliveryValuated = true;
 
-    /** Indicates if the customer wants to receive e-Invoice. */
-    private boolean eInvoice;    
-
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
     @Id
 	@Column(name="registry")
 	@GeneratedValue(generator="registry_id")
@@ -82,20 +62,10 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		return id;
 	}
 
-    /**
-     * Sets the id.
-     * 
-     * @param id the id
-     */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	/**
-	 * Gets the registry.
-	 * 
-	 * @return the registry
-	 */
 	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@PrimaryKeyJoinColumn 
@@ -103,20 +73,10 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		return registry;
 	}
 
-	/**
-	 * Sets the registry.
-	 * 
-	 * @param registry the registry
-	 */
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
 
-	/**
-	 * Gets the tariff of the customer.
-	 * 
-	 * @return the tariff
-	 */
     @ManyToOne
     @JoinColumn(name="tariff")
     @ForeignKey(name = "FK_CUSTOMER_TARIFF")
@@ -125,85 +85,40 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		return tariff;
 	}
 	
-	/**
-	 * Sets the tariff to the customer.
-	 * 
-	 * @param tariff the tariff to set.
-	 */
 	public void setTariff(Tariff tariff) {
 		this.tariff = tariff;
 	}
 	
-    /**
-     * Gets if a surcharge has to be applied to the customer or not.
-     * 
-     * @return true if a surcharge has to be applied.
-     */
     @Column(nullable=true)
     public boolean isSurcharge() {
         return surcharge;
     }
 
-    /**
-     * Sets if a surcharge has to be applied to the customer or not.
-     * 
-     * @param surcharge true if a surcharge has to be applied.
-     */
     public void setSurcharge(boolean surcharge) {
         this.surcharge = surcharge;
     }
 
-	/**
-	 * Checks if a withholding is applied.
-	 * 
-	 * @return true, if a withholding is applied
-	 */
 	@Column(nullable=true)
 	public boolean isWithholding() {
 		return withholding;
 	}
 
-	/**
-	 * Sets the withholding.
-	 * 
-	 * @param withholding the withholding
-	 */
 	public void setWithholding(boolean withholding) {
 		this.withholding = withholding;
 	}
 
-	/**
-	 * Gets the transaction type.
-	 * 
-	 * @return the transaction type
-	 */
 	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
 
-	/**
-	 * Sets the transaction type.
-	 * 
-	 * @param transaction the transaction type
-	 */
 	public void setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
 	}
 
-	/**
-	 * Gets the status.
-	 * 
-	 * @return the status
-	 */
     public CustomerStatus getStatus() {
         return status;
     }
 
-    /**
-     * Sets the status.
-     * 
-     * @param status the status
-     */
     public void setStatus(CustomerStatus status) {
         this.status = status;
     }
@@ -220,23 +135,31 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		this.scope = scope;
 	}
 	
-	/**
-	 * Checks if is e invoice.
-	 * 
-	 * @return true, if is e invoice
-	 */
 	@Column(name="e_invoice", nullable=true)
 	public boolean isEInvoice() {
 		return eInvoice;
 	}
 
-	/**
-	 * Sets the e invoice.
-	 * 
-	 * @param invoice the new e invoice
-	 */
-	public void setEInvoice(boolean invoice) {
-		eInvoice = invoice;
+	public void setEInvoice(boolean eInvoice) {
+		this.eInvoice = eInvoice;
+	}
+	
+	@Column(name="delivery_grouped", nullable=true)
+	public boolean isDeliveryGrouped() {
+		return deliveryGrouped;
+	}
+
+	public void setDeliveryGrouped(boolean deliveryGrouped) {
+		this.deliveryGrouped = deliveryGrouped;
+	}
+	
+	@Column(name="delivery_valuated", nullable=true)
+	public boolean isDeliveryValuated() {
+		return deliveryValuated;
+	}
+
+	public void setDeliveryValuated(boolean deliveryValuated) {
+		this.deliveryValuated = deliveryValuated;
 	}
 	
 	@Transient
@@ -252,6 +175,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		final Customer o = (Customer) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.deliveryGrouped, o.deliveryGrouped)
+				.append(this.deliveryValuated, o.deliveryValuated)
 				.append(this.eInvoice, o.eInvoice)
 				.append(this.registry, o.registry)
 				.append(this.scope, o.scope)
@@ -268,6 +193,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(deliveryGrouped)
+			.append(deliveryValuated)
 			.append(eInvoice)
 			.append(id)
 			.append(registry)

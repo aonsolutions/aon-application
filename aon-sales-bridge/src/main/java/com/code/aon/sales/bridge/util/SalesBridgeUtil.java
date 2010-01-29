@@ -3,7 +3,6 @@ package com.code.aon.sales.bridge.util;
 import java.util.Iterator;
 
 import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -40,10 +39,7 @@ public class SalesBridgeUtil {
 		Customer customer = new Customer();
 		customer.setRegistry(offer.getTarget().getRegistry());
 		customer.setTariff((offer.getTariff()!=null && offer.getTariff().getId()!=null) ? offer.getTariff() : null);
-		customer.setSurcharge(offer.getTarget().isSurcharge());
-		customer.setWithholding(offer.getTarget().isWithholding());
-		customer.setTransaction(offer.getTarget().getTransaction());
-		customer.setStatus((offer.getTarget().getStatus() == TargetStatus.ACTIVE) ? CustomerStatus.ACTIVE : CustomerStatus.INACTIVE);
+		customer.setStatus(CustomerStatus.ACTIVE);
 		customer.setScope(offer.getScope());
 		return (Customer)customerBean.insert(customer);
 	}

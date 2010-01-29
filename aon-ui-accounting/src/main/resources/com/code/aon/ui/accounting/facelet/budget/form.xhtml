@@ -50,7 +50,7 @@
 					<aon:selectOneMenu id="AccountBudget_accountPeriod"
 						rendered="#{accountBudget.new}"
 						value="#{accountBudget.to.period}">
-						<f:selectItems value="#{accountingCollections.activeAccountPeriodKeys}" />
+						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
 					</aon:selectOneMenu>
 					<aon:outputText styleClass="aon-bold"
 						rendered="#{!accountBudget.new}"

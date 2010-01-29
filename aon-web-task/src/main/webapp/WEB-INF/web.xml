@@ -279,8 +279,7 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
-			<role-name>MonitorTareas</role-name>
+			<role-name>Admin</role-name>
 			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
@@ -294,10 +293,10 @@
 	</login-config>
 
 	<security-role>
-		<role-name>Manager</role-name>
+		<role-name>Admin</role-name>
 	</security-role>
 	<security-role>
-		<role-name>MonitorTareas</role-name>
+		<role-name>TaskMonitoring</role-name>
 	</security-role>
 	<security-role>
 		<role-name>User</role-name>

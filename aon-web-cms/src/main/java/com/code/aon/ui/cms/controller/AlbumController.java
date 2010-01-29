@@ -9,6 +9,7 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;

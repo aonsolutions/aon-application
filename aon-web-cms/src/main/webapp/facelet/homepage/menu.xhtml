@@ -33,7 +33,7 @@
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="structure"
 				value="#{menuBundle.cms_structure}"
-				rendered="#{domainUtils.structureMenu and (cms.roleDesigner or cms.roleEditor)}">
+				rendered="#{cms.roleDesigner or cms.roleEditor}">
 				<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
 					rendered="#{cms.roleDesigner or cms.roleEditor}"
 					action="menu_list"
@@ -128,11 +128,8 @@
 				<aon:menuItem id="album_image" 
 					value="#{menuBundle.cms_album_image}"
 					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="albumImage_form"
-					actionListener="#{albumImage.onEditSearch}" >
-					<aon:actionListener method="#{albumImage.onSearch}" />
-					<aon:actionListener method="#{albumImage.onReset}" />
-				</aon:menuItem>
+					action="album_image_form"
+					actionListener="#{albumImage.onReset}" />
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="hiru"
 				value="#{menuBundle.cms_hiru}"

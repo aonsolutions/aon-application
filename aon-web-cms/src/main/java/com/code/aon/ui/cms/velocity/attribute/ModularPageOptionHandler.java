@@ -1,6 +1,5 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
-import com.code.aon.cms.ModularPageOption;
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
@@ -24,57 +23,55 @@ public class ModularPageOptionHandler {
 	private String type;
 	
 	public ModularPageOptionHandler(ModularPageOptionDetail mpod) {
-		ModularPageOption mpo = mpod.getModular_page_option();
-		ModularPageOptionType optionType = mpo.getType();
+		ModularPageOptionType optionType = mpod.getModular_page_option().getType();
 		template = optionType.getTemplateName();
 		type = optionType.getName();
-		Integer id = mpo.getIdent();
-		String message = "LA OPCION " + mpo.getAlias() + " DE LA PAGINA MODULAR " + mpo.getModular_page().getAlias();
+		Integer id = mpod.getModular_page_option().getIdent();
 		switch ( optionType ) {
 			case ACTIVITY:
-				content = ActivityGenerator.getActivityHandler(id, message);
+				content = ActivityGenerator.getActivityHandler(id);
 				break;
 			case ALBUM_CATEGORY:
-				content = AlbumGenerator.getAlbumCategoryHandler(id, message);
+				content = AlbumGenerator.getAlbumCategoryHandler(id);
 				break;
 			case ARTICLE:
-				content = ArticleGenerator.getArticleHandler(id, message);
+				content = ArticleGenerator.getArticleHandler( id );
 				break;
 			case ARTICLE_NEWS:
-				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.NEWS, message);
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.NEWS);
 				break;
 			case ARTICLE_EVENTS:
-				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.EVENTS, message);
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.EVENTS);
 				break;
 			case ARTICLE_SERVICES:
-				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.SERVICES, message);
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.SERVICES);
 				break;
 			case ARTICLE_OTHER:
-				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.OTHER, message);
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.OTHER);
 				break;
 			case BANNER_GROUP:
-				content = BannerGenerator.getBannerCategoryHandler(id, message);
+				content = BannerGenerator.getBannerCategoryHandler(id);
 				break;
 			case BANNER:
-				content = BannerGenerator.getBannerHandler(id, message);
+				content = BannerGenerator.getBannerHandler(id);
 				break;
 			case BULLETIN_SUSCRIBE:
 				content = BulletinSuscribeGenerator.getBulletinSuscribeHandler();
 				break;
 			case GENERIC:
-				content = GenericGenerator.getGenericHandler(id, message);
+				content = GenericGenerator.getGenericHandler(id);
 				break;
 			case DIRECT_ACCESS_GROUP:
-				content = DirectAccessGenerator.getDirectAccessGroupHandler(id, message);
+				content = DirectAccessGenerator.getDirectAccessGroupHandler(id);
 				break;
 			case DOWNLOADS:
-				content = DownloadsGenerator.getDownloadsHandler(id, message);
+				content = DownloadsGenerator.getDownloadsHandler(id);
 				break;
 			case DIRECT_ACCESS:
-				content = DirectAccessGenerator.getDirectAccessHandler(id, message);
+				content = DirectAccessGenerator.getDirectAccessHandler(id);
 				break;
 			case LINK_CATEGORY:
-				content = LinkGenerator.getLinkCategoryHandler(id, message);
+				content = LinkGenerator.getLinkCategoryHandler(id);
 				break;
 			case NEXT_ARTICLES:
 				content = ArticleCalendarGenerator.getNextArticlesHandler();

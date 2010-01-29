@@ -1,5 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -18,10 +19,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.cms.Constants;
 
 public class GenericPageController extends BasicI18nController implements Constants {
+
+	private String title;
 
 	private int page;
 	
@@ -88,5 +93,53 @@ public class GenericPageController extends BasicI18nController implements Consta
 		}
 		return menus;
 	}
+
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		setTitle(null);
+		super.onEditSearch(event);
+	}
+
+	public void completeDetailCriteria(String alias_value, String value) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(GenericPageDetail.class);
+		Criteria criteria = new Criteria();
+		try {
+			criteria.addExpression(bean.getFieldName(alias_value), value);
+			List objects = (List<ITransferObject>)bean.getList(criteria);
+			String alias = getFieldName(ICMSAlias.GENERIC_PAGE_ID);
+			Expression expr = null;
+			for (Iterator iterator = objects.iterator(); iterator.hasNext();) {
+				if (expr==null)
+					expr = ExpressionUtilities.getExpression(((GenericPageDetail) iterator.next()).getGeneric_page().getId().toString(),alias);
+				else
+					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getExpression(((GenericPageDetail) iterator.next()).getGeneric_page().getId().toString(),alias));
+			}
+			if (expr != null)
+				getCriteria().addExpression(expr);
+			else
+				getCriteria().addExpression(alias, "-1");
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e);
+		}
+	}
+
+	public void completeCriteria() throws ManagerBeanException {
+		if (getTitle() != null && getTitle().length()>0) {
+			completeDetailCriteria(ICMSAlias.GENERIC_PAGE_DETAIL_TITLE, getTitle());
+		}
+	}
+
+	// -------------------------------------------------
+	// Getters y setters para los campos de la búsqueda.
+	// -------------------------------------------------
+	
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 
 }

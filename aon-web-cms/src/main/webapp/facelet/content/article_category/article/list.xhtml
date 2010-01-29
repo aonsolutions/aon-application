@@ -20,13 +20,13 @@
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="generate" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" immediate="true"
-						actionListener="#{generator.onGenerateArticles}"
+						value="#{appBundle.aon_generate}" 
 						rendered="#{cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateArticles}" />
 						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							event="onclick" reRender="poll,grid" 
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>	
@@ -40,10 +40,9 @@
 					<aon:commandButton id="categories"
 						value="#{appBundle.article_category}"
 						action="article_category_list"
-						actionListener="#{article_category.onSearch}"
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item-no-icon">
-						<aon:actionListener method="#{article_category.onInit}" />
+						<aon:actionListener method="#{article_category.onSearch}" />
 					</aon:commandButton>
 					<aon:commandButton id="diary"
 						value="#{appBundle.diary}"

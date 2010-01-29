@@ -539,7 +539,7 @@ public class EcconfigController extends BasicController {
 	}
 	
 	public String getUrl(){
-		StringBuffer url = new StringBuffer( "http://" );
+		StringBuffer url = new StringBuffer( "http://aon." );
 		url.append( getDomain() );
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();

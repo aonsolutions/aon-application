@@ -23,6 +23,7 @@
 
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.CustomerSegment"/>
 		
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Item"/>
@@ -32,13 +33,11 @@
 		<mapping class="com.code.aon.product.Brand"/>
 		
 		<!-- AON-REGISTRY Mapping files -->	
-		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
-		<mapping class="com.code.aon.registry.RegistryAttachment"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
-		<mapping class="com.code.aon.registry.RegistrySegment"/>
-		<mapping class="com.code.aon.registry.Segment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.Category"/>
 		
 		<!-- AON-COMPANY Mapping files -->		
 		<mapping class="com.code.aon.company.Company"/>
@@ -49,13 +48,13 @@
 
 		<!-- AON-COMMERCIAL Mapping files -->		
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.CommercialSegment"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
 		<mapping class="com.code.aon.commercial.Offer"/>
-		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.OfferAttachment"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 
 		<!-- AON-GEOZONE Mapping files -->		

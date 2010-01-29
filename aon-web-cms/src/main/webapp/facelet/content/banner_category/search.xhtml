@@ -12,7 +12,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="bannerCategorySearch">
+		<aon:form id="list">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.banner_category}" />
@@ -27,31 +27,25 @@
 					<aon:outputLabel for="BannerCategory_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="BannerCategory_alias" size="50"
-						valueChangeListener="#{controller.addExpression}" />
-						
-					<aon:outputLabel for="BannerCategory_details_label"
-						value="#{appBundle.cms_label}" />
-					<aon:inputText id="BannerCategory_details_label" size="50"
-						valueChangeListener="#{controller.addExpression}" />
+						valueChangeListener="#{banner_category.addExpression}" />
 						
 					<aon:outputLabel for="BannerCategory_section_id"
-						value="#{appBundle.cms_section}" />
+						value="#{appBundle.section}" />
 					<aon:selectOneMenu id="BannerCategory_section_id"
-						valueChangeListener="#{controller.addIdEqualExpression}"
-						value="#{collections.section}">
+						valueChangeListener="#{banner_category.addExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 	
 					<aon:outputLabel for="BannerCategory_position"
-						value="#{appBundle.cms_position}" />
+						value="#{appBundle.banner_category_position}" />
 					<aon:inputText id="BannerCategory_position" size="10"
-						valueChangeListener="#{controller.addExpression}" />
+						valueChangeListener="#{banner_category.addExpression}" />
 						
 					<aon:outputLabel for="BannerCategory_active"
 						value="#{appBundle.cms_active}" />
 					<aon:selectOneMenu id="BannerCategory_active"
-						valueChangeListener="#{controller.addExpression}">
+						valueChangeListener="#{banner_category.addExpression}">
 						<f:selectItem itemLabel="-"	itemValue="#{null}" />
 						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />

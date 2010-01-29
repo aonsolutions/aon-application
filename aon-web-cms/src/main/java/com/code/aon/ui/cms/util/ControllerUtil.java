@@ -120,7 +120,7 @@ public class ControllerUtil implements Constants, ICMSConstants {
 	public static String getPreviewURL() {
 		String url = null;
 		url = "http://" + getCurrentConfig().getPreview_host() + 
-						"." + getCurrentConfig().getDomain() + "/"; 
+						"." + getCurrentConfig().getDomain(); 
 		return url;
 	}
 

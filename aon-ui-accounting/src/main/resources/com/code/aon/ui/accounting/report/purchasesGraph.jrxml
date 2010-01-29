@@ -1,90 +1,125 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchasesGraph" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.scriptlethandling" value="0"/>
-	<property name="ireport.encoding" value="UTF-8"/>
-	<import value="net.sf.jasperreports.engine.*"/>
-	<import value="java.util.*"/>
-	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
-	<parameter name="params" class="com.code.aon.accounting.summary.SummaryProviderParameters" isForPrompting="false"/>
-	<parameter name="title" class="java.lang.String" isForPrompting="false"/>
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="purchasesGraph"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="20"
+		 rightMargin="20"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
+	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
+	<parameter name="params" isForPrompting="false" class="com.code.aon.accounting.summary.SummaryProviderParameters"/>
+	<parameter name="title" isForPrompting="false" class="java.lang.String"/>
+
 	<field name="id" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="unpaidBalance" class="java.lang.Double"/>
 	<field name="creditBalance" class="java.lang.Double"/>
-	<variable name="percentaje" class="java.lang.Double" resetType="Group" resetGroup="f">
+
+	<variable name="percentaje" class="java.lang.Double" resetType="Group" resetGroup="f" calculation="Nothing">
 		<variableExpression><![CDATA[new Double($F{unpaidBalance}.doubleValue()/$V{Total}.doubleValue())]]></variableExpression>
 	</variable>
-	<variable name="Total" class="java.lang.Double" calculation="Sum">
+	<variable name="Total" class="java.lang.Double" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{unpaidBalance}]]></variableExpression>
 	</variable>
-	<group name="f">
-		<groupExpression><![CDATA[]]></groupExpression>
-		<groupHeader>
-			<band splitType="Stretch"/>
-		</groupHeader>
-		<groupFooter>
-			<band height="195" splitType="Stretch">
+
+		<group  name="f" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="195"  isSplitAllowed="true" >
 				<stackedBar3DChart>
-					<chart>
-						<reportElement key="element-2" x="29" y="0" width="381" height="195"/>
-						<chartTitle color="#000000">
-							<titleExpression><![CDATA[$R{accounting_profit_and_loss_module_gross_graph_sales}]]></titleExpression>
-						</chartTitle>
-						<chartSubtitle/>
-						<chartLegend textColor="#000000" backgroundColor="#FFFFFF"/>
+					<chart  hyperlinkTarget="Self" >
+					<reportElement
+						x="28"
+						y="0"
+						width="381"
+						height="195"
+						key="element-2"/>
+					<box></box>
+						<chartTitle color="#000000" >
+								<titleExpression><![CDATA[$R{accounting_profit_and_loss_module_gross_graph_sales}]]></titleExpression>
+					</chartTitle>
+						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
+					</chartLegend>
 					</chart>
 					<categoryDataset>
+						<dataset >
+						</dataset>
 						<categorySeries>
 							<seriesExpression><![CDATA[$F{id}]]></seriesExpression>
 							<categoryExpression><![CDATA[$F{id}]]></categoryExpression>
 							<valueExpression><![CDATA[$F{unpaidBalance}]]></valueExpression>
 							<labelExpression><![CDATA[$F{unpaidBalance}.toString()]]></labelExpression>
+				<itemHyperlink >
+				</itemHyperlink>
 						</categorySeries>
 					</categoryDataset>
-					<bar3DPlot>
-						<plot/>
-						<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+					<bar3DPlot >
+						<plot />
 						<categoryAxisFormat>
-							<axisFormat>
-								<labelFont/>
-								<tickLabelFont/>
+							<axisFormat >
 							</axisFormat>
 						</categoryAxisFormat>
 						<valueAxisFormat>
-							<axisFormat>
-								<labelFont/>
-								<tickLabelFont/>
+							<axisFormat >
 							</axisFormat>
 						</valueAxisFormat>
 					</bar3DPlot>
 				</stackedBar3DChart>
 			</band>
-		</groupFooter>
-	</group>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
-	<title>
-		<band splitType="Stretch"/>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band splitType="Stretch"/>
-	</columnHeader>
-	<detail>
-		<band splitType="Stretch"/>
-	</detail>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band splitType="Stretch"/>
-	</summary>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
 </jasperReport>

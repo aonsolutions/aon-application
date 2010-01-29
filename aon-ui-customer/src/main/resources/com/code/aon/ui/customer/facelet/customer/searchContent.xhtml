@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
@@ -34,17 +35,6 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 				
-		<c:if test="#{aonConfiguration.bean.customer.showSegment}">
-			<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_segment_module}">
-				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
-					<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
-						<ui:param name="controller" value="#{customer}" />
-						<ui:param name="searchController" value="#{customerSearch}" />
-					</ui:include>
-				</aon:panelGrid>
-			</aon:panelCollapsible>
-		</c:if>
-						
 	</aon:div>
 
 </ui:composition>

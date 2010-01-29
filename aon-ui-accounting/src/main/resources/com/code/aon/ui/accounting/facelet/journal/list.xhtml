@@ -23,12 +23,6 @@
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="update" value="#{accountingBundle.accounting_refresh}"
-						accesskey="Q" title="#{accountingBundle.accounting_refresh}"
-						actionListener="#{journalReport.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-refresh"
-						immediate="true" />
-				
 					<h:commandLink value="&#160;" target="_blank"
 						action="#{report.onExecute}"
 						title="#{bundle.aon_listing} MS Excel"
@@ -36,14 +30,6 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="journalBookXls" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
-						title="#{bundle.aon_listing} MS Word 2007"
-						styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="journalBook" />
-						<f:param name="outputFormat" value="DOCX" />
 					</h:commandLink>
 					<h:commandLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -55,16 +41,9 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="8" style="width:100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-100,
-						aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-100,
-						aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-100,
-						aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto">
-
+				<aon:panelGrid id="dataTable" columns="8" style="width:100%;">
+					<!--  
+					-->
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
 					<aon:outputText
@@ -95,7 +74,9 @@
 					</aon:outputText>
 				</aon:panelGrid>
 				
-				<aon:div rendered="#{journalReport.model.rowCount > 0}" styleClass="aon-margin-top">
+				<rich:spacer />
+			
+				<aon:div rendered="#{journalReport.model.rowCount > 0}">
 					<aon:dataTable id="journalReportList" value="#{journalReport.model}" rows="20" var="to">
 						<f:facet name="header">
 							<rich:columnGroup>
@@ -123,24 +104,16 @@
 
 						<aon:column colspan="6" rendered="#{journalReport.firstEntry}" 
 							style="#{journalReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							
-							
-								<aon:div style="text-align:center; font-size: 1em;">
-									<h:commandLink immediate="true" 
-										styleClass="aon-dataTable-link"
-										title="#{accountingBundle.accounting_lookup_account_entry}"
-										actionListener="#{journalReport.onAccountEntry}"
-										action="accountEntry_form">
-										<aon:outputText styleClass="aon-italic" value="#{accountingBundle.accounting_account_entry}: " />
-										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.id}" rendered="#{!journalReport.journal}"/>
-										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.journal}" rendered="#{journalReport.journal}"/>
-										<aon:outputText styleClass="aon-italic" value=" #{bundle.aon_date}: " />
-										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.entryDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-									</h:commandLink>
-								</aon:div>
+							<aon:div style="text-align:center; font-size: 1em;">
+								<aon:outputText styleClass="aon-italic" value="#{accountingBundle.accounting_account_entry}: " />
+								<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.id}" rendered="#{!journalReport.journal}"/>
+								<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.journal}" rendered="#{journalReport.journal}"/>
+								<aon:outputText styleClass="aon-italic" value=" #{bundle.aon_date}: " />
+								<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.entryDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:div>
 						</aon:column>
 						
 						<aon:column breakBefore="#{journalReport.firstEntry}" styleClass="aon-editDataTable-textColumn aon-width-100"
@@ -153,7 +126,7 @@
 							<aon:outputText value="#{to.account.description}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
 							style="#{journalReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
 							<aon:outputText value="#{to.concept}" />
 						</aon:column>

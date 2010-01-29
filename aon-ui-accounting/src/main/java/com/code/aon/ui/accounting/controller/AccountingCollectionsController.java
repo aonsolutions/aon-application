@@ -17,7 +17,6 @@ import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.common.BeanManager;
@@ -26,8 +25,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ql.util.ExpressionException;
 
 /**
  * Collections controller.
@@ -40,152 +38,54 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> balanceTypes;
 	private LinkedList<SelectItem> accountEntryTypes;
 	private LinkedList<SelectItem> amortizationPeriods;
-	private LinkedList<SelectItem> periodStatuses;
+	private LinkedList<String> concepts;
 
-	private List<SelectItem> autoConcepts;
-	private List<String> concepts;
+	/**
+	 * Gets the account periods.
+	 * 
+	 * @return the expenses accounts
+	 * @throws ManagerBeanException
+	 * @throws ExpressionException
+	 */
 
-	private String periodStatusAlias;
-	private String periodIdAlias;
-
-	public String getPeriodStatusAlias() throws ManagerBeanException {
-		if (periodStatusAlias == null) {
-			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-			periodStatusAlias = periodBean.getFieldName(IAccountingAlias.PERIOD_STATUS);
-		}
-		return periodStatusAlias;
-	}
-
-	public String getPeriodIdAlias() throws ManagerBeanException {
-		if (periodIdAlias == null) {
-			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-			periodIdAlias = periodBean.getFieldName(IAccountingAlias.PERIOD_ID);
-		}
-		return periodIdAlias;
-	}
-
-	private List<SelectItem> getPeriods(Criteria criteria, boolean pojo)
-			throws ManagerBeanException {
+	public List<SelectItem> getAccountPeriods() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), false);
 		Iterator<?> iter = periodBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Period period = (Period) iter.next();
-			SelectItem item = new SelectItem(pojo ? period : period.getId(), period.getId());
+			SelectItem item = new SelectItem(period, period.getId());
 			accountPeriods.add(item);
 		}
 		return accountPeriods;
 	}
 
-	private List<SelectItem> getEnabledAccountPeriods(boolean pojo) throws ManagerBeanException {
+	/**
+	 * Gets the account periods.
+	 * 
+	 * @return the expenses accounts
+	 * @throws ManagerBeanException
+	 * @throws ExpressionException
+	 */
+
+	public List<SelectItem> getAutoConcepts() throws ManagerBeanException, ExpressionException {
+		List<SelectItem> autoConcepts = new LinkedList<SelectItem>();
+		IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
 		Criteria criteria = new Criteria();
-		Expression e1 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(),
-				AccountPeriodStatus.ACTIVE);
-		Expression e2 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(),
-				AccountPeriodStatus.OPENING);
-		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2));
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, pojo);
-	}
-
-	public List<SelectItem> getEnabledAccountPeriods() throws ManagerBeanException {
-		return getEnabledAccountPeriods(true);
-	}
-
-	public List<SelectItem> getEnabledAccountPeriodKeys() throws ManagerBeanException {
-		return getEnabledAccountPeriods(false);
-	}
-
-	private List<SelectItem> getActiveAccountPeriods(boolean pojo) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(getPeriodStatusAlias(),
-				AccountPeriodStatus.INACTIVE));
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, pojo);
-	}
-
-	public List<SelectItem> getActiveAccountPeriods() throws ManagerBeanException {
-		return getActiveAccountPeriods(true);
-	}
-
-	public List<SelectItem> getActiveAccountPeriodKeys() throws ManagerBeanException {
-		return getActiveAccountPeriods(false);
-	}
-
-	public List<SelectItem> getClosedAccountPeriods() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.CLOSED);
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
-	}
-
-	public List<SelectItem> getOperatingAccountPeriods() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.OPERATING);
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
-	}
-
-	public List<SelectItem> getOpeningAccountPeriods() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.OPENING);
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
-	}
-
-	private List<SelectItem> getAllAccountPeriods(boolean pojo) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
-	}
-
-	public List<SelectItem> getAllAccountPeriods() throws ManagerBeanException {
-		return getAllAccountPeriods(true);
-	}
-
-	public List<SelectItem> getAllAccountPeriodKeys() throws ManagerBeanException {
-		return getAllAccountPeriods(false);
-	}
-
-	public List<SelectItem> getAccountPeriodStatuses() {
-		if (periodStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			periodStatuses = new LinkedList<SelectItem>();
-			AccountPeriodStatus[] aeTypes = AccountPeriodStatus.values();
-			for (int i = 0; i < aeTypes.length; i++) {
-				AccountPeriodStatus status = aeTypes[i];
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				periodStatuses.add(item);
-			}
-		}
-		return periodStatuses;
-	}
-
-	public void setAutoConcepts(List<SelectItem> autoConcepts ) {
-		this.autoConcepts = autoConcepts;
-	}
-	public List<SelectItem> getAutoConcepts() throws ManagerBeanException {
-		if (autoConcepts == null) {
-			autoConcepts = new LinkedList<SelectItem>();
-			IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION),
-					false);
-			Iterator<?> iter = conceptBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				AutoConcept concept = (AutoConcept) iter.next();
-				SelectItem item = new SelectItem(concept, concept.getDescription());
-				autoConcepts.add(item);
-			}
+		criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION), false);
+		Iterator<?> iter = conceptBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			AutoConcept concept = (AutoConcept) iter.next();
+			SelectItem item = new SelectItem(concept, concept.getDescription());
+			autoConcepts.add(item);
 		}
 		return autoConcepts;
 	}
 
-	public void setConceptsDescriptions(List<String> concepts ) {
-		this.concepts = concepts ;
-	}
-	public List<String> getConceptsDescriptions() {
+	@SuppressWarnings("unchecked")
+	public List getConceptsDescriptions() {
 		try {
 			if (concepts == null) {
 				concepts = new LinkedList<String>();
@@ -193,20 +93,41 @@ public class AccountingCollectionsController {
 				Criteria criteria = new Criteria();
 				String field = conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION);
 				criteria.addOrder(field);
-				List<ITransferObject> list = conceptBean.getList(criteria);
-				for (ITransferObject to : list) {
+				List<ITransferObject> list = conceptBean.getList(criteria); 
+				for (ITransferObject to:list) {
 					AutoConcept concept = (AutoConcept) to;
 					concepts.add(concept.getDescription());
 				}
 			}
 			return concepts;
-
+			
 		} catch (ManagerBeanException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			FacesMessage message = new FacesMessage(e.getMessage());
 			context.addMessage(null, message);
 			return null;
 		}
+	}
+
+	/**
+	 * Gets the account periods.
+	 * 
+	 * @return the expenses accounts
+	 * @throws ManagerBeanException
+	 * @throws ExpressionException
+	 */
+	public List<SelectItem> getAccountPeriodKeys() throws ManagerBeanException, ExpressionException {
+		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), false);
+		Iterator<?> iter = periodBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Period period = (Period) iter.next();
+			SelectItem item = new SelectItem(period.getId(), period.getId());
+			accountPeriods.add(item);
+		}
+		return accountPeriods;
 	}
 
 	public List<SelectItem> getAccountTypes() {
@@ -248,7 +169,7 @@ public class AccountingCollectionsController {
 		return loans;
 	}
 
-	public List<SelectItem> getLeasings() throws ManagerBeanException {
+	public List<SelectItem> getLeasings() throws ManagerBeanException{
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
 		Iterator<?> iter = leasingBean.getList(null).iterator();
@@ -260,7 +181,7 @@ public class AccountingCollectionsController {
 		return loans;
 	}
 
-	public List<SelectItem> getInvoiceTypes() {
+	public List<SelectItem> getInvoiceTypes(){
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
 		SelectItem item = new SelectItem(InvoiceType.SALES, InvoiceType.SALES.getName(locale));
@@ -283,7 +204,7 @@ public class AccountingCollectionsController {
 		}
 		return ats;
 	}
-
+	
 	public List<SelectItem> getAmortizationPeriods() {
 		if (amortizationPeriods == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -298,23 +219,19 @@ public class AccountingCollectionsController {
 		}
 		return amortizationPeriods;
 	}
-
+	
 	public List<SelectItem> getClosingBalances() throws ManagerBeanException {
-		return getBalances(BalanceType.CLOSING);
+		return getBalances(BalanceType.CLOSING );
 	}
-
 	public List<SelectItem> getOperatingBalances() throws ManagerBeanException {
-		return getBalances(BalanceType.OPERATING);
+		return getBalances(BalanceType.OPERATING );
 	}
-
 	public List<SelectItem> getPatrimonyBalances() throws ManagerBeanException {
 		return getBalances(BalanceType.PATRIMONY);
 	}
-
 	public List<SelectItem> getCustomBalances() throws ManagerBeanException {
-		return getBalances(BalanceType.CUSTOM);
+		return getBalances(BalanceType.CUSTOM );
 	}
-
 	public List<SelectItem> getBalances(BalanceType balanceType) throws ManagerBeanException {
 		List<SelectItem> balances = new LinkedList<SelectItem>();
 		IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
@@ -328,7 +245,6 @@ public class AccountingCollectionsController {
 		}
 		return balances;
 	}
-
 	public List<SelectItem> getBalanceTypes() {
 		if (balanceTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -343,5 +259,5 @@ public class AccountingCollectionsController {
 		}
 		return balanceTypes;
 	}
-
+	
 }

@@ -9,7 +9,7 @@
 
 	<aon:panelGrid id="main_panel" columns="2" dir="true" style="width:100%">
 	
-		<aon:outputLabel for="Article_alias"
+		<aon:outputLabel for="Article_alias" styleClass="aon-label-required"
 			value="#{appBundle.cms_alias}" />
 		<aon:inputText id="Article_alias"
 			required="true" size="32" maxlength="32"
@@ -17,7 +17,7 @@
 			<f:validator validatorId="AliasValidator" />
 		</aon:inputText>
 	
-		<aon:outputLabel for="Article_category"
+		<aon:outputLabel for="Article_category" styleClass="aon-label-required"
 			value="#{appBundle.article_category}"/>
 		<aon:selectOneMenu id="Article_category"  
 			required="true"
@@ -26,7 +26,7 @@
 			<f:selectItems value="#{collections.articleCategoryList}" />
 		</aon:selectOneMenu>
 	
-		<aon:outputLabel for="Article_type"
+		<aon:outputLabel for="Article_type" styleClass="aon-label-required"
 			value="#{appBundle.article_type_}"/>
 		<aon:selectOneMenu id="Article_type"
 			reRender="dates_initDate,dates_endDate" required="true"    
@@ -35,7 +35,7 @@
 			<f:selectItems value="#{collections.articleTypes}" />
 		</aon:selectOneMenu>
 		
-		<aon:outputLabel for="ArticleDetail_publishDate"
+		<aon:outputLabel for="ArticleDetail_publishDate" styleClass="aon-label-required"
 			value="#{appBundle.article_publishDate}" />
 		<aon:selectInputDate id="ArticleDetail_publishDate" required="true"  
 			 value="#{article.to.publishDate}"
@@ -53,7 +53,7 @@
 					timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:selectInputDate>	
 	
-		<aon:outputLabel for="ArticleDetail_title"
+		<aon:outputLabel for="ArticleDetail_title" styleClass="aon-label-required"
 			value="#{appBundle.article_title}" />
 		<aon:inputText id="ArticleDetail_title"
 			required="true" size="80" maxlength="255"
@@ -164,7 +164,7 @@
 			size="64" maxlength="64"
 			value="#{article.toI18n.alt_thumbnail}" />	
 																        	
-		<aon:outputLabel for="Article_position"
+		<aon:outputLabel for="Article_position" styleClass="aon-label-required"
 			value="#{appBundle.article_position}"/>
 		<aon:inputText id="Article_position"
 			required="true" size="10" maxlength="8"

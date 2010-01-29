@@ -84,9 +84,15 @@
 								<aon:outputLabel for="bulletin_publishDate"
 									value="#{appBundle.bulletin_publishDate}" />
 								<aon:selectInputDate id="bulletin_publishDate" 
-									value="#{bulletin.to.publish_date}" required="true"
-									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}"/>
+									required="true"
+									 style="z-index:2001;margin:0;vertical-align:middle;"
+									 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+									 value="#{bulletin.to.publish_date}" renderAsPopup="true"
+									 enableManualInput="true"
+									 popupDateFormat="#{bundle.aon_date_pattern}">
+									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:selectInputDate>	
 								
 								<aon:outputLabel for="title"
 									value="#{appBundle.bulletin_title}" />
@@ -108,17 +114,27 @@
 
 							<aon:outputLabel for="BulletinArticle_publishDate"
 								value="#{appBundle.article_publishDate}" />
-							<aon:selectInputDate id="BulletinArticle_publishDate" 
-								value="#{bulletin.publishDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>								
+							<aon:selectInputDate id="BulletinArticle_publishDate"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 value="#{bulletin.publishDate}" renderAsPopup="true"
+								 enableManualInput="true"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
 							
 							<aon:outputLabel for="BulletinArticle_expireDate"
 								value="#{appBundle.article_expireDate}" />
 							<aon:selectInputDate id="BulletinArticle_expireDate" 
-								value="#{bulletin.expireDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 value="#{bulletin.expireDate}" renderAsPopup="true"
+								 enableManualInput="true"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
 
 							<aon:commandButton id="reset_articles" 
 								value="#{appBundle.bulletin_refresh_articles}"
@@ -185,7 +201,8 @@
 											<aon:outputText value="#{appBundle.bulletin_article_article}"/>
 										</f:facet>
 										<aon:outputText value="#{to.article.alias}"
-											rendered="#{to!=bulletin_article.to}" >
+											rendered="#{to!=bulletin_article.to}" 
+											styleClass="aon-editDataTable-button">
 											<a4j:support 
 												reRender="gridDataTable,gridToolbar"
 												actionListener="#{bulletin_article.onSelect}"
@@ -216,7 +233,8 @@
 											<aon:outputText for="position" value="#{appBundle.bulletin_article_position}" />
 										</f:facet>
 										<aon:outputText value="#{to.position}"
-											rendered="#{to!=bulletin_article.to}">
+											rendered="#{to!=bulletin_article.to}" 
+											styleClass="aon-editDataTable-button">
 											<a4j:support 
 												reRender="gridDataTable,gridToolbar"
 												actionListener="#{bulletin_article.onSelect}"

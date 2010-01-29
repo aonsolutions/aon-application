@@ -153,7 +153,7 @@ public abstract class GalleryController extends BasicController implements IGall
 	}
 	
 	public String getPreviewCurrentUrl() {
-		String url = ControllerUtil.getPreviewURL() + ControllerUtil.IMAGES_PATH + getCurrentRelativePath();
+		String url = ControllerUtil.getPreviewURL() + "/" + ControllerUtil.IMAGES_PATH + getCurrentRelativePath();
 		return url;
 	}
 	

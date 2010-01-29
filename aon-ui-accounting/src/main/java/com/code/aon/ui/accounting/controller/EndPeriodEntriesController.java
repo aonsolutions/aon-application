@@ -19,7 +19,6 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -138,7 +137,7 @@ public class EndPeriodEntriesController {
 					throw new AbortProcessingException(msg);
 				}
 			} else if (accountEntryType == AccountEntryType.OPERATING) {
-				// Si no existe asiento de apertura y el ejercicio no es el primero cerrado,
+				// Si no existe asiento de apertura y el ejercicio no es el primero,
 				// se lanza el error.
 				if (!util.existsEntry(getPeriod(), AccountEntryType.OPENING, getSecurityLevel())) {
 					IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -146,8 +145,6 @@ public class EndPeriodEntriesController {
 					c.addLessThanExpression(periodBean
 							.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), getPeriod()
 							.getInitiationDate());
-					c.addEqualExpression(periodBean
-							.getFieldName(IAccountingAlias.PERIOD_STATUS), AccountPeriodStatus.CLOSED);
 					if (periodBean.getList(c).size() > 0) {
 						String msg = "No existe el asiento de apertura en el ejercicio "
 								+ getPeriod().getId() + ".";
@@ -240,11 +237,6 @@ public class EndPeriodEntriesController {
 						entryDetailBean.insert(detail);
 					}
 				}
-				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-				getPeriod().setStatus(AccountPeriodStatus.OPENING);
-				setPeriod( (Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
-				setPeriod( (Period) periodBean.update( getPeriod() ) );
-				
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
@@ -292,12 +284,6 @@ public class EndPeriodEntriesController {
 				this.navigationKey = "accountEntry_form";
 				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.CLOSING);
 				AccountEntry entry = saveClosingEntry(list);
-
-				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-				getPeriod().setStatus(AccountPeriodStatus.CLOSED);
-				setPeriod( (Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
-				setPeriod( (Period) periodBean.update( getPeriod() ) );
-
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
@@ -369,12 +355,6 @@ public class EndPeriodEntriesController {
 				this.navigationKey = "accountEntry_form";
 				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.OPERATING);
 				AccountEntry entry = saveOperatingEntry(list);
-				
-				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-				getPeriod().setStatus(AccountPeriodStatus.OPERATING);
-				setPeriod( (Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
-				setPeriod( (Period) periodBean.update( getPeriod() ) );
-
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();

@@ -42,7 +42,6 @@ import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
@@ -59,7 +58,7 @@ public class SalesController extends BasicController {
 	private List<SelectItem> addresses;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
-	private RegistryValidationManager vm;
+	private CustomerValidationManager cvm;
 	private boolean showDeliveryWindow;
 	private String deliverySeries;
 	private int deliveryNumber;
@@ -97,11 +96,11 @@ public class SalesController extends BasicController {
 		return priceStrategy;
 	}
 
-	private RegistryValidationManager getRegistryValidationManager() {
-		if (vm == null) {
-			vm = new CustomerValidationManager(); 
+	private CustomerValidationManager getCustomerValidationManager() {
+		if (cvm == null) {
+			cvm = new CustomerValidationManager(); 
 		}
-		return vm;
+		return cvm;
 	}
 	
 	public boolean isShowDeliveryWindow() {
@@ -234,7 +233,7 @@ public class SalesController extends BasicController {
 	}
 
 	private boolean isBlocked(Customer customer) {
-		return getRegistryValidationManager().isBlocked(customer);
+		return getCustomerValidationManager().isBlocked(customer);
 	}
 
 	@SuppressWarnings("unchecked")

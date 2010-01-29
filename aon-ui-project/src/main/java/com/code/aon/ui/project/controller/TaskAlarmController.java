@@ -4,9 +4,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -29,7 +31,7 @@ import com.code.aon.ui.groupware.controller.AlarmController;
 
 public class TaskAlarmController extends AlarmController {
 	
-	private static final Logger LOGGER = Logger.getLogger(TaskAlarmController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TaskAlarmController.class);
 	
 	private static final String TASK_CONTROLLER_NAME = "task";
 	
@@ -46,11 +48,11 @@ public class TaskAlarmController extends AlarmController {
 		    ((PageDataModel)model).resize(list.size());
 			controllerListenerSupport.fireAfterModelInitialized(evt);
 		} catch (ControllerListenerException e) {
-			LOGGER.severe(">>>> initializeModel " + e.getMessage());
+			LOGGER.error(">>>> initializeModel " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
-			LOGGER.severe(">>>> initializeModel " + e.getMessage());
+			LOGGER.error(">>>> initializeModel " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);
 		}	

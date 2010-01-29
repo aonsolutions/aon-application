@@ -12,58 +12,73 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="menuList">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.menu}" />
-				<ui:param name="controller" value="#{menu}" />
-				<ui:param name="skipSearchButton" value="#{true}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="home"
-						value="#{bundle.aon_home}"
-						action="home" 
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>				
-				</ui:define>
-			</ui:decorate>
-
+		<aon:form id="list">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.menu}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="menu_form"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{menu.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="parentGrid" columns="3" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 				
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_editing}:" />
+						<aon:outputText
+							value="#{appBundle.aon_editing}:" />
 					</aon:div>					
 						
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{menu.currentType.name}" />
+						<aon:outputText
+							value="#{menu.currentType.name}" />
 					</aon:div>					
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="tab_0" 
 							value="#{appBundle.menu_sidebar}"
-							disabled="#{menu.currentType == 'SIDEBAR'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab0}" />
 						<aon:commandButton id="tab_1" 
 							value="#{appBundle.menu_top}"
-							disabled="#{menu.currentType == 'TOP'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab1}" />
 						<aon:commandButton id="tab_2" 
 							value="#{appBundle.menu_foot}"
-							disabled="#{menu.currentType == 'FOOT'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab2}" />
 						<aon:commandButton id="tab_3" 
 							value="#{appBundle.menu_inner}"
-							disabled="#{menu.currentType == 'INNER'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab3}" />
@@ -89,7 +104,8 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" />
+						<aon:outputText value="#{to.alias}"  
+							styleClass="aon-editDataTable-button"/>
 					</aon:column>
 					
 					<aon:column>

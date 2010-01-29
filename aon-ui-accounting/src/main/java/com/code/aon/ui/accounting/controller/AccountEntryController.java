@@ -48,8 +48,6 @@ public class AccountEntryController extends BasicController {
 			controllerManager.register(AccountEntryType.SALARY, "salaryEntry");
 			// Wizard de Gastos Seguridad Social.
 			controllerManager.register(AccountEntryType.SOCIAL_INSURANCE, "socialInsuranceEntry");
-			// Wizard de Ajustes Seguridad Social.
-			controllerManager.register(AccountEntryType.SOCIAL_INSURANCE_ADJUST, "socialInsuranceEntry");
 			// Wizard de Creación de préstamos.
 			controllerManager.register(AccountEntryType.LOAN, "loanEntry");
 			// Wizard de Cuotas de préstamos.			
@@ -100,17 +98,13 @@ public class AccountEntryController extends BasicController {
         }
     }
 
-    public void onSelectEntry(ActionEvent event)  {
-    	try {
-    		AccountEntry entry = (AccountEntry)this.getModel().getRowData();
-    		this.setTo(entry);
+    public void onSelectEntry(ActionEvent event) throws ManagerBeanException {
+		AccountEntry entry = (AccountEntry)this.getModel().getRowData();
+		this.setTo(entry);
 		
-    		ISpecialAccountEntry c = getControllerManager().getSpecialEntryController(entry.getType());
-    		c.loadEntry(entry);
-    	} catch (ManagerBeanException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e.getMessage(),e);
-    	}
+		ISpecialAccountEntry c = getControllerManager().getSpecialEntryController(entry.getType());
+		c.loadEntry(entry);
+		
 	}
 	
 	public String getBackAction() {

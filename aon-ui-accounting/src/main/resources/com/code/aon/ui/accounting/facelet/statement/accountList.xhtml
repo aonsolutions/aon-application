@@ -18,13 +18,6 @@
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
-
-					<aon:commandButton id="update" value="#{accountingBundle.accounting_refresh}"
-						accesskey="Q" title="#{accountingBundle.accounting_refresh}"
-						actionListener="#{trialBalance.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-refresh"
-						immediate="true" />
-
 					<aon:commandButton id="trialBalance-back"
 						value="#{bundle.aon_back}"
 						rendered="#{trialBalance.backAction != null}" immediate="true"

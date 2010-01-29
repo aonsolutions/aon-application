@@ -80,7 +80,6 @@
 		<mapping class="com.code.aon.cms.Company"/>
 		<mapping class="com.code.aon.cms.Activity"/>
 		<mapping class="com.code.aon.cms.ActivityDetail"/>
-		<mapping class="com.code.aon.cms.ActivityConfig"/>
 		<mapping class="com.code.aon.cms.CompanyActivity"/>
 		<mapping class="com.code.aon.cms.Bulletin"/>
 		<mapping class="com.code.aon.cms.BulletinDetail"/>

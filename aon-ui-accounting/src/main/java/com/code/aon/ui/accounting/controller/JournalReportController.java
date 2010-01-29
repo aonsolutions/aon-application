@@ -13,12 +13,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class JournalReportController extends BasicController {
-
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private Period period;
 	private Date fromDate;
@@ -173,26 +170,6 @@ public class JournalReportController extends BasicController {
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
-		}
-	}
-
-	public void onAccountEntry(ActionEvent event) {
-		try {
-			AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
-			AccountEntryController entryController = (AccountEntryController) FormUtil
-					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountingAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
-			entryController.setCriteria(criteria);
-			entryController.onSearch(null);
-			entryController.getModel().setRowIndex(0);
-			entryController.onSelect(null);
-			entryController.setBackAction("journal_list");
-		} catch (ManagerBeanException e) {
-			String msg = "Error al cargar el apunte.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
 		}
 	}
 }
