@@ -41,8 +41,8 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	
 	private IInvoicingDAO invoicingDAO;
-	
 	private IInvoicingFeedBack invoicingFeedBack;
+	private int detailLine = 0;
 	
 	public IInvoicingDAO getInvoicingDAO() {
 		return invoicingDAO;
@@ -92,6 +92,14 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_REGISTRY_ADDRESS_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAY_METHOD_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK_ACCOUNT));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER_OF_PAYMENTS));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_DAYS_TO_FIRST_PAYMENT));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_DAYS_BETWEEN_PAYMENTS));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAYMENT_DAYS));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
@@ -227,7 +235,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		int i = 0;
 		while(iter.hasNext()){
 			Delivery delivery = (Delivery)iter.next();
-			counter = calculateNextNumber(counter, params.getInvoiceSeries());
+			counter = calculateNextNumber(params.getInvoiceSeries(), counter);
 
 			InvoicingGroup group = getInvoicingGroup(delivery.getCustomer().getRegistry());
 			if (group != null) {
@@ -243,6 +251,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 					}
 					invoice = createInvoice(delivery, counter, params);
 					counter++;
+					detailLine = 0;
 					customerDeliveryList = new LinkedList();
 					getInvoicingDAO().insertInvoice(invoice);
 					getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
@@ -266,10 +275,9 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		getInvoicingFeedBack().setCurrentRow(size);
 	}
 
-	@SuppressWarnings("unchecked")
-	private int calculateNextNumber(int counter, Series series) throws ManagerBeanException {
+	private int calculateNextNumber(Series series, int number) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		counter = (counter == 0 ? 1 : counter);
+		number = (number == 0 ? 1 : number);
 		while (true) {
 			Criteria criteria = new Criteria();
 			if (series == null) {
@@ -277,15 +285,14 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			} else {
 				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series.getId());
 			}
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), new Integer(counter));
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), number);
 			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
-			Iterator iterator = invoiceBean.getList(criteria).iterator();
-			if (!iterator.hasNext()) {
+			if (invoiceBean.getCount(criteria) == 0) {
 				break;
 			}
-			counter++;
+			number++;
 		}
-		return counter;
+		return number;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -312,7 +319,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			List customerDeliveryList = new LinkedList();
 			while (deliveryIter.hasNext()) {
 				Delivery delivery = (Delivery)deliveryIter.next();
-				counter = calculateNextNumber(counter, params.getInvoiceSeries());
+				counter = calculateNextNumber(params.getInvoiceSeries(), counter);
 				if (!isDeliveryGrouped(delivery, previousDelivery) || !delivery.getCustomer().isDeliveryGrouped()) {
 					// Se crea finance asociado al invoice anterior, que ya no tiene más detalles
 					if (invoice != null) {
@@ -321,6 +328,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 					}
 					invoice = createInvoice(group, delivery, counter, params);
 					counter++;
+					detailLine = 0;
 					customerDeliveryList = new LinkedList();
 					getInvoicingDAO().insertInvoice(invoice);
 					getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
@@ -404,7 +412,6 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		invoice.setSecurityLevel(params.getSecurityLevel());
 		return invoice;
 	}
-	
 
 	public void invoiceDeliveryList(Invoice invoice, List<Delivery> deliveryList) throws ManagerBeanException {
 		for (Delivery delivery : deliveryList) {
@@ -414,8 +421,6 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	}
 
 	private void createInvoiceDetails(Invoice invoice, Delivery delivery) throws ManagerBeanException {
-		int line = calculateMaxLine(invoice);
-
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
@@ -425,7 +430,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
-			invoiceDetail.setLine(++line);
+			invoiceDetail.setLine(++detailLine);
 			invoiceDetail.setItem(deliveryDetail.getItem());
 			invoiceDetail.setDescription(deliveryDetail.getDescription());
 			invoiceDetail.setQuantity(deliveryDetail.getQuantity());
@@ -437,15 +442,6 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 		}
-	}
-
-	private	Integer calculateMaxLine(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Projection projection = Projection.max(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
-		Object value = invoiceDetailBean.getUniqueResult(projection, criteria);
-		return (value != null) ? ((Integer)value) : 0;
 	}
 
 }
