@@ -29,7 +29,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.7.0</value>
+			<value>/aonResource/3.11.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -65,8 +65,8 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>menu_products</from-outcome>
-			<to-view-id>/facelet/menu/products.xhtml</to-view-id> 
+			<from-outcome>menu_product</from-outcome>
+			<to-view-id>/facelet/menu/product.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_commercial</from-outcome>
@@ -77,8 +77,8 @@
 			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_purchases</from-outcome>
-			<to-view-id>/facelet/menu/purchases.xhtml</to-view-id> 
+			<from-outcome>menu_purchase</from-outcome>
+			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_treasury</from-outcome>
@@ -104,9 +104,7 @@
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.accounting -->
 			<value>#{accountControllerListener}</value>
 			<!--  aon.ui.account.bridge -->
@@ -132,9 +130,7 @@
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.finance -->
 			<value>#{customerFeeChildListener}</value>
 			<!--  aon.ui.account.bridge -->
@@ -148,9 +144,7 @@
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.account.bridge -->
 			<value>#{productAccountListener}</value>
 		</list-entries>
@@ -174,9 +168,7 @@
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.account.bridge -->
 			<value>#{taxAccountListener}</value>
 		</list-entries>
@@ -188,11 +180,33 @@
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.company -->
 			<value>#{companyCertificateChildListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ SALE INVOICE DETAIL LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceDetailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.finance -->
+			<value>#{invoiceDetailDirectListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<!-- ************ PURCHASE INVOICE DETAIL LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceDetailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.finance -->
+			<value>#{invoiceDetailDirectListener}</value>
 		</list-entries>
 	</managed-bean>
 

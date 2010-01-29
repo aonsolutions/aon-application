@@ -30,7 +30,7 @@
 	<aon:outputLabel for="Customer_scope_id" value="#{bundle.aon_scope}" />
 	<aon:selectOneMenu id="Customer_scope_id"
 		value="#{controller.to.scope}">
-		<f:selectItems value="#{configCollections.scopes}" />
+		<f:selectItems value="#{configCollections.currentUserScopes}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
@@ -56,13 +56,6 @@
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{customerCollections.customerSegments}" />
 		</aon:selectOneMenu>
-	</c:if>
-
-	<c:if test="#{company.EInvoice}">
-		<aon:outputLabel for="Customer_eInvoice"
-			value="#{customerBundle.customer_receive_eInvoice}" />
-		<aon:selectBooleanCheckbox id="Customer_eInvoice"
-			value="#{controller.to.EInvoice}" />
 	</c:if>
 
 </ui:composition>

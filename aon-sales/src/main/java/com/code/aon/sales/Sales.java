@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,9 +16,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.BeanManager;
@@ -27,7 +31,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -40,22 +49,27 @@ import com.code.aon.seller.Seller;
 
 /**
  * Transfer Object that represents a Sale.
- * 
- * @author jurkiri
  */
 @Entity
 @Table(name="sales")
-public class Sales implements ITransferObject, IHeaderObject, ICalculableContainer {
-	
-	/** The Constant LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(Sales.class.getName());
+public class Sales implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
 	private static final long serialVersionUID = 2635528648512356470L;
 
+	/** The Constant LOGGER. */
+	private static final Logger LOGGER = Logger.getLogger(Sales.class.getName());
+	
+	/**
+	 * The Constructor. Sets TODAY to issueDate
+	 */
+	public Sales() {
+		this.issueDate = new Date();
+	}
+	
 	/** The id. */
     private Integer id;
 
-    /** The serie. */
+    /** The series. */
     private String series;
 
     /** The number. */
@@ -79,26 +93,43 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
     /** The pay method. */
     private PayMethod payMethod;
     
-    /** The document type. */
-    private DocumentType documentType;
-    
     /** The security level. */
     private SecurityLevel securityLevel;
 
     /** The status. */
     private SalesStatus status;
     
+    /** The document type. */
+    private DocumentType documentType;
+    
+    /** The workplace. */
+	private WorkPlace workPlace;
+
+    /** The scope. */
+	private Scope scope;
+
+    /** The number of payments. */
+    private int numberOfPayments;
+
+    /** The days to first payment. */
+    private int daysToFirstPayment;
+
+    /** The days between payments. */
+    private int daysBetweenPayments;
+
+    /** The payment days. */
+    private String paymentDays;
+
+    private int[] paymentDaysArray;
+
+	/** The bank. */
+	private Bank bank;
+	
+	/** The bank account. */
+	private BankAccount bankAccount;
+	
 	/** The detail of this sale. */
 	private Set<SalesDetail> lines = new HashSet<SalesDetail>();
-
-	private WorkPlace workPlace;
-	
-	/**
-	 * The Constructor. Sets TODAY to issueDate
-	 */
-	public Sales() {
-		this.issueDate = new Date();
-	}
 	
 	/**
 	 * Gets the id.
@@ -107,7 +138,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	 */
 	@Id
 	@GeneratedValue
-	@Column(nullable=false)
+	@Column(nullable = false)
     public Integer getId() {
 		return id;
 	}
@@ -115,16 +146,16 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	/**
 	 * Sets the id.
 	 * 
-	 * @param id the id to set
+	 * @param id the id
 	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
 	/**
-	 * Gets the series.
+	 * Gets the serie.
 	 * 
-	 * @return the series
+	 * @return the serie
 	 */
 	@Column(length=5)
 	public String getSeries() {
@@ -145,7 +176,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	 * 
 	 * @return the number
 	 */
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public int getNumber() {
 		return number;
 	}
@@ -159,13 +190,22 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		this.number = number;
 	}
 
+    @Transient
+    public String getReferenceCode() {
+    	String referenceCode = "" + getNumber();
+		if (!StringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
+
 	/**
 	 * Gets the customer.
 	 * 
 	 * @return the customer
 	 */
 	@ManyToOne
-	@JoinColumn( name="customer", nullable = false)
+	@JoinColumn( name="customer", nullable = false )
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -279,25 +319,6 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	/**
-	 * Gets the document type.
-	 * 
-	 * @return the document type
-	 */
-	@Column(name="document_type")
-	public DocumentType getDocumentType() {
-		return documentType;
-	}
-
-	/**
-	 * Sets the document type.
-	 * 
-	 * @param documentType the document type
-	 */
-	public void setDocumentType(DocumentType documentType) {
-		this.documentType = documentType;
-	}
-
-	/**
 	 * Gets the security level.
 	 * 
 	 * @return the security level
@@ -334,14 +355,193 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		this.status = status;
 	}
 
+	/**
+	 * Gets the document type.
+	 * 
+	 * @return the document type
+	 */
+	@Column(name="document_type")
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
+
+	/**
+	 * Sets the document type.
+	 * 
+	 * @param documentType the document type
+	 */
+	public void setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+	}
+
+	/**
+	 * Gets the workplace.
+	 * 
+	 * @return the workplace
+	 */
     @ManyToOne
     @JoinColumn(name="workplace", nullable = false)
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
 
+	/**
+	 * Sets the workplace.
+	 * 
+	 * @param workplace the workplace
+	 */
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
+	}
+
+	/**
+	 * Gets the scope.
+	 * 
+	 * @return the scope
+	 */
+    @ManyToOne
+    @JoinColumn(name="scope", nullable = false)
+	public Scope getScope() {
+		return scope;
+	}
+
+	/**
+	 * Sets the scope.
+	 * 
+	 * @param scope the scope
+	 */
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+	
+    /**
+     * Gets the number of payments.
+     * 
+     * @return the number of payments
+     */
+    @Column(name = "number_of_pymnts")
+    public int getNumberOfPayments() {
+        return numberOfPayments;
+    }
+
+    /**
+     * Sets the number of payments.
+     * 
+     * @param numberOfPayments the number of payments
+     */
+    public void setNumberOfPayments(int numberOfPayments) {
+        this.numberOfPayments = numberOfPayments;
+    }
+    
+    /**
+     * Gets the days to first payment.
+     * 
+     * @return the days to first payment
+     */
+    @Column(name = "days_to_first_pymnt")
+    public int getDaysToFirstPayment() {
+        return daysToFirstPayment;
+    }
+
+    /**
+     * Sets the days to first payment.
+     * 
+     * @param daysToFirstPayment the days to first payment
+     */
+    public void setDaysToFirstPayment(int daysToFirstPayment) {
+        this.daysToFirstPayment = daysToFirstPayment;
+    }
+
+    /**
+     * Gets the days between payments.
+     * 
+     * @return the days between payments
+     */
+    @Column(name = "days_between_pymnts")
+    public int getDaysBetweenPayments() {
+        return daysBetweenPayments;
+    }
+
+    /**
+     * Sets the days between payments.
+     * 
+     * @param daysBetweenPayment the days between payments
+     */
+    public void setDaysBetweenPayments(int daysBetweenPayment) {
+        this.daysBetweenPayments = daysBetweenPayment;
+    }
+
+    /**
+     * Gets the payment days.
+     * 
+     * @return the payment days
+     */
+    @Column(name="pymnt_days", length=8)
+    public String getPaymentDays() {
+        return paymentDays;
+    }
+    
+    /** The DELIM. */
+    private final String DELIM = " ";
+    
+    /**
+     * Sets the payment days.
+     * 
+     * @param paymentDays the payment days
+     */
+    public void setPaymentDays(String paymentDays) {
+        this.paymentDays = paymentDays;
+        StringTokenizer strTknzr = new StringTokenizer(this.paymentDays,DELIM);
+    	int[] values = new int[strTknzr.countTokens()];
+    	for (int i = 0; i < values.length; i++){
+    		values[i] = Integer.parseInt(strTknzr.nextToken());
+    	}    	
+        this.paymentDaysArray = values;
+    }
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
+
+	/**
+	 * Gets the bank.
+	 * 
+	 * @return the bank
+	 */
+	@ManyToOne
+    @JoinColumn(name="bank")
+	public Bank getBank() {
+		return bank;
+	}
+
+	/**
+	 * Sets the bank.
+	 * 
+	 * @param bank the bank
+	 */
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
+	/**
+	 * Gets the bank account.
+	 * 
+	 * @return the bank account
+	 */
+	@Column(name="bank_account", length=30)
+	@Type(type="com.code.aon.config.hibernate.BankAccountType")
+	public BankAccount getBankAccount() {
+		return bankAccount;
+	}
+
+	/**
+	 * Sets the bank account.
+	 * 
+	 * @param bankAccount the bank account
+	 */
+	public void setBankAccount(BankAccount bankAccount) {
+		this.bankAccount = bankAccount;
 	}
 
 	/**
@@ -350,6 +550,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	 * @return the lines
 	 */
 	@OneToMany(mappedBy = "sales", cascade={CascadeType.REMOVE})
+	@OrderBy("line")
 	public Set<SalesDetail> getLines() {
 		return this.lines;
 	}
@@ -374,6 +575,16 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	/**
+	 * Gets the payMethod. Necessary to implement <code>IPayMethod</code>
+	 * 
+	 * @return the payMethod
+	 */
+	@Transient
+	public PayMethod getPayment() {
+		return payMethod;
+	}
+
+	/**
 	 * Gets the detail list. Used in the reports
 	 * 
 	 * @return the detail list
@@ -392,4 +603,26 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		return null;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Sales) {
+			Sales s = (Sales) obj;
+			if (s.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), s.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

@@ -8,24 +8,23 @@ import com.code.aon.common.enumeration.IResourceable;
 /**
  * Enummeration to identify the different status of a SalesDetail.
  * 
- * @author jurkiri
  */
 public enum SalesDetailStatus implements IResourceable {
 
 	/** PENDING. */
 	PENDING,
     
+	/** PARTIAL_SETTLED. */
+	PARTIAL_SETTLED,
+
 	/** SETTLED. */
-	SETTLED,
-    
-	/** CLOSED. */
-	CLOSED;
+	SETTLED;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.sales.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_salesstatus_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_sales_detail_status_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -39,4 +38,5 @@ public enum SalesDetailStatus implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+
 }

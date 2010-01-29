@@ -7,9 +7,9 @@
 	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
 		<aon:form>
 			<aon:menuBar id="mainMenu">
-				<aon:commandLink id="products"
-					value="#{appBundle.menu_products}"
-					action="menu_products" immediate="true"
+				<aon:commandLink id="product"
+					value="#{appBundle.menu_product}"
+					action="menu_product" immediate="true"
 					styleClass="aon-top-menu-item" />
 				<aon:commandLink id="commercial"
 					value="#{appBundle.menu_commercial}"
@@ -20,8 +20,8 @@
 					action="menu_sales" immediate="true"
 					styleClass="aon-top-menu-item" />
 				<aon:commandLink id="purchase"
-					value="#{appBundle.menu_purchases}"
-					action="menu_purchases" immediate="true"
+					value="#{appBundle.menu_purchase}"
+					action="menu_purchase" immediate="true"
 					styleClass="aon-top-menu-item" />
 				<aon:commandLink id="treasury"
 					value="#{financeBundle.finance_menu_group}"

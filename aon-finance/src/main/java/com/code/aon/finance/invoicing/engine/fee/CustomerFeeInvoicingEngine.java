@@ -74,10 +74,13 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Expression dateExpression = createFromToExpression(params.getMonth(), params.getYear());
 		criteria.addExpression(dateExpression);
 		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		if (params.getItem() != null && params.getItem().getId() != null) {
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
+		}
 		if (params.getSecurityLevel() != null) {
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_SECURITY_LEVEL), params.getSecurityLevel());
 		}
-		if (params.getWorkPlace() != null) {
+		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
@@ -361,6 +364,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoiceDetail.setPrice(CommonUtil.round(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params), 2));
 		invoiceDetail.setQuantity(customerFee.getQuantity());
 		invoiceDetail.setSource(InvoiceSource.FEE);
+		invoiceDetail.setSourceId((customerFee.getBillingDateYear() * 100) + customerFee.getBillingDateMonth().ordinal() + 1);
 		invoiceDetail.setTaxes(0.0);
 		invoiceDetail.setWorkPlace(customerFee.getWorkPlace());
 		return invoiceDetail;

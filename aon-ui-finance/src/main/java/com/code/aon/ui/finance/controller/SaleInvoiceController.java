@@ -44,6 +44,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Finance;
@@ -60,7 +61,6 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -195,20 +195,9 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	}
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		Criteria criteria = new Criteria();
-		if (StringUtils.isEmpty(seriesId)) {
-			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
-		} else {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
-		}
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
-		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
-		Object value = invoiceBean.getUniqueResult(projection, criteria);
-		if (value != null) {
-			return ((Integer) value).intValue() + 1;
-		}
-		return 1;
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+    	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -245,7 +234,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
 	
-	public double getInvoiceTotalPrice() throws ManagerBeanException{
+	public double getInvoiceTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice)this.getModel().getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
@@ -367,7 +356,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	}
 
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
-		if (getToInvoiceTotalPrice() != getToInvoiceFinanceTotal()) {
+		if (getToInvoiceFinanceTotal() != 0 && getToInvoiceTotalPrice() != getToInvoiceFinanceTotal()) {
 			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}

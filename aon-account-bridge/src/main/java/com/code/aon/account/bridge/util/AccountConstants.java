@@ -17,7 +17,7 @@ public class AccountConstants {
 
 	public static final String FIXED_ASSETS_PREFIX = "21";
 	
-	public static final String LONG_TERM_LOAN_ACCOUNT_PREFIX = "1700";
+	//public static final String LONG_TERM_LOAN_ACCOUNT_PREFIX = "1700";
 	
 	public static final String SHORT_TERM_LOAN_ACCOUNT_PREFIX = "5200";
 
@@ -34,7 +34,7 @@ public class AccountConstants {
 			systemAccounts.add(SUPPLIER_ACCOUNT_PREFIX);
 			systemAccounts.add(CREDITOR_ACCOUNT_PREFIX);
 			systemAccounts.add(FIXED_ASSETS_PREFIX);
-			systemAccounts.add(LONG_TERM_LOAN_ACCOUNT_PREFIX);
+			//systemAccounts.add(LONG_TERM_LOAN_ACCOUNT_PREFIX);
 			systemAccounts.add(SHORT_TERM_LOAN_ACCOUNT_PREFIX);
 			systemAccounts.add(LEASING_ACCOUNT_PREFIX);
 		}

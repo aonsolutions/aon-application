@@ -7,27 +7,13 @@ import com.code.aon.common.enumeration.IResourceable;
 
 /**
  * Enummeration to identify the different types of document.
- * 
- * @author jurkiri
- *  
  */
-
 public enum DocumentType implements IResourceable {
 
-    /**
-     * UNKNOWN
-     */
-    UNKNOWN,
-    
     /**
      * NORMAL
      */
     NORMAL,
-    
-    /**
-     *  PROFORMA
-     */
-    PROFORMA,
     
     /**
      * SAMPLE
@@ -35,10 +21,10 @@ public enum DocumentType implements IResourceable {
     SAMPLE,
     
     /**
-     * Internet
+     * INTERNET
      */
     INTERNET;
-    
+
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.sales.i18n.messages";
 
@@ -57,4 +43,5 @@ public enum DocumentType implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+
 }

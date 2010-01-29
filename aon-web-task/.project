@@ -2,29 +2,7 @@
 <projectDescription>
 	<name>aon-web-task</name>
 	<comment></comment>
-	<projects>
-		<project>aon-campaign</project>
-		<project>aon-ui-groupware</project>
-		<project>aon-project</project>
-		<project>aon-ui-project</project>
-		<project>aon-ui-campaign</project>
-		<project>aon-groupware</project>
-		<project>aon-ui-customer</project>
-		<project>aon-customer</project>
-		<project>aon-product</project>
-		<project>aon-ui-config</project>
-		<project>aon-company</project>
-		<project>aon-ui-product</project>
-		<project>aon-ui-account</project>
-		<project>aon-ui-registry</project>
-		<project>aon-ui-company</project>
-	</projects>
 	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -49,9 +27,8 @@
 	<natures>
 		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
 		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
-		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
 </projectDescription>

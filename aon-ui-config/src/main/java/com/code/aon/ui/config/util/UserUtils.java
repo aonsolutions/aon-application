@@ -4,10 +4,11 @@ import java.security.Principal;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,7 +28,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class UserUtils {
 	
-	private static final Logger LOGGER = Logger.getLogger(UserUtils.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserUtils.class);
 	
 	private AuthPrincipal principal;
 	
@@ -67,7 +68,7 @@ public class UserUtils {
                 return (User) list.get(0);
             }
         } catch (ManagerBeanException e) {
-        	LOGGER.log(Level.SEVERE, "Error obtaining the USER related with the logged user: " + getPrincipal(), e);
+        	LOGGER.error( "Error obtaining the USER related with the logged user: " + getPrincipal(), e);
         }
         return null;		
 	}
@@ -90,7 +91,7 @@ public class UserUtils {
                 expression = ExpressionUtilities.getOrExpression(expression, ExpressionUtilities.getEqualExpression(alias, userWorkGroup.getWorkGroup().getId()));
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error obtaining the employee groups related with the logged in user", e);
+            LOGGER.error( "Error obtaining the employee groups related with the logged in user", e);
         }
         return expression;
     }
@@ -107,7 +108,7 @@ public class UserUtils {
 				scopes.add(((UserScope)iter.next()).getScope());
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error scopes related with the user" + getLoggedUser().getLogin(), e);
+			LOGGER.error( "Error scopes related with the user" + getLoggedUser().getLogin(), e);
 		}
 		return scopes;
 	}

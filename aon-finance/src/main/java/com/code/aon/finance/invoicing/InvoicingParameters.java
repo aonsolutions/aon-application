@@ -7,6 +7,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
+import com.code.aon.product.Item;
 
 public class InvoicingParameters {
 	
@@ -21,6 +22,8 @@ public class InvoicingParameters {
 	private Date invoiceDate;
 	
 	private Customer customer;
+	
+	private Item item;
 	
 	private SecurityLevel securityLevel;
 	
@@ -74,6 +77,14 @@ public class InvoicingParameters {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
 	}
 
 	public SecurityLevel getSecurityLevel() {

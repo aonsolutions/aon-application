@@ -22,8 +22,6 @@
 							styleClass="aon-icon-commandButton" 
 							actionListener="#{company.onLoad}"
 							action="company">
-							<f:setPropertyActionListener value="#{false}" target="#{company.showRegistryBank}" />
-							<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
 						</aon:commandButton> 
 						<aon:commandButton id="companyWebInfo"
 							value="#{infowebBundle.infoweb_data}"
@@ -67,6 +65,7 @@
 							styleClass="aon-icon-commandButton"
 							actionListener="#{companyWebInfo.onInit}" 
 							action="generator">
+							<aon:actionListener method="#{generator.onInit}" />
 						</aon:commandButton> 
 		                <aon:outputText value="#{infowebBundle.infoweb_pages}"/>
 		                <aon:outputText value="#{infowebBundle.infoweb_template}"/>
