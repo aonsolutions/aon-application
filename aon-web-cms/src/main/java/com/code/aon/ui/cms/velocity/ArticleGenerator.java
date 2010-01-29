@@ -45,7 +45,7 @@ public class ArticleGenerator extends Generator {
 				String backURL = getBackURL(article.getArticleType(),article.getArticleCategory());
 				Templates templates = getTemplate(article.getArticleType());
 				VelocityUtil vu = context.initVelocityUtil();
-				changeArticleContext(vu, article.getArticleCategory());
+				chargeArticleContext(vu, article.getArticleCategory());
 				generateArticle(vu, templates, backURL, articleDetail);		
 			}
 		} catch (ManagerBeanException e) {
@@ -53,7 +53,7 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 	
-	private void changeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+	private void chargeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getSection()!=null){
 			context.changeSection(vu, articleCategory.getSection());
 		}else{
@@ -62,7 +62,7 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 
-	private void changeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+	private void chargeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getElementSection()!=null){
 			context.changeSection(vu, articleCategory.getElementSection());
 		}else{
@@ -107,7 +107,17 @@ public class ArticleGenerator extends Generator {
 			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 			
+			Templates templates;
+			
 			Criteria articleCategoryCriteria = new Criteria();
+			Criteria articleCategoryDetailCriteria;
+			Criteria articleCriteria;
+			Criteria articleDetailCriteria;
+			
+			ArticleCategory articleCategory;
+			ArticleCategoryDetail articleCategoryDetail;
+			Article article;
+			ArticleDetail articleDetail;
 			
 			articleCategoryCriteria.addEqualExpression(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
 			if (selectedArticleCategory!=null)
@@ -118,18 +128,18 @@ public class ArticleGenerator extends Generator {
 			for (int j=0; j < articleCategoryList.size(); j++) {
 				VelocityUtil vu = context.initVelocityUtil();
 
-				ArticleCategory articleCategory = (ArticleCategory)articleCategoryList.get(j);
-				Criteria articleCategoryDetailCriteria = new Criteria();
+				articleCategory = (ArticleCategory)articleCategoryList.get(j);
+				articleCategoryDetailCriteria = new Criteria();
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 				if (articleCategoryDetailList.isEmpty()) {
 					logger.warning(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
 				}else{
-					ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
+					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					boolean emptyCategory = true;
-					Templates templates = getTemplate(articleType);
-					Criteria articleCriteria = new Criteria();
+					templates = getTemplate(articleType);
+					articleCriteria = new Criteria();
 					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), articleCategory.getId());
 					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
 					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), articleType);
@@ -143,17 +153,17 @@ public class ArticleGenerator extends Generator {
 					if (!articleList.isEmpty()){
 						emptyCategory = false;
 						String back_url = getBackURL(articleType, articleCategory);
-						changeArticleContext(vu, articleCategory);
+						chargeArticleContext(vu, articleCategory);
 						for (int i=0; i < articleList.size(); i++) {
-							Article article = (Article)articleList.get(i);
-							Criteria articleDetailCriteria = new Criteria();
+							article = (Article)articleList.get(i);
+							articleDetailCriteria = new Criteria();
 							articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
 							articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 							articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 							if (articleDetailList.isEmpty()) {
 								logger.warning(" Articulo " + article.getAlias() + " de la categoria " + articleCategory.getAlias() + " no internacionalizado.");
 							}else{
-								ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
+								articleDetail = (ArticleDetail)articleDetailList.get(0);
 								ArticleHandler ahandler = new ArticleHandler(articleDetail);
 								ahlist.add(ahandler);
 								vu.put(BACK_URL_KEY, back_url);
@@ -164,7 +174,7 @@ public class ArticleGenerator extends Generator {
 								vu.remove(BACK_URL_KEY);
 							}
 						}
-						changeArticleCategoryContext(vu, articleCategory);
+						chargeArticleCategoryContext(vu, articleCategory);
 						
 						ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,articleType,ahlist);
 						vu.put(ARTICLE_CATEGORY_KEY, achandler);
@@ -176,11 +186,9 @@ public class ArticleGenerator extends Generator {
 						achlist.add(achandler);
 					}
 					ahlist = null;
-					/*
 					if (emptyCategory){
 						logger.warning("La categoria de articulos " + articleCategory.getAlias() + " no tiene " + articleType.getName() + ".");
 					}
-					*/
 				}	
 			}
 		} catch (ManagerBeanException e) {
@@ -212,18 +220,21 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 
-	public static Object getArticleHandler(Integer ident, String message) {
+	public static Object getArticleHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Article.class);
-			Article a = (Article) bean.get(ident);
-			if ( a == null ){
-				getLogger().error( message + " REFERENCIA UN ARTICULO ("+ident+") INEXISTENTE");
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ID), ident);
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.isEmpty()){
+				getLogger().warning("ARTICULO "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
 			
+			Article a = (Article)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(ArticleDetail.class);
-				Criteria criteria = new Criteria();
+				criteria = new Criteria();
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
@@ -241,19 +252,29 @@ public class ArticleGenerator extends Generator {
 		return null;
 	}
 
-	public static Object getArticleCategoryHandler(Integer ident, ArticleType type, String message) {
+	public static Object getArticleCategoryHandler(Integer ident, ArticleType type) {
+		List<ITransferObject> l;
+		List<ITransferObject> ld;
+		List<ITransferObject> lc;
+		List<ITransferObject> lcd;
+		Iterator<ITransferObject> iter;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
-			ArticleCategory ac = (ArticleCategory) bean.get(ident);
-			if ( ac == null ){
-				getLogger().error( message + " REFERENCIA UNA CATEGORIA DE ARTICULO ("+ident+") INEXISTENTE");
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ID), ident);
+			ArticleCategory ac = null;
+			lc = bean.getList(criteria);
+			if (lc.isEmpty()){
+				getLogger().warning("CATEGORIA DE ARTICULO "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
+			}else{
+				ac = (ArticleCategory) lc.get(0);
 			}
 			bean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
-			Criteria criteria = new Criteria();
+			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), ident);
-			List<ITransferObject> lcd = (List<ITransferObject>)bean.getList(criteria);
+			lcd = (List<ITransferObject>)bean.getList(criteria);
 			if (lcd.isEmpty()){
 				getLogger().warning(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.");
 				return null;
@@ -270,8 +291,8 @@ public class ArticleGenerator extends Generator {
             criteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
 			criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE),false);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			Iterator<ITransferObject> iter = l.iterator();
+			l = (List<ITransferObject>)bean.getList(criteria);
+			iter = l.iterator();
 			ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 			Article a;
 			while (iter.hasNext()){
@@ -280,7 +301,7 @@ public class ArticleGenerator extends Generator {
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), a.getId());
-				List<ITransferObject> ld = (List<ITransferObject>)bean.getList(criteria);
+				ld = (List<ITransferObject>)bean.getList(criteria);
 				if (ld.isEmpty()){
 					getLogger().warning(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.");
 				}else{
@@ -293,6 +314,11 @@ public class ArticleGenerator extends Generator {
 			return ach;
 		} catch (ManagerBeanException e) {
 			getLogger().error(e.getMessage());
+		} finally {
+			l = null;
+			ld = null;
+			lcd = null;
+			iter = null;
 		}
 		return null;
 	}

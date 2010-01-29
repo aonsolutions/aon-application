@@ -1,11 +1,12 @@
 package com.code.aon.ui.project.controller;
 
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
@@ -14,8 +15,8 @@ import com.code.aon.ui.form.BasicController;
 
 public class TaskMonitorController extends BasicController implements ITaskController {
 
-	private static final Logger LOGGER = Logger.getLogger(TaskMonitorController.class.getName());
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(TaskMonitorController.class);
+	
 	private Customer customer;
 	private Date startDateFrom;
 	private Date startDateTo;
@@ -49,7 +50,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addGreaterThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_START_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM start date expression", e);
+				LOGGER.error("Error adding FROM start date expression", e);
 			}
 		}
 	}
@@ -60,7 +61,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addLessThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_START_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO start date expression", e);
+				LOGGER.error("Error adding TO start date expression", e);
 			}
 		}
 	}
@@ -71,7 +72,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addGreaterThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_END_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM end date expression", e);
+				LOGGER.error("Error adding FROM end date expression", e);
 			}
 		}
 	}
@@ -82,7 +83,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addLessThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_END_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO end date expression", e);
+				LOGGER.error("Error adding TO end date expression", e);
 			}
 		}
 	}
@@ -93,7 +94,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addGreaterThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_DUE_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM due date expression", e);
+				LOGGER.error("Error adding FROM due date expression", e);
 			}
 		}
 	}
@@ -104,7 +105,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addLessThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_DUE_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO due date expression", e);
+				LOGGER.error("Error adding TO due date expression", e);
 			}
 		}
 	}
@@ -115,7 +116,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addEqualExpression(getFieldName(IProjectAlias.TASK_CUSTOMER_ID),
 						new Integer(event.getNewValue().toString()));
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding customer expression", e);
+				LOGGER.error("Error adding customer expression", e);
 			}
 		}
 	}
@@ -126,7 +127,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
             	Customer c = (Customer) event.getNewValue();
                 getCriteria().addEqualExpression(getFieldName(IProjectAlias.TASK_CUSTOMER_ID), new Integer(c.getId().toString()));
             } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding customer expression", e);
+                LOGGER.error("Error adding customer expression", e);
             }
         }
     }
@@ -137,7 +138,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addEqualExpression(getFieldName(IProjectAlias.TASK_STATUS),
 						event.getNewValue());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding status expression", e);
+				LOGGER.error("Error adding status expression", e);
 			}
 		}
 	}
@@ -196,7 +197,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addGreaterThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_START_DATE), getStartDateFrom());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM start date expression", e);
+				LOGGER.error("Error adding FROM start date expression", e);
 			}
 		}
 		if (getStartDateTo() != null) {
@@ -204,7 +205,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addLessThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_START_DATE), getStartDateTo());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO start date expression", e);
+				LOGGER.error("Error adding TO start date expression", e);
 			}
 		}
 		if (getEndDateFrom() != null) {
@@ -212,7 +213,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addGreaterThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_END_DATE), getEndDateFrom());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM end date expression", e);
+				LOGGER.error("Error adding FROM end date expression", e);
 			}
 		}
 		if (getEndDateTo() != null) {
@@ -220,7 +221,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addLessThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_END_DATE), getEndDateTo());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO end date expression", e);
+				LOGGER.error("Error adding TO end date expression", e);
 			}
 		}
 		if (getDueDateFrom() != null) {
@@ -228,7 +229,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addGreaterThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_DUE_DATE), getDueDateFrom());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM due date expression", e);
+				LOGGER.error("Error adding FROM due date expression", e);
 			}
 		}
 		if (getDueDateTo() != null) {
@@ -236,7 +237,7 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 				getCriteria().addLessThanOrEqualExpression(
 						getFieldName(IProjectAlias.TASK_DUE_DATE), getDueDateTo());
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO due date expression", e);
+				LOGGER.error("Error adding TO due date expression", e);
 			}
 		}
 		super.onSearch(event);

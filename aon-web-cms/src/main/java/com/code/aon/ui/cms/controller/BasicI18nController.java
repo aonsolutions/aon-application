@@ -325,7 +325,7 @@ public class BasicI18nController extends BasicController implements I18NControll
 
 	public ITransferObject getModelRowdataI18n() {
 		try {
-			if ( this.model.isRowAvailable() ) {
+			if (this.model.getRowData() != null) {
 				IManagerBean beanI18n = getManagerBeanI18n();
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(beanI18n.getFieldName(language_alias), ControllerUtil.getCurrentLanguage().getId());

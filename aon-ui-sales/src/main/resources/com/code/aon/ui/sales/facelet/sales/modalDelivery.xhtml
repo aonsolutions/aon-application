@@ -67,14 +67,12 @@
 										<aon:outputLabel for="Sales_deliveryNumber"
 											value="#{bundle.aon_number}" />
 										<aon:inputText id="Sales_deliveryNumber"
-											value="#{sales.deliveryNumber}"
-											required="true" size="7" />
+											value="#{sales.deliveryNumber}" size="7" />
 
 										<aon:outputLabel for="Sales_deliveryDate"
 											value="#{bundle.aon_date}" />
 										<aon:selectInputDate id="Sales_deliveryDate" 
 											value="#{sales.deliveryDate}"
-											required="true"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"/>
 

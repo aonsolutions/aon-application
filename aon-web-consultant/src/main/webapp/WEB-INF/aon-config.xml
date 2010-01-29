@@ -37,9 +37,9 @@
 		<supplier:supplier
 			showFinanceData="true" 
 			showAccount="true"
-			showSegment="false"
+			showSegment="true"
 			showTaxInfoData="true"
-			showAddInfo="false"
+			showAddInfo="true"
 		/>
 	</supplier:config>
 
@@ -65,6 +65,7 @@
 			showType="false"
 			showBrand="false"
 			showStock="false"
+			showSuppliers="false"
 			showAccount="true"
 			showAttachment="false"
 			showEcommerceData="false"

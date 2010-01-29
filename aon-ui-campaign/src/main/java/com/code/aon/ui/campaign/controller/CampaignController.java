@@ -2,10 +2,11 @@ package com.code.aon.ui.campaign.controller;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
@@ -26,8 +27,9 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.project.util.CampaignTaskManager;
 
 public class CampaignController extends BasicController {
-
-    private static final Logger LOGGER = Logger.getLogger(CampaignController.class.getName());
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CampaignController.class);
+    
 	private CampaignTaskManager campaignTaskManager;
 	private boolean statusPending = true;
 	private boolean statusInProgress = true;
@@ -102,7 +104,7 @@ public class CampaignController extends BasicController {
 			}
             super.onSearch(null);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error initializing Campaign Model", e);
+            LOGGER.error("Error initializing Campaign Model", e);
         }
     }
 
@@ -155,7 +157,7 @@ public class CampaignController extends BasicController {
             campaignDossierController.setSortColumn(null);
             campaignDossierController.onSearch(null);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error creating campaign dossier in campaign with id=" + campaign.getId(), e);
+            LOGGER.error("Error creating campaign dossier in campaign with id=" + campaign.getId(), e);
         }
     }
 
@@ -178,7 +180,7 @@ public class CampaignController extends BasicController {
                 getCampaignTaskManager().finishCampaignTask(campaignDossier);
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error finishing campaign with id=" + campaign.getId(), e);
+            LOGGER.error("Error finishing campaign with id=" + campaign.getId(), e);
         }
     }
 
@@ -205,7 +207,7 @@ public class CampaignController extends BasicController {
                 getCampaignTaskManager().removeCampaignTask(campaignDossier);
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error removing campaign with id=" + campaign.getId(), e);
+            LOGGER.error("Error removing campaign with id=" + campaign.getId(), e);
         }
     }
 

@@ -6,8 +6,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.IncomeDetail">
-		<alias names="income_id,description,discountExpression,id,item_id,line,price,quantity,purchaseDetail_id,source,type,warehouse_id,item_product_type"/>
-		<hibernate names="income.id,description,discountExpression,id,item.id,line,price,quantity,purchaseDetail.id,source,type,warehouse.id,item.product.type"/>
+		<alias names="description,discountExpression,id,income_id,item_id,price,purchaseDetail_id,quantity,warehouse_id,item_product_type"/>
+		<hibernate names="description,discountExpression,id,income.id,item.id,price,purchaseDetail.id,quantity,warehouse.id,item.product.type"/>
 	</bean>
 
 	<bean class="com.code.aon.warehouse.InventoryDetail">

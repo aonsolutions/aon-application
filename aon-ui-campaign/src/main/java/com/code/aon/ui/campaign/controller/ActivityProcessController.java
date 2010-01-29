@@ -1,9 +1,9 @@
 package com.code.aon.ui.campaign.controller;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.campaign.ActivityProcess;
 import com.code.aon.campaign.dao.ICampaignAlias;
@@ -15,9 +15,9 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 
 public class ActivityProcessController extends BasicController {
-
-    private static final Logger LOGGER = Logger.getLogger(ActivityProcessController.class.getName());
-    
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(ActivityProcessController.class);
+	
     private CampaignDossierExtended cde;
     
     public CampaignDossierExtended getCampaignDossierExtended() {
@@ -45,7 +45,7 @@ public class ActivityProcessController extends BasicController {
             setCriteria(criteria);
             onSearch(null);
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error obtaining campaign tasks", e);
+            LOGGER.error("Error obtaining campaign tasks", e);
         }
     }
 

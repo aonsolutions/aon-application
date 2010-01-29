@@ -5,16 +5,69 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:panelGrid columns="2" dir="true">
+	<ui:include
+		src="/com/code/aon/ui/customer/facelet/customer/formContent.xhtml">
+		<ui:param name="controller" value="#{lookup}" />
+	</ui:include>
 
-		<ui:include src="/com/code/aon/ui/customer/facelet/customer/formContent.xhtml">
-			<ui:param name="controller" value="#{lookup}" />
-		</ui:include>
+	<aon:outputLabel for="Company_address"
+		value="#{registryBundle.registry_address}" />
+	<aon:div>
+		<aon:div>
+			<aon:inputText id="Company_address"
+				value="#{customerLookupListener.mainAddress.address}" size="64"
+				maxlength="128" />
+		</aon:div>
+		<aon:div>
+			<aon:inputText id="Company_address2"
+				value="#{customerLookupListener.mainAddress.address2}" size="64"
+				maxlength="128" />
+		</aon:div>
+		<aon:div>
+			<aon:inputText id="Company_address3"
+				value="#{customerLookupListener.mainAddress.address3}" size="64"
+				maxlength="128" />
+		</aon:div>
+	</aon:div>
+	<aon:outputLabel for="Company_address_city"
+		value="#{registryBundle.registry_city}" />
+	<aon:inputText id="Company_address_city"
+		value="#{customerLookupListener.mainAddress.city}" size="64"
+		maxlength="64" />
 
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{customerLookupListener}"/>
-		</ui:include>
-		
-	</aon:panelGrid>
+	<aon:outputLabel for="Company_address_zip"
+		value="#{registryBundle.registry_zip}" />
+	<aon:inputText id="Company_address_zip"
+		value="#{customerLookupListener.mainAddress.zip}" size="32"
+		maxlength="16" />
+
+	<aon:outputLabel for="Company_address_geozone"
+		value="#{registryBundle.registry_geozone}" />
+	<aon:selectOneMenu id="Company_address_geozone"
+		value="#{customerLookupListener.mainAddress.geozone}">
+		<f:selectItems value="#{geozoneCollections.geoTrees}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Company_telephone"
+		value="#{registryBundle.registry_phone}" />
+	<aon:inputText id="Company_telephone"
+		value="#{customerLookupListener.phone.value}" size="32" maxlength="64" />
+
+	<aon:outputLabel for="Company_fax"
+		value="#{registryBundle.registry_fax}" />
+	<aon:inputText id="Company_fax"
+		value="#{customerLookupListener.fax.value}" size="32" maxlength="64" />
+
+	<aon:outputLabel for="Company_email"
+		value="#{registryBundle.registry_email}" />
+	<aon:inputText id="Company_email"
+		value="#{customerLookupListener.email.value}" size="64" maxlength="64"
+		onblur="toLowerCase(this);" />
+
+	<aon:outputLabel for="Company_web"
+		value="#{registryBundle.registry_web}" />
+	<aon:inputText id="Company_web"
+		value="#{customerLookupListener.web.value}" size="64" maxlength="64"
+		onblur="toLowerCase(this);" />
 
 </ui:composition>

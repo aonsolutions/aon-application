@@ -288,9 +288,9 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 	}
 
 	/**
-	 * Sets the sales detail.
+	 * Sets the offer detail.
 	 * 
-	 * @param salesDetail the sales detail
+	 * @param offerDetail the offer detail
 	 */
 	public void setSalesDetail(SalesDetail salesDetail) {
 		this.salesDetail = salesDetail;

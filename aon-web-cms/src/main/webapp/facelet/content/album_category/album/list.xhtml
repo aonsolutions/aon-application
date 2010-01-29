@@ -12,7 +12,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="albumList">
+		<aon:form id="list">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.album}" />
@@ -26,25 +26,25 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
 					</aon:commandButton>
-					<aon:commandButton id="album_generate" reRender="aonStatus"
+					<aon:commandButton id="generate" reRender="aonStatus"
 						actionListener="#{generator.onGenerateAlbums}"
-						value="#{appBundle.aon_generate}" immediate="true"
+						value="#{appBundle.aon_generate}" 
 						rendered="#{cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">							
 						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							event="onclick" reRender="poll,grid"
 							actionListener="#{generator_status.onActivePoll}"   
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>	
+					<aon:commandButton id="images"
+						value="#{appBundle.albumImage}"
+						action="album_image_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{albumImage.onSearch}" />
 					</aon:commandButton>
-					<aon:commandButton id="create_album" reRender="showAlbumWindow"
-						value="#{appBundle.aon_create_album}"
-						actionListener="#{album.onInitGenerateFromGallery}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset">
-						<f:setPropertyActionListener target="#{album.showAlbumWindow}"
-							value="#{true}" />
-					</aon:commandButton>							
-					<aon:commandButton id="album_categories"
+					<aon:commandButton id="categories"
 						value="#{appBundle.album_category}"
 						action="album_category_list"
 						immediate="#{true}"
@@ -56,12 +56,12 @@
 			</ui:decorate>		
 
 			<!--  aon-region-body -->
-			<aon:div id="dataTableDiv" styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area">
 					
 				<aon:dataTable id="dataTable" rows="#{album.pageLimit}" var="to"  
 					value="#{album.model}" rendered="#{album.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
+							aon-editDataTable-iconColumn">
 							
 					<aon:rowSelector
 						action="album_form" actionListener="#{album.onSelect}" />							
@@ -80,13 +80,6 @@
 						<aon:outputText value="#{album.i18nTitle}" >
 							<aon:abbreviateConverter maxWidth="60" />
 						</aon:outputText>						
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.album_category}" />
-						</f:facet>
-						<aon:outputText value="#{to.albumCategory.alias}" />
 					</aon:column>
 
 					<aon:column>
@@ -124,10 +117,6 @@
 				<aon:dataScroller2 for="dataTable" showNote="true" />					
 
 			</aon:div>
-			<ui:include src="/facelet/content/utils/album_modal.xhtml">
-				<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
-				<ui:param name="reRender" value="dataTableDiv" />
-			</ui:include>			
 		</aon:form>
 
 		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />

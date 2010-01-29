@@ -83,12 +83,12 @@ public class GenericGenerator extends Generator {
 		}
 	}
 
-	public static GenericPageHandler getGenericHandler(Integer ident, String message) {
+	public static Object getGenericHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			GenericPage gp = (GenericPage) bean.get(ident);
 			if ( gp == null ){
-				getLogger().error( message + " REFERENCIA A UNA PAGINA GENERICA ("+ident+") INEXISTENTE");
+				getLogger().warning("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}
 			if (gp.isActive()) {

@@ -91,10 +91,10 @@ public interface IWarehouseAlias {
 	String  DELIVERY_PAYMENT_DAYS = DELIVERY_ENTRY.getAliasNames()[10];
 
 	/** 
-	* Alias value: Delivery_registryAddress_id
-	* Hibernate value: Delivery.registryAddress.id
+	* Alias value: Delivery_raddress_id
+	* Hibernate value: Delivery.raddress.id
 	*/
-	String  DELIVERY_REGISTRY_ADDRESS_ID = DELIVERY_ENTRY.getAliasNames()[11];
+	String  DELIVERY_RADDRESS_ID = DELIVERY_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Delivery_scope_id
@@ -262,106 +262,52 @@ public interface IWarehouseAlias {
 	DAOConstantsEntry INCOME_ENTRY = DAOConstants.getDAOConstant(Income.class);
 
 	/** 
-	* Alias value: Income_bankAccount
-	* Hibernate value: Income.bankAccount
-	*/
-	String  INCOME_BANK_ACCOUNT = INCOME_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Income_bank_id
-	* Hibernate value: Income.bank.id
-	*/
-	String  INCOME_BANK_ID = INCOME_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Income_daysBetweenPayments
-	* Hibernate value: Income.daysBetweenPayments
-	*/
-	String  INCOME_DAYS_BETWEEN_PAYMENTS = INCOME_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Income_daysToFirstPayment
-	* Hibernate value: Income.daysToFirstPayment
-	*/
-	String  INCOME_DAYS_TO_FIRST_PAYMENT = INCOME_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: Income_id
 	* Hibernate value: Income.id
 	*/
-	String  INCOME_ID = INCOME_ENTRY.getAliasNames()[4];
+	String  INCOME_ID = INCOME_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Income_incomeStatus
+	* Hibernate value: Income.incomeStatus
+	*/
+	String  INCOME_INCOME_STATUS = INCOME_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Income_issueTime
 	* Hibernate value: Income.issueTime
 	*/
-	String  INCOME_ISSUE_TIME = INCOME_ENTRY.getAliasNames()[5];
+	String  INCOME_ISSUE_TIME = INCOME_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Income_number
 	* Hibernate value: Income.number
 	*/
-	String  INCOME_NUMBER = INCOME_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: Income_numberOfPayments
-	* Hibernate value: Income.numberOfPayments
-	*/
-	String  INCOME_NUMBER_OF_PAYMENTS = INCOME_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: Income_payMethod_id
-	* Hibernate value: Income.payMethod.id
-	*/
-	String  INCOME_PAY_METHOD_ID = INCOME_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: Income_paymentDays
-	* Hibernate value: Income.paymentDays
-	*/
-	String  INCOME_PAYMENT_DAYS = INCOME_ENTRY.getAliasNames()[9];
+	String  INCOME_NUMBER = INCOME_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Income_registryAddress_id
 	* Hibernate value: Income.registryAddress.id
 	*/
-	String  INCOME_REGISTRY_ADDRESS_ID = INCOME_ENTRY.getAliasNames()[10];
-
-	/** 
-	* Alias value: Income_scope_id
-	* Hibernate value: Income.scope.id
-	*/
-	String  INCOME_SCOPE_ID = INCOME_ENTRY.getAliasNames()[11];
+	String  INCOME_REGISTRY_ADDRESS_ID = INCOME_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Income_securityLevel
 	* Hibernate value: Income.securityLevel
 	*/
-	String  INCOME_SECURITY_LEVEL = INCOME_ENTRY.getAliasNames()[12];
+	String  INCOME_SECURITY_LEVEL = INCOME_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Income_series
 	* Hibernate value: Income.series
 	*/
-	String  INCOME_SERIES = INCOME_ENTRY.getAliasNames()[13];
-
-	/** 
-	* Alias value: Income_status
-	* Hibernate value: Income.status
-	*/
-	String  INCOME_STATUS = INCOME_ENTRY.getAliasNames()[14];
+	String  INCOME_SERIES = INCOME_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Income_supplier_id
 	* Hibernate value: Income.supplier.id
 	*/
-	String  INCOME_SUPPLIER_ID = INCOME_ENTRY.getAliasNames()[15];
-
-	/** 
-	* Alias value: Income_workPlace_id
-	* Hibernate value: Income.workPlace.id
-	*/
-	String  INCOME_WORK_PLACE_ID = INCOME_ENTRY.getAliasNames()[16];
+	String  INCOME_SUPPLIER_ID = INCOME_ENTRY.getAliasNames()[7];
 
 
 
@@ -371,28 +317,28 @@ public interface IWarehouseAlias {
 	DAOConstantsEntry INCOME_DETAIL_ENTRY = DAOConstants.getDAOConstant(IncomeDetail.class);
 
 	/** 
-	* Alias value: IncomeDetail_income_id
-	* Hibernate value: IncomeDetail.income.id
-	*/
-	String  INCOME_DETAIL_INCOME_ID = INCOME_DETAIL_ENTRY.getAliasNames()[0];
-
-	/** 
 	* Alias value: IncomeDetail_description
 	* Hibernate value: IncomeDetail.description
 	*/
-	String  INCOME_DETAIL_DESCRIPTION = INCOME_DETAIL_ENTRY.getAliasNames()[1];
+	String  INCOME_DETAIL_DESCRIPTION = INCOME_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: IncomeDetail_discountExpression
 	* Hibernate value: IncomeDetail.discountExpression
 	*/
-	String  INCOME_DETAIL_DISCOUNT_EXPRESSION = INCOME_DETAIL_ENTRY.getAliasNames()[2];
+	String  INCOME_DETAIL_DISCOUNT_EXPRESSION = INCOME_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: IncomeDetail_id
 	* Hibernate value: IncomeDetail.id
 	*/
-	String  INCOME_DETAIL_ID = INCOME_DETAIL_ENTRY.getAliasNames()[3];
+	String  INCOME_DETAIL_ID = INCOME_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: IncomeDetail_income_id
+	* Hibernate value: IncomeDetail.income.id
+	*/
+	String  INCOME_DETAIL_INCOME_ID = INCOME_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: IncomeDetail_item_id
@@ -401,16 +347,16 @@ public interface IWarehouseAlias {
 	String  INCOME_DETAIL_ITEM_ID = INCOME_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: IncomeDetail_line
-	* Hibernate value: IncomeDetail.line
-	*/
-	String  INCOME_DETAIL_LINE = INCOME_DETAIL_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: IncomeDetail_price
 	* Hibernate value: IncomeDetail.price
 	*/
-	String  INCOME_DETAIL_PRICE = INCOME_DETAIL_ENTRY.getAliasNames()[6];
+	String  INCOME_DETAIL_PRICE = INCOME_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: IncomeDetail_purchaseDetail_id
+	* Hibernate value: IncomeDetail.purchaseDetail.id
+	*/
+	String  INCOME_DETAIL_PURCHASE_DETAIL_ID = INCOME_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: IncomeDetail_quantity
@@ -419,34 +365,16 @@ public interface IWarehouseAlias {
 	String  INCOME_DETAIL_QUANTITY = INCOME_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: IncomeDetail_purchaseDetail_id
-	* Hibernate value: IncomeDetail.purchaseDetail.id
-	*/
-	String  INCOME_DETAIL_PURCHASE_DETAIL_ID = INCOME_DETAIL_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: IncomeDetail_source
-	* Hibernate value: IncomeDetail.source
-	*/
-	String  INCOME_DETAIL_SOURCE = INCOME_DETAIL_ENTRY.getAliasNames()[9];
-
-	/** 
-	* Alias value: IncomeDetail_type
-	* Hibernate value: IncomeDetail.type
-	*/
-	String  INCOME_DETAIL_TYPE = INCOME_DETAIL_ENTRY.getAliasNames()[10];
-
-	/** 
 	* Alias value: IncomeDetail_warehouse_id
 	* Hibernate value: IncomeDetail.warehouse.id
 	*/
-	String  INCOME_DETAIL_WAREHOUSE_ID = INCOME_DETAIL_ENTRY.getAliasNames()[11];
+	String  INCOME_DETAIL_WAREHOUSE_ID = INCOME_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: IncomeDetail_item_product_type
 	* Hibernate value: IncomeDetail.item.product.type
 	*/
-	String  INCOME_DETAIL_ITEM_PRODUCT_TYPE = INCOME_DETAIL_ENTRY.getAliasNames()[12];
+	String  INCOME_DETAIL_ITEM_PRODUCT_TYPE = INCOME_DETAIL_ENTRY.getAliasNames()[9];
 
 
 

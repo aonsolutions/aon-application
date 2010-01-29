@@ -1,6 +1,7 @@
 package com.code.aon.ebackoffice.event;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -12,8 +13,7 @@ import com.code.aon.ebackoffice.enumeration.CatalogueType;
 
 public class EccatalogueBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(EccatalogueBeanVetoListener.class.getName());
+	
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt)

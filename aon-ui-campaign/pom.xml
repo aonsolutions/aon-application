@@ -10,53 +10,38 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.campaign</artifactId>
-	<version>4.3.0-SNAPSHOT</version>
+	<version>4.3.2</version>
 	<description>AON UI CAMPAIGN</description>
 	<name>AON UI CAMPAIGN</name>
 	<dependencies>
-<!-- A BORRAR CUANDO NO SEA SNAPSHOT -->
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.common</artifactId>
-			<version>4.1.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-<!-- FIN BORRAR -->
-		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.campaign</artifactId>
-			<version>4.1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.config</artifactId>
-			<version>4.2.0</version>
+			<version>4.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
-			<version>4.0.2</version>
+			<version>4.0.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.2.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.project</artifactId>
-			<version>4.3.0-SNAPSHOT</version>
+			<version>4.3.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

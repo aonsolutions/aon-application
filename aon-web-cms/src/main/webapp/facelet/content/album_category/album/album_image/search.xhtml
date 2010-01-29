@@ -12,17 +12,50 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="albumImageSearch">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.albumImage}" />
-				<ui:param name="controller" value="#{albumImage}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-			</ui:include>		
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.albumImage}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{albumImage}" />
-				<ui:define name="searchContent">
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="album_image_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{albumImage.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="album_image_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{albumImage.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="album_image_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{albumImage.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="AlbumImage_thumbnail"
 						value="#{appBundle.albumImage_thumbnail}" />
@@ -42,18 +75,9 @@
 					<aon:inputText id="AlbumImage_position" size="10"
 						valueChangeListener="#{albumImage.addExpression}" />
 	
-					<aon:outputLabel for="AlbumImage_active"
-						value="#{appBundle.cms_active}" />
-					<aon:selectOneMenu id="AlbumImage_active"
-						valueChangeListener="#{albumImage.addExpression}">
-						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneMenu>	
-	
-				</ui:define>
-			</ui:decorate>
-						
+				</aon:panelGrid>
+			</aon:div>
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>

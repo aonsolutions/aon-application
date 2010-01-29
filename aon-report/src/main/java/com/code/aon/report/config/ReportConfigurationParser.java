@@ -3,11 +3,11 @@ package com.code.aon.report.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.xmlrules.DigesterLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.util.Classpath;
@@ -83,8 +83,7 @@ public class ReportConfigurationParser {
 	/**
 	 * Gets a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger
-			.getLogger(ReportConfigurationParser.class.getName());
+	private static Logger LOGGER = LoggerFactory.getLogger(ReportConfigurationParser.class);
 
 	/**
 	 * The Digester instance.
@@ -117,7 +116,7 @@ public class ReportConfigurationParser {
 	 */
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
-			LOGGER.info("Reading config from " + IReportConstants.RULES_FILE);
+			LOGGER.info("Reading config from {}",IReportConstants.RULES_FILE);
 			DIGESTER = DigesterLoader
 					.createDigester(ReportConfigurationParser.class
 							.getResource(IReportConstants.RULES_FILE));
@@ -150,16 +149,16 @@ public class ReportConfigurationParser {
 		        configurationManager = new ReportConfigurationManager();
 		        for (int i = 0; i < urls.length; i++) {
 		            try {
-		            	LOGGER.info("Report config URL ..: " + urls[i]);
+		            	LOGGER.info("Report config URL ..: {}",urls[i]);
 		            	InputStream is = urls[i].openStream();
 		            	parse( is );
 		            	is.close();
 		            } catch (Exception e) {
-		                LOGGER.log(Level.SEVERE, "Error Loading Report Config: " + urls[i], e);
+		                LOGGER.error("Error Loading Report Config: {} {}",urls[i], e.getMessage());
 		            }
 		        }
 			} catch (IOException e) {
-	        	LOGGER.log(Level.SEVERE, "Error searching report config files", e);
+	        	LOGGER.error("Error searching report config files", e);
 	        }
 		}
 		return configurationManager;

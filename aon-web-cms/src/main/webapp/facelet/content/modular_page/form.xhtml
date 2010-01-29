@@ -11,8 +11,7 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-	
-		<aon:form id="modulaPageForm">
+		<aon:form id="modular">
 		
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -23,13 +22,13 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_modular" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" immediate="true"
-						actionListener="#{generator.onGenerateCurrentModular}"
+						value="#{appBundle.aon_generate}" 
 						rendered="#{modular_page.to!=null and (!modular_page.new) and cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateCurrentModular}" />
 						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							event="onclick" reRender="poll,grid" 
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>
@@ -51,15 +50,15 @@
 					<aon:outputLabel for="modular_page_label" 
 						value="#{appBundle.modular_page_label}" />
 					<aon:inputText id="modular_page_label"
-						required="true" size="64"
+						required="true" 
 						value="#{modular_page.toI18n.label}" />
 
 					<aon:outputLabel for="modular_page_section"
-						value="#{appBundle.cms_section}"/>
+						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="modular_page_section"
 						styleClass="aon-form-selectOneMenu-field"
-						value="#{modular_page.to.section}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						value="#{modular_page.to.section.id}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
@@ -77,7 +76,7 @@
 						rendered="#{!modular_page.new and modular_page.toI18n.id != null}">
 						<aon:div styleClass="aon-form-group-title">
 							<aon:div styleClass="aon-form-group-title-internal">
-								<aon:outputLabel for="dataTable" value="#{appBundle.modular_page_option}" />
+								<aon:outputLabel for="dataTable" value="#{appBundle.sidebar_option}" />
 							</aon:div>
 						</aon:div>
 						<aon:div rendered="#{modular_page_option.to==null}">
@@ -110,14 +109,16 @@
 									<f:facet name="header">
 										<aon:outputText value="#{appBundle.cms_alias}"/>
 									</f:facet>
-									<aon:outputText value="#{to.alias}" />
+									<aon:outputText value="#{to.alias}" 
+										styleClass="aon-editDataTable-button"/>
 								</aon:column>
 	
 								<aon:column>
 									<f:facet name="header">
 										<aon:outputText value="#{appBundle.cms_label}"/>
 									</f:facet>
-									<aon:outputText value="#{modular_page_option.i18nLabel}" />
+									<aon:outputText value="#{modular_page_option.i18nLabel}" 
+										styleClass="aon-editDataTable-button"/>
 								</aon:column>
 	
 								<aon:column>

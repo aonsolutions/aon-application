@@ -46,7 +46,7 @@ public class DeliveryManager {
 		delivery.setSeries(series);
 		delivery.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		delivery.setCustomer(sales.getCustomer());
-		delivery.setRegistryAddress(sales.getShippingAddress());
+		delivery.setRaddress(sales.getShippingAddress());
 		delivery.setIssueTime(issueDate);
 		delivery.setSecurityLevel(sales.getSecurityLevel());
 		delivery.setStatus(DeliveryStatus.PENDING);

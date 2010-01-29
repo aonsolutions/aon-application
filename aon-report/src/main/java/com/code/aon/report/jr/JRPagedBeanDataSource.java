@@ -2,13 +2,14 @@ package com.code.aon.report.jr;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.logging.Logger;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IFinderBean;
 import com.code.aon.common.ITransferObject;
@@ -24,7 +25,7 @@ import com.code.aon.ql.Criteria;
  */
 public class JRPagedBeanDataSource implements JRDataSource,ICurrentBeanProvider {
 
-	private static Logger LOGGER = Logger.getLogger(JRPagedBeanDataSource.class.getName());  
+	private static Logger LOGGER = LoggerFactory.getLogger(JRPagedBeanDataSource.class);  
 	/**
 	 * Name provider.
 	 */
@@ -145,7 +146,7 @@ public class JRPagedBeanDataSource implements JRDataSource,ICurrentBeanProvider 
 				if (data.size() == count) {
 					try {
 						offset += count;
-						LOGGER.info("Paginated report search: offset=" + offset + ", count=" + count);
+						LOGGER.debug("Paginated report search: offset={}, count={}",count,offset);
 						data = bean.getList(criteria, offset, count);
 						if (this.data != null) {
 							this.iterator = this.data.iterator();

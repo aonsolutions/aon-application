@@ -51,8 +51,8 @@
 						
 							<aon:dataTable id="dataTable" value="#{sidebar_option.model}" var="to"
 								rows="#{sidebar_option.pageLimit}"
-								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-										 aon-editDataTable-textColumn, aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
+								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
+										aon-editDataTable-textColumn">
 										
 								<aon:rowSelector immediate="true"
 									reRender="detail_panel" actionListener="#{sidebar_option.onSelect}" />							
@@ -63,21 +63,7 @@
 									</f:facet>
 									<aon:outputText value="#{to.alias}" />
 								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.cms_label}"/>
-									</f:facet>
-									<aon:outputText value="#{sidebar_option.i18nLabel}" />
-								</aon:column>
 	
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.sidebar_option_type}"/>
-									</f:facet>
-									<aon:outputText value="#{to.type}" />
-								</aon:column>
-
 								<aon:column>
 									<f:facet name="header">
 										<aon:outputText value="#{appBundle.sidebar_option_active}" />
@@ -170,7 +156,7 @@
 							<aon:div styleClass="aon-scroll-area">
 								<aon:panelGrid id="menuOptionGrid" columns="2" dir="true">
 
-									<aon:outputLabel for="Alias" 
+									<aon:outputText for="Alias" 
 										value="#{appBundle.cms_alias}" />
 									<aon:inputText id="Alias"
 										value="#{sidebar_option.to.alias}" 
@@ -179,33 +165,37 @@
 										<f:validator validatorId="AliasValidator" />
 									</aon:inputText>
 										
-									<aon:outputLabel for="Label" 
+									<aon:outputText for="Label" 
 										value="#{appBundle.sidebar_option_label}" />
 									<aon:inputText id="Label"
 										value="#{sidebar_option.toI18n.label}" 
 										required="true"
 										size="50" maxlength="64" />
 		
-									<aon:outputLabel for="SidebarOption_type" 
+									<aon:outputText for="Type" 
 										value="#{appBundle.sidebar_option_type}" />
 									<aon:selectOneMenu  
-										id="SidebarOption_type" 
+										id="Type"
 										value="#{sidebar_option.to.type}" 
 										required="true">
 										<f:selectItems value="#{collections.sidebarTypes}" />
-										<a4j:support event="onchange" reRender="menuOptionGrid" />										
+										<a4j:support 
+											event="onchange"  
+											reRender="sidebarOptionGrid" />
 									</aon:selectOneMenu> 
 		
-									<aon:outputLabel for="SidebarOption_ident"
-										value="#{appBundle.sidebar_option_ident}" 
-										rendered="#{sidebar_option.visibleIdent}" />
-									<aon:selectOneMenu id="SidebarOption_ident"
-										rendered="#{sidebar_option.visibleIdent}"
-										value="#{sidebar_option.to.ident}">
-										<f:selectItems value="#{sidebar_option.idents}" />
-									</aon:selectOneMenu>
+									<aon:outputText for="Ident"
+											value="#{appBundle.sidebar_option_ident}" 
+											rendered="#{sidebar_option.visibleIdent}" />
+									<aon:div id="selectOneMenu_edit"
+										rendered="#{sidebar_option.visibleIdent}">
+										<aon:selectOneMenu id="Ident"
+											value="#{sidebar_option.to.ident}">
+											<f:selectItems value="#{sidebar_option.idents}" />
+										</aon:selectOneMenu>
+									</aon:div> 
 		
-									<aon:outputLabel for="Side"
+									<aon:outputText for="Side"
 										value="#{appBundle.sidebar_option_side}" />
 									<aon:selectOneMenu id="Side"
 										value="#{sidebar_option.to.side}" >

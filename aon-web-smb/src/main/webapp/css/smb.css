@@ -100,3 +100,11 @@
 	color: #285E9C; 
 	text-decoration: underline;
 }
+
+.aon-icon-sign{
+	background:transparent url(images/sign.png) scroll left center no-repeat;
+ }
+ 
+.aon-icon-cancel-sign{
+	background:transparent url(images/cancel-sign.png) scroll left center no-repeat;
+ }

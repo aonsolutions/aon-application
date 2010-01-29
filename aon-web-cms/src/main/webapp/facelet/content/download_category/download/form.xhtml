@@ -11,27 +11,85 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-	
-		<aon:form id="downloadForm">
-		
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.download}" />
-				<ui:param name="controller" value="#{download}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+		<aon:form id="main_form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 				
-				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="categories"
-						value="#{appBundle.download_category}"
-						action="download_category_list"
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item-no-icon">
-						<aon:actionListener method="#{download_category.onInit}" />
-						<aon:actionListener method="#{download_category.onSearch}" />
-					</aon:commandButton>
-				</ui:define>				
-			</ui:decorate>
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.download}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{download.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{!download.new and cms.roleEditor}"
+							action="download_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{download.onReset}" />
+						</aon:commandButton>						
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{download.to!=null or download.new}"
+							reRender="main_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{download.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!download.new and cms.roleEditor}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{download.onRemove}"
+							confirmAction="download_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="download_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{download.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
+							action="download_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{download.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{download.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="categories"
+							value="#{appBundle.download_category}"
+							action="download_category_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item-no-icon">
+							<aon:actionListener method="#{download_category.onInit}" />
+							<aon:actionListener method="#{download_category.onSearch}" />
+						</aon:commandButton>
+					</aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
@@ -43,12 +101,6 @@
 						value="#{download.to.alias}">
 						<f:validator validatorId="AliasValidator" />
 					</aon:inputText>
-
-					<aon:outputLabel for="DownloadDetail_title"
-						value="#{appBundle.download_title}" />
-					<aon:inputText id="DownloadDetail_title"
-						required="true" size="60" maxlength="128"
-						value="#{download.toI18n.title}" />
 
 					<aon:outputLabel for="Download_category"
 						value="#{appBundle.download_category}"/>
@@ -74,21 +126,64 @@
 					<aon:outputLabel 
 						value="#{appBundle.download_file}" />
 					<aon:panelGroup id="thumbnail_preview_detail">
-						<aon:outputText value="#{download.toI18n.file}"
-							style="margin-right:0.7em;" />
+						<aon:outputText value="#{download.toI18n.file}" />
 							
-		               <aon:commandLink ajaxSingle="true" rendered="#{download.toI18n.file != null}"
-							immediate="true" reRender="thumbnail_preview_detail"
-							actionListener="#{download.onDelDocument}">
-							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-			       		</aon:commandLink>							
-						<aon:commandLink style="padding-left:0.4em;" immediate="true"
-							reRender="showDocumentPanelGroup" ajaxSingle="true">
-							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/select.png']}" alt="#{appBundle.document_modal_open}"/>
-							<f:setPropertyActionListener target="#{download.showWindow}" value="#{true}" />						
-						</aon:commandLink>						
+						<a href="javascript:Richfaces.showModalPanel('mp_detail',{width:680, top:200})">select</a>
+				        <rich:modalPanel id="mp_detail" minHeight="200" minWidth="450" 
+				            height="360" width="675">
+							<f:facet name="header">
+								<aon:div styleClass="aon-popupWindow-title">
+									<aon:outputText value="Modal Panel Title" />
+								</aon:div>
+							</f:facet>
+					        <f:facet name="controls">
+								<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+									immediate="true" reRender="aonStatus">
+									<rich:componentControl for="mp_detail" operation="hide" event="onclick" />
+								</aon:commandButton>
+					        </f:facet>
+							<h:panelGrid id="treeGrid_detail" columns="2">
+					            <rich:panel bodyClass="body3">
+								    <rich:tree style="width:300px"
+								    	switchType="server" 
+								    	stateAdvisor="#{treeStateAdvisor}">
+								        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.documentRoots}" 
+								        	var="item" 
+								        	nodes="#{item.nodes}">
+											<rich:treeNode>
+								                <aon:commandLink
+								                	action="#{item.onSelectFolder}" 
+								                	value="#{item}"
+								                	immediate="#{true}"
+								                	reRender="treeGrid_detail" />
+											</rich:treeNode>
+								        </rich:recursiveTreeNodesAdaptor>
+								    </rich:tree>
+								</rich:panel>
+					            <rich:panel bodyClass="body3">
+									<aon:panelGroup>
+										<aon:outputLabel value="#{document.currentRelativePath}" />
+										<rich:dataList var="item" value="#{document.model}" >	
+											<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
+								                <aon:commandLink
+								                	immediate="#{true}"
+								                	reRender="thumbnail_preview_detail"
+								                    actionListener="#{download.onSelectImage}"
+								                    value="#{item.name}" />
+											</aon:panelGrid>
+										</rich:dataList>
+									</aon:panelGroup>
+								</rich:panel>
+							</h:panelGrid>		
+				        </rich:modalPanel>													
 		        	</aon:panelGroup>
      	
+					<aon:outputLabel for="DownloadDetail_title"
+						value="#{appBundle.download_title}" />
+					<aon:inputText id="DownloadDetail_title"
+						required="true" size="60" maxlength="128"
+						value="#{download.toI18n.title}" />
+
 					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
 						<ui:param name="labelValue" value="#{bundle.aon_description}" />
 						<ui:param name="inputTextId" value="DownloadDetail_description" />
@@ -110,10 +205,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<ui:include src="/facelet/content/utils/document_modal.xhtml" />
-		
 		</aon:form>
-		
 	</ui:define>
 
 </ui:composition>
