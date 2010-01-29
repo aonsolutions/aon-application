@@ -2,8 +2,6 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -34,14 +32,6 @@ public class InvoiceDetailController extends LinesController {
 
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
-
-		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
-		if (StringUtils.equals(invoiceDetail.getItem().getProduct().getName().trim(), invoiceDetail.getDescription().trim())) {
-			String longDescription = invoiceDetail.getItem().getDescription();
-			if (!StringUtils.isEmpty(longDescription)) {
-				invoiceDetail.setDescription(invoiceDetail.getDescription() + "\r\n" + longDescription);
-			}
-		}
 	}
 
 	public void onShortDescription(ActionEvent event) {

@@ -16,61 +16,56 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{creditor.new}">
-					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/formNewContent.xhtml">
-						<ui:param name="controller" value="#{creditor}" />
-					</ui:include>				
-				</c:if>							
-				<c:if test="#{!creditor.new}">			
-					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-						columnClasses="aon-panelGrid-odd aon-width-150,
-							aon-panelGrid-even aon-width-auto,
-							aon-panelGrid-odd aon-width-120,
-							aon-panelGrid-even aon-width-auto">
-	
-						<ui:include 
-							src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml">
-							<ui:param name="controller" value="#{creditor}" />
-						</ui:include>
-					</aon:panelGrid>
-				
-					<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
-						columns="2" style="width: 100%;"
-						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
-	
-						<c:if test="#{aonConfiguration.bean.creditor.showAccount and !creditor.new}">
-							<aon:outputLabel for="Creditor_account" value="#{accountBundle.account_accounting}" />
-							<h:panelGrid columns="2" id="accountContainer">
-								<ui:include
-									src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
-									<ui:param name="id" value="Creditor_account" />
-									<ui:param name="entity" value="#{creditorAccount.account}" />
-									<ui:param name="ELExpression" value="creditorAccount.account" />
-								</ui:include>
-	
-								<aon:commandButton
-									value="#{accountBundle.account_synchronize}"
-									title="#{accountBundle.account_synchronize}"
-									style="border: #808080 1px solid;"
-									styleClass="aon-finding-toolbar-item aon-icon-refresh"
-									rendered="#{creditorAccount.accountSynchronizable}"
-									reRender="accountContainer"
-									actionListener="#{creditorAccount.onAccountSynchronize}">
-								</aon:commandButton>
-	
-								<aon:commandButton
-									value="#{accountBundle.account_new_account}" 
-									title="#{accountBundle.account_new_account}"
-									style="border: #808080 1px solid;"
-									styleClass="aon-finding-toolbar-item aon-icon-reset"
-									rendered="#{creditorAccount.account == null}"
-									reRender="accountContainer"
-									actionListener="#{creditorAccount.onNewAccount}">
-								</aon:commandButton>
-							</h:panelGrid>
-						</c:if>
-					</aon:panelGrid>
+				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto,
+						aon-panelGrid-odd aon-width-120,
+						aon-panelGrid-even aon-width-auto">
 
+					<ui:include 
+						src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml">
+						<ui:param name="controller" value="#{creditor}" />
+					</ui:include>
+				</aon:panelGrid>
+				
+				<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
+					columns="2" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+
+					<c:if test="#{aonConfiguration.bean.creditor.showAccount and !creditor.new}">
+						<aon:outputLabel for="Creditor_account" value="#{accountBundle.account_accounting}" />
+						<h:panelGrid columns="2" id="accountContainer">
+							<ui:include
+								src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
+								<ui:param name="id" value="Creditor_account" />
+								<ui:param name="entity" value="#{creditorAccount.account}" />
+								<ui:param name="ELExpression" value="creditorAccount.account" />
+							</ui:include>
+
+							<aon:commandButton
+								value="#{accountBundle.account_synchronize}"
+								title="#{accountBundle.account_synchronize}"
+								style="border: #808080 1px solid;"
+								styleClass="aon-finding-toolbar-item aon-icon-refresh"
+								rendered="#{creditorAccount.accountSynchronizable}"
+								reRender="accountContainer"
+								actionListener="#{creditorAccount.onAccountSynchronize}">
+							</aon:commandButton>
+
+							<aon:commandButton
+								value="#{accountBundle.account_new_account}" 
+								title="#{accountBundle.account_new_account}"
+								style="border: #808080 1px solid;"
+								styleClass="aon-finding-toolbar-item aon-icon-reset"
+								rendered="#{creditorAccount.account == null}"
+								reRender="accountContainer"
+								actionListener="#{creditorAccount.onNewAccount}">
+							</aon:commandButton>
+						</h:panelGrid>
+					</c:if>
+				</aon:panelGrid>
+
+				<c:if test="#{!creditor.new}">
 					<aon:panelTabSet selectedTab="#{creditor.selectedTab}">
 						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
