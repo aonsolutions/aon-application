@@ -3,16 +3,7 @@
 	<name>aon-web-ebackoffice</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ebackoffice</project>
-		<project>aon-ui-ebackoffice</project>
-		<project>aon-product</project>
-		<project>aon-ui-product</project>
-		<project>aon-commercial</project>
-		<project>aon-ui-customer</project>
-		<project>aon-ui-registry</project>
-		<project>aon-ui-webmail</project>
-		<project>aon-ui-company</project>
-		<project>aon-ui-commercial</project>
+		<project>aon-config</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
