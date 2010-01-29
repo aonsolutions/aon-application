@@ -3,11 +3,14 @@ package com.code.aon.ui.ecommerce.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.WeakHashMap;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -25,7 +28,9 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.resources.servlet.ResourceServlet;
 import com.code.aon.ui.util.AonUtil;
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class ShoppingCartController extends EmailParentController{
 	
@@ -34,14 +39,41 @@ public class ShoppingCartController extends EmailParentController{
 	private List<CartItem> list;
 	private DataModel model;
 	private boolean registered;
+	private ShoppingCartMap cart;
 	private Double total;
 	private CartTarget cartTarget;
 	private String newPasswd;
+	
+	
+//	private ShoppingCartController() {
+//		if (model == null) {
+//			model = new ListDataModel(getList());
+//		}
+//	}
+	
+//	public static ShoppingCartMap getInstance( ServletContext sc ) {
+//		ShoppingCartMap scm = (ShoppingCartMap) sc.getAttribute( SHOPPING_CART_MAP );
+//		if (scm == null) {
+//			scm = new ShoppingCartMap();
+//			sc.setAttribute( SHOPPING_CART_MAP, scm );
+//		}
+//		return scm;
+//	}
+	
+	public ShoppingCartController() {
+		ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
+//		setCart((ShoppingCartMap)sc.getAttribute("map"));
+		setCart(ShoppingCartMap.getInstance(sc));
+	}
 
 	public DataModel getModel() {
-		if (model == null) {
-			model = new ListDataModel(getList());
-		}
+//		if (model == null) {
+////			model = new ListDataModel(getCart().getList());
+////			model = new ListDataModel();
+//			model = new ListDataModel(getList());
+//		}
+//		return new ListDataModel(getCart().getList());
+		model = new ListDataModel(getList());
 		return model;
 	}
 
@@ -51,7 +83,10 @@ public class ShoppingCartController extends EmailParentController{
 
 	public List<CartItem> getList() {
 		if (list == null) {
-			list = new ArrayList<CartItem>();
+			ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
+//			setCart((ShoppingCartMap)sc.getAttribute("map"));
+//			setCart(ShoppingCartMap.getInstance(sc));
+			list = ShoppingCartMap.getInstance(sc).getList();
 			setTotal(0.0);
 		}
 		return list;
@@ -67,6 +102,14 @@ public class ShoppingCartController extends EmailParentController{
 	public void setNewPasswd(String newPasswd) {
 		this.newPasswd = newPasswd;
 	}
+
+	public ShoppingCartMap getCart() {
+		return cart;
+	}
+
+	public void setCart(ShoppingCartMap cart) {
+		this.cart = cart;
+	}
 	
 	public String budgetRequest() {
 		if (!isRegistered()) {
@@ -79,6 +122,18 @@ public class ShoppingCartController extends EmailParentController{
 	public void budgetRequest(ActionEvent event) {
 		checkItemList();
 		((CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+		
+		/*
+		 * se crea un carrito con referencias debiles en memoria y 
+		 * se guarda el carrito en el contexto de aplicacion para que sea accesible desde el servlet 
+		 */
+		ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
+		ShoppingCartMap cart = ShoppingCartMap.getInstance(sc);
+		for(CartItem ci:getList()){
+			cart.put(ci);
+		}
+		cart.setTotal(getTotal());
+		sc.setAttribute("map", cart);
 	}
 
 	public boolean isRegistered() {
@@ -113,10 +168,10 @@ public class ShoppingCartController extends EmailParentController{
 	public void addToCart(ShopItem item) {
 		CartItem ci = new CartItem();
 		ci.setItem(item);
-		ci.setQuantity(1);
 		
 		int index = getItemIndex(item);
 		if (index == -1) {
+			ci.setQuantity(1);
 			ci.setTotal(ci.getItem().getPrice());
 			getList().add(ci);
 			setTotal(getTotal() + ci.getTotal());
@@ -169,7 +224,8 @@ public class ShoppingCartController extends EmailParentController{
 	}
 
 	public void refreshTotal() {
-		setTotal(getTotal() + total);
+//		setTotal(getTotal() + total);
+		setTotal(getCart().getTotal());
 	}
 	
 	public void onSelect(ActionEvent event) {
@@ -199,7 +255,6 @@ public class ShoppingCartController extends EmailParentController{
 		getCartTarget().getWeb().setMediaType(MediaType.FAX);	
 		
 		getCartTarget().getEcTarget().getTarget().setAdvertising(Advertising.ALLOWED);
-		//#{shoppingCart.cartTarget.ecTarget.target.advertising}
 	}
 	
 	private boolean isEmpty( RegistryAddress address ) {
@@ -268,9 +323,6 @@ public class ShoppingCartController extends EmailParentController{
 		}		
 	}
 	
-	
-
-		
 	public void afterBeanAdded() {
 		setNewPasswd(null);
 		try {
@@ -326,5 +378,11 @@ public class ShoppingCartController extends EmailParentController{
 		content.append( getCartTarget().getEcTarget().getPassword() ).append(SystemUtils.LINE_SEPARATOR);
 		super.email(subject, from, to, content.toString());
 	}
+	
+	public void onCartClean(ActionEvent event){
+		setList(null);
+		setModel(null);
+	}
+
 
 }

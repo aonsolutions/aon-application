@@ -13,9 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -40,6 +42,8 @@ public class AssetActivity implements ITransferObject {
 	private String who;
 	private String why;
 	private Asset asset;
+	private ActivityStatus status;
+	private boolean check;
 
 	/**
 	 * 
@@ -133,6 +137,14 @@ public class AssetActivity implements ITransferObject {
 	public void setAsset(Asset asset) {
 		this.asset = asset;
 	}
+	
+	@Column(name = "status", length = 1)
+	public ActivityStatus getStatus() {
+		return status;
+	}
+	public void setStatus(ActivityStatus status) {
+		this.status = status;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -155,6 +167,16 @@ public class AssetActivity implements ITransferObject {
 	public int hashCode() {
 		return id != null ? this.getClass().hashCode() + id.hashCode() : super
 				.hashCode();
+	}
+
+	@Transient
+	public boolean isCheck() {
+		return check;
+	}
+
+	@Transient
+	public void setCheck(boolean check) {
+		this.check = check;
 	}
 
 }

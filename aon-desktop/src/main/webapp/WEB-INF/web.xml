@@ -35,10 +35,10 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	<context-param>
+	<!-- context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
-	</context-param>
+	</context-param -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -100,7 +100,7 @@
     </context-param>	
 	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>richFaces3.3.1/</param-value>
+		<param-value>richFaces3.3.0/</param-value>
 	</context-param>	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
@@ -224,7 +224,7 @@
 	</servlet-mapping>
 	<!-- Welcome File List -->
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>index2.jsp</welcome-file>
 	</welcome-file-list>
 	<!-- Security Constraint -->
 	<security-constraint>
@@ -245,9 +245,6 @@
 			<role-name>User</role-name>
 			<role-name>SMSSender</role-name>
 			<role-name>FAXSender</role-name>
-			<role-name>DocumentsVisible</role-name>
-			<role-name>PredefinedDocumentsExecutable</role-name>
-			<role-name>CorporativeDocumentsManager</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<login-config>
@@ -268,15 +265,6 @@
 	</security-role>
 	<security-role>
 		<role-name>FAXSender</role-name>
-	</security-role>
-	<security-role>
-		<role-name>DocumentsVisible</role-name>
-	</security-role>
-	<security-role>
-		<role-name>PredefinedDocumentsExecutable</role-name>
-	</security-role>
-	<security-role>
-		<role-name>CorporativeDocumentsManager</role-name>
 	</security-role>
 
 	<resource-env-ref>

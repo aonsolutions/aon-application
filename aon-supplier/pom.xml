@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.supplier</artifactId>
-	<version>4.0.2</version>
+	<version>4.0.1</version>
 	<description>AON SUPPLIER</description>
 	<name>AON SUPPLIER</name>
 	<dependencies>
@@ -22,12 +22,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>4.1.0</version>
+			<version>4.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>4.2.0</version>
+			<version>4.1.0</version>
 		</dependency>
 	</dependencies>
 </project>

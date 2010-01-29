@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.geozone</artifactId>
-	<version>3.1.0</version>
+	<version>4.0.1</version>
 	<description>AON GEOZONE</description>
 	<name>AON-GEOZONE</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.4.0</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>	

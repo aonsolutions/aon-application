@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.ShowPrice;
@@ -49,6 +51,25 @@ public class EcconfigController extends BasicController {
 	private AonFile leftBanner;
 	private AonFile rightBanner;
 	private AonFile welcomeBanner;
+	private boolean login;
+	private boolean showPrice;
+	
+
+	public boolean isShowPrice() {
+		return showPrice;
+	}
+
+	public void setShowPrice(boolean showPrice) {
+		this.showPrice = showPrice;
+	}
+
+	public boolean isLogin() {
+		return login;
+	}
+
+	public void setLogin(boolean login) {
+		this.login = login;
+	}
 
 	public List<SelectItem> getSkins() {
 		if (skins == null) {
@@ -236,11 +257,15 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void paintHeader(OutputStream out, Object data) throws IOException {
-		if (getHeaderImage().getData() != null) {
+		if (getHeaderImage()!=null) {
 			out.write(getHeaderImage().getData());
 		}
 	}
 	
+	public void deleteHeader(ActionEvent e)   {
+		setHeaderImage(null);
+	}
+		
 	
 	public void leftBannerUploaded(UploadEvent event) {
 		try {
@@ -260,9 +285,13 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void paintLeftBanner(OutputStream out, Object data) throws IOException {
-		if (getLeftBanner().getData() != null) {
+		if (getLeftBanner() != null) {
 			out.write(getLeftBanner().getData());
 		}
+	}
+	
+	public void deleteLeftBanner(ActionEvent e)   {
+		setLeftBanner(null);
 	}
 	
 	public void rightBannerUploaded(UploadEvent event) {
@@ -283,9 +312,13 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void paintRightBanner(OutputStream out, Object data) throws IOException {
-		if (getRightBanner().getData() != null) {
+		if (getRightBanner() != null) {
 			out.write(getRightBanner().getData());
 		}
+	}
+	
+	public void deleteRightBanner(ActionEvent e)   {
+		setRightBanner(null);
 	}
 	
 	public void welcomeBannerUploaded(UploadEvent event) {
@@ -306,16 +339,41 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void paintWelcomeBanner(OutputStream out, Object data) throws IOException {
-		if (getWelcomeBanner().getData() != null) {
+		if (getWelcomeBanner() != null) {
 			out.write(getWelcomeBanner().getData());
 		}
 	}
 	
-	public void checkValue(ValueChangeEvent event){
-		
-		System.out.println("dcfdf");
-		
+	public void deleteWelcomeBanner(ActionEvent e)   {
+		setWelcomeBanner(null);
 	}
+		
+	public void getLoginState(ActionEvent e){	
+		
+		setLogin(((Ecconfig)this.getTo()).getShowLogin()==LoginType.NEVER);		
+		if(this.login==true){
+			((Ecconfig)this.getTo()).setCommerce(false);
+		}
+	}
+	
+	public void getShowPriceState(ActionEvent e){	
+		
+		setShowPrice(((Ecconfig)this.getTo()).getPrice()==ShowPrice.NO);		
+		if(this.showPrice==true){
+			((Ecconfig)this.getTo()).setDiscount(DiscountFormat.NO);
+			((Ecconfig)this.getTo()).setTaxInPrice(TaxType.NO);
+		}
+	}
+	
+	
+	@Override
+	public void onSelectFirst(ActionEvent event) {
+		// TODO Auto-generated method stub
+		super.onSelectFirst(event);
+		setShowPrice(((Ecconfig)this.getTo()).getPrice()==ShowPrice.NO);
+		setLogin(((Ecconfig)this.getTo()).getShowLogin()==LoginType.NEVER);
+	}
+	
 	
 	public String getDomain(){
 		AuthPrincipal user = UserUtils.getInstance().getPrincipal();

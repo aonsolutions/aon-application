@@ -9,7 +9,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<rich:dataGrid id="productList" value="#{shopItems.model}" columns="#{ecConfig.activeConfig.rowItems}"
-		var="to" elements="20" style="width:100%"
+		var="to" elements="12" style="width:100%"
 		columnClasses="aon-width-300,aon-width-300">
 
 		<h:panelGrid columns="2"
@@ -19,7 +19,7 @@
 			<aon:div style="width:70px; height: 70px; border:solid #DDD 1px;">
 				<aon:commandLink action="shop_form"
 					title="#{ecommerceBundle.aon_ecommerce_extended_info}"
-					reRender="shopForm"
+					reRender="itemContent"
 					styleClass="none">
 					<aon:actionListener method="#{shopItems.onSelect}" />
 					<aon:actionListener method="#{shopItem.onLoadAttachment}" />
@@ -36,7 +36,7 @@
 				<aon:div style="margin-bottom: 5px; ">
 					<aon:commandLink action="shop_form"
 						title="#{ecommerceBundle.aon_ecommerce_extended_info}"
-						reRender="shopForm"
+						reRender="itemContent"
 						styleClass="none">
 						<aon:actionListener method="#{shopItems.onSelect}" />
 						<aon:outputText value="#{to.product.name}" 
@@ -140,7 +140,7 @@
 					</c:if>
 					<aon:commandButton value="&#160;" action="shop_form"
 						title="#{ecommerceBundle.aon_ecommerce_extended_info}"
-						reRender="shopForm"
+						reRender="itemContent"
 						styleClass="aon-editDataTable-button aon-icon-info">
 						<aon:actionListener method="#{shopItems.onSelect}" />
 					</aon:commandButton>

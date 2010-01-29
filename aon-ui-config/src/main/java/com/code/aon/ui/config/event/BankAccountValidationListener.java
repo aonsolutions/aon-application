@@ -14,17 +14,7 @@ public class BankAccountValidationListener extends ControllerAdapter {
 
 	private final String CONFIG_BUNDLE = "configBundle";
 	private final String ERROR_MESSAGE = "config_invalid_bank_account";
-
-	private boolean nullable = false;
-
-	public boolean isNullable() {
-		return nullable;
-	}
-
-	public void setNullable(boolean nullable) {
-		this.nullable = nullable;
-	}
-
+	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IBankAccountContainer bac = (IBankAccountContainer) event.getController().getTo();
@@ -38,26 +28,24 @@ public class BankAccountValidationListener extends ControllerAdapter {
 	}
 
 	private void checkBankAccount(IBankAccountContainer bac) throws ControllerListenerException {
-		Bank bank = bac.getBank();
 		BankAccount bankAccount = bac.getBankAccount();
-		if (!nullable) {
+		if (bankAccount == null) {
+			String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
+			throw new ControllerListenerException(msg);
+		}
+		if (StringUtils.isEmpty(bankAccount.getEntity())) {
+			Bank bank = bac.getBank();
 			if (bank == null) {
 				String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
 				throw new ControllerListenerException(msg);
 			}
-			if (bankAccount == null) {
-				String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
-				throw new ControllerListenerException(msg);
-			}
+			bankAccount.setEntity( bank.getCode());	
 		}
-
-		if (bank != null && bankAccount != null) {
-			bankAccount.setEntity(bank.getCode());	
-		}
-		if (bankAccount != null && !StringUtils.isEmpty(bankAccount.getEntity()) && !bankAccount.isValid()) {
+		if (!bankAccount.isValid()) {
 			String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
 			throw new ControllerListenerException(msg);
 		}
 	}
+
 
 }

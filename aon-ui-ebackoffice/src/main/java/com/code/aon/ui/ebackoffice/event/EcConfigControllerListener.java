@@ -45,28 +45,33 @@ public class EcConfigControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 		EcconfigController controller = (EcconfigController) event
 				.getController();
-		
+
 		AonFile header = controller.getHeaderImage();
 		AonFile leftBanner = controller.getLeftBanner();
 		AonFile rightBanner = controller.getRightBanner();
 		AonFile welcomeBanner = controller.getWelcomeBanner();
 		if (header != null) {
 			((Ecconfig) controller.getTo()).setHeaderImg(header.getData());
-
+		} else {
+			((Ecconfig) controller.getTo()).setHeaderImg(null);
 		}
+
 		if (leftBanner != null) {
 			((Ecconfig) controller.getTo()).setLeftBanner(leftBanner.getData());
-
+		} else {
+			((Ecconfig) controller.getTo()).setLeftBanner(null);
 		}
+		
 		if (rightBanner != null) {
-			((Ecconfig) controller.getTo()).setRightBanner(rightBanner
-					.getData());
-
+			((Ecconfig) controller.getTo()).setRightBanner(rightBanner.getData());
+		} else {
+			((Ecconfig) controller.getTo()).setRightBanner(null);
 		}
+		
 		if (welcomeBanner != null) {
-			((Ecconfig) controller.getTo()).setWelcomeBanner(welcomeBanner
-					.getData());
-
+			((Ecconfig) controller.getTo()).setWelcomeBanner(welcomeBanner.getData());
+		} else {
+			((Ecconfig) controller.getTo()).setWelcomeBanner(null);
 		}
 	}
 

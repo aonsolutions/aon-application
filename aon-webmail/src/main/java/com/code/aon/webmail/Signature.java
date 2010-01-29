@@ -7,15 +7,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.code.aon.common.ITransferObject;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.IAonObjectClasses;
 
 @Entity
 @Table(name="signature")
-@EntryObject(mainObjectClass="aonSignature", objectClasses={"top"})
-public class Signature implements ITransferObject{
+@EntryObject(mainObjectClass=IAonObjectClasses.SIGNATURE, objectClasses={IAonObjectClasses.TOP})
+public class Signature implements ILdapTransferObject {
 
 	private static final long serialVersionUID = 714322089783136934L;
 
@@ -76,5 +82,33 @@ public class Signature implements ITransferObject{
 		this.name = name;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Signature o = (Signature) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.name, o.name)
+				.append(this.signature, o.signature)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)	
+			.append(name)			
+			.append(signature)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
     
 }
