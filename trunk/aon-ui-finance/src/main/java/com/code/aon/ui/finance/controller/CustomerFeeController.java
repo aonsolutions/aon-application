@@ -42,10 +42,11 @@ public class CustomerFeeController extends LinesController {
 	private DataModel noFeeCustomersModel;
 	private List<Customer> noFeeCustomersList;
 	
-	public String getReportTitle(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
-		return bundle.getString(MSG_KEY_PREFIX);
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
 	}
 
 	public DataModel getNoFeeCustomersModel() {
@@ -65,13 +66,6 @@ public class CustomerFeeController extends LinesController {
 
 	public void setNoFeeCustomersList(List<Customer> noFeeCustomersList) {
 		this.noFeeCustomersList = noFeeCustomersList;
-	}
-
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -112,8 +106,14 @@ public class CustomerFeeController extends LinesController {
 		}
 	}
 	
-	public void onNoFeeCustomers(ActionEvent event) throws ManagerBeanException {
+	public String getReportTitle(){
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
+		return bundle.getString(MSG_KEY_PREFIX);
+	}
 
+	@SuppressWarnings("unchecked")
+	public void onNoFeeCustomers(ActionEvent event) throws ManagerBeanException {
 		Calendar calendar = new GregorianCalendar();
 		String select = "select distinct(customer) "
 			+ "from Customer as customer "
