@@ -17,6 +17,7 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -90,6 +91,28 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		return null;
 	}
 
+	public void onFindNextFreeNumber(ActionEvent event) throws ManagerBeanException {
+		int number = (getInvoice().getNumber() == 0 ? 1 : getInvoice().getNumber());
+
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		while (true) {
+			Criteria criteria = new Criteria();
+			if (getInvoice().getSeries() == null) {
+				criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+			} else {
+				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), getInvoice().getSeries());
+			}
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), number);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+			if (invoiceBean.getCount(criteria) == 0) {
+				break;
+			}
+			number++;
+		}
+
+		getInvoice().setNumber(number);
+	}
+
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
@@ -156,21 +179,21 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 				getDeliveryTransferManager().setDeliveryRowChecked(deliveryDetail.getDelivery(), true);
 			}
 		}
-
 		getDeliveryTransferManager().setInvoicedDeliveryList(invoicedDeliveryList);
 
 		List<ITransferObject> deliveryList = new LinkedList<ITransferObject>();
 		deliveryList.addAll(invoicedDeliveryList);
-		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-		criteria = new Criteria();
-		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getInvoice().getRegistry().getId());
-		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
-		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), getInvoice().getSecurityLevel());
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
-		deliveryList.addAll(deliveryBean.getList(criteria));
-
+		if (!isReadOnly()) {
+			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getInvoice().getRegistry().getId());
+			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
+			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
+			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
+			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+			deliveryList.addAll(deliveryBean.getList(criteria));
+		}
 		getDeliveryTransferManager().setDeliveryList(deliveryList);
 	}
 
