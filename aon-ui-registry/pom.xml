@@ -28,6 +28,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.company</artifactId>
+			<version>4.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
 			<version>4.2.2</version>
 			<scope>compile</scope>
