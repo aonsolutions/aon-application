@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showFinancePaymentWindow">
 		<c:if test="#{finance.showFinancePaymentWindow}">
-			<rich:modalPanel id="financePaymentModalPanel" minHeight="220"
+			<rich:modalPanel id="financePaymentModalPanel" minHeight="240"
 				minWidth="520" rendered="#{finance.showFinancePaymentWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -54,20 +54,24 @@
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
 										<aon:outputLabel for="Finance_paymentDate"
 											value="#{bundle.aon_date}" />
 										<aon:selectInputDate id="Finance_paymentDate" 
-											value="#{finance.paymentDate}"
+											value="#{finance.paymentDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
-											popupDateFormat="#{bundle.aon_date_pattern}"/>
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-110" />
 
 										<aon:outputLabel for="Finance_paymentAmount"
 											value="#{bundle.aon_amount}" />
 										<aon:inputText id="Finance_paymentAmount"
-											value="#{finance.paymentAmount}" size="10" />
+											value="#{finance.paymentAmount}"
+											required="true" size="10" />
 
 										<aon:outputLabel for="Finance_paymentRegistryBank"
 											value="#{configBundle.config_bank}"
