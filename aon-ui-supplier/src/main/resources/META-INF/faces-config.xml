@@ -15,6 +15,80 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ ITEM SUPPLIER ************* -->
+	<managed-bean>
+		<managed-bean-name>itemSupplier</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.supplier.controller.ItemSupplierController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.supplier.ItemSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ItemSupplier_priority</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>item.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{itemSupplierControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemSupplierControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.supplier.event.ItemSupplierControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>itemSupplierChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>itemSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ItemSupplier_item_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!--  ********* SUPPLIER ***************** -->
 	<managed-bean>
 		<managed-bean-name>supplier</managed-bean-name>
@@ -31,6 +105,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Supplier_registry_surname,Supplier_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -104,6 +182,19 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{supplierAddressControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>supplierAddressControllerListener</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -137,6 +228,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>supplierMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -394,7 +489,7 @@
 	<!-- ************ SUPPLIER LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>supplierLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -405,8 +500,12 @@
 			<value>com.code.aon.supplier.Supplier</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Supplier_registry_surname,Supplier_registry_name</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/list.xhtml</value>
+			<value>/com/code/aon/ui/supplier/facelet/supplier/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
@@ -414,7 +513,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/form.xhtml</value>
+			<value>/com/code/aon/ui/supplier/facelet/supplier/formNewContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -428,7 +527,7 @@
 
 	<managed-bean>
 		<managed-bean-name>supplierLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 

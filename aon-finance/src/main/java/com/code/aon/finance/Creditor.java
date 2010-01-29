@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
@@ -21,10 +20,8 @@ import org.hibernate.annotations.Parameter;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.registry.IRegistry;
-import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
 /**
@@ -32,8 +29,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="creditor")
-@PrimaryKeyJoinColumn(name="registry")
-public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry {
+public class Creditor implements ITransferObject, IScopable, IRegistry {
 	
 	private static final long serialVersionUID = 6173766150887358588L;
 
@@ -43,16 +39,11 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	/** The registry. */
 	private Registry registry;
 	
-	/** The withholding. */
-	private boolean withholding;
-	
-    /** The transaction type. */
-    private InvoiceTransactionType transaction;
-
 	/** The status. */
 	private CreditorStatus status;
 	
-	/** The scope. */
+	private boolean withholding;
+	
 	private Scope scope;
 
 	/**
@@ -99,43 +90,7 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		this.registry = registry;
 	}
 
-	/**
-	 * Checks if a withholding is applied.
-	 * 
-	 * @return true, if a withholding is applied
-	 */
-	@Column(nullable=true)
-	public boolean isWithholding() {
-		return withholding;
-	}
-
-	/**
-	 * Sets the withholding.
-	 * 
-	 * @param withholding the withholding
-	 */
-	public void setWithholding(boolean withholding) {
-		this.withholding = withholding;
-	}
-
-	/**
-	 * Gets the transaction type.
-	 * 
-	 * @return the transaction type
-	 */
-	public InvoiceTransactionType getTransaction() {
-		return transaction;
-	}
-
-	/**
-	 * Sets the transaction type.
-	 * 
-	 * @param transaction the transaction type
-	 */
-	public void setTransaction(InvoiceTransactionType transaction) {
-		this.transaction = transaction;
-	}
-
+	
 	/**
 	 * Gets the status.
 	 * 
@@ -154,6 +109,20 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		this.status = status;
 	}
 	
+	/**
+	 * Checks if a withholding is applied.
+	 * 
+	 * @return true, if a withholding is applied
+	 */
+	@Column(nullable=true)
+	public boolean isWithholding() {
+		return withholding;
+	}
+
+	public void setWithholding(boolean withholding) {
+		this.withholding = withholding;
+	}
+
 	@ManyToOne
     @JoinColumn(name="scope", nullable=false)
 	@ForeignKey(name="FK_CREDITOR_SCOPE")
@@ -164,16 +133,6 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 
 	public void setScope(Scope scope) {
 		this.scope = scope;
-	}
-
-	@Transient
-	public boolean isSurcharge() {
-		return false;
-	}
-
-	@Transient
-	public boolean isTaxFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}
 
 	@Override

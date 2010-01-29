@@ -1,11 +1,10 @@
 package com.code.aon.ui.commercial.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -16,19 +15,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.OfferAttachment;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -39,15 +32,16 @@ import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.sign.controller.SignerController;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 
 public class EmailUtilController implements ICommercialMessages, ICommercialConstants {
+
+	private static final String OFFER_REPORT = "offer";
 
 	private EmailSender sender;
 	
@@ -136,7 +130,7 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 				Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
-				String text = AonUtil.getMessage(WebMailConstants.BUNDLE_NAME, WebMailConstants.NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(BUNDLE_KEY, NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, user.getShortName() );
 				throw new AbortProcessingException( message );
 			}
@@ -144,46 +138,23 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 		return this.sender;
 	}
 	
+	public byte[] getOfferPDF( Offer offer ) throws IOException, ReportException, ManagerBeanException {
+		ReportManager report = new ReportManager();
+		report.setCollectionProvider( new SingleCollectionProvider(offer) );
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		report.execute( out, OFFER_REPORT);
+		return out.toByteArray();
+	}		
+	
 	public AonFile getOfferFile( Offer offer ) throws IOException, ReportException, ManagerBeanException {
-		SignerController signer = (SignerController) AonUtil.getRegisteredBean(OFFER_SIGNER_CONTROLLER_NAME);
-		File file = File.createTempFile( signer.getReportKey(), ".pdf" );
-		IAttachment attach = null;
-		if ( offer.isSigned() ) {
-			attach = signer.getSignedAttachment(offer.getId());
-		} else {
-			attach = signer.getReport(offer);
-		}
-		FileUtils.writeByteArrayToFile(file, attach.getData());
+		File file = File.createTempFile( OFFER_REPORT, ".pdf" );
+		byte[] data = getOfferPDF(offer);
+		FileUtils.writeByteArrayToFile(file, data);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
-		aonFile.setFileName( attach.getDescription() + ".pdf" );
+		String fileName = "offer_" + offer.getSeries() + "-" + offer.getNumber() + ".pdf";
+		aonFile.setFileName( fileName );
 		return aonFile;
-	}
-
-	public List<AonFile> getOfferAttachemnts( Offer offer ) throws ManagerBeanException, IOException {
-		IManagerBean offerAttach = BeanManager.getManagerBean(OfferAttachment.class);
-		Criteria criteria = new Criteria();
-		String offerIdAlias = offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID);
-		criteria.addEqualExpression(offerIdAlias, offer.getId());
-		String typeAlias = offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE);
-		Expression exp = ExpressionUtilities.getNotEqualExpression(typeAlias, MimeType.MIME_SIGNED_PDF);
-		criteria.addExpression( exp );
-		List<ITransferObject> list = offerAttach.getList(criteria);
-		if (! list.isEmpty() ) {
-			List<AonFile> files = new LinkedList<AonFile>();
-			for( ITransferObject to : list ) {
-				OfferAttachment attach = (OfferAttachment) to;
-				AonFile aonFile = new AonFile();
-				String ext = "." + ( (attach.getMimeType() != null) ? attach.getMimeType().getExtension() : "tmp");
-				File file = File.createTempFile( attach.getDescription(), ext );
-				FileUtils.writeByteArrayToFile(file, attach.getData());
-				aonFile.setFile(file);
-				aonFile.setFileName( attach.getDescription() );
-				files.add( aonFile );
-			}
-			return files;
-		}
-		return Collections.emptyList();
 	}
 	
 }

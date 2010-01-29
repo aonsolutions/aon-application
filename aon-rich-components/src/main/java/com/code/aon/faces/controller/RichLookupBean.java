@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
@@ -16,6 +15,8 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -44,7 +45,7 @@ public class RichLookupBean {
 	
 	private static final String DEFAULT_WINDOW_TITLE = "Select Window";
 
-	private static final Logger LOGGER = Logger.getLogger(RichLookupBean.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(RichLookupBean.class);
 
 	/** The foreign controller. */
 	private BasicController controller;
@@ -515,7 +516,7 @@ public class RichLookupBean {
 					try {
 						newValue = getController().getModel().getRowData();
 					} catch (ManagerBeanException e) {
-						LOGGER.severe( e.getMessage() );
+						LOGGER.error( e.getMessage(), e );
 					}
 				}				
 			}
@@ -530,7 +531,7 @@ public class RichLookupBean {
 			try {
 				value = PropertyUtils.getProperty( value, getComponent().getLookupProperty() );
 			} catch (Throwable e) {
-				LOGGER.severe( e.getMessage() );
+				LOGGER.error( e.getMessage(), e );
 				value = null;
 			}
 		}
@@ -550,7 +551,7 @@ public class RichLookupBean {
 	 * @throws ManagerBeanException
 	 */
 	public void lookupChanged(ValueChangeEvent event) throws ManagerBeanException {
-		LOGGER.info("lookupChanged: " + event.getNewValue() + " old: " + event.getOldValue());
+		LOGGER.info("lookupChanged: {} old: {}", event.getNewValue(), event.getOldValue());
 		boolean restoreValues = false;
 		setBindings(event.getComponent());
 		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(event);
@@ -672,7 +673,7 @@ public class RichLookupBean {
 	 *            the event
 	 */
 	public void onFormSelect(ActionEvent event) {
-		LOGGER.info("onFormSelect: " + getController().getTo());
+		LOGGER.info("onFormSelect: {}", getController().getTo());
 		fireLookupChangeListener(event.getComponent(), true);
 		updateSourcePojo();
 		beforeCloseWindow();

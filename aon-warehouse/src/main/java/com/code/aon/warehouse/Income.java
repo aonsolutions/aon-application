@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,6 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -53,7 +53,7 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
 public class Income implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
 	private static final long serialVersionUID = -2473825467680303195L;
-	private static final Logger LOGGER = Logger.getLogger(Income.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Income.class.getName());
     private static final String DELIM = " ";
     
 	public Income() {
@@ -277,7 +277,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), getId());
 			return incomeDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining incomeDetail list", e);
+			LOGGER.error("Error obtaining incomeDetail list", e);
 		}
 		return null;
 	}
@@ -292,7 +292,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 			criteria.addOrder(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE));
 			return incomeDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
+			LOGGER.error("Error obtaining incomeDetail orderedList", e);
 		}
 		return null;
 	}

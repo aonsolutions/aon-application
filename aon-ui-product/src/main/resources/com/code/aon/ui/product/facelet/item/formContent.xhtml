@@ -142,22 +142,9 @@
 			</c:if>
 			<aon:outputText value="&#160;" />
 		</aon:div>
-		<aon:div id="itemInventoriable">
+		<aon:div>
 			<c:if test="#{aonConfiguration.bean.product.showStock}">
-				<aon:selectBooleanCheckbox id="Item_product_inventoriable"
-					value="#{controller.to.product.inventoriable}" />
-				<c:if test="#{!item.new and item.to.product.inventoriable}">
-					<aon:commandButton
-						value="#{warehouseBundle.warehouse_item_stock_module}" 
-						title="#{warehouseBundle.warehouse_item_stock_module}"
-						style="border: #808080 1px solid;"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						reRender="itemStockContainer"
-						actionListener="#{itemStock.onShowPanel}">
-							<aon:set  var="#{itemStock.item}" value="#{item.to}" /> 
-					</aon:commandButton>
-				</c:if>
-
+				<aon:selectBooleanCheckbox id="Item_product_inventoriable" value="#{controller.to.product.inventoriable}" />
 			</c:if>
 			<aon:outputText value="&#160;" />
 		</aon:div>

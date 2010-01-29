@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid columns="2" 	
+		columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
+
+		<c:if test="#{lookup != null}">
+			<ui:param name="controller" value="#{lookup}"/>
+		</c:if>
+
+		<ui:include	src="/com/code/aon/ui/supplier/facelet/supplier/formContent.xhtml" />
+	
+		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+			<ui:param name="controllerLookupListener" value="#{supplierLookupListener}"/>
+		</ui:include>
+		
+	</aon:panelGrid>
+
+	<c:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
+		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
+			<ui:param name="controllerLookupListener" value="#{supplierLookupListener}"/>
+		</ui:include>
+	</c:if>
+
+</ui:composition>

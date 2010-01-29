@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,6 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferStatus;
@@ -61,7 +61,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	private static final long serialVersionUID = 851446217271328802L;
 
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(Offer.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Offer.class.getName());
 	
 	/**
 	 * The Constructor. Sets TODAY to issueDate
@@ -714,7 +714,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getId());
 			return offerDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
+			LOGGER.error("Error obtaining offerDetail list", e);
 		}
 		return null;
 	}

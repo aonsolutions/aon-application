@@ -2,12 +2,6 @@ package com.code.aon.ui.commercial.controller;
 
 public interface ICommercialConstants {
 
-	/** Offer Controller name. */
-	String OFFER_CONTROLLER_NAME = "offer";
-	
-	/** Offer signer Controller name. */
-	String OFFER_SIGNER_CONTROLLER_NAME = "offerSigner";
-	
 	/** Target Controller name. */
 	String TARGET_CONTROLLER_NAME = "target";
 	
@@ -16,6 +10,9 @@ public interface ICommercialConstants {
 	
 	/** TargetAddress Controller name. */
 	String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
+
+	/** TargetSegment Controller name. */
+	String TARGET_SEGMENT_CONTROLLER_NAME = "targetSegment";
 
 	/** TargetItem Controller name. */
 	String TARGET_ITEM_CONTROLLER_NAME = "targetItem";

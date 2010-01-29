@@ -54,7 +54,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
@@ -67,6 +66,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.util.DiscountExpression;
@@ -658,9 +658,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-	public void onInvestmentChanged(ActionEvent event) {
-		setRelatedAccounts( null );			
-	}
 
 	public String generate() {
 		return onGenerateKey;
@@ -726,17 +723,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			deleteRemovedFinances();
 			entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
 			entry = getWriter().insertOrUpdateAccountEntry(entry);
-			String concept = getHeader().getConcept();
-			if (StringUtils.isEmpty(concept)) {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal);
-			} else {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal) + " [" + concept;
-				concept = StringUtils.abbreviate(concept, 31);
-				concept += "]";
-			}
-			concept = StringUtils.abbreviate(concept, 32);
-			getHeader().setConcept(concept);
-			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(), invoiceTotal,
+			getWriter().insertEntryDetails(entry, account,
+					getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal,
 					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
 					obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
@@ -760,16 +748,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			insertFinances(invoice);
 			entry = getWriter().insertOrUpdateAccountEntry(entry);
 			setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
-			String concept = getHeader().getConcept();
-			if (StringUtils.isEmpty(concept)) {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal);
-			} else {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal) + " [" + concept;
-				concept = StringUtils.abbreviate(concept, 31);
-				concept += "]";
-			}
-			getHeader().setConcept(concept);
-			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(), invoiceTotal,
+			getWriter().insertEntryDetails(entry, account,
+					getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal,
 					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
 					obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
@@ -975,7 +955,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		invoice.setWithholding(getHeader().isWithholding());
 		invoice.setTaxFree(getHeader().isTaxFree());
 		invoice.setSurcharge(getHeader().isSurcharge());
-		invoice.setDefaultTaxInfo(false);
 		return invoice;
 	}
 
@@ -1052,15 +1031,15 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			throws ManagerBeanException {
 		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 		InvoiceTax invoiceTax = new InvoiceTax();
-		
-		invoiceTax.setInvoiceDetail(invoiceDetail);
-		invoiceTax.setPercentage(detail.getVatPercent());
-		invoiceTax.setQuota(detail.getVatQuota());
-		invoiceTax.setSurcharge(detail.getSurchargePercent());
-		invoiceTax.setSurchargeQuota(detail.getSurchargeQuota());
-		invoiceTax.setTaxType(TaxType.VAT);
-		invoiceTaxBean.insert(invoiceTax);
-		
+		if (detail.getVatPercent() > 0) {
+			invoiceTax.setInvoiceDetail(invoiceDetail);
+			invoiceTax.setPercentage(detail.getVatPercent());
+			invoiceTax.setQuota(detail.getVatQuota());
+			invoiceTax.setSurcharge(detail.getSurchargePercent());
+			invoiceTax.setSurchargeQuota(detail.getSurchargeQuota());
+			invoiceTax.setTaxType(TaxType.VAT);
+			invoiceTaxBean.insert(invoiceTax);
+		}
 		if (detail.getRetentionPercent() > 0) {
 			invoiceTax = new InvoiceTax();
 			invoiceTax.setInvoiceDetail(invoiceDetail);
@@ -1215,13 +1194,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setRegistry( supplier.getRegistry());
 					getHeader().setWithholding(supplier.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
-					getHeader().setTaxFree(supplier.isTaxFree());
+					getHeader().setTaxFree(company.isTaxFree());
 				} else if (isExpense()) {
 					Creditor creditor = (Creditor) event.getNewValue();
 					getHeader().setRegistry(creditor.getRegistry());
 					getHeader().setWithholding(creditor.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
-					getHeader().setTaxFree(creditor.isTaxFree());
+					getHeader().setTaxFree(company.isTaxFree());
 				}
 				getHeader().setDocument( getHeader().getRegistry().getDocument());
 				getHeader().setName(getHeader().getRegistry().getFullName());
@@ -1380,7 +1359,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 				getHeader().setType(InvoiceType.SALES);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "70*");
-				getHeader().setConcept( StringUtils.substringBetween(((detail != null)?detail.getConcept():null),"[","]") );
 				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "473*");
 				getHeader().setRetentionAccount((detail != null) ? detail.getAccount() : null);
@@ -1388,7 +1366,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)) {
 				getHeader().setType(InvoiceType.PURCHASE);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "60*");
-				getHeader().setConcept( StringUtils.substringBetween(((detail != null)?detail.getConcept():null),"[","]") );
 				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "475*");
 				getHeader().setRetentionAccount((detail != null) ? detail.getAccount() : null);
@@ -1396,7 +1373,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)) {
 				getHeader().setType(InvoiceType.EXPENSES);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "6*");
-				getHeader().setConcept( StringUtils.substringBetween(((detail != null)?detail.getConcept():null),"[","]") );
 				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "475*");
 				getHeader().setRetentionAccount((detail != null) ? detail.getAccount() : null);
@@ -1535,9 +1511,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					list = getRelatedAccounts(a);
 				}
 				list = mergeLists(list, acc.getExpensesAccounts() );
-			}
-			if (getHeader().isInvestment()) {
-				list = mergeLists(list, acc.getFixedAssetAccounts() );
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error related accounts", e);

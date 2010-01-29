@@ -5,24 +5,15 @@
 	<xs:element name="config">	
 		<xs:complexType>
 		    <xs:sequence>
-		      <xs:element ref="creditor" />
-		      <xs:element ref="invoice" />
+		      <xs:element ref="finance" />
 		    </xs:sequence>		
 			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="creditor">
+	<xs:element name="finance">
 		<xs:complexType>
 			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
-			<xs:attribute name="showTaxInfoData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
-			<xs:attribute name="showSegment" type="xs:boolean" use="required"/>
-			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="invoice">
-		<xs:complexType>
-			<xs:attribute name="showWarehouseData" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

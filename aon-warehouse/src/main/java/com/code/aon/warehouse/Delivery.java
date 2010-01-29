@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,6 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -53,7 +53,7 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 public class Delivery implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
 	private static final long serialVersionUID = 5865460388758611455L;
-	private static final Logger LOGGER = Logger.getLogger(Delivery.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Delivery.class.getName());
     private static final String DELIM = " ";
 	
 	public Delivery() {
@@ -278,7 +278,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), getId());
 			return deliveryDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining deliveryDetail list", e);
+			LOGGER.error("Error obtaining deliveryDetail list", e);
 		}
 		return null;
 	}
@@ -293,7 +293,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 			criteria.addOrder(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
 			return deliveryDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
+			LOGGER.error("Error obtaining deliveryDetail orderedList", e);
 		}
 		return null;
 	}

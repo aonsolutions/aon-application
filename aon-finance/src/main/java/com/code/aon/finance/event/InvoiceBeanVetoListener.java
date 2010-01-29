@@ -25,6 +25,7 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -127,8 +128,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 			invoice.setWithholding((type == InvoiceType.SALES) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
 			invoice.setSurcharge((type == InvoiceType.SALES) ? taxInfo.isSurcharge() : company.isSurcharge());
-			invoice.setTaxFree(taxInfo.isTaxFree());
-			invoice.setTransaction(taxInfo.getTransaction());
+			invoice.setTaxFree((type == InvoiceType.SALES) ? taxInfo.isTaxFree() : company.isTaxFree());
+			invoice.setTransaction((taxInfo.isTaxFree()) ? InvoiceTransactionType.INTRACOMUNNITARY : InvoiceTransactionType.NATIONAL);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}

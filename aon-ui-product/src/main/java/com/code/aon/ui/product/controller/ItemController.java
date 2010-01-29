@@ -9,16 +9,6 @@ import com.code.aon.ui.product.util.ItemControllerUtil;
 
 public class ItemController extends BasicController {
 
-	private String selectedTab;
-	
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
-
 	public double getSalesPrice() {
 		return ItemControllerUtil.getSalesPrice( (Item) getTo() );
 	}

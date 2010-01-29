@@ -6,8 +6,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -40,7 +41,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger LOGGER = Logger.getLogger(BasicPriceStrategy.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicPriceStrategy.class.getName());
 
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getBasePrice(com.code.aon.product.strategy.ICalculable, boolean)
@@ -60,7 +61,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining basePrice", e);
+			LOGGER.error("Error obtaining basePrice", e);
 		}
 		return CommonUtil.round(price);
 	}
@@ -202,7 +203,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining unitPrice for tariff = " + tariff.getName(), e);
+			LOGGER.error("Error obtaining unitPrice for tariff = " + tariff.getName(), e);
 		}
 		return getUnitPrice(calc);
 	}
@@ -247,7 +248,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				return (TaxDetail)iter.next();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining taxDetail for tax with id= " + vat.getId(), e);
+			LOGGER.error("Error obtaining taxDetail for tax with id= " + vat.getId(), e);
 		}
 		return null;
 	}

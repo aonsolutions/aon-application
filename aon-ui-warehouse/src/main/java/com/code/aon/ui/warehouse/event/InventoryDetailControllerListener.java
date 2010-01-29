@@ -1,8 +1,9 @@
 package com.code.aon.ui.warehouse.event;
 
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,7 +28,7 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 	/**
 	 * The class logger
 	 */
-	private static final Logger LOGGER = Logger.getLogger(InventoryDetailControllerListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryDetailControllerListener.class.getName());
 
 	/**
 	 * After updating the inventory search the stock and updates it or creates if needed
@@ -57,7 +58,7 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 				stockBean.insert(stock);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Exception removing InventoryDetails", e);
+			LOGGER.error("Exception removing InventoryDetails", e);
 		}
 	}
 }
