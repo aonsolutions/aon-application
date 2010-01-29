@@ -6,12 +6,12 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:outputLabel for="#{searchController.preffix}_segments_segment_id"
-		value="#{bundle.aon_name}" />				
+	<aon:outputLabel for="#{searchController.preffix}segments_segment_id"
+		value="#{bundle.aon_segment}" />				
 	<aon:div id="segmentDiv">
 		<a4j:repeat value="#{searchController.segments}" rowKeyVar="index" var="segment">
 			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-				<aon:selectOneMenu id="#{searchController.preffix}_segments_segment_id"
+				<aon:selectOneMenu id="#{searchController.preffix}segments_segment_id"
 					value="#{searchController.segments[index]}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{registryCollections.segments}" />
