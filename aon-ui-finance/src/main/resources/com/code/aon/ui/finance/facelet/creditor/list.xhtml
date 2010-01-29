@@ -55,37 +55,27 @@
 		<aon:div styleClass="aon-scroll-area">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{creditor}" />
-				<ui:param name="columnClasses" value="
-					aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
-					aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 				<ui:define name="columns">
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<h:outputText value="#{to.id}" />
-					</aon:column>
+				
+					<ui:include 
+						src="/com/code/aon/ui/finance/facelet/creditor/listBasic.xhtml" />
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.fullName}" />
-					</aon:column>
-
-					<aon:column>
+					<aon:column alias="Creditor.registry.alias"
+						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_company_alias}" />
 						</f:facet>
 						<aon:outputText value="#{to.registry.alias}" />
 					</aon:column>
 
-					<aon:column>
+					<aon:column alias="Creditor.status"
+						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:outputText value="#{to.status}" />
 					</aon:column>
+
 				</ui:define>
 			</ui:decorate>
 

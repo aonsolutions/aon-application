@@ -1853,7 +1853,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/finance/facelet/lookup/creditor/list.xhtml</value>
+			<value>/com/code/aon/ui/finance/facelet/creditor/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
