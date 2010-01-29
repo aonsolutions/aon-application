@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="headerForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.header}" />
+				<ui:param name="controller" value="#{cmsHeader}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+			</ui:include>		
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width:99%;">
+	
+					<aon:panelTabSet id="menuTabSet">
+	
+						<aon:panelTab id="general" label="#{appBundle.header}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="header_alias"
+									value="#{appBundle.cms_alias}" />
+								<aon:inputText id="header_alias"
+									required="true" size="32" maxlength="32"
+									value="#{cmsHeader.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
+			
+								<aon:outputLabel for="header_menu"
+									value="#{appBundle.header_menu}"/>
+								<aon:selectOneMenu id="header_menu"  
+									value="#{cmsHeader.to.menu.id}">
+									<f:selectItems value="#{collections.menuTopList}" />
+								</aon:selectOneMenu> 
+			
+								<aon:outputLabel for="header_banners"
+									value="#{appBundle.header_banners}"/>
+								<aon:selectOneMenu id="header_banners"  
+									value="#{cmsHeader.to.bannerCategory.id}">
+									<f:selectItem itemLabel="-" itemValue="" />
+									<f:selectItems value="#{collections.bannerGroupList}" />
+								</aon:selectOneMenu> 
+								
+								<aon:outputLabel for="header_language_menu"
+									value="#{appBundle.header_hasmenu}" />
+								<aon:div>
+									<aon:selectBooleanCheckbox id="header_language_menu" 
+										value="#{cmsHeader.to.language_menu}" />
+									<aon:outputLabel for="header_menutype"
+										value="#{appBundle.header_menutype}" />
+									<aon:selectOneMenu id="header_menutype" 
+										value="#{cmsHeader.to.language_menu_type}">
+										<f:selectItems value="#{collections.languageTypes}" />
+									</aon:selectOneMenu> 
+								</aon:div>
+										
+								<aon:outputLabel for="headerDetail_sitename"
+									value="#{appBundle.header_sitename}" />
+								<aon:inputText id="headerDetail_sitename"
+									size="90" maxlength="255"
+									value="#{cmsHeader.toI18n.sitename}" />
+								
+								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+									<ui:param name="inputTextId" value="headerDetail_content" />
+									<ui:param name="inputTextValue" value="#{cmsHeader.toI18n.content}" />
+									<ui:param name="richTextEnabled" value="#{cmsHeader.richTextEnabled}" />
+								</ui:include>																									
+								
+								<aon:outputLabel 
+									value="#{appBundle.cms_image}" />
+								<aon:panelGroup id="thumbnail_preview">
+									<aon:graphicImage styleClass="aon-padding aon-border"
+										url="#{cmsHeader.toI18n.image}.thumbnail" 
+										alt="#{cmsHeader.toI18n.image}"/>										
+									<ui:include src="/facelet/content/utils/image_modal.xhtml">
+										<ui:param name="modalPanelName" value="mp" />
+										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+										<ui:param name="listenerBean" value="#{cmsHeader}" />
+										<ui:param name="reRender" value="thumbnail_preview" />
+										<ui:param name="thumbnail" value="#{false}" />
+									</ui:include>
+					                <aon:commandLink style="padding:2px"
+					                	immediate="#{true}"
+					                	reRender="thumbnail_preview"
+					                    actionListener="#{cmsHeader.onDelImage}">
+										<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}"  alt="#{bundle.aon_remove}" />
+					        		</aon:commandLink>
+								</aon:panelGroup>
+	
+								<aon:outputLabel for="Header_imageAlt"
+									value="#{appBundle.cms_image_alt}" />
+								<aon:inputText id="Header_imageAlt"
+									size="64" maxlength="64"
+									value="#{cmsHeader.toI18n.alt}" />
+								
+							</aon:panelGrid>
+						</aon:panelTab>
+	
+						<aon:panelTab id="css"
+							label="#{appBundle.header_css}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="header_css" style="width:100px"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.header_css}" />
+								<aon:inputTextarea id="headerDetail_css"
+									cols="60" rows="20" 
+									value="#{cmsHeader.to.css}"/>
+							</aon:panelGrid>
+						</aon:panelTab>
+	
+						<aon:panelTab id="js"
+							label="#{appBundle.header_javascript}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="header_javascript" style="width:100px"
+									value="#{appBundle.header_javascript}" />
+								<aon:inputTextarea id="headerDetail_javascript"
+									cols="60" rows="20" 
+									value="#{cmsHeader.to.javascript}"/>
+							</aon:panelGrid>
+						</aon:panelTab>
+						
+					</aon:panelTabSet>
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

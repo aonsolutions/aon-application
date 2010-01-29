@@ -1,0 +1,100 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
+		<locale-config>
+			<default-locale>es</default-locale>
+		</locale-config>
+		<resource-bundle>
+		   <base-name>com.code.aon.ui.infoweb.i18n.application</base-name>
+		   <var>appBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!-- *************** RESOURCE RESOLVER ***************** --> 
+	<managed-bean>
+		<managed-bean-name>aonResource</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.resources.bean.ResourceResolver
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>resourceContextPath</property-name>
+			<value>aon-desktop</value>
+		</managed-property>
+		<managed-property>
+			<property-name>resourceURIPreffix</property-name>
+			<value>/aonResource/4.2.0</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!--  *************** 
+		AON CONFIGURATION
+		***************** -->
+	<managed-bean>
+		<managed-bean-name>aonConfiguration</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.ConfigurationController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	    <managed-property>
+	      <property-name>styleSheets</property-name>
+			<list-entries>
+				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/colorpicker.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/aon-infoweb.css']}</value>
+			</list-entries>
+	    </managed-property>
+	   <managed-property>
+	      <property-name>properties</property-name>
+	      <map-entries>
+	         <map-entry>
+	            <key>hideHeaderLinks</key>
+	            <value>#{true}</value>
+	         </map-entry>
+	         <map-entry>
+	            <key>hideMenuBar</key>
+	            <value>#{true}</value>
+	         </map-entry>
+	      </map-entries>
+	   </managed-property>      	    
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<value>#{webInfoControllerListener}</value>
+			<value>#{companyImagesChildListener}</value>
+		</list-entries>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>webInfoControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.infoweb.event.WebInfoControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- =================== HOME ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>home</from-outcome>
+			<to-view-id>/homepage.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/home.jsf</to-view-id> 
+			<redirect/>
+		</navigation-case>
+	</navigation-rule>
+   
+   
+</faces-config>

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="paymethodForm">
+
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{configBundle.config_paymethod_module}" />
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="controller" value="#{paymethod}" />
+				<ui:define name="beforeSpinToolbarContent">
+
+					<aon:commandButton value="Configuracion Ecommerce" 
+						action="ecconfig_form" actionListener="#{ecconfig.setPayMethodTab}"	 			
+						styleClass="aon-finding-toolbar-item aon-icon-advanced-search">
+					</aon:commandButton>
+
+				</ui:define>
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+					<aon:outputLabel for="PayMethod_name" value="#{bundle.aon_name}" />
+
+					<aon:inputText id="PayMethod_name"  size="40"
+						maxlength="32" value="#{paymethod.to.name}" required="true" />
+					<aon:outputLabel for="PayMethod_type" value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="PayMethod_type" 
+						value="#{paymethod.to.type}">
+						<f:selectItems value="#{configCollections.payMethodTypes}" />
+					</aon:selectOneMenu>
+				</aon:panelGrid>
+				
+				<aon:panelTabSet rendered="#{!paymethod.new}" style="width:50%">				
+				<aon:panelTab label="Datos de la pasarela de pago">
+							
+						<ui:include src="grid.xhtml"  />	
+				</aon:panelTab>
+				</aon:panelTabSet>
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
