@@ -17,5 +17,14 @@ public interface ICommonConstants {
 	
 	/**	 */
 	String CONFIGURATION_ERROR = "aon_configuration_error";
+	
+	/** The file upload error. */
+	String FILE_UPLOAD_ERROR = "aon_fileUpload_error";
+	
+	/** The file upload element. */
+	String FILE_UPLOAD_ELEMENT = "aon_fileupload_element";
 
+	/** The document max size error. */
+	String DOCUMENT_MAX_SIZE_ERROR = "aon_document_max_size_error";	
+	
 }

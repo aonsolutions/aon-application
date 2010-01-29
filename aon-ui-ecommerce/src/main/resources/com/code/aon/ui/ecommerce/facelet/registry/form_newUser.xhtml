@@ -10,109 +10,56 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="shopItemForm">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="Registry -i18-" />
-				<ui:define name="toolbarContent">
-					<!--  
-					<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
-						action="#{shopItem.backAction}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-					<aon:commandButton id="aonToolbar-addToCart"
-						value="Ainadir al carrito -i18n-" action="shopingCart_list"
-						title="add to cart -i18n-"
-						styleClass="aon-finding-toolbar-item aon-icon-new">
-						<aon:actionListener method="#{shopItem.addToCart}" />
-					</aon:commandButton>
-					<aon:commandButton id="aonToolbar-view" value="VIEW CART -i18-"
-						action="shopingCart_list" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-new" />
-					-->
-					<h:commandButton id="aonToolbar-back" value="#{bundle.aon_accept}"
-						action="offer_form"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_accept}" 
-						actionListener="#{shoppingCart.onAcceptTarget}" />
-				</ui:define>
-			</ui:decorate>
+		<aon:form id="newUserForm">
 
-			
-			
-			
-			
-		<aon:div styleClass="aon-scroll-area">
-			
-			<aon:panelGrid columns="2" dir="true">	
-			
-			<ui:include src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
-				<ui:param name="controller" value="#{shoppingCart}"/>
-			</ui:include>
-			
-			<aon:outputLabel for="Company_address" 
-				value="#{registryBundle.registry_address}" />
-			<aon:div>
-				<aon:div>
-					<aon:inputText id="Company_address"
-						value="#{shoppingCart.cartTarget.mainAddress.address}" size="64" maxlength="128"/>
-				</aon:div>
-				<aon:div>
-					<aon:inputText id="Company_address2"
-						value="#{shoppingCart.cartTarget.mainAddress.address2}" size="64" maxlength="128"/>
-				</aon:div>
-				<aon:div>
-					<aon:inputText id="Company_address3"
-						value="#{shoppingCart.cartTarget.mainAddress.address3}" size="64" maxlength="128"/>		
-				</aon:div>
+			<aon:div styleClass="menu" />
+
+			<aon:div styleClass="back-button">
+				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
+					action="shop_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
 			</aon:div>
-			<aon:outputLabel for="Company_address_city" 
-				value="#{registryBundle.registry_city}" />
-			<aon:inputText id="Company_address_city" 
-				value="#{shoppingCart.cartTarget.mainAddress.city}" size="64" maxlength="64"/>
-				
-			<aon:outputLabel for="Company_address_zip" 
-				value="#{registryBundle.registry_zip}" />
-			<aon:inputText id="Company_address_zip" 
-				value="#{shoppingCart.cartTarget.mainAddress.zip}" size="32" maxlength="16"/>
-				
-			<aon:outputLabel for="Company_address_geozone" 
-				value="#{registryBundle.registry_geozone}" />
-			<aon:selectOneMenu id="Company_address_geozone"
-				value="#{shoppingCart.cartTarget.mainAddress.geozone}">
-				<f:selectItems value="#{geozoneCollections.geoTrees}" />
-			</aon:selectOneMenu>
-			
-			<aon:outputLabel for="Company_telephone" 
-				value="#{registryBundle.registry_phone}" />
-			<aon:inputText id="Company_telephone" 
-				value="#{shoppingCart.cartTarget.phone.value}" size="32" maxlength="64"/>
-				
-			<aon:outputLabel 
-				for="Company_fax" 
-				value="#{registryBundle.registry_fax}" />
-			<aon:inputText  id="Company_fax"
-				value="#{shoppingCart.cartTarget.fax.value}" size="32" maxlength="64"/>
-				
-			<aon:outputLabel 
-				for="Company_email" 
-				value="#{registryBundle.registry_email}" />
-			<aon:inputText id="Company_email" 
-				value="#{shoppingCart.cartTarget.email.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
-				
-			<aon:outputLabel for="Company_web" 
-				value="#{registryBundle.registry_web}" />
-			<aon:inputText id="Company_web" 
-				value="#{shoppingCart.cartTarget.web.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
-				
-		
-			</aon:panelGrid>
-		</aon:div>
-		</aon:form>
-		<!--  
-		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		-->
 
+			<aon:panel id="login-panel" styleClass="login-panel">
+				<f:facet name="header">
+					<aon:outputText
+						value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
+				</f:facet>
+				<aon:panelGrid columns="2" style="width:100%;border:000 2px solid;">
+					<aon:outputLabel for="ectarget_email"
+						value="#{bundle.aon_login_user}" />
+					<aon:div>
+						<aon:inputText id="ectarget_email" required="true"
+							value="#{shoppingCart.cartTarget.ecTarget.login}" size="20"
+							maxlength="48" />
+						<aon:outputLabel for="ectarget_email"
+							value="*debe ser un email v&#225;lido" />
+					</aon:div>
+
+					<aon:outputLabel for="ectarget_password"
+						value="#{bundle.aon_login_passwd}" />
+					<aon:inputText id="ectarget_password" required="true"
+						value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"
+						maxlength="32" />
+
+					<aon:outputLabel for="ectarget_password_retype"
+						value="#{ecommerceBundle.aon_ecommerce_user_passwd_retype}" />
+					<aon:inputText id="ectarget_password_retype" required="true"
+						value="#{shoppingCart.newPasswd}" size="20" maxlength="32">
+						<a4j:support event="onblur" reRender="login-panel"
+							focus="ectarget_password"
+							actionListener="#{shoppingCart.checkUserPasswd}" />
+					</aon:inputText>
+				</aon:panelGrid>
+
+				<rich:spacer height="10" />
+
+				<ui:include 
+					src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
+				</ui:include>
+
+			</aon:panel>
+		</aon:form>
 	</ui:define>
 </ui:composition>

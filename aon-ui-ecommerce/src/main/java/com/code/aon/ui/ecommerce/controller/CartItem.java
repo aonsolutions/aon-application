@@ -1,17 +1,16 @@
 package com.code.aon.ui.ecommerce.controller;
 
-import com.code.aon.product.Item;
 
 public class CartItem {
-	private Item item;
+	private ShopItem item;
 	private double quantity;
 	private double total;
 
-	public Item getItem() {
+	public ShopItem getItem() {
 		return item;
 	}
 
-	public void setItem(Item item) {
+	public void setItem(ShopItem item) {
 		this.item = item;
 	}
 

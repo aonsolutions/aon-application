@@ -12,19 +12,9 @@
 			showDigitalCertificate="true"
 		/>
 	</company:config>
-	
 	<ecommerce:config version="1.0" xmlns:ecommerce="http://www.esferalia.com/ecommerce">
 		<ecommerce:ecommerce
-			showStocks="false"
+			showEcommerce="false"
 		/>
 	</ecommerce:config>
-	
-	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
-		<product:product
-			showStock="false"
-			showAccount="true"
-			showAttachment="true"
-		/>
-	</product:config>
-	
 </config>

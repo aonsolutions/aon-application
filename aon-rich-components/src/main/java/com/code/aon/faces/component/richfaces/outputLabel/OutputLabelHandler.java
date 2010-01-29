@@ -7,8 +7,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
 import javax.faces.component.UIViewRoot;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.faces.component.AonComponentHandler;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.TagAttribute;

@@ -8,33 +8,11 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="aonHeader" styleClass="aon-header">
-		<aon:panelGrid columns="3" width="100%" 
+<!--  
+		<aon:panelGrid columns="3" width="100%"
 			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
-<!--  
+
 			<aon:div>
-				<aon:graphicImage rendered="#{company.withLogo}" url="company.logo"/>
-				<a4j:mediaOutput element="img" cacheable="false"
-					rendered="#{company.withLogo}" 
-					value="#{company.aonFile.key}"
-					createContent="#{company.createLogoContent}" />
-			</aon:div>
--->
-			<aon:div>
-<!--  
-				<aon:outputConnectionStatus id="aonStatus"
-					styleClass="aon-outputConnectionStatus"
-					startStyleClass="aon-outputConnectionStatus-start"
-					stopStyleClass="aon-outputConnectionStatus-stop"
-					onstart="resetStatusError();" />
-				<aon:div id="status_error" layout="inline"
-					styleClass="aon-outputConnectionStatus-failed"
-					style="display: none" />
-				<aon:outputText value="#{appBundle.aon_application_title}"
-					styleClass="aon-applicationName" />
-				<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
-					styleClass="aon-applicationName" style="font-size:0.9em;margin-top:0.3em;"
-					rendered="#{aonConfiguration.applicationVersion != null}" />
--->			
 			</aon:div>
 
 			<aon:div>
@@ -51,48 +29,36 @@
 
 			<aon:div styleClass="aon-nowrap">
 				<aon:div style="white-space:nowrap;">
-					<aon:outputText value="#{loggedUser.companyName}" />
+					<aon:outputText value="#{ecConfig.company.name}" />
 					<aon:outputText value=" / " />
-					<aon:outputText value="#{loggedUser.loggedUserName}"
-						styleClass="aon-bold" />
+					<aon:div id="company-info" layout="inline"
+						styleClass="aon-company-info" style="display: none" />
 				</aon:div>
 			</aon:div>
 		</aon:panelGrid>
-		
-		<aon:panelGrid columns="3" width="100%" 
-			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
+-->		
+
+		<aon:panelGrid columns="3" width="100%" style="background-color:#{ecConfig.activeConfig.headerColor};"
+			columnClasses="aon-logo-name,aon-header-slogan,aon-header-info">
 
 			<aon:div>
-<!--  
-				<aon:graphicImage rendered="#{company.withLogo}" url="company.logo"/>
--->		
-				<a4j:mediaOutput element="img" cacheable="false"
-					rendered="#{company.withLogo}" 
-					value="#{company.aonFile.key}"
-					createContent="#{company.createLogoContent}" />
+				<aon:div id="company-logo">
+					<h:outputLink target="_top"
+						value="${facesContext.externalContext.requestContextPath}">
+						<a4j:mediaOutput id="company-logo-left" element="img"
+							cacheable="false" rendered="#{company.withLogo}"
+							value="#{company.aonFile.key}"
+							createContent="#{company.createLogoContent}" />
+					</h:outputLink>
+				</aon:div>
+				<aon:div id="header-image">
+					<a4j:mediaOutput id="header-image-right" element="img"
+						rendered="#{ecConfig.headerImage}"
+						cacheable="false" value="#{ecConfig.activeConfig.id}"
+						createContent="#{ecConfig.paintHeader}" />
+				</aon:div>
 			</aon:div>
 		</aon:panelGrid>
-		
-		
 
-		<aon:form>
-			<aon:div styleClass="aon-header-additionalInfo">
-				<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
-					<aon:div styleClass="aon-float-right">
-						<aon:div styleClass="aon-header-menu-item">
-							<h:outputLink target="_top"
-								value="${facesContext.externalContext.requestContextPath}">
-								<h:outputText value="#{bundle.aon_home}" />
-							</h:outputLink>
-						<aon:commandLink style="border-right:0;" action="logout"
-								actionListener="#{aonConfiguration.logout}">
-								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-						</aon:commandLink>
-						</aon:div>
-					</aon:div>
-				</c:if>
-				<aon:outputText value="#{aonConfiguration.currentDate}" />
-			</aon:div>
-		</aon:form>
 	</aon:div>
 </ui:composition>

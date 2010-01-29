@@ -543,6 +543,16 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>hotKey</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.HotKey
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.hotkey.HotKeyHandler
+			</handler-class>
+		</component>
+	</tag>	<tag>
 		<tag-name>methodParam</tag-name>
 		<handler-class>com.code.aon.faces.component.methodParam.MethodParamHandler</handler-class>
 	</tag>

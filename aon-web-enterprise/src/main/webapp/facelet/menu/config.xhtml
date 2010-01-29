@@ -1,15 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
-<body>
-
-<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 
@@ -23,113 +21,20 @@
 					<aon:panelGroup>
 						<aon:panel headerClass="aon-panel-title">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_masters}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="customer" 
-										action="customer_search" actionListener="#{customer.onEditSearch}"
-										value="#{customerBundle.customer_module}" >
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="supplier" 
-										action="supplier_search" actionListener="#{supplier.onEditSearch}"
-										value="#{supplierBundle.supplier_module}" >
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="creditor" 
-										action="creditor_search" actionListener="#{creditor.onEditSearch}"
-										value="#{financeBundle.finance_creditor_module}" >
-									</aon:commandLink>
-								</aon:div>						
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="target" 
-										action="target_search" actionListener="#{target.onEditSearch}"
-										value="#{commercialBundle.commercial_target_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="seller" 
-										action="seller_search" actionListener="#{seller.onEditSearch}"
-										value="#{salesBundle.sales_seller_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panel>
-	
-						<aon:panel headerClass="aon-panel-title">
-							<f:facet name="header">
-								<aon:outputText value="#{productBundle.product_module}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="item" 
-										action="item_search" actionListener="#{item.onEditSearch}"
-										value="#{productBundle.product_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="productCategory" 
-										action="productCategory" 
-										value="#{productBundle.product_category_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="brand" 
-										action="brand"
-										value="#{productBundle.product_brand_module}" />
-								</aon:div>
-								
-								<aon:panel headerClass="aon-panel-title">
-									<f:facet name="header">
-										<aon:outputText value="#{productBundle.product_price_module}"/>
-									</f:facet>					
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="tariff" 
-												action="tariff_list" actionListener="#{tariff.onSearch}"
-												value="#{productBundle.product_tariff_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="catalogue" 
-												action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
-												value="#{productBundle.product_catalogue_module}" />
-										</aon:div>
-									</aon:div>
-								</aon:panel>
-							
-							</aon:div>
-						</aon:panel>
-	
-					</aon:panelGroup>
-
-					<aon:panelGroup>
-						<aon:panel headerClass="aon-panel-title">
-							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_menu_group}"/>
+								<aon:outputText value="#{bundle.aon_configuration}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="company" 
 										action="company" actionListener="#{company.onLoad}"
-										value="#{companyBundle.company_data_module}" />
+										value="#{companyBundle.company_data_module}">
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="workplace" 
 										action="workplace" 
 										value="#{companyBundle.company_workplace_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="warehouse" 
-										action="warehouse" actionListener="#{warehouse.onSearch}"
-										value="#{warehouseBundle.warehouse_warehouse_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panel>
-						
-						<aon:panel headerClass="aon-panel-title">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_configuration}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="series" 
 										action="series" 
@@ -143,43 +48,27 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="payMethod" 
 										action="payMethod" 
-										value="#{configBundle.config_pay_methods}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="commercialSegment" 
-										action="commercialSegment" actionListener="#{commercialSegment.onSearch}"
-										value="#{commercialBundle.commercial_segment_module}" />
+										value="#{configBundle.config_paymethod_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="geotreeParent" 
 										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
 										value="#{geozoneBundle.geozone_module}" />
 								</aon:div>
-							</aon:div>
-						</aon:panel>					
-	
-						<aon:panel headerClass="aon-panel-title">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink disabled="true" 
-										value="Importar Catálogo de Proveedores" />
+									<aon:commandLink id="accPeriod" action="accPeriod"
+										value="#{accountingBundle.accounting_period_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="defaultParams" action="defaultParams"
+										actionListener="#{accAppParams.onLoad}"
+										value="#{accountingBundle.accounting_default_params_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panel>
 					</aon:panelGroup>
-					
 				</aon:panelGrid>
-				
 			</aon:div>
-				
 		</aon:form>
-
 	</ui:define>
-
 </ui:composition>
-
-</body>
-</html>

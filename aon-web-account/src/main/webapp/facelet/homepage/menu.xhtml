@@ -57,7 +57,7 @@
 			<aon:dropDownMenu value="#{appBundle.account_reports}">
 				<aon:menuItem  actionListener="#{trialBalance.onReset}" action="account_statement_search" value="#{accountingBundle.accounting_statement_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem actionListener="#{journalReport.onEditSearch}" action="journal_search"	value="#{accountingBundle.accounting_journal_module}"/>
+				<aon:menuItem actionListener="#{journalReport.onReset}" action="journal_search"	value="#{accountingBundle.accounting_journal_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{trialBalance.onReset}" action="trialBalance_search" value="#{accountingBundle.accounting_trial_balance_module}" />
 				<aon:menuItem actionListener="#{profitAndLossReport.onEditSearch}" action="profit_and_loss_search" value="#{accountingBundle.accounting_profit_and_loss_module}"/>
@@ -91,12 +91,13 @@
 
 			</aon:dropDownMenu>
 
+<!-- 
 			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
-				<aon:menuItem action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
-				<aon:menuItem action="periodAmortization_search" value="#{accountingBundle.accounting_period_amortization_module}"/>
+				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem action="amortizationType_list" value="#{accountingBundle.accounting_amortization_type_module}"/>				
 			</aon:dropDownMenu>
+-->
  
 			<aon:dropDownMenu value="#{appBundle.account_budget}">
 				<aon:menuItem actionListener="#{accountBudget.onEditSearch}" action="accountBudget_search" value="#{accountingBundle.accounting_account_budget_module}"/>

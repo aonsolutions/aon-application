@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,10 +17,6 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.bean.AonMessage;
-import com.code.aon.webmail.bean.AonMessageUtils;
-import com.code.aon.webmail.bean.IMimeType;
 import com.sun.mail.util.BASE64DecoderStream;
 
 /**
@@ -35,15 +30,11 @@ public class AonMessageTracer implements IMimeType {
 			"(cid:[^\"\']+)(\"|\')", Pattern.CASE_INSENSITIVE);
 	
 	private Message message;
-	
+
 	private Set<String> cids;
 	
 	private ArrayList<BodyPart> relateds;
 	
-	public AonMessageTracer(Message message) {
-		this.message = message;
-	}
-
 	private String traceText(Object mimepart) throws MessagingException, IOException {
 		String value = parseCids((String) mimepart);
 		value = AonMessageUtils.parse_tags(value);
@@ -220,7 +211,7 @@ public class AonMessageTracer implements IMimeType {
 	
 	private String traceMessage( Message message ) throws IOException, MessagingException {
 		String content = AonMessageUtils.extractBodyInnerHTML(traceContent(message));
-		return AonMessage.getMessageEnvelope(message, content, null, AonUtil.getCurrentLocale());
+		return AonMessage.getMessageEnvelope(message, content, null);
 	}
 
 	private String traceContent( Message message ) throws IOException, MessagingException {
@@ -241,29 +232,32 @@ public class AonMessageTracer implements IMimeType {
 	public String getBodyHTML() throws MessagingException, IOException {
 		this.cids = new HashSet<String>();
 		String data = traceContent(message);
-		parseRelateds();
+		parseRelateds(data);
 		return AonMessageUtils.extractInnerHTML(data);
+	}
+
+	/**
+	 * Returns the javax.mail.Message object.
+	 */
+	public Message getMessage() {
+		return message;
+	}
+
+	/**
+	 * Method for mapping a message to this MessageInfo class.
+	 */
+	public void setMessage(Message message) {
+		this.message = message;
 	}
 
 	/**
 	 * @return the relateds
 	 */
 	public ArrayList<BodyPart> getRelateds() {
-		if ( relateds == null ) {
-			this.cids = new HashSet<String>();
-			try {
-				traceContent(message);
-				parseRelateds();
-			} catch (IOException e) {
-				LOGGER.log( Level.SEVERE, "Error parsing cids & relateds", e );
-			} catch (MessagingException e) {
-				LOGGER.log( Level.SEVERE, "Error parsing cids & relateds", e );
-			}
-		}
 		return relateds;
 	}
 
-	private void parseRelateds() throws IOException, MessagingException {
+	private void parseRelateds(String msgText) throws IOException, MessagingException {
 		this.relateds = new ArrayList<BodyPart>();
 		Object obj = message.getContent();
 		if (obj instanceof MimeMultipart) {

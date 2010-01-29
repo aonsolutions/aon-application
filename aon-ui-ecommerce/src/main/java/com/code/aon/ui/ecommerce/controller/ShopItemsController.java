@@ -1,5 +1,7 @@
 package com.code.aon.ui.ecommerce.controller;
 
+import java.io.OutputStream;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -10,16 +12,18 @@ import javax.faces.model.ListDataModel;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ShopItemsController {
 
-	private List<ITransferObject> list;
+	private List<ShopItem> list;
 	private DataModel model;
 	private Criteria criteria;
 
@@ -34,23 +38,57 @@ public class ShopItemsController {
 		this.model = model;
 	}
 
-	public List<ITransferObject> getList() {
-		try {
-			if (list == null) {
-				IManagerBean bean = BeanManager.getManagerBean(Item.class);
-				list = bean.getList(criteria);
+	public List<ShopItem> getList() {
+		if (list == null) {
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+
+				ConfigController cc = (ConfigController) AonUtil
+						.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER);
+				Tariff tariff = cc.getActiveConfig().getTariff();
+				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+				String identifier = itemBean.getFieldName(IProductAlias.ITEM_INTERNET);
+				getCriteria().addEqualExpression(identifier, true);
+				List<ITransferObject> itemList = itemBean.getList(getCriteria());
+				setList(new LinkedList<ShopItem>());
+				for (ITransferObject to : itemList) {
+					Item item = (Item) to;
+					ShopItem si = new ShopItem(item, tariff);
+					getList().add(si);
+				}
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					// nothing
+				}
+				String msg = "La obtencion de datos falló";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
 			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
 		}
 		return list;
 	}
 
-	public void setList(List<ITransferObject> list) {
+	public void setList(List<ShopItem> list) {
 		this.list = list;
 	}
 
 	public Criteria getCriteria() {
+		if(criteria==null){
+			criteria = new Criteria();
+		}
 		return criteria;
 	}
 
@@ -58,32 +96,13 @@ public class ShopItemsController {
 		this.criteria = criteria;
 	}
 
-	public void resetCriteria(Criteria criteria) throws ManagerBeanException {
+	public void resetCriteria(Criteria criteria) {
 		setModel(null);
 		setCriteria(criteria);
 	}
 
-	public void onSelect(ActionEvent event) {
-		((ShopItemController) FormUtil
-				.getController(IECommerceConstants.SHOP_ITEM_CONTROLLER))
-				.setItem((Item) getModel().getRowData());
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setDetail(true);
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setBackView(IECommerceConstants.ITEM_LIST_VIEW);
-	}
-
 	public void onReset(ActionEvent event) {
-		try {
-			Criteria criteria = null;
-			resetCriteria(criteria);
-		} catch (ManagerBeanException e) {
-			String msg = "La búsqueda falló";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
+		resetCriteria(new Criteria());
 	}
 
 	public void onSearch(ActionEvent event) {
@@ -91,13 +110,33 @@ public class ShopItemsController {
 		model = new ListDataModel(getList());
 	}
 
+	public void onSelect(ActionEvent event) {
+		ShopItemController sic = (ShopItemController) AonUtil
+				.getRegisteredBean(IECommerceConstants.SHOP_ITEM_CONTROLLER);
+		ShopItem item = (ShopItem) getModel().getRowData();
+		sic.setItem(item);
+		ShopController sc = (ShopController) AonUtil
+				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView(ViewEnum.ITEM_LIST);
+		sc.setContentView(ViewEnum.ITEM_DETAIL);
+	}
+
 	public void addToCart(ActionEvent event) {
 		((ShoppingCartController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER))
-				.addToCart((Item) model.getRowData());
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setCart(true);
+				.addToCart((ShopItem) model.getRowData());
+		ShopController sc = (ShopController) AonUtil
+				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView(ViewEnum.ITEM_LIST);
+		sc.setContentView(ViewEnum.SHOPPING_CART);
 	}
 
+	public void paintThumbnail(OutputStream out, Object data) {
+		Integer id = (Integer) data;
+		for (ShopItem shopItem : getList()) {
+			if (id.equals(shopItem.getId())) {
+				shopItem.paintThumbnail(out, data);
+			}
+		}
+	}
 }

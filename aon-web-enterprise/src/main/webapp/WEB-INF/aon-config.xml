@@ -3,7 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
 	xmlns="http://www.esferalia.com/config" >
-	
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+		
 	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
@@ -17,7 +23,7 @@
 		<customer:customer
 			showFinanceData="true" 
 			showProjectData="false"
-			showFinanceFeeData="false" 
+			showFinanceFeeData="true" 
 			showAccount="true"
 			showTariff="true" 
 			showSegment="true"
@@ -41,4 +47,19 @@
 			showAccount="true"
 		/>
 	</finance:config>
+
+	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:product
+			showStock="false"
+			showAccount="true"
+			showAttachment="false"
+		/>
+	</product:config>
+
+	<commercial:config version="1.0" xmlns:commercial="http://www.esferalia.com/commercial">
+		<commercial:commercial
+			showEcommerceTab="false"
+			showInvoicing="false"
+		/>
+	</commercial:config>
 </config>

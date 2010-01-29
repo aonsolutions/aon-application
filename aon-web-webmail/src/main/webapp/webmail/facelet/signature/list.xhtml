@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="list">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_webmail_signature}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="signature_form" actionListener="#{signature.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}" />
+					<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+						rendered="#{!signature.checklistEmpty}" inmediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{signature.onRemoveSelected}"
+						confirmAction="signature_list"
+						accesskey="#{bundle.aon_key_remove}" />
+				</ui:define>
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:editDataTable id="dataTable" value="#{signature.model}" var="to"
+					rows="#{signature.pageLimit}"
+					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+								aon-editDataTable-textColumn">
+					
+					<aon:rowSelector action="signature_form"
+						actionListener="#{signature.onSelect}" />
+						
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_check}" />
+						</f:facet>
+						<aon:div styleClass="aon-text-center">
+							<aon:selectBooleanCheckbox
+								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
+								value="#{signature.rowChecked}">
+								<a4j:support event="onclick"
+									reRender="dataTable,aonToolbar" />
+							</aon:selectBooleanCheckbox>
+						</aon:div>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_webmail_signature_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+
+				</aon:editDataTable>
+
+				<aon:dataScroller2 for="dataTable" showNote="true" />
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
+

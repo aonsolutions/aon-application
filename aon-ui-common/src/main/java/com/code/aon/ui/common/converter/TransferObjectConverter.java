@@ -11,6 +11,8 @@ import javax.faces.convert.ConverterException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -23,6 +25,19 @@ import com.code.aon.common.ManagerBeanException;
  */
 public class TransferObjectConverter implements Converter {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(TransferObjectConverter.class);
+	
+	private Serializable getId( String value ) {
+		Serializable id = null;
+		try {
+	        byte[] data = Base64.decodeBase64(value.getBytes());
+	        id = (Serializable) SerializationUtils.deserialize(data);			
+		} catch ( Throwable th ) {
+			LOGGER.debug( "Error deserializing: " + value, th );	
+		}
+        return id;
+	}
+	
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		ValueExpression vb = component.getValueExpression("value");
@@ -30,11 +45,12 @@ public class TransferObjectConverter implements Converter {
 		if (toType != null) {
 			if (value != null) {
 				try {
-					IManagerBean bean = BeanManager.getManagerBean(toType);
-			        byte[] data = Base64.decodeBase64(value.getBytes());
-			        Serializable id = (Serializable) SerializationUtils.deserialize(data);
-					ITransferObject to = bean.get(id);
-					return to;
+					Serializable id = getId(value);
+					if ( id != null ) {
+						IManagerBean bean = BeanManager.getManagerBean(toType);
+						ITransferObject to = bean.get(id);
+						return to;
+					}
 				} catch (ManagerBeanException e) {
 					throw new ConverterException("Unable to find "
 							+ ClassUtils.getShortClassName(toType) + " with id " + value);

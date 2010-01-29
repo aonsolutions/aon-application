@@ -8,6 +8,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.project.Dossier;
 
@@ -18,9 +23,7 @@ public class CampaignDossier implements ITransferObject {
 	private static final long serialVersionUID = -2268140702529400027L;
 
 	private Integer id;
-	
 	private Campaign campaign;
-	
 	private Dossier dossier;
 	
 	@Id
@@ -54,12 +57,34 @@ public class CampaignDossier implements ITransferObject {
 		this.dossier = dossier;
 	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof CampaignDossier) {
-            return (this.id.equals(((CampaignDossier)obj).getId()));
-        }
-        return false;
-    }
+	@Override	
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final CampaignDossier o = (CampaignDossier) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.id, o.id)
+				.append(this.campaign, o.campaign)
+				.append(this.dossier, o.dossier)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(this.id)
+			.append(this.campaign)
+			.append(this.dossier)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }

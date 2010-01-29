@@ -9,9 +9,8 @@
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="mainContent">
-		<a4j:include id="aonContent"
-			viewId="/com/code/aon/ui/webmail/facelet/webmailFolder/folderView.xhtml"
-			ajaxRendered="false"/>		
+		<a4j:include id="homepage" viewId="/webmail/facelet/folderView.xhtml" />	
+		<!-- <ui:include src="/homepage.xhtml" />  -->	
 	</ui:define>
   
 </ui:composition>

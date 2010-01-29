@@ -12,7 +12,7 @@
 	</xs:element>
 	<xs:element name="ecommerce">
 		<xs:complexType>
-			<xs:attribute name="showStocks" type="xs:boolean" use="required"/>
+			<xs:attribute name="showEcommerce" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

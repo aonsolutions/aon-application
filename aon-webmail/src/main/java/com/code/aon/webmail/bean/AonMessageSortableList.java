@@ -2,8 +2,6 @@ package com.code.aon.webmail.bean;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -14,12 +12,14 @@ import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.webmail.WebmailException;
 
 public class AonMessageSortableList extends AonSortableList implements MessageCountListener,MessageChangedListener {
 
-	private static final Logger LOGGER = Logger.getLogger(AonMessageSortableList.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessageSortableList.class);
 
     public static String FROM_COLUMN = "from";   
     
@@ -35,12 +35,15 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 
 	protected Folder folder;
 	
+	private boolean sortable;
+	
 	public AonMessageSortableList(Folder folder) {
-		this(AonMessageSortableList.DATE_COLUMN,folder);
+		this(AonMessageSortableList.DATE_COLUMN,folder,true);
 	}
 
-	public AonMessageSortableList(String column,Folder folder) {
+	public AonMessageSortableList(String column, Folder folder, boolean sortable) {
 		super(column);
+		this.sortable = sortable;
 		this.folder = folder;
 		if (this.folder != null) {
 			this.folder.addMessageCountListener(this);
@@ -101,12 +104,12 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 * Sort the list.
 	 */
 	protected void sort(final String column, final boolean ascending) {
-		if (messageList != null) {
+		if ( (messageList != null) && sortable) {
 			try {
 				Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
 				Arrays.sort(messageList, comparator);
 			} catch ( Throwable th ) {
-				LOGGER.log(Level.SEVERE, "Error sorting message list", th);
+				LOGGER.error("Error sorting message list", th);
 			}
 		}
 	}
@@ -175,7 +178,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
                     try {
                         foundMessage.setMessageFlag(changedMessage.getFlags());
                     } catch (MessagingException e) {
-            			LOGGER.log(Level.SEVERE,"Error getting message flags",e);
+            			LOGGER.error("Error getting message flags",e);
                     }
                 }
             }

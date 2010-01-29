@@ -1,49 +1,52 @@
 package com.code.aon.ui.ecommerce.controller;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 
-import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.WorkPlace;
+import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.geozone.GeoZone;
-import com.code.aon.product.Item;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
-import com.code.aon.ui.company.controller.CompanyCollectionsController;
-import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ShoppingCartController {
+public class ShoppingCartController extends EmailParentController{
+	
+	private static final String ECOMMERCE_BUNDLE = "ecommerceBundle";
+	
 	private List<CartItem> list;
 	private DataModel model;
 	private boolean registered;
+	private ShoppingCartMap cart;
 	private Double total;
 	private CartTarget cartTarget;
+	private String newPasswd;
+	
+	public ShoppingCartController() {
+		ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
+		setCart(ShoppingCartMap.getInstance(sc));
+	}
 
 	public DataModel getModel() {
-		if (model == null) {
-			model = new ListDataModel(getList());
-		}
+		model = new ListDataModel(getList());
 		return model;
 	}
 
@@ -53,7 +56,8 @@ public class ShoppingCartController {
 
 	public List<CartItem> getList() {
 		if (list == null) {
-			list = new ArrayList<CartItem>();
+			ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
+			list = ShoppingCartMap.getInstance(sc).getList();
 			setTotal(0.0);
 		}
 		return list;
@@ -63,14 +67,48 @@ public class ShoppingCartController {
 		this.list = list;
 	}
 	
+	public String getNewPasswd() {
+		return newPasswd;
+	}
+	public void setNewPasswd(String newPasswd) {
+		this.newPasswd = newPasswd;
+	}
+
+	public ShoppingCartMap getCart() {
+		return cart;
+	}
+
+	public void setCart(ShoppingCartMap cart) {
+		this.cart = cart;
+	}
+	
 	public String budgetRequest() {
 		if (!isRegistered()) {
 			return IECommerceConstants.REGISTRY_ACTION;
 		}
-		return IECommerceConstants.BUDGET_ACTION;
+		((CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+		return IECommerceConstants.PAYMETHOD_ACTION;
+	}
+
+	public void budgetRequest(ActionEvent event) {
+		checkItemList();
+		((CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+		
+		/*
+		 * se crea un carrito con referencias debiles en memoria y 
+		 * se guarda el carrito en el contexto de aplicacion para que sea accesible desde el servlet 
+		 */
+		ServletContext sc = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext());
+		ShoppingCartMap cart = ShoppingCartMap.getInstance(sc);
+		for(CartItem ci:getList()){
+			cart.put(ci);
+		}
+		cart.setTotal(getTotal());
+		sc.setAttribute("map", cart);
 	}
 
 	public boolean isRegistered() {
+		registered = ((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).isLogged();
 		return registered;
 	}
 
@@ -98,21 +136,18 @@ public class ShoppingCartController {
 		return getList().size();
 	}
 
-	public void addToCart(Item item) {
+	public void addToCart(ShopItem item) {
 		CartItem ci = new CartItem();
 		ci.setItem(item);
-		ci.setQuantity(1);
-		// ci.setDiscount(0);
-		// ci.setPrice(item.getPrice());
-
-		// int index = getList().indexOf(ci);
+		
 		int index = getItemIndex(item);
 		if (index == -1) {
+			ci.setQuantity(1);
 			ci.setTotal(ci.getItem().getPrice());
 			getList().add(ci);
 			setTotal(getTotal() + ci.getTotal());
 		} else {
-			CartItem c = (CartItem) getList().get(index);
+			CartItem c = getList().get(index);
 			c.setQuantity(c.getQuantity() + 1);
 			c.setTotal(c.getItem().getPrice() * c.getQuantity());
 			setTotal(getTotal() + c.getItem().getPrice());
@@ -125,12 +160,12 @@ public class ShoppingCartController {
 	 * @param item
 	 * @return index
 	 */
-	private int getItemIndex(Item item) {
+	private int getItemIndex(ShopItem item) {
 		int index = -1;
 		boolean found = false;
 		Iterator<CartItem> iterator = getList().iterator();
 		while (iterator.hasNext() && !found) {
-			CartItem listItem = ((CartItem) iterator.next());
+			CartItem listItem = iterator.next();
 			if (listItem.getItem().getId().equals(item.getId())) {
 				index = getList().indexOf(listItem);
 				found = true;
@@ -156,30 +191,26 @@ public class ShoppingCartController {
 		Double totalPrice = ci.getQuantity() * ci.getItem().getPrice();
 		setTotal(getTotal() - ci.getTotal());
 		ci.setTotal(totalPrice);
-
 		setTotal(getTotal() + totalPrice);
-
-		// refreshTotal();
 	}
 
 	public void refreshTotal() {
-		setTotal(getTotal() + total);
-
+		setTotal(getCart().getTotal());
 	}
 	
 	public void onSelect(ActionEvent event) {
-		((ShopItemController) FormUtil
-			.getController(IECommerceConstants.SHOP_ITEM_CONTROLLER))
-			.setItem(((CartItem) getModel().getRowData()).getItem());
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setDetail(true);
+		ShopItemController sic = (ShopItemController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_ITEM_CONTROLLER);
+		CartItem ci =  (CartItem) getModel().getRowData();
+		sic.setItem(ci.getItem());
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView( ViewEnum.SHOPPING_CART );
+		sc.setContentView( ViewEnum.ITEM_DETAIL );
 	}
 	
 	public void onResetTarget(ActionEvent event) {
 		setCartTarget(new CartTarget());
-		getCartTarget().setTarget(new Target());
-		getCartTarget().getTarget().setRegistry(new Registry());
+		getCartTarget().setEcTarget(new Ectarget());
+		getCartTarget().getEcTarget().setTarget(new Target());
 		getCartTarget().setMainAddress(new RegistryAddress());
 		getCartTarget().getMainAddress().setAddressType( AddressType.MAIN );
 		getCartTarget().getMainAddress().setGeozone( new GeoZone() );
@@ -191,6 +222,9 @@ public class ShoppingCartController {
 		getCartTarget().getEmail().setMediaType(MediaType.FAX);
 		getCartTarget().setWeb(new RegistryMedia());	
 		getCartTarget().getWeb().setMediaType(MediaType.FAX);	
+		getCartTarget().getWeb().setMediaType(MediaType.FAX);	
+		
+		getCartTarget().getEcTarget().getTarget().setAdvertising(Advertising.ALLOWED);
 	}
 	
 	private boolean isEmpty( RegistryAddress address ) {
@@ -226,98 +260,101 @@ public class ShoppingCartController {
 		updateRegistryMedia(registry, getCartTarget().getWeb());
 	}
 
-	private void acceptTarget() throws ManagerBeanException {
+	private void addTarget() throws ManagerBeanException {
 		IManagerBean tagetBean = BeanManager.getManagerBean(Target.class);
+		IManagerBean ecTagetBean = BeanManager.getManagerBean(Ectarget.class);
 		
+		Ectarget to = getCartTarget().getEcTarget();
+		to.getTarget().setAdvertising(getCartTarget().getEcTarget().getTarget().getAdvertising());
+		to.getTarget().setRegistry(getCartTarget().getEcTarget().getTarget().getRegistry());
 		
-		Target to = new Target();
-		to.setAdvertising(getCartTarget().getTarget().getAdvertising());
-		to.setRegistry(getCartTarget().getTarget().getRegistry());
+		try{
+			tagetBean.insertOrUpdate(to.getTarget());
+			ecTagetBean.insertOrUpdate(to);
+		} catch (Exception e){
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
 		
-		tagetBean.insertOrUpdate(to);
-		
-		
-		
-		
-//		if (! isEmpty(getTarget()) ) {
-//			getTarget().getMainAddress().setRegistry(registry);
-//			registryAddressBean.insertOrUpdate(getTarget().getMainAddress());
-//		} else if ( getTarget().getMainAddress().getId() != null ) {
-//			registryAddressBean.remove(getTarget().getMainAddress());
-//		}
-		
+		String message = "target guardado";
+		System.out.println(message);
+		sendEmail();
 		afterBeanAdded();
 	}
 	
-	public void onAcceptTarget(ActionEvent event) {
+	public void onAddTarget(ActionEvent event) {
 		try {
-			acceptTarget();
+			addTarget();
+			CartOfferController offerController = (CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER);
+			offerController.getOffer().setTarget(getCartTarget().getEcTarget().getTarget());
+			offerController.initialize();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
-		}
-
-		String message = "target guardado \n oo";
-		System.out.println(message);
-		//AonUtil.addInfoMessage(message);
-		
-//****************************
-//creacion del presupuesto
-//****************************
-		OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
-		OfferDetailController offerDetailController = (OfferDetailController)FormUtil.getController(IECommerceConstants.OFFER_DETAIL_CONTROLLER);
-		if(offerController.exist(getCartTarget().getTarget())){
-			// 
-		} else {
-			offerController.onReset(null);
-			Offer to = (Offer)offerController.getTo();
-			getCartTarget().getTarget().setId(738);
-			to.setTarget(getCartTarget().getTarget());
-			to.setStatus(OfferStatus.PENDING);
-			try {
-				to.setWorkPlace((WorkPlace)((CompanyCollectionsController)AonUtil.getRegisteredBean("companyCollections")).getWorkPlaces().get(0).getValue());
-				//to.setWorkPlace((WorkPlace)ECommerceUtil.getWorkPlaces().get(0));
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			offerController.accept(event);
-			for(CartItem ci:getList()){
-				offerDetailController.onReset(null);
-				OfferDetail tod = (OfferDetail)offerDetailController.getTo();
-				tod.setOffer(to);
-				tod.setItem(ci.getItem());
-				tod.setDescription(ci.getItem().getProduct().getName());
-				tod.setQuantity(ci.getQuantity());
-				tod.setPrice(ci.getItem().getPrice());
-				tod.setDiscountExpression(null);
-				offerDetailController.onAccept(event);
-			}
-		}
+		}		
 	}
 	
 	public void afterBeanAdded() {
-//		IController controller = event.getController();
-//		Registry registry = ((IRegistry) controller.getTo()).getRegistry();
+		setNewPasswd(null);
 		try {
-			updateRegistryLines( getCartTarget().getTarget().getRegistry() );
+			((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(true);
+			((LoginController)AonUtil.getRegisteredBean(IECommerceConstants.LOGIN_CONTROLLER)).setLogin(getCartTarget().getEcTarget().getLogin());
+			
+			updateRegistryLines( getCartTarget().getEcTarget().getTarget().getRegistry() );
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
 		}
 	}
 
 	public void afterBeanUpdated() {
-//		IController controller = event.getController();
-//		Registry registry = ((IRegistry) controller.getTo()).getRegistry();
 		try {
-			updateRegistryLines( getCartTarget().getTarget().getRegistry() );
+			updateRegistryLines( getCartTarget().getEcTarget().getTarget().getRegistry() );
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
 		}
 	}
-
-
 	
-
+	private void checkItemList(){
+		if(getList().size()<=0){
+			String message = "Imposible realizar el pedido. Ningun articulo seleccionado.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}
+	}
 	
+	public void checkUserPasswd(ActionEvent event){
+		if(!getCartTarget().getEcTarget().getPassword().equals(this.getNewPasswd())){
+			String msg = "passwd check failed";
+			AonUtil.addErrorMessage(msg);
+			new AbortProcessingException(msg);
+		}
+	}
+	
+	public void sendEmail(){
+		String from=null;
+		try {
+			from = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getCompany().getEmail().getValue();
+		} catch (ManagerBeanException e1) {
+			String msg = "En los Datos de la Empresa no esta indicado el email";
+			AonUtil.addErrorMessage(msg);
+			new AbortProcessingException(msg,e1);
+		}
+		String to = getCartTarget().getEcTarget().getLogin();
+		String subject = "AON-ECOMMERCE - datos de registro.";
+		StringBuffer content = new StringBuffer();
+		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_user_registry")).append(SystemUtils.LINE_SEPARATOR);
+		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_user_name")).append(": ");
+		content.append( getCartTarget().getEcTarget().getLogin() ).append(SystemUtils.LINE_SEPARATOR);
+		content.append(	AonUtil.getMessage(ECOMMERCE_BUNDLE,"aon_ecommerce_user_passwd")).append(": ");
+		content.append( getCartTarget().getEcTarget().getPassword() ).append(SystemUtils.LINE_SEPARATOR);
+		super.email(subject, from, to, content.toString());
+	}
+	
+	public void onCartClean(ActionEvent event){
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		setList(null);
+		setModel(null);
+		sc.setContentView( ViewEnum.ITEM_LIST );
+	}
+
 
 }
