@@ -26,6 +26,7 @@ import com.code.aon.sales.enumeration.SalesDetailStatus;
 public class SalesTransferManager {
 
 	private IPriceStrategy priceStrategy;
+	private Integer selectedSalesId;
 	private List<ITransferObject> salesList;
 	private List<ITransferObject> detailList;
 	private DataModel salesModel;
@@ -38,6 +39,14 @@ public class SalesTransferManager {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public Integer getSelectedSalesId() {
+		return selectedSalesId;
+	}
+
+	public void setSelectedSalesId(Integer selectedSalesId) {
+		this.selectedSalesId = selectedSalesId;
 	}
 
 	public List<ITransferObject> getSalesList() {
@@ -85,6 +94,7 @@ public class SalesTransferManager {
 
 	public void onSelectSales(ActionEvent event) {
 		Sales sales = (Sales)salesModel.getRowData();
+		setSelectedSalesId(sales.getId());
 		setDetailList(obtainSalesDetailList(sales));
 		setDetailModel(null);
 	}
@@ -129,12 +139,10 @@ public class SalesTransferManager {
 		Sales sales = (Sales)salesModel.getRowData();
 		setSalesRowChecked(sales, rowChecked);
 
-		setDetailList(obtainSalesDetailList(sales));
-		setDetailModel(null);
 		if (rowChecked) {
-			checkAllDetails(null);
+			checkAllDetails(obtainSalesDetailList(sales));
 		} else {
-			checkNoneDetails(null);
+			checkNoneDetails(obtainSalesDetailList(sales));
 		}
 	}
 
@@ -171,14 +179,17 @@ public class SalesTransferManager {
 		Iterator iterator = salesList.iterator();
 		while (iterator.hasNext()) {
 			Sales sales = (Sales)iterator.next();
-			if (!salesChecks.contains(sales)) {
-				salesChecks.add(sales);
-			}
+			setSalesRowChecked(sales, true);
+			checkAllDetails((sales.getId().equals(selectedSalesId)) ? detailList : obtainSalesDetailList(sales));
 		}
 	}
 
 	public void checkNoneSales(ActionEvent event) {
+		if (detailList != null) {
+			checkNoneDetails(detailList);
+		}
 		clearCheckedSales();
+		clearCheckedDetails();
 	}
 
 	/**
@@ -229,8 +240,8 @@ public class SalesTransferManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void checkAllDetails(ActionEvent event) {
-		Iterator iterator = detailList.iterator();
+	private void checkAllDetails(List<ITransferObject> salesDetailList) {
+		Iterator iterator = salesDetailList.iterator();
 		while (iterator.hasNext()) {
 			SalesDetail detail = (SalesDetail)iterator.next();
 			if (!detailChecks.contains(detail)) {
@@ -241,8 +252,8 @@ public class SalesTransferManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void checkNoneDetails(ActionEvent event) {
-		Iterator iterator = detailList.iterator();
+	private void checkNoneDetails(List<ITransferObject> salesDetailList) {
+		Iterator iterator = salesDetailList.iterator();
 		while (iterator.hasNext()) {
 			SalesDetail detail = (SalesDetail)iterator.next();
 			if (detailChecks.contains(detail)) {
