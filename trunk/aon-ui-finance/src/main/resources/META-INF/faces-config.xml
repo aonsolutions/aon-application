@@ -166,7 +166,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finance_dueDate desc,Finance_invoice_series,Finance_invoice_number desc</value>
+			<value>Finance_dueDate,Finance_invoice_series desc,Finance_invoice_number desc</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
