@@ -27,7 +27,7 @@
 					<aon:div>
 						<aon:commandButton value=""
 							styleClass="aon-editDataTable-button aon-icon-new"
-							reRender="TaxesData,invoiceContainer"
+							reRender="TaxesData,invoiceTables"
 							actionListener="#{invoiceEntry.onNewDetail}"
 							rendered="#{!invoiceEntry.newDetail}"
 							accesskey="#{bundle.aon_key_new_line}"
@@ -52,16 +52,14 @@
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
 					rendered="#{to==invoiceEntry.currentDetail}"
 					valueChangeListener="#{invoiceEntry.onChangeTaxableBase}"
-					value="#{invoiceEntry.currentDetail.taxableBase}" required="true" 
-					focus="Account_Vat"/>
+					value="#{invoiceEntry.currentDetail.taxableBase}" required="true" />
 				<f:facet name="footer">
 					<aon:div styleClass="aon-text-right">
 						<aon:inputText id="Account_Taxable_Base-New" size="8"
 							reRender="newRetention,newVat,newSurcharge,newTotal"
 							rendered="#{invoiceEntry.newDetail}"
 							valueChangeListener="#{invoiceEntry.onChangeTaxableBase}"
-							value="#{invoiceEntry.currentDetail.taxableBase}"
-							focus="Account_Vat-New">
+							value="#{invoiceEntry.currentDetail.taxableBase}">
 
 							<a4j:support event="onkeyup"
 								onsubmit="if(event.keyCode != 27) return false;"
@@ -73,6 +71,56 @@
 							</a4j:support>
 						</aon:inputText>
 					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100"
+				rendered="#{invoiceEntry.withHolding}">
+				<f:facet name="header">
+					<aon:outputLabel for="Account_Retention" value="#{bundle.aon_retention}" />
+				</f:facet>
+				<aon:outputText value="#{to.retentionPercent}"
+					rendered="#{to!=invoiceEntry.currentDetail}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:inputText id="Account_Retention" size="5"
+					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					valueChangeListener="#{invoiceEntry.onChangeRetentionPercent}"
+					value="#{invoiceEntry.currentDetail.retentionPercent}" />
+				<f:facet name="footer">
+					<aon:div styleClass="aon-text-right">
+						<aon:inputText id="Account_Retention-New" size="5"
+							rendered="#{invoiceEntry.newDetail}"
+							value="#{invoiceEntry.currentDetail.retentionPercent}"
+							valueChangeListener="#{invoiceEntry.onChangeRetentionPercent}"
+							reRender="newRetention,newVat,newSurcharge,newTotal" />
+						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
+							value="&#160;" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150"
+				rendered="#{invoiceEntry.withHolding}">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_retention_quota}" />
+				</f:facet>
+				<aon:outputText rendered="#{to!=invoiceEntry.currentDetail}" 
+					value="#{to.retentionQuota}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:inputText id="editRetention" size="8"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					value="#{invoiceEntry.currentDetail.retentionQuota}"
+					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
+					required="true" />
+				<f:facet name="footer">
+					<aon:inputText id="newRetention" size="8"
+						rendered="#{invoiceEntry.newDetail}" 
+						value="#{invoiceEntry.currentDetail.retentionQuota}"
+						reRender="newRetention,newVat,newSurcharge,newTotal"
+						required="true" />
 				</f:facet>
 			</aon:column>
 
@@ -112,20 +160,18 @@
 					rendered="#{to==invoiceEntry.currentDetail}"
 					value="#{invoiceEntry.currentDetail.vatQuota}"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
-					required="true" 
-					focus="Account_Surcharge-Edit"/>
+					required="true" />
 				<f:facet name="footer">
 					<aon:inputText id="newVat" size="8"
 						rendered="#{invoiceEntry.newDetail}" 
 						value="#{invoiceEntry.currentDetail.vatQuota}"
 						reRender="newRetention,newVat,newSurcharge,newTotal"
-						required="true" 
-						focus="Account_Surcharge-New"/>
+						required="true" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100"
-				rendered="#{invoiceEntry.header.surcharge}">
+				rendered="#{invoiceEntry.withSurcharge}">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_surcharge}" />
 				</f:facet>
@@ -138,7 +184,6 @@
 					value="#{invoiceEntry.currentDetail.surchargePercent}"
 					valueChangeListener="#{invoiceEntry.onChangeSurchargePercent}"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
-					focus="editSurcharge"
 					/>
 				<f:facet name="footer">
 					<aon:inputText id="Account_Surcharge-New" size="5"
@@ -146,13 +191,12 @@
 						value="#{invoiceEntry.currentDetail.surchargePercent}"
 						valueChangeListener="#{invoiceEntry.onChangeSurchargePercent}"
 						reRender="newRetention,newVat,newSurcharge,newTotal"
-						focus="newSurcharge"
 						/>
 				</f:facet>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100"
-				rendered="#{invoiceEntry.header.surcharge}">
+				rendered="#{invoiceEntry.withSurcharge}">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_surcharge_quota}" />
 				</f:facet>
@@ -164,67 +208,12 @@
 					rendered="#{to==invoiceEntry.currentDetail}"
 					value="#{invoiceEntry.currentDetail.surchargeQuota}"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
-					required="true" focus="Account_Retention" />
+					required="true" />
 				<f:facet name="footer">
 					<aon:inputText id="newSurcharge" size="8"
 						rendered="#{invoiceEntry.newDetail}"
 						value="#{invoiceEntry.currentDetail.surchargeQuota}"
-						reRender="newRetention,newVat,newSurcharge,newTotal" 
-						focus="Account_Retention-New" />
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100"
-				rendered="#{invoiceEntry.header.withholding}">
-				<f:facet name="header">
-					<aon:outputLabel for="Account_Retention" value="#{bundle.aon_retention}" />
-				</f:facet>
-				<aon:outputText value="#{to.retentionPercent}"
-					rendered="#{to!=invoiceEntry.currentDetail}">
-					<f:convertNumber pattern="#,##0.00" />
-				</aon:outputText>
-				<aon:inputText id="Account_Retention" size="5"
-					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
-					rendered="#{to==invoiceEntry.currentDetail}"
-					valueChangeListener="#{invoiceEntry.onChangeRetentionPercent}"
-					value="#{invoiceEntry.currentDetail.retentionPercent}" 
-					focus="editRetention"/>
-				<f:facet name="footer">
-					<aon:div styleClass="aon-text-right">
-						<aon:inputText id="Account_Retention-New" size="5"
-							rendered="#{invoiceEntry.newDetail}"
-							value="#{invoiceEntry.currentDetail.retentionPercent}"
-							valueChangeListener="#{invoiceEntry.onChangeRetentionPercent}"
-							focus="newRetention"
-							reRender="newRetention,newVat,newSurcharge,newTotal" />
-						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
-							value="&#160;" />
-					</aon:div>
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150"
-				rendered="#{invoiceEntry.header.withholding}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_retention_quota}" />
-				</f:facet>
-				<aon:outputText rendered="#{to!=invoiceEntry.currentDetail}" 
-					value="#{to.retentionQuota}">
-					<f:convertNumber pattern="#,##0.00" />
-				</aon:outputText>
-				<aon:inputText id="editRetention" size="8"
-					rendered="#{to==invoiceEntry.currentDetail}"
-					value="#{invoiceEntry.currentDetail.retentionQuota}"
-					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
-					focus="accountId"
-					required="true" />
-				<f:facet name="footer">
-					<aon:inputText id="newRetention" size="8"
-						rendered="#{invoiceEntry.newDetail}" 
-						value="#{invoiceEntry.currentDetail.retentionQuota}"
-						reRender="newRetention,newVat,newSurcharge,newTotal"
-						focus="accountId-New"
-						required="true" />
+						reRender="newRetention,newVat,newSurcharge,newTotal" />
 				</f:facet>
 			</aon:column>
 

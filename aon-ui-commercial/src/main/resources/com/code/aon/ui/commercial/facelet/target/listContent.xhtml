@@ -7,50 +7,56 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<!--  aon-region-body -->
-	<aon:div styleClass="aon-scroll-area">		
-		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-			<ui:param name="controller" value="#{target}" />
-			<ui:param name="columnClasses" value="
-				aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-				aon-editDataTable-textColumn" />
-			<ui:define name="columns">
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_id}" />
-					</f:facet>
-					<aon:outputText value="#{to.id}"/>
-				</aon:column>
-	
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_company_document}" />
-					</f:facet>
-					<aon:outputText value="#{to.registry.document}" />
-				</aon:column>
-				
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_company_name}" />
-					</f:facet>
-					<aon:outputText value="#{to.registry.fullName}" />
-				</aon:column>
-	
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_company_alias}" />
-					</f:facet>
-					<aon:outputText value="#{to.registry.alias}" />
-				</aon:column>
-	
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{commercialBundle.commercial_target_advertising}" />
-					</f:facet>
-					<aon:outputText value="#{to.advertising}"/>
-				</aon:column>
-			</ui:define>
-		</ui:decorate>
+	<aon:div styleClass="aon-scroll-area">
+
+		<aon:dataTable id="targetData" value="#{target.model}"
+			var="to" rows="20" rendered="#{target.model.rowCount > 0}"
+			columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+			<c:if test="#{!skipRowSelector}">
+				<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />
+			</c:if>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_id}" />
+				</f:facet>
+				<aon:outputText value="#{to.id}"/>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_document}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.document}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.fullName}" />
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_alias}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.alias}" />
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{commercialBundle.commercial_target_advertising}" />
+				</f:facet>
+				<aon:outputText value="#{to.advertising}"/>
+			</aon:column>
+
+		</aon:dataTable>
+
+		<aon:dataScroller2 for="targetData" showNote="true" />
+
 	</aon:div>
 
 </ui:composition>

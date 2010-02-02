@@ -13,7 +13,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.config.IPayMethod;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -56,7 +55,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	public void updateSource(ITransferObject to) {
 	}
 	
-	public void createFinances(Invoice invoice, IPayMethod payMethod) {
+	public void createFinances(Invoice invoice) {
 	}
 
 	@SuppressWarnings("unchecked")

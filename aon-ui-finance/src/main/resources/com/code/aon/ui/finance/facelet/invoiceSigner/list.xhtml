@@ -20,14 +20,31 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
-						<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
-						<aon:methodParam name="cancelSignActionListener" value="#{invoiceSigner.onCancelSignSelected}" type="actionListener" />					
-						<ui:param name="signController" value="#{saleInvoiceSigner}" />
-						<ui:param name="skipSignButton" value="#{invoiceSigner.selectionEmpty}" />
-						<ui:param name="skipCancelSignButton" value="#{invoiceSigner.selectionEmpty}" />
-						<ui:param name="signButtonReRender" value="invoiceSignerDataDiv,aonToolbar" />
-					</ui:include>
+					<c:if test="#{!saleInvoiceSigner.sessionCertificateStored}">			
+						<aon:commandButton id="sign"
+							value="#{financeBundle.finance_sign_selected}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{saleInvoiceSigner.onShowSignWindow}"
+							disabled="#{invoiceSigner.selectionEmpty}"
+							reRender="showSignWindow" />
+					</c:if>
+					<c:if test="#{saleInvoiceSigner.sessionCertificateStored}">			
+						<aon:commandButton id="sign"
+							value="#{financeBundle.finance_sign_selected}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{invoiceSigner.onSignSelected}"
+							disabled="#{invoiceSigner.selectionEmpty}"
+							reRender="invoiceSignerDataDiv,aonToolbar"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					</c:if>
+					<aon:commandButton id="cancel_sign"
+						value="#{financeBundle.finance_cancel_sign_selected}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						actionListener="#{invoiceSigner.onCancelSignSelected}"
+						disabled="#{invoiceSigner.selectionEmpty}" 
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>				
 				
 			</ui:decorate>
@@ -116,8 +133,8 @@
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
+			<ui:param name="controller" value="#{saleInvoiceSigner}" />
 			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
-			<ui:param name="skipSmartCardTab" value="#{true}" />
 			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		

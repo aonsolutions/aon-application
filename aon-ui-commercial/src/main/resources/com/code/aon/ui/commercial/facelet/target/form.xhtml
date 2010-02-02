@@ -16,24 +16,19 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{target.new}">
-					<ui:include src="/com/code/aon/ui/commercial/facelet/target/formNewContent.xhtml">
+				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto,
+						aon-panelGrid-odd aon-width-120,
+						aon-panelGrid-even aon-width-auto">
+
+					<ui:include 
+						src="/com/code/aon/ui/commercial/facelet/target/formContent.xhtml">
 						<ui:param name="controller" value="#{target}"/>
-					</ui:include>				
-				</c:if>			
+					</ui:include>
+				</aon:panelGrid>
+
 				<c:if test="#{!target.new}">
-					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-						columnClasses="aon-panelGrid-odd aon-width-150,
-							aon-panelGrid-even aon-width-auto,
-							aon-panelGrid-odd aon-width-120,
-							aon-panelGrid-even aon-width-auto">
-	
-						<ui:include 
-							src="/com/code/aon/ui/commercial/facelet/target/formContent.xhtml">
-							<ui:param name="controller" value="#{target}"/>
-						</ui:include>
-					</aon:panelGrid>
-				
 					<aon:panelTabSet id="targetTab" selectedTab="#{target.selectedTab}">
 						<aon:panelTab id="targetAddress" label="#{registryBundle.registry_address_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
@@ -95,19 +90,14 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{!target.new}">
-			<c:if test="#{aonConfiguration.bean.target.showProduct}">
-				<aon:lookupButtonPopup lookup="#{itemLookup}" />
-			</c:if>	
-			<c:if test="#{aonConfiguration.bean.target.showSeller}">
-				<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.target.showProfile}">
-				<aon:lookupButtonPopup lookup="#{questionLookup}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
-				<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-			</c:if>					
+		<c:if test="#{aonConfiguration.bean.target.showProduct}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</c:if>	
+		<c:if test="#{aonConfiguration.bean.target.showSeller}">
+			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.target.showProfile}">
+			<aon:lookupButtonPopup lookup="#{questionLookup}" />
 		</c:if>	
 	</ui:define>
 </ui:composition>

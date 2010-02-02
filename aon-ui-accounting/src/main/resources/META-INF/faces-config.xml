@@ -395,6 +395,10 @@
 			<property-name>beanName</property-name>
 			<value>periodAmortization</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>periodAmortization</value>
+		</managed-property>
 	</managed-bean>
 		
 	<!-- **************** AMORTIZATION TYPE ************************** -->

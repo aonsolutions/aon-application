@@ -3,27 +3,23 @@ package com.code.aon.ui.finance.controller;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.sign.controller.CertificateController;
-import com.code.aon.ui.sign.controller.ISignConstants;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceSignerController extends BasicController implements IFinanceConstants {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceSignerController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoiceSignerController.class.getName());
 	
 	private Set<Integer> checks = new HashSet<Integer>();
 
@@ -85,11 +81,10 @@ public class InvoiceSignerController extends BasicController implements IFinance
 	}
 	
 	public void onSignSelected(ActionEvent event){
-		CertificateController cc = (CertificateController) AonUtil.getRegisteredBean(ISignConstants.CERTIFICATE_CONTROLLER);
-		if (! cc.resolveCertificado() ) {
+		SignerController signer = (SignerController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
+		if (! signer.resolveCertificado() ) {
 			return;
 		}
-		SignerController signer = (SignerController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
@@ -103,11 +98,11 @@ public class InvoiceSignerController extends BasicController implements IFinance
 				try {
 					Invoice invoice = (Invoice) getManagerBean().get(id);
 					if (! invoice.isSigned() ) {
-						IAttachment attach = signer.getReport(invoice);
+						byte[] pdfData = signer.getReport(invoice);
 						
 						HibernateUtil.beginTransaction(sessionName);
 						
-						signer.sign(invoice, attach.getDescription(), attach.getData(), true);
+						signer.sign(invoice, pdfData, true);
 
 						HibernateUtil.getSession(sessionName).flush();					
 						HibernateUtil.commitTransaction(sessionName);
@@ -117,10 +112,10 @@ public class InvoiceSignerController extends BasicController implements IFinance
 						HibernateUtil.rollbackTransaction(sessionName);
 					} catch (DAOException daoe) {
 						String msg =  "Unable to rollback transaction!";
-						LOGGER.error(msg, e);
+						LOGGER.log(Level.SEVERE, msg, e);
 					}
 					String msg =  "Error recording invoice:  " + id;
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				} finally {
@@ -132,7 +127,7 @@ public class InvoiceSignerController extends BasicController implements IFinance
 		} finally {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-			cc.setShowSignWindow(false);
+			signer.setShowSignWindow(false);
 		}
 	}
 	
@@ -161,10 +156,10 @@ public class InvoiceSignerController extends BasicController implements IFinance
 						HibernateUtil.rollbackTransaction(sessionName);
 					} catch (DAOException daoe) {
 						String msg =  "Unable to rollback transaction!";
-						LOGGER.error(msg, e);
+						LOGGER.log(Level.SEVERE, msg, e);
 					}
 					String msg =  "Error recording invoice:  " + id;
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				} finally {

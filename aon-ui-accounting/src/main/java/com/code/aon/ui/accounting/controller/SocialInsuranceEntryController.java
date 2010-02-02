@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -11,8 +13,6 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
@@ -45,7 +45,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SocialInsuranceEntryController.class.getName()); 
+	private static final Logger LOGGER = Logger.getLogger(SocialInsuranceEntryController.class.getName()); 
 	
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	
@@ -179,10 +179,10 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 				}
 				String msg = "Error on aon-accounting:  " + e.getMessage() ;
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -224,10 +224,10 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 				}
 				String msg = "Error on aon-accounting:  " + e.getMessage() ;
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -277,7 +277,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 			detail.setCredit(getHeader().getTotal());
 			accountEntryDetailBean.insert(detail);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error inserting details for AccountEntry with id = " + entry.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
 		}
 	}
 

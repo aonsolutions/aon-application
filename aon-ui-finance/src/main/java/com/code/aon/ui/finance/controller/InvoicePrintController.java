@@ -3,13 +3,12 @@ package com.code.aon.ui.finance.controller;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.mail.MessagingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -17,15 +16,15 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.util.FinanceEmailUtil;
-import com.code.aon.ui.sign.controller.CertificateController;
+import com.code.aon.ui.finance.util.EmailUtilController;
+import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.SecurityInfo;
 
 public class InvoicePrintController extends InvoiceController implements IFinanceConstants {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(InvoicePrintController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoicePrintController.class.getName());
 	
 	private IPriceStrategy priceStrategy;
 	
@@ -41,7 +40,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
-	private SecurityInfo getSecurityInfo(CertificateController signer) {
+	private SecurityInfo getSecurityInfo(SignerController signer) {
 		KeyStore keyStore = signer.getSignStore().getKeySore();
 		String alias = signer.getCertificado().getAlias();
 		SecurityInfo si = new SecurityInfo( keyStore, alias, signer.getPassword());
@@ -49,14 +48,14 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	}
 	
 	public void onSendInvoicesBySignedEmail( ActionEvent event ) {
-		CertificateController signer = (CertificateController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
+		SignerController signer = (SignerController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 		if (! signer.resolveCertificado() ) {
 			return;
 		}
 		try {		
 			sendInvoicesByEmail( getSecurityInfo(signer) );
 		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
@@ -68,15 +67,14 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		try {		
 			sendInvoicesByEmail( null );
 		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		}
 	}	
 
 	public void sendInvoicesByEmail( SecurityInfo si ) throws UnsupportedEncodingException, MessagingException, ManagerBeanException {
-		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-		FinanceEmailUtil emailController = controller.getEmailController();
+		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
 		EmailSender sender = emailController.getEmailSender();
 		sender.connect();
 		Criteria criteria = getCriteria();

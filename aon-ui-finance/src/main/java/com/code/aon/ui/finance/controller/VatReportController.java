@@ -183,10 +183,10 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 			} else if (params.getVatReportType() == VatReportType.SURCHARGE) {
 				buf.append(VatReportType.SURCHARGE.getName(locale));
 				percent = params.getSurchargePercent();
-			} else if (params.getVatReportType() == VatReportType.INTRACOMMUNITY) {
-				buf.append(VatReportType.INTRACOMMUNITY.getName(locale));	
-			} else if (params.getVatReportType() == VatReportType.EXTRACOMMUNITY) {
-				buf.append(VatReportType.EXTRACOMMUNITY.getName(locale));	
+			} else if (params.getVatReportType() == VatReportType.INTRACOMUNNITARY) {
+				buf.append(VatReportType.INTRACOMUNNITARY.getName(locale));	
+			} else if (params.getVatReportType() == VatReportType.EXTRACOMUNNITARY) {
+				buf.append(VatReportType.EXTRACOMUNNITARY.getName(locale));	
 			}
 			buf.append(" ");
 			buf.append(percent);
@@ -231,11 +231,11 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public VatReportType getSurcharge() {
 		return VatReportType.SURCHARGE;
 	}
-	public VatReportType getIntracommunity() {
-		return VatReportType.INTRACOMMUNITY;
+	public VatReportType getIntracomunnitary() {
+		return VatReportType.INTRACOMUNNITARY;
 	}
-	public VatReportType getExtracommunity() {
-		return VatReportType.EXTRACOMMUNITY;
+	public VatReportType getExtracomunnitary() {
+		return VatReportType.EXTRACOMUNNITARY;
 	}
 	public Double getGeneralPercent() {
 		return GENERAL_PERCENT;

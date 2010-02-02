@@ -311,6 +311,7 @@
 		</managed-property>
 	</managed-bean>
 	
+
 	<!--  **** TARGET ADDRESS **** -->
 
 	<managed-bean>
@@ -357,10 +358,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>targetMedia</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -536,7 +533,7 @@
 	<!-- ************ TARGET LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>targetLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -556,7 +553,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/target/formNewContent.xhtml</value>
+			<value>/com/code/aon/ui/commercial/facelet/lookup/target/form.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -594,7 +591,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Offer_issueDate desc,Offer_series,Offer_number desc</value>
+			<value>Offer_issueDate,Offer_series,Offer_number</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

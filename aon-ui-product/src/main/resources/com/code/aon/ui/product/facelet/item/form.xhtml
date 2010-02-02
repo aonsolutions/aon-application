@@ -123,7 +123,7 @@
 		<c:if test="#{aonConfiguration.bean.product.showStock}">
 			<c:if test="#{!item.new and item.to.product.inventoriable}">
 				<ui:include
-					src="/com/code/aon/ui/warehouse/facelet/item/modalStock.xhtml" />
+					src="/com/code/aon/ui/warehouse/facelet/item/itemStockPanel.xhtml" />
 			</c:if>
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>

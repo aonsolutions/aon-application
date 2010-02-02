@@ -9,22 +9,12 @@
 	<ui:define name="content">
 		<aon:form id="accountList">
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_amortization_form_module}" />
 				<ui:param name="controller" value="#{amortization}" />
-				<ui:define name="additionalToolbarContent">
-					<h:commandLink target="_blank"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						value="#{bundle.aon_report}"
-						action="#{report.onExecute}">
-						<f:param name="reportKey" value="amortizationList" />
-						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>
-									
-				</ui:define>
-			</ui:decorate>
+			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="amortizationDataList"

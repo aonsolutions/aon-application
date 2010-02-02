@@ -37,11 +37,11 @@
 					rendered="#{formList}" />
 				<aon:inputText id="OfferDetail_line" 
 					value="#{controller.to.line}" rendered="#{formEdit}"
-					required="true" size="1" maxlength="3" />
+					required="true" size="2" maxlength="3" />
 				<f:facet name="footer">
 					<aon:inputText id="OfferDetail_line-New" 
 						value="#{controller.to.line}" rendered="#{formNew}"
-						required="true" size="1" maxlength="3" />
+						required="true" size="2" maxlength="3" />
 				</f:facet>
 			</aon:column>
 	
@@ -81,17 +81,17 @@
 							selectReRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
 							actionType="new">
 						</aon:lookupButton>
+						<aon:inputTextarea id="OfferDetail_item_product_name"
+							value="#{offerDetail.to.description}"
+							cols="64" rows="#{!offerDetail.longDescription?1:5}"
+							style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+							<f:validateLength maximum="1024" />
+						</aon:inputTextarea>
 					</a4j:region>
-					<aon:inputTextarea id="OfferDetail_item_product_name"
-						value="#{offerDetail.to.description}"
-						cols="60" rows="#{!offerDetail.longDescription?1:5}"
-						style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-						<f:validateLength maximum="1024" />
-					</aon:inputTextarea>
-					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
 						actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_item_product_name"
 						rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
-					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
 						actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_item_product_name"
 						rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 				</aon:div>
@@ -123,17 +123,17 @@
 								selectReRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
 								actionType="new">
 							</aon:lookupButton>												
+							<aon:inputTextarea id="OfferDetail_item_product_name-New"
+								value="#{offerDetail.to.description}"
+								cols="64" rows="#{!offerDetail.longDescription?1:5}"
+								style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+								<f:validateLength maximum="1024" />
+							</aon:inputTextarea>
 						</a4j:region>
-						<aon:inputTextarea id="OfferDetail_item_product_name-New"
-							value="#{offerDetail.to.description}"
-							cols="60" rows="#{!offerDetail.longDescription?1:5}"
-							style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-							<f:validateLength maximum="1024" />
-						</aon:inputTextarea>
-						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
 							actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_item_product_name-New"
 							rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
-						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
 							actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_item_product_name-New"
 							rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 					</aon:div>
@@ -152,13 +152,13 @@
 					value="#{controller.to.quantity}" rendered="#{formEdit}"
 					valueChangeListener="#{controller.onQuantityChanged}" 
 					reRender="OfferDetail_price,OfferDetail_discount,OfferDetail_amount" 
-					required="true" size="5" focus="OfferDetail_price" />
+					required="true" size="7" focus="OfferDetail_price" />
 				<f:facet name="footer">
 					<aon:inputText id="OfferDetail_quantity-New" 
 						value="#{controller.to.quantity}" rendered="#{formNew}"
 						valueChangeListener="#{controller.onQuantityChanged}" 
 						reRender="OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" 
-						required="true" size="5" focus="OfferDetail_price-New" />
+						required="true" size="7" focus="OfferDetail_price-New" />
 				</f:facet>
 			</aon:column>
 	
@@ -173,12 +173,12 @@
 				<aon:inputText id="OfferDetail_price" 
 					value="#{controller.to.price}" rendered="#{formEdit}"
 					reRender="OfferDetail_amount" 
-					required="true" size="5" />
+					required="true" size="7" />
 				<f:facet name="footer">
 					<aon:inputText id="OfferDetail_price-New" 
 						value="#{controller.to.price}" rendered="#{formNew}"
 						reRender="OfferDetail_amount-New" 
-						required="true" size="5" />
+						required="true" size="7" />
 				</f:facet>
 			</aon:column>
 	
@@ -193,12 +193,12 @@
 				<aon:inputText id="OfferDetail_discount" 
 					value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
 					reRender="OfferDetail_amount" 
-					required="true" size="5" />
+					required="true" size="7" />
 				<f:facet name="footer">
 					<aon:inputText id="OfferDetail_discount-New" 
 						value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew}"
 						reRender="OfferDetail_amount-New" 
-						required="true" size="5" />
+						required="true" size="7" />
 				</f:facet>
 			</aon:column>
 	

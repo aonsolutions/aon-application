@@ -19,23 +19,21 @@
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
+				<aon:dataTable id="applicationDataList" value="#{currentDomain.applications}"
+					var="to" rows="20" columnClasses="aon-editDataTable-textColumn">
 
-				<aon:methodParam name="rowSelectorAction" value="profile_list" />
-				<aon:methodParam name="rowSelectorActionListener" value="#{currentDomain.onSelectApplication}" type="actionListener" />
-			
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="rows" value="20" />
-					<ui:param name="dataTableId" value="applicationDataList" />
-					<ui:param name="dataModel" value="#{currentDomain.applications}" />
-					<ui:define name="columns">
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_application}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}"/>
-						</aon:column>
-					</ui:define>
-				</ui:decorate>
+					<aon:rowSelector action="profile_list" actionListener="#{currentDomain.onSelectApplication}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_application}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}"/>
+					</aon:column>
+
+				</aon:dataTable>
+				
+				<aon:dataScroller2 for="applicationDataList" showNote="true" />
 
 			</aon:div>
 

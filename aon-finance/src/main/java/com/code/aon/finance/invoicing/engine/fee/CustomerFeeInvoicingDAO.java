@@ -14,7 +14,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.IPayMethod;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -86,7 +85,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		}
 	}
 
-	public void createFinances(Invoice invoice, IPayMethod payMethod) throws ManagerBeanException {
+	public void createFinances(Invoice invoice) throws ManagerBeanException {
 		double amount = getPriceStrategy().getTotalPrice(invoice, invoice);
 		if(amount != 0.0){
 			getFinanceGenerator().generateFinances(invoice, amount, true);

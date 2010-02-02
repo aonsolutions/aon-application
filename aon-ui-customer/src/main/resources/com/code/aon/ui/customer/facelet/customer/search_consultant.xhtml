@@ -8,9 +8,12 @@
 
 	<ui:define name="content">
 		<aon:form id="customerForm">
+		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{customerBundle.customer_module}." />
-				<ui:param name="controller" value="#{customer}" />
+				<ui:param name="controller" value="#{customer}" />	
+				<aon:methodParam name="resetAction" value="customer_consultant_form" />
+				<aon:methodParam name="backAction" value="customer_consultant_list" />
 			</ui:include>
 
 			<ui:decorate

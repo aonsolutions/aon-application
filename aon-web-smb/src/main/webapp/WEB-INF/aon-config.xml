@@ -21,6 +21,7 @@
 
 	<customer:config version="1.0" xmlns:customer="http://www.esferalia.com/customer">
 		<customer:customer
+			showDeliveryData="false" 
 			showFinanceData="true" 
 			showProjectData="false"
 			showFinanceFeeData="true" 
@@ -73,6 +74,9 @@
 			showAttachment="false"
 			showEcommerceData="false"
 		/>
+ 		<product:productCategory
+ 			showCategoryGroup="false"
+ 		/>
 	</product:config>
 
 	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">

@@ -114,7 +114,6 @@
 					<aon:lookupInputText id="RegistryBank_code"
 						property="#{financeTo.bank}" reRender="RegistryBank_lookup"
 						lookup="#{bankLookup}" value="#{financeTo.bank.code}" size="3"
-						focus="RegistryBank_office"
 						lookupChangeListener="#{invoiceEntry.onBankChanged}" maxlength="4">
 						<aon:joinProperty alias="Bank_code" value="#{financeTo.bank.code}" />
 					</aon:lookupInputText>
@@ -127,47 +126,28 @@
 					</aon:lookupButton>
 					<aon:inputText id="RegistryBank_name"
 						value="#{financeTo.bank.name}" size="30" disabled="true" />
-					<aon:inputText id="RegistryBank_office"
+					<aon:inputText
 						value="#{invoiceEntry.currentFinance.bankAccount.office}" size="3"
 						maxlength="4">
 						<f:validateLength minimum="4" maximum="4" />
-						<a4j:support ajaxSingle="true" 
-								event="onchange" 
-								reRender="RegistryBank_lookup"
-								focus="RegistryBank_control"/>
 					</aon:inputText>
-					<aon:inputText id="RegistryBank_control"
+					<aon:inputText
 						value="#{invoiceEntry.currentFinance.bankAccount.control}"
 						size="1" maxlength="2">
 						<f:validateLength minimum="2" maximum="2" />
-						<a4j:support ajaxSingle="true" 
-								event="onchange" 
-								reRender="RegistryBank_lookup"
-								focus="RegistryBank_account"/>
 					</aon:inputText>
-					<aon:inputText id="RegistryBank_account"
+					<aon:inputText
 						value="#{invoiceEntry.currentFinance.bankAccount.account}"
 						size="8" maxlength="10">
 						<f:validateLength minimum="10" maximum="10" />
-						<a4j:support ajaxSingle="true" 
-								event="onchange" 
-								reRender="RegistryBank_lookup"
-								focus="Account_Finance_Amount"/>
 					</aon:inputText>
-					<aon:commandButton id="createBank" value=""
-						reRender="RegistryBank_lookup"
-						rendered="#{invoiceEntry.bankCreationEnabled}"
-						ajaxSingle="true"
-						actionListener="#{invoiceEntry.onAddRBank}"
-						onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{invoiceEntry.header.name}?')) return false;"	
-						styleClass="aon-editDataTable-button aon-lookupButton-new" />
 					<aon:div style="font-size:0.9em;" styleClass="aon-italic">
 						<aon:selectOneMenu id="Account_Finance_RegistryBank"
 							style="margin-left: 50px;"
 							reRender="RegistryBank_lookup" immediate="true"
-							value="#{invoiceEntry.currentBank}"
+							value="#{registryCollections.registryBank}"
 							valueChangeListener="#{invoiceEntry.onRBankChanged}">
-							<f:selectItem value="#{invoiceEntry.emptyBank}" />
+							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{invoiceEntry.banks}" />
 						</aon:selectOneMenu>
 					</aon:div>
@@ -180,7 +160,7 @@
 							reRender="RegistryBank_lookup-New" lookup="#{bankLookup}"
 							lookupChangeListener="#{invoiceEntry.onBankChanged}"
 							value="#{invoiceEntry.currentFinance.bank.code}" size="3"
-							maxlength="4" focus="RegistryBank_office-New">
+							maxlength="4">
 							<aon:joinProperty alias="Bank_code"
 								value="#{invoiceEntry.currentFinance.bank.code}" />
 						</aon:lookupInputText>
@@ -193,47 +173,29 @@
 						</aon:lookupButton>
 						<aon:inputText id="RegistryBank_name-New"
 							value="#{invoiceEntry.currentFinance.bank.name}" size="30"
-							reRender="RegistryBank_lookup-New"
 							disabled="true" />
-						<aon:inputText id="RegistryBank_office-New"
+						<aon:inputText
 							value="#{invoiceEntry.currentFinance.bankAccount.office}"
 							size="3" maxlength="4">
 							<f:validateLength minimum="4" maximum="4" />
-							<a4j:support ajaxSingle="true" 
-								event="onchange" 
-								reRender="RegistryBank_lookup-New"
-								focus="RegistryBank_control-New"/>
 						</aon:inputText>
-						<aon:inputText id="RegistryBank_control-New"
+						<aon:inputText
 							value="#{invoiceEntry.currentFinance.bankAccount.control}"
 							size="1" maxlength="2">
 							<f:validateLength minimum="2" maximum="2" />
-							<a4j:support event="onchange" 
-								ajaxSingle="true" reRender="RegistryBank_lookup-New"
-								focus="RegistryBank_account-New"/>
 						</aon:inputText>
-						<aon:inputText id="RegistryBank_account-New"
+						<aon:inputText
 							value="#{invoiceEntry.currentFinance.bankAccount.account}"
 							size="8" maxlength="10">
 							<f:validateLength minimum="10" maximum="10" />
-							<a4j:support event="onchange" 
-								ajaxSingle="true" reRender="RegistryBank_lookup-New"
-								focus="Account_Finance_Amount-New"/>
 						</aon:inputText>
-						<aon:commandButton id="createBank-New" value=""
-							reRender="RegistryBank_lookup-New"
-							rendered="#{invoiceEntry.bankCreationEnabled}"
-							ajaxSingle="true"
-							actionListener="#{invoiceEntry.onAddRBank}"
-							onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{invoiceEntry.header.name}?')) return false;"	
-							styleClass="aon-editDataTable-button aon-lookupButton-new" />
 						<aon:div style="font-size:0.9em;" styleClass="aon-italic">
 							<aon:selectOneMenu id="Account_Finance_RegistryBank-New"
 								style="margin-left: 50px;"
 								valueChangeListener="#{invoiceEntry.onRBankChanged}"
-								value="#{invoiceEntry.currentBank}" immediate="true"
+								value="#{registryCollections.registryBank}" immediate="true"
 								reRender="RegistryBank_lookup-New">
-								<f:selectItem value="#{invoiceEntry.emptyBank}" />
+								<f:selectItem itemLabel="-" value="#{null}" />
 								<f:selectItems value="#{invoiceEntry.banks}" />
 							</aon:selectOneMenu>
 						</aon:div>

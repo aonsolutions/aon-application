@@ -1,6 +1,8 @@
 package com.code.aon.desktop.controller;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -8,8 +10,6 @@ import javax.faces.event.ActionEvent;
 import javax.naming.Name;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
@@ -32,7 +32,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AonUserController extends UserController implements ILdapConstants, IAonObjectClasses, IDesktopConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(AonUserController.class);
+	private static final Logger LOGGER = Logger.getLogger(AonUserController.class.getName());
 	
 	private AuthPrincipal principal;
 	
@@ -106,6 +106,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void loadUser( User user ) throws ManagerBeanException {
 		setShowPasswordChangedWindow(false);
 		setShowUserChangedWindow(false);
@@ -146,7 +147,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 				ldap.closeSession();
 			}
 		} else {
-			LOGGER.error( "No existe en LDAP el usuario {} para el dominio {}", userName, domain );
+			LOGGER.severe( "No existe en LDAP el usuario " + userName + " para el dominio " + domain );
 		}
 	}
 	
@@ -159,7 +160,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 			updateUserLdapProperties(user.getLogin(), name, surname, alternativeEmail, cellular);
 			setShowUserChangedWindow(true);
 		} catch (Exception e) {
-			LOGGER.error( "Error cambiando datos del usuario.", e );
+			LOGGER.log(Level.SEVERE, "Error cambiando datos del usuario.", e );
 		}
 	}
 
@@ -242,7 +243,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 				AonUtil.addErrorMessage("Error calculando si la contraseña ha expirado" );
 			}
 		} else {
-			LOGGER.error( "No existe en LDAP el usuario {} para el dominio {}", principal.getShortName(), domain );
+			LOGGER.severe( "No existe en LDAP el usuario " + principal.getShortName() + " para el dominio " + domain );
 		}
 		return passwordExpired;
 	}
@@ -291,7 +292,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 				ldap.closeSession();
 			}
 		} else {
-			LOGGER.error( "No existe en LDAP el usuario {} para el dominio {}", userName, domain );
+			LOGGER.severe( "No existe en LDAP el usuario " + userName + " para el dominio " + domain );
 		}
 	}
 

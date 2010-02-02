@@ -109,7 +109,7 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		setSupplier(new Supplier());
 		setCreditor(new Creditor());
 		setRegistryBank(new RegistryBank());
-		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
+		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING};
 		setFinanceStatuses(defaultFinanceStatus);
 		setPayMethods(new LinkedList<PayMethod>());
 		getPayMethods().add(EMPTY_PAYMETHOD);

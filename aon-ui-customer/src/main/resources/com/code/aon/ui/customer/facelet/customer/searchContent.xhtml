@@ -33,7 +33,18 @@
 				</ui:include>
 			</aon:panelGrid>
 		</aon:panelCollapsible>
-				
+
+		<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
+			<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_finance_data_module}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+					<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/searchContent.xhtml">
+						<ui:param name="controller" value="#{customer}" />
+						<ui:param name="searchController" value="#{customerSearch}" />
+					</ui:include>
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</c:if>
+
 		<c:if test="#{aonConfiguration.bean.customer.showSegment}">
 			<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_segment_module}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		

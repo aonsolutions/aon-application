@@ -5,13 +5,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
@@ -47,7 +46,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FeeInvoicingController implements IProgression, IFinanceConstants, IFinanceMessages {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FeeInvoicingController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(FeeInvoicingController.class.getName());
 
 	private InvoicingParameters invoicingParams;
 	private IInvoicingEngine engine;
@@ -201,10 +200,10 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
 				String msg =  "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 			}
 			String msg =  "Error invoicing fees. " + e.getMessage();
-			LOGGER.error(msg, e);
+			LOGGER.log(Level.SEVERE, msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		} finally {

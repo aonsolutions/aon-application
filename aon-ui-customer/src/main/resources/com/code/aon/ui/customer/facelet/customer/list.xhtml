@@ -38,7 +38,7 @@
 						disabled="#{customer.to != null}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
-						<f:param name="reportKey" value="customerDetailReport" />
+						<f:param name="reportKey" value="customerDetailExcelReport" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</h:commandLink>
 					<h:commandLink id="customerDetailReportPdf" value="#{bundle.aon_detailed_listing}"
@@ -56,45 +56,26 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{customer}" />
-					<ui:param name="columnClasses" value="
-						aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn" />
 					<ui:define name="columns">
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_document}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.document}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.fullName}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.alias}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
-						</f:facet>
-						<aon:outputText value="#{to.status}" />
-					</aon:column>
+					
+						<ui:include
+							src="/com/code/aon/ui/customer/facelet/customer/listBasic.xhtml" />
+	
+						<aon:column alias="Customer.registry.alias"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.alias}" />
+						</aon:column>
+	
+						<aon:column alias="Customer.status"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
 					</ui:define>
 			</ui:decorate>
 		</aon:div>

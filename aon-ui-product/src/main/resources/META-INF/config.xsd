@@ -17,6 +17,7 @@
 			<xs:attribute name="showEcommerceData" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
+	
 	<xs:element name="product">
 		<xs:complexType>
 			<xs:attribute name="showBarcode" type="xs:boolean" use="required"/>
