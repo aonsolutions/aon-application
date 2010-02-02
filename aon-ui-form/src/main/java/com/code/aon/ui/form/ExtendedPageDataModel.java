@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.el.ELContext;
-import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModelEvent;
@@ -34,9 +32,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
-import com.code.aon.ql.OrderByList;
-import com.code.aon.ql.ast.IdentExpression;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 /**
  * DataModel that loads <code>Page</code>s to load objects.
@@ -70,12 +65,12 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
     private BasicController controller;
 
     private SequenceRange cachedRange;
-    
-	private OrderByList orderByList;
 			
 	private SortOderMap sortOrder;
 	
 	private boolean sortable;
+	
+	private boolean updated;
     
 	/**
 	 * Instantiates a new page data model2.
@@ -150,6 +145,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
         }
         return index >= 0 && index < rowCount;
     }	
+    
     @Override
     public void setRowIndex(int rowIndex) {
         if (rowIndex < -1) {
@@ -238,7 +234,48 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		}
 	}
 
-	   
+	/**
+	 * Update.
+	 * 
+	 * @param start the start
+	 * @param limit the limit
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void update( int start, int limit ) throws ManagerBeanException {
+		IManagerBean bean = controller.getManagerBean();
+		Criteria criteria = controller.getCriteria();
+		this.rowCount = bean.getCount(criteria);
+		this.page = getPage(start, limit);
+    }
+	
+	/**
+	 * Checks if is sortable.
+	 * 
+	 * @return true, if is sortable
+	 */
+	public boolean isSortable() {
+		return sortable;
+	}
+
+	/**
+	 * Sets the sortable.
+	 * 
+	 * @param sortable the new sortable
+	 */
+	public void setSortable(boolean sortable) {
+		this.sortable = sortable;
+	}
+	
+	/**
+	 * Gets the sort order.
+	 * 
+	 * @return the sort order
+	 */
+	public SortOderMap getSortOrder() {
+		return sortOrder;
+	}	
+	
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		oos.writeObject( getWrappedData() );
 		oos.writeInt( getRowIndex() );
@@ -291,25 +328,6 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 			}
 		}
 	}
-
-	/**
-	 * Update.
-	 * 
-	 * @param start the start
-	 * @param limit the limit
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public void update( int start, int limit ) throws ManagerBeanException {
-		IManagerBean bean = controller.getManagerBean();
-		Criteria criteria = controller.getCriteria();
-		this.rowCount = bean.getCount(criteria);
-		this.page = getPage(start, limit);
-		this.orderByList = new OrderByList();
-		if ( criteria.hasOrders() ) {
-			this.orderByList.setOrders( criteria.getOrderByList().getOrders() );
-		}		
-    }
 	
 	private String[] getAliases( String key ) {
 		String[] aliases = StringUtils.split( (String) key, ',' );
@@ -320,64 +338,14 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		}
 		return aliases;
 	}
-		
-	private OrderByList toOrderByList( List<SortField2> sortFields ) {
-		OrderByList list = new OrderByList();
-		ELContext context = FacesContext.getCurrentInstance().getELContext();
-		for( SortField2 field : sortFields ) {
-			if ( field.getOrdering() != Ordering.UNSORTED ) {
-				String value = (String) ((ValueExpression)field.getExpression()).getValue(context);
-				String[] aliases = getAliases( value );
-				if (! ArrayUtils.isEmpty(aliases) ) {
-					for( String alias : aliases ) {
-						IdentExpression expression = ExpressionUtilities.getIdentifierExpression(alias);
-						Order order = new Order(expression, field.getOrdering() == Ordering.ASCENDING);
-						list.add(order);						
-					}
-				}
-			}
-		}
-		return list;
-	}
 	
-	/**
-	 * Checks if is sortable.
-	 * 
-	 * @return true, if is sortable
-	 */
-	public boolean isSortable() {
-		return sortable;
-	}
-
-	/**
-	 * Sets the sortable.
-	 * 
-	 * @param sortable the new sortable
-	 */
-	public void setSortable(boolean sortable) {
-		this.sortable = sortable;
-	}
-
 	@Override
 	public void modify(List<FilterField> filterFields, List<SortField2> sortFields) {
-		if ( isSortable() ) {
-			OrderByList newOrderByList = toOrderByList(sortFields);
-			if (! this.orderByList.equals(newOrderByList) ) {
-				this.orderByList = newOrderByList;
-		
-				setWrappedData( Collections.emptyList() );
-				this.cachedRange = null;
-			}
+		if ( isSortable() && this.updated ) {
+			setWrappedData( Collections.emptyList() );
+			this.cachedRange = null;
+			this.updated = false;
 		}
-	}
-
-	/**
-	 * Gets the sort order.
-	 * 
-	 * @return the sort order
-	 */
-	public SortOderMap getSortOrder() {
-		return sortOrder;
 	}
 
 	/**
@@ -407,26 +375,35 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 			}
 			return Ordering.UNSORTED;
 		}
-
+		
+		private void updateOrder( Criteria criteria, String alias, Ordering value ) {
+			int index = -1;
+			if ( criteria.hasOrders() ) {
+				index = criteria.getOrderByList().indexOf(alias);
+			}
+			if ( index != -1 ) {
+				Order order = criteria.getOrderByList().getOrders().get(index);
+				if (! order.isAscending()) {
+					criteria.getOrderByList().remove(index);
+				} else {
+					Order newOrder = new Order(order.getExpression(), false );
+					criteria.getOrderByList().getOrders().set(index, newOrder);
+				}
+			} else {
+				if ( value != Ordering.UNSORTED ) {
+					criteria.addOrder(alias, Ordering.ASCENDING == value);
+				}							
+			}
+		}
+		
 		@Override
 		public Ordering put(String key, Ordering value) {
-			boolean skipUpdate = false;
 			Criteria  criteria = getCriteria();
 			String[] aliases = getAliases( key );
-			if ( criteria.hasOrders() ) {
-				for( String alias : aliases ) {
-					Order order = criteria.getOrderByList().get(alias);
-					if ( order != null ) {
-						criteria.getOrderByList().remove(alias);
-						skipUpdate = !order.isAscending();
-					}
-				}
+			for( String alias : aliases ) {
+				updateOrder(criteria, alias, value);
 			}
-			if ( (value != Ordering.UNSORTED) && (! skipUpdate) ) {
-				for( String alias : aliases ) {
-					criteria.addOrder(alias, Ordering.ASCENDING == value);
-				}
-			}
+			updated = true;			
 			return value;
 		}
 
