@@ -1072,7 +1072,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate,Invoice_referenceCode</value>
+			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
 		</managed-property>									
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1129,7 +1129,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate,Invoice_referenceCode</value>
+			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
 		</managed-property>									
 		<managed-property>
 			<property-name>listenerClasses</property-name>
