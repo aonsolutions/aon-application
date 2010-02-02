@@ -524,6 +524,15 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **** COMPANY DISPLAY **** -->
+	<managed-bean>
+		<managed-bean-name>companyDisplay</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.controller.CompanyDisplay
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Company ========================== -->
 	<navigation-rule>
 		<navigation-case>

@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -22,6 +20,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
@@ -37,8 +37,7 @@ import com.code.aon.ui.form.LinesController;
 
 public class ItemAttachController extends LinesController {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(ItemAttachController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemAttachController.class.getName());
 
 	/** The uploaded file. */
 	private AonFile aonFile;
@@ -135,7 +134,7 @@ public class ItemAttachController extends LinesController {
 			sos.close();
 			response.flushBuffer();
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

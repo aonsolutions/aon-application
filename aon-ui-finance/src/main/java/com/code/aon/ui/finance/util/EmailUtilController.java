@@ -1,8 +1,10 @@
 package com.code.aon.ui.finance.util;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.logging.Level;
@@ -14,19 +16,16 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
-import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
@@ -39,9 +38,9 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.finance.controller.InvoiceController;
+import com.code.aon.ui.finance.controller.InvoiceSignerController;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
@@ -49,6 +48,8 @@ import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailUtil;
 
 public class EmailUtilController implements IFinanceMessages, IFinanceConstants {
+
+	private static final String SALE_INVOICE_REPORT = "saleInvoice";
 
 	private static final Logger LOGGER = Logger.getLogger(EmailUtilController.class.getName());
 	
@@ -156,36 +157,37 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 				Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
-				String text = AonUtil.getMessage(WebMailConstants.BUNDLE_NAME, WebMailConstants.NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, user.getShortName() );
 				throw new AbortProcessingException( message );
 			}
 		}
 		return this.sender;
 	}
-
-	public AonFile getInvoiceFile( Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
-		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-		IAttachment attach = controller.getInvoiceData(invoice);
-		return getInvoiceFile(attach, invoice);
-	}
 	
-	public AonFile getInvoiceFile( IAttachment attach, Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
-		String fileName = attach.getDescription();
-		File file = File.createTempFile( fileName, ".pdf" );
-		FileUtils.writeByteArrayToFile(file, attach.getData());
+	public AonFile getInvoiceFile( Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
+		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		File file = File.createTempFile( SALE_INVOICE_REPORT, ".pdf" );
+		byte[] data = null;
+		if ( invoice.isSigned() ) {
+			data = invoiceSigner.getSignedInvoice(invoice).getData();
+		} else {
+			data = invoiceSigner.getInvoicePDF(invoice);
+		}
+		FileUtils.writeByteArrayToFile(file, data);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
-		aonFile.setFileName( fileName + ".pdf" );
+		String fileName = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
+		aonFile.setFileName( fileName );
 		return aonFile;
 	}
 
 	public AonFile getInvoiceXml( Invoice invoice ) throws IOException, SAXException {
-		File file = File.createTempFile( "facturae", ".xsig" );
-		FacturaeWriter fw = new FacturaeWriter( getCompany() );
-		String filePath = file.getAbsolutePath();
-		String fileName = FilenameUtils.getFullPath(filePath) + FilenameUtils.getBaseName(filePath);
-		fw.serialize(invoice, fileName);
+		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);		
+		File file = File.createTempFile( "facturae", ".xml" );
+		Writer writer = new FileWriter( file );
+		invoiceController.writeInvoiceXml( writer, invoice.getId());
+		writer.close();
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);
 		aonFile.setFileName( "facturae.xml" );

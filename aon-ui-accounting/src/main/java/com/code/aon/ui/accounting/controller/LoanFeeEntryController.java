@@ -354,28 +354,24 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		return obtainLoanAccount( getHeader().getLoan() );	
 	}
 	
-	public Double getOutstandingBalance() {
+	public double getOutstandingBalance() {
 		try {
 			SummaryProvider sp = new SummaryProvider();
 			SummaryProviderParameters params = new SummaryProviderParameters();
-			if (getRelatedAccount() != null) {
-				params.setAccountExpression( getRelatedAccount().getId());
-				params.setAccountLevel(5);
-				params.setBudgeted(false);
-				Period period = getAccountingUtil().getPeriod( getHeader().getFeeDate() );
-				params.setPeriod(period);
-				params.setFromDate(period.getInitiationDate());
-				params.setToDate(period.getDeadline());
-				params.setSecurityLevel(getHeader().getLoan().getSecurityLevel());
-				SummaryCollection sc = sp.getSummaryCollection(params);
-				double p = CommonUtil.round(sc.getCreditBalance())==0.0?
-						CommonUtil.round(sc.getUnpaidBalance()*-1):sc.getCreditBalance(); 
-				return p;
-			}
+			params.setAccountExpression( getRelatedAccount().getId());
+			params.setAccountLevel(5);
+			params.setBudgeted(false);
+			Period period = getAccountingUtil().getPeriod( getHeader().getFeeDate() );
+			params.setPeriod(period);
+			params.setFromDate(period.getInitiationDate());
+			params.setToDate(period.getDeadline());
+			params.setSecurityLevel(getHeader().getLoan().getSecurityLevel());
+			SummaryCollection sc = sp.getSummaryCollection(params);
+			return sc.getCreditBalance();
 		} catch (ManagerBeanException e) {
 			LOGGER.warning("No se puede obtener el saldo pendiente: " + e.getMessage());
 		}
-		return null;
+		return 0;
 	}
 
 	public void onAccountStatement(ActionEvent event) {

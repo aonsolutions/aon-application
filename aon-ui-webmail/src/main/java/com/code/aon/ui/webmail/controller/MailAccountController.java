@@ -13,9 +13,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
-import javax.naming.Name;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -42,7 +42,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	private Name accountId;
+	private String accountId;
 	
 	private boolean showMailAccountList;
 	
@@ -70,16 +70,16 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	@Override
 	public void accept(ActionEvent event) {		
+		String oldId = (String) this.savedToId;
 		try {
-			Name currentId = this.dao.calculateDN(getTo());
+			String currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
 				if ( dao.exists(currentId) ) {
 					addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 		            return;
 				}			
 			} else {
-				Name oldId = (Name) this.savedToId;				
-				if (! oldId.equals(currentId) ) {
+				if (! StringUtils.equals(oldId, currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 						return;
@@ -185,11 +185,11 @@ public class MailAccountController extends BasicController implements WebMailCon
 		this.accountId = webmail.getServer().getAccount().getId();
 	}
 	
-	public Name getAccountId() {
+	public String getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(Name accountId) {
+	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
 
@@ -207,7 +207,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 
 	public void onChangeMailAccount( ValueChangeEvent event ) {
 		resetFolderController();
-		Name newAccountId = (Name) event.getNewValue();
+		String newAccountId = (String) event.getNewValue();
 		for( int i = 0; i < this.mailAccounts.size(); i++ ) {
 			if ( ObjectUtils.equals(newAccountId, this.mailAccounts.get(i).getValue()) ) {
 				try {

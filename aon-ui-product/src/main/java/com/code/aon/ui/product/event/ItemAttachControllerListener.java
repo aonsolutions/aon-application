@@ -1,8 +1,5 @@
 package com.code.aon.ui.product.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 
@@ -12,6 +9,8 @@ import net.sf.jmimemagic.MagicMatch;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -30,7 +29,7 @@ import com.sun.faces.util.MessageFactory;
 
 public class ItemAttachControllerListener extends ControllerAdapter implements IItemConstants{
 	
-	private static final Logger LOGGER = Logger.getLogger(ItemAttachControllerListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemAttachControllerListener.class.getName());
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -110,7 +109,7 @@ public class ItemAttachControllerListener extends ControllerAdapter implements I
 						ext = match.getExtension();
 						mt = MimeType.get(match.getMimeType());
 					} catch (Throwable th) {
-						LOGGER.log(Level.SEVERE, "Error finding file Mime Type", th );
+						LOGGER.error("Error finding file Mime Type", th );
 					}
 				} else {
 					mt = MimeType.getByExtension(ext);	

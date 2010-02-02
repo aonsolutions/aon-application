@@ -55,6 +55,7 @@
 				<value>#{customerNoteChildListener}</value>
 				<value>#{customerSegmentListener}</value>
 				<value>#{customerAddInfoListener}</value>
+				<value>#{customerDirStaffListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -630,6 +631,71 @@
 		</managed-property>
 	</managed-bean>
 
+	<!--  **** CUSTOMER ADDINFO **** -->
+	<managed-bean>
+		<managed-bean-name>customerDirStaff</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryDirStaffLinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryDirStaff</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerDirStaff</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerDirStaffControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerDirStaffListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerDirStaff</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryDirStaff_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerDirStaffControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryDirStaffControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
@@ -692,6 +758,19 @@
 		<navigation-case>
 			<from-outcome>customer_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/customer/facelet/customer/search.xhtml</to-view-id>
+		</navigation-case>
+		<!-- =================== Customer Consultant ========================== -->
+		<navigation-case>
+			<from-outcome>customer_consultant_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/customer/facelet/customer/form_consultant.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_consultant_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/customer/facelet/customer/list_consultant.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_consultant_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/customer/facelet/customer/search_consultant.xhtml</to-view-id>
 		</navigation-case>
 		<!-- =================== CustomerRecordData ========================== -->
 		<navigation-case>

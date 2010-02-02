@@ -37,6 +37,12 @@
 							<f:setPropertyActionListener target="#{sales.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
+						<aon:commandButton value="&#160;" id="email"
+							title="#{webmailBundle.webmail_send_email}"
+							actionListener="#{sales.onSendByEmail}"
+							rendered="#{!sales.new and salesDetail.model.rowCount > 0 and salesDetail.to == null}"
+							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
+						</aon:commandButton>									
 						<h:commandLink id="sales" value="#{bundle.aon_report}"
 							target="_new" rendered="#{!sales.new}"
 							action="#{report.onExecute}"
@@ -568,5 +574,6 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalDelivery.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>

@@ -39,7 +39,6 @@ function aonFocusFirstInput( formId ) {
 	}	  		
 }
 
-var aon_oldRow;
 var aon_tableId;
 
 function aonSelectFirstRow( tableId ) {
@@ -58,21 +57,7 @@ function aonSelectFirstRow( tableId ) {
 		}
 	} else {
 		aon_tableId = null;
-		aon_oldRow = null;
 	}
-}
-
-function aonChangeRowSelection(rowIndex) {
-	try {
-		if (aon_oldRow!=undefined) {
-		    aon_oldRow.style.backgroundColor='#ffffff';
-		} 
-		var table = document.getElementById(aon_tableId);
-		row = table.rows[rowIndex+1];
-	    row.style.backgroundColor= '#AAAAAA';
-	    aon_oldRow=row;
-	} catch(ex) {
-	}	    
 }
 
 function aon_focusOnRow(row) {

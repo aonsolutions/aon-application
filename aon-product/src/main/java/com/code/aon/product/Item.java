@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -19,92 +20,28 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.enumeration.ProductStatus;
 
-/**
- * Transfer Object that represents an item.
- * 
- * @author Consulting & Development. Eugenio Castellano - 31-ene-2005
- * @since 1.0
- * @version 1.0
- *  
- */
 @Entity
 @Table(name="item")
 public class Item implements ITransferObject {
 
 	private static final long serialVersionUID = -2720748805321005422L;
 	
-    /**
-     * Unique key.
-     */
     private Integer id;
-
-    /**
-     * Product that references this item.
-     */
     private Product product;
-
-    /**
-     * Item detail.
-     */
     private String detail;
-
-    /**
-     * Item description.
-     */
     private String description;
-
-    /**
-     * Item price.
-     */
+    private String barcode;
     private double price;
-
-    /**
-     * Item status.
-     */
     private ProductStatus status;
-
-    /**
-     * Expenses percent.
-     */
     private double expensesPercent;
-
-    /**
-     * Sure expenses.
-     */
     private double expensesFixed;
-    
-    /**
-     * Sales's profit percent.
-     */
     private double profitPercent;
-    
-    /**
-	 * Last purchase price.
-	 */
     private double purchasePrice;
-    
-    /**
-	 * Visible in internet.
-	 */
     private boolean internet;
 
-    /**
-     * Barcode.
-     */
-    private String barcode;
-
-    /**
-     * Alternative Item.
-     */
-    private Item alternativeItem;
-
-    /**
-     * Returns the unique key.
-     * 
-     * @return Unique key.
-     */
     @Id
     @GeneratedValue
     @Column(nullable = false)
@@ -112,83 +49,10 @@ public class Item implements ITransferObject {
         return id;
     }
 
-    /**
-     * Asigns the unique key.
-     * 
-     * @param id
-     *            Unique key.
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Returns article's detail.
-     * 
-     * @return article's detail.
-     */
-    @Column(length=64)
-    public String getDetail() {
-        return detail;
-    }
-
-    /**
-     * Asigns article's detail.
-     * 
-     * @param detail
-     *            article's detail.
-     */
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
-    /**
-     * Returns this item's description.
-     * 
-     * @return item's description.
-     */
-    @Lob
-    @Type(type="stringClob")
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Asign this item's description.
-     * 
-     * @param description
-     *            item's description.
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Returns item's price.
-     * 
-     * @return item's price.
-     */
-    @Column(nullable=true)
-    public double getPrice() {
-        return price;
-    }
-
-    /**
-     * Asigns item's price.
-     * 
-     * @param price
-     *            item's price.
-     */
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    /**
-     * Returns item's product.
-     * 
-     * @return item's product.
-     * 
-     */
     @ManyToOne
     @JoinColumn(name="product", nullable=false)
     @org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
@@ -199,169 +63,110 @@ public class Item implements ITransferObject {
         return product;
     }
 
-    /**
-     * Asigns this item's product.
-     * 
-     * @param product
-     *            item's product.
-     */
     public void setProduct(Product product) {
         this.product = product;
     }
 
-    /**
-     * Returns item's status.
-     * 
-     * @return item's status.
-     */
-    public ProductStatus getStatus() {
-        return status;
+    @Column(length=64)
+    public String getDetail() {
+        return detail;
     }
 
-	/**
-     * Asigns item's status.
-     * 
-     * @param status
-     *            item's status.
-     */
-    public void setStatus(ProductStatus status) {
-        this.status = status;
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
-    
-	/**
-	 * Returns sure expenses 
-	 * 
-	 * @return Returns sure expenses.
-	 */
-    @Column(name="expenses_fixed")
-	public double getExpensesFixed() {
-		return expensesFixed;
-	}
 
-	/**
-	 * Asigns sure expenses
-	 * 
-	 * @param expensesFixed sure expenses.
-	 */
-	public void setExpensesFixed(double expensesFixed) {
-		this.expensesFixed = expensesFixed;
-	}
+    @Lob
+    @Type(type="stringClob")
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Returns the expenses percent
-	 * 
-	 * @return Returns expenses percent.
-	 */
-    @Column(name="expenses_percent")
-	public double getExpensesPercent() {
-		return expensesPercent;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	/**
-	 * Asigns the expenses percent
-	 * 
-	 * @param expensesPercent expenses percent.
-	 */
-	public void setExpensesPercent(double expensesPercent) {
-		this.expensesPercent = expensesPercent;
-	}
-
-	/**
-	 * Returns the profit percent
-	 * 
-	 * @return Returns profit percent.
-	 */
-	@Column(name="profit_percent")
-	public double getProfitPercent() {
-		return profitPercent;
-	}
-
-	/**
-	 * Asigns the profit percent
-	 * 
-	 * @param profitPercent profit percent.
-	 */
-	public void setProfitPercent(double profitPercent) {
-		this.profitPercent = profitPercent;
-	}
-
-	/**
-	 * Returns the purchase price
-	 * 
-	 * @return Returns purchase price.
-	 */
-	@Column(name="purchase_price")
-	public double getPurchasePrice() {
-		return purchasePrice;
-	}
-	
-	/**
-	 * Asigns the purchase price
-	 * 
-	 * @param purchasePrice purchase price.
-	 */
-    public void setPurchasePrice(double purchasePrice) {
-		this.purchasePrice = purchasePrice;
-	}
-      
-	/**
-	 *  Returns if the product is visible in internet or not
-	 * @return
-	 */
-	public boolean isInternet() {
-		return internet;
-	}
-
-	/**
-	 * @param internet
-	 */
-	public void setInternet(boolean internet) {
-		this.internet = internet;
-	}
-
-    /**
-     * Returns this item's barcode.
-     * 
-     * @return item's barcode.
-     */
     @Column(length=32)
     public String getBarcode() {
         return barcode;
     }
 
-    /**
-     * Asign this item's barcode.
-     * 
-     * @param barcode
-     *            item's barcode.
-     */
     public void setBarcode(String barcode) {
         this.barcode = barcode;
     }
 
-    /**
-     * Returns item's alternative item.
-     * 
-     * @return item's alternative item.
-     * 
-     */
-    @ManyToOne
-    @JoinColumn(name="alternative_item")
-    @ForeignKey(name = "FK_ALTENATIVE_ITEM")
-    @Index(name = "IDX_ALTENATIVE_ITEM")
-    public Item getAlternativeItem() {
-        return alternativeItem;
+    @Column(nullable=true)
+    public double getPrice() {
+        return price;
     }
 
-    /**
-     * Asigns this item's alternative item.
-     * 
-     * @param alternativeItem
-     *            item's alternative item.
-     */
-    public void setAlternativeItem(Item alternativeItem) {
-        this.alternativeItem = alternativeItem;
+    public void setPrice(double price) {
+        this.price = price;
     }
+
+    public ProductStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProductStatus status) {
+        this.status = status;
+    }
+    
+    @Column(name="expenses_percent")
+	public double getExpensesPercent() {
+		return expensesPercent;
+	}
+
+	public void setExpensesPercent(double expensesPercent) {
+		this.expensesPercent = expensesPercent;
+	}
+
+    @Column(name="expenses_fixed")
+	public double getExpensesFixed() {
+		return expensesFixed;
+	}
+
+	public void setExpensesFixed(double expensesFixed) {
+		this.expensesFixed = expensesFixed;
+	}
+
+	@Column(name="profit_percent")
+	public double getProfitPercent() {
+		return profitPercent;
+	}
+
+	public void setProfitPercent(double profitPercent) {
+		this.profitPercent = profitPercent;
+	}
+
+	@Column(name="purchase_price")
+	public double getPurchasePrice() {
+		return purchasePrice;
+	}
+	
+    public void setPurchasePrice(double purchasePrice) {
+		this.purchasePrice = purchasePrice;
+	}
+      
+	public boolean isInternet() {
+		return internet;
+	}
+
+	public void setInternet(boolean internet) {
+		this.internet = internet;
+	}
+	
+	@Transient
+	public double getSalesPrice() {
+		double price = this.getPrice();
+		Product product = this.getProduct();
+		double vatPercent = (product.getVat() != null) ? product.getVat().getPercentage() : 0;
+		double retentionPercent = (product.getRetention() != null) ? product.getRetention().getPercentage() : 0;
+		return CommonUtil.round(price* (1 + vatPercent / 100 - retentionPercent / 100));
+	}
+	
+	public void setSalesPrice(double salesPrice) {
+	}
 
 	@Override
 	public boolean equals(Object obj) {

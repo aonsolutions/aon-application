@@ -6,7 +6,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class AccountControllerListener extends ControllerAdapter {
-
+	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Account account = (Account) event.getController().getTo();

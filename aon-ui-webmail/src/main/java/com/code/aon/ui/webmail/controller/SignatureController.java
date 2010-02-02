@@ -10,7 +10,8 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.naming.Name;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -62,17 +63,16 @@ public class SignatureController extends GridController {
 	@Override
 	public void accept(ActionEvent event) {		
 		boolean renamed = false;
-		Name oldId = null;
+		String oldId = (String) this.savedToId;
 		try {
-			Name currentId = this.dao.calculateDN(getTo());
+			String currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
 				if ( dao.exists(currentId) ) {
 					addMessageExpression(SIGNATURE_DUPLICATED);
 		            return;
 				}			
 			} else {
-				oldId = (Name) this.savedToId;				
-				if (! oldId.equals(currentId) ) {
+				if (! StringUtils.equals(oldId, currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(SIGNATURE_DUPLICATED);
 						return;
@@ -115,7 +115,7 @@ public class SignatureController extends GridController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<MailAccount> getReferences( Name id ) {
+	private List<MailAccount> getReferences( String id ) {
 		List<MailAccount> list = null;
 		try {
 			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
@@ -128,7 +128,7 @@ public class SignatureController extends GridController {
 		return list;
 	}
 
-	private void updateReferences( Name id, Signature signature ) {
+	private void updateReferences( String id, Signature signature ) {
 		try {
 			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			for( MailAccount mailAccount : getReferences(id) ) {

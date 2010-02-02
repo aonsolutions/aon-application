@@ -2,8 +2,9 @@ package com.code.aon.ui.product.event;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,7 +29,7 @@ import com.code.aon.ui.util.AonUtil;
 public class ItemControllerItemPosListener extends ControllerAdapter {
 	
 	/** LOGGER. */
-	private static final Logger LOGGER = Logger.getLogger(ItemControllerItemPosListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemControllerItemPosListener.class.getName());
 	
 	/** ITEMPOS_CONTROLLER_NAME. */
 	private static final String ITEMPOS_CONTROLLER_NAME = "itemPos";
@@ -56,7 +57,7 @@ public class ItemControllerItemPosListener extends ControllerAdapter {
 			
 		} catch (ManagerBeanException e) {
             AonUtil.addErrorMessage("Error al insertar PLU.");
-            LOGGER.log(Level.SEVERE, "Error al insertar PLU.", e);
+            LOGGER.error("Error al insertar PLU.", e);
 		}
 	}
 
@@ -73,7 +74,7 @@ public class ItemControllerItemPosListener extends ControllerAdapter {
 			itemPosController.setCriteria(criteria);
 			itemPosController.onSearch(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error reloading ItemPosModel", e);
+			LOGGER.error("Error reloading ItemPosModel", e);
 		}
 	}
 	

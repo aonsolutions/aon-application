@@ -123,6 +123,7 @@
 		<mapping class="com.code.aon.product.CatalogueCategory"/>
 		<mapping class="com.code.aon.product.CatalogueItem"/>
 		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAlternative"/>
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemPos"/>
 		<mapping class="com.code.aon.product.Product"/>
@@ -132,7 +133,6 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
 		<!-- AON-PURCHASE Mapping files -->	
-		<mapping class="com.code.aon.purchase.ItemSupplier"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
@@ -161,6 +161,7 @@
 		<mapping class="com.code.aon.seller.Seller"/>
 
 		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.ItemSupplier"/>
 		<mapping class="com.code.aon.supplier.Supplier"/>
 
 		<!-- AON-WAREHOUSE Mapping files -->		

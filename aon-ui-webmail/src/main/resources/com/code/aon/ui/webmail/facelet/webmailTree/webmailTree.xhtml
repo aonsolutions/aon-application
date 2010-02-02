@@ -17,13 +17,11 @@
 			rendered="#{webmailTree.treeLoaded}" style="padding-bottom:0;">					
 							
 			<aon:commandButton
-				id="newFolder" reRender="createSubFolderGrid"
+				id="newFolder" reRender="aonStatus"
 				title="#{webmailBundle.webmail_newfolder}"
 				styleClass="aon-icon-commandButton aon-icon-newFolder"
 				actionListener="#{webmailFolder.openNewFolderPanelPopup}">
 				<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
-				<f:setPropertyActionListener value="#{false}" target="#{webmailFolder.createAsSubfolder}" />
-				<f:setPropertyActionListener value="#{null}" target="#{webmailFolder.newFolderName}" />
 			</aon:commandButton>
 				
 			<aon:commandButton
@@ -107,10 +105,11 @@
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
-	               	value="#{item.name} (#{item.unreadMessageCount})"
-					rendered="#{item.unreadMessageCount>0}" />
-				<aon:outputText
-					value="#{item.name}" rendered="#{item.unreadMessageCount==0}" />
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Enviados" 
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}" 
@@ -118,10 +117,11 @@
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
-	               	value="#{item.name} (#{item.unreadMessageCount})"
-					rendered="#{item.unreadMessageCount>0}" />
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
 				<aon:outputText 
-	               	value="#{item.name}" rendered="#{item.unreadMessageCount==0}" />
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="spam" 
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}" 
@@ -129,11 +129,11 @@
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
-	               	value="#{item.name} (#{item.unreadMessageCount})"
-					rendered="#{item.unreadMessageCount>0}" />
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
 				<aon:outputText 
 	               	value="#{item.name}"
-					rendered="#{item.unreadMessageCount==0}" />
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Papelera" 
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}" 
@@ -141,10 +141,11 @@
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
-	               	value="#{item.name} (#{item.unreadMessageCount})"
-					rendered="#{item.unreadMessageCount>0}" />
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
 				<aon:outputText 
-	               	value="#{item.name}" rendered="#{item.unreadMessageCount==0}" />
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Borrador" 
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}" 
@@ -152,10 +153,11 @@
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
 				<aon:outputText 
-	               	value="#{item.name} (#{item.unreadMessageCount})"
-					rendered="#{item.unreadMessageCount>0}" />
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
 				<aon:outputText 
-	               	value="#{item.name}" rendered="#{item.unreadMessageCount==0}" />
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="other" 
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}" 
@@ -166,10 +168,11 @@
 					value="WebMail"
 					rendered="#{item.root}" />
 				<aon:outputText 
-	               	value="#{item.name} (#{item.unreadMessageCount})"
-					rendered="#{!item.root and item.unreadMessageCount>0}" />
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
 				<aon:outputText 
-	               	value="#{item.name}" rendered="#{!item.root and item.unreadMessageCount==0}" />
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 		</rich:tree>	
 	    

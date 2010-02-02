@@ -35,10 +35,10 @@
 		<variableExpression><![CDATA[new Double($V{creditBalance}.doubleValue() + $F{creditBalance}.doubleValue())]]></variableExpression>
 		<initialValueExpression><![CDATA[new Double(0.0)]]></initialValueExpression>
 	</variable>
-	<group name="account" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+	<group name="account" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{account}]]></groupExpression>
 		<groupHeader>
-			<band height="64" splitType="Stretch">
+			<band height="53" splitType="Stretch">
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-25" x="0" y="3" width="535" height="14"/>
 					<box leftPadding="15" rightPadding="5">
@@ -217,110 +217,6 @@
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{fromOpeningEntry}.getCreditBalance())]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-3" mode="Opaque" x="1" y="46" width="33" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box leftPadding="2">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_account_entry}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-4" mode="Opaque" x="34" y="46" width="52" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box leftPadding="2">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_date}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-5" mode="Opaque" x="86" y="46" width="152" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box leftPadding="2">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_concept}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-6" mode="Opaque" x="238" y="46" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box rightPadding="2">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_debit}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-7" mode="Opaque" x="294" y="46" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box rightPadding="2">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_credit}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-23" mode="Opaque" x="462" y="46" width="73" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box leftPadding="7">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_balancing_account}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-26" mode="Opaque" x="350" y="46" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box rightPadding="2">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_debit_balance}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement key="textField-27" mode="Opaque" x="406" y="46" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-					<box rightPadding="2">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{account_credit_balance}]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -403,7 +299,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_statement_report}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-39" x="475" y="15" width="59" height="12"/>
+				<reportElement key="textField-39" x="489" y="15" width="45" height="12"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -491,7 +387,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getId()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-45" x="433" y="15" width="42" height="13"/>
+				<reportElement key="textField-45" x="447" y="15" width="42" height="13"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -506,8 +402,112 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band splitType="Stretch">
+		<band height="15" splitType="Stretch">
 			<printWhenExpression><![CDATA[new Boolean($P{printHeaders}.booleanValue() || (!$P{printHeaders}.booleanValue() && $V{PAGE_NUMBER}.intValue()==1))]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-3" mode="Opaque" x="0" y="0" width="33" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_account_entry}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-4" mode="Opaque" x="33" y="0" width="52" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-5" mode="Opaque" x="85" y="0" width="152" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_concept}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-6" mode="Opaque" x="238" y="0" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_debit}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-7" mode="Opaque" x="294" y="0" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_credit}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-23" mode="Opaque" x="462" y="0" width="73" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="7">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_balancing_account}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-26" mode="Opaque" x="350" y="0" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_debit_balance}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-27" mode="Opaque" x="406" y="0" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_credit_balance}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>

@@ -34,7 +34,6 @@ public class FoldersTreeBean implements WebMailConstants {
 
 	private void addNodes(TreeNode node) {
 		AonFolder folder = (AonFolder) node.getData();
-		String name = folder.getName();
 		ArrayList<AonFolder> lst;
 		try {
 			lst = folder.getFolderList();
@@ -42,14 +41,7 @@ public class FoldersTreeBean implements WebMailConstants {
 				AonFolder aonFolder = lst.get(i);
 				TreeNodeImpl nodeImpl = new TreeNodeImpl();
 				nodeImpl.setData(aonFolder);
-				String id = aonFolder.getFolderTypeName();
-				if ( AonFolder.OTHER_FOLDER_NAME.equals(id) ) {
-					id = name + i;
-				}
-				node.addChild(id, nodeImpl);
-				if ( aonFolder.isHoldFolders() ) {
-					addNodes( nodeImpl );
-				}
+				node.addChild(new Integer(i + 1), nodeImpl);
 			}
 		} catch (WebmailException e) {
 			throw new FacesException(e.getMessage(), e);
@@ -58,7 +50,7 @@ public class FoldersTreeBean implements WebMailConstants {
 
 	public void initTree( AonServer server ) {
 		loadTree( server );
-		setCurrent( (AonFolder) rootNode.getChild(AonFolder.INBOX_FOLDER_NAME).getData() );
+		setCurrent( (AonFolder) rootNode.getChild(1).getData() );
 		getFolderController().nodeSelected( getCurrent() );
 	}
 	
@@ -129,7 +121,6 @@ public class FoldersTreeBean implements WebMailConstants {
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
    		MessageController message = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
    		message.moveSelectedMessageAndMove(destinyFolder);
-   		getFolderController().updateModel();
 	}
 	
 	public boolean isTreeLoaded(){
