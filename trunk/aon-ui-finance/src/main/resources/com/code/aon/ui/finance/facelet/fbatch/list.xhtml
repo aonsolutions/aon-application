@@ -37,75 +37,78 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{fbatch}" />
-					<ui:param name="columnClasses" value="
-						aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 					<ui:define name="columns">
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}" />
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.description}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.issueDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_bank}" />
-						</f:facet>
-						<aon:outputText value="#{to.registryBank.bank.name}" />
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_bank_account}" />
-						</f:facet>
-						<aon:outputText value="#{to.registryBank.bankAccount}" />
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
-						</f:facet>
-						<aon:outputText value="#{to.financeBatchStatus}" />
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_regs}" />
-						</f:facet>
-						<aon:outputText value="#{fbatch.modelToTotalDetails}" >
-							<f:convertNumber pattern="#{bundle.aon_integer_pattern}" />
-						</aon:outputText>	
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_amount}" />
-						</f:facet>
-						<aon:outputText value="#{fbatch.modelToTotalAmount}" >
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>	
-					</aon:column>
-				</ui:define>
-			</ui:decorate>
+						<aon:column alias="FinanceBatch.id"
+							styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+						</aon:column>
+						
+						<aon:column alias="FinanceBatch.description"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+	
+						<aon:column alias="FinanceBatch.issueDate"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.issueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column alias="FinanceBatch.registryBank.bank.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{configBundle.config_bank}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryBank.bank.name}" />
+						</aon:column>
+						
+						<aon:column alias="FinanceBatch.registryBank.bankAccount"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{configBundle.config_bank_account}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryBank.bankAccount}" />
+						</aon:column>
+						
+						<aon:column alias="FinanceBatch.financeBatchStatus"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.financeBatchStatus}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_regs}" />
+							</f:facet>
+							<aon:outputText value="#{fbatch.modelToTotalDetails}" >
+								<f:convertNumber pattern="#{bundle.aon_integer_pattern}" />
+							</aon:outputText>	
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_amount}" />
+							</f:facet>
+							<aon:outputText value="#{fbatch.modelToTotalAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>	
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 						
 			</aon:div>
 			
