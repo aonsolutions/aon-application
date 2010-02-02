@@ -13,7 +13,7 @@
 	<artifactId>aon.web.commercial</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMERCIAL</name>
-	<version>1.9.4</version>
+	<version>1.9.5</version>
 	<description>AON WEB COMMERCIAL</description>
 	<properties>
 		<dbVersion>4.8.1</dbVersion>
@@ -37,19 +37,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.7.0</version>
+			<version>4.8.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -69,42 +69,42 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>4.13.0</version>
+			<version>4.14.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>4.9.0</version>
+			<version>4.10.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.10.0</version>			
+			<version>4.12.1</version>			
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.7.1</version>			
+			<version>4.8.0</version>			
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>4.0.3</version>
+			<version>4.0.4</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>4.9.0</version>
+			<version>4.10.0</version>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.marketing</artifactId>
-			<version>3.5.3</version>
+			<version>3.5.4</version>
 		</dependency>
 	</dependencies>
 </project>
