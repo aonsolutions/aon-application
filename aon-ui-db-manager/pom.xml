@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.db.manager</artifactId>
-	<version>0.7.1</version>
+	<version>0.7.2</version>
 	<description>AON UI DB MANAGER</description>
 	<name>AON UI DB MANAGER</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.7.0</version>
+			<version>4.8.0</version>
 			<scope>compile</scope>
 		</dependency>					
 		<dependency>
