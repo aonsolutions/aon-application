@@ -26,7 +26,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/4.3.0</value>
+			<value>/aonResource/4.4.0</value>
 		</managed-property>
 	</managed-bean>
 
