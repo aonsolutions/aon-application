@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.infoweb</artifactId>
 	<packaging>war</packaging>
-	<version>4.4.0</version>
+	<version>4.4.3</version>
 	<description>AON WEB INFOWEB</description>
 	<name>AON WEB INFOWEB</name>
 	<properties>
-		<dbVersion>4.8.0</dbVersion>
+		<dbVersion>4.8.1</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-infoweb</finalName>
@@ -24,25 +24,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.5.0</version>
+			<version>4.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.1.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.infoweb</artifactId>
-			<version>1.5.0</version>
+			<version>1.7.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>4.0.2</version>
+			<version>4.0.3</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
