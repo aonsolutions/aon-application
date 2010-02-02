@@ -71,6 +71,11 @@
 										actionListener="#{invoicePrint.onEditSearch}"
 										action="invoicePrint_search" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_invoicing_group"
+										value="#{financeBundle.finance_invoicing_group_module}"
+										action="invoicingGroup_list" />
+								</aon:div>
 							</aon:div>
 						</aon:panel>
 
@@ -112,11 +117,6 @@
 								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_invoicing_group"
-										value="#{financeBundle.finance_invoicing_group_module}"
-										action="invoicingGroup_list" />
-								</aon:div>
 								<c:if test="#{company.EInvoice and (certificate.certificateCount>0)}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink
