@@ -53,73 +53,78 @@
 				</aon:div>
 
 				<aon:div id="invoiceRemoverDataDiv" >
-					<aon:dataTable id="invoiceRemoverData" value="#{invoiceRemover.model}"
-						var="to" rows="20" rendered="#{invoiceRemover.model.rowCount > 0}"
-						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn
-							 aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{invoiceRemover}" />
+						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+						<ui:param name="skipSelectButton" value="#{true}" />
+						<ui:define name="columns">
 	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<aon:selectBooleanCheckbox id="Included_Row_checked"
-								value="#{invoiceRemover.rowChecked}"
-								rendered="#{invoiceRemover.modelToRemovable}" />	
-							<aon:div style="display:inline;cursor:pointer;">
-								<aon:outputText value="&#160;"
-									styleClass="aon-icon-errorwarning" style="padding-left:20px"
-									rendered="#{!invoiceRemover.modelToRemovable}" />
-								<rich:toolTip value="#{financeBundle.finance_unable_remove_paid_error}" />
-							</aon:div>
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{customerBundle.customer_customer}" />
-							</f:facet>
-							<aon:outputText value="#{to.registryName}" />
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.issueDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.status}" />
-						</aon:column>
-
-						<c:if test="#{company.EInvoice}">
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_signature}" />
+									<aon:outputText value="&#160;" />
 								</f:facet>
-								<aon:outputText value="&#160;" rendered="#{to.signed}"
-									title="#{signBundle.sign_signed}"
-									styleClass="aon-icon aon-icon-signed" />
-								<aon:outputText value="&#160;" rendered="#{!to.signed}"
-									title="#{signBundle.sign_sign_pending}"
-									styleClass="aon-icon aon-icon-unsigned" />
+								<aon:selectBooleanCheckbox id="Included_Row_checked"
+									value="#{invoiceRemover.rowChecked}"
+									rendered="#{invoiceRemover.modelToRemovable}" />	
+								<aon:div style="display:inline;cursor:pointer;">
+									<aon:outputText value="&#160;"
+										styleClass="aon-icon-errorwarning" style="padding-left:20px"
+										rendered="#{!invoiceRemover.modelToRemovable}" />
+									<rich:toolTip value="#{financeBundle.finance_unable_remove_paid_error}" />
+								</aon:div>
 							</aon:column>
-						</c:if>
-
-					</aon:dataTable>
-					<aon:dataScroller2 for="invoiceRemoverData" showNote="true" />
+		
+							<aon:column alias="Invoice.referenceCode"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+								</f:facet>
+								<aon:outputText value="#{to.referenceCode}" />
+							</aon:column>
+		
+							<aon:column alias="Invoice.registryName"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{customerBundle.customer_customer}" />
+								</f:facet>
+								<aon:outputText value="#{to.registryName}" />
+							</aon:column>
+		
+							<aon:column alias="Invoice.issueDate"
+								styleClass="aon-editDataTable-textColumn aon-width-150">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.issueDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:column>
+		
+							<aon:column alias="Invoice.status"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_status}" />
+								</f:facet>
+								<aon:outputText value="#{to.status}" />
+							</aon:column>
+	
+							<c:if test="#{company.EInvoice}">
+								<aon:column alias="Invoice.signed"
+									styleClass="aon-editDataTable-textColumn">
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_signature}" />
+									</f:facet>
+									<aon:outputText value="&#160;" rendered="#{to.signed}"
+										title="#{signBundle.sign_signed}"
+										styleClass="aon-icon aon-icon-signed" />
+									<aon:outputText value="&#160;" rendered="#{!to.signed}"
+										title="#{signBundle.sign_sign_pending}"
+										styleClass="aon-icon aon-icon-unsigned" />
+								</aon:column>
+							</c:if>
+						</ui:define>
+					</ui:decorate>
 				</aon:div>
 			</aon:div>
 		</aon:form>
