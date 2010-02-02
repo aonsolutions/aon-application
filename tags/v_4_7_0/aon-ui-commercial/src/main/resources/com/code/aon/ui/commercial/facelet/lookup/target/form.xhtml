@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid columns="2" dir="true">
+
+		<ui:include src="/com/code/aon/ui/commercial/facelet/target/formContent.xhtml">
+			<ui:param name="controller" value="#{lookup}"/>
+		</ui:include>
+	
+		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+			<ui:param name="controllerLookupListener" value="#{targetLookupListener}"/>
+		</ui:include>
+		
+	</aon:panelGrid>
+
+</ui:composition>

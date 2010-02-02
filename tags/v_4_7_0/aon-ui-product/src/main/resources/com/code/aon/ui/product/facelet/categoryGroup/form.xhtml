@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="productCategoryGroup">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{productBundle.product_categoryGroup_module}" />
+				<ui:param name="controller" value="#{productCategoryGroup}" />
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" style="width: 50%;">
+					<aon:outputLabel value="#{productBundle.product_category_group}" />
+					<aon:inputText size="50" value="#{productCategoryGroup.to.name}"
+						maxlength="40" />
+				</aon:panelGrid>
+
+				<c:if test="#{!productCategoryGroup.new}">
+					<aon:panelTabSet>
+
+						<aon:panelTab id="productCategories"
+							label="#{productBundle.product_category_module}">
+							<ui:include src="grid.xhtml" />
+						</aon:panelTab>
+
+					</aon:panelTabSet>
+				</c:if>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{categoryLookup}" />
+	</ui:define>
+</ui:composition>

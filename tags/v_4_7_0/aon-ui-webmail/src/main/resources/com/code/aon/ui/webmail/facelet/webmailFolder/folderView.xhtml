@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<c:if test="#{!webmail.logged}" >
+			<ui:include src="/com/code/aon/ui/webmail/facelet/util/serverError.xhtml" />
+		</c:if>
+
+		<c:if test="#{webmail.logged}" >
+			<rich:dragIndicator id="messageIndicator">
+				<f:facet name="single">
+					<aon:outputText value="&#160;"
+						styleClass="aon-icon aon-icon-mailInbox-read"
+						style="cursor: pointer;width:16px;" />					
+				</f:facet>
+			</rich:dragIndicator>
+	
+			<aon:form id="webmailForm">
+	
+				<!--  webmail toolbar -->
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid id="folderButtonsGrid" columns="3" dir="true"
+						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+						
+						<aon:div styleClass="aon-finding-title-internal">
+							<aon:outputText value="#{webmailBundle.webmail_main}" />
+						</aon:div>
+						
+						<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText value="#{webmailBundle.webmail_messages}" />
+						</aon:div>
+						
+						<aon:div styleClass="aon-finding-toolbar-item-group">
+							<aon:commandButton id="newMailMessage"
+								title="#{webmailBundle.webmail_newmail}" action="messageNew"
+								actionListener="#{webmailMessage.createNewMessage}"
+								value="#{webmailBundle.webmail_newmail}"
+								styleClass="aon-finding-toolbar-item aon-icon-newMail">
+							</aon:commandButton>
+								
+							<aon:commandButton id="deleteMail"
+								rendered="#{!webmailFolder.folder.purgableAllMessages}"
+								title="#{bundle.aon_remove}" action="folder"
+								actionListener="#{webmailFolder.deleteCheckedMessages}"
+								value="#{bundle.aon_remove}"
+								styleClass="aon-icon-mailDelete aon-finding-toolbar-item">
+							</aon:commandButton>
+			
+							<aon:commandButton id="searchMail"
+								title="#{bundle.aon_search}" action="messageSearch"
+								actionListener="#{webmailSearch.init}"
+								value="#{bundle.aon_search}"
+								styleClass="aon-icon-mailSearch aon-finding-toolbar-item">
+							</aon:commandButton>
+			
+							<!-- Move button  -->
+							<aon:commandButton id="moveButton" reRender="aonStatus"
+								title="#{webmailBundle.webmail_movemail}"
+								value="#{webmailBundle.webmail_movemail}"
+								styleClass="aon-finding-toolbar-item aon-icon-mail-move">
+								<rich:componentControl for="msgMoveModalPanel" operation="show"
+									event="onclick" />
+							</aon:commandButton>
+							
+							<!-- Purge button  -->						
+							<aon:confirmButton id="purgeMail"
+								title="#{webmailBundle.webmail_mail_purge}"
+								confirmTitle="#{bundle.aon_advice}"
+								confirmMessage="#{webmailBundle.webmail_purge_confirm}"
+								accesskey="#{bundle.aon_key_remove}" confirmAction="folder"
+								confirmActionListener="#{webmailFolder.purgeCheckedMessages}"
+								value="#{webmailBundle.webmail_mail_purge}"
+								styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
+	
+							<!-- Purge All button -->
+							<aon:confirmButton id="purgeAll"
+								rendered="#{webmailFolder.folder.purgableAllMessages}"
+								title="#{webmailBundle.webmail_mail_purge_all}"
+								confirmTitle="#{bundle.aon_advice}"
+								confirmMessage="#{webmailBundle.webmail_purge_all_confirm}"
+								confirmAction="folder"
+								confirmActionListener="#{webmailFolder.purgeAllMessages}"
+								value="#{webmailBundle.webmail_mail_purge_all}"
+								styleClass="aon-icon-mailDeleteAll aon-finding-toolbar-item" />		
+									
+							<!--  Refresh button -->
+							<aon:commandButton id="refreshAccounts" action="folder" 
+								actionListener="#{webmailFolder.refresh}"
+								title="#{webmailBundle.webmail_refresh}"
+								value="#{webmailBundle.webmail_refresh}"
+								styleClass="aon-finding-toolbar-item aon-icon-refresh">
+							</aon:commandButton> 
+				
+						</aon:div>
+					</aon:panelGrid>
+					<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml" />
+					
+				</aon:div>
+				<!-- fin webmail toolbar -->
+				
+				
+				<aon:panelGrid columns="2" style="width:100%"
+					columnClasses="aon-tree-column,aon-messages-column">
+	
+					<ui:include src="/com/code/aon/ui/webmail/facelet/webmailTree/webmailTree.xhtml" />
+	
+					<ui:include src="/com/code/aon/ui/webmail/facelet/webmailFolder/folderMessagesTable.xhtml" />
+	
+				</aon:panelGrid>
+	
+			</aon:form>
+			
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailFolder/createFolder.xhtml" />
+		    
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailFolder/renameFolder.xhtml" />
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

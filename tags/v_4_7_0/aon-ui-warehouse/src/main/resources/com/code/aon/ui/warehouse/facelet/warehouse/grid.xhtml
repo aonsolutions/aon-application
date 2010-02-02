@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="warehouseGrid">
+			<aon:div ajaxRendered="true" layout="none">
+			
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_warehouse_module}" />
+					<ui:param name="controller" value="#{warehouse}" />
+				</ui:decorate>			
+
+				<!--  aon-region-body -->
+				<aon:div styleClass="aon-scroll-area">
+
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{warehouse}" />
+						<ui:param name="columnClasses" value="aon-width-60, aon-editDataTable-textColumn" />
+						<ui:define name="columns">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.id}" />
+								<f:facet name="footer">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.aon_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}"
+									rendered="#{formList}" />
+								<aon:inputText styleClass="aon-form-input-text " required="true"
+									rendered="#{formEdit}" size="32"
+									value="#{controller.to.name}" maxlength="32" />
+								<f:facet name="footer">
+									<aon:inputText styleClass="aon-form-input-text" required="true"
+										rendered="#{formNew}" size="32"
+										value="#{controller.to.name}" maxlength="32" />
+								</f:facet>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
