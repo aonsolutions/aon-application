@@ -153,7 +153,7 @@
 					style="margin-top: 5px;margin-bottom: 5px;" />
 
 				<aon:div id="#{id}tableContainer">
-					<aon:editDataTable id="#{id}table" value="#{wizard.model}"
+					<aon:editDataTable id="#{id}table" value="#{wizard.model}" sortMode="multi"
 						var="acc" rows="15" rendered="#{wizard.model.rowCount > 0}"
 						columnClasses="aon-editDataTable-iconColumn,
 						aon-editDataTable-textColumn,
@@ -183,14 +183,14 @@
 							</aon:commandButton>
 						</aon:column>
 
-						<aon:column>
+						<aon:column alias="Account.id">
 							<f:facet name="header">
 								<aon:outputText value="#{accountBundle.account_account}" />
 							</f:facet>
 							<aon:outputText value="#{acc.id}" />
 						</aon:column>
 
-						<aon:column>
+						<aon:column alias="Account.description">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
