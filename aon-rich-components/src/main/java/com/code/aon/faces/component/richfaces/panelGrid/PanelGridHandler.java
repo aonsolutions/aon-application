@@ -22,7 +22,7 @@ public class PanelGridHandler extends AonComponentHandler {
 		if (! StringUtils.isEmpty(columnClasses) ) {
 			int columns = panelGrid.getColumns();
 			if ( columns > 0 ) {
-				String[] classes = StringUtils.split(columnClasses, ",");
+				String[] classes = StringUtils.split(columnClasses, " ,");
 				if ( (classes != null) && (columns > classes.length) ) {
 					StringBuffer newColumnClasses = new StringBuffer();
 					for( int i = 0, n = 0; i < columns; ) {

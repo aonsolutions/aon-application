@@ -25,9 +25,5 @@ public interface IRichFacesTags {
 	String NAME = "name";	
 	
 	String DEFAULT = "default";   	
-
-	String SORT_BY = "sortBy";
-	
-	String SORT_ORDER = "sortOrder";
 	
 }
