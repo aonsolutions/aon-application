@@ -611,7 +611,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Offer_issueDate desc,Offer_series,Offer_number desc</value>
+			<value>Offer_issueDate desc,Offer_series desc,Offer_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
