@@ -6,6 +6,7 @@ import java.util.List;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 
@@ -100,7 +101,16 @@ public class BasicFinderBean implements IFinderBean {
 	 */
 	public int getCount(Criteria criteria) throws ManagerBeanException {
 		try {
-			return dao.getCount(criteria);
+			OrderByList obl = null;
+			if ( criteria != null ) {
+				obl = criteria.getOrderByList();
+				criteria.setOrderByList( null );
+			}
+			int count = dao.getCount(criteria);
+			if ( criteria != null ) {
+				criteria.setOrderByList( obl );	
+			}
+			return count;
 		} catch (DAOException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}

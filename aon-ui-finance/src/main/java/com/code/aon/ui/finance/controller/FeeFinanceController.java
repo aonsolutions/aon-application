@@ -39,28 +39,10 @@ public class FeeFinanceController extends LinesController {
 		this.registryBankId = registryBankId;
 	}
 	
-	public boolean isModelToEditable() throws ManagerBeanException{
-		Finance finance = (Finance)this.getModel().getRowData(); 
-		return (finance.getFinanceStatus().equals(FinanceStatus.PENDING) || finance.getFinanceStatus().equals(FinanceStatus.RETURNED));
+	public boolean isModelToPaid() throws ManagerBeanException{
+		return ((Finance)this.getModel().getRowData()).getFinanceStatus().equals(FinanceStatus.PAID);
 	}
-
-	public boolean isModelToPending() throws ManagerBeanException{
-		Finance finance = (Finance)this.getModel().getRowData(); 
-		return (finance.getFinanceStatus().equals(FinanceStatus.PENDING));
-	}
-
-	@SuppressWarnings("unchecked")
-	public boolean isAllPending() throws ManagerBeanException{
-		Iterator iter = ((List)this.getModel().getWrappedData()).iterator();
-		while(iter.hasNext()){
-			Finance finance = (Finance)iter.next();
-			if(!finance.getFinanceStatus().equals(FinanceStatus.PENDING)){
-				return false;
-			}
-		}
-		return true;
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	public void payMethodChanged(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){

@@ -18,6 +18,8 @@ import com.code.aon.config.User;
 @Table(name="favorite")
 public class Favorite implements ITransferObject {
 
+	private static final long serialVersionUID = 1239534857460207970L;
+
 	private Integer id;
 	
 	private FavoriteCategory favoriteCategory;

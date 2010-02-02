@@ -11,6 +11,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name="series")
 public class Series implements ITransferObject {

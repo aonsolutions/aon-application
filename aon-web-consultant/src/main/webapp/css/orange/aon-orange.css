@@ -751,38 +751,6 @@ div.aon-form-collapsiblePanel{
    	overflow:visible;	
 	cursor:pointer;
 }
-.aon-form-button-delete{
-	padding:3px 1em 3px 20px;
-	margin-right:5px;
-	color:#5C81A7;
-	text-decoration:none;
-	text-align:left;
-	font-weight:bold;
-	border:0;
-	background:transparent url("images/content/orange-form-button-delete.gif") 0px 3px no-repeat;
-	font-size:11px;
-	font-family:arial,verdana,sans-serif;
-	display:inline;
-	width:auto;
-   	overflow:visible;	
-	cursor:pointer;
-}
-.aon-form-button-download{
-	padding:3px 1em 3px 20px;
-	margin-right:5px;
-	color:#5C81A7;
-	text-decoration:none;
-	text-align:left;
-	font-weight:bold;
-	border:0;
-	background:transparent url("images/content/orange-form-button-download.gif") 0px 3px no-repeat;
-	font-size:11px;
-	font-family:arial,verdana,sans-serif;
-	display:inline;
-	width:auto;
-   	overflow:visible;	
-	cursor:pointer;
-}
 .aon-navigation-link{
 	padding:2px 1em 2px 14px;
 	background:transparent url("images/content/orange-navigation-link.gif") left 5px no-repeat;

@@ -3,8 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
-	xmlns:s="http://myfaces.apache.org/sandbox"
 	xmlns:h="http://java.sun.com/jsf/html">
+
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -22,7 +22,7 @@
 					<t:commandButton id="save" value="#{bundle.aon_accept}"
 						actionListener="#{addCampaignDossier.onAddCampaignDossiers}" action="campaign_form"
 						forceId="#{true}" 
-						onclick="if(confirm('#{bundle.aon_accept_confirm}')){viewDialog.show();}else{ return false; }"
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
@@ -30,7 +30,7 @@
 					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 						actionListener="#{addCampaignDossier.onCancel}" action="campaign_form"
 						immediate="#{true}"
-						onclick="if(confirm('#{bundle.aon_cancel_confirm}')){viewDialog.show();}else{ return false; }"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
@@ -152,19 +152,6 @@
 					</t:div>
 				</t:div>
 			</t:div>
-
-			<s:modalDialog
-		       dialogId="viewDialog"
-		       dialogVar="viewDialog"
-		       closeButton="false">
-		       <t:div styleClass="aon-timer">		       		
-		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
-		       		<t:div styleClass="aon-timer-title" >
-		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
-		       		</t:div>
-  			   </t:div>
-			</s:modalDialog>
-
 		</h:form>
 		<h:form id="placeList" target="list" />
 	</ui:define>

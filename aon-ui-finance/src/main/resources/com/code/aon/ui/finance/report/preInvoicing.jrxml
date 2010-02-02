@@ -44,36 +44,26 @@
 	</variable>
 	<variable name="taxTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
-	<variable name="taxTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Nothing">
-		<variableExpression><![CDATA[$V{taxTotal}!=null?new Double($V{taxTotalAmount}.doubleValue()+$V{taxTotal}.doubleValue()):$V{taxTotalAmount}!=null?$V{taxTotalAmount}:new Double(0)]]></variableExpression>
-	</variable>
-	<variable name="surchargeTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
-	</variable>
-	<variable name="surchargeTotalAmount" class="java.lang.Double" resetType="None" calculation="Nothing">
-		<variableExpression><![CDATA[$V{surchargeTotal}!=null?new Double($V{surchargeTotalAmount}.doubleValue()+$V{surchargeTotal}.doubleValue()):$V{surchargeTotalAmount}!=null?$V{surchargeTotalAmount}:new Double(0)]]></variableExpression>
-	</variable>
-	<variable name="retentionTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
-	</variable>
-	<variable name="retentionTotalAmount" class="java.lang.Double" resetType="None" calculation="Nothing">
-		<variableExpression><![CDATA[$V{retentionTotal}!=null?new Double($V{retentionTotalAmount}.doubleValue()+$V{retentionTotal}.doubleValue()):$V{retentionTotalAmount}!=null?$V{retentionTotalAmount}:new Double(0)]]></variableExpression>
-	</variable>
 	<variable name="reportTotal" class="java.lang.Double" resetType="None" calculation="Sum">
 		<variableExpression><![CDATA[$V{invoiceTotal}]]></variableExpression>
 	</variable>
 	<variable name="invoiceTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$V{invoiceTotalAmount}]]></variableExpression>
 	</variable>
+	<variable name="taxTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$V{taxTotal}]]></variableExpression>
+	</variable>
 
 		<group  name="invoiceGroup" >
 			<groupExpression><![CDATA[$F{id}]]></groupExpression>
 			<groupHeader>
-			<band height="16"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+			<band height="25"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="1"
-						width="371"
-						height="14"
+						y="3"
+						width="330"
+						height="17"
 						key="textField-24"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -242,12 +232,12 @@
 			<band height="31"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="301"
+						x="300"
 						y="14"
 						width="141"
 						height="17"
 						key="textField-21"
-						positionType="FixRelativeToBottom"/>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
@@ -256,23 +246,23 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="442"
+						x="441"
 						y="14"
 						width="93"
 						height="17"
 						key="textField-22"
-						positionType="FixRelativeToBottom"/>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotal}.doubleValue() + ($V{taxTotal}!=null?$V{taxTotal}.doubleValue():0) + ($V{surchargeTotal}!=null?$V{surchargeTotal}.doubleValue():0) + ($V{retentionTotal}!=null?$V{retentionTotal}.doubleValue():0))]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotal}.doubleValue() + $V{taxTotal}.doubleValue())]]></textFieldExpression>
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
-						x="72"
+						x="67"
 						y="17"
-						width="228"
+						width="233"
 						height="14"
 						key="subreport-2"
 						positionType="Float"/>
@@ -280,11 +270,7 @@
 					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentPreInvoice}, $V{currentPreInvoice}))]]></dataSourceExpression>
 					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
 					<returnValue subreportVariable="taxTotal" toVariable="taxTotalAmount" calculation="Sum"/>
-					<returnValue subreportVariable="surchargeTotal" toVariable="surchargeTotal"/>
-					<returnValue subreportVariable="surchargeTotal" toVariable="surchargeTotalAmount" calculation="Sum"/>
-					<returnValue subreportVariable="retentionTotal" toVariable="retentionTotal"/>
-					<returnValue subreportVariable="retentionTotal" toVariable="retentionTotalAmount" calculation="Sum"/>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("preInvoicingTaxBreakDown")]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("taxBreakDown")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -302,12 +288,11 @@
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="30"
+						y="14"
 						width="535"
 						height="0"
-						backcolor="#000000"
 						key="line-3"
-						positionType="FixRelativeToBottom"/>
+						positionType="Float"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
@@ -344,6 +329,16 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="535"
+						height="0"
+						forecolor="#999999"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="6"
@@ -357,25 +352,14 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
 				</textField>
-				<line direction="TopDown">
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="1"
-						width="535"
-						height="0"
-						forecolor="#999999"
-						key="line-4"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
 			</band>
 		</pageFooter>
 		<summary>
-			<band height="80"  isSplitAllowed="true" >
+			<band height="17"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="442"
-						y="61"
+						y="0"
 						width="93"
 						height="17"
 						key="textField-26"
@@ -384,12 +368,12 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotalAmount}.doubleValue() + $V{taxTotalAmount}.doubleValue() + $V{surchargeTotalAmount}.doubleValue() + $V{retentionTotalAmount}.doubleValue())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotalAmount}.doubleValue() + $V{taxTotalAmount}.doubleValue())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="301"
-						y="10"
+						y="0"
 						width="141"
 						height="17"
 						key="textField-27"
@@ -398,119 +382,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_taxable_base} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="179"
-						y="10"
-						width="48"
-						height="17"
-						key="textField-28"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Integer"><![CDATA[new Integer($V{REPORT_COUNT}.intValue())]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="442"
-						y="10"
-						width="93"
-						height="17"
-						key="textField-29"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotalAmount}.doubleValue())]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="301"
-						y="27"
-						width="141"
-						height="17"
-						key="textField-30"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_tax_rate} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="301"
-						y="61"
-						width="141"
-						height="17"
-						key="textField-31"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_invoicing_total} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="56"
-						y="10"
-						width="123"
-						height="17"
-						key="textField-32"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_invoice_count} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="442"
-						y="27"
-						width="93"
-						height="17"
-						key="textField-33"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{taxTotalAmount}.doubleValue() + $V{surchargeTotalAmount}.doubleValue())]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="301"
-						y="44"
-						width="141"
-						height="17"
-						key="textField-34"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_retention_rate} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="442"
-						y="44"
-						width="93"
-						height="17"
-						key="textField-35"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{retentionTotalAmount}.doubleValue()!=0?$V{retentionTotalAmount}.doubleValue() * (-1):0)]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_total} + ":"]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>

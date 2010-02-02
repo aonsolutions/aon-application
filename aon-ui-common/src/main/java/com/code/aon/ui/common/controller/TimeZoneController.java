@@ -1,5 +1,6 @@
 package com.code.aon.ui.common.controller;
 
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -40,4 +41,11 @@ public class TimeZoneController {
 		return getTimeZone().getID();
 	}
 	
+	/**
+	 * Gets the current Date (new Date() ).
+	 * @return The current Date.
+	 */
+	public Date getCurrentDate() {
+		return new Date();
+	}
 }

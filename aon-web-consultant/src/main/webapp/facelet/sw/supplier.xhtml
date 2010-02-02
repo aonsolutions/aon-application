@@ -62,17 +62,17 @@
 
 							<t:column>
 								<f:facet name="header">
-									<h:outputText value="#{supplierBundle.aon_supplier_name}" />
+									<h:outputText value="#{registryBundle.aon_nif}" />
 								</f:facet>
 								<h:commandLink styleClass="aon-table-row-selected"
 									onclick="window.opener.update('#{supplierLookup.lookupsAsXML}');window.close();return false;" />
-								<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
+								<h:outputText value="#{to.registry.document}" />
 							</t:column>
 							<t:column>
 								<f:facet name="header">
-									<h:outputText value="#{supplierBundle.supplier_alias}" />
+									<h:outputText value="#{registryBundle.aon_name}" />
 								</f:facet>
-								<h:outputText value="#{to.registry.alias}" />
+								<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
 							</t:column>
 						</t:dataTable>
 					</t:div>

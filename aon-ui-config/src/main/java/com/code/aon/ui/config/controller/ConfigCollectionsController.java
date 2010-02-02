@@ -70,6 +70,21 @@ public class ConfigCollectionsController {
 		return workgroups;
 	}
 
+	public List<SelectItem> getWorkgroupEntities() throws ManagerBeanException {
+		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
+		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+		Iterator<ITransferObject> iter = workGroupBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			WorkGroup workGroup = (WorkGroup) iter.next();
+			SelectItem item = new SelectItem(workGroup, workGroup.getDescription());
+			workgroups.add(item);
+		}
+		return workgroups;
+	}
+
 	public List<SelectItem> getWorkGroupStatuses() {
 		if(workGroupStatuses == null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

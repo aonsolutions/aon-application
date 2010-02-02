@@ -11,7 +11,6 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Loan;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -102,7 +101,6 @@ public class AccountLoanController {
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(getLoan().getLoanDate()).getId());
 		entry.setJournal(null);
 		entry.setType(AccountEntryType.LOAN);
-		entry.setSecurityLevel(getLoan().getSecurityLevel());
 		entry = insertorUpdateAccountEntry(entry);
 		insertEntryDetails(entry);
 		setAccountEntry(entry);
@@ -150,25 +148,26 @@ public class AccountLoanController {
 			Account rBankAccount = AccountUtil.obtainRBankAccount(getLoan().getRegistryBank());
 			detail.setAccount(loanAccount);
 			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(rBankAccount);
 			detail.setConcept(getLoan().getDescription());
 			detail.setCredit(getLoan().getAmount());
-			detail.setBalancingAccount(rBankAccount);
 			accountEntryDetailBean.insert(detail);
 			// Segundo Apunte
 			detail = new AccountEntryDetail();
-			detail.setAccount(rBankAccount);
+			Account account270 = AccountUtil.obtainAccount("270");
+			detail.setAccount(account270);
 			detail.setAccountEntry(entry);
-			detail.setConcept(getLoan().getDescription());
-			detail.setDebit(getLoan().getAmount() - getLoan().getExpenses());
 			detail.setBalancingAccount(loanAccount);
+			detail.setConcept(getLoan().getDescription());
+			detail.setDebit(getLoan().getExpenses());
 			accountEntryDetailBean.insert(detail);
 			// Tercer Apunte
 			detail = new AccountEntryDetail();
-			detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
+			detail.setAccount(rBankAccount);
 			detail.setAccountEntry(entry);
-			detail.setConcept(getLoan().getDescription());
-			detail.setDebit(getLoan().getExpenses());
 			detail.setBalancingAccount(loanAccount);
+			detail.setConcept(getLoan().getDescription());
+			detail.setDebit(getLoan().getAmount() - getLoan().getExpenses());
 			accountEntryDetailBean.insert(detail);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);

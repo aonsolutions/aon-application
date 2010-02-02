@@ -6,154 +6,221 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 <body>
 
-<ui:composition>
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
 
-	<t:div styleClass="aon-content-toolbar" forceId="#{true}"
-		id="aon-content-toolbar">
-		<t:div styleClass="aon-content-toolbar-internal">
-			<t:div styleClass="aon-content-toolbar-item-group">
-				<h:commandButton id="save" value="#{bundle.aon_save}"
-					styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
-					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
-					actionListener="#{recordData.onAccept}"
-					action="#{recordData.getListNavigation}" accesskey="#{bundle.aon_key_save}" />
-				<t:commandButton id="remove" value="#{bundle.aon_remove}"
-					forceId="#{true}" actionListener="#{recordData.onRemove}"
-					action="#{recordData.getListNavigation}" rendered="#{!recordData.new}"
-					onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
-					styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
-					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
-					accesskey="#{bundle.aon_key_remove}" />
-				<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
-					immediate="#{true}" actionListener="#{recordData.onSearch}"
-					action="#{recordData.getListNavigation}"
-					styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
-					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
-					onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-					accesskey="#{bundle.aon_key_cancel}" />
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="dossierForm" enctype="multipart/form-data">
+
+			<t:div id="aon-content-menu" styleClass="aon-content-menu-aux"
+				forceId="#{true}" style="margin-left:16px;margin-right:16px;">
+				<h:outputText
+					value="#{customer.to.registry.name} #{customer.to.registry.surname}, #{customerBundle.customer_document}: #{customer.to.registry.document}" />
 			</t:div>
-		</t:div>
-	</t:div>
 
-	<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-		styleClass="aon-form-table"
-		columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal" style="padding-top:0">
 
-		<h:outputLabel for="RecordData_creationDate"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_creation_date}" />
-		<t:inputCalendar size="8" id="RecordData_creationDate"
-			value="#{recordData.to.creationDate}"
-			monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-			currentDayCellClass="currentDayCell" renderAsPopup="true"
-			popupButtonStyleClass="aon-form-calendar-button"
-			styleClass="aon-form-input-text"
-			popupTodayString="#{bundle.aon_popup_today}"
-			popupWeekString="#{bundle.aon_popup_week}" />
+					<t:div styleClass="aon-content-menu" rendered="#{!customer.new}"
+						id="aon-content-menu" forceId="#{true}">
+						<t:panelGrid columns="7" cellpadding="0" cellspacing="0"
+							border="0">
+							<t:panelGroup>
+								<t:commandLink id="customer_data" forceId="#{true}"
+									value="#{appBundle.aon_personal_data}" action="customer_form"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="economic_data" forceId="#{true}"
+									visibleOnUserRole="DatosEconomicos"
+									value="#{appBundle.aon_economic_data}"
+									actionListener="#{customerFee.onCustomerFee}"
+									action="economic_data" styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_dossier" forceId="#{true}"
+									value="#{projectBundle.dossier_dossiers}"
+									actionListener="#{dossier.onDossier}" action="dossier_list"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_business_data" forceId="#{true}"
+									value="#{appBundle.aon_business_data}"
+									actionListener="#{rdirStaff.onRDirStaff}" action="rdir_staff"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_rnote" forceId="#{true}"
+									value="#{appBundle.aon_monitoring}"
+									actionListener="#{rnote.onSearch}" action="rnote"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_relationship" forceId="#{true}"
+									value="#{appBundle.aon_rRelationship}"
+									actionListener="#{rRelationship.onSearch}"
+									action="rrelationship" styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="record_data"
+									value="#{appBundle.aon_record_data}" forceId="#{true}"
+									styleClass="aon-content-menu-item-active" />
+							</t:panelGroup>
+						</t:panelGrid>
+					</t:div>
 
-		<t:outputLabel for="RecordData_description"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_description}" />
-		<t:inputText id="RecordData_description"
-			styleClass="aon-form-input-text" forceId="#{true}"
-			value="#{recordData.to.description}" size="64" />
+					<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+						id="aon-content-toolbar">
+						<t:div styleClass="aon-content-toolbar-internal">
+							<t:div styleClass="aon-content-toolbar-item-group">
+								<h:commandButton id="save" value="#{bundle.aon_save}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+									actionListener="#{recordData.onAccept}"
+									action="record_data_list" accesskey="#{bundle.aon_key_save}" />
+								<t:commandButton id="remove" value="#{bundle.aon_remove}"
+									forceId="#{true}" actionListener="#{recordData.onRemove}"
+									action="record_data_list" rendered="#{!recordData.new}"
+									onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
+									accesskey="#{bundle.aon_key_remove}" />
+								<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+									immediate="#{true}" actionListener="#{recordData.onSearch}"
+									action="record_data_list"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+									onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+									accesskey="#{bundle.aon_key_cancel}" />
+							</t:div>
+						</t:div>
+					</t:div>
 
-		<t:outputLabel for="RecordData_notary"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_notary}" />
-		<t:inputText id="RecordData_notary"
-			styleClass="aon-form-input-text" forceId="#{true}"
-			value="#{recordData.to.notary}" size="64" />
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-		<t:outputLabel for="RecordData_number"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_number}" />
-		<t:inputText id="RecordData_number"
-			styleClass="aon-form-input-text" forceId="#{true}"
-			value="#{recordData.to.number}" size="16" />
+						<h:outputLabel for="RecordData_creationDate"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_date}" />
+						<t:inputCalendar size="8" id="RecordData_creationDate"
+							value="#{recordData.to.creationDate}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							popupButtonStyleClass="aon-form-calendar-button"
+							styleClass="aon-form-input-text"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
 
-		<h:outputLabel for="RecordData_recordDate"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_record_date}" />
-		<t:inputCalendar size="8" id="RecordData_recordDate"
-			value="#{recordData.to.recordDate}"
-			monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-			currentDayCellClass="currentDayCell" renderAsPopup="true"
-			popupButtonStyleClass="aon-form-calendar-button"
-			styleClass="aon-form-input-text"
-			popupTodayString="#{bundle.aon_popup_today}"
-			popupWeekString="#{bundle.aon_popup_week}" />
+						<t:outputLabel for="RecordData_description"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_description}" />
+						<t:inputText id="RecordData_description"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							value="#{recordData.to.description}" size="64" />
 
-		<t:outputLabel for="RecordData_volume"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_volume}" />
-		<t:inputText id="RecordData_volume"
-			styleClass="aon-form-input-text" forceId="#{true}"
-			value="#{recordData.to.volume}" size="16" />
+						<t:outputLabel for="RecordData_notary"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_notary}" />
+						<t:inputText id="RecordData_notary"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							value="#{recordData.to.notary}" size="64" />
 
-		<t:outputLabel for="RecordData_section"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_section}" />
-		<t:inputText id="RecordData_section"
-			styleClass="aon-form-input-text" forceId="#{true}"
-			value="#{recordData.to.section}" size="16" />
+						<t:outputLabel for="RecordData_number"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_number}" />
+						<t:inputText id="RecordData_number"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							value="#{recordData.to.number}" size="16" />
 
-		<t:outputLabel for="RecordData_page"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_page}" />
-		<t:inputText id="RecordData_page" styleClass="aon-form-input-text"
-			forceId="#{true}" value="#{recordData.to.page}" size="16" />
+						<h:outputLabel for="RecordData_recordDate"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_record_date}" />
+						<t:inputCalendar size="8" id="RecordData_recordDate"
+							value="#{recordData.to.recordDate}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							popupButtonStyleClass="aon-form-calendar-button"
+							styleClass="aon-form-input-text"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
 
-		<t:outputLabel for="RecordData_sheet"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_sheet}" />
-		<t:inputText id="RecordData_sheet"
-			styleClass="aon-form-input-text" forceId="#{true}"
-			value="#{recordData.to.sheet}" size="16" />
+						<t:outputLabel for="RecordData_volume"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_volume}" />
+						<t:inputText id="RecordData_volume"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							value="#{recordData.to.volume}" size="16" />
 
-		<t:outputLabel for="RecordData_registration"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_registration}" />
-		<t:inputText id="RecordData_registration"
-			styleClass="aon-form-input-text" forceId="#{true}"
-			value="#{recordData.to.registration}" size="16" />
+						<t:outputLabel for="RecordData_section"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_section}" />
+						<t:inputText id="RecordData_section"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							value="#{recordData.to.section}" size="16" />
 
-		<t:outputLabel for="RecordData_attach_id"
-			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_attachment}" />
-		<t:inputFileUpload styleClass="aon-form-input-text"
-			id="RecordData_attach_id"
-			rendered="#{recordData.to.attach.id == null}"
-			value="#{recordData.file}" storage="file" size="40" />
-		<t:panelGrid rendered="#{recordData.to.attach.id != null}">
-			<t:inputText id="RecordData_attach"
-				styleClass="aon-form-input-text-disabled" forceId="#{true}"
-				value="#{recordData.to.attach.description}" size="64"
-				disabled="true" rendered="#{recordData.to.attach.id != null}" />
-			<t:div>
-				<t:commandButton id="download_lnk" styleClass="aon-form-button"
-					onclick="downloadWindow('placeList', '${facesContext.externalContext.requestContextPath}${downloadPage}'); return false;"
-					value="#{registryBundle.aon_record_data_attachment_download}" />
-				<t:commandButton id="remove_lnk" styleClass="aon-form-button"
-					actionListener="#{recordData.onAttachRemove}"
-					value="#{registryBundle.aon_record_data_attachment_remove}" />
+						<t:outputLabel for="RecordData_page"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_page}" />
+						<t:inputText id="RecordData_page" styleClass="aon-form-input-text"
+							forceId="#{true}" value="#{recordData.to.page}" size="16" />
+
+						<t:outputLabel for="RecordData_sheet"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_sheet}" />
+						<t:inputText id="RecordData_sheet"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							value="#{recordData.to.sheet}" size="16" />
+
+						<t:outputLabel for="RecordData_registration"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_registration}" />
+						<t:inputText id="RecordData_registration"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							value="#{recordData.to.section}" size="16" />
+
+						<t:outputLabel for="RecordData_attach_id"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_record_data_attachment}" />
+						<t:inputFileUpload styleClass="aon-form-input-text"
+							id="RecordData_attach_id"
+							rendered="#{recordData.to.attach.id == null}"
+							value="#{recordData.file}" storage="file" size="40" />
+						<t:panelGrid rendered="#{recordData.to.attach.id != null}">
+							<t:inputText id="RecordData_attach"
+								styleClass="aon-form-input-text-disabled" forceId="#{true}"
+								value="#{recordData.to.attach.description}" size="64"
+								disabled="true" rendered="#{recordData.to.attach.id != null}" />
+							<t:div>
+								<t:commandButton id="download_lnk" styleClass="aon-form-button"
+									onclick="downloadWindow('placeList', '${facesContext.externalContext.requestContextPath}/facelet/record_data/download.faces'); return false;"
+									value="#{appBundle.aon_record_data_attachment_download}" />
+								<t:commandButton id="remove_lnk" styleClass="aon-form-button"
+									actionListener="#{recordData.onAttachRemove}"
+									value="#{appBundle.aon_record_data_attachment_remove}" />
+							</t:div>
+						</t:panelGrid>
+					</h:panelGrid>
+				</t:div>
 			</t:div>
-		</t:panelGrid>
-	</h:panelGrid>
-
-	<script>
-		function downloadWindow(form, action){
-			hform=document.forms[form];
-			hform.action = action;
-			window.open(hform.action, hform.target);
-			hform.submit();
-		}
-	</script>
-
+		</h:form>
+		<script>
+			function downloadWindow(form, action){
+				hform=document.forms[form];
+				hform.action = action;
+				window.open(hform.action, hform.target);
+				hform.submit();
+			}
+		</script>
+		<h:form id="placeList" target="list" />
+	</ui:define>
 </ui:composition>
-
 </body>
 </html>

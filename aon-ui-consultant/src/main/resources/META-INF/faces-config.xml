@@ -5,15 +5,13 @@
 
 <faces-config>
 
-	<!--  *************** COLLECTIONS ***************** -->
+	<!-- =================== Mailing ========================== -->
 	<managed-bean>
-		<managed-bean-name>consultantCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.consultant.controller.ConsultantCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
+		<managed-bean-name>mailing</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.consultant.controller.MailingController</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
+	
   <!-- =================== Application Menu Navigation Rules ================= -->	
   <navigation-rule>
 	<navigation-case>

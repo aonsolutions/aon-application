@@ -79,6 +79,15 @@
 								styleClass="aon-form-input-text-disabled" size="40" />
 						</t:div>
 						
+						<h:outputLabel for="DailyTracking_customer_status"
+							styleClass="aon-form-input-text-label"
+							value="#{projectBundle.aon_daily_tracking_user}" />
+						<h:selectOneMenu id="DailyTracking_customer_status"
+							styleClass="aon-form-selectOneMenu-field"
+							onchange="submit();" value="#{dailyTracking.customerStatus}">
+							<f:selectItems value="#{customerCollections.customerStatuses}" />
+						</h:selectOneMenu>
+
 						<h:outputLabel for="DailyTracking_dossier_id" value="#{projectBundle.aon_daily_tracking_dossier}"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 						<h:selectOneMenu id="DailyTracking_dossier_id" forceId="#{true}"
@@ -98,16 +107,6 @@
 							<f:selectItems value="#{dailyTracking.activities}" />
 						</h:selectOneMenu>
 			 
-						<h:outputLabel for="DailyTracking_customer_status"
-							styleClass="aon-form-input-text-label"
-							value="#{projectBundle.aon_status}" />
-						<h:selectOneMenu id="DailyTracking_customer_status"
-							styleClass="aon-form-selectOneMenu-field"
-							onchange="submit();" value="#{dailyTracking.customerStatus}">
-							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
-							<f:selectItems value="#{customerCollections.customerStatuses}" />
-						</h:selectOneMenu>
-
 						<h:outputLabel value="#{projectBundle.aon_date}"
 							styleClass="aon-form-input-text-label" />
 						<h:panelGrid columns="4">

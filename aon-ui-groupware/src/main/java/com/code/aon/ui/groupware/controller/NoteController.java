@@ -16,7 +16,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 
@@ -30,6 +29,7 @@ public class NoteController extends BasicController {
 	
 	private List<SelectItem> users = new LinkedList<SelectItem>();
 	
+
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -46,41 +46,23 @@ public class NoteController extends BasicController {
 		this.toDate = toDate;
 	}
 	
-	@Override
-	public void onSearch(ActionEvent event) {
-		addFromDateExpression();
-		addToDateExpression();
-		super.onSearch(event);
-	}
-
-	public void addFromDateExpression(){
-        if(this.fromDate != null) {
-            try {
-                getCriteria().addGreaterThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTE_DATE), this.fromDate);
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding FROM due date expression", e);
-            }
-    		setFromDate(null);
-        }
-    }
-    
-    public void addToDateExpression(){
-        if(this.toDate != null) {
-            try {
-                getCriteria().addLessThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTE_DATE), this.toDate);
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding TO due date expression", e);
-            }
-            setToDate(null);
-        }
-    }	
-	
 	public List<SelectItem> getUsers() {
 		return users;
 	}
 
 	public void setUsers(List<SelectItem> users) {
 		this.users = users;
+	}
+	
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		initializeSearchParameters();
+		super.onEditSearch(event);
+	}
+
+	private void initializeSearchParameters() {
+		this.fromDate = null;
+		this.toDate = null;
 	}
 	
 	public void workGroupChange(ValueChangeEvent event) {

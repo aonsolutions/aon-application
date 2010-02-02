@@ -15,6 +15,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
  */
 public class Projection implements Criterion {
 
+	private static final long serialVersionUID = -4257093769323361196L;
+
 	/**
 	 * The Enum ProjectionType.
 	 */

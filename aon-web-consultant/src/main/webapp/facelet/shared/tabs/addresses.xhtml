@@ -144,16 +144,15 @@
 			<h:selectOneMenu value="#{controllerAlias.to.geozone.id}"
 				styleClass="aon-form-selectOneMenu-field"
 				rendered="#{to==controllerAlias.to}"
-				valueChangeListener="#{controllerAlias.onChangeGeoZone}">
-				<f:selectItems value="#{geozoneCollections.geoTrees}" />
+				valueChangeListener="#{company.onChangeGeoZone}">
+				<f:selectItems value="#{registryCollections.geoZones}" />
 			</h:selectOneMenu>
 			<f:facet name="footer">
 				<t:div>
 					<h:selectOneMenu value="#{controllerAlias.to.geozone.id}"
 						styleClass="aon-form-selectOneMenu-field"
-						rendered="#{controllerAlias.new}"
-						valueChangeListener="#{controllerAlias.onChangeGeoZone}">
-						<f:selectItems value="#{geozoneCollections.geoTrees}" />
+						rendered="#{controllerAlias.new}">
+						<f:selectItems value="#{registryCollections.geoZones}" />
 					</h:selectOneMenu>
 				</t:div>
 			</f:facet>

@@ -18,6 +18,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name = "app_param")
 public class ApplicationParameter implements ITransferObject {
 
+	private static final long serialVersionUID = -7241719325009628022L;
+
 	/**
 	 * Name of the parameter.
 	 */

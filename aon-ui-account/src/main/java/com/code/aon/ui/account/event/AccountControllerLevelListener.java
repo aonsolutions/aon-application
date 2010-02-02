@@ -11,7 +11,7 @@ public class AccountControllerLevelListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Account account = (Account)event.getController().getTo();
 		if(!checkValidLength(account)){
-			throw new ControllerListenerException("Valid id lengths are: 1, 2, 3, 5 or 12");
+			throw new ControllerListenerException("Valid id lenghts are: 1, 2, 3, 5 or 12");
 		}
 	}
 	
@@ -19,7 +19,7 @@ public class AccountControllerLevelListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Account account = (Account)event.getController().getTo();
 		if(!checkValidLength(account)){
-			throw new ControllerListenerException("Valid id lengths are: 1, 2, 3, 5 or 12");
+			throw new ControllerListenerException("Valid id lenghts are: 1, 2, 3, 5 or 12");
 		}
 	}
 

@@ -58,15 +58,19 @@
 					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 						
-						<h:outputLabel for="Account_invoice_referenceCode"
-							styleClass="aon-form-input-text-label"
-							value="#{accountBundle.aon_series_number}" />
-						<t:inputText id="Account_invoice_referenceCode" 
-							value="#{accountLeasingFee.header.referenceCode}" size="25" maxlength="32"
-							styleClass="aon-form-input-text" forceId="#{true}" 
-							onblur="toUpperCase(this);">
-							<f:validateLength maximum="32" />
-						</t:inputText>
+						<h:outputLabel for="Account_invoice_series"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_series_number}" />
+						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
+							<t:inputText id="Account_invoice_series"
+								value="#{accountLeasingFee.header.series}" size="4" maxlength="5"
+								styleClass="aon-form-input-text" forceId="#{true}" />
+							<t:inputText id="Account_invoice_number"
+								value="#{accountLeasingFee.header.number}" size="7" maxlength="7"
+								styleClass="aon-form-input-text" forceId="#{true}">
+								<f:validateLength maximum="7" />
+							</t:inputText>	
+						</h:panelGrid>
 						
 						<t:outputLabel for="Account_date"
 							styleClass="aon-form-input-text-label"

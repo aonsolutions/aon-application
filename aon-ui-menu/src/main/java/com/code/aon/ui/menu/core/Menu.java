@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.code.aon.ui.menu.IMenu;
 import com.code.aon.ui.menu.IMenuItem;
 import com.code.aon.ui.menu.IMenuVisitor;
+import com.code.aon.ui.menu.IOption;
 import com.code.aon.ui.menu.MenuVisitorException;
 
 /**
@@ -55,6 +56,52 @@ public class Menu extends MenuItem implements IMenu {
                 IMenuItem mi = menu.find(id);
                 if (mi != null) {
                     return mi;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param key
+     * @return IMenuItem
+     */
+    public IMenuItem findByKey(String key) {
+        if (key.equals(getKey())) {
+            return this;
+        } 
+        for( IMenuItem item : getItems() ) {
+            if (key.equals(item.getKey())) {
+                return item;
+            } 
+            if (item instanceof IMenu) {
+                IMenu menu = (IMenu) item;
+                IMenuItem mi = menu.findByKey(key);
+                if (mi != null) {
+                    return mi;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param key
+     * @return IOption
+     */
+    public IOption findOptionByKey(String key) {
+        if (this instanceof IOption && key.equals(getKey())) {
+            return (IOption) this;
+        } 
+        for( IMenuItem item : getItems() ) {
+            if (item instanceof IOption && key.equals(item.getKey())) {
+                return (IOption) item;
+            } 
+            if (item instanceof IMenu) {
+                IMenu menu = (IMenu) item;
+                IOption op = menu.findOptionByKey(key);
+                if (op != null) {
+                    return op;
                 }
             }
         }

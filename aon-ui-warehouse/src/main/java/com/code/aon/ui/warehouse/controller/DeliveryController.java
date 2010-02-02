@@ -425,7 +425,16 @@ public class DeliveryController extends BasicController {
 		}
 		return total;
 	}
-	
+
+	public String getSupportOrderData() throws ManagerBeanException {
+		TasDelivery tasDelivery = obtainTasDelivery(((Delivery)this.getModel().getRowData()).getId());
+		String supportOrderData = "";
+		if (tasDelivery != null) {
+			supportOrderData = tasDelivery.getSupportOrder().getTasItem().getPublicCode() + " / " + tasDelivery.getSupportOrder().getTasItem().getModel().getMake().getName()+ " " + tasDelivery.getSupportOrder().getTasItem().getModel().getName();			
+		}
+		return supportOrderData;
+	}
+
 	/**
 	 * Searches and assigns a customer instead of the value of the event
 	 * that is customer's ident
@@ -496,12 +505,16 @@ public class DeliveryController extends BasicController {
 	 * 
 	 * @return the tasdelivery
 	 */
-	@SuppressWarnings("unchecked")
 	public TasDelivery obtainTasDelivery(){
+		return obtainTasDelivery(((Delivery)this.getTo()).getId());
+	}
+	
+	@SuppressWarnings("unchecked")
+	private TasDelivery obtainTasDelivery(Integer deliveryId) {
 		try {
 			IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(tasDeliveryBean.getFieldName(ITasDeliveryAlias.TAS_DELIVERY_DELIVERY_ID), ((Delivery)this.getTo()).getId());
+			criteria.addEqualExpression(tasDeliveryBean.getFieldName(ITasDeliveryAlias.TAS_DELIVERY_DELIVERY_ID), deliveryId);
 			Iterator iter = tasDeliveryBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (TasDelivery)iter.next();
@@ -511,7 +524,7 @@ public class DeliveryController extends BasicController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Adds a criteria greater than or equal to the issue date
 	 * 
@@ -675,4 +688,5 @@ public class DeliveryController extends BasicController {
 		}
 		return 1;
 	}
+
 }

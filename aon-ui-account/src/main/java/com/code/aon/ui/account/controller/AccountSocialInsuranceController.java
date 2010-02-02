@@ -104,7 +104,6 @@ private static final Logger LOGGER = Logger.getLogger(AccountExpensesController.
 		entry.setAccountPeriod(getHeader().getPeriod().getId());
 		entry.setJournal(null);
 		entry.setType(AccountEntryType.SOCIAL_INSURANCE);
-		entry.setSecurityLevel(getHeader().getSecurityLevel());
 		entry = insertorUpdateAccountEntry(entry);
 		insertEntryDetails(entry);
 		setAccountEntry(entry);
@@ -183,21 +182,16 @@ private static final Logger LOGGER = Logger.getLogger(AccountExpensesController.
 	
 	@SuppressWarnings("unchecked")
 	private double obtainSalaryDiference(Account account, AccountEntry entry, double amount) throws ManagerBeanException {
-		Calendar fromDate = new GregorianCalendar();
-		fromDate.setTime(entry.getEntryDate());
-		fromDate.set(Calendar.DAY_OF_MONTH, 1);
-		fromDate.add(Calendar.MONTH, -1);
-		Calendar toDate = new GregorianCalendar();
-		toDate.setTime(entry.getEntryDate());
-		toDate.set(Calendar.DAY_OF_MONTH, 1);
-		toDate.add(Calendar.DAY_OF_MONTH, -1);
-
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(entry.getEntryDate());
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		Integer month = new Integer(calendar.get(Calendar.MONTH) + 1);
 		IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_PERIOD), entry.getAccountPeriod());
 		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
-		criteria.addGreaterThanOrEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE), fromDate.getTime());
-		criteria.addLessThanOrEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE), toDate.getTime());
+		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_MONTH), month);
 		Iterator iter = accountSummaryBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			AccountSummary accSum = (AccountSummary)iter.next();

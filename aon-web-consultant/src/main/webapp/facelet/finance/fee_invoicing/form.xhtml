@@ -15,7 +15,6 @@
 	<ui:define name="content">
 
 		<h:form id="feeInvoicingForm">
-
 			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
 				forceId="#{true}">
 				<t:div styleClass="aon-content-toolbar-internal">
@@ -69,7 +68,7 @@
 							accesskey="#{bundle.aon_key_search}" />
 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{feeInvoicing.generateFinances}"
-							rendered="#{feeInvoicingDetail.model.rowCount > 0 and feeFinance.allPending}"
+							rendered="#{feeInvoicingDetail.model.rowCount > 0}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" />
@@ -108,9 +107,9 @@
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
 					<h:panelGrid columns="2">
-						<h:panelGrid columns="4" cellpadding="0" cellspacing="0"
+						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
 							styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even,aon-form-table-column-odd,aon-form-table-column-even">
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
 							<h:outputLabel for="Invoice_series"
 								styleClass="aon-form-input-text-label"
@@ -133,29 +132,10 @@
 									styleClass="aon-form-input-text" required="true" size="7" />
 							</h:panelGrid>
 
-							<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
-								styleClass="aon-form-input-text-label" />
-							<t:div>
-								<t:inputText id="Customer_Lookup_id" forceId="#{true}"
-									styleClass="aon-form-input-text" size="5" 
-									onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_registry_document|Customer_Lookup_registry_document,Customer_full_name|Customer_full_name');"
-									value="#{feeInvoicing.to.registry.id}"
-									disabled="#{feeInvoicing.recorded}"
-									valueChangeListener="#{feeInvoicing.customerData}" />
-								<h:commandButton id="find_Customer_Lookup_id"
-									styleClass="aon-form-lookup-button" value="" immediate="true"
-									disabled="#{feeInvoicing.recorded}"
-									onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_registry_document|Customer_Lookup_registry_document,Customer_full_name|Customer_full_name');return false;" />	
-								<t:inputText id="Customer_full_name" forceId="#{true}"
-									value="#{feeInvoicing.to.registryName}"
-									disabled="#{feeInvoicing.recorded}" 
-									styleClass="aon-form-input-text" size="40" />
-							</t:div>
-
 							<h:outputLabel for="Invoice_issueDate"
-								value="#{financeBundle.aon_date}"
+								value="#{appBundle.aon_date}"
 								styleClass="aon-form-input-text-label " />
-							<t:inputCalendar id="Invoice_issueDate" size="10"
+							<t:inputCalendar id="Invoice_issueDate" size="12"
 								required="#{true}" forceId="#{true}"
 								value="#{feeInvoicing.to.issueDate}" disabled="#{feeInvoicing.recorded}"
 								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
@@ -163,14 +143,7 @@
 								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
 								popupTodayString="#{bundle.aon_popup_today}"
 								popupWeekString="#{bundle.aon_popup_week}" />
-
-							<h:outputLabel for="Customer_Lookup_registry_document"
-								styleClass="aon-form-input-text-label"
-								value="#{registryBundle.aon_nif}" />
-							<t:inputText id="Customer_Lookup_registry_document" forceId="#{true}"
-								value="#{feeInvoicing.to.registryDocument}"
-								disabled="#{feeInvoicing.recorded}"
-								styleClass="aon-form-input-text" size="10" />
+							
 
 							<t:outputLabel for="Invoice_securityLevel"
 								styleClass="aon-form-selectOneMenu-label"
@@ -182,36 +155,6 @@
 								<f:selectItems value="#{financeCollections.securityLevels}" />
 							</h:selectOneMenu>
 
-							<h:outputLabel for="Invoice_registryAddress_id"
-								styleClass="aon-form-input-text-label"
-								value="#{registryBundle.aon_address}" />
-							<t:div>
-								<h:selectOneMenu id="Invoice_registryAddress_id" forceId="#{true}"
-									rendered="#{(feeInvoicing.new or feeInvoicingAddress.to.id == null) and feeInvoicing.addressCount > 0}"
-									styleClass="aon-form-selectOneMenu-field"
-									disabled="#{feeInvoicing.recorded}"
-									value="#{feeInvoicing.to.registryAddress.id}">
-									<f:selectItems value="#{feeInvoicing.addresses}" />
-								</h:selectOneMenu>	
-								<h:outputLabel value="#{financeBundle.invoice_no_available_address}"
-									rendered="#{(feeInvoicing.new or feeInvoicingAddress.to.id == null) and feeInvoicing.addressCount == 0}" />
-								<t:inputText id="Invoice_registryAddress_address" forceId="#{true}"
-									rendered="#{!feeInvoicing.new and feeInvoicingAddress.to.id != null}"
-									value="#{feeInvoicing.address}"
-									disabled="#{true}"
-									styleClass="aon-form-input-text" size="33" />
-								<t:inputText id="Invoice_registryAddress_city" forceId="#{true}"
-									rendered="#{!feeInvoicing.new and feeInvoicingAddress.to.id != null}"
-									value="#{feeInvoicing.city}"
-									disabled="#{true}"
-									styleClass="aon-form-input-text" size="16" />
-								<t:commandButton id="popupButton"
-									rendered="#{!feeInvoicing.new}"
-									styleClass="aon-navigation-link"
-									value="#{registryBundle.aon_address_other}"
-									onclick="showPopup();return false;" />
-							</t:div>
-
 							<t:outputLabel for="Invoice_status"
 								styleClass="aon-form-selectOneMenu-label"
 								value="#{financeBundle.aon_status}" />
@@ -220,16 +163,50 @@
 								value="#{feeInvoicing.to.status}">
 								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
 							</h:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+							styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
+								styleClass="aon-form-input-text-label" />
+							<t:div>
+								<t:inputText id="Customer_Lookup_id" forceId="#{true}"
+									styleClass="aon-form-input-text" size="5" 
+									onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+									value="#{feeInvoicing.to.registry.id}"
+									disabled="#{feeInvoicing.recorded}"
+									valueChangeListener="#{feeInvoicing.customerData}" />
+								<h:commandButton id="find_Customer_Lookup_id"
+									styleClass="aon-form-lookup-button" value="" immediate="true"
+									disabled="#{feeInvoicing.recorded}"
+									onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+								<t:inputText id="Customer_full_name" forceId="#{true}"
+									disabled="true" value="#{feeInvoicing.to.registryName}"
+									styleClass="aon-form-input-text-disabled" size="40" />
+							</t:div>
+
+							<h:outputLabel for="Invoice_registryAddress_id"
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_address}" />
+							<t:div>	
+								<h:selectOneMenu id="Invoice_registryAddress_id"
+									rendered="#{feeInvoicing.addressCount > 0}"
+									styleClass="aon-form-selectOneMenu-field"
+									disabled="#{feeInvoicing.recorded}"
+									value="#{feeInvoicing.to.registryAddress.id}">
+									<f:selectItems value="#{feeInvoicing.addresses}" />
+								</h:selectOneMenu>	
+							</t:div>
 
 							<t:outputLabel for="Invoice_total"
 								styleClass="aon-form-selectOneMenu-label"
 								value="#{financeBundle.aon_total}" />
-							<t:inputText id="Invoice_total"
-								styleClass="aon-form-input-text-disabled"
-								disabled="true" size="10"
-								value="#{feeInvoicing.toInvoiceTotalPrice}" forceId="#{true}" >
+							<t:outputText id="Invoice_total" forceId="#{true}" size="15"
+								value="#{feeInvoicing.toInvoiceTotalPrice}">
 								<f:convertNumber pattern="#,##0.00" />
-							</t:inputText>	
+							</t:outputText>
 
 						</h:panelGrid>
 					</h:panelGrid>
@@ -301,7 +278,7 @@
 											onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code-Edit[#{rowIndex}],Item_id|Item_Lookup_id-Edit[#{rowIndex}],Item_price|Item_Lookup_price-Edit[#{rowIndex}],Item_full_name|Item_full_name-Edit[#{rowIndex}]');return false;" />										
 										<t:inputText id="Item_full_name-Edit" size="40"
 											forceId="#{true}" required="#{true}"
-											styleClass="aon-form-input-text" maxlength="64"
+											styleClass="aon-form-input-text"
 											value="#{feeInvoicingDetail.to.description}" />
 									</h:panelGroup>
 
@@ -320,7 +297,7 @@
 													onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code-New,Item_id|Item_Lookup_id-New,Item_price|Item_Lookup_price-New,Item_full_name|Item_full_name-New');return false;" />
 												<t:inputText id="Item_full_name-New" size="40"
 													forceId="#{true}" required="#{true}"
-													styleClass="aon-form-input-text" maxlength="64"
+													styleClass="aon-form-input-text"
 													value="#{feeInvoicingDetail.to.description}" />
 											</h:panelGroup>
 										</t:div>
@@ -530,16 +507,10 @@
 									</t:div>
 								</h:panelGrid>
 							</t:div>
-							<ui:include src="/facelet/finance/fee_invoicing/popup/popup.xhtml"/>
 						</t:div>
 					</t:div>
 					
-					<t:div rendered="#{feeInvoicingDetail.model.rowCount > 0 or feeFinance.model.rowCount>0}" >
-						<ui:include src="/facelet/finance/finance/grid.xhtml" >
-							<ui:param name="controllerAlias" value="#{feeFinance}" />
-							<ui:param name="dataTable" value="feeFinanceData" />
-						</ui:include>
-					</t:div>
+					<ui:include src="/facelet/finance/finance/grid.xhtml" />
 					
 				</t:div>
 			</t:div>
@@ -568,6 +539,7 @@
 				temp = redondea( price.value * quantity.value , 2 );
 				amount.innerText = "" + redondea( temp - ( temp * discount.value / 100 ), 2 );
 			}
+			
 			function redondea(xparam , digits ){
 			    retvalue = xparam;
 			    if ( digits > 0 ) {
@@ -581,14 +553,6 @@
 			        retvalue = 0;
 			    }
 			    return retvalue;
-			}
-			function showPopup(){
-				document.getElementById( "popup" ).style.display='block';
-				document.getElementById( "Address_required" ).style.display = 'none';
-				document.getElementById( "Zip_required" ).style.display = 'none';
-				document.getElementById( "City_required" ).style.display = 'none';
-				document.getElementById( "Geozone_required" ).style.display = 'none';
-				document.getElementById( "InvoiceAddress_address" ).focus();
 			}
 		</script>
 		<h:form id="placeList" target="list" />

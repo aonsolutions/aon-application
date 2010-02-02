@@ -10,32 +10,32 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.account</artifactId>
-	<version>2.1.2</version>
+	<version>2.1.0</version>
 	<description>AON ACCOUNT</description>
 	<name>AON-ACCOUNT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>1.9.19</version>
+			<version>1.9.18</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>2.2.1</version>
+			<version>2.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>2.1.1</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>2.1.2</version>
+			<version>2.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

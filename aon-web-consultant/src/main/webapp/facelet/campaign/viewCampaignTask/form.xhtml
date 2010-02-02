@@ -3,8 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
-	xmlns:s="http://myfaces.apache.org/sandbox"
 	xmlns:h="http://java.sun.com/jsf/html">
+
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -78,8 +78,7 @@
 								styleClass="aon-form-button"
 								value="#{campaignBundle.campaign_change_current_action}"
 								actionListener="#{activityProcess.onChangeProcessDetail}"
-								action="campaign_form"
-								onclick="viewDialog.show();" />
+								action="campaign_form" />
 						</h:panelGroup>
 					</h:panelGrid>
 
@@ -172,19 +171,6 @@
 					</t:div>
 				</t:div>
 			</t:div>
-
-			<s:modalDialog
-		       dialogId="viewDialog"
-		       dialogVar="viewDialog"
-		       closeButton="false">
-		       <t:div styleClass="aon-timer">		       		
-		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
-		       		<t:div styleClass="aon-timer-title" >
-		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
-		       		</t:div>
-  			   </t:div>
-			</s:modalDialog>
-
 		</h:form>
 		<h:form id="placeList" target="list" />
 	</ui:define>

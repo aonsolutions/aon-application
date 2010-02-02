@@ -16,6 +16,8 @@ import com.code.aon.config.WorkGroup;
 @Table(name="process_detail")
 public class ProcessDetail implements ITransferObject {
 
+	private static final long serialVersionUID = 1030141795904320316L;
+
 	private Integer id;
 	
 	private Process process;

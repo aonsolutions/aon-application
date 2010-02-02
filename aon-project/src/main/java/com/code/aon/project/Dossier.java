@@ -16,6 +16,8 @@ import com.code.aon.project.enumeration.DossierStatus;
 @Table(name="dossier")
 public class Dossier implements ITransferObject {
 	
+	private static final long serialVersionUID = -8950442685548951095L;
+
 	private Integer id;
 	
 	private Customer customer;

@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_master?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_account?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -19,9 +19,8 @@
 		<mapping class="com.code.aon.account.bridge.CreditorAccount"/>
 		<mapping class="com.code.aon.account.bridge.ProductAccount"/>		
 		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
-		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
 		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
-		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
+		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>

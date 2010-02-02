@@ -42,10 +42,10 @@
 									styleClass="aon-content-menu-item-active" />
 							</t:panelGroup>
 							<t:panelGroup>
-								<t:commandLink id="customer_business_data" forceId="#{true}" 
+								<t:commandLink id="customer_business_data" forceId="#{true}"
 									value="#{appBundle.aon_business_data}"
-									action="customer_rdir_staff" 
-									styleClass="aon-content-menu-item" />						
+									actionListener="#{rdirStaff.onRDirStaff}" action="rdir_staff"
+									styleClass="aon-content-menu-item" />
 							</t:panelGroup>
 							<t:panelGroup>
 								<t:commandLink id="customer_rnote" forceId="#{true}"
@@ -60,10 +60,10 @@
 									action="rrelationship" styleClass="aon-content-menu-item" />
 							</t:panelGroup>
 							<t:panelGroup>
-								<t:commandLink id="record_data" forceId="#{true}" 
+								<t:commandLink id="record_data" forceId="#{true}"
 									value="#{appBundle.aon_record_data}"
-									action="customer_record_data_list" 
-									styleClass="aon-content-menu-item" />						
+									actionListener="#{recordData.onRecordData}"
+									action="record_data_list" styleClass="aon-content-menu-item" />
 							</t:panelGroup>
 						</t:panelGrid>
 					</t:div>

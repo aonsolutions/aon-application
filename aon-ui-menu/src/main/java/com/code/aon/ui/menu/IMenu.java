@@ -42,5 +42,25 @@ public interface IMenu extends IMenuItem {
      * 		the found element in this list; returns null if the object is not found.
      */
     IMenuItem find(String id);
+    
+    /**
+     * Searchs an element in the menu structure by the element key. 
+     * 
+     * @param key
+     * 			key of the element that is found.
+     * @return 
+     * 		the found element in this list; returns null if the object is not found.
+     */
+    IMenuItem findByKey(String key);
 
+    /**
+     * Searchs an element in the menu structure by the element key. 
+     * 
+     * @param key
+     * 			key of the element that is found.
+     * @return 
+     * 		the found element in this list; returns null if the object is not found.
+     */
+    IOption findOptionByKey(String key);
+    
 }

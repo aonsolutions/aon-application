@@ -6,23 +6,25 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 <body id="aon-body">
 
-<ui:composition>
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
 
-	<h:form id="downloadManager">
-		<t:commandButton id="download_lnk" forceId="#{true}" style="display:none"
-			actionListener="#{recordData.onAttachDownload}"/>
-		<t:div styleClass="aon-form-note">
-			<t:div styleClass="aon-form-note-internal">
-				<h:panelGroup>
-					<h:outputText value="#{registryBundle.aon_record_data_downloading}" />
-				</h:panelGroup>
-			</t:div>
-		</t:div>				
-	</h:form>
-	<script>
-		document.getElementById("download_lnk").click();
-	</script>
+	<ui:define name="content">
 
+		<h:form id="downloadManager">
+			<t:commandButton id="download_lnk" forceId="#{true}" style="display:none"
+				actionListener="#{recordData.onAttachDownload}"/>
+			<t:div styleClass="aon-form-note">
+				<t:div styleClass="aon-form-note-internal">
+					<h:panelGroup>
+						<h:outputText value="#{appBundle.aon_downloading}" />
+					</h:panelGroup>
+				</t:div>
+			</t:div>				
+		</h:form>
+		<script>
+			document.getElementById("download_lnk").click();
+		</script>
+	</ui:define>
 </ui:composition>
 
 </body>

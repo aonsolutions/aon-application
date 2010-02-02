@@ -20,7 +20,7 @@
 							accesskey="#{bundle.aon_key_save}" />
 						<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							forceId="#{true}" immediate="#{true}"
-							actionListener="#{customerFee.onCancel}" action="economic_data"
+							actionListener="#{customerFee.onCancel}"
 							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
@@ -28,8 +28,7 @@
 							accesskey="#{bundle.aon_key_cancel}" />
 						<t:commandButton id="remove" value="#{bundle.aon_remove}"
 							forceId="#{true}" immediate="true"
-							rendered="#{!customerFee.new}"
-							actionListener="#{customerFee.onRemove}" action="economic_data"
+							actionListener="#{customerFee.onRemove}"
 							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"

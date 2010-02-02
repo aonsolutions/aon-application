@@ -111,15 +111,22 @@
 							styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-							<h:outputLabel for="Invoice_referenceCode"
+							<h:outputLabel for="Invoice_series"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_invoice_number}" />
-							<t:inputText id="Invoice_series" value="#{purchaseDirectInvoicing.to.referenceCode}"
-								disabled="#{!purchaseDirectInvoicing.new and !purchaseDirectInvoicing.editable}" styleClass="aon-form-input-text"
-								forceId="#{true}" size="25" maxlength="32"
-								onblur="toUpperCase(this);" required="#{true}">
-								<f:validateLength maximum="32" />
-							</t:inputText>
+								value="#{financeBundle.aon_series_number}" />
+							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
+								<t:inputText id="Invoice_series" value="#{purchaseDirectInvoicing.to.series}"
+									disabled="#{!purchaseDirectInvoicing.new and !purchaseDirectInvoicing.editable}" styleClass="aon-form-input-text"
+									forceId="#{true}" size="4" maxlength="5"
+									onblur="toUpperCase(this);">
+									<f:validateLength maximum="5" />
+								</t:inputText>
+								<t:inputText id="Invoice_number" value="#{purchaseDirectInvoicing.to.number}"
+									disabled="#{!purchaseDirectInvoicing.new and !purchaseDirectInvoicing.editable}" styleClass="aon-form-input-text"
+									forceId="#{true}" required="true" size="7">
+									<f:validateLongRange minimum="1" />
+								</t:inputText>
+							</h:panelGrid>
 
 							<h:outputLabel for="Invoice_issueDate"
 								value="#{financeBundle.aon_date}"
@@ -190,6 +197,19 @@
 								styleClass="aon-form-input-text" forceId="#{true}"
 								required="true" size="10" />
 
+<!-- 
+							<h:outputLabel for="raddress"
+								styleClass="aon-form-input-text-label"
+								value="#{supplierBundle.aon_supplier_address}" />
+							<t:inputText id="raddress" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled" size="56"
+								disabled="true" value="#{purchaseDirectInvoicing.to.registryAddress.address}" />
+							<t:div />
+							<t:inputText id="raddress_info" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled" size="56"
+								disabled="true" />
+ -->
+ 
 							<t:outputLabel for="Invoice_total"
 								styleClass="aon-form-selectOneMenu-label"
 								value="#{financeBundle.aon_total}" />

@@ -59,11 +59,11 @@
 						<t:div>
 							<t:inputText id="Customer_Lookup_id" forceId="#{true}"
 								styleClass="aon-form-input-text" size="5" 
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+								onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','customerLookup');"
 								valueChangeListener="#{dailyTracking.addCustomerExpression}" />
 							<h:commandButton id="find_Customer_Lookup_id"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}');return false;" />	
 							<t:inputText id="Customer_full_name"
 								disabled="true" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled" size="40" />

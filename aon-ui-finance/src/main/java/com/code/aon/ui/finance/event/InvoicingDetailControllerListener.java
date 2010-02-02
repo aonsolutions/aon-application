@@ -9,8 +9,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.temp.SeriesNumberUtil;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -18,9 +18,9 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.purchase.Supplier;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.finance.controller.InvoicingController;
 import com.code.aon.ui.finance.controller.InvoicingDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -215,7 +215,11 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 	private Purchase insertPurchase(Invoice invoice, InvoicingDetailController invoicingDetailController) {
 		Purchase purchase = new Purchase();
 		purchase.setSupplier(new Supplier());
-		purchase.getSupplier().setRegistry(invoice.getRegistry());
+		purchase.getSupplier().setAlias(invoice.getRegistry().getAlias());
+		purchase.getSupplier().setDocument(invoice.getRegistry().getDocument());
+		purchase.getSupplier().setId(invoice.getRegistry().getId());
+		purchase.getSupplier().setName(invoice.getRegistry().getName());
+		purchase.getSupplier().setSurname(invoice.getRegistry().getSurname());
 		purchase.setIssueDate(invoice.getIssueDate());
 		purchase.setSeries(invoice.getSeries());
 		purchase.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Purchase"));
@@ -264,7 +268,11 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 	private Income insertIncome(Invoice invoice, InvoicingDetailController invoicingDetailController) {
 		Income income = new Income();
 		income.setSupplier(new Supplier());
-		income.getSupplier().setRegistry(invoice.getRegistry());
+		income.getSupplier().setAlias(invoice.getRegistry().getAlias());
+		income.getSupplier().setDocument(invoice.getRegistry().getDocument());
+		income.getSupplier().setId(invoice.getRegistry().getId());
+		income.getSupplier().setName(invoice.getRegistry().getName());
+		income.getSupplier().setSurname(invoice.getRegistry().getSurname());
 		income.setIssueTime(invoice.getIssueDate());
 		income.setRegistryAddress(invoice.getRegistryAddress());
 		income.setSeries(invoice.getSeries());
@@ -287,7 +295,6 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 	 * 
 	 * @param invoiceDetail related invoicedetail
 	 */
-	@SuppressWarnings("unchecked")
 	private void updateIncomeDetail(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -339,7 +346,6 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 	 * @param invoiceDetail related invoiceDetail 
 	 * @param hasToRemoveHeaders true to remove headers
 	 */
-	@SuppressWarnings("unchecked")
 	private void removeIncomeDetail(InvoiceDetail invoiceDetail, boolean hasToRemoveHeaders) {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);

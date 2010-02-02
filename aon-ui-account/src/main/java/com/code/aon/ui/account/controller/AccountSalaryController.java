@@ -99,7 +99,6 @@ public class AccountSalaryController {
 		entry.setAccountPeriod(getHeader().getPeriod().getId());
 		entry.setJournal(null);
 		entry.setType(AccountEntryType.SALARY);
-		entry.setSecurityLevel(getHeader().getSecurityLevel());
 		entry = insertorUpdateAccountEntry(entry);
 		insertEntryDetails(entry);
 		setAccountEntry(entry);

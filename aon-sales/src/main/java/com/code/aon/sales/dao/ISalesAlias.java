@@ -54,76 +54,70 @@ public interface ISalesAlias {
 	String  CUSTOMER_FEE_CUSTOMER_STATUS = CUSTOMER_FEE_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: CustomerFee_customer_scope_id
-	* Hibernate value: CustomerFee.customer.scope.id
-	*/
-	String  CUSTOMER_FEE_CUSTOMER_SCOPE_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: CustomerFee_item_id
 	* Hibernate value: CustomerFee.item.id
 	*/
-	String  CUSTOMER_FEE_ITEM_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[6];
+	String  CUSTOMER_FEE_ITEM_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: CustomerFee_description
 	* Hibernate value: CustomerFee.description
 	*/
-	String  CUSTOMER_FEE_DESCRIPTION = CUSTOMER_FEE_ENTRY.getAliasNames()[7];
+	String  CUSTOMER_FEE_DESCRIPTION = CUSTOMER_FEE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: CustomerFee_quantity
 	* Hibernate value: CustomerFee.quantity
 	*/
-	String  CUSTOMER_FEE_QUANTITY = CUSTOMER_FEE_ENTRY.getAliasNames()[8];
+	String  CUSTOMER_FEE_QUANTITY = CUSTOMER_FEE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: CustomerFee_price
 	* Hibernate value: CustomerFee.price
 	*/
-	String  CUSTOMER_FEE_PRICE = CUSTOMER_FEE_ENTRY.getAliasNames()[9];
+	String  CUSTOMER_FEE_PRICE = CUSTOMER_FEE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: CustomerFee_discountExpression
 	* Hibernate value: CustomerFee.discountExpression
 	*/
-	String  CUSTOMER_FEE_DISCOUNT_EXPRESSION = CUSTOMER_FEE_ENTRY.getAliasNames()[10];
+	String  CUSTOMER_FEE_DISCOUNT_EXPRESSION = CUSTOMER_FEE_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: CustomerFee_initialDate
 	* Hibernate value: CustomerFee.initialDate
 	*/
-	String  CUSTOMER_FEE_INITIAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[11];
+	String  CUSTOMER_FEE_INITIAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: CustomerFee_finalDate
 	* Hibernate value: CustomerFee.finalDate
 	*/
-	String  CUSTOMER_FEE_FINAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[12];
+	String  CUSTOMER_FEE_FINAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: CustomerFee_billingDate
 	* Hibernate value: CustomerFee.billingDate
 	*/
-	String  CUSTOMER_FEE_BILLING_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[13];
+	String  CUSTOMER_FEE_BILLING_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: CustomerFee_period
 	* Hibernate value: CustomerFee.period
 	*/
-	String  CUSTOMER_FEE_PERIOD = CUSTOMER_FEE_ENTRY.getAliasNames()[14];
+	String  CUSTOMER_FEE_PERIOD = CUSTOMER_FEE_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: CustomerFee_securityLevel
 	* Hibernate value: CustomerFee.securityLevel
 	*/
-	String  CUSTOMER_FEE_SECURITY_LEVEL = CUSTOMER_FEE_ENTRY.getAliasNames()[15];
+	String  CUSTOMER_FEE_SECURITY_LEVEL = CUSTOMER_FEE_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: CustomerFee_workPlace_id
 	* Hibernate value: CustomerFee.workPlace.id
 	*/
-	String  CUSTOMER_FEE_WORK_PLACE_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[16];
+	String  CUSTOMER_FEE_WORK_PLACE_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[15];
 
 
 

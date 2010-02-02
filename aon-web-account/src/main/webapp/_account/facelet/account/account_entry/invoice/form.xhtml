@@ -195,49 +195,53 @@
 								<f:selectItem itemValue="" itemLabel=" " />
 								<f:selectItems value="#{configCollections.series}" />
 							</h:selectOneMenu>
+							<t:inputText id="Account_invoice_series-input"
+								rendered="#{!accountInvoice.sales}"
+								disabled="#{accountInvoice.details.rowCount > 0}"
+								value="#{accountInvoice.header.series}" size="4" maxlength="5"
+								styleClass="aon-form-input-text" forceId="#{true}">
+								<f:validateLength maximum="5" />
+							</t:inputText>	
 							<t:inputText id="Account_invoice_number"
-								rendered="#{accountInvoice.sales}"
 								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.number}" size="7" maxlength="7"
 								styleClass="aon-form-input-text" forceId="#{true}">
 								<f:validateLength maximum="7" />
 							</t:inputText>	
-							<t:inputText id="Account_invoice_referenceCode" 
-								rendered="#{!accountInvoice.sales}"
-								disabled="#{accountInvoice.details.rowCount > 0}"
-								value="#{accountInvoice.header.referenceCode}" size="25" maxlength="32"
-								styleClass="aon-form-input-text" forceId="#{true}" 
-								onblur="toUpperCase(this);">
-								<f:validateLength maximum="32" />
-							</t:inputText>
 						</h:panelGrid>
 
-						<h:outputLabel for="Account_account"
-							styleClass="aon-form-input-text-label"
-							value="#{accountBundle.aon_account}" rendered="#{accountInvoice.header.account!=null}"/>
-						<t:div id="Account_account" rendered="#{accountInvoice.header.account!=null}">
-							<h:selectOneMenu id="Account_account-Sales"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{accountInvoice.header.account.id}"
-								disabled="#{accountInvoice.details.rowCount > 0}"
-								rendered="#{accountInvoice.sales}">
-								<f:selectItems value="#{accountCollections.salesAccounts}" />
-							</h:selectOneMenu>
-							<h:selectOneMenu id="Account_account-Purchase"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{accountInvoice.header.account.id}"
-								disabled="#{accountInvoice.details.rowCount > 0}"
-								rendered="#{accountInvoice.purchase}">
-								<f:selectItems value="#{accountCollections.purchaseAccounts}" />
-							</h:selectOneMenu>
-							<h:selectOneMenu id="Account_account-Expenses"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{accountInvoice.header.account.id}"
-								disabled="#{accountInvoice.details.rowCount > 0}"
-								rendered="#{accountInvoice.expense}">
-								<f:selectItems value="#{accountCollections.expensesAccounts}" />
-							</h:selectOneMenu>
-						</t:div>
+						<h:outputLabel for="Account_account-Sales"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_account}" rendered="#{accountInvoice.sales}"/>
+						<h:selectOneMenu id="Account_account-Sales"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.account.id}"
+							disabled="#{accountInvoice.details.rowCount > 0}"
+							rendered="#{accountInvoice.sales}">
+							<f:selectItems value="#{accountCollections.salesAccounts}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Account_account-Purchase"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_account}" rendered="#{accountInvoice.purchase}"/>
+						<h:selectOneMenu id="Account_account-Purchase"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.account.id}"
+							disabled="#{accountInvoice.details.rowCount > 0}"
+							rendered="#{accountInvoice.purchase}">
+							<f:selectItems value="#{accountCollections.purchaseAccounts}" />
+						</h:selectOneMenu>
+												
+						<h:outputLabel for="Account_account-Expenses"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_account}" rendered="#{accountInvoice.expense}"/>
+						<h:selectOneMenu id="Account_account-Expenses"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountInvoice.header.account.id}"
+							disabled="#{accountInvoice.details.rowCount > 0}"
+							rendered="#{accountInvoice.expense}">
+							<f:selectItems value="#{accountCollections.expensesAccounts}" />
+						</h:selectOneMenu>
 						
 						<h:outputLabel for="AccountEntry_securityLevel"
 							value="#{accountBundle.aon_account_security_level}"
@@ -270,12 +274,12 @@
 								columnClasses="aon-edit-table-body-icon,
 									aon-edit-table-body aon-edit-table-body-number,
 									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string
 									aon-edit-table-body aon-edit-table-body-number,
 									aon-edit-table-body aon-edit-table-body-number,
 									aon-edit-table-body aon-edit-table-body-number,
 									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,									
 									aon-edit-table-body aon-edit-table-body-buttons"
 								cellpadding="0" cellspacing="0">
 								
@@ -377,41 +381,10 @@
 								
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{accountBundle.aon_account}" />
-									</f:facet>
-									<h:outputText value="#{to.account}" rendered="#{to!=accountInvoice.currentDetail}" />
-									<t:div rendered="#{to==accountInvoice.currentDetail}">
-										<t:inputText id="Account_Lookup_id-Edit"
-											value="#{accountInvoice.currentDetail.account}"
-											styleClass="aon-form-input-text" forceId="#{true}"
-											size="12" required="#{true}">
-											<f:validateLength minimum="1" maximum="12" />
-										</t:inputText>
-										<h:commandButton id="find_Account_Lookup-Edit"
-											styleClass="aon-form-lookup-button" value="" immediate="true"
-											onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Account_Lookup_id-Edit');return false;" />
-									</t:div>
-									<f:verbatim>&#160;</f:verbatim>
-									<f:facet name="footer">
-										<t:div rendered="#{accountInvoice.newDetail}">
-											<t:inputText id="Account_Lookup_id-New"
-												value="#{accountInvoice.currentDetail.account}"
-												styleClass="aon-form-input-text" forceId="#{true}"
-												size="12" required="#{true}">
-												<f:validateLength minimum="1" maximum="12" />
-											</t:inputText>
-											<h:commandButton id="find_Account_Lookup-New"
-												styleClass="aon-form-lookup-button" value="" immediate="true"
-												onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Account_Lookup_id-New');return false;" />
-										</t:div>
-									</f:facet>
-								</h:column>
-
-								<h:column>
-									<f:facet name="header">
 										<t:outputText value="#{accountBundle.aon_retention_quota}" />
 									</f:facet>
 									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
 										value="#{to.retentionQuota}" forceId="#{true}">
 										<f:convertNumber pattern="#,##0.00" />
 									</t:outputText>
@@ -422,6 +395,7 @@
 										<t:outputText value="#{accountBundle.aon_vat_quota}" />
 									</f:facet>
 									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
 										value="#{to.vatQuota}" forceId="#{true}">
 										<f:convertNumber pattern="#,##0.00" />
 									</t:outputText>
@@ -432,6 +406,7 @@
 										<t:outputText value="#{accountBundle.aon_surcharge}" />
 									</f:facet>
 									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
 										value="#{to.surcharge}" forceId="#{true}">
 										<f:convertNumber pattern="#,##0.00" />
 									</t:outputText>
@@ -442,6 +417,7 @@
 										<t:outputText value="#{accountBundle.aon_total}" />
 									</f:facet>
 									<t:outputText
+										rendered="#{!accountInvoice.newDetail}" 
 										value="#{to.total}" forceId="#{true}">
 										<f:convertNumber pattern="#,##0.00" />
 									</t:outputText>
@@ -673,7 +649,7 @@
 									</t:outputText>
 									<t:inputText id="RegistryBank_Lookup_bankAccount-Edit"
 										rendered="#{financeTo==accountInvoice.currentFinance}" forceId="#{true}"
-										value="#{accountInvoice.currentFinance.bankAccount}" />
+										value="#{accountInvoice.currentFinance.bankAccount}" required="#{true}" />
 									<f:facet name="footer">
 										<t:div style="text-align:right;">
 											<t:inputText id="RegistryBank_Lookup_bankAccount-New"
@@ -700,7 +676,8 @@
 										<t:div style="text-align:right;">
 											<t:inputText id="Account_Finance_Amount-New"
 												rendered="#{accountInvoice.newFinance}"
-												value="#{accountInvoice.currentFinance.amount}" required="#{true}" />
+												value="#{accountInvoice.currentFinance.amount}">
+											</t:inputText>
 										</t:div>
 									</f:facet>
 								</h:column>

@@ -62,7 +62,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_date}" />						
 						<t:inputCalendar id="Account_date"
-							value="#{accountLeasing.leasing.leasingDate}" size="10" required="true" 
+							value="#{accountLeasing.leasing.leasingDate}" size="8" required="true" 
 							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 							currentDayCellClass="currentDayCell" renderAsPopup="true"
 							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
@@ -73,42 +73,42 @@
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_leasing_supplier_name}" />
 						<t:inputText id="Account_supplierName"
-							value="#{accountLeasing.leasing.supplierName}" size="40" maxlength="32"
+							value="#{accountLeasing.leasing.supplierName}" size="60"
 							styleClass="aon-form-input-text" forceId="#{true}" />
 
 						<h:outputLabel for="Account_supplierDocument"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_leasing_supplier_document}" />
 						<t:inputText id="Account_supplierDocument"
-							value="#{accountLeasing.leasing.supplierDocument}" size="16" maxlength="16"
+							value="#{accountLeasing.leasing.supplierDocument}" size="12"
 							styleClass="aon-form-input-text" forceId="#{true}" />
 							
 						<h:outputLabel for="Account_description"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_description}" />
 						<t:inputText id="Account_description"
-							value="#{accountLeasing.leasing.description}" size="40" maxlength="32"
+							value="#{accountLeasing.leasing.description}" size="60"
 							styleClass="aon-form-input-text" forceId="#{true}" />
 							
 						<h:outputLabel for="Account_term"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_leasing_term}" />
 						<t:inputText id="Account_term"
-							value="#{accountLeasing.leasing.term}" size="16" maxlength="16"
+							value="#{accountLeasing.leasing.term}" size="16"
 							styleClass="aon-form-input-text" forceId="#{true}" />
 							
 						<h:outputLabel for="Account_interest_percent"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_leasing_interest_percent}" />
 						<t:inputText id="Account_interest_percent"
-							value="#{accountLeasing.leasing.interestPercent}" size="10" maxlength="16"
+							value="#{accountLeasing.leasing.interestPercent}" size="5"
 							styleClass="aon-form-input-text" forceId="#{true}" />
 
 						<h:outputLabel for="Account_review"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_leasing_review}" />
 						<t:inputText id="Account_review"
-							value="#{accountLeasing.leasing.review}" size="16" maxlength="16"
+							value="#{accountLeasing.leasing.review}" size="16"
 							styleClass="aon-form-input-text" forceId="#{true}" />
 						
 						<h:outputLabel for="RegistryBank_Lookup_id"
@@ -128,14 +128,14 @@
 						<t:inputText id="RegistryBank_Lookup_bankAccount"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}"
 							value="#{accountLeasing.leasing.registryBank.bankAccount}"
-							disabled="true" size="25" />
+							disabled="true" size="35" />
 
 						<h:outputLabel for="Account_amount"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_leasing_amount}" />
 						<t:inputText id="Account_amount"
-							value="#{accountLeasing.leasing.amount}" size="16"
-							styleClass="aon-form-input-text" forceId="#{true}">
+							value="#{accountLeasing.leasing.amount}" size="15"
+							styleClass="aon-form-input-text" forceId="#{true}" >
 							<f:validateDoubleRange  />
 						</t:inputText>
 

@@ -36,30 +36,4 @@
 		</vetoListeners>
 	</bean>
 
-	<bean description="">
-		<pojo>com.code.aon.finance.Invoice</pojo>
-		<listeners>
-	        <listener>com.code.aon.finance.event.InvoiceBeanListener</listener>
-		</listeners>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.InvoiceBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
-		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
-		<listeners>
-	        <listener>com.code.aon.finance.event.InvoiceDetailBeanListener</listener>
-		</listeners>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.InvoiceDetailBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
-	<bean description="">
-		<pojo>com.code.aon.finance.Finance</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.FinanceBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
 </bean-config>

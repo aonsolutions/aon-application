@@ -107,7 +107,7 @@ public class GroupWareCollectionsController {
 	public List<SelectItem> getFavoriteCategories() throws ManagerBeanException{
 		List<SelectItem> favoriteCategoriesList = new LinkedList<SelectItem>();
 		IManagerBean favoriteCategoriesBean = BeanManager.getManagerBean(FavoriteCategory.class);
-		User user = UserUtils.getInstance().getLoggedUser();
+		User user = UserUtils.getLoggedUser();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(favoriteCategoriesBean.getFieldName(IGroupWareAlias.FAVORITE_CATEGORY_USER_ID), user.getId());
 		criteria.addOrder(favoriteCategoriesBean.getFieldName(IGroupWareAlias.FAVORITE_CATEGORY_DESCRIPTION));

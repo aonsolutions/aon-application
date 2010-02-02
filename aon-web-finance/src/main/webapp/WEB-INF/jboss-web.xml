@@ -15,7 +15,7 @@
 	</class-loading>
 	-->
 	
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-web-finance</security-domain>
 
 	<!-- The context-root element specifies the context root of a web
 	application. It may be given here for standalone wars.

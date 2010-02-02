@@ -3,8 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
-	xmlns:s="http://myfaces.apache.org/sandbox"
 	xmlns:h="http://java.sun.com/jsf/html">
+
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -37,7 +37,7 @@
 					<t:commandButton id="remove" value="#{bundle.aon_remove}"
 						forceId="#{true}" actionListener="#{campaign.onRemoveCampaign}"
 						action="campaign_list" rendered="#{!campaign.new}"
-						onclick="if(confirm('#{bundle.aon_remove_confirm}')){viewDialog.show();}else{ return false; }"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
 						disabled="#{campaign.deleted or campaign.finished}"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
@@ -58,14 +58,14 @@
 						actionListener="#{campaign.onEditSearch}" action="campaign_search" 
 						accesskey="#{bundle.aon_key_search}"/>
 					<h:commandButton id="startCampaign" value="#{campaignBundle.campaign_start}"
-						onclick="if(confirm('#{campaignBundle.campaign_start_confirm}')){viewDialog.show();}else{ return false; }"
+						onclick="return (confirm('#{campaignBundle.campaign_start_confirm}'))"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 						actionListener="#{campaign.onStartCampaign}" action="campaign_form" 
 						rendered="#{!campaign.new and campaign.pending}" />
 					<h:commandButton id="finishCampaign" value="#{campaignBundle.campaign_finish}"
-						onclick="if(confirm('#{campaignBundle.campaign_finish_confirm}')){viewDialog.show();}else{ return false; }"
+						onclick="return (confirm('#{campaignBundle.campaign_finish_confirm}'))"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
@@ -268,13 +268,11 @@
 									styleClass="aon-form-button-plus"
 									value="#{campaignBundle.campaign_add_dossier}"
 									actionListener="#{addCampaignDossier.onSearchDossiers}"
-									action="campaign_add_dossier"
-									onclick="viewDialog.show();" />
+									action="campaign_add_dossier" />
 								<t:commandButton title="#{campaignBundle.campaign_exclude_dossier}"
 									styleClass="aon-form-button-minus"
 									value="#{campaignBundle.campaign_exclude_dossier}"
-									actionListener="#{campaignDossier.onRemoveCampaignDossier}"
-									onclick="viewDialog.show();" />
+									actionListener="#{campaignDossier.onRemoveCampaignDossier}" />
 							</t:div>
 
 							<ui:include src="/facelet/shared/dataScroller.xhtml">
@@ -286,19 +284,6 @@
 					</t:div>
 				</t:div>
 			</t:div>
-
-			<s:modalDialog
-		       dialogId="viewDialog"
-		       dialogVar="viewDialog"
-		       closeButton="false">
-		       <t:div styleClass="aon-timer">		       		
-		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
-		       		<t:div styleClass="aon-timer-title" >
-		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
-		       		</t:div>
-  			   </t:div>
-			</s:modalDialog>
-
 		</h:form>
 		<h:form id="placeList" target="list" />
 	</ui:define>

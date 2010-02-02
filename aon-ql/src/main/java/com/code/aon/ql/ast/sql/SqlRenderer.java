@@ -3,7 +3,9 @@ package com.code.aon.ql.ast.sql;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -43,7 +45,7 @@ public class SqlRenderer implements CriterionVisitor {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(SqlRenderer.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(SqlRenderer.class);
 
 	/**
 	 * Where the result will be printed.
@@ -89,7 +91,7 @@ public class SqlRenderer implements CriterionVisitor {
 	 */
 	public void visitOrderByList(OrderByList orderByList) {
 		write(ORDER_BY);
-		Iterator i = orderByList.getOrders().iterator();
+		Iterator<Order> i = orderByList.getOrders().iterator();
 		while (i.hasNext()) {
 			Order order = (Order) i.next();
 			order.accept(this);
@@ -224,7 +226,7 @@ public class SqlRenderer implements CriterionVisitor {
 		try {
 			out.write(str);
 		} catch (IOException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

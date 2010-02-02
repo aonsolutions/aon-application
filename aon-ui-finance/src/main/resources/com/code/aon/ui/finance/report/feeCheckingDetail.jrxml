@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="feeCheckingDetail"
+		 name="fBatchDetail"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -47,7 +47,7 @@
 						x="60"
 						y="0"
 						width="475"
-						height="14"
+						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-6"/>
@@ -63,7 +63,7 @@
 						x="0"
 						y="0"
 						width="60"
-						height="14"
+						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-11"/>
@@ -76,26 +76,26 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="10"  isSplitAllowed="true" >
+			<band height="14"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="60"
-						y="-1"
+						y="0"
 						width="475"
-						height="11"
+						height="14"
 						key="textField-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getSurname()!=null?$F{registry}.getSurname():"") + " " + ($F{registry}.getName()!=null?$F{registry}.getName():"")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getName()!=null?$F{registry}.getName():"") + " " + ($F{registry}.getSurname()!=null?$F{registry}.getSurname():"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="-1"
+						y="0"
 						width="60"
-						height="11"
+						height="14"
 						key="textField-12"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">

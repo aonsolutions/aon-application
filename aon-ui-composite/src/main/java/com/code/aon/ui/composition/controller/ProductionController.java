@@ -38,7 +38,9 @@ public class ProductionController extends BasicController {
     /** The LOGGER. */
     private final static Logger LOGGER = Logger.getLogger(ProductionController.class.getName()); 
 
-    /**
+	private static final String MENU_MANAGER_NAME = "menuManager";
+
+	/**
      * Object that provides the different prices that take part in the product production.
      */
     private ProductionPriceProvider provider;
@@ -319,9 +321,9 @@ public class ProductionController extends BasicController {
      * Updates the bread crumb. 
      */
     private void updateBreadCrumb() {
-        MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean("menuManager");
+		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
         menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode("aon_app.aon_product_making.aon_elaboration.aon_production");
+        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_production").getId());
     }
 
     /**

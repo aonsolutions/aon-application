@@ -32,6 +32,7 @@ public class FinanceAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-finance/src/main/java/com/code/aon/finance/dao/IFinanceAlias.java");
+//		File file = new File("c:/IFinanceAlias.java");
 		String[] classes = new String[15]; 
 		classes[0] = Bank.class.getName();
 		classes[1] = Finance.class.getName();

@@ -15,6 +15,8 @@ import com.code.aon.project.Dossier;
 @Table(name="campaign_dossier")
 public class CampaignDossier implements ITransferObject {
 
+	private static final long serialVersionUID = -2268140702529400027L;
+
 	private Integer id;
 	
 	private Campaign campaign;

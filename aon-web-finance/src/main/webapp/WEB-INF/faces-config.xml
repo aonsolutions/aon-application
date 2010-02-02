@@ -947,7 +947,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>feeInvoicingHeaderControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceHeaderControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.finance.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>table</property-name>
@@ -1202,7 +1202,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>purchaseDirectInvoicingHeaderControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceHeaderControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.finance.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>table</property-name>
@@ -1531,7 +1531,6 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{productAccountListener}</value>
 				<value>#{itemRetentionListener}</value>
 				<value>#{itemControllerListener}</value>
 			</list-entries>
@@ -1855,46 +1854,18 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* ACCOUNT LOOKUP ***************** -->
-	<managed-bean>
-		<managed-bean-name>accountLookup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.LookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.account.Account</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>Account</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>description</value>
-				<value>entryEnabled</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<description>Needed for Search Select Window</description>
-			<property-name>searchPagePath</property-name>
-			<value>/facelet/account/sw/accountSearch.faces</value>
-		</managed-property>
-	</managed-bean>
-	
 	<!-- =================== Navigation Rules ================= -->
+	<!-- =================== Company ========================== -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>company_record_data_list</from-outcome>
+			<to-view-id>/facelet/registry/company/record_data/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>company_record_data_form</from-outcome>
+			<to-view-id>/facelet/registry/company/record_data/form.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	<!-- =================== Customer ========================== -->	
 	<navigation-rule>
 	    <navigation-case>
@@ -1996,37 +1967,17 @@
 	</navigation-rule>
 	
   <!-- =================== Company ================= -->
-	<navigation-rule>
-	   <navigation-case>
-		 <from-outcome>company_form</from-outcome>
-		 <to-view-id>/facelet/registry/company/company.faces</to-view-id>
-	   </navigation-case>
-       <navigation-case>
-         <from-outcome>company_init</from-outcome>
-         <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
-	   </navigation-case>
-	   <navigation-case>
-		 <from-outcome>company_record_data_list</from-outcome>
-		 <to-view-id>/facelet/registry/company/record_data/list.faces</to-view-id>
-	   </navigation-case>
-	   <navigation-case>
-		 <from-outcome>company_record_data_form</from-outcome>
-		 <to-view-id>/facelet/registry/company/record_data/form.faces</to-view-id>
-	  </navigation-case>
-	</navigation-rule>
-
-  <!-- =================== Account ================= -->
-	<navigation-rule>
-	  <navigation-case>
-		<from-outcome>account_sw</from-outcome>
-		<to-view-id>/facelet/account/sw/account.faces</to-view-id>
-	  </navigation-case>
-	  <navigation-case>
-		<from-outcome>account_sw_search</from-outcome>
-		<to-view-id>/facelet/account/sw/accountSearch.faces</to-view-id>
-	  </navigation-case>
-	</navigation-rule>
-
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>company_form</from-outcome>
+      <to-view-id>/facelet/registry/company/company.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>company_init</from-outcome>
+      <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- ********************************* -->
   <!-- ************ MENU *************** -->
   <!-- ********************************* -->

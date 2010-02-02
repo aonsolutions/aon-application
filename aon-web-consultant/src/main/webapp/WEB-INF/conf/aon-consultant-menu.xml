@@ -15,15 +15,33 @@
 			<actionListener action="#{invoicePrint.onEditSearch}"/>
 		</option>
 		<menu ref="content" key="aon_fees" descriptionKey="aon_fees_desc">
-			<option key="aon_invoicing" descriptionKey="aon_invoicing_desc" ref="feeInvoicing" role="Facturacion">
+			<option key="aon_invoicing" descriptionKey="aon_invoicing_desc" ref="feeInvoicing">
 				<actionListener action="#{feeInvoicing.onInitialize}"/>
 			</option>
-			<option key="aon_pre_invoicing" descriptionKey="aon_pre_invoicing" ref="feePreInvoicing" role="PreFacturacion">
+			<option key="aon_pre_invoicing" descriptionKey="aon_pre_invoicing" ref="feePreInvoicing">
 				<actionListener action="#{preInvoicing.onInitialize}"/>
 			</option>
 		</menu>
-		<menu ref="content" key="aon_auxiliar" descriptionKey="aon_auxiliar_desc" role="Auxiliares">
+		<menu ref="content" key="finance" descriptionKey="finance_desc" role="Tesoreria">
+			<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
+				<actionListener action="#{finance.onEditSearch}"/>
+			</option>
+			<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return">
+				<actionListener action="#{financeReturn.onEditSearch}"/>
+			</option>
+			<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment">
+				<actionListener action="#{financePayment.onEditSearch}"/>
+			</option>
+			<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
 			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
+			<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
+				<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
+				<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
+					<actionListener action="#{feePrint.onEditSearch}"/>				
+				</option>
+			</menu>
+		</menu>	
+		<menu ref="content" key="aon_auxiliar" descriptionKey="aon_auxiliar_desc" role="Auxiliares">
 			<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank" role="Bancos"/>
 			<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method" role="FormasDePago"/>
 			<option key="aon_item" descriptionKey="aon_item_desc" ref="item" role="Conceptos">
@@ -31,34 +49,7 @@
 			</option>
 			<option key="aon_product_category" descriptionKey="aon_product_category_desc" ref="productCategory" role="Categorias"/>
 		</menu>	
-		<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
-			<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
-				<actionListener action="#{feePrint.onEditSearch}"/>				
-			</option>
-			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording">
-				<actionListener action="#{invoiceRecording.onInitialize}"/>				
-			</option>
-			<option key="aon_invoice_removing" descriptionKey="aon_invoice_removing" ref="invoiceRemoving">
-				<actionListener action="#{invoiceRemover.onEditSearch}"/>				
-			</option>
-		</menu>
 	</menu>
-
-	<menu ref="content" key="finance" descriptionKey="finance_desc" role="Tesoreria">
-		<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
-			<actionListener action="#{finance.onEditSearch}"/>
-		</option>
-		<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return">
-			<actionListener action="#{financeReturn.onEditSearch}"/>
-		</option>
-		<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment">
-			<actionListener action="#{financePayment.onEditSearch}"/>
-		</option>
-		<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
-		<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
-			<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
-		</menu>
-	</menu>	
 	
 	<menu ref="content" key="aon_time_management" descriptionKey="aon_time_management_desc" role="GestionTiempos">
 		<option key="aon_daily_tracking" descriptionKey="aon_daily_tracking_desc" ref="daily_tracking" role="ParteDiario">
@@ -105,10 +96,6 @@
 		 -->
 		<option ref="tax" key="aon_product_tax" descriptionKey="aon_product_tax_desc" role="Impuestos"/>
 		<option ref="series" key="aon_series" descriptionKey="aon_series_desc"/>
-		<option contextRelative="false" external="false" ref="geozone" 
-			key="aon_geozone" descriptionKey="aon_geozone_desc">
-			<actionListener action="#{geotreeParent.onSearch}" />
-		</option>
 		<option ref="scope" key="aon_scope" descriptionKey="aon_scope_desc"/>
 		<!-- 
 		<menu ref="content" key="aon_utilities"  descriptionKey="aon_utilities_desc" role="UtilidadesConfiguracion">

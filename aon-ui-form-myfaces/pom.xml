@@ -5,19 +5,19 @@
 	<parent>
 		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.form.myfaces</artifactId>
-	<version>2.0.4</version>
+	<version>2.1.0</version>
 	<description>AON UI FORM MYFACES</description>
 	<name>AON UI FORM MYFACES</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>2.0.4</version>
+			<version>2.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

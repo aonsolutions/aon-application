@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.IHeaderObject;
-import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.common.temp.SeriesNumberUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -43,9 +43,17 @@ public class HeaderControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IHeaderObject header = (IHeaderObject)event.getController().getTo();
-        if(header.getNumber() == 0) {
-        	header.setNumber(SeriesNumberUtil.obtainNumber(header.getSeries(), this.table));
+
+        String series = header.getSeries();
+        series = SeriesNumberUtil.obtainSeries(series, header.getSecurityLevel()); 
+        	
+        int number = header.getNumber();
+        if(number == 0) {
+            number = SeriesNumberUtil.obtainNumber(series, this.table);
 		}
+
+        header.setSeries(series);
+        header.setNumber(number);
     }
 
 }
