@@ -24,65 +24,70 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{mailAccount}" />
-					<ui:define name="columns">
+				<aon:dataTable id="dataTable" value="#{mailAccount.model}" var="to"
+					rows="20" styleClass="dr-table rich-table aon-editDataTable"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_mailAccount_name}" />
-							</f:facet>
-							<aon:outputText value="#{to.name}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_mailAccount_email}" />
-							</f:facet>
-							<aon:outputText value="#{to.email}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_signature_signature}" />
-							</f:facet>
-							<aon:outputText value="#{to.signature.name}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{webmailBundle.webmail_mailAccount_active}" />
-							</f:facet>
+					<aon:rowSelector
+						action="mailAccount_form" actionListener="#{mailAccount.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{webmailBundle.webmail_mailAccount_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{webmailBundle.webmail_mailAccount_email}" />
+						</f:facet>
+						<aon:outputText value="#{to.email}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{webmailBundle.webmail_signature_signature}" />
+						</f:facet>
+						<aon:outputText value="#{to.signature.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
 							<aon:outputText
-								value="#{webmailBundle.webmail_mailAccount_user_account}"
-								rendered="#{!mailAccount.currentToDefaultAccount}">
-							</aon:outputText>
-							<aon:outputText
-								value="#{webmailBundle.webmail_mailAccount_default_account}"
-								rendered="#{mailAccount.currentToDefaultAccount}" />
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&nbsp;" />
-							</f:facet>
-							<aon:outputText
-								value="#{webmailBundle.webmail_signature_active}"
-								rendered="#{mailAccount.currentToActiveAccount}" />
-							<aon:commandButton id="mailAccountChange"
-								rendered="#{!mailAccount.currentToActiveAccount}"
-								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-								title="#{webmailBundle.webmail_mailAccountChange}"
-								action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
-								value="#{webmailBundle.webmail_mailAccountChange}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								styleClass="aon-icon-commandButton aon-icon-predetermine">
-							</aon:commandButton>
-						</aon:column>
-					</ui:define>
-					
-				</ui:decorate>
+								value="#{webmailBundle.webmail_mailAccount_active}" />
+						</f:facet>
+						<aon:outputText
+							value="#{webmailBundle.webmail_mailAccount_user_account}"
+							rendered="#{!mailAccount.currentToDefaultAccount}">
+						</aon:outputText>
+						<aon:outputText
+							value="#{webmailBundle.webmail_mailAccount_default_account}"
+							rendered="#{mailAccount.currentToDefaultAccount}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&nbsp;" />
+						</f:facet>
+						<aon:outputText
+							value="#{webmailBundle.webmail_signature_active}"
+							rendered="#{mailAccount.currentToActiveAccount}" />
+						<aon:commandButton id="mailAccountChange"
+							rendered="#{!mailAccount.currentToActiveAccount}"
+							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
+							title="#{webmailBundle.webmail_mailAccountChange}"
+							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
+							value="#{webmailBundle.webmail_mailAccountChange}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							styleClass="aon-icon-commandButton aon-icon-predetermine">
+						</aon:commandButton>
+					</aon:column>
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="dataTable" showNote="true" />
 
 			</aon:div>
 		</aon:form>

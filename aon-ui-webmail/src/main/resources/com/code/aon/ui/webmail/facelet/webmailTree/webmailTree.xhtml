@@ -12,21 +12,19 @@
 <ui:composition>
 
 	<aon:div>
-  
+		 
 		<aon:div styleClass="aon-toolbar"  id="buttonsGrid" 
-			rendered="#{webmailTree.treeLoaded}" style="padding-bottom:0;">
+			rendered="#{webmailTree.treeLoaded}" style="padding-bottom:0;">					
 							
-			<aon:commandButton value="&#160;"
-				id="newFolder" reRender="createSubFolderGrid"
+			<aon:commandButton
+				id="newFolder" reRender="aonStatus"
 				title="#{webmailBundle.webmail_newfolder}"
 				styleClass="aon-icon-commandButton aon-icon-newFolder"
 				actionListener="#{webmailFolder.openNewFolderPanelPopup}">
 				<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
-				<f:setPropertyActionListener value="#{false}" target="#{webmailFolder.createAsSubfolder}" />
-				<f:setPropertyActionListener value="#{null}" target="#{webmailFolder.newFolderName}" />
 			</aon:commandButton>
 				
-			<aon:commandButton value="&#160;"
+			<aon:commandButton
 				id="deleteFolder_n"
 				rendered="#{webmailFolder.folder.deleteable}"
 				title="#{webmailBundle.webmail_delfolder}"
@@ -35,14 +33,14 @@
 				styleClass="aon-icon-commandButton aon-icon-deleteFolder">
 			</aon:commandButton>
 			
-			<aon:commandButton value="&#160;"
+			<aon:commandButton
 				id="deleteFolder_d" disabled="true"
 				rendered="#{!webmailFolder.folder.deleteable}"
 				title="#{webmailBundle.webmail_delfolder}"
 				styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
 			</aon:commandButton>
 		
-			<aon:commandButton value="&#160;"
+			<aon:commandButton
 				id="renameFolder_n" reRender="aonStatus"
 				rendered="#{webmailFolder.folder.renameable}"
 				title="#{webmailBundle.webmail_renamefolder}"
@@ -51,7 +49,7 @@
 				<rich:componentControl for="renameFolderModalPanel" operation="show" event="onclick"/>
 			</aon:commandButton>
 			
-			<aon:commandButton value="&#160;"
+			<aon:commandButton
 				id="renameFolder_d" disabled="true"
 				rendered="#{!webmailFolder.folder.renameable}"
 				title="#{webmailBundle.webmail_renamefolder}"					

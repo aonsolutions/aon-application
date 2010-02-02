@@ -5,14 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -37,7 +35,7 @@ public class SignatureController extends GridController {
 
 	private static final String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SignatureController.class);
+	private static final Logger LOGGER = Logger.getLogger(SignatureController.class.getName());
 
 	private LdapDAO dao;
 	
@@ -45,16 +43,6 @@ public class SignatureController extends GridController {
 	
 	private List<SelectItem> signatures;
 	
-	private boolean richTextEnabled = true;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
@@ -97,11 +85,11 @@ public class SignatureController extends GridController {
 				}
 			}
 		} catch (ManagerBeanException e) {
-	        LOGGER.error(">>>> accept", e);
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		} catch (DAOException e) {
-			LOGGER.error(">>>> accept", e);
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
@@ -135,7 +123,7 @@ public class SignatureController extends GridController {
 			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_SIGNATURE_ID), id);
 			list = (List) mailAccountBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-            LOGGER.error(">>>> getReferences", e);
+            LOGGER.severe(">>>> getReferences " + e.getMessage());
 		}		
 		return list;
 	}
@@ -148,7 +136,7 @@ public class SignatureController extends GridController {
 				mailAccountBean.update( mailAccount );
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> updateReferences", e);
+            LOGGER.severe(">>>> getReferences " + e.getMessage());
 		}					
 	}
 	

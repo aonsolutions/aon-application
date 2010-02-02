@@ -12,7 +12,8 @@
 
 	<aon:form id="renameFolderForm">
 
-		<rich:modalPanel id="renameFolderModalPanel" height="100" width="400">
+		<rich:modalPanel id="renameFolderModalPanel" height="100" width="300"
+			top="100" zindex="2000">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
 					<aon:outputText value="#{webmailBundle.webmail_folder_rename}" />
@@ -30,7 +31,7 @@
 			<h:panelGrid width="100%" cellpadding="2" cellspacing="0" columns="2"
 				styleClass="aon-panelGrid-formatting">
 
-				<aon:inputText id="renameFolderName" size="40" required="true"
+				<aon:inputText id="renameFolderName" size="27" required="true"
 					value="#{webmailFolder.renameFolderName}" />
 				<aon:commandButton reRender="foldersTree"
 					actionListener="#{webmailFolder.renameFolder}"
