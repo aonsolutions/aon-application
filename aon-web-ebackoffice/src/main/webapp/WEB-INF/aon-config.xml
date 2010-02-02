@@ -10,10 +10,10 @@
 			showBarcode="true"
 			showType="false"
 			showBrand="true"
-			showStock="false"
-			showSuppliers="false"
-			showAccount="false"
-			showAttachment="true"
+			showStock="true"
+			showSuppliers="true"
+			showAccount="true"
+			showAttachment="false"
 			showEcommerceData="true"
 		/>
 	</product:config>

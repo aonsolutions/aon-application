@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<config
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.esferalia.com/config" >
-	
-	<cms:config version="1.0" xmlns:cms="http://www.esferalia.com/cms" />
-	
-</config>

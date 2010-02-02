@@ -61,16 +61,21 @@ public class EcconfigController extends BasicController {
 	public boolean richTextEnabled;
 	private String selectedTab;
 	private boolean ecParam;
-		
-	
+
 	public boolean isEcParam() {
-		try {
-			ecParam=getEcommerceParam();
+		try {	
+						
+			ecParam = getEcommerceParam();
+			if (ecParam == false) {
+				IManagerBean bean = BeanManager.getManagerBean(Ecconfig.class);
+				Ecconfig c = (Ecconfig) bean.getList(null).get(0);
+				c.setCommerce(false);
+				bean.update(c);
+			}		
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return ecParam;
 	}
 
@@ -81,25 +86,23 @@ public class EcconfigController extends BasicController {
 	public String getSelectedTab() {
 		return selectedTab;
 	}
-	
+
 	public boolean isPaymethodTab() {
-		String s= "tab3";
-		if(selectedTab!=null && selectedTab.equals(s))
-			return true;		
+		String s = "tab3";
+		if (selectedTab != null && selectedTab.equals(s))
+			return true;
 		else
 			return false;
 	}
 
-
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-   
+
 	public void setPayMethodTab(ActionEvent e) {
 		this.selectedTab = "tab3";
 	}
-   
-	
+
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;
 	}
@@ -107,7 +110,6 @@ public class EcconfigController extends BasicController {
 	public void setRichTextEnabled(boolean richTextEnabled) {
 		this.richTextEnabled = richTextEnabled;
 	}
-	
 
 	public boolean isShowPrice() {
 		return showPrice;
@@ -204,13 +206,15 @@ public class EcconfigController extends BasicController {
 
 		return discountTypes;
 	}
-	
+
 	public void refreshBankTranfers() throws ManagerBeanException {
 		bankTransfers = new LinkedList<SelectItem>();
 		IManagerBean paymethodBean = BeanManager
 				.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(paymethodBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE),PayMethodType.BANK_TRANSFER);
+		criteria.addEqualExpression(paymethodBean
+				.getFieldName(IConfigAlias.PAY_METHOD_TYPE),
+				PayMethodType.BANK_TRANSFER);
 		criteria.addOrder(paymethodBean
 				.getFieldName(IConfigAlias.PAY_METHOD_ID));
 		List<ITransferObject> lista;
@@ -221,13 +225,15 @@ public class EcconfigController extends BasicController {
 			bankTransfers.add(item);
 		}
 	}
-	
+
 	public void refreshPaypals() throws ManagerBeanException {
 		paypals = new LinkedList<SelectItem>();
 		IManagerBean paymethodBean = BeanManager
 				.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(paymethodBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE),PayMethodType.CREDIT_CARD);
+		criteria.addEqualExpression(paymethodBean
+				.getFieldName(IConfigAlias.PAY_METHOD_TYPE),
+				PayMethodType.CREDIT_CARD);
 		criteria.addOrder(paymethodBean
 				.getFieldName(IConfigAlias.PAY_METHOD_ID));
 		List<ITransferObject> lista;
@@ -238,13 +244,15 @@ public class EcconfigController extends BasicController {
 			paypals.add(item);
 		}
 	}
-	
+
 	public void refreshCreditCards() throws ManagerBeanException {
 		creditCards = new LinkedList<SelectItem>();
 		IManagerBean paymethodBean = BeanManager
 				.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(paymethodBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE),PayMethodType.CREDIT_CARD);
+		criteria.addEqualExpression(paymethodBean
+				.getFieldName(IConfigAlias.PAY_METHOD_TYPE),
+				PayMethodType.CREDIT_CARD);
 		criteria.addOrder(paymethodBean
 				.getFieldName(IConfigAlias.PAY_METHOD_ID));
 		List<ITransferObject> lista;
@@ -255,13 +263,15 @@ public class EcconfigController extends BasicController {
 			creditCards.add(item);
 		}
 	}
-	
+
 	public void refreshCashOnDeliverys() throws ManagerBeanException {
 		cashOnDeliverys = new LinkedList<SelectItem>();
 		IManagerBean paymethodBean = BeanManager
 				.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(paymethodBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE),PayMethodType.CASH_BASIS);
+		criteria.addEqualExpression(paymethodBean
+				.getFieldName(IConfigAlias.PAY_METHOD_TYPE),
+				PayMethodType.CASH_BASIS);
 		criteria.addOrder(paymethodBean
 				.getFieldName(IConfigAlias.PAY_METHOD_ID));
 		List<ITransferObject> lista;
@@ -272,13 +282,15 @@ public class EcconfigController extends BasicController {
 			cashOnDeliverys.add(item);
 		}
 	}
-	
+
 	public void refreshBankDrafts() throws ManagerBeanException {
 		bankDrafts = new LinkedList<SelectItem>();
 		IManagerBean paymethodBean = BeanManager
 				.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(paymethodBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE),PayMethodType.NEGOTIABLE_DOCUMENT);
+		criteria.addEqualExpression(paymethodBean
+				.getFieldName(IConfigAlias.PAY_METHOD_TYPE),
+				PayMethodType.NEGOTIABLE_DOCUMENT);
 		criteria.addOrder(paymethodBean
 				.getFieldName(IConfigAlias.PAY_METHOD_ID));
 		List<ITransferObject> lista;
@@ -289,16 +301,12 @@ public class EcconfigController extends BasicController {
 			bankDrafts.add(item);
 		}
 	}
-	
-	
 
 	public void refreshTariffs() throws ManagerBeanException {
 		tariffs = new LinkedList<SelectItem>();
-		IManagerBean tariffBean = BeanManager
-				.getManagerBean(Tariff.class);
+		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(tariffBean
-				.getFieldName(IConfigAlias.TARIFF_ID));
+		criteria.addOrder(tariffBean.getFieldName(IConfigAlias.TARIFF_ID));
 		List<ITransferObject> lista;
 		lista = tariffBean.getList(criteria);
 		for (ITransferObject rec : lista) {
@@ -308,22 +316,20 @@ public class EcconfigController extends BasicController {
 		}
 	}
 
-	
-	
 	public List<SelectItem> getBankTransfers() throws ManagerBeanException {
-		bankTransfers=null;
+		bankTransfers = null;
 		if (bankTransfers == null) {
 			refreshBankTranfers();
 		}
 		return bankTransfers;
 	}
-	
+
 	public void setBankTransfers(List<SelectItem> bankTransfers) {
 		this.bankTransfers = bankTransfers;
 	}
 
 	public List<SelectItem> getCashOnDeliverys() throws ManagerBeanException {
-		cashOnDeliverys=null;
+		cashOnDeliverys = null;
 		if (cashOnDeliverys == null) {
 			refreshCashOnDeliverys();
 		}
@@ -335,7 +341,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public List<SelectItem> getBankDrafts() throws ManagerBeanException {
-		bankDrafts=null;
+		bankDrafts = null;
 		if (bankDrafts == null) {
 			refreshBankDrafts();
 		}
@@ -347,7 +353,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public List<SelectItem> getCreditCards() throws ManagerBeanException {
-		creditCards=null;
+		creditCards = null;
 		if (creditCards == null) {
 			refreshCreditCards();
 		}
@@ -359,7 +365,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public List<SelectItem> getPaypals() throws ManagerBeanException {
-		paypals=null;
+		paypals = null;
 		if (paypals == null) {
 			refreshPaypals();
 		}
@@ -370,9 +376,8 @@ public class EcconfigController extends BasicController {
 		this.paypals = paypals;
 	}
 
-	
 	public List<SelectItem> getTariffs() throws ManagerBeanException {
-		tariffs=null;
+		tariffs = null;
 		if (tariffs == null) {
 			refreshTariffs();
 		}
@@ -433,16 +438,15 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void paintHeader(OutputStream out, Object data) throws IOException {
-		if (getHeaderImage()!=null) {
+		if (getHeaderImage() != null) {
 			out.write(getHeaderImage().getData());
 		}
 	}
-	
-	public void deleteHeader(ActionEvent e)   {
+
+	public void deleteHeader(ActionEvent e) {
 		setHeaderImage(null);
 	}
-		
-	
+
 	public void leftBannerUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
@@ -460,16 +464,17 @@ public class EcconfigController extends BasicController {
 		}
 	}
 
-	public void paintLeftBanner(OutputStream out, Object data) throws IOException {
+	public void paintLeftBanner(OutputStream out, Object data)
+			throws IOException {
 		if (getLeftBanner() != null) {
 			out.write(getLeftBanner().getData());
 		}
 	}
-	
-	public void deleteLeftBanner(ActionEvent e)   {
+
+	public void deleteLeftBanner(ActionEvent e) {
 		setLeftBanner(null);
 	}
-	
+
 	public void rightBannerUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
@@ -487,16 +492,17 @@ public class EcconfigController extends BasicController {
 		}
 	}
 
-	public void paintRightBanner(OutputStream out, Object data) throws IOException {
+	public void paintRightBanner(OutputStream out, Object data)
+			throws IOException {
 		if (getRightBanner() != null) {
 			out.write(getRightBanner().getData());
 		}
 	}
-	
-	public void deleteRightBanner(ActionEvent e)   {
+
+	public void deleteRightBanner(ActionEvent e) {
 		setRightBanner(null);
 	}
-	
+
 	public void welcomeBannerUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
@@ -514,66 +520,70 @@ public class EcconfigController extends BasicController {
 		}
 	}
 
-	public void paintWelcomeBanner(OutputStream out, Object data) throws IOException {
+	public void paintWelcomeBanner(OutputStream out, Object data)
+			throws IOException {
 		if (getWelcomeBanner() != null) {
 			out.write(getWelcomeBanner().getData());
 		}
 	}
-	
-	public void deleteWelcomeBanner(ActionEvent e)   {
+
+	public void deleteWelcomeBanner(ActionEvent e) {
 		setWelcomeBanner(null);
 	}
-		
-	public void getLoginState(ActionEvent e){	
-		
-		setLogin(((Ecconfig)this.getTo()).getShowLogin()==LoginType.NEVER);		
-		if(this.login==true){
-			((Ecconfig)this.getTo()).setCommerce(false);
+
+	public void getLoginState(ActionEvent e) {
+
+		setLogin(((Ecconfig) this.getTo()).getShowLogin() == LoginType.NEVER);
+		if (this.login == true) {
+			((Ecconfig) this.getTo()).setCommerce(false);
 		}
 	}
-	
-	public void getShowPriceState(ActionEvent e){	
-		
-		setShowPrice(((Ecconfig)this.getTo()).getPrice()==ShowPrice.NO);		
-		if(this.showPrice==true){
-			((Ecconfig)this.getTo()).setDiscount(DiscountFormat.NO);
-			((Ecconfig)this.getTo()).setTaxInPrice(TaxType.NO);
+
+	public void getShowPriceState(ActionEvent e) {
+
+		setShowPrice(((Ecconfig) this.getTo()).getPrice() == ShowPrice.NO);
+		if (this.showPrice == true) {
+			((Ecconfig) this.getTo()).setDiscount(DiscountFormat.NO);
+			((Ecconfig) this.getTo()).setTaxInPrice(TaxType.NO);
 		}
 	}
-	
-	
+
 	@Override
 	public void onSelectFirst(ActionEvent event) {
 		// TODO Auto-generated method stub
 		super.onSelectFirst(event);
-		setShowPrice(((Ecconfig)this.getTo()).getPrice()==ShowPrice.NO);
-		setLogin(((Ecconfig)this.getTo()).getShowLogin()==LoginType.NEVER);
+		setShowPrice(((Ecconfig) this.getTo()).getPrice() == ShowPrice.NO);
+		setLogin(((Ecconfig) this.getTo()).getShowLogin() == LoginType.NEVER);
 	}
-	
-	
-	public String getDomain(){
+
+	public String getDomain() {
 		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
 		return user.getDomain();
 	}
-	
-	public String getUrl(){
-		StringBuffer url = new StringBuffer( "http://aon." );
-		url.append( getDomain() );
+
+	public String getUrl() {
+		StringBuffer url = new StringBuffer("http://aon.");
+		url.append(getDomain());
 		FacesContext context = FacesContext.getCurrentInstance();
-		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-		if ( request.getRemotePort() != 80 ) {
-			url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+		HttpServletRequest request = (HttpServletRequest) context
+				.getExternalContext().getRequest();
+		if (request.getRemotePort() != 80) {
+			url.append(":").append(String.valueOf(request.getLocalPort()));
 		}
-		url.append( "/aon-ecommerce" );
-		url.append( "?aonEbackoffice=true" );
-		return url.toString();	
+		url.append("/aon-ecommerce");
+		url.append("?aonEbackoffice=true");
+		return url.toString();
 	}
-	
+
 	public boolean getEcommerceParam() throws ManagerBeanException {
-		IManagerBean param= BeanManager.getManagerBean(ApplicationParameter.class);
+		IManagerBean param = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(param.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME),"EC_SALES_ALLOWED");
-		return Boolean.parseBoolean(((ApplicationParameter)param.getList(criteria).get(0)).getValue());
-		
+		if  (param.getList(criteria).isEmpty()|| ((ApplicationParameter) param.getList(criteria).get(0)).getValue() == "false")   {
+			return false;
+		} else if (((ApplicationParameter) param.getList(criteria).get(0)).getValue().equals("true")) {
+			return true;
+		} else
+			return false;
 	}
 }

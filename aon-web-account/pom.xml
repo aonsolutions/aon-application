@@ -9,20 +9,20 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>4.3.7</version>
+	<version>4.4.2</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
 		<finalName>aon-account</finalName>
 	</build>
 	<properties>
-		<dbVersion>4.7.0</dbVersion>
+		<dbVersion>4.8.1</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.accounting</artifactId>
-			<version>4.9.0</version>
+			<version>4.12.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.5.0</version>
+			<version>4.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -50,43 +50,43 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>4.5.2</version>
+			<version>4.6.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>4.2.7</version>
+			<version>4.3.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.11.1</version>
+			<version>4.14.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.5.0</version>
+			<version>4.7.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.6.2</version>
+			<version>4.8.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>4.14.1</version>
+			<version>4.16.0</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -102,19 +102,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>4.0.2</version>
+			<version>4.0.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>4.2.0</version>
+			<version>4.2.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.0.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -130,7 +130,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.3.2</version>
+			<version>4.5.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -142,7 +142,7 @@
 		<dependency>
 			<groupId>com.sun.facelets</groupId>
 			<artifactId>jsf-facelets</artifactId>
-			<version>1.1.14</version>
+			<version>1.1.15</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
