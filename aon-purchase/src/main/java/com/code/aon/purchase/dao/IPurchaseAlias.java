@@ -157,10 +157,16 @@ public interface IPurchaseAlias {
 	String  PURCHASE_WITHHOLDING = PURCHASE_ENTRY.getAliasNames()[11];
 
 	/** 
+	* Alias value: Purchase_supplierSegment_id
+	* Hibernate value: Purchase.supplierSegment.id
+	*/
+	String  PURCHASE_SUPPLIER_SEGMENT_ID = PURCHASE_ENTRY.getAliasNames()[12];
+
+	/** 
 	* Alias value: Purchase_workPlace_id
 	* Hibernate value: Purchase.workPlace.id
 	*/
-	String  PURCHASE_WORK_PLACE_ID = PURCHASE_ENTRY.getAliasNames()[12];
+	String  PURCHASE_WORK_PLACE_ID = PURCHASE_ENTRY.getAliasNames()[13];
 
 
 }

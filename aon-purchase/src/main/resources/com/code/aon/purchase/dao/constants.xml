@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.purchase.Purchase" sqlName="purchase">
-		<alias names="id,documentType,series,number,supplier_id,discountExpression,issueDate,payMethod_id,securityLevel,status,supplier_name,withholding,workPlace_id" />
-		<hibernate names="id,documentType,series,number,supplier.id,discountExpression,issueDate,payMethod.id,securityLevel,status,supplier.name,withholding,workPlace.id" />
+		<alias names="id,documentType,series,number,supplier_id,discountExpression,issueDate,payMethod_id,securityLevel,status,supplier_name,withholding,supplierSegment_id,workPlace_id" />
+		<hibernate names="id,documentType,series,number,supplier.id,discountExpression,issueDate,payMethod.id,securityLevel,status,supplier.name,withholding,supplierSegment.id,workPlace.id" />
 	</bean>
 </dao>

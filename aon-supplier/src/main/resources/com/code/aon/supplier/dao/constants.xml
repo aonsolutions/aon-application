@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.supplier.Supplier" sqlName="supplier">
-		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_surname,registry_type,scope_id,status,withholding,transaction" />
-		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.surname,registry.type,scope.id,status,withholding,transaction" />
+		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_surname,registry_type,scope_id,status,supplierSegment_id,withholding" />
+		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.surname,registry.type,scope.id,status,supplierSegment.id,withholding" />
 	</bean>
 </dao>

@@ -23,8 +23,6 @@ public class SalesControllerListener extends ControllerAdapter {
 		((Sales)controller.getTo()).setStatus(SalesStatus.PENDING);
 		((Sales)controller.getTo()).setDocumentType(DocumentType.NORMAL);
 		controller.setAddresses(null);
-		controller.setDefaultPayMethod(null);
-		controller.resetSalesPayMethod();
 	}
 
 	@Override
@@ -32,10 +30,8 @@ public class SalesControllerListener extends ControllerAdapter {
 		SalesController controller = (SalesController)event.getController();
 		try {
 			controller.loadAddresses(((Sales)controller.getTo()).getCustomer().getRegistry().getId());
-			controller.loadDefaultPayMethod(((Sales)controller.getTo()).getCustomer().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
 	}
-
 }

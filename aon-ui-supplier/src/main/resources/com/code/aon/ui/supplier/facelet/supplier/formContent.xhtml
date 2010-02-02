@@ -6,10 +6,21 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+
 	<ui:include
 		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>
+
+	<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
+		<aon:outputLabel for="Supplier_supplierSegment_id"
+			value="#{bundle.aon_segment}" />
+		<aon:selectOneMenu id="Supplier_supplierSegment_id"
+			value="#{controller.to.supplierSegment}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{supplierCollections.supplierSegments}" />
+		</aon:selectOneMenu>
+	</c:if>
 
 	<aon:outputLabel for="Supplier_scope_id" value="#{bundle.aon_scope}" />
 	<aon:selectOneMenu id="Supplier_scope_id" value="#{controller.to.scope}">
@@ -17,20 +28,14 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Supplier_status" value="#{bundle.aon_status}" />
-	<aon:selectOneRadio id="Supplier_status" value="#{controller.to.status}">
+	<aon:selectOneMenu id="Supplier_status" value="#{controller.to.status}">
 		<f:selectItems value="#{supplierCollections.supplierStatuses}" />
-	</aon:selectOneRadio>
+	</aon:selectOneMenu>
 
-	<c:if test="#{aonConfiguration.bean.supplier.showTaxInfoData}">
-		<aon:outputLabel for="Supplier_withholding" value="#{bundle.aon_retention}" />
-		<aon:selectBooleanCheckbox id="Supplier_withholding" 
-			value="#{controller.to.withholding}" />
-
-		<aon:outputLabel for="Supplier_transaction" value="#{supplierBundle.supplier_transaction_type}" />
-		<aon:selectOneRadio id="Supplier_transaction" value="#{controller.to.transaction}">
-			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
-		</aon:selectOneRadio>
-	</c:if>
+	<aon:outputLabel for="Supplier_withholding"
+		value="#{bundle.aon_retention}" />
+	<aon:selectBooleanCheckbox id="Supplier_withholding"
+		value="#{controller.to.withholding}" />
 
 </ui:composition>
 

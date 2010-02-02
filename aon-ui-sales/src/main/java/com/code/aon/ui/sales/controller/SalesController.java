@@ -1,6 +1,5 @@
 package com.code.aon.ui.sales.controller;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,27 +13,17 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.Bank;
-import com.code.aon.config.BankAccount;
-import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
-import com.code.aon.finance.Invoice;
-import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
-import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.sales.Sales;
-import com.code.aon.sales.bridge.DeliveryManager;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -42,53 +31,23 @@ import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.registry.util.RegistryValidationManager;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.DeliveryDetailType;
+import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 /**
  * Controller used in the sales maintenance.
  */
 public class SalesController extends BasicController {
 
-	private final String DELIVERY_CONTROLLER = "delivery";
-	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
-
 	private List<SelectItem> addresses;
-	private Boolean defaultPayMethod;
-	private IPriceStrategy priceStrategy;
-	private RegistryValidationManager vm;
-	private boolean showDeliveryWindow;
-	private String deliverySeries;
-	private int deliveryNumber;
-	private Date deliveryDate;
-	private Warehouse deliveryWarehouse;
-	private boolean showInvoiceWindow;
-	private String invoiceSeries;
-	private int invoiceNumber;
-	private Date invoiceDate;
-	private Warehouse invoiceWarehouse;
-	
-    public List<SelectItem> getAddresses() {
-		return addresses;
-	}
-	
-	public void setAddresses(List<SelectItem> addresses) {
-		this.addresses = addresses;
-	}
-	
-	public Boolean getDefaultPayMethod() {
-		return defaultPayMethod;
-	}
 
-	public void setDefaultPayMethod(Boolean defaultPayMethod) {
-		this.defaultPayMethod = defaultPayMethod;
-		if (defaultPayMethod != null && defaultPayMethod) {
-			resetSalesPayMethod();
-		}
-	}
+	private IPriceStrategy priceStrategy;
+	
+	private CustomerValidationManager cvm;
 	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -97,91 +56,20 @@ public class SalesController extends BasicController {
 		return priceStrategy;
 	}
 
-	private RegistryValidationManager getRegistryValidationManager() {
-		if (vm == null) {
-			vm = new CustomerValidationManager(); 
+	private CustomerValidationManager getCustomerValidationManager() {
+		if (cvm == null) {
+			cvm = new CustomerValidationManager(); 
 		}
-		return vm;
+		return cvm;
 	}
 	
-	public boolean isShowDeliveryWindow() {
-		return showDeliveryWindow;
-	}
-
-	public void setShowDeliveryWindow(boolean value) {
-		this.showDeliveryWindow = value;
-	}
-	
-	public String getDeliverySeries() {
-		return deliverySeries;
-	}
-
-	public void setDeliverySeries(String deliverySeries) {
-		this.deliverySeries = deliverySeries;
-	}
-
-	public int getDeliveryNumber() {
-		return deliveryNumber;
-	}
-
-	public void setDeliveryNumber(int deliveryNumber) {
-		this.deliveryNumber = deliveryNumber;
-	}
-
-	public Date getDeliveryDate() {
-		return deliveryDate;
-	}
-
-	public void setDeliveryDate(Date deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
-
-	public Warehouse getDeliveryWarehouse() {
-		return deliveryWarehouse;
-	}
-
-	public void setDeliveryWarehouse(Warehouse deliveryWarehouse) {
-		this.deliveryWarehouse = deliveryWarehouse;
-	}
-
-	public boolean isShowInvoiceWindow() {
-		return showInvoiceWindow;
-	}
-
-	public void setShowInvoiceWindow(boolean value) {
-		this.showInvoiceWindow = value;
-	}
-	
-	public String getInvoiceSeries() {
-		return invoiceSeries;
-	}
-
-	public void setInvoiceSeries(String invoiceSeries) {
-		this.invoiceSeries = invoiceSeries;
-	}
-
-	public int getInvoiceNumber() {
-		return invoiceNumber;
-	}
-
-	public void setInvoiceNumber(int invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
-
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
-
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
-
-	public Warehouse getInvoiceWarehouse() {
-		return invoiceWarehouse;
-	}
-
-	public void setInvoiceWarehouse(Warehouse invoiceWarehouse) {
-		this.invoiceWarehouse = invoiceWarehouse;
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		Series series = SeriesNumberUtil.obtainSeries((String)event.getNewValue());
+		if (this.getTo() != null) {
+			((Sales)this.getTo()).setNumber(SeriesNumberUtil.obtainNumber((String)event.getNewValue(), StringUtils.capitalize(this.getBeanName())));
+			((Sales)this.getTo()).setSecurityLevel((series!=null)?series.getSecurityLevel():null);
+//			((Sales)this.getTo()).setWorkPlace((series!=null)?series.getWorkPlace():null);
+		}
 	}
 
 	public boolean isPending(){
@@ -192,49 +80,15 @@ public class SalesController extends BasicController {
 		return false;
 	}
 
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
-		if (this.getTo() != null) {
-			((Sales)this.getTo()).setNumber(number);
-			((Sales)this.getTo()).setSecurityLevel(securityLevel);
-		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
-
-	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
-	}
-
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
-			isBlocked(customer);
+			isBlocked(customer); //Sacar la ventanita de los bloqueos. REVISAR
 			((Sales)this.getTo()).setCustomer(customer);
-			((Sales)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
-			loadDefaultPayMethod(customer.getId(), false);
 		} else {
 			setAddresses(null);
 		}
-	}
-
-	private boolean isBlocked(Customer customer) {
-		return getRegistryValidationManager().isBlocked(customer);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -257,6 +111,14 @@ public class SalesController extends BasicController {
 		this.addresses = addresses;
 	}
 
+    public List<SelectItem> getAddresses() {
+		return addresses;
+	}
+	
+	public void setAddresses(List<SelectItem> addresses) {
+		this.addresses = addresses;
+	}
+	
 	public int getAddressCount() {
 		if (addresses != null){
 			return addresses.size();
@@ -264,36 +126,6 @@ public class SalesController extends BasicController {
 		return 0;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
-		if (id != null) {
-			if (((Sales)this.getTo()).getPayMethod() != null && ((Sales)this.getTo()).getPayMethod().getId() != null) {
-				setDefaultPayMethod(false);
-			} else {
-				if (forceDefault) {
-					setDefaultPayMethod(true);
-				} else {
-					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
-					setDefaultPayMethod(iter.hasNext());
-				}
-			}
-		}
-	}
-
-	public void resetSalesPayMethod() {
-		Sales to = (Sales)this.getTo();
-		to.setPayMethod(new PayMethod());
-		to.setNumberOfPayments(1);
-		to.setDaysToFirstPayment(0);
-		to.setDaysBetweenPayments(0);
-		to.setPaymentDays("");
-		to.setBank(new Bank());
-		to.setBankAccount(new BankAccount());
-	}
-
 	public void sellerData(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Seller seller = (Seller)event.getNewValue();
@@ -309,74 +141,88 @@ public class SalesController extends BasicController {
 		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), ((Sales)getTo()).getCustomer());
 	}
 
-	public double getSalesTotalPrice() throws ManagerBeanException {
-		Sales sales = (Sales)this.getModel().getRowData();
-		return getPriceStrategy().getTotalPrice(sales, sales.getCustomer());
+	/*
+    public void onReport(ActionEvent event) {
+        ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
+        manager.setReportKey("sales");
+        manager.setOutputFormat(OutputFormat.PDF);
+    }
+    */
+
+	private boolean isBlocked(Customer customer) {
+		return getCustomerValidationManager().isBlocked(customer);
 	}
 
-	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
-		Sales to = (Sales)this.getTo();
-		setDeliverySeries(to.getSeries());
-		setDeliveryNumber(obtainMaxDeliveryNumber(to.getSeries()));
-		setDeliveryDate(new Date());
-	}
+	/***************************************************************************************
+	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
+	 ***************************************************************************************/
 
-	public void onDeliverySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setDeliveryNumber(obtainMaxDeliveryNumber((String)event.getNewValue()));
-	}
+	public void createDelivery(ActionEvent event) throws ManagerBeanException {
+		Sales sales = (Sales)getTo();
+		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 
-	private int obtainMaxDeliveryNumber(String seriesId) {
-		return SeriesNumberUtil.obtainNumber(seriesId, "Delivery");
-	}
+		Delivery delivery = new Delivery();
+		delivery.setSeries(sales.getSeries());
+		delivery.setNumber(SeriesNumberUtil.obtainNumber(sales.getSeries(), "Delivery"));
+		delivery.setCustomer(sales.getCustomer());
+		delivery.setRaddress(sales.getShippingAddress());
+		delivery.setIssueTime(sales.getIssueDate());
+		delivery.setSecurityLevel(sales.getSecurityLevel());
+		delivery.setStatus(DeliveryStatus.PENDING);
+		delivery = (Delivery)deliveryBean.insert(delivery);
 
-	public void onDelivery(ActionEvent event) throws ManagerBeanException {
-		setShowDeliveryWindow(false);
+		Iterator iterator = sales.getDetailList().iterator();
+		while (iterator.hasNext()) {
+			SalesDetail salesDetail = (SalesDetail)iterator.next();
 
-		Sales to = (Sales)this.getTo();
-		DeliveryManager deliveryManager = new DeliveryManager();
-		Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse(), DeliveryDetailType.MANUAL);
+			DeliveryDetail deliveryDetail = new DeliveryDetail();
+			deliveryDetail.setDelivery(delivery);
+			deliveryDetail.setItem(salesDetail.getItem());
+			deliveryDetail.setDescription(salesDetail.getDescription());
+			deliveryDetail.setWarehouse(obtainGenericWarehouse());
+			deliveryDetail.setQuantity(salesDetail.getQuantity());
+			deliveryDetail.setPrice(salesDetail.getPrice());
+			deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
+			deliveryDetail.setSalesDetail(salesDetail);
+			deliveryDetailBean.insert(deliveryDetail);
+		}
 
-		IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER);
+//		sales.setPos(null);
+		sales.setStatus(SalesStatus.CLOSED);
+		salesBean.update(sales);
+
+		IController deliveryController = FormUtil.getController("delivery");
 		deliveryController.clearCriteria();
-		deliveryController.getCriteria().addEqualExpression(deliveryController.getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
+		deliveryController.getCriteria().addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
 		deliveryController.onSearch(null);
-		deliveryController.getModel().setRowIndex(0);
-		deliveryController.onSelect(null);
 	}
 
-	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
-		Sales to = (Sales)this.getTo();
-		setInvoiceSeries(to.getSeries());
-		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
-		setInvoiceDate(new Date());
+	private Warehouse obtainGenericWarehouse() {
+		Warehouse warehouse = new Warehouse();
+		warehouse.setId(1);
+		return warehouse;
 	}
 
-	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setInvoiceNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
+	/***************************************************************************************
+	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
+	 ***************************************************************************************/
+
+	// ***************************************	
+	public void sendFarsaMail(ActionEvent event ) {
+		Sales sales = (Sales)getTo();
+		String email = "cliente@esferalia.com";
+		try {
+			email = sales.getCustomer().getRegistry().getEmail().getValue(); 
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+		}	
+		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
+				email + "." +
+				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
+				);
 	}
-
-	private int obtainMaxInvoiceNumber(String seriesId) {
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
-	}
-
-	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		setShowInvoiceWindow(false);
-
-		Sales to = (Sales)this.getTo();
-		int deliveryNumber = obtainMaxDeliveryNumber(getInvoiceSeries());
-		DeliveryManager deliveryManager = new DeliveryManager();
-		Delivery delivery = deliveryManager.salesDelivery(to, getInvoiceSeries(), deliveryNumber, getInvoiceDate(), getInvoiceWarehouse(), DeliveryDetailType.AUTOMATIC);
-		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(delivery, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
-
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
-		invoiceController.clearCriteria();
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(null);
-		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(null);
-	}
+	// ***************************************
 
 }

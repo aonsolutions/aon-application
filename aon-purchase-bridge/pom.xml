@@ -9,16 +9,32 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.account</artifactId>
+	<artifactId>aon.purchase.bridge</artifactId>
 	<version>4.0.2</version>
-	<description>AON ACCOUNT</description>
-	<name>AON-ACCOUNT</name>
+	<description>AON PURCHASE BRIDGE</description>
+	<name>AON PURCHASE BRIDGE</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.6.0</version>
+			<version>3.5.0</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.purchase</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.warehouse</artifactId>
+			<version>4.7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_09</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
