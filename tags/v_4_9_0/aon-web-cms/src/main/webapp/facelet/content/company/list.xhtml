@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="companyList">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.company}" />
+				<ui:param name="controller" value="#{company}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="home"
+						value="#{bundle.aon_home}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+					<aon:commandButton id="activities_link"
+						value="#{appBundle.activity}"
+						action="activity_list"
+						actionListener="#{activity.onSearch}"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{activity.onInit}" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>	
+							
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{company}" />
+					<ui:define name="columns">			
+			
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.company_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.company_telephone}" />
+							</f:facet>
+							<aon:outputText value="#{to.telephone}" />
+						</aon:column>
+
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+		</aon:form>
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

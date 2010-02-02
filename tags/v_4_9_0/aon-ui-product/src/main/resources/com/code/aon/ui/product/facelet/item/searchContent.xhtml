@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
+	<aon:inputText id="Item_product_code" size="15"
+		valueChangeListener="#{controller.addExpression}"
+		onblur="toUpperCase(this);" />
+
+	<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+		<aon:outputLabel for="Item_barcode" value="#{productBundle.product_barcode}" />
+		<aon:inputText id="Item_barcode" size="15"
+			valueChangeListener="#{controller.addExpression}" />
+	</c:if>
+
+	<aon:outputLabel for="Item_product_name"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="Item_product_name" size="50"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Item_product_category_id"
+		value="#{productBundle.product_category}" />
+	<aon:selectOneMenu id="Item_product_category_id"
+		value="#{productCollections.category}"
+		valueChangeListener="#{controller.addIdEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{productCollections.categories}" />
+	</aon:selectOneMenu>
+	
+	<c:if test="#{aonConfiguration.bean.product.showBrand}">
+		<aon:outputLabel for="Item_product_brand_id"
+			value="#{productBundle.product_brand}" />
+		<aon:selectOneMenu id="Item_product_brand_id"
+			value="#{productCollections.brand}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" itemDisabled="true" />
+			<f:selectItems value="#{productCollections.brands}" />
+		</aon:selectOneMenu>
+	</c:if>
+
+	<c:if test="#{aonConfiguration.bean.product.showStock}">
+		<aon:outputLabel for="Item_product_inventoriable"
+			value="#{productBundle.product_inventoriable}" />
+		<aon:selectOneMenu id="Item_product_inventoriable"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" itemValue="#{null}" />
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneMenu>
+	</c:if>
+
+	<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
+		<aon:outputLabel for="Item_internet"
+			value="#{productBundle.product_internet}" />
+		<aon:selectOneMenu id="Item_internet"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" itemValue="#{null}" />
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneMenu>
+	</c:if>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{itemSearch.itemStatuses}">
+		<f:selectItems value="#{productCollections.productStatuses}"/>
+	</aon:selectManyCheckbox>							
+
+</ui:composition>

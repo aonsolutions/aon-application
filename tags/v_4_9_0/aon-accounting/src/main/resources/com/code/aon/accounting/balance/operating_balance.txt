@@ -1,0 +1,64 @@
+A|A OPERACIONES CONTINUADAS|A.T4|0|true|true|true|false|true
+A.1|1. Importe neto de la cifra de negocios.|A.1.A,A.1.B|1|true|true|true|false|true
+A.1.A|a) Ventas.|700,701,702,703,704,(706),(708),(709)|2|false|false|true|false|true
+A.1.B|b) Prestaciones de servicios.|705|3|false|false|true|false|true
+A.2|2. Variación de existencias de productos terminados y en curso de fabricación.|(6930),71,7930|4|true|false|true|false|true
+A.3|3. Trabajos realizados por la empresa para su activo.|73|5|true|false|true|false|true
+A.4|4. Aprovisionamientos.|A.4.A,A.4.B,A.4.C,A.4.D|6|true|true|true|false|true
+A.4.A|a) Consumo de mercaderías.|(600),6060,6080,6090,610|7|false|false|true|false|true
+A.4.B|b) Consumo de materias primas y otras materias consumibles.|(601),(602),6061,6062,6081,6082,6091,6092,611,612|8|false|false|true|false|true
+A.4.C|c) Trabajos realizados por otras empresas.|(607)|9|false|false|true|false|true
+A.4.D|d) Deterioro de mercaderías, materias primas y otros aprovisionamientos.|(6931),(6932),(6933),7931,7932,7933|10|false|false|true|false|true
+A.5|5. Otros ingresos de explotación.|A.5.A,A.5.B|11|true|true|true|false|true
+A.5.A|a) Ingresos accesorios y otros de gestión corriente.|75|12|false|false|true|false|true
+A.5.B|b) Subvenciones de explotación incorporadas al resultado del ejercicio.|740,747|13|false|false|true|false|true
+A.6|6. Gastos de personal.|A.6.A,A.6.B,A.6.C|14|true|true|true|false|true
+A.6.A|a) Sueldos, salarios y asimilados.|(640),(641),(6450)|15|false|false|true|false|true
+A.6.B|b) Cargas sociales.|(642),(643),(649)|16|false|false|true|false|true
+A.6.C|c) Provisiones.|(644),(6457),7950,7957|17|false|false|true|false|true
+A.7|7. Otros gastos de explotación.|A.7.A,A.7.B,A.7.C,A.7.D|18|true|true|true|false|true
+A.7.A|a) Servicios exteriores.|(62)|19|false|false|true|false|true
+A.7.B|b) Tributos.|(631),(634),636,639|20|false|false|true|false|true
+A.7.C|c) Pérdidas, deterioro y variación de provisiones por operaciones comerciales.|(650),(694),(695),794,7954|21|false|false|true|false|true
+A.7.D|d) Otros gastos de gestión corriente.|(651),(659)|22|false|false|true|false|true
+A.8|8. Amortización del inmovilizado.|(68)|23|true|false|true|false|true
+A.9|9. Imputación de subvenciones de inmovilizado no financiero y otras.|746|24|true|false|true|false|true
+A.10|10. Excesos de provisiones.|7951,7952,7955,7956|25|true|false|true|false|true
+A.11|11. Deterioro y resultado por enajenaciones del inmovilizado.|A.11.A,A.11.B|26|true|true|true|false|true
+A.11.A|a) Deterioros y pérdidas.|(690),(691),(692),790,791,792|27|false|false|true|false|true
+A.11.B|b) Resultados por enajenaciones y otras.|(670),(671),(672),770,771,772|28|false|false|true|false|true
+A.X|Otros Resultados.|678,778|29|true|false|true|false|true
+|||30|false|false|true|false|true
+A.T1|A.1) RESULTADO DE EXPLOTACIÓN (1+2+3+4+5+6+7+8+9+10+11+12)|A.1,A.2,A.3,A.4,A.5,A.6,A.7,A.8,A.9,A.10,A.11,A.X|31|true|true|true|false|true
+|||32|false|false|true|false|true
+A.12|12. Ingresos financieros.|A.12.A,A.12.B|33|true|true|true|false|true
+A.12.A|a) De participaciones en instrumentos de patrimonio.|A.12.A.1,A.12.A.2|34|true|true|true|false|true
+A.12.A.1|a1) En empresas del grupo y asociadas.|7600,7601|35|false|false|true|false|true
+A.12.A.2|a2) En terceros.|7602,7603|36|false|false|true|false|true
+A.12.B|b) De valores negociables y otros instrumentos financieros.|A.12.B.1,A.12.B.2|37|true|true|true|false|true
+A.12.B.1|b1) De empresas del grupo y asociadas.|7610,7611,76200,76201,76210,76211|38|false|false|true|false|true
+A.12.B.2|b2) De terceros.|7612,7613,76202,76203,76212,76213,767,769|39|false|false|true|false|true
+A.13|13. Gastos financieros.|A.13.A,A.13.B,A.13.C|40|true|true|true|false|true
+A.13.A|a) Por deudas con empresas del grupo y asociadas.|(6610),(6611),(6615),(6616),(6620),(6621),(6640),(6641),(6650),(6651),(6654),(6655)|41|false|false|true|false|true
+A.13.B|b) Por deudas con terceros.|(6612),(6613),(6617),(6618),(6622),(6623),(6624),(6642),(6643),(6652),(6653),(6656),(6657),(669)|42|false|false|true|false|true
+A.13.C|c) Por actualización de provisiones.|(660)|43|false|false|true|false|true
+A.14|14. Variación de valor razonable en instrumentos financieros.|A.14.A,A.14.B|44|true|true|true|false|true
+A.14.A|a) Cartera de negociación y otros.|(6630),(6631),(6633),7630,7631,7633|45|false|false|true|false|true
+A.14.B|b) Imputación al resultado del ejercicio por activos financieros disponibles para la venta.|(6632),7632|46|false|false|true|false|true
+A.15|15. Diferencias de cambio.|(668),768|47|true|false|true|false|true
+A.16|16. Deterioro y resultado por enajenaciones de instrumentos financieros.|A.16.A,A.16.B|48|true|true|true|false|true
+A.16.A|a) Deterioros y pérdidas.|(696),(697),(698),(699),796,797,798,799|49|false|false|true|false|true
+A.16.B|b) Resultados por enajenaciones y otras.|(666),(667),(673),(675),766,773,775|50|false|false|true|false|true
+|||51|false|false|true|false|true
+A.T2|A.2) RESULTADO FINANCIERO (12+13+14+15+16)|A.12,A.13,A.14,A.15,A.16|52|true|true|true|false|true
+|||53|false|false|true|false|true
+A.T3|A.3) RESULTADO ANTES DE IMPUESTOS (A.1+A.2)|A.T1,A.T2|54|true|true|true|false|true
+|||55|false|false|true|false|true
+A.17|17. Impuestos sobre beneficios.|(6300),6301,(633),638|56|true|false|true|false|true
+|||57|false|false|true|false|true
+A.T4|A.4) RESULTADO DEL EJ. PROCEDENTE DE OP. CONTINUADAS (A.3+17)|A.T3,A.17|58|true|true|true|false|true
+|||59|false|false|true|false|true
+B|B) OPERACIONES INTERRUMPIDAS|B.18|60|true|true|true|false|true
+B.18|18. Resultado del ejercicio procedente de operaciones interrumpidas neto de impuestos.||61|false|false|true|false|true
+|||62|false|false|true|false|true
+A.5|A.5) RESULTADO DEL EJERCICIO (A.4+18)|A.T4,B.18|63|true|true|true|false|true

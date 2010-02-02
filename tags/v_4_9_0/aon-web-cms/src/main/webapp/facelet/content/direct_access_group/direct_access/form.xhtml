@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="directAccessForm">
+		
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.direct_access}" />
+				<ui:param name="controller" value="#{direct_access}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="categories"
+						value="#{appBundle.direct_access_group}"
+						action="direct_access_group_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{direct_access_group.onSearch}" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="DirectAccess_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="DirectAccess_alias"
+						required="true" size="32" maxlength="32"
+						value="#{direct_access.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+
+					<aon:outputLabel for="DirectAccess_type"
+						value="#{appBundle.direct_access_type}" />
+					<aon:selectOneMenu id="DirectAccess_type" 
+						value="#{direct_access.to.type}" >
+						<f:selectItems value="#{collections.pageTypes}">
+						</f:selectItems>
+							<a4j:support 
+								event="onchange"  
+								ajaxSingle="true" 
+								reRender="main_panel" />
+					</aon:selectOneMenu> 
+
+					<aon:outputLabel for="DirectAccess_level"
+						value="#{appBundle.direct_access_level}" 
+						rendered="#{direct_access.visibleLevel}"/>
+					<aon:selectOneMenu id="DirectAccess_level" 
+						rendered="#{direct_access.visibleLevel}" 
+						value="#{direct_access.to.level}">
+						<f:selectItems value="#{direct_access.levels}">
+						</f:selectItems>
+							<a4j:support 
+								event="onchange"  
+								ajaxSingle="true" 
+								reRender="main_panel" />
+					</aon:selectOneMenu>											
+
+					<aon:outputLabel for="DirectAccess_ident"
+						value="#{appBundle.direct_access_ident}" 
+						rendered="#{direct_access.visibleIdent}"/>
+					<aon:selectOneMenu id="DirectAccess_ident" 
+						rendered="#{direct_access.visibleIdent}" 
+						value="#{direct_access.to.ident}"
+						 partialSubmit="true">
+						<f:selectItems value="#{direct_access.idents}" />
+					</aon:selectOneMenu> 
+										
+					<aon:outputLabel for="DirectAccessDetail_url"
+						rendered="#{direct_access.visibleUrl}"
+						value="#{appBundle.direct_access_url}" />
+					<aon:inputText id="DirectAccessDetail_url"
+						rendered="#{direct_access.visibleUrl}"
+						size="80" maxlength="255"
+						value="#{direct_access.toI18n.url}" />
+
+					<aon:outputLabel for="DirectAccess_category"
+						value="#{appBundle.direct_access_group}"/>
+					<aon:selectOneMenu id="DirectAccess_category"  
+						required="true"
+						value="#{direct_access.to.directAccessGroup.id}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.directAccessGroupList}" />
+					</aon:selectOneMenu>
+	
+					<aon:outputLabel for="DirectAccessDetail_label"
+						value="#{appBundle.direct_access_label}" />
+					<aon:inputText id="DirectAccessDetail_label"
+						required="true" size="80" maxlength="255"
+						value="#{direct_access.toI18n.label}" />
+
+					<aon:outputLabel for="DirectAccessDetail_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="DirectAccessDetail_description"
+						size="80" maxlength="255"
+						value="#{direct_access.toI18n.description}" />
+
+					<aon:outputLabel 
+						value="#{appBundle.direct_access_image}" />
+					<aon:panelGroup id="thumbnail_preview">
+						<aon:graphicImage 
+							url="#{direct_access.to.image}.thumbnail" 
+							alt="#{direct_access.to.image}"/>
+		                <aon:commandLink
+		                	immediate="#{true}"
+		                	reRender="thumbnail_preview"
+		                    actionListener="#{direct_access.onDelImage}">
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+		        		</aon:commandLink>
+						<ui:include src="/facelet/content/utils/image_modal.xhtml">
+							<ui:param name="modalPanelName" value="mp2" />
+							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="listenerBean" value="#{direct_access}" />
+							<ui:param name="reRender" value="thumbnail_preview" />
+							<ui:param name="thumbnail" value="#{false}" />
+						</ui:include>
+		        	</aon:panelGroup>
+							        	
+					<aon:outputLabel for="DirectAccess_position"
+						value="#{appBundle.direct_access_position}"/>
+					<aon:inputText id="DirectAccess_position"
+						required="true" size="10" maxlength="8"
+						value="#{direct_access.to.position}" />
+					
+					<aon:outputLabel for="DirectAccess_active"
+						value="#{appBundle.direct_access_active}"/>
+					<aon:selectBooleanCheckbox id="DirectAccess_active" 
+						value="#{direct_access.to.active}" />
+					
+				</aon:panelGrid>
+			</aon:div>
+		
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,307 @@
+<?xml version="1.0"?> 
+
+<web-app version="2.4" 
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+	<!-- Resource Servlet -->
+	<servlet>
+		<servlet-name>ResourceServlet</servlet-name>
+		<servlet-class>com.code.aon.ui.resources.servlet.ResourceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ResourceServlet</servlet-name>
+		<url-pattern>/aonResource/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- JSF STANDARD CONFIGURATION -->
+    <context-param>
+		<description>State saving method: "client" or "server" (= default) See JSF Specification 2.5.2</description>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>server</param-value>
+    </context-param>
+
+	<context-param>
+		<description>Use Documents Saved as *.xhtml</description>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+ 
+	    <!-- Faces Servlet -->
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.res</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.jaas</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.jsf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.jspx</url-pattern>
+    </servlet-mapping>
+
+	<!-- JSF SUN-RI CONFIGURATION -->
+	<context-param>
+		<description>
+			Improving render phase performance. You should increase
+			response buffer (to reduce reallocations at render time)
+		</description>
+		<param-name>com.sun.faces.responseBufferSize</param-name>
+		<param-value>500000</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Defines the maximum number of serialized views stored in the
+			session. Works with server state saving.
+		</description>
+		<param-name>com.sun.faces.numberOfViewsInSession</param-name>
+		<param-value>50</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			This parameter defines the maximum number of logical views
+			to store per session. The map used to store the logical
+			views uses an LRU algorighm to keep the map from growing
+			beyone the configured value.
+		</description>
+		<param-name>com.sun.faces.numberOfLogicalViews</param-name>
+		<param-value>50</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			This parameter specifies a class that implements the
+			SerializationProvider SPI. This implementation represents a
+			hook the JSF implementation will use in order to allow the
+			use of alternate Serialization implementations. See the
+			documentation of the interface for more details
+		</description>
+		<param-name>com.sun.faces.serializationProvider</param-name>
+		<param-value>
+			org.jboss.web.jsf.integration.serialization.JBossSerializationProvider
+		</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			When true JSF makes sure all managed beans components,validators, 
+			etc can be instantiated by the runtime
+		</description>
+		<param-name>com.sun.faces.verifyObjects</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			If true then all web configuration information (context initialization 
+			parameters and environment entries) will be written to the log. This 
+			is useful during development to confirm your application is configured 
+			as expected. Valid values for this parameter are true and false
+		</description>
+		<param-name>com.sun.faces.displayConfiguration</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<!-- JSF-FACELETS CONFIGURATION -->
+
+	<context-param>
+		<description>
+			When a page is requested, what interval in seconds should 
+			the compiler check for changes. If you don't want the compiler 
+			to check for changes once the page is compiled, then use a 
+			value of -1. Setting a low refresh period helps during development 
+			to be able to edit pages in a running application.
+		</description>
+		<param-name>facelets.REFRESH_PERIOD</param-name>
+		<param-value>-1</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>facelets.SKIP_COMMENTS</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			Setting this to true will cause the FaceletViewHandler to print out debug information in an easy to use
+			screen when an error occurs during the rendering process.
+		</description>
+		<param-name>facelets.DEVELOPMENT</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Improving render phase performance. You should increase
+			response buffer (to reduce reallocations at render time)
+		</description>
+		<param-name>facelets.BUFFER_SIZE</param-name>
+		<param-value>500000</param-value>
+	</context-param>
+	<context-param>
+      <param-name>facelets.RESOURCE_RESOLVER</param-name>
+      <param-value>com.code.aon.ui.resources.TemplateResolver</param-value>
+   </context-param>
+
+	<!-- JBOSS RICH FACES CONFIGURATION -->
+	<context-param>
+		<description>
+			Is a name of a skin used in an application. It can be a
+			literal string with a skin name, or the EL expression
+			(#{...}) pointed to a String property (skin name) or a
+			property of a org.richfaces.framework.skin type. Skin in
+			last case, this instance is used as a current skin
+		</description>
+		<param-name>org.richfaces.SKIN</param-name>
+		<param-value>aon</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Is a comma-separated list of custom ViewHandler instances
+			for inserting in chain. Handlers are inserted BEFORE
+			RichFaces viewhandlers in the given order. For example, in
+			facelets application this parameter must contain
+			com.sun.facelets.FaceletViewHandler, instead of declaration
+			in facesconfig. xml
+		</description>
+		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
+		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
+	</context-param>
+	
+	<context-param>
+      <description>Define que los recursos no expiren en 100 dias</description>
+      <param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
+      <param-value>8640000</param-value>
+   </context-param>
+
+	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
+	<context-param>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+    </context-param>
+
+	<context-param>
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
+	</context-param>
+
+	<filter>
+		<display-name>RichFaces Filter</display-name>
+		<filter-name>richfaces</filter-name>
+		<filter-class>org.ajax4jsf.Filter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>richfaces</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+
+        <!-- Sessions Filter -->
+	<filter>
+		<description>Enables and Registers session for concurrent sessions</description>
+	   <filter-name>SessionFilter</filter-name>
+	   <filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SessionFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
+  	<!-- Listener, that enables Concurrent Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
+	</listener>
+ 
+	<!-- Bean Loader Listener -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.listener.BeanRegisterContextListener
+       </listener-class>
+    </listener>
+
+	<!-- Listener, that does all the startup work (configuration, init). -->
+	<listener>
+		<listener-class>
+			com.sun.faces.config.ConfigureListener
+		</listener-class>
+	</listener>
+	    
+    <context-param>
+       <param-name>config-file</param-name>
+       <param-value>/WEB-INF/conf/bean_config.xml</param-value>
+    </context-param> 
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    
+    <!-- Security Constraint -->  
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>facelet</web-resource-name>
+			<url-pattern>/facelet/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>account</web-resource-name>
+			<url-pattern>/_account/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>finance</web-resource-name>
+			<url-pattern>/finance/*</url-pattern>
+		</web-resource-collection>
+ 		<web-resource-collection>
+			<web-resource-name>jsp</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>actions</web-resource-name>
+			<url-pattern>*.jsf</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>Invitado</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<form-login-config>
+			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jaas</form-login-page>
+			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jaas</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<security-role><role-name>Invitado</role-name></security-role>
+
+	<resource-env-ref>
+	  <resource-env-ref-name>jdbc/AonEnterprise</resource-env-ref-name>
+	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+	</resource-env-ref>
+
+</web-app>

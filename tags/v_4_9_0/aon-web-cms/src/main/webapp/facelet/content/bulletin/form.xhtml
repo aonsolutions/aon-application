@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="bulletinForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.bulletin}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bulletin.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+
+	
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="bulletin_form"
+							rendered="#{!bulletin.new and cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{bulletin.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{bulletin.to!=null or bulletin.new}"
+							action="bulletin_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{bulletin.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!bulletin.new and cms.roleEditor}" 
+							immediate="true"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{bulletin.onRemove}" 
+							confirmAction="bulletin_list"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="bulletin_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{bulletin.onCancel}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width:99%;">
+	
+					<aon:panelTabSet id="bulletinTabSet">
+						<aon:panelTab id="general" label="#{appBundle.aon_content}">
+						
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputText value="#{appBundle.cms_alias}" 
+									for="alias"/>
+								<aon:inputText id="alias" 
+									required="true"
+									value="#{bulletin.to.alias}" size="40" maxlength="64" />
+		
+								<aon:outputLabel for="bulletin_publishDate"
+									value="#{appBundle.bulletin_publishDate}" />
+								<aon:selectInputDate id="bulletin_publishDate" 
+									value="#{bulletin.to.publish_date}" required="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+								
+								<aon:outputLabel for="title"
+									value="#{appBundle.bulletin_title}" />
+								<aon:inputText id="title" 
+									required="true"
+									value="#{bulletin.toI18n.title}" size="85" maxlength="255" />
+								
+								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+									<ui:param name="inputTextId" value="content" />
+									<ui:param name="inputTextValue" value="#{bulletin.toI18n.content}" />
+									<ui:param name="richTextEnabled" value="#{bulletin.richTextEnabled}" />
+								</ui:include>																	
+							
+							</aon:panelGrid>
+						</aon:panelTab>
+						
+						<aon:panelTab id="articlesTab" label="#{appBundle.bulletin_articles}"
+							rendered="#{!bulletin.new}" >
+
+							<aon:outputLabel for="BulletinArticle_publishDate"
+								value="#{appBundle.article_publishDate}" />
+							<aon:selectInputDate id="BulletinArticle_publishDate" 
+								value="#{bulletin.publishDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>								
+							
+							<aon:outputLabel for="BulletinArticle_expireDate"
+								value="#{appBundle.article_expireDate}" />
+							<aon:selectInputDate id="BulletinArticle_expireDate" 
+								value="#{bulletin.expireDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+							<aon:commandButton id="reset_articles" 
+								value="#{appBundle.bulletin_refresh_articles}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								reRender="gridToolbar,bulletin_articleData" />
+
+							<aon:div styleClass="aon-form-group">
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputLabel for="bulletin_articleData" value="#{appBundle.aon_listing}" />
+									</aon:div>
+								</aon:div>
+						
+								<aon:div>
+									<aon:div id="gridToolbar" styleClass="aon-toolbar">
+										<aon:div styleClass="aon-finding-toolbar-item-group">							
+											<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+												styleClass="aon-finding-toolbar-item aon-icon-reset"
+												accesskey="#{bundle.aon_key_new}"
+												reRender="detail_list_panel">
+												<aon:actionListener method="#{bulletin_article.onReset}" />
+											</aon:commandButton>
+									    </aon:div>
+									</aon:div>
+							
+									<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+										<ui:param name="controller" value="#{bulletin_article}" />
+										<ui:define name="columns">
+								
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.bulletin_article_article}"/>
+												</f:facet>
+												<aon:outputText value="#{to.article.alias}"
+													rendered="#{to!=bulletin_article.to}" >
+												</aon:outputText>	
+												<aon:selectOneMenu
+													required="#{true}"   
+													rendered="#{to==bulletin_article.to}"
+													value="#{to.article.id}">
+													<f:selectItem itemLabel="-" itemValue="-1" />
+													<f:selectItems value="#{bulletin.articleList}" />
+												</aon:selectOneMenu>
+												<f:facet name="footer">
+													<aon:div>
+														<aon:selectOneMenu
+															required="#{true}"   
+															rendered="#{bulletin_article.new}"
+															value="#{bulletin_article.to.article.id}">
+															<f:selectItem itemLabel="-" itemValue="-1" />
+															<f:selectItems value="#{bulletin.articleList}" />
+														</aon:selectOneMenu>
+													</aon:div>
+												</f:facet>
+											</aon:column>
+																	
+											<aon:column styleClass="aon-width-100 aon-editDataTable-numberColumn">
+												<f:facet name="header">
+													<aon:outputText for="position" value="#{appBundle.bulletin_article_position}" />
+												</f:facet>
+												<aon:outputText value="#{to.position}"
+													rendered="#{to!=bulletin_article.to}">
+												</aon:outputText>	
+												<aon:inputText value="#{bulletin_article.to.position}"
+													id="#{to.id}_position"
+													rendered="#{to==bulletin_article.to}"
+													required="#{true}" size="70" maxlength="64" />
+												<f:facet name="footer">
+													<aon:div>
+														<aon:inputText value="#{bulletin_article.to.position}"
+															id="new_position"
+															rendered="#{bulletin_article.new}"
+															required="#{true}" size="70" maxlength="64" />
+													</aon:div>
+												</f:facet>
+											</aon:column>
+	
+										</ui:define>
+									</ui:decorate>
+								</aon:div>						
+							</aon:div>
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
