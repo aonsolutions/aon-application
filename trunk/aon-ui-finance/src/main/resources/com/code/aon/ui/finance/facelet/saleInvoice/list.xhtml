@@ -51,14 +51,14 @@
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn" />
 					<ui:define name="columns">
-						<aon:column>
+						<aon:column alias="Invoice.referenceCode">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.referenceCode}" />
 						</aon:column>
 	
-						<aon:column>
+						<aon:column alias="Invoice.issueDate">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -68,7 +68,7 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column alias="Invoice.registryName">
 							<f:facet name="header">
 								<h:outputText value="#{customerBundle.customer_customer}" />
 							</f:facet>
@@ -77,14 +77,14 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column alias="Invoice.registryDocument">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_company_document}" />
 							</f:facet>
 							<aon:outputText value="#{to.registryDocument}" />
 						</aon:column>
 	
-						<aon:column>
+						<aon:column alias="Invoice.status">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
