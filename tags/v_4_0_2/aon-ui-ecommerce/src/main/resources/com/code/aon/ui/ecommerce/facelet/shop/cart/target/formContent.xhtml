@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid columns="4" dir="true" style="width:100%">
+
+		<aon:outputLabel for="Registry_document"
+			value="#{bundle.aon_company_document}" />
+		<aon:inputText id="Registry_document" maxlength="16"
+			value="#{shoppingCart.cartTarget.ecTarget.target.registry.document}"
+			size="16">
+			<f:validateLength minimum="1" maximum="16" />
+		</aon:inputText>
+
+		<aon:outputLabel value="&#160;" />
+		<aon:outputLabel value="&#160;" />
+
+		<aon:outputLabel for="Registry_name" value="#{bundle.aon_name}" />
+		<aon:inputText id="Registry_name" maxlength="64"
+			value="#{shoppingCart.cartTarget.ecTarget.target.registry.name}"
+			size="60">
+			<f:validateLength minimum="1" maximum="64" />
+		</aon:inputText>
+
+		<aon:outputLabel for="Registry_surname"
+			value="#{registryBundle.registry_surname}" />
+		<aon:inputText id="Registry_surname" maxlength="64"
+			value="#{shoppingCart.cartTarget.ecTarget.target.registry.surname}"
+			size="60">
+			<f:validateLength minimum="1" maximum="64" />
+		</aon:inputText>
+
+		<aon:outputLabel for="Company_address"
+			value="#{registryBundle.registry_address}" />
+		<aon:div>
+			<aon:div>
+				<aon:inputText id="Company_address"
+					value="#{shoppingCart.cartTarget.mainAddress.address}" size="60"
+					maxlength="128" />
+			</aon:div>
+			<aon:div>
+				<aon:inputText id="Company_address2"
+					value="#{shoppingCart.cartTarget.mainAddress.address2}" size="60"
+					maxlength="128" />
+			</aon:div>
+			<aon:div>
+				<aon:inputText id="Company_address3"
+					value="#{shoppingCart.cartTarget.mainAddress.address3}" size="60"
+					maxlength="128" />
+			</aon:div>
+		</aon:div>
+
+		<aon:outputLabel value="&#160;" />
+		<aon:outputLabel value="&#160;" />
+
+		<aon:outputLabel for="Company_address_zip"
+			value="#{registryBundle.registry_zip}" />
+		<aon:inputText id="Company_address_zip"
+			value="#{shoppingCart.cartTarget.mainAddress.zip}" size="32"
+			maxlength="16" />
+
+		<aon:outputLabel for="Company_telephone"
+			value="#{registryBundle.registry_phone}" />
+		<aon:inputText id="Company_telephone"
+			value="#{shoppingCart.cartTarget.phone.value}" size="32"
+			maxlength="64" />
+
+
+		<aon:outputLabel for="Company_address_city"
+			value="#{registryBundle.registry_city}" />
+		<aon:div>
+			<aon:inputText id="Company_address_city"
+				value="#{shoppingCart.cartTarget.mainAddress.city}" size="60"
+				maxlength="64" />
+		</aon:div>
+
+		<aon:outputLabel for="Target_advertising"
+			value="#{commercialBundle.commercial_target_advertising}" />
+		<aon:selectOneMenu id="Target_advertising" required="true"
+			value="#{shoppingCart.cartTarget.ecTarget.target.advertising}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{commercialCollections.advertisings}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="Company_address_geozone"
+			value="#{registryBundle.registry_geozone}" />
+		<aon:selectOneMenu id="Company_address_geozone"
+			value="#{shoppingCart.cartTarget.mainAddress.geozone}">
+			<f:selectItems value="#{geozoneCollections.geoTrees}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel value="&#160;" />
+		<aon:outputLabel value="&#160;" />
+
+		<aon:outputLabel value="&#160;" />
+		<aon:outputLabel value="&#160;" />
+
+		<aon:outputLabel value="&#160;" />
+		<aon:commandButton id="aonToolbar-accept" value="#{bundle.aon_accept}"
+			action="paymethod_form"
+			styleClass="aon-finding-toolbar-item aon-icon-accept"
+			accesskey="#{bundle.aon_key_accept}"
+			actionListener="#{shoppingCart.onAddTarget}" />
+	</aon:panelGrid>
+
+</ui:composition>
