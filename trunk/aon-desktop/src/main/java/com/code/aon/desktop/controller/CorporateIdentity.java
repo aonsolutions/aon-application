@@ -38,7 +38,7 @@ import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.company.Company;
 import com.code.aon.config.User;
 import com.code.aon.desktop.report.IdentityReport;
-import com.code.aon.desktop.utils.identity.n2t;
+import com.code.aon.desktop.utils.identity.Number2Text;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
@@ -327,7 +327,7 @@ public class CorporateIdentity implements ICollectionProvider{
     public void onN2T(ActionEvent event){
     	try{
 			String res;
-			n2t numero;
+			Number2Text numero;
 			String num = identityReport.getPagare_cantidad_num();
 			String decimalChar = ".";
 			if (num.lastIndexOf(",") != -1) decimalChar = ",";
@@ -336,14 +336,14 @@ public class CorporateIdentity implements ICollectionProvider{
 				String str2 = num.substring(num.lastIndexOf(decimalChar)+1);
 		        int num_ = Integer.parseInt(str1);
 		        int dec_ = Integer.parseInt(str2);
-		        numero = new n2t();
+		        numero = new Number2Text();
 		        res = numero.convertirLetras(num_) + " euros";
 		        res += " con ";
-		        res += numero.convertirLetras(dec_) + " centimos";
+		        res += numero.convertirLetras(dec_) + " céntimos";
 			}
 			else {
 		        int num_ = Integer.parseInt(num);
-		        numero = new n2t();
+		        numero = new Number2Text();
 		        res = numero.convertirLetras(num_) + " euros";
 			}
 			identityReport.setPagare_cantidad(res);
