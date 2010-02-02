@@ -863,7 +863,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>invoicePrint</value>
-		</managed-property>						
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
+		</managed-property>										
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1507,7 +1511,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate desc,Invoice_series,Invoice_number desc</value>
+			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
