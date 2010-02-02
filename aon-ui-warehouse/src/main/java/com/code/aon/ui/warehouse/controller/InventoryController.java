@@ -14,12 +14,15 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tax;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
-import com.code.aon.ui.product.util.ItemPriceProvider;
+import com.code.aon.ui.product.util.ItemCompanyTaxProvider;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
@@ -35,12 +38,18 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
  */
 public class InventoryController extends BasicController {
 	
-	/**
+    /** The BASE PRECISION. */
+    private int BASE_PRECISION = 3;
+
+    /**
 	 * The ident of the warehouse
 	 */
 	private Warehouse warehouse; 
 	
-	/**
+    /** The tax provider. */
+    private ItemCompanyTaxProvider taxProvider = new ItemCompanyTaxProvider();
+
+    /**
 	 * Inicialize stock
 	 */
 	private boolean initStock;
@@ -53,7 +62,6 @@ public class InventoryController extends BasicController {
 	/**
 	 * Price provider
 	 */
-	private ItemPriceProvider provider;
 	
 	public boolean isInitStock() {
 		return initStock;
@@ -102,10 +110,9 @@ public class InventoryController extends BasicController {
 	private void closeInventary() throws Exception{
 		HibernateUtil.setCloseSession(false);
 		HibernateUtil.setBeginTransaction(false);
+		String sessionName = HibernateUtil.getSessionFactoryName(); 
 		try{
-			HibernateUtil.beginTransaction();
-			
-			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+			HibernateUtil.beginTransaction(sessionName);
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 			IManagerBean inventoryDetailBean = BeanManager.getManagerBean(InventoryDetail.class);
@@ -126,7 +133,7 @@ public class InventoryController extends BasicController {
 			inventory.setWarehouse(warehouse);
 			inventory = (Inventory) inventoryBean.insert(inventory);
 			
-	        Session session = HibernateUtil.getSession();
+	        Session session = HibernateUtil.getSession(sessionName);
 	        Query q = session.createQuery(
 	                "select item " +
 	                "from Item as item, Product prod, ProductCategory cat " +
@@ -152,10 +159,10 @@ public class InventoryController extends BasicController {
 				}
 				inventoryDetail.setRealQuantity(total);
 				inventoryDetail.setActualQuantity(total);
-				inventoryDetail.setCost(getProvider().getInventoryBasePrice(item));
+				inventoryDetail.setCost(getInventoryBasePrice(item));
 				inventoryDetail = (InventoryDetail) inventoryDetailBean.insert(inventoryDetail);
 			}
-			HibernateUtil.commitTransaction();
+			HibernateUtil.commitTransaction(sessionName);
 			this.clearCriteria();
 			getCriteria().addEqualExpression(inventoryBean.getFieldName(IWarehouseAlias.INVENTORY_ID), inventory.getId());
 			this.onSearch(null);
@@ -163,15 +170,31 @@ public class InventoryController extends BasicController {
 			this.onSelect(null);
 		} catch (Exception e) {
 			try {
-				HibernateUtil.rollbackTransaction();
+				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
 			}
 			throw e;
 		} finally {
-			HibernateUtil.closeSession();
+			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(true);
 			HibernateUtil.setBeginTransaction(true);
 		}
+	}
+
+	private double getInventoryBasePrice(Item item) {
+		double purchasePrice = (item.getPurchasePrice() * (1 + item.getExpensesPercent() / 100)) + item.getExpensesFixed();
+		double percent = 0;
+		Iterator<?> iter = taxProvider.getTaxList(item).iterator();
+		while (iter.hasNext()) {
+		    Tax tax = (Tax)iter.next();
+		    if (!tax.getType().equals(TaxType.VAT) || taxProvider.isSurcharge()) {
+		        percent += tax.getPercentage();
+		        if (taxProvider.isSurcharge()) {
+		            percent += tax.getSurcharge();
+		        }
+		    }
+		}
+		return CommonUtil.round(purchasePrice * (1 + percent / 100), BASE_PRECISION);
 	}
 
 	/**
@@ -195,7 +218,6 @@ public class InventoryController extends BasicController {
 	 * @return true if exists a inventory with today as date
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean isInventaryDone() throws ManagerBeanException{
 		IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 		Criteria criteria = new Criteria();
@@ -233,16 +255,6 @@ public class InventoryController extends BasicController {
 		idc.setCategory(null);
 		super.onSelect(event);
 	}
-
-	/**
-	 * Returns the price provider
-	 * 
-	 * @return price provider
-	 */
-	public ItemPriceProvider getProvider() {
-	    if (provider == null) {
-			provider = new ItemPriceProvider();
-        }
-	    return provider;
-    }
 }
+
+
