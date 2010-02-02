@@ -23,6 +23,12 @@
 				<ui:param name="controller" value="#{finance}" />
 				<ui:define name="searchContent">
 
+					<aon:outputLabel for="Finance_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Finance_amount"
+						valueChangeListener="#{finance.addExpression}"
+						size="10" />
+
 					<aon:outputLabel for="Customer_lookup"
 						rendered="#{!finance.payment}"
 						value="#{customerBundle.customer_customer}" />
@@ -133,12 +139,6 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{companyCollections.companyBanks}" />
 					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Finance_amount"
-						value="#{bundle.aon_amount}" />
-					<aon:inputText id="Finance_amount"
-						valueChangeListener="#{finance.addExpression}"
-						size="10" />
 
 					<aon:outputLabel for="Finance_payMethod_id"
 						value="#{configBundle.config_pay_method}" />
