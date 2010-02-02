@@ -257,7 +257,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Delivery_issueTime desc,Delivery_series,Delivery_number desc</value>
+			<value>Delivery_issueTime desc,Delivery_series desc,Delivery_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -410,7 +410,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Income_issueTime desc,Income_series,Income_number desc</value>
+			<value>Income_issueTime desc,Income_series desc,Income_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
