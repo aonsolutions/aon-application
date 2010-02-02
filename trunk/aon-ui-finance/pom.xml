@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.9.0</version>
+			<version>4.9.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -143,7 +143,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.6.0</version>
+			<version>4.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
