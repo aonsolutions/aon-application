@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+			<h:outputText
+				value="#{loanAlias.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+		</t:div>
+	</t:div>
+
+	<t:div id="aon-scroll-area" forceId="#{true}">
+		<t:div styleClass="aon-scroll-area-internal">
+			<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+				
+				<h:outputLabel for="AlumnLoan_id" value="#{appBundle.loan_code}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="AlumnLoan_id" styleClass="aon-form-input-text"
+					value="#{loanAlias.to.id}"
+					size="16" forceId="#{true}"
+					disabledOnClientSide="true" />
+
+				<h:outputLabel for="Customer_Lookup_id-Edit" value="#{appBundle.aon_alumn}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:div>
+					<t:inputText id="Customer_Lookup_id-Edit" forceId="#{true}"
+						styleClass="aon-form-input-text" size="5" 
+						onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id-Edit','Customer_id|Customer_Lookup_id-Edit,Customer_full_name|Customer_full_name-Edit');"
+						value="#{loanAlias.to.customer.id}" />
+					<h:commandButton id="find_Customer_Lookup_id-Edit"
+						styleClass="aon-form-lookup-button" value="" immediate="true"
+						onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id-Edit,Customer_full_name|Customer_full_name-Edit');return false;" />
+					<t:inputText id="Customer_full_name-Edit" 
+						disabled="true" forceId="#{true}"
+						value="#{loanAlias.to.customer.registry.name} #{courseAlumn.to.customer.registry.surname}"
+						styleClass="aon-form-input-text-disabled" size="40" />
+				</t:div>
+
+				<h:outputLabel for="AlumnLoan_material" value="#{appBundle.loan_material}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText styleClass="aon-form-input-text" id="AlumnLoan_material"
+					value="#{loanAlias.to.material}" required="#{true}"
+					forceId="#{true}" size="70" 
+					disabledOnClientSide="false" />
+					
+				<h:outputLabel for="AlumnLoan_loanDate" value="#{appBundle.loan_date}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputCalendar id="AlumnLoan_loanDate" size="8"
+					required="true" value="#{loanAlias.to.loanDate}"
+					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+					currentDayCellClass="currentDayCell" renderAsPopup="true"
+					styleClass="aon-form-input-text"
+					popupButtonStyleClass="aon-form-calendar-button"
+					popupTodayString="#{bundle.aon_popup_today}"
+					popupWeekString="#{bundle.aon_popup_week}" />
+				
+				<h:outputLabel for="AlumnLoan_endDate" value="#{appBundle.loan_end_date}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputCalendar id="AlumnLoan_endDate" size="8"
+					value="#{loanAlias.to.endDate}"
+					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+					currentDayCellClass="currentDayCell" renderAsPopup="true"
+					styleClass="aon-form-input-text"
+					popupButtonStyleClass="aon-form-calendar-button"
+					popupTodayString="#{bundle.aon_popup_today}"
+					popupWeekString="#{bundle.aon_popup_week}" />
+
+				<h:outputLabel for="AlumnLoan_comments" value="#{appBundle.loan_comments}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText styleClass="aon-form-input-text" id="AlumnLoan_comments"
+					value="#{loanAlias.to.comments}"
+					forceId="#{true}" size="70" 
+					disabledOnClientSide="false" />
+
+			</h:panelGrid>
+		</t:div>
+	</t:div>
+</ui:composition>
+</body>
+</html>

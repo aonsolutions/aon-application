@@ -1,0 +1,69 @@
+package com.code.aon.ui.finance.util.print;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.finance.enumeration.PayMethodType;
+import com.code.aon.finance.print.CheckingTo;
+
+public class FinanceCheckingPrinter implements ICollectionProvider {
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection getCollection() {
+		CheckingTo checkingTo = new CheckingTo();
+		checkingTo.setNoPaymethodList(obtainNoPaymethodList());
+		checkingTo.setNegotiableNoBankAccountList(obtainNegotiableNoBankAccountList());
+		checkingTo.setNoNegotiableBankAccountList(obtainNoNegotiableBankAccountList());
+		List list = new ArrayList();
+		list.add(checkingTo);
+		return list;
+	}
+	@Override
+	public Collection getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
+		return getCollection();
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	private List<ITransferObject> obtainNoPaymethodList() {
+		String select = "SELECT finance " +
+						"FROM Finance finance " +
+						"WHERE finance.payMethod.id IS NULL";
+		Session session = HibernateUtil.getSession();
+		Query query = session.createQuery(select);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<ITransferObject> obtainNegotiableNoBankAccountList() {
+		String select = "SELECT finance " +
+						"FROM Finance finance " +
+						"WHERE finance.payMethod.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
+						"AND ( finance.bankAccount IS NULL OR finance.bankAccount = '' )"; 
+		Session session = HibernateUtil.getSession();
+		Query query = session.createQuery(select);
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ITransferObject> obtainNoNegotiableBankAccountList() {
+		String select = "SELECT finance " +
+						"FROM Finance finance " +
+						"WHERE finance.payMethod.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
+						"AND finance.bankAccount IS NOT NULL " +
+						"AND finance.bankAccount <> '' ";
+		Session session = HibernateUtil.getSession();
+		Query query = session.createQuery(select);
+		return query.list();
+	}
+}

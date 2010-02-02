@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="alarmForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{alarm.accept}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{alarm.onCancel}" action="alarm_list"
+						immediate="#{true}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="finishAlarm" value="#{groupwareBundle.alarm_finish}"
+						actionListener="#{alarm.onFinishAlarm}" action="alarm_list"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" />
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{alarm.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="Alarm_descripcion" value="#{groupwareBundle.alarm_description}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Alarm_descripcion" forceId="#{true}"
+							value="#{alarm.to.description}" required="#{true}"
+							styleClass="aon-form-input-text" size="50" />
+
+						<h:outputLabel for="Alarm_alarmDate" value="#{groupwareBundle.aon_date}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputCalendar id="Alarm_alarmDate" forceId="#{true}"
+							disabled="#{!alarm.new}"
+							value="#{alarm.to.alarmDate}" size="12" required="#{true}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+
+						<h:outputLabel for="Alarm_delayTime" value="#{groupwareBundle.alarm_delay_time}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:div>
+							<h:selectOneMenu id="Alarm_delayTime"
+								value="#{alarm.delayTime}"
+								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItems value="#{groupWareCollections.delayTimes}" />
+							</h:selectOneMenu>
+							<h:commandButton id="delayAlarm" value="#{groupwareBundle.alarm_delay}"
+								actionListener="#{alarm.onDelayAlarm}"
+								action="alarm_list"
+								styleClass="aon-form-button" />
+						</t:div>
+						
+						<h:outputLabel for="Alarm_status" value="#{groupwareBundle.alarm_status}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Alarm_status"
+							value="#{alarm.to.status}" disabled="true"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{groupWareCollections.alarmStatus}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Alarm_source" value="#{groupwareBundle.alarm_source}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Alarm_source" forceId="#{true}"
+							value="#{alarm.to.source}" disabled="true"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{groupWareCollections.alarmSources}" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

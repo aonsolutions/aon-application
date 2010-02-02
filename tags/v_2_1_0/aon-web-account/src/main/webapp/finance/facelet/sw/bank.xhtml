@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/formHead.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="bankForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-title" forceId="#{true}"
+				id="aon-window-popup-title">
+				<t:div styleClass="aon-content-title-internal">
+					<h:outputText value="#{financeBundle.aon_bank}" />
+				</t:div>
+			</t:div>
+
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							accesskey="#{bundle.aon_key_search}" action="bank_sw_search"
+							actionListener="#{bankLookup.onEditSearch}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							onclick="window.close();return false;"
+							accesskey="#{bundle.aon_key_cancel}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="bankData" styleClass="aon-table" var="to"
+							value="#{bankLookup.model}" rows="20"
+							headerClass="aon-table-header" footerClass="aon-table-foot"
+							columnClasses="aon-table-body,aon-table-body,"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							rowClasses="aon-table-row-odd, aon-table-row-even">
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_bank_name}" />
+								</f:facet>
+								<h:commandLink styleClass="aon-table-row-selected"
+									onclick="window.opener.update('#{bankLookup.lookupsAsXML}');window.close();return false;" />
+								<h:outputText value="#{to.name}" />
+							</t:column>
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_id}" />
+								</f:facet>
+								<h:outputText value="#{to.code}" />
+							</t:column>
+						</t:dataTable>
+					</t:div>
+					
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="bankData" />
+						<ui:param name="model" value="#{bankLookup.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+					
+				</t:div>
+			</t:div>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
