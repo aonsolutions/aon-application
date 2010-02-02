@@ -73,30 +73,38 @@ public class OrderByList implements Criterion {
 	 * 
 	 * @param id the id
 	 * 
-	 * @return the order
+	 * @return the index
 	 */
-	public Order get( String id ) {
-		for( Order order : this.orders ) {
-			if ( order.getExpression().getName().equals(id) ) {
-				return order;
+	public int indexOf( String id ) {
+		for( int i = 0; i < this.orders.size(); i++ ) {
+			if ( orders.get(i).getExpression().getName().equals(id) ) {
+				return i;
 			}
 		}
-		return null;
+		return -1;
 	}
 
 	/**
-	 * Removes the order.
+	 * Gets the order.
 	 * 
 	 * @param id the id
 	 * 
 	 * @return the order
 	 */
-	public boolean remove( String id ) {
-		Order order = get(id);
-		if ( order != null ) {
-			return this.orders.remove(order);
-		}
-		return false;
+	public Order get( String id ) {
+		int index = indexOf(id);
+		return ( index != -1 ) ? this.orders.get(index) : null;
+	}
+	
+	/**
+	 * Removes the order.
+	 * 
+	 * @param index the index
+	 * 
+	 * @return the order
+	 */
+	public Order remove( int index ) {
+		return this.orders.remove(index);
 	}
 	
     /**
