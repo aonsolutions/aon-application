@@ -1354,8 +1354,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1449,8 +1449,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
