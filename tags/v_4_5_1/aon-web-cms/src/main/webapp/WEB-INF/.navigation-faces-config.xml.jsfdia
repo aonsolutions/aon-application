@@ -1,0 +1,960 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS ENTITY="JSFProcess">
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:" SHAPE="32,17,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::0" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="home::#facelet#homepage#main.xhtml" NAME="output"
+    PATH="/facelet/homepage/main.xhtml"
+    TARGET="rules:#facelet#homepage#main.xhtml" TITLE="home"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::1" SHAPE="32,129,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::1" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="logout::#home.jsf" NAME="output" PATH="/home.jsf"
+    TARGET="rules:#home.jsf" TITLE="logout"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::2" SHAPE="32,241,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::2" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="language_list::#facelet#configuration#language#list.xhtml"
+    NAME="output" PATH="/facelet/configuration/language/list.xhtml"
+    TARGET="rules:#facelet#configuration#language#list.xhtml" TITLE="language_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::3" SHAPE="32,353,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::3" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="config_form::#facelet#configuration#config#form.xhtml"
+    NAME="output" PATH="/facelet/configuration/config/form.xhtml"
+    TARGET="rules:#facelet#configuration#config#form.xhtml" TITLE="config_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::4" SHAPE="32,465,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::4" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="generic_page_list::#facelet#content#generic_page#list.xhtml"
+    NAME="output" PATH="/facelet/content/generic_page/list.xhtml"
+    TARGET="rules:#facelet#content#generic_page#list.xhtml" TITLE="generic_page_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="generic_page_form::#facelet#content#generic_page#form.xhtml"
+    NAME="output1" PATH="/facelet/content/generic_page/form.xhtml"
+    TARGET="rules:#facelet#content#generic_page#form.xhtml" TITLE="generic_page_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="generic_page_search::#facelet#content#generic_page#search.xhtml"
+    NAME="output2" PATH="/facelet/content/generic_page/search.xhtml"
+    TARGET="rules:#facelet#content#generic_page#search.xhtml" TITLE="generic_page_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::5" SHAPE="32,865,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::5" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="menu_list::#facelet#content#menu#list.xhtml" NAME="output"
+    PATH="/facelet/content/menu/list.xhtml"
+    TARGET="rules:#facelet#content#menu#list.xhtml" TITLE="menu_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="menu_form::#facelet#content#menu#form.xhtml" NAME="output1"
+    PATH="/facelet/content/menu/form.xhtml"
+    TARGET="rules:#facelet#content#menu#form.xhtml" TITLE="menu_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::6" SHAPE="32,1121,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::6" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="link_category_list::#facelet#content#link_category#list.xhtml"
+    NAME="output" PATH="/facelet/content/link_category/list.xhtml"
+    TARGET="rules:#facelet#content#link_category#list.xhtml" TITLE="link_category_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="link_category_form::#facelet#content#link_category#form.xhtml"
+    NAME="output1" PATH="/facelet/content/link_category/form.xhtml"
+    TARGET="rules:#facelet#content#link_category#form.xhtml" TITLE="link_category_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="link_category_search::#facelet#content#link_category#search.xhtml"
+    NAME="output2" PATH="/facelet/content/link_category/search.xhtml"
+    TARGET="rules:#facelet#content#link_category#search.xhtml" TITLE="link_category_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="link_list::#facelet#content#link_category#link#list.xhtml"
+    NAME="output3" PATH="/facelet/content/link_category/link/list.xhtml"
+    TARGET="rules:#facelet#content#link_category#link#list.xhtml" TITLE="link_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="link_form::#facelet#content#link_category#link#form.xhtml"
+    NAME="output4" PATH="/facelet/content/link_category/link/form.xhtml"
+    TARGET="rules:#facelet#content#link_category#link#form.xhtml" TITLE="link_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="link_search::#facelet#content#link_category#link#search.xhtml"
+    NAME="output5"
+    PATH="/facelet/content/link_category/link/search.xhtml"
+    TARGET="rules:#facelet#content#link_category#link#search.xhtml" TITLE="link_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::7" SHAPE="32,1953,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::7" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="faq_category_list::#facelet#content#faq_category#list.xhtml"
+    NAME="output" PATH="/facelet/content/faq_category/list.xhtml"
+    TARGET="rules:#facelet#content#faq_category#list.xhtml" TITLE="faq_category_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="faq_category_form::#facelet#content#faq_category#form.xhtml"
+    NAME="output1" PATH="/facelet/content/faq_category/form.xhtml"
+    TARGET="rules:#facelet#content#faq_category#form.xhtml" TITLE="faq_category_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="faq_category_search::#facelet#content#faq_category#search.xhtml"
+    NAME="output2" PATH="/facelet/content/faq_category/search.xhtml"
+    TARGET="rules:#facelet#content#faq_category#search.xhtml" TITLE="faq_category_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="faq_list::#facelet#content#faq_category#faq#list.xhtml"
+    NAME="output3" PATH="/facelet/content/faq_category/faq/list.xhtml"
+    TARGET="rules:#facelet#content#faq_category#faq#list.xhtml" TITLE="faq_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="faq_form::#facelet#content#faq_category#faq#form.xhtml"
+    NAME="output4" PATH="/facelet/content/faq_category/faq/form.xhtml"
+    TARGET="rules:#facelet#content#faq_category#faq#form.xhtml" TITLE="faq_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="faq_search::#facelet#content#faq_category#faq#search.xhtml"
+    NAME="output5" PATH="/facelet/content/faq_category/faq/search.xhtml"
+    TARGET="rules:#facelet#content#faq_category#faq#search.xhtml" TITLE="faq_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::8" SHAPE="32,2785,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::8" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="product_list::#facelet#content#product#list.xhtml" NAME="output"
+    PATH="/facelet/content/product/list.xhtml"
+    TARGET="rules:#facelet#content#product#list.xhtml" TITLE="product_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="product_form::#facelet#content#product#form.xhtml"
+    NAME="output1" PATH="/facelet/content/product/form.xhtml"
+    TARGET="rules:#facelet#content#product#form.xhtml" TITLE="product_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="product_search::#facelet#content#product#search.xhtml"
+    NAME="output2" PATH="/facelet/content/product/search.xhtml"
+    TARGET="rules:#facelet#content#product#search.xhtml" TITLE="product_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="brand_list::#facelet#content#product#brand#list.xhtml"
+    NAME="output3" PATH="/facelet/content/product/brand/list.xhtml"
+    TARGET="rules:#facelet#content#product#brand#list.xhtml" TITLE="brand_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="product_category_list::#facelet#content#product#product_category#list.xhtml"
+    NAME="output4"
+    PATH="/facelet/content/product/product_category/list.xhtml"
+    TARGET="rules:#facelet#content#product#product_category#list.xhtml" TITLE="product_category_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="product_category_form::#facelet#content#product#product_category#form.xhtml"
+    NAME="output5"
+    PATH="/facelet/content/product/product_category/form.xhtml"
+    TARGET="rules:#facelet#content#product#product_category#form.xhtml" TITLE="product_category_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="product_category_search::#facelet#content#product#product_category#search.xhtml"
+    NAME="output6"
+    PATH="/facelet/content/product/product_category/search.xhtml"
+    TARGET="rules:#facelet#content#product#product_category#search.xhtml" TITLE="product_category_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::9" SHAPE="32,3761,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::9" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="header_list::#facelet#content#header#list.xhtml" NAME="output"
+    PATH="/facelet/content/header/list.xhtml"
+    TARGET="rules:#facelet#content#header#list.xhtml" TITLE="header_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="header_form::#facelet#content#header#form.xhtml" NAME="output1"
+    PATH="/facelet/content/header/form.xhtml"
+    TARGET="rules:#facelet#content#header#form.xhtml" TITLE="header_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::10" SHAPE="32,4017,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::10" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="footer_list::#facelet#content#footer#list.xhtml" NAME="output"
+    PATH="/facelet/content/footer/list.xhtml"
+    TARGET="rules:#facelet#content#footer#list.xhtml" TITLE="footer_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="footer_form::#facelet#content#footer#form.xhtml" NAME="output1"
+    PATH="/facelet/content/footer/form.xhtml"
+    TARGET="rules:#facelet#content#footer#form.xhtml" TITLE="footer_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::11" SHAPE="32,4273,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::11" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="article_category_list::#facelet#content#article_category#list.xhtml"
+    NAME="output" PATH="/facelet/content/article_category/list.xhtml"
+    TARGET="rules:#facelet#content#article_category#list.xhtml" TITLE="article_category_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="article_category_form::#facelet#content#article_category#form.xhtml"
+    NAME="output1" PATH="/facelet/content/article_category/form.xhtml"
+    TARGET="rules:#facelet#content#article_category#form.xhtml" TITLE="article_category_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="article_category_search::#facelet#content#article_category#search.xhtml"
+    NAME="output2" PATH="/facelet/content/article_category/search.xhtml"
+    TARGET="rules:#facelet#content#article_category#search.xhtml" TITLE="article_category_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="article_list::#facelet#content#article_category#article#list.xhtml"
+    NAME="output3"
+    PATH="/facelet/content/article_category/article/list.xhtml"
+    TARGET="rules:#facelet#content#article_category#article#list.xhtml" TITLE="article_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="article_form::#facelet#content#article_category#article#form.xhtml"
+    NAME="output4"
+    PATH="/facelet/content/article_category/article/form.xhtml"
+    TARGET="rules:#facelet#content#article_category#article#form.xhtml" TITLE="article_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="article_search::#facelet#content#article_category#article#search.xhtml"
+    NAME="output5"
+    PATH="/facelet/content/article_category/article/search.xhtml"
+    TARGET="rules:#facelet#content#article_category#article#search.xhtml" TITLE="article_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::12" SHAPE="32,5105,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::12" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="banner_category_list::#facelet#content#banner_category#list.xhtml"
+    NAME="output" PATH="/facelet/content/banner_category/list.xhtml"
+    TARGET="rules:#facelet#content#banner_category#list.xhtml" TITLE="banner_category_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="banner_category_form::#facelet#content#banner_category#form.xhtml"
+    NAME="output1" PATH="/facelet/content/banner_category/form.xhtml"
+    TARGET="rules:#facelet#content#banner_category#form.xhtml" TITLE="banner_category_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="banner_category_search::#facelet#content#banner_category#search.xhtml"
+    NAME="output2" PATH="/facelet/content/banner_category/search.xhtml"
+    TARGET="rules:#facelet#content#banner_category#search.xhtml" TITLE="banner_category_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="banner_list::#facelet#content#banner_category#banner#list.xhtml"
+    NAME="output3"
+    PATH="/facelet/content/banner_category/banner/list.xhtml"
+    TARGET="rules:#facelet#content#banner_category#banner#list.xhtml" TITLE="banner_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="banner_form::#facelet#content#banner_category#banner#form.xhtml"
+    NAME="output4"
+    PATH="/facelet/content/banner_category/banner/form.xhtml"
+    TARGET="rules:#facelet#content#banner_category#banner#form.xhtml" TITLE="banner_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="banner_search::#facelet#content#banner_category#banner#search.xhtml"
+    NAME="output5"
+    PATH="/facelet/content/banner_category/banner/search.xhtml"
+    TARGET="rules:#facelet#content#banner_category#banner#search.xhtml" TITLE="banner_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::13" SHAPE="32,5937,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::13" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="download_category_list::#facelet#content#download_category#list.xhtml"
+    NAME="output" PATH="/facelet/content/download_category/list.xhtml"
+    TARGET="rules:#facelet#content#download_category#list.xhtml" TITLE="download_category_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="download_category_form::#facelet#content#download_category#form.xhtml"
+    NAME="output1" PATH="/facelet/content/download_category/form.xhtml"
+    TARGET="rules:#facelet#content#download_category#form.xhtml" TITLE="download_category_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="download_category_search::#facelet#content#download_category#search.xhtml"
+    NAME="output2"
+    PATH="/facelet/content/download_category/search.xhtml"
+    TARGET="rules:#facelet#content#download_category#search.xhtml" TITLE="download_category_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="download_list::#facelet#content#download_category#download#list.xhtml"
+    NAME="output3"
+    PATH="/facelet/content/download_category/download/list.xhtml"
+    TARGET="rules:#facelet#content#download_category#download#list.xhtml" TITLE="download_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="download_form::#facelet#content#download_category#download#form.xhtml"
+    NAME="output4"
+    PATH="/facelet/content/download_category/download/form.xhtml"
+    TARGET="rules:#facelet#content#download_category#download#form.xhtml" TITLE="download_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="download_search::#facelet#content#download_category#download#search.xhtml"
+    NAME="output5"
+    PATH="/facelet/content/download_category/download/search.xhtml"
+    TARGET="rules:#facelet#content#download_category#download#search.xhtml" TITLE="download_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::14" SHAPE="32,6769,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::14" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_category_list::#facelet#content#album_category#list.xhtml"
+    NAME="output" PATH="/facelet/content/album_category/list.xhtml"
+    TARGET="rules:#facelet#content#album_category#list.xhtml" TITLE="album_category_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_category_form::#facelet#content#album_category#form.xhtml"
+    NAME="output1" PATH="/facelet/content/album_category/form.xhtml"
+    TARGET="rules:#facelet#content#album_category#form.xhtml" TITLE="album_category_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_category_search::#facelet#content#album_category#search.xhtml"
+    NAME="output2" PATH="/facelet/content/album_category/search.xhtml"
+    TARGET="rules:#facelet#content#album_category#search.xhtml" TITLE="album_category_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_list::#facelet#content#album_category#album#list.xhtml"
+    NAME="output3"
+    PATH="/facelet/content/album_category/album/list.xhtml"
+    TARGET="rules:#facelet#content#album_category#album#list.xhtml" TITLE="album_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_form::#facelet#content#album_category#album#form.xhtml"
+    NAME="output4"
+    PATH="/facelet/content/album_category/album/form.xhtml"
+    TARGET="rules:#facelet#content#album_category#album#form.xhtml" TITLE="album_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_search::#facelet#content#album_category#album#search.xhtml"
+    NAME="output5"
+    PATH="/facelet/content/album_category/album/search.xhtml"
+    TARGET="rules:#facelet#content#album_category#album#search.xhtml" TITLE="album_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_image_list::#facelet#content#album_category#album#album_image##list.xhtml"
+    NAME="output6"
+    PATH="/facelet/content/album_category/album/album_image//list.xhtml"
+    TARGET="rules:#facelet#content#album_category#album#album_image##list.xhtml" TITLE="album_image_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_image_form::#facelet#content#album_category#album#album_image#form.xhtml"
+    NAME="output7"
+    PATH="/facelet/content/album_category/album/album_image/form.xhtml"
+    TARGET="rules:#facelet#content#album_category#album#album_image#form.xhtml" TITLE="album_image_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="album_image_search::#facelet#content#album_category#album#album_image#search.xhtml"
+    NAME="output8"
+    PATH="/facelet/content/album_category/album/album_image/search.xhtml"
+    TARGET="rules:#facelet#content#album_category#album#album_image#search.xhtml" TITLE="album_image_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::15" SHAPE="32,8033,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::15" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sidebar_list::#facelet#content#sidebar#list.xhtml" NAME="output"
+    PATH="/facelet/content/sidebar/list.xhtml"
+    TARGET="rules:#facelet#content#sidebar#list.xhtml" TITLE="sidebar_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sidebar_form::#facelet#content#sidebar#form.xhtml"
+    NAME="output1" PATH="/facelet/content/sidebar/form.xhtml"
+    TARGET="rules:#facelet#content#sidebar#form.xhtml" TITLE="sidebar_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::16" SHAPE="32,8289,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::16" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="section_list::#facelet#content#section#list.xhtml" NAME="output"
+    PATH="/facelet/content/section/list.xhtml"
+    TARGET="rules:#facelet#content#section#list.xhtml" TITLE="section_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="section_form::#facelet#content#section#form.xhtml"
+    NAME="output1" PATH="/facelet/content/section/form.xhtml"
+    TARGET="rules:#facelet#content#section#form.xhtml" TITLE="section_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::17" SHAPE="32,8545,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::17" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="modular_page_list::#facelet#content#modular_page#list.xhtml"
+    NAME="output" PATH="/facelet/content/modular_page/list.xhtml"
+    TARGET="rules:#facelet#content#modular_page#list.xhtml" TITLE="modular_page_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="modular_page_form::#facelet#content#modular_page#form.xhtml"
+    NAME="output1" PATH="/facelet/content/modular_page/form.xhtml"
+    TARGET="rules:#facelet#content#modular_page#form.xhtml" TITLE="modular_page_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="modular_page_search::#facelet#content#modular_page#search.xhtml"
+    NAME="output2" PATH="/facelet/content/modular_page/search.xhtml"
+    TARGET="rules:#facelet#content#modular_page#search.xhtml" TITLE="modular_page_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::18" SHAPE="32,8945,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::18" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="direct_access_group_list::#facelet#content#direct_access_group#list.xhtml"
+    NAME="output" PATH="/facelet/content/direct_access_group/list.xhtml"
+    TARGET="rules:#facelet#content#direct_access_group#list.xhtml" TITLE="direct_access_group_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="direct_access_group_form::#facelet#content#direct_access_group#form.xhtml"
+    NAME="output1"
+    PATH="/facelet/content/direct_access_group/form.xhtml"
+    TARGET="rules:#facelet#content#direct_access_group#form.xhtml" TITLE="direct_access_group_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="direct_access_group_search::#facelet#content#direct_access_group#search.xhtml"
+    NAME="output2"
+    PATH="/facelet/content/direct_access_group/search.xhtml"
+    TARGET="rules:#facelet#content#direct_access_group#search.xhtml" TITLE="direct_access_group_search"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="direct_access_list::#facelet#content#direct_access_group#direct_access#list.xhtml"
+    NAME="output3"
+    PATH="/facelet/content/direct_access_group/direct_access/list.xhtml"
+    TARGET="rules:#facelet#content#direct_access_group#direct_access#list.xhtml" TITLE="direct_access_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="direct_access_form::#facelet#content#direct_access_group#direct_access#form.xhtml"
+    NAME="output4"
+    PATH="/facelet/content/direct_access_group/direct_access/form.xhtml"
+    TARGET="rules:#facelet#content#direct_access_group#direct_access#form.xhtml" TITLE="direct_access_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="direct_access_search::#facelet#content#direct_access_group#direct_access#search.xhtml"
+    NAME="output5"
+    PATH="/facelet/content/direct_access_group/direct_access/search.xhtml"
+    TARGET="rules:#facelet#content#direct_access_group#direct_access#search.xhtml" TITLE="direct_access_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::19" SHAPE="32,9777,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::19" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="template_list::#facelet#generation#template#list.xhtml"
+    NAME="output" PATH="/facelet/generation/template/list.xhtml"
+    TARGET="rules:#facelet#generation#template#list.xhtml" TITLE="template_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="template_upload::#facelet#generation#template#upload.xhtml"
+    NAME="output1" PATH="/facelet/generation/template/upload.xhtml"
+    TARGET="rules:#facelet#generation#template#upload.xhtml" TITLE="template_upload"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::20" SHAPE="32,10033,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::20" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="gallery_list::#facelet#content#gallery#list.xhtml" NAME="output"
+    PATH="/facelet/content/gallery/list.xhtml"
+    TARGET="rules:#facelet#content#gallery#list.xhtml" TITLE="gallery_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="gallery_form::#facelet#content#gallery#form.xhtml"
+    NAME="output1" PATH="/facelet/content/gallery/form.xhtml"
+    TARGET="rules:#facelet#content#gallery#form.xhtml" TITLE="gallery_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::21" SHAPE="32,10289,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::21" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="document_list::#facelet#content#documents#list.xhtml"
+    NAME="output" PATH="/facelet/content/documents/list.xhtml"
+    TARGET="rules:#facelet#content#documents#list.xhtml" TITLE="document_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::22" SHAPE="32,10401,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::22" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="generator_form::#facelet#generation#generator#form.xhtml"
+    NAME="output" PATH="/facelet/generation/generator/form.xhtml"
+    TARGET="rules:#facelet#generation#generator#form.xhtml" TITLE="generator_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="generator_log::#facelet#generation#generator#log.xhtml"
+    NAME="output1" PATH="/facelet/generation/generator/log.xhtml"
+    TARGET="rules:#facelet#generation#generator#log.xhtml" TITLE="generator_log"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::23" SHAPE="32,10657,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::23" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="activity_list::#facelet#content#activity#list.xhtml"
+    NAME="output" PATH="/facelet/content/activity/list.xhtml"
+    TARGET="rules:#facelet#content#activity#list.xhtml" TITLE="activity_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::24" SHAPE="32,10769,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::24" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="company_list::#facelet#content#company#list.xhtml" NAME="output"
+    PATH="/facelet/content/company/list.xhtml"
+    TARGET="rules:#facelet#content#company#list.xhtml" TITLE="company_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="company_form::#facelet#content#company#form.xhtml"
+    NAME="output1" PATH="/facelet/content/company/form.xhtml"
+    TARGET="rules:#facelet#content#company#form.xhtml" TITLE="company_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="company_search::#facelet#content#company#search.xhtml"
+    NAME="output2" PATH="/facelet/content/company/search.xhtml"
+    TARGET="rules:#facelet#content#company#search.xhtml" TITLE="company_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::25" SHAPE="32,11169,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::25" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="bulletin_list::#facelet#content#bulletin#list.xhtml"
+    NAME="output" PATH="/facelet/content/bulletin/list.xhtml"
+    TARGET="rules:#facelet#content#bulletin#list.xhtml" TITLE="bulletin_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="bulletin_form::#facelet#content#bulletin#form.xhtml"
+    NAME="output1" PATH="/facelet/content/bulletin/form.xhtml"
+    TARGET="rules:#facelet#content#bulletin#form.xhtml" TITLE="bulletin_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::26" SHAPE="32,11425,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::26" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="bulletin_email_list::#facelet#content#bulletin#emails#list.xhtml"
+    NAME="output" PATH="/facelet/content/bulletin/emails/list.xhtml"
+    TARGET="rules:#facelet#content#bulletin#emails#list.xhtml" TITLE="bulletin_email_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::27" SHAPE="32,11537,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::27" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="bulletin_send_list::#facelet#content#bulletin#sender#list.xhtml"
+    NAME="output" PATH="/facelet/content/bulletin/sender/list.xhtml"
+    TARGET="rules:#facelet#content#bulletin#sender#list.xhtml" TITLE="bulletin_send_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::28" SHAPE="32,11649,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::28" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="diary_form::#facelet#content#diary#form.xhtml" NAME="output"
+    PATH="/facelet/content/diary/form.xhtml"
+    TARGET="rules:#facelet#content#diary#form.xhtml" TITLE="diary_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::29" SHAPE="32,11761,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::29" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="hiru_organizer_centre_list::#facelet#content#hiru#organizer_centre#list.xhtml"
+    NAME="output"
+    PATH="/facelet/content/hiru/organizer_centre/list.xhtml"
+    TARGET="rules:#facelet#content#hiru#organizer_centre#list.xhtml" TITLE="hiru_organizer_centre_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="hiru_organizer_centre_form::#facelet#content#hiru#organizer_centre#form.xhtml"
+    NAME="output1"
+    PATH="/facelet/content/hiru/organizer_centre/form.xhtml"
+    TARGET="rules:#facelet#content#hiru#organizer_centre#form.xhtml" TITLE="hiru_organizer_centre_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::30" SHAPE="32,12017,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::30" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="hiru_course_list::#facelet#content#hiru#course#list.xhtml"
+    NAME="output" PATH="/facelet/content/hiru/course/list.xhtml"
+    TARGET="rules:#facelet#content#hiru#course#list.xhtml" TITLE="hiru_course_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="hiru_course_form::#facelet#content#hiru#course#form.xhtml"
+    NAME="output1" PATH="/facelet/content/hiru/course/form.xhtml"
+    TARGET="rules:#facelet#content#hiru#course#form.xhtml" TITLE="hiru_course_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="hiru_course_search::#facelet#content#hiru#course#search.xhtml"
+    NAME="output2" PATH="/facelet/content/hiru/course/search.xhtml"
+    TARGET="rules:#facelet#content#hiru#course#search.xhtml" TITLE="hiru_course_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::31" SHAPE="32,12417,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::31" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="hiru_generator::#facelet#content#hiru#generator#form.xhtml"
+    NAME="output" PATH="/facelet/content/hiru/generator/form.xhtml"
+    TARGET="rules:#facelet#content#hiru#generator#form.xhtml" TITLE="hiru_generator"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::32" SHAPE="32,12529,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::32" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_category_list::#facelet#content#sport#sport_category#list.xhtml"
+    NAME="output"
+    PATH="/facelet/content/sport/sport_category/list.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_category#list.xhtml" TITLE="sport_category_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::33" SHAPE="32,12641,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::33" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_club_list::#facelet#content#sport#sport_club#list.xhtml"
+    NAME="output" PATH="/facelet/content/sport/sport_club/list.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_club#list.xhtml" TITLE="sport_club_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_club_form::#facelet#content#sport#sport_club#form.xhtml"
+    NAME="output1" PATH="/facelet/content/sport/sport_club/form.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_club#form.xhtml" TITLE="sport_club_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::34" SHAPE="32,12897,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::34" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_position_list::#facelet#content#sport#sport_position#list.xhtml"
+    NAME="output"
+    PATH="/facelet/content/sport/sport_position/list.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_position#list.xhtml" TITLE="sport_position_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::35" SHAPE="32,13009,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::35" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_natiolity_list::#facelet#content#sport#sport_nationality#list.xhtml"
+    NAME="output"
+    PATH="/facelet/content/sport/sport_nationality/list.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_nationality#list.xhtml" TITLE="sport_natiolity_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::36" SHAPE="32,13121,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::36" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_season_list::#facelet#content#sport#sport_season#list.xhtml"
+    NAME="output" PATH="/facelet/content/sport/sport_season/list.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_season#list.xhtml" TITLE="sport_season_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::37" SHAPE="32,13233,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::37" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_player_list::#facelet#content#sport#sport_player#list.xhtml"
+    NAME="output" PATH="/facelet/content/sport/sport_player/list.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_player#list.xhtml" TITLE="sport_player_list"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_player_form::#facelet#content#sport#sport_player#form.xhtml"
+    NAME="output1" PATH="/facelet/content/sport/sport_player/form.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_player#form.xhtml" TITLE="sport_player_form"/>
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_player_search::#facelet#content#sport#sport_player#search.xhtml"
+    NAME="output2"
+    PATH="/facelet/content/sport/sport_player/search.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_player#search.xhtml" TITLE="sport_player_search"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::38" SHAPE="32,13633,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::38" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_coach_list::#facelet#content#sport#sport_coach#list.xhtml"
+    NAME="output" PATH="/facelet/content/sport/sport_coach/list.xhtml"
+    TARGET="rules:#facelet#content#sport#sport_coach#list.xhtml" TITLE="sport_coach_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::39" SHAPE="32,13745,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::39" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="sport_config_list::#facelet#content#sport#list.xhtml"
+    NAME="output" PATH="/facelet/content/sport/list.xhtml"
+    TARGET="rules:#facelet#content#sport#list.xhtml" TITLE="sport_config_list"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::40" SHAPE="32,13857,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::40" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="cropper_form::#facelet#content#cropper#form.xhtml" NAME="output"
+    PATH="/facelet/content/cropper/form.xhtml"
+    TARGET="rules:#facelet#content#cropper#form.xhtml" TITLE="cropper_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::41" SHAPE="32,13969,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::41" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="resizer_form::#facelet#content#resizer#form.xhtml" NAME="output"
+    PATH="/facelet/content/resizer/form.xhtml"
+    TARGET="rules:#facelet#content#resizer#form.xhtml" TITLE="resizer_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::42" SHAPE="32,14081,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::42" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="admin_form::#facelet#admin#form.xhtml" NAME="output"
+    PATH="/facelet/admin/form.xhtml"
+    TARGET="rules:#facelet#admin#form.xhtml" TITLE="admin_form"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#album#form.xhtml"
+  PATH="/facelet/content/album_category/album/form.xhtml" SHAPE="304,7489,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#album#album_image#form.xhtml"
+  PATH="/facelet/content/album_category/album/album_image/form.xhtml" SHAPE="304,7825,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#banner_category#search.xhtml"
+  PATH="/facelet/content/banner_category/search.xhtml" SHAPE="304,5505,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#generic_page#form.xhtml"
+  PATH="/facelet/content/generic_page/form.xhtml" SHAPE="272,657,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#faq_category#search.xhtml"
+  PATH="/facelet/content/faq_category/search.xhtml" SHAPE="304,2353,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#bulletin#emails#list.xhtml"
+  PATH="/facelet/content/bulletin/emails/list.xhtml" SHAPE="240,11441,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#activity#list.xhtml"
+  PATH="/facelet/content/activity/list.xhtml" SHAPE="240,10673,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#article_category#article#search.xhtml"
+  PATH="/facelet/content/article_category/article/search.xhtml" SHAPE="304,5009,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#generation#generator#form.xhtml"
+  PATH="/facelet/generation/generator/form.xhtml" SHAPE="256,10417,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#faq_category#faq#search.xhtml"
+  PATH="/facelet/content/faq_category/faq/search.xhtml" SHAPE="304,2689,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#hiru#course#list.xhtml"
+  PATH="/facelet/content/hiru/course/list.xhtml" SHAPE="272,12033,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sidebar#form.xhtml"
+  PATH="/facelet/content/sidebar/form.xhtml" SHAPE="256,8193,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#direct_access_group#direct_access#form.xhtml"
+  PATH="/facelet/content/direct_access_group/direct_access/form.xhtml" SHAPE="304,9569,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#hiru#generator#form.xhtml"
+  PATH="/facelet/content/hiru/generator/form.xhtml" SHAPE="240,12433,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#direct_access_group#direct_access#search.xhtml"
+  PATH="/facelet/content/direct_access_group/direct_access/search.xhtml" SHAPE="304,9681,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#footer#list.xhtml"
+  PATH="/facelet/content/footer/list.xhtml" SHAPE="256,4033,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#faq_category#list.xhtml"
+  PATH="/facelet/content/faq_category/list.xhtml" SHAPE="304,1969,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#download_category#download#form.xhtml"
+  PATH="/facelet/content/download_category/download/form.xhtml" SHAPE="304,6561,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#album#album_image#search.xhtml"
+  PATH="/facelet/content/album_category/album/album_image/search.xhtml" SHAPE="304,7937,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#resizer#form.xhtml"
+  PATH="/facelet/content/resizer/form.xhtml" SHAPE="240,13985,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#company#search.xhtml"
+  PATH="/facelet/content/company/search.xhtml" SHAPE="272,11073,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#direct_access_group#form.xhtml"
+  PATH="/facelet/content/direct_access_group/form.xhtml" SHAPE="304,9233,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#product#product_category#form.xhtml"
+  PATH="/facelet/content/product/product_category/form.xhtml" SHAPE="304,3553,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#list.xhtml"
+  PATH="/facelet/content/sport/list.xhtml" SHAPE="240,13761,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#article_category#search.xhtml"
+  PATH="/facelet/content/article_category/search.xhtml" SHAPE="304,4673,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#company#form.xhtml"
+  PATH="/facelet/content/company/form.xhtml" SHAPE="272,10961,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#download_category#search.xhtml"
+  PATH="/facelet/content/download_category/search.xhtml" SHAPE="304,6337,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#generation#template#upload.xhtml"
+  PATH="/facelet/generation/template/upload.xhtml" SHAPE="256,9937,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_nationality#list.xhtml"
+  PATH="/facelet/content/sport/sport_nationality/list.xhtml" SHAPE="240,13025,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#direct_access_group#search.xhtml"
+  PATH="/facelet/content/direct_access_group/search.xhtml" SHAPE="304,9345,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#admin#form.xhtml"
+  PATH="/facelet/admin/form.xhtml" SHAPE="240,14097,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_player#search.xhtml"
+  PATH="/facelet/content/sport/sport_player/search.xhtml" SHAPE="272,13537,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#generic_page#search.xhtml"
+  PATH="/facelet/content/generic_page/search.xhtml" SHAPE="272,769,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#modular_page#form.xhtml"
+  PATH="/facelet/content/modular_page/form.xhtml" SHAPE="272,8737,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#banner_category#banner#search.xhtml"
+  PATH="/facelet/content/banner_category/banner/search.xhtml" SHAPE="304,5841,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#bulletin#list.xhtml"
+  PATH="/facelet/content/bulletin/list.xhtml" SHAPE="256,11185,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#banner_category#list.xhtml"
+  PATH="/facelet/content/banner_category/list.xhtml" SHAPE="304,5121,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#configuration#language#list.xhtml"
+  PATH="/facelet/configuration/language/list.xhtml" SHAPE="240,257,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#article_category#article#form.xhtml"
+  PATH="/facelet/content/article_category/article/form.xhtml" SHAPE="304,4897,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#home.jsf"
+  PATH="/home.jsf" SHAPE="240,145,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#generation#generator#log.xhtml"
+  PATH="/facelet/generation/generator/log.xhtml" SHAPE="256,10561,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#diary#form.xhtml"
+  PATH="/facelet/content/diary/form.xhtml" SHAPE="240,11665,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_player#list.xhtml"
+  PATH="/facelet/content/sport/sport_player/list.xhtml" SHAPE="272,13249,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_club#list.xhtml"
+  PATH="/facelet/content/sport/sport_club/list.xhtml" SHAPE="256,12657,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#bulletin#sender#list.xhtml"
+  PATH="/facelet/content/bulletin/sender/list.xhtml" SHAPE="240,11553,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#configuration#config#form.xhtml"
+  PATH="/facelet/configuration/config/form.xhtml" SHAPE="240,369,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#product#brand#list.xhtml"
+  PATH="/facelet/content/product/brand/list.xhtml" SHAPE="304,3329,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sidebar#list.xhtml"
+  PATH="/facelet/content/sidebar/list.xhtml" SHAPE="256,8049,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#footer#form.xhtml"
+  PATH="/facelet/content/footer/form.xhtml" SHAPE="256,4177,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#generation#template#list.xhtml"
+  PATH="/facelet/generation/template/list.xhtml" SHAPE="256,9793,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#list.xhtml"
+  PATH="/facelet/content/album_category/list.xhtml" SHAPE="304,6785,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#product#product_category#list.xhtml"
+  PATH="/facelet/content/product/product_category/list.xhtml" SHAPE="304,3441,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_player#form.xhtml"
+  PATH="/facelet/content/sport/sport_player/form.xhtml" SHAPE="272,13425,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#faq_category#faq#list.xhtml"
+  PATH="/facelet/content/faq_category/faq/list.xhtml" SHAPE="304,2465,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#documents#list.xhtml"
+  PATH="/facelet/content/documents/list.xhtml" SHAPE="240,10305,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#download_category#download#search.xhtml"
+  PATH="/facelet/content/download_category/download/search.xhtml" SHAPE="304,6673,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#product#search.xhtml"
+  PATH="/facelet/content/product/search.xhtml" SHAPE="304,3217,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#cropper#form.xhtml"
+  PATH="/facelet/content/cropper/form.xhtml" SHAPE="240,13873,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_season#list.xhtml"
+  PATH="/facelet/content/sport/sport_season/list.xhtml" SHAPE="240,13137,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#banner_category#banner#list.xhtml"
+  PATH="/facelet/content/banner_category/banner/list.xhtml" SHAPE="304,5617,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#gallery#form.xhtml"
+  PATH="/facelet/content/gallery/form.xhtml" SHAPE="256,10193,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#header#form.xhtml"
+  PATH="/facelet/content/header/form.xhtml" SHAPE="256,3921,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#header#list.xhtml"
+  PATH="/facelet/content/header/list.xhtml" SHAPE="256,3777,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_coach#list.xhtml"
+  PATH="/facelet/content/sport/sport_coach/list.xhtml" SHAPE="240,13649,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#article_category#form.xhtml"
+  PATH="/facelet/content/article_category/form.xhtml" SHAPE="304,4561,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_club#form.xhtml"
+  PATH="/facelet/content/sport/sport_club/form.xhtml" SHAPE="256,12801,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_position#list.xhtml"
+  PATH="/facelet/content/sport/sport_position/list.xhtml" SHAPE="240,12913,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#link_category#link#form.xhtml"
+  PATH="/facelet/content/link_category/link/form.xhtml" SHAPE="304,1745,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#gallery#list.xhtml"
+  PATH="/facelet/content/gallery/list.xhtml" SHAPE="256,10049,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#album#search.xhtml"
+  PATH="/facelet/content/album_category/album/search.xhtml" SHAPE="304,7601,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#hiru#organizer_centre#form.xhtml"
+  PATH="/facelet/content/hiru/organizer_centre/form.xhtml" SHAPE="256,11921,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#bulletin#form.xhtml"
+  PATH="/facelet/content/bulletin/form.xhtml" SHAPE="256,11329,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#direct_access_group#direct_access#list.xhtml"
+  PATH="/facelet/content/direct_access_group/direct_access/list.xhtml" SHAPE="304,9457,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#faq_category#form.xhtml"
+  PATH="/facelet/content/faq_category/form.xhtml" SHAPE="304,2241,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#modular_page#list.xhtml"
+  PATH="/facelet/content/modular_page/list.xhtml" SHAPE="272,8561,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#article_category#article#list.xhtml"
+  PATH="/facelet/content/article_category/article/list.xhtml" SHAPE="304,4785,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#company#list.xhtml"
+  PATH="/facelet/content/company/list.xhtml" SHAPE="272,10785,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#sport#sport_category#list.xhtml"
+  PATH="/facelet/content/sport/sport_category/list.xhtml" SHAPE="240,12545,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#menu#list.xhtml"
+  PATH="/facelet/content/menu/list.xhtml" SHAPE="256,881,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#link_category#link#search.xhtml"
+  PATH="/facelet/content/link_category/link/search.xhtml" SHAPE="304,1857,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#download_category#download#list.xhtml"
+  PATH="/facelet/content/download_category/download/list.xhtml" SHAPE="304,6449,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#form.xhtml"
+  PATH="/facelet/content/album_category/form.xhtml" SHAPE="304,7153,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#menu#form.xhtml"
+  PATH="/facelet/content/menu/form.xhtml" SHAPE="256,1025,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#direct_access_group#list.xhtml"
+  PATH="/facelet/content/direct_access_group/list.xhtml" SHAPE="304,8961,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#article_category#list.xhtml"
+  PATH="/facelet/content/article_category/list.xhtml" SHAPE="304,4289,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#generic_page#list.xhtml"
+  PATH="/facelet/content/generic_page/list.xhtml" SHAPE="272,481,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#section#list.xhtml"
+  PATH="/facelet/content/section/list.xhtml" SHAPE="256,8305,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#product#list.xhtml"
+  PATH="/facelet/content/product/list.xhtml" SHAPE="304,2801,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#product#form.xhtml"
+  PATH="/facelet/content/product/form.xhtml" SHAPE="304,3105,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#banner_category#banner#form.xhtml"
+  PATH="/facelet/content/banner_category/banner/form.xhtml" SHAPE="304,5729,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#hiru#course#form.xhtml"
+  PATH="/facelet/content/hiru/course/form.xhtml" SHAPE="272,12209,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#hiru#course#search.xhtml"
+  PATH="/facelet/content/hiru/course/search.xhtml" SHAPE="272,12321,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#search.xhtml"
+  PATH="/facelet/content/album_category/search.xhtml" SHAPE="304,7265,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#faq_category#faq#form.xhtml"
+  PATH="/facelet/content/faq_category/faq/form.xhtml" SHAPE="304,2577,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#link_category#search.xhtml"
+  PATH="/facelet/content/link_category/search.xhtml" SHAPE="304,1521,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#banner_category#form.xhtml"
+  PATH="/facelet/content/banner_category/form.xhtml" SHAPE="304,5393,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#link_category#form.xhtml"
+  PATH="/facelet/content/link_category/form.xhtml" SHAPE="304,1409,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#section#form.xhtml"
+  PATH="/facelet/content/section/form.xhtml" SHAPE="256,8449,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#hiru#organizer_centre#list.xhtml"
+  PATH="/facelet/content/hiru/organizer_centre/list.xhtml" SHAPE="256,11777,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#product#product_category#search.xhtml"
+  PATH="/facelet/content/product/product_category/search.xhtml" SHAPE="304,3665,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#album#list.xhtml"
+  PATH="/facelet/content/album_category/album/list.xhtml" SHAPE="304,7377,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#album_category#album#album_image##list.xhtml"
+  PATH="/facelet/content/album_category/album/album_image//list.xhtml" SHAPE="304,7713,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#download_category#list.xhtml"
+  PATH="/facelet/content/download_category/list.xhtml" SHAPE="304,5953,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#link_category#link#list.xhtml"
+  PATH="/facelet/content/link_category/link/list.xhtml" SHAPE="304,1633,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#link_category#list.xhtml"
+  PATH="/facelet/content/link_category/list.xhtml" SHAPE="304,1137,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#modular_page#search.xhtml"
+  PATH="/facelet/content/modular_page/search.xhtml" SHAPE="272,8849,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#content#download_category#form.xhtml"
+  PATH="/facelet/content/download_category/form.xhtml" SHAPE="304,6225,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#homepage#main.xhtml"
+  PATH="/facelet/homepage/main.xhtml" SHAPE="240,33,0,0"/>
+</PROCESS>
