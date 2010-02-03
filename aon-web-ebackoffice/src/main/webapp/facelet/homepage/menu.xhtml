@@ -28,19 +28,16 @@
 					actionListener="#{catalogue.onEditSearch}"
 					value="#{productBundle.product_catalogue_module}" />
 				<aon:menuSeparator />
-				<aon:menuItem id="pcategory" action="pcategory_grid"
+				<aon:menuItem id="productCategory" action="productCategory"
 					value="#{productBundle.product_category_module}">
-					<aon:actionListener method="#{pcategory.onEditSearch}" />
-					<aon:actionListener method="#{pcategory.onSearch}" />
-
+					<aon:actionListener method="#{productCategory.onEditSearch}" />
+					<aon:actionListener method="#{productCategory.onSearch}" />
 				</aon:menuItem>
 				<aon:menuSeparator />
-				<aon:menuItem id="productCategoryGroup"
-					action="productCategoryGroup_list"
+				<aon:menuItem id="productCategoryGroup" action="productCategoryGroup"
 					value="#{productBundle.product_categoryGroup_module}">
 					<aon:actionListener method="#{productCategoryGroup.onEditSearch}" />
 					<aon:actionListener method="#{productCategoryGroup.onSearch}" />
-					<!--<aon:actionListener method="#{productCategoryGroup.onSelectFirst}" /> -->
 				</aon:menuItem>
 				<aon:menuSeparator />
 				<aon:menuItem id="brand" action="brand"
@@ -57,16 +54,17 @@
 				<aon:menuItem id="company" action="company"
 					actionListener="#{company.onLoad}"
 					value="#{companyBundle.company_data_module}" />
-				<aon:menuSeparator />
+				<aon:menuSeparator rendered="#{ecconfig.ecParam}" />
 				<aon:menuItem id="paymethod" value="formas de pago"
-					action="paymethod_list" immediate="true">
+					rendered="#{ecconfig.ecParam}" action="paymethod_list"
+					immediate="true">
 					<aon:actionListener method="#{paymethod.onEditSearch}" />
 					<aon:actionListener method="#{paymethod.onSearch}" />
 
 				</aon:menuItem>
-				<aon:menuSeparator />
+				<aon:menuSeparator rendered="#{ecconfig.ecParam}" />
 				<aon:menuItem id="series" value="series" action="series"
-					immediate="true" />
+					rendered="#{ecconfig.ecParam}" immediate="true" />
 				<aon:menuSeparator />
 				<aon:menuItem id="EC-CONFIG"
 					value="#{appBundle.menu_efunctionality}" immediate="true"

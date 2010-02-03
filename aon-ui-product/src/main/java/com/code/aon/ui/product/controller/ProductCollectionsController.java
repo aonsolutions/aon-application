@@ -44,6 +44,13 @@ public class ProductCollectionsController {
 	public void setBrand(Brand brand ) {
 	}
 	
+	/**
+	 * Gets the brands.
+	 * 
+	 * @return the brands
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
 	public List<SelectItem> getBrands() throws ManagerBeanException {
 		List<SelectItem> brands = new LinkedList<SelectItem>();
 		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
@@ -65,79 +72,72 @@ public class ProductCollectionsController {
 	public void setCategory(ProductCategory productCategory) {
 	}
 	
-	@SuppressWarnings("unchecked")
+	/**
+	 * Gets the productCategories.
+	 * 
+	 * @return the productCategories
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
 	public List<SelectItem> getCategories() throws ManagerBeanException {
-		boolean groups = false;
-		List<SelectItem> categories = new LinkedList<SelectItem>();
-		IManagerBean categoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
+		List<SelectItem> pCategories = new LinkedList<SelectItem>();
+		IManagerBean productCategoryBean = BeanManager.getManagerBean(ProductCategory.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(categoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
-		Iterator iter = categoryGroupBean.getList(criteria).iterator();
+		criteria.addOrder(productCategoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
+		Iterator<ITransferObject> iter = productCategoryBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
-			groups = true;
-			ProductCategoryGroup categoryGroup = (ProductCategoryGroup)iter.next();
-			SelectItem[] groupCategories = obtainGroupCategories(categoryGroup.getId());
-			SelectItemGroup item = new SelectItemGroup(categoryGroup.getName(), categoryGroup.getName(), false, groupCategories);
-			categories.add(item);
+			ProductCategory pCategory = (ProductCategory) iter.next();
+			SelectItem item = new SelectItem(pCategory, pCategory.getName());
+			pCategories.add(item);
 		}
-
-		SelectItem[] noGroupCategories = obtainNoGroupCategories();
-		if (groups) {
-			SelectItemGroup item = new SelectItemGroup("OTRAS", "OTRAS", false, noGroupCategories);
-			categories.add(item);
-		} else {
-			for (SelectItem category : noGroupCategories) {
-				categories.add(category);
-			}
-		}
-		return categories;
-	}
-
-	@SuppressWarnings("unchecked")
-	private SelectItem[] obtainGroupCategories(Integer groupId) throws ManagerBeanException {
-		List<SelectItem> categories = new LinkedList<SelectItem>();
-		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_CATEGORY_GROUP_ID), groupId);
-		criteria.addOrder(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
-		Iterator iter = categoryBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			ProductCategory category = (ProductCategory)iter.next();
-			SelectItem item = new SelectItem(category, category.getName());
-			categories.add(item);
-		}
-		return categories.toArray(new SelectItem[categories.size()]);
+		return pCategories;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private SelectItem[] obtainNoGroupCategories() throws ManagerBeanException {
-		List<SelectItem> categories = new LinkedList<SelectItem>();
-		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
+	public List<SelectItem> getCategoriesByGroup() throws ManagerBeanException {
+		List<SelectItem> pCategoriesByGroup = new LinkedList<SelectItem>();
+		IManagerBean pCategoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
 		Criteria criteria = new Criteria();
-		criteria.addNullExpression(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_CATEGORY_GROUP));
-		criteria.addOrder(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
-		Iterator iter = categoryBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			ProductCategory category = (ProductCategory)iter.next();
-			SelectItem item = new SelectItem(category, category.getName());
-			categories.add(item);
-		}
-		return categories.toArray(new SelectItem[categories.size()]);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getCategoryGroups() throws ManagerBeanException {
-		List<SelectItem> categoryGroups = new LinkedList<SelectItem>();
-		IManagerBean categoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(categoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
-		Iterator iter = categoryGroupBean.getList(criteria).iterator();
+		criteria.addOrder(pCategoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
+		Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
 		while(iter.hasNext()){
-			ProductCategoryGroup categoryGroup = (ProductCategoryGroup)iter.next();
-			SelectItem item = new SelectItem(categoryGroup, categoryGroup.getName());
-			categoryGroups.add(item);
+			ProductCategoryGroup catGroup = (ProductCategoryGroup)iter.next();
+			SelectItemGroup itemGroup = new SelectItemGroup(catGroup.getName(), catGroup.getName(), true, obtainGroupCateogries(catGroup.getId()));
+			pCategoriesByGroup.add(itemGroup);
 		}
-		return categoryGroups;
+		return pCategoriesByGroup;
+	}
+
+	@SuppressWarnings("unchecked")
+	private SelectItem[] obtainGroupCateogries(Integer id) throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
+		IManagerBean pcategoryBean = BeanManager.getManagerBean(ProductCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(pcategoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_CATEGORY_GROUP_ID), id);
+		criteria.addOrder(pcategoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
+		Iterator iter = pcategoryBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			ProductCategory category = (ProductCategory)iter.next();
+			SelectItem item = new SelectItem(category, category.getName());
+			items.add(item);
+		}
+		return items.toArray(new SelectItem[items.size()]);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getPCategoryGroups() throws ManagerBeanException {
+
+		List<SelectItem> pCategoryGroups = new LinkedList<SelectItem>();
+		IManagerBean pCategoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(pCategoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
+		Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			ProductCategoryGroup group = (ProductCategoryGroup)iter.next();
+			SelectItem item = new SelectItem(group, group.getName());
+			pCategoryGroups.add(item);
+		}
+		return pCategoryGroups;
 	}
 
 	/**
@@ -176,6 +176,8 @@ public class ProductCollectionsController {
 		return productTypes;
 	}
 	
+
+
 	/**
 	 * Gets the MIME types
 	 * 
@@ -193,6 +195,7 @@ public class ProductCollectionsController {
 		}
 		return mimeTypes;
 	}
+
 
 	/**
 	 * Gets the catalogues.
@@ -215,6 +218,7 @@ public class ProductCollectionsController {
 		return catalogues;
 	}
 	
+
 	/**
 	 * Gets the plu product types
 	 * 

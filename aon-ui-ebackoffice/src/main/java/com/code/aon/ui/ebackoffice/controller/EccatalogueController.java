@@ -10,7 +10,6 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -34,8 +33,7 @@ import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
 public class EccatalogueController extends LinesController {
-	private static final Logger LOGGER = Logger
-			.getLogger(EccatalogueController.class.getName());
+	
 
 	private AonFile image;
 	private AonFile icon;

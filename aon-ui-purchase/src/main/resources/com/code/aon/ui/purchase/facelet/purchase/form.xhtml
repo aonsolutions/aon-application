@@ -16,6 +16,7 @@
 					<ui:param name="toolbarTitle"
 						value="#{purchaseBundle.purchase_module}" />
 					<ui:param name="controller" value="#{purchase}" />
+					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!purchase.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!purchase.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
@@ -37,13 +38,19 @@
 							<f:setPropertyActionListener target="#{purchase.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
+						<aon:commandButton value="&#160;" id="email"
+							title="#{webmailBundle.webmail_send_email}"
+							actionListener="#{purchase.onSendByEmail}"
+							rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0 and purchaseDetail.to == null}"
+							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
+						</aon:commandButton>									
 						<h:commandLink id="purchase" value="#{bundle.aon_report}"
 							target="_new" rendered="#{!purchase.new}"
 							action="#{report.onExecute}"
 							disabled="#{purchaseDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-printer">
-							<f:param name="reportKey" value="purchase" />
+							<f:param name="reportKey" value="purchaseForm" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
 					</ui:define>
@@ -301,11 +308,11 @@
 										rendered="#{formList}" />
 									<aon:inputText id="PurchaseDetail_line" 
 										value="#{controller.to.line}" rendered="#{formEdit}"
-										required="true" size="2" maxlength="3" />
+										required="true" size="1" maxlength="3" />
 									<f:facet name="footer">
 										<aon:inputText id="PurchaseDetail_line-New" 
 											value="#{controller.to.line}" rendered="#{formNew}"
-											required="true" size="2" maxlength="3" />
+											required="true" size="1" maxlength="3" />
 									</f:facet>
 								</aon:column>
 		
@@ -344,17 +351,17 @@
 												selectReRender="purchaseDetailItemEdit,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount"
 												actionType="new">
 											</aon:lookupButton>
-											<aon:inputTextarea id="PurchaseDetail_item_product_name" 
-												value="#{purchaseDetail.to.description}"
-												cols="64" rows="#{!purchaseDetail.longDescription?1:5}"
-												style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-												<f:validateLength maximum="1024" />
-											</aon:inputTextarea>
 										</a4j:region>
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+										<aon:inputTextarea id="PurchaseDetail_item_product_name" 
+											value="#{purchaseDetail.to.description}"
+											cols="60" rows="#{!purchaseDetail.longDescription?1:5}"
+											style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											<f:validateLength maximum="1024" />
+										</aon:inputTextarea>
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
 											actionListener="#{purchaseDetail.onShortDescription}" reRender="PurchaseDetail_item_product_name"
 											rendered="#{purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
 											actionListener="#{purchaseDetail.onLongDescription}" reRender="PurchaseDetail_item_product_name"
 											rendered="#{!purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
 									</aon:div>
@@ -386,17 +393,17 @@
 													selectReRender="purchaseDetailItemNew,PurchaseDetail_price-New,PurchaseDetail_discount-New,PurchaseDetail_amount-New"
 													actionType="new">
 												</aon:lookupButton>
-												<aon:inputTextarea id="PurchaseDetail_item_product_name-New"
-													value="#{purchaseDetail.to.description}"
-													cols="64" rows="#{!purchaseDetail.longDescription?1:5}"
-													style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-													<f:validateLength maximum="1024" />
-												</aon:inputTextarea>
 											</a4j:region>
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+											<aon:inputTextarea id="PurchaseDetail_item_product_name-New"
+												value="#{purchaseDetail.to.description}"
+												cols="60" rows="#{!purchaseDetail.longDescription?1:5}"
+												style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+												<f:validateLength maximum="1024" />
+											</aon:inputTextarea>
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
 												actionListener="#{purchaseDetail.onShortDescription}" reRender="PurchaseDetail_item_product_name-New"
 												rendered="#{purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
 												actionListener="#{purchaseDetail.onLongDescription}" reRender="PurchaseDetail_item_product_name-New"
 												rendered="#{!purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
 										</aon:div>
@@ -414,12 +421,12 @@
 									<aon:inputText id="PurchaseDetail_quantity" 
 										value="#{controller.to.quantity}" rendered="#{formEdit}"
 										reRender="PurchaseDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="PurchaseDetail_quantity-New" 
 											value="#{controller.to.quantity}" rendered="#{formNew}" 
 											reRender="PurchaseDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 
@@ -434,12 +441,12 @@
 									<aon:inputText id="PurchaseDetail_price" 
 										value="#{controller.to.price}" rendered="#{formEdit}" 
 										reRender="PurchaseDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="PurchaseDetail_price-New" 
 											value="#{controller.to.price}" rendered="#{formNew}" 
 											reRender="PurchaseDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 
@@ -454,12 +461,12 @@
 									<aon:inputText id="PurchaseDetail_discount" 
 										value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
 										reRender="PurchaseDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="PurchaseDetail_discount-New" 
 											value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew}" 
 											reRender="PurchaseDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 
@@ -513,5 +520,6 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalIncome.xhtml" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>

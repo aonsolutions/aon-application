@@ -2,8 +2,6 @@ package com.code.aon.faces.component.richfaces.lookup.inputText;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
@@ -12,6 +10,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
@@ -31,7 +31,7 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  */
 public class LookupInputTextHandler extends AonAjaxInputHandler implements ILookupTags {
 
-	private static final Logger LOGGER = Logger.getLogger(LookupInputTextHandler.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(LookupInputTextHandler.class);
 	
     private static final String VALUE_CHANGE_LISTENER = "lookupChanged";
 	
@@ -96,7 +96,7 @@ public class LookupInputTextHandler extends AonAjaxInputHandler implements ILook
 			try {
 				type = ve.getType(ctx);
 			} catch ( Throwable th ) {
-				LOGGER.log(Level.FINE, "Type no found for " + ve + ". " + th.getMessage(), th);
+				LOGGER.debug("Type no found for " + ve, th);
 				return null;
 			}
 			if (type.getName().equals(propertyClassName)) {

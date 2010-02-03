@@ -1,17 +1,10 @@
 package com.code.aon.ui.webmail.controller;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -26,7 +19,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
@@ -85,17 +77,14 @@ public class AttachController {
 		try {
 			String filename = attachment.getFileName();
 			response.setContentType(attachment.getPart().getContentType());
-			response.setHeader("Content-disposition", "attachment;filename=\""
+			response.setHeader("content-disposition", "attachment;filename=\""
 					+ filename + "\"");
 			ServletOutputStream sos = response.getOutputStream();
 			BufferedInputStream bis = new BufferedInputStream(attachment.getPart().getInputStream());
-			int size = IOUtils.copy( bis, sos );
-			if ( size > 0 ) {
-				response.setHeader("Content-Length", String.valueOf(size));
-			}
-			bis.close();
-			sos.close();
+			IOUtils.copy( bis, sos );
 			response.flushBuffer();
+			sos.close();
+			bis.close();
 		} catch (IOException e) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
@@ -124,55 +113,43 @@ public class AttachController {
         context.responseComplete();    	
     }
     
-    private boolean isMSIE() {
-    	FacesContext context = FacesContext.getCurrentInstance();
-    	String browser = context.getExternalContext().getRequestHeaderMap().get("User-Agent");
-		return StringUtils.containsIgnoreCase(browser, "msie");
-    }
-    
-    private void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
+    public void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
         try {
 	        String outFilename = "attachments.zip";
-	        // Unico Content-Type que soporta Firefox para ficheros comprimidos
-	        response.setContentType("application/x-zip-compressed");
-	        if ( isMSIE() ) {
-	        	response.setHeader("Content-Encoding", "deflate");
-	        }
+			response.setContentType("application/zip");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
+			byte[] data = new byte[1024];
 
-			File tempFile = File.createTempFile(outFilename, ".zip");
-			OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(tempFile) );
-			ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-			Set<String> fileNames = new HashSet<String>();
-			for (AonAttachment aonAttachment : attachments) {
-                InputStream in = aonAttachment.getPart().getInputStream();
-                                
-            	String filename = aonAttachment.getFileName();
-           		for( int i = 0; fileNames.contains(filename); i++ ) {
-           			filename = aonAttachment.getFileName() + "("+i+")";
-            	}
-           		zipOut.putNextEntry(new ZipEntry(filename));
+            ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
 
-            	IOUtils.copy( in, zipOut );
-
-            	zipOut.closeEntry();
-                in.close();
+    		for (AonAttachment aonAttachment : attachments) {
+                InputStream in = (InputStream)aonAttachment.getPart().getInputStream();
                 
-           		fileNames.add(filename);                
+                
+            	String filename = aonAttachment.getFileName();
+            	boolean done = false;
+            	int i = 0;
+            	while (!done){
+	                try{
+	                	out.putNextEntry(new ZipEntry(filename+(i==0?"":"["+i+"]")));
+	                	done = true;
+	                }catch (Exception e) {
+	                	++i;
+					}
+            	}
+
+                int len;
+                while ((len = in.read(data)) > 0) {
+                    out.write(data, 0, len);
+                }
+
+                out.closeEntry();
+                in.close();
             }
-			zipOut.close();
-            long size = tempFile.length();
-            if ( size > 0 ) {
-                response.setHeader("Content-Length", String.valueOf(size));	
-            }
-            ServletOutputStream sos = response.getOutputStream();
-            InputStream fileIn = new BufferedInputStream( new FileInputStream(tempFile) );
-            IOUtils.copy( fileIn, sos );
-            fileIn.close();
-            sos.close();
+
     		response.flushBuffer();
-    		tempFile.delete();
+            out.close();
 		} catch (IOException e) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {

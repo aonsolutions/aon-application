@@ -50,11 +50,11 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
             if (period.getStatus() == AccountPeriodStatus.INACTIVE) {
             	throw new ManagerBeanVetoListenerException("El Ejercicio "+period.getId() + " está inactivo.");
             }
-            if (period.getStatus() == AccountPeriodStatus.OPERATING && to.getType() != AccountEntryType.CLOSING) {
-            	throw new ManagerBeanVetoListenerException("No se permite la introducción o modificación de asientos en el ejercicio "+period.getId() + " porque ya se ha realizado el asiento de explotación.");
+            if (period.getStatus() == AccountPeriodStatus.OPERATING) {
+            	throw new ManagerBeanVetoListenerException("No se permite la introducción de asientos en el ejercicio "+period.getId() + " porque ya se ha realizado el asiento de explotación.");
             }
             if (period.getStatus() == AccountPeriodStatus.CLOSED) {
-            	throw new ManagerBeanVetoListenerException("No se permite la introducción o modificación de asientos en el ejercicio "+period.getId() + " porque ya se ha realizado el asiento de cierre.");
+            	throw new ManagerBeanVetoListenerException("No se permite la introducción de asientos en el ejercicio "+period.getId() + " porque ya se ha realizado el asiento de cierre.");
             }
         } catch (ManagerBeanException e) {
             throw new ManagerBeanVetoListenerException(e);

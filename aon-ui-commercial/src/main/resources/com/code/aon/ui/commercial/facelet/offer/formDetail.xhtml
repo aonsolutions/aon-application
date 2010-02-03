@@ -15,15 +15,15 @@
 		<ui:param name="rows" value="0" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="skipResetButton" value="#{offer.readOnly}" />
-		<ui:param name="skipLineEdition" value="#{offer.readOnly}" />
+		<ui:param name="skipResetButton" value="#{!offer.pending}" />
+		<ui:param name="skipLineEdition" value="#{!offer.pending}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
 		<ui:param name="newCancelButtonReRender" value="menuExt" />
 		<ui:param name="cancelButtonReRender" value="menuExt" />
-		<ui:param name="newSaveButtonReRender" value="menuExt,headerData,Offer_total" />
-		<ui:param name="saveButtonReRender" value="menuExt,headerData,Offer_total" />
-		<ui:param name="removeButtonReRender" value="menuExt,headerData,Offer_total" />
+		<ui:param name="newSaveButtonReRender" value="menuExt,Offer_total" />
+		<ui:param name="saveButtonReRender" value="menuExt,Offer_total" />
+		<ui:param name="removeButtonReRender" value="menuExt,Offer_total" />
 		<ui:param name="focusOnAdd" value="OfferDetail_item_product_code-New" />
 		<ui:param name="focusOnSelect" value="OfferDetail_item_product_code" />
 	
@@ -232,7 +232,7 @@
 				<f:facet name="header">
 					<aon:outputLabel value="INFO" />
 				</f:facet>
-				<aon:div rendered="#{!controller.pending and to.item != null and to.item.id != null}" style="display:inline;cursor:pointer;">
+				<aon:div rendered="#{!controller.pending}" style="display:inline;cursor:pointer;">
 					<aon:outputText value="&#160;"
 						styleClass="aon-icon-predetermine" style="padding-left:20px" />
 					<rich:toolTip value="#{controller.lineStatusInfo}" />

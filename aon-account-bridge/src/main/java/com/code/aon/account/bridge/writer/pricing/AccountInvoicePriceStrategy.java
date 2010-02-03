@@ -1,8 +1,9 @@
 package com.code.aon.account.bridge.writer.pricing;
 
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.TaxAccount;
@@ -24,7 +25,7 @@ import com.code.aon.ql.Criteria;
 
 public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 	
-	private static final Logger LOGGER = Logger.getLogger(AccountInvoicePriceStrategy.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountInvoicePriceStrategy.class.getName());
 	
 	private AccountingUtil accountingUtil;
 
@@ -57,7 +58,7 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 					return taxAccount.getAccount();
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error obtaining Tax Account", e);
+				LOGGER.error("Error obtaining Tax Account", e);
 			}
 		}
 		
@@ -73,7 +74,7 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 			} 
 			return getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining Tax Account", e);
+			LOGGER.error("Error obtaining Tax Account", e);
 		}
 
 		return null;

@@ -44,13 +44,13 @@
 							<aon:actionListener method="#{direct_access.onEditSearch}" />
 						</aon:commandButton>
 						<aon:commandButton id="generate" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" immediate="true"
+							value="#{appBundle.aon_generate}" 
 							rendered="#{cms.roleEditor}"
-							actionListener="#{generator.onGenerateDirectAccess}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateDirectAccess}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" ajaxSingle="true"
+								event="onclick" reRender="poll,grid" 
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>	

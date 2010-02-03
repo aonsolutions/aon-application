@@ -8,8 +8,7 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="controller" value="#{ecpaymethod}" />
-		<ui:param name="columnClasses"
-			value="aon-editDataTable-text,aon-editDataTable-text" />
+		<ui:param name="columnClasses"	value="aon-editDataTable-text,aon-editDataTable-text" />
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
@@ -17,11 +16,11 @@
 				</f:facet>
 				<aon:outputText value="#{to.userName}" rendered="#{formList}" />
 				<aon:inputText id="user" rendered="#{formEdit}" size="20"
-					value="#{ecpaymethod.to.userName}" maxlength="40" />
+					value="#{ecpaymethod.to.userName}" maxlength="64" />
 				<f:facet name="footer">
 					<aon:inputText id="CommercialSegment_name-New" required="true"
-						rendered="#{formNew}" size="20" value="#{ecpaymethod.to.userName}"
-						maxlength="40" />
+						rendered="#{formNew}" size="20" maxlength="64" value="#{ecpaymethod.to.userName}"
+						 />
 				</f:facet>
 			</aon:column>
 			
@@ -30,11 +29,24 @@
 					<aon:outputLabel value="Password" />
 				</f:facet>
 				<aon:outputText  value="#{to.password}" rendered="#{formList}" />
-				<aon:outputText id="password" rendered="#{formEdit}" size="20"
-					value="#{ecpaymethod.to.password}" maxlength="40" />
+				<aon:inputText id="password" rendered="#{formEdit}" size="20"
+					value="#{ecpaymethod.to.password}" maxlength="32" />
 				<f:facet name="footer">
 					<aon:inputSecret required="true" rendered="#{formNew}" size="20"
-						value="#{ecpaymethod.to.password}" maxlength="40" />
+						value="#{ecpaymethod.to.password}" maxlength="32" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel value="Signature" />
+				</f:facet>
+				<aon:outputText  value="#{to.signature}" rendered="#{formList}" />
+				<aon:inputText id="signature" rendered="#{formEdit}" size="40"
+					value="#{ecpaymethod.to.signature}" maxlength="128" />
+				<f:facet name="footer">
+					<aon:inputSecret required="true" rendered="#{formNew}" size="40"
+						value="#{ecpaymethod.to.signature}" maxlength="128" />
 				</f:facet>
 			</aon:column>
 

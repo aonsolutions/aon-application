@@ -23,7 +23,7 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		}
 		generateEmailSendPage();
 		generateSearchPage();
-		generateLanguagePage();		
+		generatePage( Templates.LANGUAGE );		
 		generatePage( Templates.CAPTCHA );		
 	}
 
@@ -43,11 +43,6 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		context.changeDefaultSection(vu);
 		generate(vu, Templates.SEARCH);
 	}
-	
-	private void generateLanguagePage() {
-		VelocityUtil vu = context.initVelocityUtil();		
-		generate(vu, Templates.LANGUAGE);
-	}	
 
 	private void generatePage( Templates template) throws IOException {
 		File file = Generator.getTemplateFile(template);

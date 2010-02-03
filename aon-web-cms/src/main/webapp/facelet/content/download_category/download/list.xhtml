@@ -27,13 +27,13 @@
 						accesskey="#{bundle.aon_key_close}">
 					</aon:commandButton>
 					<aon:commandButton id="generate" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" immediate="true"
+						value="#{appBundle.aon_generate}" 
 						rendered="#{cms.roleEditor}"
-						actionListener="#{generator.onGenerateDownloads}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateDownloads}" />
 						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							event="onclick" reRender="poll,grid" 
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>	

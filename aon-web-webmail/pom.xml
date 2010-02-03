@@ -6,14 +6,14 @@
 	<parent>
 		<artifactId>aon.web.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>1.0.5</version>
+		<version>1.0.4</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-web-webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
-	<version>4.15.0</version>
+	<version>4.5.0</version>
 	<description>AON WEB WEBMAIL</description>
 	<build>
 		<finalName>aon-webmail</finalName>
@@ -22,13 +22,32 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.16.0</version>
-			<scope>runtime</scope>
+			<version>4.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+	    <dependency>
+	      <groupId>com.code.aon</groupId>
+	      <artifactId>aon.ui.resources</artifactId>
+	      <version>3.5.0</version>
+	      <scope>compile</scope>
+	    </dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>3.4.1</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.2</version>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.groupware</artifactId>
+			<version>3.4.0</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>			
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.config</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 	</dependencies>
 </project>

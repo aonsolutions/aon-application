@@ -23,13 +23,13 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_modular" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" immediate="true"
-						actionListener="#{generator.onGenerateCurrentModular}"
+						value="#{appBundle.aon_generate}" 
 						rendered="#{modular_page.to!=null and (!modular_page.new) and cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateCurrentModular}" />
 						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							event="onclick" reRender="poll,grid" 
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>

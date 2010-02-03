@@ -12,22 +12,47 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="downloadCategoryList">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.download_category}" />
-				<ui:param name="controller" value="#{download_category}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="exit"
-						value="#{bundle.aon_close}"
-						action="#{download_category.getBack}" 
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>				
-				</ui:define>
-			</ui:decorate>
+		<aon:form id="faqCategoryList">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.download_category}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="download_category_form"
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{download_category.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="download_category_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{download_category.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="#{download_category.getBack}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="sectionGrid" columns="2" dir="true" 

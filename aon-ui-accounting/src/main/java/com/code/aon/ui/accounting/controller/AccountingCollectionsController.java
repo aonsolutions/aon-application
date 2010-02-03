@@ -135,6 +135,7 @@ public class AccountingCollectionsController {
 
 	private List<SelectItem> getAllAccountPeriods(boolean pojo) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.CLOSED);
 		criteria.addOrder(getPeriodIdAlias(), false);
 		return getPeriods(criteria, true);
 	}

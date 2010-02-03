@@ -37,7 +37,7 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 	}
 
 	public void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
-		File template = (type == Templates.LANGUAGE) ? getTemplateFile(Templates.LANGUAGE) : getTemplateFile(Templates.INDEX);
+		File template = getIndexTemplate();
 		String content = contentTemplate;
 		File page = getPage(type, name);
 		
@@ -50,6 +50,10 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 	    } else {
 	    	logger.error("No se ha encontrado plantilla " + type.getTemplateName());
 	    }
+	}
+
+	private static File getIndexTemplate() {
+		return getTemplateFile(Templates.INDEX);
 	}
 
 	private static String getContentTemplate(Templates t) {

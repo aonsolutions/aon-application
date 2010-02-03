@@ -3,10 +3,8 @@ package com.code.aon.finance.vat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.VatReportType;
 import com.code.aon.finance.enumeration.VatType;
@@ -57,11 +55,11 @@ public class Vat {
 	}
 
 	public VatReportType getReportType() {
-		if (transactionType == InvoiceTransactionType.INTRACOMMUNITY) {
-			return VatReportType.INTRACOMMUNITY;
+		if (transactionType == InvoiceTransactionType.INTRACOMUNNITARY) {
+			return VatReportType.INTRACOMUNNITARY;
 		} 
-		if (transactionType == InvoiceTransactionType.EXTRACOMMUNITY) {
-			return VatReportType.EXTRACOMMUNITY;
+		if (transactionType == InvoiceTransactionType.EXTRACOMUNNITARY) {
+			return VatReportType.EXTRACOMUNNITARY;
 		}
 		return VatReportType.GENERAL;
 	}
@@ -120,13 +118,6 @@ public class Vat {
 
 	public void setNumber(int number) {
 		this.number = number;
-	}
-
-	public String getSeriesNumber() {
-		if ( StringUtils.isBlank(series) ) {
-			return Integer.toString(number);
-		} 
-		return series + "/" + number;
 	}
 
 	public String getReference() {
