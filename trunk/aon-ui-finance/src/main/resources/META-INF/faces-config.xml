@@ -853,10 +853,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Invoice</value>
 		</managed-property>
@@ -1002,10 +998,6 @@
 			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>feePrint</value>
@@ -1166,10 +1158,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Invoice</value>
 		</managed-property>
@@ -1304,10 +1292,6 @@
 		<managed-bean-name>saleInvoiceAddress</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoiceAddress</value>
@@ -1498,10 +1482,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Invoice</value>
 		</managed-property>
@@ -1635,10 +1615,6 @@
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoiceAddress</value>
 		</managed-property>
@@ -1684,8 +1660,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1769,8 +1745,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
