@@ -9,7 +9,7 @@
 			<var>commercialBundle</var>
 		</resource-bundle>				
 	</application>
-	
+
 	<!--  *************** COLLECTIONS ***************** -->
 
 	<managed-bean>
