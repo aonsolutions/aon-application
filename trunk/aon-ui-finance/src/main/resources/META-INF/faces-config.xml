@@ -18,7 +18,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* FBATCH ***************** -->
 	<managed-bean>
 		<managed-bean-name>fbatch</managed-bean-name>
