@@ -30,11 +30,6 @@
 		<hibernate names="id,parent.id,parent.surname,parent.name" />
 	</bean>
 	
-	<bean class="com.code.aon.finance.InvoicingGroupDetail" sqlName="invoicing_group_detail">
-		<alias names="id,invoicingGroup_id,child_id,child_surname,child_name,grouped" />
-		<hibernate names="id,invoicingGroup.id,child.id,child.surname,child.name,grouped" />
-	</bean>
-	
 	<bean class="com.code.aon.finance.Finance" sqlName="finance">
 		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_type,payment,registry_id,securityLevel,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate" />
 		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice.id,payMethod.id,payMethod.type,payment,registry.id,securityLevel,invoice.series,invoice.number,invoice.referenceCode,invoice.issueDate" />

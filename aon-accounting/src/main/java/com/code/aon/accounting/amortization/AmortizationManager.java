@@ -1,6 +1,5 @@
 package com.code.aon.accounting.amortization;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -111,10 +110,10 @@ public class AmortizationManager {
 		GregorianCalendar c = (GregorianCalendar) GregorianCalendar.getInstance();
 		int days = 0;
 		int intYears = (int) Math.floor(years);
-		double modYears = CommonUtil.round( years - intYears);
-		for (int i = 0; i < years-(modYears==0?0:1); i++) {
+		for (int i = 0; i < years-1; i++) {
 			days += c.isLeapYear(currentYear + i)?366:365;
 		}
+		double modYears = CommonUtil.round( years - intYears);
 		if (modYears > 0) {
 			int lastYearDays = c.isLeapYear(currentYear + intYears)?366:365;
 			lastYearDays = (int) Math.ceil(lastYearDays * modYears );
@@ -170,15 +169,5 @@ public class AmortizationManager {
 	public void unrecordAllocation(Integer acccountEntryId) throws ManagerBeanException {
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 		accountEntryBean.remove(accountEntryBean.get(acccountEntryId));
-	}
-	
-	
-	public static void main(String[] args) {
-		Amortization a = new Amortization();
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		c.set(Calendar.MONTH, 2);
-		c.set(Calendar.YEAR, 2);
-		a.setInitialDate(c.getTime());
 	}
 }

@@ -11,39 +11,26 @@ import com.code.aon.product.Item;
 
 public class InvoicingParameters {
 	
-	private Customer customer;
-	private Item item;
 	private Month month;
+	
 	private int year;
+	
 	private Series series;
-	private Integer fromNumber;
-	private Integer toNumber;
-	private Date fromDate;
-	private Date toDate;
+	
+	private int number;
+	
+	private Date invoiceDate;
+	
+	private Customer customer;
+	
+	private Item item;
+	
 	private SecurityLevel securityLevel;
+	
 	private WorkPlace workPlace;
 	
-	private Series invoiceSeries;
-	private int invoiceNumber;
-	private Date invoiceDate;
 	private boolean invoiceRecordable;
 	
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
-	public Item getItem() {
-		return item;
-	}
-
-	public void setItem(Item item) {
-		this.item = item;
-	}
-
 	public Month getMonth() {
 		return month;
 	}
@@ -68,36 +55,36 @@ public class InvoicingParameters {
 		this.series = series;
 	}
 
-	public Integer getFromNumber() {
-		return fromNumber;
+	public int getNumber() {
+		return number;
 	}
 
-	public void setFromNumber(Integer fromNumber) {
-		this.fromNumber = fromNumber;
+	public void setNumber(int number) {
+		this.number = number;
 	}
 	
-	public Integer getToNumber() {
-		return toNumber;
+	public Date getInvoiceDate() {
+		return invoiceDate;
 	}
 
-	public void setToNumber(Integer toNumber) {
-		this.toNumber = toNumber;
-	}
-	
-	public Date getFromDate() {
-		return fromDate;
+	public void setInvoiceDate(Date invoiceDate) {
+		this.invoiceDate = invoiceDate;
 	}
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public Date getToDate() {
-		return toDate;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -116,30 +103,6 @@ public class InvoicingParameters {
 		this.workPlace = workPlace;
 	}
 
-	public Series getInvoiceSeries() {
-		return invoiceSeries;
-	}
-
-	public void setInvoiceSeries(Series invoiceSeries) {
-		this.invoiceSeries = invoiceSeries;
-	}
-
-	public int getInvoiceNumber() {
-		return invoiceNumber;
-	}
-
-	public void setInvoiceNumber(int invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
-	
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
-
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
-
 	public boolean isInvoiceRecordable() {
 		return invoiceRecordable;
 	}
@@ -147,5 +110,4 @@ public class InvoicingParameters {
 	public void setInvoiceRecordable(boolean invoiceRecordable) {
 		this.invoiceRecordable = invoiceRecordable;
 	}
-
 }

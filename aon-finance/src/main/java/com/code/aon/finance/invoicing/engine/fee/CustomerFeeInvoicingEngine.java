@@ -41,8 +41,8 @@ import com.code.aon.registry.Registry;
 public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	
 	private IInvoicingDAO invoicingDAO;
+	
 	private IInvoicingFeedBack invoicingFeedBack;
-	private int detailLine = 0;
 	
 	public IInvoicingDAO getInvoicingDAO() {
 		return invoicingDAO;
@@ -83,7 +83,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
-		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID));
 		return criteria;
 	}
 
@@ -227,31 +226,32 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		int size = feeList.size();
 		getInvoicingFeedBack().setRowCount(size);
 		getInvoicingFeedBack().setCurrentRow(0);
-		int counter = params.getInvoiceNumber();
+		int counter = params.getNumber();
 		Invoice invoice = null;
 		Integer previousCustomerId = new Integer(Integer.MIN_VALUE);
 		Iterator iter = feeList.iterator();
 		int i = 0;
 		while(iter.hasNext()){
 			CustomerFee customerFee = (CustomerFee)iter.next();
-			counter = calculateNextNumber(params.getInvoiceSeries(), counter);
+			counter = calculateNextNumber(counter, params.getSeries());
 
 			InvoicingGroup group = getInvoicingGroup(customerFee.getCustomer().getRegistry());
 			if (group != null) {
 				if (!previousCustomerId.equals(customerFee.getCustomer().getId())) {
 					invoiceGroup(group, criteria, counter, params);
+					invoice = null;
+					counter++;
 				}
 			} else {
 				if (!previousCustomerId.equals(customerFee.getCustomer().getId())) {
-					// Se crea finance asociado al invoice anterior, que ya no tiene más detalles.
+					// se crea finance asociado al invoice anterior, que ya no tiene más detalles
 					if (invoice != null) {
-						getInvoicingDAO().createFinances(invoice, null);
+						getInvoicingDAO().createFinances(invoice);
 					}
 					invoice = createInvoice(customerFee, counter, params);
 					counter++;
-					detailLine = 0;
 					getInvoicingDAO().insertInvoice(invoice);
-					getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
+					getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getSeries() + "/" + invoice.getNumber());
 				}
 				InvoiceDetail invoiceDetail = createInvoiceDetail(customerFee, invoice, params);
 				getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
@@ -262,13 +262,14 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 			i++;
 			if (i < size) {
-				// La última vuelta se ignora para que el progreso se quede incompleto porque falta el calculo de vencimientos. 
+				// La última vuelta se ignora para que el progreso se quede 
+				// incompleto porque falta el calculo de vencimientos. 
 				getInvoicingFeedBack().setCurrentRow(i);	
 			} 
 		}
-		// Se crea finance asociado al ultimo invoice, que ya no tiene más detalles
-		if (invoice != null) {
-			getInvoicingDAO().createFinances(invoice, null);
+		// se crea finance asociado al ultimo invoice, que ya no tiene más detalles
+		if(invoice != null){
+			getInvoicingDAO().createFinances(invoice);
 		}
 		// Finalizado el calculo de vtos. se fija el progreso.
 		getInvoicingFeedBack().setCurrentRow(size);
@@ -293,10 +294,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Iterator feeIter = customerFeeBean.getList(feeCriteria).iterator();
 		if (feeIter.hasNext()) {
 			Invoice invoice = createInvoice(group, counter, params);
-			counter++;
-			detailLine = 0;
 			getInvoicingDAO().insertInvoice(invoice);
-			getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
+			getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getSeries() + "/" + invoice.getNumber());
 			while (feeIter.hasNext()) {
 				CustomerFee fee = (CustomerFee)feeIter.next();
 				InvoiceDetail invoiceDetail = createInvoiceDetail(fee, invoice, params);
@@ -304,7 +303,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 				getInvoicingDAO().updateSource(fee);
 				getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());			
 			}
-			getInvoicingDAO().createFinances(invoice, null);
+			getInvoicingDAO().createFinances(invoice);
 		}
 	}
 
@@ -316,7 +315,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) + " " + (registry.getSurname()==null?"":registry.getSurname()));
-		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
+		invoice.setSeries(params.getSeries()==null?null:params.getSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
@@ -330,7 +329,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistry(group.getParent());
 		invoice.setRegistryDocument(group.getParent().getDocument());
 		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) + " " + (group.getParent().getSurname()==null?"":group.getParent().getSurname()));
-		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
+		invoice.setSeries(params.getSeries()==null?null:params.getSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
@@ -341,7 +340,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setSourceId(null);
 		invoiceDetail.setInvoice(invoice);
-		invoiceDetail.setLine(++detailLine);
 		invoiceDetail.setItem(customerFee.getItem());
         invoiceDetail.setDescription(obtainFeeDescription(customerFee, invoice, params));
         invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
@@ -368,24 +366,25 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		return (description.length()>64)?description.substring(0, 64):description;
 	}
 
-	private int calculateNextNumber(Series series, int number) throws ManagerBeanException {
+	@SuppressWarnings("unchecked")
+	private int calculateNextNumber(int counter, Series series) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		number = (number == 0 ? 1 : number);
-		while (true) {
+		counter = (counter == 0?1:counter);
+		while(true){
 			Criteria criteria = new Criteria();
 			if (series == null) {
 				criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
 			} else {
 				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series.getId());
 			}
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), number);
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
-			if (invoiceBean.getCount(criteria) == 0) {
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), new Integer(counter));
+			Iterator iter = invoiceBean.getList(criteria).iterator();
+			if(!iter.hasNext()){
 				break;
 			}
-			number++;
+			counter++;
 		}
-		return number;
+		return counter;
 	}
 
 	private double calculateCorrectionFactor(CustomerFee customerFee, InvoicingParameters params) {

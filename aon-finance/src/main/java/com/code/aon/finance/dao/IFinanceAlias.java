@@ -893,40 +893,28 @@ public interface IFinanceAlias {
 	DAOConstantsEntry INVOICING_GROUP_DETAIL_ENTRY = DAOConstants.getDAOConstant(InvoicingGroupDetail.class);
 
 	/** 
-	* Alias value: InvoicingGroupDetail_id
-	* Hibernate value: InvoicingGroupDetail.id
-	*/
-	String  INVOICING_GROUP_DETAIL_ID = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: InvoicingGroupDetail_invoicingGroup_id
-	* Hibernate value: InvoicingGroupDetail.invoicingGroup.id
-	*/
-	String  INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: InvoicingGroupDetail_child_id
 	* Hibernate value: InvoicingGroupDetail.child.id
 	*/
-	String  INVOICING_GROUP_DETAIL_CHILD_ID = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: InvoicingGroupDetail_child_surname
-	* Hibernate value: InvoicingGroupDetail.child.surname
-	*/
-	String  INVOICING_GROUP_DETAIL_CHILD_SURNAME = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: InvoicingGroupDetail_child_name
-	* Hibernate value: InvoicingGroupDetail.child.name
-	*/
-	String  INVOICING_GROUP_DETAIL_CHILD_NAME = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[4];
+	String  INVOICING_GROUP_DETAIL_CHILD_ID = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: InvoicingGroupDetail_grouped
 	* Hibernate value: InvoicingGroupDetail.grouped
 	*/
-	String  INVOICING_GROUP_DETAIL_GROUPED = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[5];
+	String  INVOICING_GROUP_DETAIL_GROUPED = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: InvoicingGroupDetail_id
+	* Hibernate value: InvoicingGroupDetail.id
+	*/
+	String  INVOICING_GROUP_DETAIL_ID = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: InvoicingGroupDetail_invoicingGroup_id
+	* Hibernate value: InvoicingGroupDetail.invoicingGroup.id
+	*/
+	String  INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }

@@ -56,7 +56,7 @@ B.V.1|1. Instrumentos de patrimonio.|5305,540,(5395),(549)|54|false|false|true|f
 B.V.2|2. Créditos a empresas|5325,5345,542,543,547,(5955),(598)|55|false|false|true|false|false
 B.V.3|3. Valores representativos de deuda.|5315,5335,541,546,(5945),(597)|56|false|false|true|false|false
 B.V.4|4. Derivados.|5590,5593|57|false|false|true|false|false
-B.V.5|5. Otros activos financieros.|5355,545,548,?551,5525,565,566|58|false|false|true|false|false
+B.V.5|5. Otros activos financieros.|5355,545,548,551,5525,565,566|58|false|false|true|false|false
 B.VI|VI. Periodificaciones a corto plazo.|480,567|59|true|false|true|false|false
 B.VII|VII. Efectivo y otros activos líquidos equivalentes.|B.VII.1,B.VII.2|60|true|true|true|false|false
 B.VII.1|1. Tesorería.|570,571,572,573,574,575|61|false|false|true|false|false
@@ -81,7 +81,7 @@ PA.A-1.V|V. Resultados de ejercicios anteriores.|PA.A-1.V.1,PA.A-1.V.2|79|true|t
 PA.A-1.V.1|1. Remanente.|120|80|false|false|true|false|true
 PA.A-1.V.2|2. (Resultados negativos de ejercicios anteriores).|(121)|81|false|false|true|false|true
 PA.A-1.VI|VI. Otras aportaciones de socios.|118|82|true|false|true|false|true
-PA.A-1.VII|VII. Resultado del ejercicio.|129,6,7|83|true|false|true|false|true
+PA.A-1.VII|VII. Resultado del ejercicio.|129|83|true|false|true|false|true
 PA.A-1.VIII|VIII. (Dividendo a cuenta).|(557)|84|true|false|true|false|true
 PA.A-1.IX|IX. Otros instrumentos de patrimonio neto.|111|85|true|false|true|false|true
 PA.A-2|A-2) Ajustes por cambios de valor.|PA.A-2.I,PA.A-2.II,PA.A-2.III|86|true|true|true|false|true
@@ -114,7 +114,7 @@ PC.III.1|1. Obligaciones y otros valores negociables.|500,501,505,506|112|false|
 PC.III.2|2. Deudas con entidades de crédito.|5105,520,527|113|false|false|true|false|true
 PC.III.3|3. Acreedores por arrendamiento financiero.|5125,524|114|false|false|true|false|true
 PC.III.4|4. Derivados.|5595,5598|115|false|false|true|false|true
-PC.III.5|5. Otros pasivos financieros.|(1034),(1044),(190),(192),194,509,5115,5135,5145,521,522,523,525,526,528,?551,5525,5530,5532,555,5565,5566,560,561,569|116|false|false|true|false|true
+PC.III.5|5. Otros pasivos financieros.|(1034),(1044),(190),(192),194,509,5115,5135,5145,521,522,523,525,526,528,551,5525,5530,5532,555,5565,5566,560,561,569|116|false|false|true|false|true
 PC.IV|IV. Deudas con empresas del grupo y asociadas a corto plazo.|5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5523,5524,5563,5564|117|true|false|true|false|true
 PC.V|V. Acreedores comerciales y otras cuentas a pagar.|PC.V.1,PC.V.2,PC.V.3,PC.V.4,PC.V.5,PC.V.6,PC.V.7|118|true|true|true|false|true
 PC.V.1|1. Proveedores|400,401,405,(406)|119|false|false|true|false|true
