@@ -8,8 +8,8 @@
 			<var>ebackofficeBundle</var>
 		</resource-bundle>
 	</application>
-	
-	
+
+
 	<!-- ****** ECCONFIG****** -->
 	<managed-bean>
 		<managed-bean-name>ecconfig</managed-bean-name>
@@ -159,8 +159,8 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-		<managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>targetEctargetListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
@@ -180,6 +180,89 @@
 		</managed-property>
 	</managed-bean>
 
+
+	<!-- ************* PAYMETHOD ***************** -->
+	<managed-bean>
+		<managed-bean-name>pmethod</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.ebackoffice.controller.PayMethodController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.PayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>pmethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{paymethodEcpaymethodtListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** ECPAYMETHOD **** -->
+	<managed-bean>
+		<managed-bean-name>ecpaymethod</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.ebackoffice.EcPaymethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>ecpaymethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>pmethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>paymethod.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>paymethodEcpaymethodtListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>ecpaymethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>EcPaymethod_paymethod_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<navigation-rule>
 
 		<navigation-case>
@@ -191,6 +274,17 @@
 			<from-outcome>ecconfig_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecConfig/form.xhtml</to-view-id>
 		</navigation-case>
+
+       	<navigation-case>
+			<from-outcome>pmethod_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecPaymethod/form.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>pmethod_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecPaymethod/list.xhtml</to-view-id>
+		</navigation-case>
+              
 
 		<navigation-case>
 			<from-outcome>eccatalogue_grid</from-outcome>

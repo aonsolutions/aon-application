@@ -74,19 +74,56 @@
 					<aon:outputLabel 
 						value="#{appBundle.download_file}" />
 					<aon:panelGroup id="thumbnail_preview_detail">
-						<aon:outputText value="#{download.toI18n.file}"
-							style="margin-right:0.7em;" />
+						<aon:outputText value="#{download.toI18n.file}" />
 							
-		               <aon:commandLink ajaxSingle="true" rendered="#{download.toI18n.file != null}"
-							immediate="true" reRender="thumbnail_preview_detail"
-							actionListener="#{download.onDelDocument}">
-							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-			       		</aon:commandLink>							
-						<aon:commandLink style="padding-left:0.4em;" immediate="true"
-							reRender="showDocumentPanelGroup" ajaxSingle="true">
-							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/select.png']}" alt="#{appBundle.document_modal_open}"/>
-							<f:setPropertyActionListener target="#{download.showWindow}" value="#{true}" />						
-						</aon:commandLink>						
+						<a href="javascript:Richfaces.showModalPanel('mp_detail',{width:680, top:200})">select</a>
+				        <rich:modalPanel id="mp_detail" minHeight="200" minWidth="450" 
+				            height="360" width="675">
+							<f:facet name="header">
+								<aon:div styleClass="aon-popupWindow-title">
+									<aon:outputText value="Modal Panel Title" />
+								</aon:div>
+							</f:facet>
+					        <f:facet name="controls">
+								<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+									immediate="true" reRender="aonStatus">
+									<rich:componentControl for="mp_detail" operation="hide" event="onclick" />
+								</aon:commandButton>
+					        </f:facet>
+							<h:panelGrid id="treeGrid_detail" columns="2">
+					            <rich:panel bodyClass="body3">
+								    <rich:tree style="width:300px"
+								    	switchType="server" 
+								    	stateAdvisor="#{treeStateAdvisor}">
+								        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.documentRoots}" 
+								        	var="item" 
+								        	nodes="#{item.nodes}">
+											<rich:treeNode>
+								                <aon:commandLink
+								                	action="#{item.onSelectFolder}" 
+								                	value="#{item}"
+								                	immediate="#{true}"
+								                	reRender="treeGrid_detail" />
+											</rich:treeNode>
+								        </rich:recursiveTreeNodesAdaptor>
+								    </rich:tree>
+								</rich:panel>
+					            <rich:panel bodyClass="body3">
+									<aon:panelGroup>
+										<aon:outputLabel value="#{document.currentRelativePath}" />
+										<rich:dataList var="item" value="#{document.model}" >	
+											<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
+								                <aon:commandLink
+								                	immediate="#{true}"
+								                	reRender="thumbnail_preview_detail"
+								                    actionListener="#{download.onSelectImage}"
+								                    value="#{item.name}" />
+											</aon:panelGrid>
+										</rich:dataList>
+									</aon:panelGroup>
+								</rich:panel>
+							</h:panelGrid>		
+				        </rich:modalPanel>													
 		        	</aon:panelGroup>
      	
 					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
@@ -110,10 +147,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<ui:include src="/facelet/content/utils/document_modal.xhtml" />
-		
 		</aon:form>
-		
 	</ui:define>
 
 </ui:composition>

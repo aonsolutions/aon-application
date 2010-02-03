@@ -22,7 +22,11 @@
 				<ui:param name="skipRemoveButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSpin" value="true" />
+				<ui:define name="beforeSpinToolbarContent">
 
+
+
+				</ui:define>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
@@ -31,10 +35,12 @@
 				<aon:panel height="60"
 					header="#{ebackofficeBundle.aon_ebackoffice_ecconfig_funtion_params}">
 
-					<aon:panelTabSet switchType="ajax" selectedTab="#{target.selectedTab}">
+					<aon:panelTabSet switchType="ajax"
+						selectedTab="#{ecconfig.selectedTab}">
 
 						<aon:panelTab id="tab1"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_funtion}">
+
 							<aon:panelGrid id="options" columns="2" style="width: 50%;">
 
 								<aon:outputText
@@ -55,16 +61,18 @@
 									</a4j:support>
 								</aon:selectOneMenu>
 
-								<aon:outputText
+								<aon:outputText rendered="#{ecconfig.ecParam}"
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_commerce}" />
 
 								<aon:selectBooleanCheckbox disabled="#{ecconfig.login}"
-									value="#{ecconfig.to.commerce}" />
+									rendered="#{ecconfig.ecParam}" value="#{ecconfig.to.commerce}" />
 
 								<aon:outputLabel for="Offer_series-New"
+									rendered="#{ecconfig.ecParam}"
 									value="#{bundle.aon_series}/#{bundle.aon_number}" />
 								<aon:selectOneMenu id="Offer_series-New"
-									value="#{ecconfig.to.series}" style="width:130px"
+									rendered="#{ecconfig.ecParam}" value="#{ecconfig.to.series}"
+									style="width:130px"
 									valueChangeListener="#{offer.onSeriesChanged}">
 									<f:selectItem itemLabel=" " itemValue="#{null}" />
 									<f:selectItems value="#{configCollections.seriesIds}" />
@@ -109,9 +117,6 @@
 									<f:selectItem itemLabel=" " itemValue="#{null}" />
 									<f:selectItems value="#{ecconfig.tariffs}" />
 								</aon:selectOneMenu>
-
-
-
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_rowitems}" />
 
@@ -161,10 +166,12 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_header}" />
 								<aon:div id="header">
 									<a4j:region>
-
+										<aon:outputText
+											value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_size2}" />
+										<br />
 										<c:if test="#{ecconfig.headerImage!=null}">
 											<a4j:mediaOutput id="header_preview" element="img"
-												cacheable="false" style="width:500px"
+												cacheable="false" style="width:100px"
 												value="#{ecconfig.headerImage.key}"
 												createContent="#{ecconfig.paintHeader}" />
 
@@ -202,6 +209,9 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_leftBanner}" />
 								<aon:div id="leftBanner">
 									<a4j:region>
+										<aon:outputText
+											value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_size1}" />
+										<br />
 
 										<c:if test="#{ecconfig.leftBanner!=null}">
 											<a4j:mediaOutput id="bannerL_preview" element="img"
@@ -248,7 +258,9 @@
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_rightBanner}" />
 								<aon:div id="rightBanner">
 									<a4j:region>
-
+										<aon:outputText
+											value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_size1}" />
+										<br />
 
 										<c:if test="#{ecconfig.rightBanner!=null}">
 
@@ -335,10 +347,15 @@
 
 
 						<aon:panelTab id="tab3" style="height:300px"
+							rendered="#{ecconfig.ecParam}"
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod}">
 
 							<aon:panel height="60" style="width: 50%;"
 								header="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod}">
+								<div align="right"><aon:commandButton
+									value="Formas de pago" id="email" action="pmethod_list"
+									styleClass="aon-finding-toolbar-item aon-icon-advanced-search">
+								</aon:commandButton></div>
 
 								<aon:panelGrid id="paymethods" columns="2" style="width: 50%;">
 
@@ -349,7 +366,7 @@
 
 									<aon:selectOneMenu value="#{ecconfig.to.bankTransfer}">
 										<f:selectItem itemValue="#{null}" itemLabel=" " />
-										<f:selectItems value="#{ecconfig.paymethods}" />
+										<f:selectItems value="#{ecconfig.bankTransfers}" />
 									</aon:selectOneMenu>
 
 									<aon:outputText
@@ -357,15 +374,15 @@
 
 									<aon:selectOneMenu value="#{ecconfig.to.cashOnDelivery}">
 										<f:selectItem itemValue="#{null}" itemLabel=" " />
-										<f:selectItems value="#{ecconfig.paymethods}" />
+										<f:selectItems value="#{ecconfig.cashOnDeliverys}" />
 									</aon:selectOneMenu>
 
 									<aon:outputText
 										value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_visa}" />
 
-									<aon:selectOneMenu value="#{ecconfig.to.visa}">
+									<aon:selectOneMenu value="#{ecconfig.to.creditCard}">
 										<f:selectItem itemValue="#{null}" itemLabel=" " />
-										<f:selectItems value="#{ecconfig.paymethods}" />
+										<f:selectItems value="#{ecconfig.creditCards}" />
 									</aon:selectOneMenu>
 
 
@@ -374,7 +391,7 @@
 
 									<aon:selectOneMenu value="#{ecconfig.to.paypal}">
 										<f:selectItem itemValue="#{null}" itemLabel=" " />
-										<f:selectItems value="#{ecconfig.paymethods}" />
+										<f:selectItems value="#{ecconfig.paypals}" />
 									</aon:selectOneMenu>
 
 									<aon:outputText
@@ -382,7 +399,7 @@
 
 									<aon:selectOneMenu value="#{ecconfig.to.bankDraft}">
 										<f:selectItem itemValue="#{null}" itemLabel=" " />
-										<f:selectItems value="#{ecconfig.paymethods}" />
+										<f:selectItems value="#{ecconfig.bankDrafts}" />
 									</aon:selectOneMenu>
 								</aon:panelGrid>
 
@@ -423,7 +440,7 @@
 									style="width:130px" />
 								<aon:inputText value="#{ecconfig.to.noteTitle1}" maxlength="64"
 									size="30" />
-								<aon:outputLabel 
+								<aon:outputLabel
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_richText}" />
 								<aon:selectBooleanCheckbox id="richText"
 									value="#{ecconfig.richTextEnabled}">
@@ -443,12 +460,12 @@
 							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_note2}">
 
 							<h:panelGrid columns="2">
-							<aon:outputText
-								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_title}  "
-								style="width:130px" />
-							<aon:inputText value="#{ecconfig.to.noteTitle2}" maxlength="64"
-								size="30" />
-							<aon:outputLabel 
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_title}  "
+									style="width:130px" />
+								<aon:inputText value="#{ecconfig.to.noteTitle2}" maxlength="64"
+									size="30" />
+								<aon:outputLabel
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_richText}" />
 								<aon:selectBooleanCheckbox id="richText2"
 									value="#{ecconfig.richTextEnabled}">
@@ -473,7 +490,7 @@
 									style="width:130px" />
 								<aon:inputText value="#{ecconfig.to.noteTitle3}" maxlength="64"
 									size="30" />
-								<aon:outputLabel 
+								<aon:outputLabel
 									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_richText}" />
 								<aon:selectBooleanCheckbox id="richText3"
 									value="#{ecconfig.richTextEnabled}">
@@ -488,7 +505,123 @@
 							</rich:editor>
 						</aon:panelTab>
 
-				</aon:panelTabSet>
+						<aon:panelTab id="tab7"
+							label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_catalogues}">
+
+							<div align="center"><aon:commandButton
+								value="Catalogos" id="cat" action="catalogue_search"
+								styleClass="aon-finding-toolbar-item aon-icon-advanced-search">
+							</aon:commandButton></div>
+							
+							<aon:editDataTable id="activeCatalogues" var="to" rows="50"
+								style="width:40%" value="#{eccatalogue.model}"
+								columnClasses="aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-textColumn,aon-editDataTable-buttonsColumn">
+
+								<aon:rowSelector toggleOnClick="#{eccatalogue.to == null}"
+									actionListener="#{eccatalogue.onSelect}" />
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:commandButton id="Table-select"
+										actionListener="#{eccatalogue.onSelect}"
+										rendered="#{to!=eccatalogue.to}"
+										styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputLabel
+											value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_catalogue}" />
+									</f:facet>
+									<aon:outputText value="#{to.catalogue.name}" size="40" />
+
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputLabel
+											value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_start}" />
+									</f:facet>
+
+									<aon:outputText value="#{to.catalogue.startDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+
+								</aon:column>
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputLabel
+											value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ends}" />
+									</f:facet>
+									<aon:outputText value="#{to.catalogue.endDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+
+									</aon:outputText>
+
+								</aon:column>
+
+
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText
+											value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_visible}" />
+									</f:facet>
+									<aon:div style="float:left;width:25px;" >
+											<aon:outputText value="&#160;" style="align:center;"
+											styleClass="#{(to.visible)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+											rendered="#{to!=eccatalogue.to}" />
+									
+										<aon:selectBooleanCheckbox rendered="#{to==eccatalogue.to}"
+											value="#{eccatalogue.to.visible}" />
+									
+									</aon:div>
+									<aon:div style="float:left;"  >
+										<h:graphicImage  style="align:center;" rendered="#{to.outofDate}"
+											title="Catalogo caducado" value="/css/icons/cal.png" />
+										<rich:toolTip>
+											<span style="white-space: nowrap"> Este catalogo ha
+											caducado.</span>
+										</rich:toolTip>
+									</aon:div>
+									
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:div>
+										<f:verbatim rendered="#{to!=eccatalogue.to}">&#160;</f:verbatim>
+
+										<aon:commandButton title="[#{bundle.aon_accept}]"
+											rendered="#{to==eccatalogue.to}"
+											styleClass="aon-editDataTable-button aon-icon-accept"
+											actionListener="#{eccatalogue.onAccept}"
+											accesskey="#{bundle.aon_key_save_line}" />
+										<aon:commandButton title="[#{bundle.aon_cancel}]"
+											styleClass="aon-editDataTable-button aon-icon-cancel"
+											rendered="#{to==eccatalogue.to}"
+											actionListener="#{eccatalogue.onCancel}" immediate="true"
+											accesskey="#{bundle.aon_key_cancel_line}" />
+
+									</aon:div>
+
+								</aon:column>
+
+
+
+							</aon:editDataTable>
+
+						</aon:panelTab>
+
+
+					</aon:panelTabSet>
 
 				</aon:panel>
 

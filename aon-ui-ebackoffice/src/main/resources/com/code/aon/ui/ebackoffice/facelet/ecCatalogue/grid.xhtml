@@ -10,26 +10,15 @@
 	<ui:define name="content">
 
 
-		<aon:form id="eccatalogueGrid">
 
 			<aon:div ajaxRendered="true" layout="none">
 
-				<ui:include
-					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle"
-						value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue}" />
-					<ui:param name="controller" value="#{eccatalogue}" />
-					<ui:param name="skipResetButton" value="true" />
-					<ui:param name="skipRemoveButton" value="true" />
-
-				</ui:include>
-
-
-				<aon:div styleClass="aon-scroll-area">
+	
+				
 
 					<aon:editDataTable id="activeCatalogues" var="to" rows="50"
 						style="width:40%" value="#{eccatalogue.model}"
-						columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-dateColumn,aon-editDataTable-iconColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-iconColumn,aon-editDataTable-buttonsColumn">
 
 						<aon:rowSelector toggleOnClick="#{eccatalogue.to == null}"
 							actionListener="#{eccatalogue.onSelect}" />
@@ -50,29 +39,42 @@
 								<aon:outputLabel
 									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_catalogue}" />
 							</f:facet>
-							<aon:outputText value="#{to.catalogue.name}" />
+							<aon:outputText value="#{to.catalogue.name}" size="40" />
 
 						</aon:column>
 
-						<aon:column >
+						<aon:column>
 							<f:facet name="header">
 								<aon:outputLabel
-									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_dates}" />
+									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_start}" />
 							</f:facet>
-							<aon:outputText value="#{to.catalogue.startDate} / #{to.catalogue.endDate}" />
-							
-							<!--  <c:if test="#{eccatalogue.isOutOfDate}">
-							<h:graphicImage value="/css/icons/alerta.png"  />
-							</c:if>-->
+
+							<aon:outputText value="#{to.catalogue.startDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputLabel
+									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ends}" />
+							</f:facet>
+							<aon:outputText value="#{to.catalogue.endDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+
 						</aon:column>
 
-		
+
+
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_visible}" />
 							</f:facet>
-							<aon:outputText value="&#160;" style="text-align:center;"
+							<aon:outputText value="&#160;" style="align:center;"
 								styleClass="#{(to.visible)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
 								rendered="#{to!=eccatalogue.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==eccatalogue.to}"
@@ -106,9 +108,6 @@
 					</aon:editDataTable>
 
 				</aon:div>
-			</aon:div>
-
-		</aon:form>
-
+		
 	</ui:define>
 </ui:composition>

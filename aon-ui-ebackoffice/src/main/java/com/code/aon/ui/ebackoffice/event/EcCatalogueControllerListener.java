@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.code.aon.ebackoffice.Eccatalogue;
 import com.code.aon.ebackoffice.Ecconfig;
+import com.code.aon.ebackoffice.enumeration.CatalogueType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.ebackoffice.controller.EccatalogueController;
 import com.code.aon.ui.ebackoffice.controller.EcconfigController;
@@ -26,6 +27,7 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 		EccatalogueController controller = (EccatalogueController) event
 				.getController();
+		((Eccatalogue) controller.getTo()).setType(CatalogueType.STANDARD);
 		AonFile img = controller.getImage();
 		if (img != null) {
 			((Eccatalogue) controller.getTo()).setCatalogueImg(img.getData());
@@ -35,7 +37,7 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 			((Eccatalogue) controller.getTo()).setCatalogueIcon(ico.getData());
 		}
 
-		if (((Eccatalogue) controller.getTo()).isVisible()) {
+		/*if (((Eccatalogue) controller.getTo()).isVisible()) {
 			Calendar c = new GregorianCalendar();
 
 			if (c.getTime().after(
@@ -45,7 +47,7 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 				AonUtil.addErrorMessage("La fecha de fin de vigencia del Catalogo ha finalizado. Cambie esta fecha para poner visible este catalogo en Ecommerce");
 				((Eccatalogue) controller.getTo()).setVisible(false);
 			}
-		}
+		}*/
 
 	}
 
@@ -54,6 +56,7 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 		EccatalogueController controller = (EccatalogueController) event
 				.getController();
+		((Eccatalogue) controller.getTo()).setType(CatalogueType.STANDARD);
 		AonFile img = controller.getImage();
 		if (img != null) {
 			((Eccatalogue) controller.getTo()).setCatalogueImg(img.getData());
@@ -67,7 +70,7 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 			((Eccatalogue) controller.getTo()).setCatalogueIcon(null);
 		}
 
-		if (((Eccatalogue) controller.getTo()).isVisible()) {
+		/*if (((Eccatalogue) controller.getTo()).isVisible()) {
 			Calendar c = new GregorianCalendar();
 
 			if (c.getTime().after(
@@ -77,7 +80,7 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 						.addErrorMessage("La fecha de fin de vigencia del Catalogo ha finalizado. Cambie esta fecha para poner visible este catalogo en Ecommerce");
 				((Eccatalogue) controller.getTo()).setVisible(false);
 			}
-		}
+		}*/
 
 	}
 

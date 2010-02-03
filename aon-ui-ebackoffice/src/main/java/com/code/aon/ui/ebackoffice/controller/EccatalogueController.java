@@ -10,7 +10,6 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -34,17 +33,13 @@ import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
 public class EccatalogueController extends LinesController {
-	private static final Logger LOGGER = Logger
-			.getLogger(EccatalogueController.class.getName());
+	
 
 	private AonFile image;
 	private AonFile icon;
 	private List<SelectItem> catalogues;
 	private List<SelectItem> catalogueTypes;
 
-	
-
-	
 	public List<SelectItem> getCatalogueTypes() {
 		if (catalogueTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
@@ -59,9 +54,6 @@ public class EccatalogueController extends LinesController {
 		return catalogueTypes;
 	}
 	
-	
-
-
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
 		catalogues = null;
 		if (catalogues == null) {
@@ -187,13 +179,7 @@ public class EccatalogueController extends LinesController {
 
 	}
 	
-	public boolean isOutofDate(){
-		
-		Date toDate =((Eccatalogue)this.getTo()).getCatalogue().getEndDate();
-		Calendar d =new GregorianCalendar();
-		return toDate.before(d.getTime());
-				
-	}
+
 	
 	
 

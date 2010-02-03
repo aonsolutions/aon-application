@@ -19,7 +19,6 @@ public class InvoiceEntryHeader implements ITransferObject {
 	private Registry registry;
 	private String name;
 	private String document;
-	private String concept;
 	private Date date;
 	private Date taxDate;
 	private Period period;
@@ -63,13 +62,6 @@ public class InvoiceEntryHeader implements ITransferObject {
 	}
 	public void setDocument(String document) {
 		this.document = document;
-	}
-
-	public String getConcept() {
-		return concept;
-	}
-	public void setConcept(String concept) {
-		this.concept = concept;
 	}
 
 	public Date getDate() {

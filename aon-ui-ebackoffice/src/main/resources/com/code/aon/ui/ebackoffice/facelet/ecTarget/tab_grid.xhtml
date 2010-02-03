@@ -17,11 +17,15 @@
 				</f:facet>
 				<aon:outputText value="#{to.login}" rendered="#{to!=ectarget.to}" />
 				<aon:inputText required="true" rendered="#{to==ectarget.to}"
-					size="20" value="#{ectarget.to.login}" maxlength="20" />
+					size="20" value="#{ectarget.to.login}" maxlength="48" />
+				<aon:outputLabel rendered="#{to==ectarget.to}" value=" * email valido" style="color:#808080;" />
 				<f:facet name="footer">
+					<aon:div>
 					<aon:inputText styleClass="aon-form-input-text" required="true"
 						rendered="#{ectarget.new}" size="20" value="#{ectarget.to.login}"
-						maxlength="20" />
+						maxlength="48" />
+					<aon:outputLabel rendered="#{ectarget.new}" value=" * email valido" style="color:#808080;" />	
+					 </aon:div>	
 				</f:facet>
 			</aon:column>
 
@@ -42,7 +46,7 @@
 
 
 
-
+<!-- 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
@@ -64,7 +68,7 @@
 
 				</f:facet>
 			</aon:column>
-
+ -->
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
