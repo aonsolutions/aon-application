@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+
+	<aon:outputLabel for="Income_supplier_id"
+		value="#{supplierBundle.supplier_supplier}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Income_supplier_id" 
+			value="#{incomeSearch.supplier.id}"
+			lookup="#{supplierLookup}" 
+			reRender="Income_supplier_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{supplierBundle.supplier_selection}"
+			minHeight="460" minWidth="650" 
+			property="#{incomeSearch.supplier}" lookup="#{supplierLookup}"
+			selectReRender="Income_supplier_id,Income_supplier_full_name" 
+			actionType="search">
+		</aon:lookupButton>
+		<aon:inputText id="Income_supplier_full_name"
+			value="#{(incomeSearch.supplier.registry.fullName!=null)?(incomeSearch.supplier.registry.fullName):('')}"
+			disabled="true" size="50" />							
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Income_issueTime-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Income_issueTime-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="Income_issueTime-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Income_issueTime-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+							
+	<aon:outputLabel for="Income_securityLevel"
+		value="#{bundle.aon_security_level}" />
+	<aon:selectOneMenu id="Income_securityLevel"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commonCollections.securityLevels}" />
+	</aon:selectOneMenu>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{incomeSearch.incomeStatuses}">
+		<f:selectItems value="#{warehouseCollections.incomeStatuses}" />
+	</aon:selectManyCheckbox>							
+
+</ui:composition>
