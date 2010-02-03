@@ -47,9 +47,6 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	/** Obtains a suitable Logger. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedPageDataModel.class);
 
-	/** Default limit of rows to be load from de data source. */
-    public static final int LIMIT = 20;
-
     /** Indicates the current row index of the <code>DataModel</code>. */
     private Integer _rowIndex = -1;
 
@@ -58,9 +55,6 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 
     /** Number of rows of the data source. */
     private int rowCount;
-    
-	/** Limit of rows to be load from the data source. */
-    private int limit = LIMIT;
 
     private BasicController controller;
 
@@ -186,7 +180,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
         if(i != -1 && offset < 0)
             offset = backward(i);
         else
-	        if(page == null || offset >= limit)
+	        if(page == null || offset >= controller.getPageLimit())
 	            offset = forward(i);
         return offset;
     }
@@ -199,7 +193,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      */
     protected int backward(int i) {
         int start = Math.max((i), 0);
-        page = getPage(start, limit);
+        page = getPage(start, controller.getPageLimit());
         return i - start;
     }
 
@@ -210,8 +204,8 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      * @return new index
      */
     protected int forward(int i) {
-    	int start = i + 1 != rowCount ? i : rowCount - limit;
-        page = getPage(start, limit);
+    	int start = i + 1 != rowCount ? i : rowCount - controller.getPageLimit();
+        page = getPage(start, controller.getPageLimit());
         return i - start;
     }
 
@@ -296,12 +290,15 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		_rowIndex = (key == null) ? -1 : (Integer) key;
 	}
 
-	private static boolean areEqualRanges(SequenceRange range1, SequenceRange range2) {
+	private boolean areEqualRanges(SequenceRange range1, SequenceRange range2) {
 		if (range1 == null || range2 == null) {
 			return range1 == null && range2 == null;
-		} else {
-			return range1.getFirstRow() == range2.getFirstRow() && range1.getRows() == range2.getRows();
+		} else if ( range1.getFirstRow() == range2.getFirstRow() ) {
+			int rows1 = ( range1.getRows() > 0 ) ? range1.getRows() : this.rowCount;
+			int rows2 = ( range2.getRows() > 0 ) ? range2.getRows() : this.rowCount;
+			return  rows1 == rows2;
 		}
+		return false;
 	}
 	
 	@Override
@@ -314,7 +311,9 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 			int rows = -1;
 			if (sequenceRange != null) {
 				first = sequenceRange.getFirstRow();
-				rows = sequenceRange.getRows();
+				if ( sequenceRange.getRows() > 0  ) {
+					rows = sequenceRange.getRows();	
+				}
 			}
 			try {
 				update(first, rows);

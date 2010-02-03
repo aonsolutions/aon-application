@@ -47,6 +47,9 @@ public class BasicController extends AbstractPojoController implements IControll
 		ICollectionProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicController.class);
+	
+	/** Default limit of rows to be load from de data source. */
+    public static final int LIMIT = 20;	
 
 	private Criteria criteria = new Criteria();
 
@@ -62,7 +65,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	/** Represent a manager of listeners */
 	protected ControllerListenerSupport controllerListenerSupport;
 
-	private int pageLimit = ExtendedPageDataModel.LIMIT;
+	private int pageLimit = LIMIT;
 
 	private int selectedIndex;
 
