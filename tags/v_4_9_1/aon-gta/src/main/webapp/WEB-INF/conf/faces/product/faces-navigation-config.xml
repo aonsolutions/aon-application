@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+  <!-- =================== Navigation Rules ================= -->
+
+  <!-- ********************************* -->
+  <!-- ********** AUXILIARY ************ -->
+  <!-- ********************************* -->
+
+  <!-- =================== Tax  ============================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>brand_list</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/tax/grid.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- =================== Category =========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>productCategory_list</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/category/grid.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- =================== Brand =========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>brand_list</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/brand/grid.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ********************************* -->
+  <!-- *********** MASTER ************** -->
+  <!-- ********************************* -->
+
+  <!-- =================== Product ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>product_form</from-outcome>
+      <to-view-id>/facelet/product/master/product/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>product_list</from-outcome>
+      <to-view-id>/facelet/product/master/product/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>product_search</from-outcome>
+      <to-view-id>/facelet/product/master/product/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- =================== Item ============================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>item_form</from-outcome>
+      <to-view-id>/facelet/product/master/item/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>item_list</from-outcome>
+      <to-view-id>/facelet/product/master/item/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>item_search</from-outcome>
+      <to-view-id>/facelet/product/master/item/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>item_sw</from-outcome>
+      <to-view-id>/facelet/sw/item.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>item_sw_search</from-outcome>
+      <to-view-id>/facelet/sw/itemSearch.faces</to-view-id>
+    </navigation-case>
+    
+  </navigation-rule>
+
+  <!-- =================== ItemPOS ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>itemPos_form</from-outcome>
+      <to-view-id>/facelet/product/master/item/itemPos/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>itemPos_list</from-outcome>
+      <to-view-id>/facelet/product/master/item/itemPos/list.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- =================== Composition ============================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>composition_form</from-outcome>
+      <to-view-id>/facelet/product/master/composition/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>composition_list</from-outcome>
+      <to-view-id>/facelet/product/master/composition/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>composition_search</from-outcome>
+      <to-view-id>/facelet/product/master/composition/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- =================== Elaboration ============================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>elaboration_form</from-outcome>
+      <to-view-id>/facelet/product/master/elaboration/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>elaboration_list</from-outcome>
+      <to-view-id>/facelet/product/master/elaboration/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>elaboration_search</from-outcome>
+      <to-view-id>/facelet/product/master/elaboration/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+
+  <!-- ********************************* -->
+  <!-- ************ MENU *************** -->
+  <!-- ********************************* -->
+  
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>item</from-outcome>
+      <to-view-id>/facelet/product/master/item/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>composition</from-outcome>
+      <to-view-id>/facelet/product/master/composition/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>tax</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/tax/grid.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>productCategory</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/category/grid.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+</faces-config>

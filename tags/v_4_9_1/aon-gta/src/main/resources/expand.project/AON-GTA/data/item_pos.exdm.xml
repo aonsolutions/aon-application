@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="item_pos">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="item" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="plu" sqlType="varchar" type="string"/>
+        <column label="" length="15" name="barcode" sqlType="varchar" type="string"/>
+        <column label="" length="20" name="desc_short" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="intempos_item_ibfk" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
