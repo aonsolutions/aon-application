@@ -9,7 +9,7 @@
 			<var>purchaseBundle</var>
 		</resource-bundle>
 	</application>
-	
+
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>purchaseCollections</managed-bean-name>
