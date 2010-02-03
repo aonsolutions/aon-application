@@ -173,8 +173,10 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
 					.toHibernateCriteria(criteria, session, this.entry);
-			if (count != -1) {
+			if (offset != -1) {
 				hibernateCriteria.setFirstResult(offset);
+			}
+			if (count != -1) {
 				hibernateCriteria.setMaxResults(count);
 			}
 			if (! isDistinctProblem(hibernateCriteria, count) ) {
