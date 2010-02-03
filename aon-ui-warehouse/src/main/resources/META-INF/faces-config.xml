@@ -510,7 +510,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>incomeDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
