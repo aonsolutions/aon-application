@@ -199,10 +199,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.warehouse.Stock</value>
 		</managed-property>
@@ -243,10 +239,6 @@
 			com.code.aon.ui.warehouse.controller.DeliveryController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.warehouse.Delivery</value>
@@ -340,8 +332,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -396,10 +388,6 @@
 			com.code.aon.ui.warehouse.controller.IncomeController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.warehouse.Income</value>
@@ -482,8 +470,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
