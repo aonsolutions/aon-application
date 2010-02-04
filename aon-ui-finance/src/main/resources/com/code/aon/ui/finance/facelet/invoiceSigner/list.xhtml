@@ -117,7 +117,6 @@
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
-			<ui:param name="skipSmartCardTab" value="#{true}" />
 			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		

@@ -19,7 +19,7 @@
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+						<c:if test="#{aonConfiguration.bean.invoice.showDeliveryData}">
 							<aon:commandButton id="deliveryTransfer"
 								value="#{financeBundle.finance_invoice_deliveries}"
 								immediate="#{true}" rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
@@ -66,7 +66,7 @@
 						</h:commandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{saleInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (!certificate.signable)}" />
+							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (certificate.certificateCount==0)}" />
 							<ui:param name="skipCancelSignButton" value="#{saleInvoice.new or (!saleInvoice.to.signed)}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm,showNewMessageWindow" />
 						</ui:include>				

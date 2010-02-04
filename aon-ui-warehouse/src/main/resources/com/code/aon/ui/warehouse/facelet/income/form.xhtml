@@ -16,6 +16,7 @@
 					<ui:param name="toolbarTitle"
 						value="#{warehouseBundle.warehouse_income_module}" />
 					<ui:param name="controller" value="#{income}" />
+					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!income.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!income.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
@@ -37,6 +38,15 @@
 							<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
+						<h:commandLink id="income" value="#{bundle.aon_report}"
+							target="_new" rendered="#{!income.new}"
+							action="#{report.onExecute}" 
+							disabled="#{incomeDetail.to != null}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							<f:param name="reportKey" value="incomeForm" />
+							<f:param name="outputFormat" value="PDF" />
+						</h:commandLink>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -302,11 +312,11 @@
 										rendered="#{formList}" />
 									<aon:inputText id="IncomeDetail_line" 
 										value="#{controller.to.line}" rendered="#{formEdit}"
-										required="true" size="2" maxlength="3" />
+										required="true" size="1" maxlength="3" />
 									<f:facet name="footer">
 										<aon:inputText id="IncomeDetail_line-New" 
 											value="#{controller.to.line}" rendered="#{formNew}"
-											required="true" size="2" maxlength="3" />
+											required="true" size="1" maxlength="3" />
 									</f:facet>
 								</aon:column>
 		
@@ -345,17 +355,17 @@
 												selectReRender="incomeDetailItemEdit,IncomeDetail_price,IncomeDetail_amount"
 												actionType="new">
 											</aon:lookupButton>
-											<aon:inputTextarea id="IncomeDetail_item_product_name" 
-												value="#{incomeDetail.to.description}"
-												cols="64" rows="#{!incomeDetail.longDescription?1:5}"
-												style="#{!incomeDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-												<f:validateLength maximum="1024" />
-											</aon:inputTextarea>
 										</a4j:region>
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+										<aon:inputTextarea id="IncomeDetail_item_product_name" 
+											value="#{incomeDetail.to.description}"
+											cols="60" rows="#{!incomeDetail.longDescription?1:5}"
+											style="#{!incomeDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											<f:validateLength maximum="1024" />
+										</aon:inputTextarea>
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
 											actionListener="#{incomeDetail.onShortDescription}" reRender="IncomeDetail_item_product_name"
 											rendered="#{incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
 											actionListener="#{incomeDetail.onLongDescription}" reRender="IncomeDetail_item_product_name"
 											rendered="#{!incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
 									</aon:div>
@@ -387,17 +397,17 @@
 													selectReRender="incomeDetailItemNew,IncomeDetail_price-New,IncomeDetail_amount-New"
 													actionType="new">
 												</aon:lookupButton>
-												<aon:inputTextarea id="IncomeDetail_item_product_name-New" 
-													value="#{incomeDetail.to.description}"
-													cols="64" rows="#{!incomeDetail.longDescription?1:5}"
-													style="#{!incomeDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-													<f:validateLength maximum="1024" />
-												</aon:inputTextarea>
 											</a4j:region>
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+											<aon:inputTextarea id="IncomeDetail_item_product_name-New" 
+												value="#{incomeDetail.to.description}"
+												cols="60" rows="#{!incomeDetail.longDescription?1:5}"
+												style="#{!incomeDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+												<f:validateLength maximum="1024" />
+											</aon:inputTextarea>
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
 												actionListener="#{incomeDetail.onShortDescription}" reRender="IncomeDetail_item_product_name-New"
 												rendered="#{incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
 												actionListener="#{incomeDetail.onLongDescription}" reRender="IncomeDetail_item_product_name-New"
 												rendered="#{!incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
 										</aon:div>
@@ -415,12 +425,12 @@
 									<aon:inputText id="IncomeDetail_quantity" 
 										value="#{controller.to.quantity}" rendered="#{formEdit}"
 										reRender="IncomeDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="IncomeDetail_quantity-New" 
 											value="#{controller.to.quantity}" rendered="#{formNew}" 
 											reRender="IncomeDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 
@@ -435,12 +445,12 @@
 									<aon:inputText id="IncomeDetail_price" 
 										value="#{controller.to.price}" rendered="#{formEdit}"
 										reRender="IncomeDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="IncomeDetail_price-New" 
 											value="#{controller.to.price}" rendered="#{formNew}"
 											reRender="IncomeDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 
@@ -455,12 +465,12 @@
 									<aon:inputText id="IncomeDetail_discount" 
 										value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
 										reRender="IncomeDetail_amount" 
-										required="true" size="7" />
+										required="true" size="5" />
 									<f:facet name="footer">
 										<aon:inputText id="IncomeDetail_discount-New" 
 											value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew}"
 											reRender="IncomeDetail_amount-New" 
-											required="true" size="7" />
+											required="true" size="5" />
 									</f:facet>
 								</aon:column>
 

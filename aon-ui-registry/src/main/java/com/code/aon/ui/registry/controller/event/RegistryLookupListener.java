@@ -1,11 +1,15 @@
 package com.code.aon.ui.registry.controller.event;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.geozone.GeoZone;
+import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
@@ -13,11 +17,14 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class RegistryLookupListener extends ControllerAdapter {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RegistryLookupListener.class);
 	
 	private RegistryAddress mainAddress;
 	
@@ -68,26 +75,38 @@ public class RegistryLookupListener extends ControllerAdapter {
 	public void setWeb(RegistryMedia web) {
 		this.web = web;
 	}
+	
+	private void initRegistryMedia( RegistryMedia media, MediaType type ) {
+		media.setMediaType( type );
+		media.setAdministrative(true);
+		media.setCommercial(true);
+		media.setTechnical(true);
+	}
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		this.mainAddress = new RegistryAddress();
-		this.mainAddress.setAddressType( AddressType.MAIN );
-		this.mainAddress.setGeozone( new GeoZone() );
-		this.phone = new RegistryMedia();
-		this.phone.setMediaType(MediaType.FIXED_PHONE);
-		this.fax = new RegistryMedia();
-		this.fax.setMediaType(MediaType.FAX);
-		this.email = new RegistryMedia();
-		this.email.setMediaType(MediaType.EMAIL);
-		this.web = new RegistryMedia();
-		this.web.setMediaType(MediaType.WEB);
+		setMainAddress( new RegistryAddress() );
+		getMainAddress().setAddressType( AddressType.MAIN );
+		try {
+			getMainAddress().setGeozone( CompanyUtil.getCompanyGeoZone() );
+		} catch( ManagerBeanException e ) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+
+		setPhone( new RegistryMedia() );
+		initRegistryMedia(phone, MediaType.FIXED_PHONE);
+		setFax( new RegistryMedia() );
+		initRegistryMedia(fax, MediaType.FAX);
+		setEmail( new RegistryMedia() );
+		initRegistryMedia(email, MediaType.EMAIL);
+		setWeb( new RegistryMedia() );
+		initRegistryMedia(web, MediaType.WEB);
 	}
 
 	private boolean isEmpty( RegistryAddress address ) {
-		return StringUtils.isEmpty(address.getAddress()) && StringUtils.isEmpty(address.getAddress2()) &&
-			StringUtils.isEmpty(address.getAddress3());
+		return StringUtils.isEmpty(address.getAddress()) && StringUtils.isEmpty(address.getCity()) &&
+			StringUtils.isEmpty(address.getZip());
 	}
 	
 	private boolean isEmpty( RegistryMedia media ) {
@@ -104,27 +123,74 @@ public class RegistryLookupListener extends ControllerAdapter {
 		}		
 	}
 	
-	private void updateRegistryLines( Registry registry ) throws ManagerBeanException {
+	private void updateRegistryAddress( Registry registry, RegistryAddress address ) throws ManagerBeanException {
 		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-		if (! isEmpty(mainAddress) ) {
-			mainAddress.setRegistry(registry);
-			registryAddressBean.insertOrUpdate(mainAddress);
-		} else if ( mainAddress.getId() != null ) {
-			registryAddressBean.remove(mainAddress);
+		if (! isEmpty(address) ) {
+			address.setRegistry(registry);
+			registryAddressBean.insertOrUpdate(address);
+		} else if ( address.getId() != null ) {
+			registryAddressBean.remove(address);
 		}
+	}	
+
+	public ITransferObject onAccept( LinesController controller, ITransferObject to ) {
+		controller.initModel();
+		controller.onReset(null);
+		ITransferObject newTo = controller.getTo();
+		try {
+			BeanUtils.copyProperties(newTo, to);
+			IManagerBean bean = controller.getManagerBean();
+			bean.initializePOJO(newTo);
+			bean.setId(newTo, bean.getId(to));
+			controller.onAccept(null);
+			return newTo;
+		} catch (Throwable th) {
+			LOGGER.error( "onAccept: " + to, th );
+		}
+		return null;
+	}
+
+	private void updateRegistryAddress( LinesController controller, RegistryAddress address ) {
+		if (! isEmpty(address) ) {
+			onAccept(controller, address);
+		}
+	}	
+
+	private void updateRegistryMedia( LinesController controller, RegistryMedia media ) {
+		if (! isEmpty(media) ) {
+			onAccept(controller, media);
+		}		
+	}
+		
+	protected void updateRegistryLines( Registry registry ) throws ManagerBeanException {
+		updateRegistryAddress(registry, getMainAddress());
 		updateRegistryMedia(registry, phone);
 		updateRegistryMedia(registry, fax);
 		updateRegistryMedia(registry, email);
 		updateRegistryMedia(registry, web);
 	}
+
+	public void updateRegistryAddress( LinesController registryAddress ) throws ManagerBeanException {
+		updateRegistryAddress(registryAddress, getMainAddress());
+	}	
+	
+	public void updateRegistryMedia( LinesController registryMedia ) throws ManagerBeanException {
+		updateRegistryMedia(registryMedia, phone);
+		updateRegistryMedia(registryMedia, fax);
+		updateRegistryMedia(registryMedia, email);
+		updateRegistryMedia(registryMedia, web);
+	}	
+	
+	protected Registry getRegistry( ControllerEvent event ) {
+		IController controller = event.getController();
+		return ((IRegistry) controller.getTo()).getRegistry();
+	}
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		IController controller = event.getController();
-		Registry registry = ((IRegistry) controller.getTo()).getRegistry();
 		try {
-			updateRegistryLines( registry );
+			updateRegistryLines( getRegistry(event) );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
@@ -133,13 +199,10 @@ public class RegistryLookupListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		IController controller = event.getController();
-		Registry registry = ((IRegistry) controller.getTo()).getRegistry();
 		try {
-			updateRegistryLines( registry );
+			updateRegistryLines( getRegistry(event) );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
-
 }

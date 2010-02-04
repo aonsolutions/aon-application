@@ -2,6 +2,7 @@ package com.code.aon.ui.warehouse.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
+import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
@@ -21,7 +22,9 @@ public class StockSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		setItem( new Item() );
+		Item item = new Item();
+		item.setProduct(new Product() );
+		setItem( item );
 	}
 	
 	@Override

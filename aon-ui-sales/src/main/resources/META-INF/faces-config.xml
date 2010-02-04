@@ -9,7 +9,7 @@
 			<var>salesBundle</var>
 		</resource-bundle>
 	</application>
-	
+
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>salesCollections</managed-bean-name>
@@ -27,10 +27,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.seller.Seller</value>
 		</managed-property>
@@ -39,16 +35,29 @@
 			<value>seller</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Seller_registry_surname,Seller_registry_name</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{sellerSearch}</value>
 				<value>#{sellerAddressListener}</value>
 				<value>#{sellerMediaListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>sellerSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistrySearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>sellerAddressListener</managed-bean-name>
@@ -119,6 +128,19 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sellerAddressControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>sellerAddressControllerListener</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!--  **** SELLER MEDIA **** -->
@@ -157,7 +179,7 @@
 	<!-- ************ SELLER LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>sellerLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -168,8 +190,12 @@
 			<value>com.code.aon.seller.Seller</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Seller_registry_surname,Seller_registry_name</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/sales/facelet/lookup/seller/list.xhtml</value>
+			<value>/com/code/aon/ui/sales/facelet/seller/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
@@ -177,7 +203,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/sales/facelet/lookup/seller/form.xhtml</value>
+			<value>/com/code/aon/ui/sales/facelet/seller/formNewContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -202,10 +228,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.sales.Sales</value>
 		</managed-property>
@@ -215,7 +237,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Sales_issueDate,Sales_series,Sales_number</value>
+			<value>Sales_issueDate desc,Sales_series desc,Sales_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -298,8 +320,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>

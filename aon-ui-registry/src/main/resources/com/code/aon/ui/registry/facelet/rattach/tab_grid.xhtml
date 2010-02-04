@@ -10,7 +10,8 @@
 	<ui:decorate template="/com/code/aon/faces/attachment/grid.xhtml">
 		<ui:define name="additionalColumns" >
 			<c:if test="#{!skipScopeColumn}"> 
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.scope.description"
+					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="#{controller.beanName}_scope"
 							value="#{bundle.aon_scope}" />
@@ -31,7 +32,8 @@
 				</aon:column>
 			</c:if>
 			<c:if test="#{!skipCategoryColumn}"> 
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.category.name"
+					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="#{controller.beanName}_category"
 							value="#{registryBundle.registry_category}" />

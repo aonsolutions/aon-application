@@ -4,6 +4,8 @@ import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -43,6 +45,14 @@ public class IncomeDetailController extends LinesController {
 
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
+
+		IncomeDetail incomeDetail = (IncomeDetail)getTo();
+		if (StringUtils.equals(incomeDetail.getItem().getProduct().getName().trim(), incomeDetail.getDescription().trim())) {
+			String longDescription = incomeDetail.getItem().getDescription();
+			if (!StringUtils.isEmpty(longDescription)) {
+				incomeDetail.setDescription(incomeDetail.getDescription() + "\r\n" + longDescription);
+			}
+		}
 	}
 
 	public void onShortDescription(ActionEvent event) {

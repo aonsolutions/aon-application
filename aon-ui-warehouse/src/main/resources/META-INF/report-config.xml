@@ -90,7 +90,6 @@
 			<param id="TotalPrice" value="#{delivery.getTotalPrice}" />
 			<param id="warehouse" value="#{delivery.getWarehouse}" />
 			<param id="defaultPayMethod" value="#{delivery.getDefaultPayMethod}" />
-			<param id="valuableDelivery" value="#{delivery.getValuableDelivery}" />
 		</params>
 		
 		<nested-report report="deliveryDetail"/>
@@ -209,6 +208,35 @@
 	</report>
 	<report id="incomeListTaxBreakDown" description="taxBreakDown">
 		<template path="/com/code/aon/ui/warehouse/report/incomeListTaxBreakDown.jasper"/>
+	</report>
+	
+	<report id="incomeForm" description="Formulario de albarán de compras">
+		<template path="/com/code/aon/ui/warehouse/report/incomeForm.jasper" />
+		<collection provider="#{income}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
+			<param id="defaultPayMethod" value="#{income.getDefaultPayMethod}" />
+		</params>
+			 <nested-report report="incomeDetail"/>
+	    	 <nested-report report="incomeTaxBreakDown"/> 
+	</report>
+	
+	<report id="incomeDetail" description="income Details">
+		<template path="/com/code/aon/ui/warehouse/report/incomeDetail.jasper" />
+	</report>
+	<report id="incomeTaxBreakDown" description="taxBreakDown">
+		<template path="/com/code/aon/ui/warehouse/report/incomeVatBreakDown.jasper"/>
 	</report>
 	
 	<report id="orderProposal" description="Order Proposal report">

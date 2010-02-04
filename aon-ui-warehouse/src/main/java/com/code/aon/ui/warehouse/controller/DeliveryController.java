@@ -79,7 +79,6 @@ public class DeliveryController extends BasicController {
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
-	private Boolean valuableDelivery;
 	private WarehouseEmailUtil emailUtil;
 	
     public DeliveryController() {
@@ -178,14 +177,6 @@ public class DeliveryController extends BasicController {
 		this.invoiceDate = invoiceDate;
 	}
 	
-	public Boolean getValuableDelivery() {
-		return valuableDelivery;
-	}
-
-	public void setValuableDelivery(Boolean valuableDelivery) {
-		this.valuableDelivery = valuableDelivery;
-	}
-
 	public boolean isPending(){
 		Delivery delivery = (Delivery)this.getTo();
 		if (delivery.getStatus() != null) {

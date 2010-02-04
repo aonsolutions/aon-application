@@ -21,9 +21,7 @@ import com.code.aon.webmail.bean.AonMessage;
 
 public class CidServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -2679137324617541495L;
-
-	/** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+    /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      */

@@ -87,12 +87,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
-	private CommercialEmailUtil emailUtil;
 	
-	public OfferController() {
-		this.emailUtil = new CommercialEmailUtil();
-	}
-
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -471,9 +466,11 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public void sendOfferByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		Offer offer = getOffer();
+		CommercialEmailUtil emailUtil = new CommercialEmailUtil();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
-		emailUtil.initMessageController(messageController, getOffer());
+		emailUtil.initMessageController(messageController, offer);
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
 	}

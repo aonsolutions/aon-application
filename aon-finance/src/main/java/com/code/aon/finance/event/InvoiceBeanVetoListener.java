@@ -8,6 +8,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -52,6 +53,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				criteria.addExpression(ExpressionUtilities.getNotEqualExpression("invoice.type", InvoiceType.SALES.ordinal()));
 				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
+		}
+		if (invoice.getSecurityLevel() == null) {
+			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 		}
 		if (invoice.getTaxDate() == null) {
 			invoice.setTaxDate(invoice.getIssueDate());

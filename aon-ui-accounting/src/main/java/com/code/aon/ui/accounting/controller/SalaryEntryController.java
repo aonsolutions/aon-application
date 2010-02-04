@@ -2,12 +2,11 @@ package com.code.aon.ui.accounting.controller;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
@@ -32,7 +31,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SalaryEntryController implements ISpecialAccountEntry{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryEntryController.class.getName()); 
+	private static final Logger LOGGER = Logger.getLogger(SalaryEntryController.class.getName()); 
 	
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	
@@ -150,10 +149,10 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 				}
 				String msg = "Error on aon-accounting:  " + e.getMessage() ;
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -189,10 +188,10 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 				}
 				String msg = "Error on aon-accounting:  " + e.getMessage() ;
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -277,7 +276,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 			detail.setCredit(getHeader().getNetSalary());
 			accountEntryDetailBean.insert(detail);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error inserting details for AccountEntry with id = " + entry.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
 		}
 		
 	}
@@ -293,7 +292,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error deleting details related with AccountEntry with id=" + accountEntry.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error deleting details related with AccountEntry with id=" + accountEntry.getId(), e);
 		}
 	}
 
@@ -302,7 +301,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 			accountEntryBean.remove(accountEntry);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error deleting AccountEntry with id= " + accountEntry.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id= " + accountEntry.getId(), e);
 		}
 	}
 	
@@ -316,7 +315,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error loading AccountEntryController", e);
+			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
 		}
 	}
 

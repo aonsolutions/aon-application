@@ -11,11 +11,11 @@
 	<aon:panelGroup id="showSalesTransferWindow">
 		<c:if test="#{delivery.showSalesTransferWindow}">
 			<rich:modalPanel id="salesTransferModalPanel" minHeight="580"
-				minWidth="740" rendered="#{delivery.showSalesTransferWindow}"
-				showWhenRendered="true" zindex="90" style="overflow:auto">
+				minWidth="775" rendered="#{delivery.showSalesTransferWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{warehouseBundle.warehouse_delivery_sales}" />
+						<aon:outputText value="#{warehouseBundle.warehouse_delivery_sales_pending}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -38,8 +38,20 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="salesTransfer-selectAll"
+										value="#{bundle.aon_check_all}"
+										rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+										actionListener="#{delivery.salesTransferManager.checkAllSales}" 
+										reRender="salesData,detailDataContainer" />
+									<aon:commandButton id="salesTransfer-selectNone"
+										value="#{bundle.aon_uncheck_all}"
+										rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+										actionListener="#{delivery.salesTransferManager.checkNoneSales}" 
+										reRender="salesData,detailDataContainer" />	
 									<aon:commandButton id="salesTransfer-accept"
-										value="#{warehouseBundle.warehouse_delivery_to_import}"
+										value="#{warehouseBundle.warehouse_delivery_to_transfer}"
 										rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
 										reRender="showSalesTransferWindow,deliveryDetails,menuExt"
 										actionListener="#{delivery.onSalesTransfer}"
@@ -68,14 +80,10 @@
 
 									<aon:dataTable id="salesData" value="#{delivery.salesTransferManager.salesModel}"
 										var="to" rows="10" rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
-										columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-											aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+										columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+											aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
 
-										<aon:rowSelector immediate="true"
-											actionListener="#{delivery.salesTransferManager.onSelectSales}" reRender="detailDataContainer" 
-											eventsQueue="salesSelector" ignoreDupResponses="true" requestDelay="500" />
-
-										<aon:column>
+										<aon:column styleClass="#{delivery.salesTransferManager.selectedSalesId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="&#160;" />
 											</f:facet>
@@ -85,14 +93,14 @@
 												reRender="detailDataContainer" ajaxSingle="true" />	
 										</aon:column>
 			
-										<aon:column>
+										<aon:column styleClass="#{delivery.salesTransferManager.selectedSalesId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 											</f:facet>
 											<aon:outputText value="#{to.referenceCode}" />
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{delivery.salesTransferManager.selectedSalesId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_date}" />
 											</f:facet>
@@ -102,7 +110,7 @@
 											</aon:outputText>
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{delivery.salesTransferManager.selectedSalesId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<h:outputText value="#{customerBundle.customer_customer}" />
 											</f:facet>
@@ -111,13 +119,25 @@
 											</aon:outputText>
 										</aon:column>
 
-										<aon:column>
+										<aon:column styleClass="#{delivery.salesTransferManager.selectedSalesId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_total}" />
 											</f:facet>
 											<aon:outputText value="#{delivery.salesTransferManager.salesTotalPrice}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
+										</aon:column>
+
+										<aon:column styleClass="#{delivery.salesTransferManager.selectedSalesId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:commandButton value="&#160;" immediate="true"
+												title="#{warehouseBundle.warehouse_delivery_see_sales_details}"
+												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
+												actionListener="#{delivery.salesTransferManager.onSelectSales}"
+												reRender="salesData,detailDataContainer" ajaxSingle="true">
+											</aon:commandButton>															
 										</aon:column>
 									</aon:dataTable>
 					
@@ -170,7 +190,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{warehouseBundle.warehouse_delivery_sales_pending}" />
+													<h:outputText value="#{warehouseBundle.warehouse_delivery_quantity_pending}" />
 												</f:facet>
 												<aon:outputText value="#{(to.quantity-to.delivered)}">
 													<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
@@ -179,12 +199,12 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{warehouseBundle.warehouse_delivery_sales_transfer}" />
+													<h:outputText value="#{warehouseBundle.warehouse_delivery_quantity_transfer}" />
 												</f:facet>
 												<aon:inputText id="transfered"
-													value="#{to.transfered}" size="5"
+													value="#{to.transfered}" size="4"
 													valueChangeListener="#{delivery.salesTransferManager.onTransferedChanged}"
-													reRender="salesData,detailData" ajaxSingle="true" />	
+													reRender="salesData,detailDataContainer" ajaxSingle="true" />	
 											</aon:column>
 	
 										</aon:dataTable>

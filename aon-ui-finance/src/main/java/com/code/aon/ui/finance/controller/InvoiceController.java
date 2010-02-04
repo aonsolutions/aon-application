@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -39,8 +41,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.util.FinanceEmailUtil;
+import com.code.aon.ui.finance.util.EmailUtilController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -53,7 +56,7 @@ import com.code.aon.webmail.SecurityInfo;
 
 public class InvoiceController extends BasicController implements ISignatureController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoiceController.class.getName());
 	
 	private String invoiceAddressControllerName;
 	private String invoiceDetailControllerName;
@@ -63,10 +66,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private AccountEntryInvoiceWriter accountWriter;
 	private List<SelectItem> addresses;
 	private boolean showInvoiceAddressWindow;
-	private FinanceEmailUtil emailController;
+	private EmailUtilController emailController;
 	
 	public InvoiceController() {
-		this.emailController = new FinanceEmailUtil();
+		this.emailController = new EmailUtilController();
 	}
 
 	public String getInvoiceAddressControllerName() {
@@ -342,7 +345,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		try {
 			return BeanManager.getManagerBean(InvoiceAttachment.class);
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -390,7 +393,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return "invoice_" + invoice.getReferenceCode().replace("/", "-");
 	}
 	
-	public FinanceEmailUtil getEmailController() {
+	public EmailUtilController getEmailController() {
 		return emailController;
 	}
 	
@@ -398,7 +401,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
-	public IAttachment getInvoiceData( Invoice invoice ) throws ManagerBeanException {
+	public IAttachment getInvoiceData( Invoice invoice ) throws ReportException, ManagerBeanException {
 		SignerController signer = getSignerController();
 		IAttachment attach = null;
 		if ( invoice.isSigned() ) {
@@ -409,16 +412,29 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return attach;		
 	}
 	
-	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, IOException {
+	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		sendInvoiceByEmail( null, true );
 	}
 
-	private void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, IOException {
+	private void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		Invoice invoice = getInvoice();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
+		String[] emails = emailController.getEmails(invoice);
+		if (! ArrayUtils.isEmpty(emails) ) {
+			messageController.setRecipientsTo( emails[0] );
+			if ( emails.length > 1 ) { 
+				String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
+				messageController.setRecipientsCc( recipientsCc );
+			}
+		}
+		messageController.setSubject( emailController.getEmailSubject(invoice) );
+		messageController.setContent( emailController.getEmailBody(invoice) );
 		IAttachment attach = getInvoiceData(invoice);
-		emailController.initMessageController(messageController, invoice, attach, facturae);
+		messageController.addAttachment( emailController.getInvoiceFile(attach, invoice) );
+		if ( facturae ) {
+			messageController.addAttachment( emailController.getInvoiceXml(invoice) );	
+		}
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
 	}
