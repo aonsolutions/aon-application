@@ -56,7 +56,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
     /** Number of rows of the data source. */
     private int rowCount;
 
-    private BasicController controller;
+    private IDataModelDataProvider dataProvider;
 
     private SequenceRange cachedRange;
 			
@@ -69,10 +69,10 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	/**
 	 * Instantiates a new page data model2.
 	 * 
-	 * @param controller the controller
+	 * @param dataProvider the IDataModelDataProvider
 	 */
-	public ExtendedPageDataModel(BasicController controller) {
-    	this.controller = controller;
+	public ExtendedPageDataModel(IDataModelDataProvider dataProvider) {
+    	this.dataProvider = dataProvider;
     	this.page = Page.EMPTY_PAGE;
     	this.sortOrder = new SortOderMap();
 	}
@@ -180,7 +180,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
         if(i != -1 && offset < 0)
             offset = backward(i);
         else
-	        if(page == null || offset >= controller.getPageLimit())
+	        if(page == null || offset >= dataProvider.getPageLimit())
 	            offset = forward(i);
         return offset;
     }
@@ -193,7 +193,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      */
     protected int backward(int i) {
         int start = Math.max((i), 0);
-        page = getPage(start, controller.getPageLimit());
+        page = getPage(start, dataProvider.getPageLimit());
         return i - start;
     }
 
@@ -204,8 +204,8 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      * @return new index
      */
     protected int forward(int i) {
-    	int start = i + 1 != rowCount ? i : rowCount - controller.getPageLimit();
-        page = getPage(start, controller.getPageLimit());
+    	int start = i + 1 != rowCount ? i : rowCount - dataProvider.getPageLimit();
+        page = getPage(start, dataProvider.getPageLimit());
         return i - start;
     }
 
@@ -219,7 +219,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      */
 	private Page getPage(int start, int count) {
 		try {
-			List<ITransferObject> l = controller.search(start, count);
+			List<ITransferObject> l = dataProvider.search(start, count);
 			this.cachedRange = new SequenceRange(start, count);
 			return new Page(l, start);
 		} catch (ManagerBeanException e) {
@@ -237,8 +237,8 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public void update( int start, int limit ) throws ManagerBeanException {
-		IManagerBean bean = controller.getManagerBean();
-		Criteria criteria = controller.getCriteria();
+		IManagerBean bean = dataProvider.getManagerBean();
+		Criteria criteria = dataProvider.getCriteria();
 		this.rowCount = bean.getCount(criteria);
 		this.page = getPage(start, limit);
 		this._rowIndex = (this.rowCount > 0) ? start : -1;		
@@ -355,7 +355,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		
 		private Criteria getCriteria() {
 			try {
-				return controller.getCriteria();
+				return dataProvider.getCriteria();
 			} catch (ManagerBeanException e) {
 				throw new FacesException(e.getMessage(), e); 
 			}
