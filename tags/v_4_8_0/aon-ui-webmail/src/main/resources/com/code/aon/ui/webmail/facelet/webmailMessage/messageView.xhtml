@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="webmailForm" styleClass="aon-form" >
+		
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-section-title">
+					<aon:div styleClass="aon-float-right aon-text-smaller">
+					<aon:commandButton
+						title="#{webmailBundle.webmail_previous_message}"
+						rendered="#{webmailMessage.previousMessage}"
+						action="message"
+						actionListener="#{webmailMessage.previousMessage}"
+						value="#{webmailBundle.webmail_previous_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailPrevious">
+					</aon:commandButton>
+		
+					<aon:commandButton
+						title="#{webmailBundle.webmail_previous_message}"
+						rendered="#{!webmailMessage.previousMessage}" disabled="true"
+						value="#{webmailBundle.webmail_previous_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailPrevious-dis">
+					</aon:commandButton>
+		
+					<aon:commandButton
+						title="#{webmailBundle.webmail_next_message}"
+						rendered="#{webmailMessage.nextMessage}"
+						action="message"
+						actionListener="#{webmailMessage.nextMessage}"
+						value="#{webmailBundle.webmail_next_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailNext">
+					</aon:commandButton>
+					
+					<aon:commandButton
+						title="#{webmailBundle.webmail_next_message}"
+						rendered="#{!webmailMessage.nextMessage}" disabled="true"
+						value="#{webmailBundle.webmail_next_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailNext-dis">
+					</aon:commandButton>
+				</aon:div>
+					<aon:outputText value="#{webmailFolder.folder.name}"/>
+				</aon:div>
+
+				<aon:div styleClass="aon-toolbar">	
+			
+					<aon:commandButton
+						id="newMailMessage"
+						title="#{webmailBundle.webmail_newmail}"
+						action="messageNew"
+						actionListener="#{webmailMessage.createNewMessage}"
+						value="#{webmailBundle.webmail_newmail}"
+						styleClass="aon-finding-toolbar-item aon-icon-newMail"
+						>
+					</aon:commandButton>
+							
+					<!-- Reply to message  -->									
+					<aon:commandButton
+						id="replyButton"
+						title="#{webmailBundle.webmail_newmail_reply}"
+						action="messageNew"
+						actionListener="#{webmailMessage.replyToSelectedMessage}"
+						value="#{webmailBundle.webmail_newmail_reply}"
+						styleClass="aon-finding-toolbar-item aon-icon-mailReply"
+						>
+					</aon:commandButton>									
+	
+					<!-- Reply to all button  -->										
+					<aon:commandButton
+						id="replyAllButton"
+						title="#{webmailBundle.webmail_newmail_replyAll}"
+						action="messageNew"
+						actionListener="#{webmailMessage.replyToAllMessage}"
+						value="#{webmailBundle.webmail_newmail_replyAll}"
+						styleClass="aon-finding-toolbar-item aon-icon-mailReplyAll">
+					</aon:commandButton>							
+	
+					<!-- Forward button  -->
+					<aon:commandButton
+						id="forwardButton"
+						title="#{webmailBundle.webmail_newmail_forward}"
+						action="messageNew"
+						actionListener="#{webmailMessage.forwardMessage}"
+						value="#{webmailBundle.webmail_newmail_forward}"
+						styleClass="aon-finding-toolbar-item aon-icon-mailForward">
+					</aon:commandButton>					
+	
+					<!-- Delete button  -->
+					<aon:commandButton
+						id="deleteButton"
+						title="#{bundle.aon_remove}"
+						rendered="#{!webmailFolder.folder.purgableAllMessages}"
+						action="#{webmailMessage.getReturnAction}"
+						actionListener="#{webmailMessage.deleteSelectedMessage}"
+						value="#{bundle.aon_remove}"
+						styleClass="aon-finding-toolbar-item aon-icon-mailDelete">
+					</aon:commandButton>
+								
+					<aon:confirmButton id="purgeMail"
+						rendered="#{webmailFolder.folder.purgableAllMessages}"
+						title="#{webmailBundle.webmail_mail_purge}"
+						confirmTitle="#{bundle.aon_advice}"
+						confirmMessage="#{webmailBundle.webmail_purge_confirm}"
+						accesskey="#{bundle.aon_key_remove}"
+						confirmAction="#{webmailMessage.getReturnAction}"
+						confirmActionListener="#{webmailMessage.purgeSelectedMessage}"
+						value="#{webmailBundle.webmail_mail_purge}"
+						styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
+
+					<a4j:htmlCommandLink id="save" target="_blank"
+						actionListener="#{webmailMessage.save}"
+						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
+						style="line-height:16px;">
+						<aon:outputText value="#{webmailBundle.webmail_save}" />
+					</a4j:htmlCommandLink> 					
+
+					<a4j:htmlCommandLink id="print" target="_blank"
+						actionListener="#{webmailMessage.print}"
+						styleClass="aon-icon aon-icon-printer aon-finding-toolbar-item"
+						style="line-height:16px;">
+						<aon:outputText value="#{webmailBundle.webmail_print}" />
+					</a4j:htmlCommandLink> 					
+						
+					<!-- Move button  -->
+					<aon:commandButton
+						id="moveButton" reRender="aonStatus"
+						title="#{webmailBundle.webmail_movemail}"
+						value="#{webmailBundle.webmail_movemail}"
+						styleClass="aon-finding-toolbar-item aon-icon-mail-move">
+						<rich:componentControl for="msgMoveModalPanel" operation="show" event="onclick"/>
+					</aon:commandButton>									
+	
+					<aon:commandButton
+						id="back" immediate="true"
+						title="#{bundle.aon_back}"
+						value="#{bundle.aon_back}"
+						action="#{webmailMessage.getReturnAction}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel">
+					</aon:commandButton>											
+
+				</aon:div>
+				<!-- icon to collapse message details -->
+				
+			<aon:div>
+
+			<aon:panelGrid columns="2" style="width:100%;" columnClasses="aon-width-100 aon-panelGrid-odd,aon-width-auto aon-panelGrid-even">
+					
+				<!-- from -->
+				<aon:outputText styleClass="aon-text-bold"											
+					value="#{webmailBundle.webmail_from}: " />
+				<aon:div>
+					<aon:outputText escape="false" converter="longString" value="#{webmailMessage.message.sender}" />
+					<aon:commandButton
+						id="addToContacts" reRender="aonStatus"
+						title="#{webmailBundle.webmail_email_add}"
+						styleClass="aon-icon-commandButton aon-icon-agenda aon-italic aon-bold">
+						<rich:componentControl for="addContactModalPanel" operation="show" event="onclick"/>
+					</aon:commandButton>
+					<aon:commandButton id="add_white_list"
+						reRender="aonStatus"
+						rendered="#{spam.whiteListEmail}"
+						title="#{webmailBundle.webmail_add_white_list}" 
+						styleClass="aon-icon-commandButton aon-icon-white-list aon-italic aon-bold"
+						actionListener="#{spam.onAddWhiteMessageFrom}" />
+					<aon:commandButton id="add_black_list"
+						reRender="aonStatus"
+						rendered="#{spam.blackListEmail}"
+						title="#{webmailBundle.webmail_add_black_list}" 
+						styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
+						actionListener="#{spam.onAddBlackMessageFrom}" />
+				</aon:div>
+					
+				<!-- To -->
+				<aon:outputText 
+					value="#{webmailBundle.webmail_to}: " />
+				<aon:div>
+					<aon:div>
+						<aon:commandButton
+							reRender="webmailForm"
+							rendered="#{webmailMessage.shotMessageToControlDown}" 
+							actionListener="#{webmailMessage.changeShotMessageTo}"
+							styleClass="aon-icon-commandButton aon-icon-drop-down">
+						</aon:commandButton>
+						<aon:commandButton
+							reRender="webmailForm"
+							rendered="#{webmailMessage.shotMessageToControlUp}" 
+							actionListener="#{webmailMessage.changeShotMessageTo}"
+							styleClass="aon-icon-commandButton aon-icon-drop-up">
+						</aon:commandButton>
+						<aon:outputText escape="false"
+							rendered="#{!webmailMessage.shotMessageTo}" 
+							value="#{webmailMessage.message.recipientsTo}" >
+							<aon:abbreviateConverter maxWidth="120" />
+						</aon:outputText>
+						<aon:outputText escape="false" 
+							rendered="#{webmailMessage.shotMessageTo}" 
+							converter="longString" 
+							value="#{webmailMessage.message.recipientsTo}" />
+						<aon:outputText escape="false"
+							rendered="#{webmailMessage.shotMessageToControlDown}" 
+							value="..." />
+					</aon:div>
+				</aon:div>
+
+				<!-- Cc -->
+				<aon:outputText
+					value="#{webmailBundle.webmail_cc}: " />
+				<aon:div>
+					<aon:div>
+						<aon:outputText value="&#160;" />
+						<aon:commandButton
+							reRender="webmailForm"
+							rendered="#{webmailMessage.shotMessageCcControlDown}" 
+							actionListener="#{webmailMessage.changeShotMessageCc}"
+							styleClass="aon-icon-commandButton aon-icon-drop-down">
+						</aon:commandButton>
+						<aon:commandButton
+							reRender="webmailForm"
+							rendered="#{webmailMessage.shotMessageCcControlUp}" 
+							actionListener="#{webmailMessage.changeShotMessageCc}"
+							styleClass="aon-icon-commandButton aon-icon-drop-up">
+						</aon:commandButton>
+						<aon:outputText escape="false"
+							rendered="#{!webmailMessage.shotMessageCc}" 
+							value="#{webmailMessage.message.recipientsCc}" >
+							<aon:abbreviateConverter maxWidth="120" />
+						</aon:outputText>
+						<aon:outputText escape="false" 
+							rendered="#{webmailMessage.shotMessageCc}" 
+							converter="longString" 
+							value="#{webmailMessage.message.recipientsCc}" />
+						<aon:outputText escape="false"
+							rendered="#{webmailMessage.shotMessageCcControlDown}" 
+							value="..." />
+					</aon:div>
+				</aon:div>
+
+				<aon:outputText
+					value="#{webmailBundle.webmail_subject}: " />
+				<aon:div>
+					<aon:outputText value="&#160;" />
+					<aon:outputText escape="false" converter="longString" value="#{webmailMessage.message.subject}" />
+				</aon:div>
+						
+				<!-- Date -->
+				<aon:outputText 
+					styleClass="aon-form-input-text-label"
+					value="#{webmailBundle.webmail_date}: " />
+				<aon:div>
+					<aon:outputText value="&#160;" />
+					<aon:outputText value="#{webmailMessage.message.sentDateString}" />
+				</aon:div>
+				
+				<aon:outputText rendered="#{webmailAttach.attachment}" 
+					styleClass="aon-form-input-text-label aon-nowrap"
+					value="#{webmailBundle.webmail_attach_files}: " />
+				<aon:div rendered="#{webmailAttach.attachment}">
+					<aon:panelGroup styleClass="aon-icon aon-icon-attach">
+						
+						<aon:selectOneMenu 
+							id="attach" reRender="download"
+							style="font-size: 0.9em;boder: #000 1px solid;"
+							styleClass="aon-inputText"
+							value="#{webmailAttach.attachPos}">
+							<f:selectItems value="#{webmailAttach.attachmentsDrop}" />
+						</aon:selectOneMenu> 
+							
+						<a4j:htmlCommandLink id="download" target="_blank"
+							actionListener="#{webmailAttach.downloadAttachment}"
+							styleClass="aon-icon aon-icon-mail-save"
+							style="line-height:16px;margin-right:0;"
+							title="#{webmailBundle.webmail_download}">
+							<f:param name="index" value="#{webmailAttach.attach.position}" />
+							<aon:outputText value="&#160;" />
+						</a4j:htmlCommandLink>
+	
+						<a4j:htmlCommandLink id="downloadZip" target="_blank"
+							actionListener="#{webmailAttach.downloadZippedAttachments}"
+							styleClass="aon-icon aon-icon-zip"
+							style="line-height:18px;"
+							title="#{webmailBundle.webmail_download_zipped}">
+							<aon:outputText value="&#160;" />
+						</a4j:htmlCommandLink>
+
+					</aon:panelGroup>
+				</aon:div>
+					
+			</aon:panelGrid>
+			
+			<!-- Message Body -->
+			<aon:div styleClass="aon-border-newmessage aon-padding-top">
+				<aon:panelGroup>
+					<aon:div>
+						<iframe src="#{webmail.context}/com/code/aon/ui/webmail/facelet/webmailMessage/messageContent.jsf?id=#{webmail.millis}" width="100%" height="430" frameborder="0">
+						</iframe>
+					</aon:div>
+				</aon:panelGroup>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	</aon:form>
+
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessage.xhtml" />
+
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/addContact.xhtml" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

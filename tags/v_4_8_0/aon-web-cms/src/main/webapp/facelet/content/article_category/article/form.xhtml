@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="artilceForm">
+	
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.article}" />
+				<ui:param name="controller" value="#{article}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="generate_article" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" immediate="true"
+						rendered="#{!article.new and cms.roleEditor}"
+						actionListener="#{generator.onGenerateCurrentArticle}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<a4j:support 
+							event="onclick" reRender="poll,grid" ajaxSingle="true"
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>	
+					<aon:commandButton id="categories"
+						value="#{appBundle.article_category}"
+						action="article_category_list" immediate="true"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{article_category.onSearch}" />
+					</aon:commandButton>				
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				
+				<aon:panelTabSet selectedTab="#{article.selectedTab}">
+ 
+					<aon:panelTab id="content" label="#{appBundle.aon_content}">
+						<ui:include src="/facelet/content/article_category/article/formContent.xhtml" />
+					</aon:panelTab>
+
+					<aon:panelTab id="article_related"
+						rendered="#{!article.new}" label="#{appBundle.article_related_list}">
+						<ui:include src="/facelet/content/article_category/article/gridArticleRelated.xhtml" />												
+					</aon:panelTab>
+
+					<aon:panelTab id="document_related"
+						rendered="#{!article.new}" label="#{appBundle.document_related_list}">
+						<ui:include src="/facelet/content/article_category/article/gridDocumentRelated.xhtml" />
+					</aon:panelTab>
+
+				</aon:panelTabSet>		
+							
+			</aon:div>
+		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

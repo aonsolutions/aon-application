@@ -1,0 +1,301 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>	
+		<locale-config>
+			<default-locale>es</default-locale>
+		</locale-config>
+		<resource-bundle>
+		   <base-name>com.code.aon.desktop.i18n.messages</base-name>
+		   <var>appBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!-- *************** RESOURCE RESOLVER ***************** --> 
+	<managed-bean>
+		<managed-bean-name>aonResource</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.resources.bean.ResourceResolver
+		</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+		<managed-property>
+			<property-name>resourceURIPreffix</property-name>
+			<value>/aonResource/3.10.0</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!--  *************** 
+		AON CONFIGURATION
+		***************** -->
+	<managed-bean>
+		<managed-bean-name>aonConfiguration</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ConfigurationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>styleSheets</property-name>
+			<list-entries>
+				<value>#{aonResource.resolveLocal['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/desktop.css']}</value>				
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>properties</property-name>
+			<map-entries>
+				<map-entry>
+					<key>hideHeaderLinks</key>
+					<value>#{true}</value>
+				</map-entry>
+				<map-entry>
+					<key>hideMenuBar</key>
+					<value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************ DESKTOP ************** -->
+	<managed-bean>
+		<managed-bean-name>desktop</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.DesktopController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>currentUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.AonUserController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>currentUser</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{userSecurityActivationListener}</value>
+				<value>#{userScopeListener}</value>
+				<value>#{userWorkGroupListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ PROFILES ************** -->
+	<managed-bean>
+		<managed-bean-name>currentDomain</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.AonDomainController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.jaas.client.ast.IDomainApplication</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>securityUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.event.SecurityUserListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>controller</property-name>
+			<value>#{user}</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ DESKTOP SERVICES ************** -->
+	<managed-bean>
+		<managed-bean-name>aonapps</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.ApplicationsManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>email</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.WebmailManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>smsManager</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.SMSManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>task</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.TaskManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ Collections ************** -->
+	<managed-bean>
+		<managed-bean-name>corporateIdentity</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.CorporateIdentity</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **** CORPORATE IDENTITY DOCUMENTS **** --> 
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryAttachController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>corporateIdentityAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>maximumSize</property-name>
+			<value>1048576</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{corporateIdentityAttachControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistryAttachControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>corporateIdentityAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* DOMAIN ***************** -->
+	<managed-bean>
+		<managed-bean-name>domain</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.desktop.controller.DomainController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.desktop.Domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domain</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Domain_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{domainControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>domainControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.desktop.event.DomainControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** CUSTOMER **** -->
+	<managed-bean>
+		<managed-bean-name>userOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<value>#{userDomainManagementListener}</value>
+		</list-entries>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>userDomainManagementListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.desktop.event.UserDomainManagementListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ COMPANY LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>companyOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.company -->
+			<value>#{corporateIdentityChildListener}</value>
+		</list-entries>
+	</managed-bean>
+	
+	
+</faces-config>
