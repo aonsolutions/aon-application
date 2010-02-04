@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.20.1</version>
+			<version>4.21.0</version>
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>
