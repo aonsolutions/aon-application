@@ -103,7 +103,7 @@
 					
 					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 						<ui:param name="controller" value="#{corporateIdentityAttach}" />
-						<ui:param name="rows" value="10" />
+						<ui:param name="sortColumns" value="#{true}" />
 						<ui:param name="skipLineEdition" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
 						<ui:param name="skipResetButton" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
 					</ui:include>
