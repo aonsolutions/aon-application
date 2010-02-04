@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition>
+
+	<rich:modalPanel id="waitProccess" height="100" width="325"
+		zindex="2000">
+
+		<f:facet name="header">
+			<aon:div styleClass="aon-popupWindow-title">
+				<aon:outputText value="#{bundle.aon_advice}" />
+			</aon:div>
+		</f:facet>
+
+		<aon:div styleClass="aon-popupWindow-content">
+			<aon:div styleClass="aon-popupWindow-content-internal">
+
+				<aon:div styleClass="aon-message-big aon-icon-big-sendingMail">
+					<aon:outputText value="#{webmailBundle.webmail_sending}" />
+				</aon:div>
+
+			</aon:div>
+		</aon:div>
+			
+	</rich:modalPanel>
+
+</ui:composition>
+
+</body>
+</html>

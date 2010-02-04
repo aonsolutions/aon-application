@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="#{searchController.preffix}segments_segment_id"
+		value="#{bundle.aon_segment}" />				
+	<aon:div id="segmentDiv">
+		<a4j:repeat value="#{searchController.segments}" rowKeyVar="index" var="segment">
+			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+				<aon:selectOneMenu id="#{searchController.preffix}segments_segment_id"
+					value="#{searchController.segments[index]}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{registryCollections.segments}" />
+					<a4j:support event="onchange" reRender="segmentDiv"/>
+				</aon:selectOneMenu>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+					actionListener="#{searchController.onRemoveSegment}" reRender="segmentDiv"
+					rendered="#{segment != null}">
+					<f:param name="index" value="#{index}" />
+				</aon:commandButton>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+					actionListener="#{searchController.onAddSegment}" reRender="segmentDiv"
+					rendered="#{(segment != null) and (index == (searchController.segmentsSize-1))}"/>					
+			</aon:div>						
+		</a4j:repeat>
+	</aon:div>						
+
+</ui:composition>

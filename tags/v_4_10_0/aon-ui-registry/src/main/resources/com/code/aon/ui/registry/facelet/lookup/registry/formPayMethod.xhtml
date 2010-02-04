@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="#{controller.beanName}-PayMethodDiv" styleClass="aon-margin-top"> 
+		<aon:panelGrid columns="2" 
+			columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
+	
+			<aon:outputLabel for="RegistryPayMethod_payment" 
+				value="#{configBundle.config_pay_method}" />
+			<aon:selectOneMenu id="RegistryPayMethod_payment"
+				valueChangeListener="#{controllerLookupListener.onPayMethodChanged}"
+				reRender="#{controller.beanName}-PayMethodDiv,#{controller.beanName}-PayMethodDiv2"
+				focus="RegistryPayMethod_bank"
+				value="#{controllerLookupListener.registryPayMethod.payment}">
+				<f:selectItem value="#{null}" />
+				<f:selectItems value="#{configCollections.payMethods}" />
+			</aon:selectOneMenu>				
+			
+			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">
+				<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
+				<c:if test="#{controllerLookupListener.showCompanyBanks}">
+					<aon:selectOneMenu id="RegistryPayMethod_bank"
+						value="#{controllerLookupListener.registryBank}">
+						<f:selectItem value="#{null}" />
+						<f:selectItems value="#{companyCollections.companyBanks}" />
+					</aon:selectOneMenu>
+				</c:if>					
+				<c:if test="#{!controllerLookupListener.showCompanyBanks}">
+					<aon:panelGroup>
+						<aon:lookupInputText id="RegistryPayMethod_bank" property="#{controllerLookupListener.registryBank.bank}"
+							reRender="RegistryBank_name" lookup="#{bankLookup}"
+							value="#{controllerLookupListener.registryBank.bank.code}" size="5">
+							<aon:joinProperty alias="Bank_code" value="#{controllerLookupListener.registryBank.bank.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton 
+							windowTitle="#{configBundle.config_bank_selection}"
+							selectReRender="RegistryPayMethod_bank,RegistryBank_name" actionType="search"
+							lookup="#{bankLookup}" minHeight="460" minWidth="650"
+							property="#{controllerLookupListener.registryBank.bank}">
+						</aon:lookupButton>
+						<aon:inputText id="RegistryBank_name"
+							value="#{controllerLookupListener.registryBank.bank.name}"
+							size="50" disabled="true" />
+							
+						<aon:div>
+							<aon:inputText label="#{configBundle.config_bank_code}" 
+								value="#{controllerLookupListener.registryBank.bankAccount.office}"
+								required="true" size="4" maxlength="4">
+								<f:validateLength minimum="4" maximum="4" />
+							</aon:inputText>
+							<aon:inputText label="#{configBundle.config_bank_control}"
+								value="#{controllerLookupListener.registryBank.bankAccount.control}"
+								required="true" size="2" maxlength="2">
+								<f:validateLength minimum="2" maximum="2" />
+							</aon:inputText>
+							<aon:inputText label="#{configBundle.config_bank_account}"
+								value="#{controllerLookupListener.registryBank.bankAccount.account}"
+								required="true" size="10" maxlength="10">
+								<f:validateLength minimum="10" maximum="10" />
+							</aon:inputText>
+						</aon:div>
+					</aon:panelGroup>
+				</c:if>
+			</c:if>			
+		</aon:panelGrid>					
+	</aon:div>
+				
+	<aon:div id="#{controller.beanName}-PayMethodDiv2"  styleClass="aon-margin-top">
+		<aon:panelGrid columns="4" 
+			columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-100,
+				aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-100" >
+					
+			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">				
+				<aon:outputLabel for="RegistryPayMethod_numberOfPayments" 
+					value="#{registryBundle.registry_number_of_payments}" />
+				<aon:inputText id="RegistryPayMethod_numberOfPayments"
+					value="#{controllerLookupListener.registryPayMethod.numberOfPayments}" required="true" size="5" >
+					<f:validateLongRange minimum="1" />
+				</aon:inputText>	
+				
+				<aon:outputLabel for="RegistryPayMethod_daysToFirstPayment" 
+					value="#{registryBundle.registry_days_to_first_payment}" />
+				<aon:inputText id="RegistryPayMethod_daysToFirstPayment"
+					value="#{controllerLookupListener.registryPayMethod.daysToFirstPayment}" required="true" size="5" />
+			
+				<aon:outputLabel for="RegistryPayMethod_daysBetweenPayments" 
+					value="#{registryBundle.registry_days_between_payments}" />
+				<aon:inputText id="RegistryPayMethod_daysBetweenPayments"
+					value="#{controllerLookupListener.registryPayMethod.daysBetweenPayments}" required="true" size="5" />
+			
+				<aon:outputLabel for="RegistryPayMethod_paymentDays" 
+					value="#{registryBundle.registry_payment_days}" />
+				<aon:inputText id="RegistryPayMethod_paymentDays"
+					value="#{controllerLookupListener.registryPayMethod.paymentDays}" size="5" />
+			</c:if>
+		</aon:panelGrid>
+	</aon:div>
+	
+</ui:composition>
