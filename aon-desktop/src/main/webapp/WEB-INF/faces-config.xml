@@ -23,7 +23,7 @@
 		<managed-bean-scope>application</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/4.2.0</value>
+			<value>/aonResource/4.4.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -162,6 +162,14 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>corporateIdentityAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category_name,RegistryAttachment_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>type</property-name>
