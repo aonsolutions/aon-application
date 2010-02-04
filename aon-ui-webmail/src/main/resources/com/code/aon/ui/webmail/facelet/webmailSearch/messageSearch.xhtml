@@ -13,133 +13,112 @@
 
 	<ui:define name="content">
 	
-		<aon:form id="webmailForm" styleClass="aon-form">
+		<aon:form id="webmailForm">
 		
-			<!--  barra de menu y titulo -->
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{webmailBundle.webmail_main}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="Buscar" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<!-- 
-						<aon:commandButton
-							id="search"
-							title="#{bundle.aon_search}"
-							reRender="webmailForm"
-							actionListener="#{webmailSearch.searchMessagesCurrentFolder}"
-							value="#{bundle.aon_search}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept">
-						</aon:commandButton>
-						-->								
-						<aon:commandButton
-							title="#{bundle.aon_back}"
-							action="folder"
-							actionListener="#{webmailSearch.onExit}"
-							value="#{bundle.aon_back}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel">
-						</aon:commandButton>
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_main}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton
+						title="#{bundle.aon_back}"
+						action="folder"
+						actionListener="#{webmailSearch.onExit}"
+						value="#{bundle.aon_back}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel">
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
 			
-			<!-- fin de barra de menu y titulo -->
+			<!-- fin de barra de menu y titulo -->		
 			
-			
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-			
-					<ui:define name="searchContent">	
-						<ui:param name="searchReRender" value="webmailSearchResult" />			
-						<aon:methodParam name="searchActionListener" value="#{webmailSearch.searchMessagesCurrentFolder}" type="actionListener" />
-						<aon:methodParam name="searchAction" />
-				
-						<aon:outputText value="" />
-				        <aon:div styleClass="aon-italic" style="padding-bottom:0.5em;">
-				        	<aon:outputText value="Buscar mensajes dentro de la carpeta " />
-				        	<aon:outputText value="#{webmailFolder.folder.name}" styleClass="aon-bold"/>
-				        	<aon:outputText value=" con los siguientes criterios: " />
-				        </aon:div>
-			           
-						<aon:outputLabel for="SearchMail_from" 
-							value="#{webmailBundle.webmail_from}: " />
-						<aon:inputText id="SearchMail_from"
-							size="80"
-							value="#{webmailSearch.address_from}"/>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 		
-						<aon:outputLabel for="SearchMail_to" 
-							value="#{webmailBundle.webmail_to}: " />
-						<aon:inputText id="SearchMail_to"
-							size="80"
-							value="#{webmailSearch.address_cc}"/>
-		
-						<aon:outputLabel for="SearchMail_subject" 
-							value="#{webmailBundle.webmail_subject}: " />
-						<aon:inputText id="SearchMail_subject"
-							size="80"
-							value="#{webmailSearch.subject}"/>
-		
-						<aon:outputLabel for="SearchMail_bodyText" 
-							value="#{webmailBundle.webmail_content}: " />
-						<aon:inputText id="SearchMail_bodyText"
-							size="80"
-							value="#{webmailSearch.bodyText}"/>						
-		        	
-					</ui:define>
-				</ui:decorate>
-			<aon:div styleClass="aon-scroll-area" id="webmailForm">	
-				<aon:div id="webmailSearchResult" layout="none">
-					<aon:div rendered="#{webmailSearch.resultSelected}">
-						<aon:div rendered="#{!webmailSearch.resultFound}" styleClass="aon-box aon-box-outstanding2">
-							<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
-								<aon:outputText value="#{webmailBundle.webmail_search_none}"/>
-							</aon:div>
-						</aon:div>
-						<aon:div rendered="#{webmailSearch.resultFound}">
-						
-							<aon:dataTable id="messageDataTable" 
-								value="#{webmailSearch.model}" var="to" rows="10" 
-								cellpadding="0" cellspacing="0"
-								columnClasses="aon-editDataTable-textColumn,
-										aon-editDataTable-textColumn, aon-editDataTable-textColumn">
-										
-								<aon:rowSelector action="message"
-									actionListener="#{webmailSearch.changeSelectedMessage}" />							
-																				
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{webmailBundle.webmail_from}"/>
-									</f:facet>
-									<aon:outputText escape="false" converter="longString" value="#{to.sender}"/>
-								</aon:column>
-								
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{webmailBundle.webmail_subject}"/>
-									</f:facet>
-									<aon:outputText value="#{to.subject}" />
-								</aon:column>
-										  
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{webmailBundle.webmail_date}"/>
-									</f:facet>
-									<aon:outputText value="#{to.sentDate}"/>
-								</aon:column>		  
-							</aon:dataTable>
-							
-							<aon:dataScroller2 for="messageDataTable" />
+				<ui:define name="searchContent">	
+					<ui:param name="searchReRender" value="webmailSearchResult" />			
+					<aon:methodParam name="searchActionListener" value="#{webmailSearch.searchMessagesCurrentFolder}" type="actionListener" />
+					<aon:methodParam name="searchAction" />
+			
+					<aon:outputText value="" />
+			        <aon:div styleClass="aon-italic" style="padding-bottom:0.5em;">
+			        	<aon:outputFormat value="#{webmailBundle.webmail_search_message}" escape="false">
+			        		<f:param value="#{webmailFolder.folder.name}" />
+			        	</aon:outputFormat>
+			        </aon:div>
+		           
+					<aon:outputLabel for="SearchMail_from" 
+						value="#{webmailBundle.webmail_from}: " />
+					<aon:inputText id="SearchMail_from"
+						size="80"
+						value="#{webmailSearch.address_from}"/>
 	
+					<aon:outputLabel for="SearchMail_to" 
+						value="#{webmailBundle.webmail_to}: " />
+					<aon:inputText id="SearchMail_to"
+						size="80"
+						value="#{webmailSearch.address_cc}"/>
+	
+					<aon:outputLabel for="SearchMail_subject" 
+						value="#{webmailBundle.webmail_subject}: " />
+					<aon:inputText id="SearchMail_subject"
+						size="80"
+						value="#{webmailSearch.subject}"/>
+	
+					<aon:outputLabel for="SearchMail_bodyText" 
+						value="#{webmailBundle.webmail_content}: " />
+					<aon:inputText id="SearchMail_bodyText"
+						size="80"
+						value="#{webmailSearch.bodyText}"/>						
+	        	
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area" id="webmailSearchResult">	
+				<aon:div rendered="#{webmailSearch.showResults}">
+					<aon:div rendered="#{!webmailSearch.messagesFound}" styleClass="aon-box aon-box-outstanding2">
+						<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
+							<aon:outputText value="#{webmailBundle.webmail_search_none}"/>
 						</aon:div>
 					</aon:div>
-		    	</aon:div>		
+					<aon:div rendered="#{webmailSearch.messagesFound}">
+					
+						<aon:dataTable id="messageDataTable" 
+							value="#{webmailSearch.model}" var="to" rows="10" 
+							cellpadding="0" cellspacing="0" >
+									
+							<aon:rowSelector action="message"
+								actionListener="#{webmailSearch.changeSelectedMessage}" />							
+																			
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-250"
+								sortBy="#{to.sender}" sortOrder="#{webmailSearch.sortOrders[0]}">
+								<f:facet name="header">
+									<aon:outputText value="#{webmailBundle.webmail_from}"/>
+								</f:facet>
+								<aon:outputText title="#{to.senderEmail}"
+									value="#{to.senderSummary}" />
+							</aon:column>
+							
+							<aon:column styleClass="aon-editDataTable-textColumn"
+								sortBy="#{to.subject}" sortOrder="#{webmailSearch.sortOrders[1]}">
+								<f:facet name="header">
+									<aon:outputText value="#{webmailBundle.webmail_subject}"/>
+								</f:facet>
+								<aon:outputText value="#{to.subject}" />
+							</aon:column>
+									  
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+								sortBy="#{to.sentDate}" sortOrder="#{webmailSearch.sortOrders[2]}">
+								<f:facet name="header">
+									<aon:outputText value="#{webmailBundle.webmail_date}"/>
+								</f:facet>
+								<aon:outputText value="#{to.sentDateString}"
+									title="#{to.sentDateFullString}" />								
+							</aon:column>		  
+						</aon:dataTable>
+						
+						<aon:dataScroller2 for="messageDataTable" />
+
+					</aon:div>
+				</aon:div>		
 			</aon:div>		    
 		</aon:form>
 
