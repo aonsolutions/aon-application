@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
@@ -13,7 +12,9 @@ import javax.mail.Flags.Flag;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.DropEvent;
+import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.Ordering;
+import org.richfaces.model.SequenceDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ import com.code.aon.webmail.bean.AonMessageSortableList;
 import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
-public class FolderController implements WebMailConstants {
+public class FolderController implements IMessageContainer, WebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FolderController.class);
 	
@@ -35,7 +36,7 @@ public class FolderController implements WebMailConstants {
 	
 	private AonFolder folder;
 	
-	private ArrayDataModel model;
+	private ModifiableModel model;
 	
 	private WebMailController webMailController;
 	
@@ -44,13 +45,15 @@ public class FolderController implements WebMailConstants {
 	private boolean createAsSubfolder;
 	
 	private int currentPage = 1;
+	
+	private int currentIndex;
 
 	private String tableState;
 	
 	private Ordering dateOrder = Ordering.DESCENDING;
 	
 	public FolderController() {
-		this.model = new ArrayDataModel();
+		this.model = new ModifiableModel(new SequenceDataModel(), "to");
 	}
 
 	public int getCurrentPage() {
@@ -401,6 +404,7 @@ public class FolderController implements WebMailConstants {
 
     public void changeSelectedMessage(ActionEvent event) throws MessagingException {
     	AonMessage aonMessage = getSelectedMessage();
+    	this.currentIndex = getModel().getRowIndex();
     	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
     	if ( getFolder().isDraftFolder() ) {
     		IMAPFolder imapFolder = (IMAPFolder) getFolder().getFolder();
@@ -490,4 +494,12 @@ public class FolderController implements WebMailConstants {
 		return ((visible * 26)+27) + "px";
 	}
 
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+	
 }

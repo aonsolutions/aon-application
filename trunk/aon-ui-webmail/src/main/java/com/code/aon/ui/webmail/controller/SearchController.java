@@ -17,7 +17,7 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageSortableList;
 import com.code.aon.webmail.bean.AonSearcher;
 
-public class SearchController implements WebMailConstants {
+public class SearchController implements IMessageContainer, WebMailConstants {
 
 	private AonMessageSortableList sortableList;
 	
@@ -30,6 +30,8 @@ public class SearchController implements WebMailConstants {
 	private String address_from;
 
 	private String subject;
+	
+	private int currentIndex;
 	
 	/**
 	 * @return the sortableList
@@ -160,6 +162,7 @@ public class SearchController implements WebMailConstants {
 	
     public void changeSelectedMessage(ActionEvent event) throws MessagingException {
     	AonMessage aonMessage = (AonMessage) getModel().getRowData();
+    	this.currentIndex = getModel().getRowIndex();
     	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
        	messageController.setMessage( aonMessage );      				
     }	
@@ -168,4 +171,12 @@ public class SearchController implements WebMailConstants {
     	return this.model;
     }
 
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+	
 }

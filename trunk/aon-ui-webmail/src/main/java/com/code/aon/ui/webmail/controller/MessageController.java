@@ -818,75 +818,45 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	// NEXT - PREVIOUS
 	// ****************************************************************
 
-	private AonMessage[] getMessageList(){
-		if (NAVIGATION_FOLDER.equals(returnAction)){
-			if (this.getMessage()==null)
-				return new AonMessage[0];
-			return this.getMessage().getParent().getMessageList();
-		}else if(NAVIGATION_SEARCH.equals(returnAction)){
-			SearchController sc = (SearchController)AonUtil.getRegisteredBean(BEAN_SEARCH);
-			return sc.getSortableList().getMessageList();
+	public IMessageContainer getMessageContainer(){
+		if (NAVIGATION_SEARCH.equals(returnAction)) {
+			return (IMessageContainer) AonUtil.getRegisteredBean(BEAN_SEARCH);
 		}
-		return null;
-	}
-
-	public int getCurrentIndex(){
-		return ArrayUtils.indexOf( getMessageList(), getMessage() );
+		return (IMessageContainer) AonUtil.getRegisteredBean(BEAN_FOLDER);
 	}
 	
 	public boolean isPreviousMessage(){
-		int index = getCurrentIndex();
-		index--;
-		if (index>=0)
-			return true;
-		return false;
+		int index = getMessageContainer().getCurrentIndex();
+		return index > 0;
 	}
 
 	public boolean isNextMessage(){
-		int index = getCurrentIndex();
-		index++;
-		if (index<getMessageList().length)
-			return true;
-		return false;
-	}
-
-	private AonMessage getPreviousMessage(){
-		int index = getCurrentIndex();
-		index--;
-		if (index>=0) {
-			return getMessageList()[index];
-		}
-		return null;
+		IMessageContainer mc = getMessageContainer();
+		int index = mc.getCurrentIndex();
+		return (index+1) < mc.getModel().getRowCount();
 	}
 	
-	private AonMessage getNextMessage(){
-		int index = getCurrentIndex();
-		index++;
-		if (index < getMessageList().length ) {
-			return getMessageList()[index];
-		}
-		return null;
+	private AonMessage getMessage( int offset ) {
+		IMessageContainer mc = getMessageContainer();
+		int index = mc.getCurrentIndex()+offset;
+		mc.getModel().setRowIndex(index);
+		mc.setCurrentIndex(index);
+		return (AonMessage) mc.getModel().getRowData();		
 	}
 	
 	public void onPreviousMessage(ActionEvent event) {
-		setMessage(getPreviousMessage());
+		setMessage(getMessage(-1));
 	}
 
 	public void onNextMessage(ActionEvent event) {
-		setMessage(getNextMessage());
+		setMessage(getMessage(1));
 	}
 
 	//********************************************************************************************
 	// DESTINY FOLDER SELECTION POPUP
 	//********************************************************************************************
     
-    public void moveSelectedMessageAndMove(AonFolder dest){
-    	AonMessage nextMessage = null; 
-    	if(isNextMessage()){
-    		nextMessage = getNextMessage();
-    	}else if (isPreviousMessage()){
-    		nextMessage = getPreviousMessage();
-    	}
+    public void moveSelectedMessage(AonFolder dest){
     	AonMessage[] lst = new AonMessage[] { this.message };
 		try{
 	    	message.getParent().moveMessages(lst, dest);
@@ -894,7 +864,6 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
-    	setMessage(nextMessage);
 	}
 
 	//********************************************************************************************
@@ -1026,7 +995,6 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		this.senderMailAccountId = senderMailAccountId;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onMailAccountChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null) {
 			IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
