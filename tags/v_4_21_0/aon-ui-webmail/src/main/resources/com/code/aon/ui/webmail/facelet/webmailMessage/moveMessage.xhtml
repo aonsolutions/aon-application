@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition>
+
+	<aon:form id="moveMessage">
+
+		<rich:modalPanel id="msgMoveModalPanel" minHeight="250" height="350"
+			width="440" top="100" zindex="2000">
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{webmailBundle.webmail_move_message}" />
+				</aon:div>
+			</f:facet>
+			<f:facet name="controls">
+				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+					immediate="true">
+					<rich:componentControl for="msgMoveModalPanel" operation="hide"
+						event="onclick" />
+				</aon:commandButton>
+			</f:facet>
+			<aon:div styleClass="modalPanel-scroll1">
+				<rich:tree nodeSelectListener="#{webmailTree.moveMessageToFolder}"
+					ajaxSubmitSelection="true" switchType="ajax"
+					value="#{webmailTree.treeNode}"
+					var="item" nodeFace="#{item.folderTypeName}">
+					<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailTree/treeNodes.xhtml" >
+						<ui:define name="nodeContent">
+							<aon:commandLink value="#{item.name}" action="#{webmailMessage.getReturnAction}">
+								<rich:componentControl for="msgMoveModalPanel" operation="hide"
+									event="onclick" />
+							</aon:commandLink>
+						</ui:define>
+					</ui:decorate>				
+				</rich:tree>
+			</aon:div>
+
+		</rich:modalPanel>
+
+	</aon:form>
+
+</ui:composition>
+
+</body>
+</html>
