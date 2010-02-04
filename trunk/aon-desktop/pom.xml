@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>4.15.0</version>
+	<version>4.15.1</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -121,7 +121,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.20.1</version>
+			<version>4.21.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
