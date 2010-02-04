@@ -37,7 +37,7 @@ public class DataTableHandler extends AonComponentHandler {
 		if (UIData.class.isAssignableFrom(c.getClass())) {
 			UIData table = (UIData) c;
 			Object model = table.getValue();
-			if (ExtendedPageDataModel.class.isAssignableFrom(model.getClass())) {
+			if ( (model != null) && ExtendedPageDataModel.class.isAssignableFrom(model.getClass())) {
 				return (ExtendedPageDataModel) model;
 			}
 		}
