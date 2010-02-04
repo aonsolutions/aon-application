@@ -241,6 +241,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		Criteria criteria = controller.getCriteria();
 		this.rowCount = bean.getCount(criteria);
 		this.page = getPage(start, limit);
+		this._rowIndex = (this.rowCount > 0) ? start : -1;		
     }
 	
 	/**
