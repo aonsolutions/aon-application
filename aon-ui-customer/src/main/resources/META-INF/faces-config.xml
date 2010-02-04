@@ -163,7 +163,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>customerMedia</value>
-		</managed-property>		
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
+		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -703,7 +707,7 @@
 	<!-- ************ CUSTOMER LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>customerLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -723,7 +727,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/customer/facelet/lookup/customer/form.xhtml</value>
+			<value>/com/code/aon/ui/customer/facelet/customer/formNewContent.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -737,8 +741,12 @@
 	
 	<managed-bean>
 		<managed-bean-name>customerLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>registryPayMethodType</property-name>
+			<value>#{configCollections.payMethodTypes[2].value}</value>
+		</managed-property>
 	</managed-bean>	
 
 	<!-- ========================================================== -->

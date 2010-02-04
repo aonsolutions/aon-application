@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -20,7 +20,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class InvoicingGroupDetailControllerListener extends ControllerAdapter {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(InvoicingGroupDetailControllerListener.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoicingGroupDetailControllerListener.class.getName());
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
@@ -46,7 +46,7 @@ public class InvoicingGroupDetailControllerListener extends ControllerAdapter {
         		throw new ControllerListenerException(message);
         	}
     	} catch (ManagerBeanException e) {
-            LOGGER.error("Error obtaining InvoicingGroup with parent=" + registry.getId(), e);
+            LOGGER.log(Level.SEVERE, "Error obtaining InvoicingGroup with parent=" + registry.getId(), e);
     	}
     }
 
@@ -63,7 +63,7 @@ public class InvoicingGroupDetailControllerListener extends ControllerAdapter {
         		throw new ControllerListenerException(message);
         	}
     	} catch (ManagerBeanException e) {
-            LOGGER.error("Error obtaining InvoicingGroupDetail with child=" + detail.getChild().getId(), e);
+            LOGGER.log(Level.SEVERE, "Error obtaining InvoicingGroupDetail with child=" + detail.getChild().getId(), e);
     	}
     }
 

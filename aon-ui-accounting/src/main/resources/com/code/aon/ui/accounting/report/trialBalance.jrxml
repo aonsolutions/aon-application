@@ -34,7 +34,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{summaryCollection}.getDebit())]]></textFieldExpression>
 				</textField>
@@ -47,7 +47,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{summaryCollection}.getCredit())]]></textFieldExpression>
 				</textField>
@@ -60,7 +60,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{summaryCollection}.getUnpaidBalance())]]></textFieldExpression>
 				</textField>
@@ -74,7 +74,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="7"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{summaryCollection}.getCreditBalance())]]></textFieldExpression>
 				</textField>
@@ -305,7 +305,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{indentedId}]]></textFieldExpression>
 			</textField>
@@ -320,7 +320,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font size="7" isBold="false" pdfFontName="Helvetica"/>
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{shortDescription}]]></textFieldExpression>
 			</textField>
@@ -335,7 +335,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{debit}]]></textFieldExpression>
 			</textField>
@@ -350,7 +350,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{credit}]]></textFieldExpression>
 			</textField>
@@ -365,7 +365,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{unpaidBalance}]]></textFieldExpression>
 			</textField>
@@ -380,7 +380,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{creditBalance}]]></textFieldExpression>
 			</textField>
@@ -395,7 +395,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{indentedId}]]></textFieldExpression>
 			</textField>
@@ -410,7 +410,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font size="7" isBold="false" pdfFontName="Helvetica"/>
+					<font size="8" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{shortDescription}]]></textFieldExpression>
 			</textField>
@@ -425,7 +425,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{debit}]]></textFieldExpression>
 			</textField>
@@ -440,7 +440,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{credit}]]></textFieldExpression>
 			</textField>
@@ -455,7 +455,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{unpaidBalance}]]></textFieldExpression>
 			</textField>
@@ -470,7 +470,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{creditBalance}]]></textFieldExpression>
 			</textField>

@@ -10,12 +10,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.desktop.DBConnnection;
@@ -24,11 +24,11 @@ public class DBManager {
 
 	private static final String DB_SEP = "`";
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(DBManager.class);
+	private static final Logger LOGGER = Logger.getLogger(DBManager.class.getName());
 	
 	public static final String AON_MASTER = "aon_master";
 	
-	private static final String CREATE_SQL = "create.database.4.7.0.sql";
+	private static final String CREATE_SQL = "create.database.4.3.0.sql";
 	
 	private static final String INSERT_SQL = "default-insert.database.sql";
 	
@@ -43,7 +43,7 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	private List<String> readSqlScript( URL url, String dbName ) throws IOException {
 		InputStream in = url.openStream();
-		List<String> lines = IOUtils.readLines( in, "ISO-8859-1" );
+		List<String> lines = IOUtils.readLines( in );
 		for( int i = lines.size()-1; i >= 0; i-- ) {
 			String line = lines.get(i);
 			if ( line.startsWith("#") || StringUtils.isBlank(line) ) {
@@ -82,7 +82,7 @@ public class DBManager {
 	}
 	
 	private void executeScript( DBConnnection dbc, URL scriptUrl ) throws AonException {
-		LOGGER.info( "Executing script {} for {}", scriptUrl, dbc);
+		LOGGER.info( "Executing script " + scriptUrl + " for " + dbc);
 		List<String> statements = null;
 		try {
 			statements = readSqlScript(scriptUrl, dbc.getDBName());
@@ -100,7 +100,7 @@ public class DBManager {
 				statement.close();
 			}
 		} catch ( SQLException e ) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			DbUtils.closeQuietly(statement);
 			statement = null;
 			DbUtils.rollbackAndCloseQuietly(connection);
@@ -119,7 +119,7 @@ public class DBManager {
 			connection = getConnection(dbc);
 			statement = connection.createStatement();
 			String sql = "DROP DATABASE " + DB_SEP + dbc.getDBName() + DB_SEP + "";
-			LOGGER.info( "Executing sql: {}", sql );
+			LOGGER.info( "Executing sql: " + sql );
 			statement.execute(sql);
 		} finally {
 			DbUtils.closeQuietly(statement);
@@ -134,7 +134,7 @@ public class DBManager {
 			connection = getConnection(dbc);
 			statement = connection.createStatement();
 			String sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" + dbc.getDBName() + "'";
-			LOGGER.info( "Check if exists database: {}", sql );
+			LOGGER.info( "Check if exists database: " + sql );
 			ResultSet set = statement.executeQuery(sql);
 			return set.next();
 		} finally {

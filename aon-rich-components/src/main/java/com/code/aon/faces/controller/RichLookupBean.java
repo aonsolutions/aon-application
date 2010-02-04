@@ -44,6 +44,8 @@ public class RichLookupBean {
 	private static final String SEARCH_ID = LookupButtonType.SEARCH.getName();
 	
 	private static final String DEFAULT_WINDOW_TITLE = "Select Window";
+	
+	private static final int DEFAULT_PAGE_LIMIT = 15;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(RichLookupBean.class);
 
@@ -94,6 +96,7 @@ public class RichLookupBean {
 	 */
 	public RichLookupBean() {
 		this.controller = new BasicController();
+		setPageLimit(DEFAULT_PAGE_LIMIT);
 	}
 
 	/**
@@ -212,6 +215,15 @@ public class RichLookupBean {
 	public String getPojoShortName() {
 		return getController().getPojoShortName();
 	}
+	
+	/**
+	 * Return the limit of page in the model associated to controller.
+	 * 
+	 * @return int
+	 */
+	public int getPageLimit() {
+		return getController().getPageLimit();
+	}	
 	
 	/**
 	 * Set the limit of page in the model associated to controller.

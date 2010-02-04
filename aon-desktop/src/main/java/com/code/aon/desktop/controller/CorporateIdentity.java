@@ -17,13 +17,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -57,7 +56,7 @@ import com.code.aon.ui.util.AonUtil;
 public class CorporateIdentity implements ICollectionProvider{
 
 	/** Obtiene un logger apropiado. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(CorporateIdentity.class);
+	private static final Logger LOGGER = Logger.getLogger(CorporateIdentity.class.getName());	
 	
 	private IdentityReport identityReport;
 
@@ -89,7 +88,7 @@ public class CorporateIdentity implements ICollectionProvider{
         		identityReport.setWeb(recoverCompanyMediasString(company,MediaType.WEB));
         	}
         } catch (Exception e) {
-        	LOGGER.error(e.getMessage(), e);
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
         }
 	}
 	
@@ -231,7 +230,7 @@ public class CorporateIdentity implements ICollectionProvider{
 		try {
 			return getCollection(false);
 		} catch (ManagerBeanException e) {
-        	LOGGER.error(e.getMessage(), e);			
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );			
 		}
 		return null;
 	}
@@ -317,9 +316,9 @@ public class CorporateIdentity implements ICollectionProvider{
 			response.flushBuffer();
 			out.close();
 		} catch (IOException e) {
-        	LOGGER.error(e.getMessage(), e);
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		} catch (AonException e) {
-        	LOGGER.error(e.getMessage(), e);
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		} 	
 		context.responseComplete();
     }
@@ -348,7 +347,7 @@ public class CorporateIdentity implements ICollectionProvider{
 			}
 			identityReport.setPagare_cantidad(res);
     	} catch (Exception e) {
-        	LOGGER.error(e.getMessage(), e);
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
     }
     

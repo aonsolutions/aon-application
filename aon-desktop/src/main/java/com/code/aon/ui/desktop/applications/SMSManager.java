@@ -3,14 +3,13 @@ package com.code.aon.ui.desktop.applications;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -25,7 +24,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 
 	private static final long serialVersionUID = -5534264216750579958L;
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(SMSManager.class);
+	private static final Logger LOGGER = Logger.getLogger( SMSManager.class.getName() );
 	
 	private static final String APP_BUNDLE = "appBundle";
 	
@@ -34,6 +33,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 
 	private ApplicationsManager.App app;
 
+	@SuppressWarnings("unchecked")
 	public SMSManager() {
 		try {
 			ApplicationsManager apps = 
@@ -41,7 +41,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 			app = apps.getApplication( SMSController.AON_SMS_APPLICATION );
 			initSMSController();
 		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 

@@ -3,12 +3,11 @@ package com.code.aon.ui.accounting.controller;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LoanAccount;
@@ -43,7 +42,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class LoanFeeEntryController implements ISpecialAccountEntry{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LoanFeeEntryController.class.getName()); 
+	private static final Logger LOGGER = Logger.getLogger(LoanFeeEntryController.class.getName()); 
 	
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
@@ -158,10 +157,10 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 				}
 				String msg = "Error on aon-accounting:  " + e.getMessage() ;
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -194,10 +193,10 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
 					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
+					LOGGER.log(Level.SEVERE, msg, e);
 				}
 				String msg = "Error on aon-accounting:  " + e.getMessage() ;
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} finally {
@@ -355,28 +354,24 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		return obtainLoanAccount( getHeader().getLoan() );	
 	}
 	
-	public Double getOutstandingBalance() {
+	public double getOutstandingBalance() {
 		try {
 			SummaryProvider sp = new SummaryProvider();
 			SummaryProviderParameters params = new SummaryProviderParameters();
-			if (getRelatedAccount() != null) {
-				params.setAccountExpression( getRelatedAccount().getId());
-				params.setAccountLevel(5);
-				params.setBudgeted(false);
-				Period period = getAccountingUtil().getPeriod( getHeader().getFeeDate() );
-				params.setPeriod(period);
-				params.setFromDate(period.getInitiationDate());
-				params.setToDate(period.getDeadline());
-				params.setSecurityLevel(getHeader().getLoan().getSecurityLevel());
-				SummaryCollection sc = sp.getSummaryCollection(params);
-				double p = CommonUtil.round(sc.getCreditBalance())==0.0?
-						CommonUtil.round(sc.getUnpaidBalance()*-1):sc.getCreditBalance(); 
-				return p;
-			}
+			params.setAccountExpression( getRelatedAccount().getId());
+			params.setAccountLevel(5);
+			params.setBudgeted(false);
+			Period period = getAccountingUtil().getPeriod( getHeader().getFeeDate() );
+			params.setPeriod(period);
+			params.setFromDate(period.getInitiationDate());
+			params.setToDate(period.getDeadline());
+			params.setSecurityLevel(getHeader().getLoan().getSecurityLevel());
+			SummaryCollection sc = sp.getSummaryCollection(params);
+			return sc.getCreditBalance();
 		} catch (ManagerBeanException e) {
-			LOGGER.warn("No se puede obtener el saldo pendiente: " + e.getMessage());
+			LOGGER.warning("No se puede obtener el saldo pendiente: " + e.getMessage());
 		}
-		return null;
+		return 0;
 	}
 
 	public void onAccountStatement(ActionEvent event) {

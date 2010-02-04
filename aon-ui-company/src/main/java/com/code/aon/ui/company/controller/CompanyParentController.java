@@ -430,6 +430,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), ((Registry)this.getTo()).getId());
+		criteria.addOrder(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
 		Iterator iter = rAddressBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAddress)iter.next();

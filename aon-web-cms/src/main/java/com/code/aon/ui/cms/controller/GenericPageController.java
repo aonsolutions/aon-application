@@ -23,7 +23,17 @@ import com.code.aon.ui.cms.Constants;
 
 public class GenericPageController extends BasicI18nController implements Constants {
 
-	private boolean richTextEnabled;
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	private boolean richTextEnabled = false;
 
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;
@@ -33,6 +43,7 @@ public class GenericPageController extends BasicI18nController implements Consta
 		this.richTextEnabled = richTextEnabled;
 	}
 
+	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
 		loadCurrentLanguage();
@@ -66,8 +77,8 @@ public class GenericPageController extends BasicI18nController implements Consta
 		menus.add(item);
 		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), MenuType.SIDEBAR);
-		List<ITransferObject> list = menuBean.getList(criteria);
+		criteria.addExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), "" + MenuType.SIDEBAR.ordinal());
+		List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
 			Menu menu = (Menu)list.get(i);
 			int id = menu.getId();

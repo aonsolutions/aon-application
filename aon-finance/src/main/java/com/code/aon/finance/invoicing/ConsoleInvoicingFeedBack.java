@@ -2,19 +2,18 @@ package com.code.aon.finance.invoicing;
 
 import java.util.Collections;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConsoleInvoicingFeedBack implements IInvoicingFeedBack {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleInvoicingFeedBack.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConsoleInvoicingFeedBack.class.getName());
 	
 	private int currentRow;
 	private int rowCount;
 
 	public void addMessage(String message) {
-        LOGGER.info(message);
+        LOGGER.log(Level.FINE, message);
 	}
 
 	@SuppressWarnings("unchecked")

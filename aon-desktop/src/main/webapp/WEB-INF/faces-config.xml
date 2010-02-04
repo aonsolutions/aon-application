@@ -23,7 +23,7 @@
 		<managed-bean-scope>application</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/4.1.0</value>
+			<value>/aonResource/3.10.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -192,8 +192,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{corporateIdentityAttachControllerListener}</value> 
-				<value>#{corporateIdentityAttachScopeListener}</value>
+				<value>#{corporateIdentityAttachControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -204,16 +203,6 @@
 			com.code.aon.ui.registry.controller.event.RegistryAttachControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>corporateIdentityAttachScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>RegistryAttachment_scope_id</value>
-		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>

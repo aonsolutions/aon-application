@@ -29,8 +29,10 @@
 		</aon:div>
 		<!-- end toolbar navigation -->
 		<aon:div style="width:98%;">
-			<aon:dataTable id="#{lookup.beanName}Data" var="to"
-				value="#{lookup.model}" rows="15" rowKeyVar="rowKey" stateVar="state">
+			<aon:dataTable id="#{lookup.beanName}Data"
+				var="to" value="#{lookup.model}"
+				rows="#{lookup.pageLimit}" sortMode="multi"
+				rowKeyVar="rowKey" stateVar="state">
 				
 				<aon:rowSelector actionListener="#{lookup.onListSelect}"
 					reRender="#{lookup.component.selectReRender}"
@@ -39,22 +41,25 @@
 					
 				<aon:column styleClass="aon-editDataTable-iconColumn">
 					<aon:commandLink id="#{lookupId}-selectButton"
+						styleClass="aon-table-row-link" value="&#160;"
 						immediate="true" ajaxSingle="true" requestDelay="100"
 						actionListener="#{lookup.onListSelect}"
 						reRender="#{lookup.component.selectReRender}"
 						focus="#{lookup.windowCloseFocus}"
 						onkeyup="aonTableKeyUp(event.keyCode,#{rowKey-state.range.firstRow})"
-						onfocus="aonChangeRowSelection(#{rowKey-state.range.firstRow})"
+						onfocus="#{lookupId}SelectRow(this)"
+						onblur="#{lookupId}DeselectRow(this)"
 						oncomplete="Richfaces.hideModalPanel('#{lookupId}')" >
-						<aon:graphicImage height="14" width="14"
-							styleClass="aon-vertical-align-middle aon-nopadding aon-nomargin"
-							url="#{aonResource.resolve['/richCss/images/aon-icon/aon-icon-rowSelector.png']}" >
-						</aon:graphicImage>
 					</aon:commandLink>
 				</aon:column>
 					
 				<ui:include src="#{lookup.listPagePath}" />
 			</aon:dataTable>
+			
+			<rich:jQuery name="#{lookupId}SelectRow" timing="onJScall"
+				query="parent().parent().addClass('aon-table-row-hover')" />		
+			<rich:jQuery name="#{lookupId}DeselectRow" timing="onJScall"
+				query="parent().parent().removeClass('aon-table-row-hover')" />					
 
 			<aon:dataScroller2 for="#{lookup.beanName}Data" showNote="true"
 				oncomplete="#{selectFirstRow}" />

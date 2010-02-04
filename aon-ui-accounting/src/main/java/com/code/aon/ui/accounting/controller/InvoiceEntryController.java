@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -17,8 +19,6 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
@@ -54,7 +54,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
@@ -67,6 +66,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.util.DiscountExpression;
@@ -90,7 +90,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceEntryController implements ISpecialAccountEntry {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceEntryController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoiceEntryController.class.getName());
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	private static final String ACCOUNT_APP_PARAM_CONTROLLER_NAME = "accAppParams";
 	private static final String ACCOUNT_COLLECTIONS_CONTROLLER_NAME = "accountCollections";
@@ -367,7 +367,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				}
 				onTaxableBaseWizard(event);
 			} catch (Exception e) {
-				LOGGER.warn("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
+				LOGGER.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
 			}
 		} else {
 			String msg="La Base Imponible es un dato requerido para esta utilidad.";
@@ -473,11 +473,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 						getCurrentDetail().setSurchargePercent(tax.getSurcharge());
 					}
 				} else {
-					LOGGER.warn("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO. ENCONTRADO [" + value + "]");
+					LOGGER
+							.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO. ENCONTRADO ["
+									+ value + "]");
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.warn("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
+			LOGGER.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
 		}
 
 		if (isWithHolding()) {
@@ -494,7 +496,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					}
 				}
 			} catch (Exception e) {
-				LOGGER.warn("NO SE PUEDE ASIGNAR EL PORCENTAJE DE RETENCION POR DEFECTO.");
+				LOGGER.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE RETENCION POR DEFECTO.");
 			}
 		}
 	}
@@ -697,10 +699,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
 				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 			}
 			String msg = "No se pudo generar el apunte contable. " + e.getMessage();
-			LOGGER.error(msg, e);
+			LOGGER.log(Level.SEVERE, msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		} finally {
@@ -919,10 +921,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
 				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
+				LOGGER.log(Level.SEVERE, msg, e);
 			}
 			String msg = "No se pudo borrar la factura. " + e.getMessage();
-			LOGGER.error(msg, e);
+			LOGGER.log(Level.SEVERE, msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		} finally {
@@ -1194,7 +1196,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		} catch (ManagerBeanException e) {
 			String m = "Error loading AccountEntryController";
 			AonUtil.addErrorMessage(m);
-			LOGGER.error(m, e);
+			LOGGER.log(Level.SEVERE, m, e);
 		}
 	}
 
@@ -1213,13 +1215,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setRegistry( supplier.getRegistry());
 					getHeader().setWithholding(supplier.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
-					getHeader().setTaxFree(supplier.isTaxFree());
+					getHeader().setTaxFree(company.isTaxFree());
 				} else if (isExpense()) {
 					Creditor creditor = (Creditor) event.getNewValue();
 					getHeader().setRegistry(creditor.getRegistry());
 					getHeader().setWithholding(creditor.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
-					getHeader().setTaxFree(creditor.isTaxFree());
+					getHeader().setTaxFree(company.isTaxFree());
 				}
 				getHeader().setDocument( getHeader().getRegistry().getDocument());
 				getHeader().setName(getHeader().getRegistry().getFullName());
@@ -1253,7 +1255,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		} catch (ManagerBeanException e) {
 			String m = "Error al inicializar los datos";
 			AonUtil.addErrorMessage(m);
-			LOGGER.error(m, e);
+			LOGGER.log(Level.SEVERE, m, e);
 		}
 	}
 
@@ -1437,7 +1439,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				finances.add((Finance)iter.next());
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining finances for invoice with id=" + invoice.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error obtaining finances for invoice with id=" + invoice.getId(), e);
 		}
 		return finances;
 	}
@@ -1501,7 +1503,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				details.add(detail);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error loading details for invoice with id=" + invoice.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error loading details for invoice with id=" + invoice.getId(), e);
 		}
 		return details;
 	}
@@ -1538,9 +1540,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				list = mergeLists(list, acc.getFixedAssetAccounts() );
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error related accounts", e);
+			LOGGER.log(Level.SEVERE, "Error related accounts", e);
 		} catch (ExpressionException e) {
-			LOGGER.error("Error related accounts", e);
+			LOGGER.log(Level.SEVERE, "Error related accounts", e);
 		}
 		return list;
 	}

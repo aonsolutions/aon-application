@@ -56,6 +56,7 @@ public class CompanyCollectionsController {
     		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
     		Criteria criteria = new Criteria();
     		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
+    		criteria.addOrder(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ID));
     		List<ITransferObject> list = registryBankBean.getList(criteria);
     		for (ITransferObject to : list) {
     			RegistryBank rBank = (RegistryBank)to;

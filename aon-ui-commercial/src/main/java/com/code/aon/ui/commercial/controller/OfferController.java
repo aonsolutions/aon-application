@@ -5,14 +5,15 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.commercial.Offer;
@@ -53,7 +54,7 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.SalesManager;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.seller.Seller;
-import com.code.aon.ui.commercial.util.CommercialEmailUtil;
+import com.code.aon.ui.commercial.util.EmailUtilController;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -63,6 +64,7 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.SecurityInfo;
 
 /**
@@ -70,12 +72,11 @@ import com.code.aon.webmail.SecurityInfo;
  */
 public class OfferController extends BasicController implements ISignatureController, ICommercialConstants {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OfferController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OfferController.class.getName());
 	
 	private final String SALES_CONTROLLER = "sales";
 	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
-	private String selectedTab;
 	private List<SelectItem> addresses;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
@@ -87,12 +88,8 @@ public class OfferController extends BasicController implements ISignatureContro
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
-	private CommercialEmailUtil emailUtil;
+	private String selectedTab;
 	
-	public OfferController() {
-		this.emailUtil = new CommercialEmailUtil();
-	}
-
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -354,11 +351,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 
-	public void onPending(ActionEvent event) {
-		getOffer().setStatus(OfferStatus.PENDING);
-		accept(event);
-	}
-	
 	public void onApprove(ActionEvent event) {
 		getOffer().setStatus(OfferStatus.APPROVED);
 		accept(event);
@@ -369,8 +361,8 @@ public class OfferController extends BasicController implements ISignatureContro
 		accept(event);
 	}
 
-	public void onBlock(ActionEvent event) {
-		getOffer().setStatus(OfferStatus.BLOCKED);
+	public void onPending(ActionEvent event) {
+		getOffer().setStatus(OfferStatus.PENDING);
 		accept(event);
 	}
 	
@@ -379,6 +371,11 @@ public class OfferController extends BasicController implements ISignatureContro
 		accept(event);
 	}
 
+	public void onBlock(ActionEvent event) {
+		getOffer().setStatus(OfferStatus.BLOCKED);
+		accept(event);
+	}
+	
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
 		setSalesSeries(to.getSeries());
@@ -471,9 +468,27 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public void sendOfferByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		Offer offer = getOffer();
+		EmailUtilController emailController = new EmailUtilController();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
-		emailUtil.initMessageController(messageController, getOffer());
+		Target target = offer.getTarget();
+		if ( target != null ) {
+			String[] emails = emailController.getEmails(target.getRegistry());
+			if (! ArrayUtils.isEmpty(emails) ) {
+				messageController.setRecipientsTo( emails[0] );
+				if ( emails.length > 1 ) { 
+					String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
+					messageController.setRecipientsCc( recipientsCc );
+				}
+			}			
+		}
+		messageController.setSubject(emailController.getEmailSubject(offer));
+		messageController.setContent(emailController.getEmailBody(offer));
+		messageController.addAttachment(emailController.getOfferFile(offer));
+		for( AonFile aonFile : emailController.getOfferAttachemnts(offer) ) {
+			messageController.addAttachment(aonFile);
+		}
 		messageController.setShowNewMessageWindow(true);
 		messageController.setSecurityInfo( securyInfo );
 	}
@@ -483,7 +498,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		try {
 			return BeanManager.getManagerBean(OfferAttachment.class);
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
 	}

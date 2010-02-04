@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -23,7 +22,7 @@ import com.code.aon.registry.Registry;
 
 public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerFeePreInvoicingDAO.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CustomerFeePreInvoicingDAO.class.getName());
 	
 	private List<PreInvoice> preInvoicingCollection;
 	
@@ -48,7 +47,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			currentPreInvoice.addPreInvoiceDetail(invoiceDetail);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error adding invoiceDetail with id=" + invoiceDetail.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error adding invoiceDetail with id=" + invoiceDetail.getId(), e);
 		}
 	}
 	
@@ -79,7 +78,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 				return (Company) iterator.next();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining company", e);
+			LOGGER.log(Level.SEVERE, "Error obtaining company", e);
 		}
 		return null;
 	}
@@ -89,7 +88,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			return (Customer)customerBean.get(registry.getId());
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining customer with id=" + registry.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error obtaining customer with id=" + registry.getId(), e);
 		}
 		return null;
 	}

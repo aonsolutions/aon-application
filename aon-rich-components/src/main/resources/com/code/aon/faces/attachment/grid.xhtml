@@ -10,7 +10,8 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:define name="columns">
 		
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-300 aon-nowrap">
+			<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.description"
+				styleClass="aon-editDataTable-textColumn aon-width-300 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="#{controller.beanName}_description" value="#{bundle.aon_description}" />
 				</f:facet>

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,8 +23,6 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -46,7 +46,7 @@ public class FinanceBatch implements ITransferObject {
 	
 	private static final long serialVersionUID = 804673961013565165L;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceBatch.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(FinanceBatch.class.getName());
 
     /** The id. */
     private Integer id;
@@ -240,7 +240,7 @@ public class FinanceBatch implements ITransferObject {
 	        criteria.addOrder(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER));
 			return financeBatchDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining financeBatchDetail list", e);
+			LOGGER.log(Level.SEVERE, "Error obtaining financeBatchDetail list", e);
 		}
 		return null;
 	}

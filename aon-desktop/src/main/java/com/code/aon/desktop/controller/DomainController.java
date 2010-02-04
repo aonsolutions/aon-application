@@ -2,6 +2,8 @@ package com.code.aon.desktop.controller;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -19,8 +21,6 @@ import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BasicManagerBean;
@@ -58,7 +58,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DomainController extends BasicController implements IDesktopConstants, IAonObjectClasses {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
+	private static final Logger LOGGER = Logger.getLogger(DomainController.class.getName());
 	
 	private String currentDomain;
 	
@@ -184,10 +184,10 @@ public class DomainController extends BasicController implements IDesktopConstan
 			Entry entry = new Entry(dn);
 			entry.addObjectClasses(new String[]{TOP, ORGANIZATIONAL_UNIT});
 			entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, NameResolver.getFirstValue(dn) );
-			LOGGER.info( "Add Organization Unit entry: {}", dn );
+			LOGGER.info( "Add Organization Unit entry: " + dn );
 			ldap.getLdapSession().add(entry);
 		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			ldap.closeSession();
 		}
@@ -204,13 +204,13 @@ public class DomainController extends BasicController implements IDesktopConstan
 				String preffix = StringUtils.substringBeforeLast(ldap.getProperties().getProperty(Context.PROVIDER_URL), "/" );
 				String url = preffix + "/" + session.getFullDN(ref);
 				entry.put( ILdapConstants.REF_ATTRIBUTE, url );
-				LOGGER.debug( "Adding referral {} -> {}", dn, url );
+				LOGGER.info( "Adding referral " + dn + " ->" + url );
 				ldap.getLdapSession().add(entry);
 			} else {
-				LOGGER.error( "Can't make a Referreal, ref doesn't exist: {}", ref );
+				LOGGER.severe( "Can't make a Referreal, ref doesn't exist: " + ref );
 			}
 		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			ldap.closeSession();
 		}
@@ -227,7 +227,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 				ldap.getLdapSession().deleteDepth(dn, selftDelete);	
 			}
 		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			ldap.closeSession();
 		}
@@ -237,7 +237,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 				manager.dropDB(dbc);
 			}
 		} catch ( Throwable e ) {
-			LOGGER.error( "Error removing db of " + domain, e);
+			LOGGER.log(Level.SEVERE, "Error removing db of " + domain + ", " + e.getMessage(), e);
 		}
 	}	
 	
@@ -319,7 +319,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	private SessionFactory getSessionFactory( DBConnnection dbConnection ) {
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
-		dbConnection.configure(configuration);
+		configuration.setProperties( dbConnection.getHibernateProperties() );
+   		configuration.configure();
 		
 		// Parche para que funciona bien el replicate en mysql
 		String factoryName = HibernateUtil.getSessionFactoryName();
@@ -332,7 +333,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 	}
 	
 	public void replicateUsers( DBConnnection dbc, List<ITransferObject> users ) throws AonException {
-		LOGGER.info( "Replicating users in {}", dbc );
+		LOGGER.info( "Replicating users in " + dbc );
 		replicateObjects( getSessionFactory(dbc), users, ReplicationMode.EXCEPTION);
 	}
 
@@ -386,7 +387,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 			Name value = ldap.getLdapSession().getFullDN(currentDomainDN);
 			return value.toString();
 		} catch ( LdapException e ) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			ldap.closeSession();
 		}		

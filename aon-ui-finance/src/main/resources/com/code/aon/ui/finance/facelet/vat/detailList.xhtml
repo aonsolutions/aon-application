@@ -50,7 +50,6 @@
 								aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
 								aon-editDataTable-numberColumn,
 								aon-editDataTable-numberColumn,
 								aon-editDataTable-numberColumn,
@@ -65,13 +64,6 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_invoice_order}" />
-						</f:facet>
-						<aon:outputText value="#{to.seriesNumber}" />
 					</aon:column>
 
 					<aon:column>

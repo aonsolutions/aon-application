@@ -3,9 +3,8 @@ package com.code.aon.finance.invoicing.engine.delivery;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,7 +21,7 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 public class DeliveryInvoicingDAO implements IInvoicingDAO {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryInvoicingDAO.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DeliveryInvoicingDAO.class.getName());
 	
 	private List<Invoice> invoicingCollection;
 	
@@ -41,7 +40,7 @@ public class DeliveryInvoicingDAO implements IInvoicingDAO {
 			invoicingCollection.add(invoice);
 			return invoice;
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error inserting invoice wiht id=" + invoice.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error inserting invoice wiht id=" + invoice.getId(), e);
 		}
 		return null;
 	}
@@ -52,7 +51,7 @@ public class DeliveryInvoicingDAO implements IInvoicingDAO {
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			invoiceDetailBean.insert(invoiceDetail);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error inserting invoiceDetail with id=" + invoiceDetail.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error inserting invoiceDetail with id=" + invoiceDetail.getId(), e);
 		}
 	}
 	
@@ -64,7 +63,7 @@ public class DeliveryInvoicingDAO implements IInvoicingDAO {
 			delivery.setStatus(DeliveryStatus.INVOICED);
 			deliveryBean.update(delivery);
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error updating delivery with id=" + delivery.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error updating delivery with id=" + delivery.getId(), e);
 		}
 	}
 
