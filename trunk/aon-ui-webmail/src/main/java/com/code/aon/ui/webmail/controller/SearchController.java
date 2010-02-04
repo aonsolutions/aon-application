@@ -2,26 +2,27 @@ package com.code.aon.ui.webmail.controller;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.richfaces.model.ModifiableModel;
+import org.richfaces.model.Ordering;
+import org.richfaces.model.SequenceDataModel;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
-import com.code.aon.webmail.bean.AonMessageSortableList;
 import com.code.aon.webmail.bean.AonSearcher;
 
 public class SearchController implements IMessageContainer, WebMailConstants {
 
-	private AonMessageSortableList sortableList;
+	private ModifiableModel model;
 	
-	private DataModel model;
+	private Ordering[] sortOrders;
 	
 	private String bodyText;
 
@@ -33,20 +34,10 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 	
 	private int currentIndex;
 	
-	/**
-	 * @return the sortableList
-	 */
-	public AonMessageSortableList getSortableList() {
-		return sortableList;
-	}
-
-	/**
-	 * @param sortableList the sortableList to set
-	 */
-	public void setSortableList(AonMessageSortableList sortableList) {
-		this.sortableList = sortableList;
-	}
-
+	private boolean messagesFound;
+	
+	private boolean showResults;
+	
 	/**
 	 * @return the bodyText
 	 */
@@ -106,18 +97,23 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 	}
 
 	public void init(ActionEvent event){
-		sortableList = null;
+		this.model = new ModifiableModel(new SequenceDataModel(), "to");
 		bodyText = null;
 		address_cc = null;
 		address_from = null;
 		subject = null;
+		sortOrders = new Ordering[]{ Ordering.UNSORTED, Ordering.UNSORTED, Ordering.DESCENDING };
+		setShowResults(false);
+		setMessagesFound(false);
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+    	messageController.setReturnAction(WebMailConstants.NAVIGATION_SEARCH);		
 	}
 	
 	public void searchMessagesCurrentFolder(ActionEvent event) {
-		try{
+		try {
+			setShowResults(false);
 			FolderController folderController = (FolderController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_FOLDER);
 			AonFolder sourceFolder = folderController.getFolder();
-			sortableList = new AonMessageSortableList(sourceFolder.getFolder());
 			AonSearcher as = new AonSearcher();
 			as.setAonFolder(sourceFolder);
 			if (! StringUtils.isEmpty(bodyText) ) {
@@ -132,10 +128,10 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 			if (! StringUtils.isEmpty(subject) ) {
 				as.addStringTerm(subject,AonSearcher.SUBJECT);
 			}
-			sortableList.setMessageList(as.search());
-			this.model = new ArrayDataModel( sortableList.getMessageList() );
-	    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
-	    	messageController.setReturnAction(WebMailConstants.NAVIGATION_SEARCH);
+			AonMessage[] list = as.search();
+			setMessagesFound(! ArrayUtils.isEmpty(list) );
+			this.model.setWrappedData( list );
+			setShowResults(true);
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -145,19 +141,6 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 	public void onExit(ActionEvent event) {
 		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
 		messageController.setReturnAction(WebMailConstants.NAVIGATION_FOLDER);
-	}
-	
-	public boolean isResultFound(){
-		if ( this.sortableList != null ) {
-			return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());	
-		}
-		return false;
-	}
-
-	public boolean isResultSelected(){
-		if (this.sortableList==null)
-			return false;
-		return true;
 	}
 	
     public void changeSelectedMessage(ActionEvent event) throws MessagingException {
@@ -177,6 +160,30 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 
 	public void setCurrentIndex(int currentIndex) {
 		this.currentIndex = currentIndex;
+	}
+
+	public boolean isShowResults() {
+		return showResults;
+	}
+
+	public void setShowResults(boolean showResults) {
+		this.showResults = showResults;
+	}
+
+	public boolean isMessagesFound() {
+		return messagesFound;
+	}
+
+	public void setMessagesFound(boolean messagesFound) {
+		this.messagesFound = messagesFound;
+	}
+
+	public Ordering[] getSortOrders() {
+		return sortOrders;
+	}
+
+	public void setSortOrders(Ordering[] sortOrders) {
+		this.sortOrders = sortOrders;
 	}
 	
 }
