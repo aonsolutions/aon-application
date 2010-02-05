@@ -9,7 +9,7 @@
 			<var>commercialBundle</var>
 		</resource-bundle>				
 	</application>
-	
+
 	<!--  *************** COLLECTIONS ***************** -->
 
 	<managed-bean>
@@ -342,6 +342,19 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{targetAddressControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>targetAddressControllerListener</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!--  **** TARGET MEDIA **** -->
@@ -547,8 +560,12 @@
 			<value>com.code.aon.commercial.Target</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Target_registry_surname,Target_registry_name</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/target/list.xhtml</value>
+			<value>/com/code/aon/ui/commercial/facelet/target/listBasic.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
@@ -581,10 +598,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.commercial.Offer</value>
 		</managed-property>
@@ -594,7 +607,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Offer_issueDate desc,Offer_series,Offer_number desc</value>
+			<value>Offer_issueDate desc,Offer_series desc,Offer_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -757,8 +770,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>

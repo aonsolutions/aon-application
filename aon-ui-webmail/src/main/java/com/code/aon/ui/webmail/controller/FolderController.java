@@ -1,6 +1,11 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -12,10 +17,8 @@ import javax.mail.MessagingException;
 import javax.mail.Flags.Flag;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.richfaces.event.DropEvent;
-import org.richfaces.model.Ordering;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -29,9 +32,7 @@ import com.sun.mail.imap.IMAPFolder;
 
 public class FolderController implements WebMailConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(FolderController.class);
-	
-	private static final int PAGE_SIZE = 20;
+	private static final Logger LOGGER = Logger.getLogger(FolderController.class.getName());
 	
 	private AonFolder folder;
 	
@@ -44,10 +45,6 @@ public class FolderController implements WebMailConstants {
 	private boolean createAsSubfolder;
 	
 	private int currentPage = 1;
-
-	private String tableState;
-	
-	private Ordering dateOrder = Ordering.DESCENDING;
 	
 	public FolderController() {
 		this.model = new ArrayDataModel();
@@ -57,11 +54,11 @@ public class FolderController implements WebMailConstants {
 		return currentPage;
 	}
 	
-	public int getPageSize() {
-		return PAGE_SIZE;
-	}
-	
 	public DataModel getModel() {
+		AonMessage[] list = getFolder().getMessageList();
+		if (! ObjectUtils.equals(list, this.model.getWrappedData()) ) {
+			this.model.setWrappedData(list);
+		}
 		return this.model;
 	}
 
@@ -71,13 +68,8 @@ public class FolderController implements WebMailConstants {
 	
 	public void resetCurrentPage() {
 		setCurrentPage( 1 );
-		updateModel();		
 	}
 
-	public void updateModel() {
-		this.model.setWrappedData(folder.getMessageList());		
-	}
-	
 	/**
 	 * @return the folder
 	 */
@@ -104,7 +96,7 @@ public class FolderController implements WebMailConstants {
 		try {
 			folder.refresh();
 		} catch (WebmailException e) {
-			LOGGER.error( "Error refreshing folder " + folder.getName(), e);
+			LOGGER.log(Level.SEVERE,"Error refreshing folder " + folder.getName(), e);
 		}
 	}
 	
@@ -119,7 +111,6 @@ public class FolderController implements WebMailConstants {
 		try{
 			if (folder!=null) {
 				folder.refresh();
-				resetCurrentPage();
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -161,7 +152,7 @@ public class FolderController implements WebMailConstants {
 			try {
 				folder.refresh();
 			} catch (WebmailException e) {
-				LOGGER.error( e.getMessage(), e);
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		} else {
 	    	AonFolder treeDest = getTreeController().recoverTreeNode(server.getTrashFolderName());
@@ -169,6 +160,49 @@ public class FolderController implements WebMailConstants {
 	    	getTreeController().loadTree();
 		}
     	resetCurrentPage();		
+    }
+
+	// *************************************************************************
+	// SELECT / UNSELECT ALL 
+	// *************************************************************************
+    public void selectAllMessages(ActionEvent event){
+    	for( AonMessage message : folder.getMessageList() ) {
+    		message.setSelected(true);
+    	}
+    }
+
+    public void deselectAllMessages(ActionEvent event){
+    	for( AonMessage message : folder.getMessageList() ) {
+    		message.setSelected(false);
+    	}
+    }
+
+    public void selectAllPageMessages(ActionEvent event){
+    	Iterator<AonMessage> iter = currentPageObjects().iterator();
+    	while (iter.hasNext()){
+    		iter.next().setSelected(true);
+    	}
+    }
+
+    public void deselectAllPageMessages(ActionEvent event){
+    	Iterator<AonMessage> iter = currentPageObjects().iterator();
+    	while (iter.hasNext()){
+    		iter.next().setSelected(false);
+    	}
+    }
+    
+    private List<AonMessage> currentPageObjects() {
+    	List<AonMessage> messages = new ArrayList<AonMessage>();
+    	int currentPage = getCurrentPage();
+    	currentPage--;
+    	AonMessage[] allMessages = folder.getMessageList();
+    	int pageObjectNumber = folder.getPageSize();
+    	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
+    		if (i < allMessages.length) {
+    			messages.add(allMessages[i]);
+    		}
+    	}
+    	return messages;
     }
 
     //*************************************************************
@@ -466,28 +500,5 @@ public class FolderController implements WebMailConstants {
 	public void setCreateAsSubfolder(boolean createAsSubfolder) {
 		this.createAsSubfolder = createAsSubfolder;
 	}
-
-	public String getTableState() {
-		return tableState;
-	}
-
-	public void setTableState(String tableState) {
-		this.tableState = tableState;
-	}
-
-	public Ordering getDateOrder() {
-		return dateOrder;
-	}
-
-	public void setDateOrder(Ordering dateOrder) {
-		this.dateOrder = dateOrder;
-	}
-	
-	public String getTableHeight() {
-		int count = getFolder().getMessageListCount();
-		int first = (getCurrentPage()-1) * getPageSize();
-		int visible = Math.min( count-first, getPageSize());
-		return ((visible * 26)+27) + "px";
-	}
-
+    
 }

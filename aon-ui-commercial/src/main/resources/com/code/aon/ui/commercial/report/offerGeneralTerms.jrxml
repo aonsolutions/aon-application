@@ -36,7 +36,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Justified" verticalAlignment="Middle">
-						<font fontName="Arial Narrow" size="8" isBold="false"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{name}+" "+$F{description}]]></textFieldExpression>
 				</textField>

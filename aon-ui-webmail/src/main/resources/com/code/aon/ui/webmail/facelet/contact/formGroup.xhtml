@@ -23,7 +23,7 @@
 	
 			<aon:outputLabel for="GroupContact_contacts"
 				value="#{webmailBundle.webmail_email}" />
-			<aon:pickList id="GroupContact_contacts"
+			<rich:pickList id="GroupContact_contacts"
 				copyAllControlLabel = "#{webmailBundle.webmail_copyAll}"
 				copyControlLabel = "#{webmailBundle.webmail_copy}"
 				removeControlLabel = "#{webmailBundle.webmail_remove}" 
@@ -33,7 +33,7 @@
 				converter="#{contact.groupContactConverter}"
 				value="#{contact.to.contacts}" required="true">
 		        <f:selectItems value="#{contact.availableContacts}"/>
-			</aon:pickList>
+			</rich:pickList>
 
 		</aon:panelGrid>
 		

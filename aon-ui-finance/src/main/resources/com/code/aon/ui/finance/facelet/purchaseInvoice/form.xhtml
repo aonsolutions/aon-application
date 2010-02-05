@@ -17,7 +17,6 @@
 					<ui:param name="toolbarTitle"
 						value="#{financeBundle.finance_purchase_invoice_management_module}" />
 					<ui:param name="controller" value="#{purchaseInvoice}" />
-					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
@@ -32,12 +31,10 @@
 							</aon:commandButton>
 						</c:if>
 						<aon:commandButton id="finances"
-							value="#{bundle.aon_key_finance_description}"
-							title="#{bundle.aon_key_finance_accelerator}"
+							value="#{financeBundle.finance_generate}"
 							actionListener="#{purchaseInvoice.generateFinances}"
 							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceFinance.allPending}"
-							styleClass="aon-finding-toolbar-item aon-icon-tree"
-							accesskey="#{bundle.aon_key_finance}" />
+							styleClass="aon-finding-toolbar-item aon-icon-tree" />
 						<aon:commandButton id="record"
 							value="#{financeBundle.finance_record}"
 							actionListener="#{purchaseInvoice.onRecordInvoice}"

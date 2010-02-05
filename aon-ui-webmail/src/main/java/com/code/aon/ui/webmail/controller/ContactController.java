@@ -2,6 +2,8 @@ package com.code.aon.ui.webmail.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -12,8 +14,6 @@ import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -34,7 +34,7 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class ContactController extends BasicController implements WebMailConstants {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(ContactController.class);
+	private static final Logger LOGGER = Logger.getLogger(ContactController.class.getName());
 
 	private LdapDAO contactDAO;
 	
@@ -48,7 +48,7 @@ public class ContactController extends BasicController implements WebMailConstan
 		LdapDAO dao = new LdapDAO(_class);
 		AuthPrincipal principal = Utils.getAuthPrincipal();
 		Name baseDN = NameResolver.getUserAddressBookDN(principal.getDomain(), principal.getShortName());
-		LOGGER.info( "Contact DAO DN: {}", baseDN );
+		LOGGER.info( "Contact DAO DN:" + baseDN );
 		dao.setBaseDN( baseDN );
 		return dao;
 	}
@@ -92,7 +92,7 @@ public class ContactController extends BasicController implements WebMailConstan
            		groupContacts.add( item );
 			}
     	} catch (DAOException e) {
-    		LOGGER.error( e.getMessage(), e );
+    		LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}		
 	}
 	
@@ -151,11 +151,11 @@ public class ContactController extends BasicController implements WebMailConstan
 				}
 			}
 		} catch (ManagerBeanException e) {
-	        LOGGER.error(">>>> accept", e );
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		} catch (DAOException e) {
-	        LOGGER.error(">>>> accept ", e );
+	        LOGGER.severe(">>>> accept " + e.getMessage());
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
