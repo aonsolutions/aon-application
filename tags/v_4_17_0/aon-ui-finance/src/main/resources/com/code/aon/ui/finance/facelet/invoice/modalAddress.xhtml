@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showInvoiceAddressWindow">
+		<c:if test="#{invoiceController.showInvoiceAddressWindow}">
+			<rich:modalPanel id="invoiceAddressModalPanel" minHeight="220"
+				minWidth="460" rendered="#{invoiceController.showInvoiceAddressWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{registryBundle.registry_addresses}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showInvoiceAddressWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{invoiceController.showInvoiceAddressWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="invoiceAddressFrom">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="invoiceAddress-save"
+										value="#{bundle.aon_save}"
+										reRender="showInvoiceAddressWindow,InvoiceAddress"
+										actionListener="#{invoiceAddress.accept}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										accesskey="#{bundle.aon_key_save}">
+										<f:setPropertyActionListener
+											target="#{invoiceController.showInvoiceAddressWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="invoiceAddress-remove"
+										value="#{bundle.aon_remove}"
+										reRender="showInvoiceAddressWindow,InvoiceAddress"
+										rendered="#{invoiceAddress.to.id != null}"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										actionListener="#{invoiceAddress.onRemove}"
+										accesskey="#{bundle.aon_key_remove}">
+										<f:setPropertyActionListener
+											target="#{invoiceController.showInvoiceAddressWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+										<aon:outputLabel for="InvoiceAddress_address"
+											value="#{registryBundle.registry_address}" />
+										<aon:inputText id="InvoiceAddress_address"
+											value="#{invoiceAddress.to.address}" size="45"
+											maxlength="45" required="true" />
+
+										<aon:outputLabel for="InvoiceAddress_address2" />
+										<aon:inputText id="InvoiceAddress_address2"
+											value="#{invoiceAddress.to.address2}" size="45"
+											maxlength="45" />
+
+										<aon:outputLabel for="InvoiceAddress_zip"
+											value="#{registryBundle.registry_zip}" />
+										<aon:inputText id="InvoiceAddress_zip"
+											value="#{invoiceAddress.to.zip}" size="16"
+											maxlength="16" />
+
+										<aon:outputLabel for="InvoiceAddress_city"
+											value="#{registryBundle.registry_city}" />
+										<aon:inputText id="InvoiceAddress_city"
+											value="#{invoiceAddress.to.city}" size="45"
+											maxlength="45" required="true" />
+
+										<aon:outputLabel for="InvoiceAddress_geozone_id"
+											value="#{registryBundle.registry_geozone}" />
+										<aon:selectOneMenu id="InvoiceAddress_geozone_id"
+											value="#{invoiceAddress.to.geozone}" required="true">
+											<f:selectItem itemLabel="-" value="#{null}" />
+											<f:selectItems value="#{geozoneCollections.geoTrees}" />
+										</aon:selectOneMenu>
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

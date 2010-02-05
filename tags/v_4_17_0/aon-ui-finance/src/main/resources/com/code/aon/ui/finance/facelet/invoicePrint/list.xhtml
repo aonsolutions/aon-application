@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="invoicePrintList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_print_module}" />
+				<ui:param name="controller" value="#{invoicePrint}" />
+				<ui:param name="skipResetButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton value="&#160;" id="sendEmail"
+						actionListener="#{invoicePrint.onSendInvoicesByEmail}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
+					</aon:commandButton>											
+					<h:commandLink value="&#160;" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="invoicePrint" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>											
+					<h:commandLink value="#{financeBundle.finance_invoice_module}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="invoicePrint" />
+					</h:commandLink>
+
+					<h:commandLink value="&#160;" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="receipt" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>											
+					<h:commandLink value="#{financeBundle.finance_receipts}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+						<f:param name="reportKey" value="receipt" />
+					</h:commandLink>
+				</ui:define>				
+				
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="invoicePrintData" value="#{invoicePrint.model}" sortMode="multi"
+					var="to" rows="20" rendered="#{invoicePrint.model.rowCount > 0}">
+					
+					<aon:column alias="Invoice.referenceCode"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						</f:facet>
+						<h:outputText value="#{to.referenceCode}" />
+					</aon:column>
+
+					<aon:column alias="Invoice.issueDate"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<h:outputText value="#{to.issueDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</h:outputText>
+					</aon:column>
+
+					<aon:column alias="Invoice.registryName"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{customerBundle.customer_customer}" />
+						</f:facet>
+						<h:outputText value="#{to.registryName}" />
+					</aon:column>
+
+					<aon:column alias="Invoice.registryDocument"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_document}" />
+						</f:facet>
+						<h:outputText value="#{to.registryDocument}" />
+					</aon:column>
+
+					<aon:column alias="Invoice.status"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_total}" />
+						</f:facet>
+						<aon:outputText value="#{invoicePrint.invoiceTotalPrice}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<c:if test="#{company.EInvoice}">					
+						<aon:column alias="Invoice.signed"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{signBundle.sign_signature}" />
+							</f:facet>
+							<aon:outputText value="&#160;" rendered="#{to.signed}"
+								title="#{signBundle.sign_signed}"
+								styleClass="aon-icon aon-icon-signed" />
+							<aon:outputText value="&#160;" rendered="#{!to.signed}"
+								title="#{signBundle.sign_sign_pending}"
+								styleClass="aon-icon aon-icon-unsigned" />
+						</aon:column>
+					</c:if>
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="invoicePrintData" showNote="true" />
+			</aon:div>
+			
+		</aon:form>
+
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+	</ui:define>
+
+</ui:composition>
