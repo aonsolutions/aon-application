@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+					
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+			<ui:param name="controller" value="#{accountBudgetDetail}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-textColumn,
+			aon-editDataTable-numberColumn,
+			aon-editDataTable-numberColumn" />
+
+			<ui:param name="showDataScroller" value="false" />
+			<ui:param name="skipResetButton" value="#{true}" />
+			<ui:param name="skipRemoveButton" value="#{true}" />
+			<ui:param name="saveButtonReRender" value="#{dataTableId}" />
+
+		<ui:define name="columns">
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="#{accountBudgetDetail.monthNames[accountBudgetDetail.model.rowIndex]}" />
+				<f:facet name="footer">
+					<aon:outputText value="#{accountingBundle.accounting_total}" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_debit}" />
+				</f:facet>
+				<aon:outputText value="#{to.debit}" rendered="#{to!=accountBudgetDetail.to}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:inputText value="#{to.debit}" required="true" size="15"
+					rendered="#{to==accountBudgetDetail.to}" >
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:outputText value="#{accountBudget.debitTotal}" >
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_credit}" />
+				</f:facet>
+				<aon:outputText value="#{to.credit}" rendered="#{to!=accountBudgetDetail.to}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:inputText value="#{to.credit}" required="true" size="15"
+					rendered="#{to==accountBudgetDetail.to}" >
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:outputText value="#{accountBudget.creditTotal}" >
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
+				</f:facet>
+			</aon:column>
+			
+		</ui:define>
+	</ui:decorate>			
+</ui:composition>
