@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<c:if test="#{!saleInvoice.new}">
+		<aon:div styleClass="aon-padding-top">
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice_lines}" />
+				</f:facet>
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					<ui:param name="dataTableId" value="invoiceDetails" />
+					<ui:param name="controller" value="#{saleInvoiceDetail}" />
+					<ui:param name="rows" value="0" />
+					<ui:param name="showNote" value="false" />
+					<ui:param name="showDataScroller" value="false" />
+					<ui:param name="skipResetButton" value="#{saleInvoice.readOnly}" />
+					<ui:param name="skipLineEdition" value="#{saleInvoice.readOnly}" />
+					<ui:param name="rowSelectorReRender" value="menuExt" />
+					<ui:param name="resetButtonReRender" value="menuExt" />
+					<ui:param name="newCancelButtonReRender" value="menuExt" />
+					<ui:param name="cancelButtonReRender" value="menuExt" />
+					<ui:param name="newSaveButtonReRender" value="menuExt,Invoice_total" />
+					<ui:param name="saveButtonReRender" value="menuExt,Invoice_total" />
+					<ui:param name="removeButtonReRender" value="menuExt,Invoice_total" />
+					<ui:param name="focusOnAdd" value="InvoiceDetail_item_product_code-New" />
+					<ui:param name="focusOnSelect" value="InvoiceDetail_item_product_code" />
+	
+					<ui:define name="columns">
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputLabel for="InvoiceDetail_item_product_code" value="#{productBundle.product_item}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" rendered="#{formList}">
+								<aon:abbreviateConverter maxWidth="64" />
+							</aon:outputText>
+	
+							<aon:div id="invoiceDetailItemEdit" styleClass="aon-lookup" rendered="#{formEdit}">
+								<c:if test="#{!skipLineEdition}"> 
+									<a4j:region>
+										<aon:lookupInputText id="InvoiceDetail_item_product_code"
+											value="#{saleInvoiceDetail.to.item.product.code}"
+											lookup="#{itemLookup}"
+											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+											reRender="invoiceDetailItemEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
+											required="true" size="10" ajaxSingle="false">
+											<aon:joinProperty alias="Item_product_code"
+												value="#{saleInvoiceDetail.to.item.product.code}" />
+										</aon:lookupInputText>
+										<aon:lookupButton windowTitle="#{productBundle.product_item_selection}"
+											actionType="search"
+											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+											selectReRender="invoiceDetailItemEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
+											lookup="#{itemLookup}" minHeight="460" minWidth="650"
+											property="#{saleInvoiceDetail.to.item}">
+										</aon:lookupButton>
+										<aon:inputTextarea id="InvoiceDetail_item_product_name"
+											value="#{saleInvoiceDetail.to.description}"
+											cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}"
+											style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											<f:validateLength maximum="1024" />
+										</aon:inputTextarea>
+									</a4j:region>
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+										actionListener="#{saleInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name"
+										rendered="#{saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+										actionListener="#{saleInvoiceDetail.onLongDescription}" reRender="InvoiceDetail_item_product_name"
+										rendered="#{!saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
+								</c:if>
+							</aon:div>
+	
+							<f:facet name="footer">
+								<aon:div id="invoiceDetailItemNew" styleClass="aon-lookup" rendered="#{formNew}">
+									<c:if test="#{!skipResetButton}">
+										<a4j:region>
+											<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
+												value="#{saleInvoiceDetail.to.item.product.code}"
+												lookup="#{itemLookup}"
+												lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+												reRender="invoiceDetailItemNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+												required="true" size="10" ajaxSingle="false">
+												<aon:joinProperty alias="Item_product_code" value="#{saleInvoiceDetail.to.item.product.code}" />
+											</aon:lookupInputText>
+											<aon:lookupButton windowTitle="#{productBundle.product_item_selection}"
+												actionType="search"
+												lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+												selectReRender="invoiceDetailItemNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+												lookup="#{itemLookup}" minHeight="460" minWidth="650"
+												property="#{saleInvoiceDetail.to.item}">
+											</aon:lookupButton>
+											<aon:inputTextarea id="InvoiceDetail_item_product_name-New"
+												value="#{saleInvoiceDetail.to.description}"
+												cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}"
+												style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+												<f:validateLength maximum="1024" />
+											</aon:inputTextarea>
+										</a4j:region>
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+											actionListener="#{saleInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name-New"
+											rendered="#{saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+											actionListener="#{saleInvoiceDetail.onLongDescription}" reRender="InvoiceDetail_item_product_name-New"
+											rendered="#{!saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
+									</c:if>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
+							</f:facet>
+							<aon:outputText value="#{to.quantity}"
+								rendered="#{formList}">
+								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+							</aon:outputText>
+							<aon:inputText id="InvoiceDetail_quantity"
+								valueChangeListener="#{controller.onQuantityChanged}"
+								reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
+								rendered="#{formEdit}" value="#{controller.to.quantity}"
+								required="true" size="7" focus="InvoiceDetail_price" />
+							<f:facet name="footer">
+								<aon:inputText id="InvoiceDetail_quantity-New"
+									valueChangeListener="#{controller.onQuantityChanged}"
+									reRender="InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+									rendered="#{formNew}" value="#{controller.to.quantity}"
+									required="true" size="7" focus="InvoiceDetail_price-New" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel for="InvoiceDetail_price" value="#{bundle.aon_price}" />
+							</f:facet>
+							<aon:outputText value="#{to.price}"
+								rendered="#{formList}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:inputText id="InvoiceDetail_price" size="7"
+								reRender="InvoiceDetail_amount" rendered="#{formEdit}"
+								value="#{controller.to.price}" required="true" />
+							<f:facet name="footer">
+								<aon:inputText id="InvoiceDetail_price-New" size="7" reRender="InvoiceDetail_amount-New"
+									rendered="#{formNew}" value="#{controller.to.price}"
+									required="true" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel for="InvoiceDetail_discount" value="#{bundle.aon_discount}" />
+							</f:facet>
+							<aon:outputText rendered="#{formList}"
+								value="#{to.discountExpression.discountExpr}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:inputText id="InvoiceDetail_discount" rendered="#{formEdit}"
+								reRender="InvoiceDetail_amount" size="7" required="true"
+								value="#{controller.to.discountExpression.discountExpr}" />
+							<f:facet name="footer">
+								<aon:inputText id="InvoiceDetail_discount-New" rendered="#{formNew}"
+									size="7" reRender="InvoiceDetail_amount-New"
+									value="#{controller.to.discountExpression.discountExpr}"
+									required="true" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel for="InvoiceDetail_amount" value="#{bundle.aon_amount}" />
+							</f:facet>
+							<aon:outputText rendered="#{formList}"
+								value="#{to.taxableBase}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:outputText id="InvoiceDetail_amount" rendered="#{formEdit}"
+								value="#{controller.taxableBase}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div style="text-align:right;">
+									<aon:outputText id="InvoiceDetail_amount-New" rendered="#{formNew}"
+										value="#{controller.taxableBase}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace}" />
+							</f:facet>
+							<aon:outputText
+								rendered="#{formList}"
+								value="#{to.workPlace.description}" />
+							<aon:selectOneMenu id="InvoiceDetail_workPlace"
+								value="#{controller.to.workPlace}"
+								rendered="#{formEdit}">
+								<f:selectItems value="#{companyCollections.workPlaces}" />
+							</aon:selectOneMenu>
+							<f:facet name="footer">
+								<aon:selectOneMenu id="InvoiceDetail_workPlace-New"
+									value="#{controller.to.workPlace}"
+									rendered="#{formNew}">
+									<f:selectItems value="#{companyCollections.workPlaces}" />
+								</aon:selectOneMenu>
+							</f:facet>
+						</aon:column>
+	
+					</ui:define>
+				</ui:decorate>
+			</aon:panel>
+		</aon:div>
+	</c:if>
+</ui:composition>

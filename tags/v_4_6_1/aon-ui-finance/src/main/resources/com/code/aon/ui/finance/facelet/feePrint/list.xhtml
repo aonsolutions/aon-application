@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="feePrintList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fee_print_module}" />
+				<ui:param name="controller" value="#{feePrint}" />
+				<ui:param name="skipResetButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="feePrintList" />
+					</h:commandLink>
+					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="feePrintList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+				</ui:define>				
+				
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="feePrintData" value="#{feePrint.model}"
+					var="to" rows="20" rendered="#{feePrint.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn, 
+						aon-editDataTable-numberColumn, 
+						aon-editDataTable-numberColumn,
+						aon-editDataTable-numberColumn, 
+						aon-editDataTable-textColumn">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{customerBundle.customer_customer}" />
+						</f:facet>
+						<aon:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
+						<aon:outputText value="#{to.customer.registry.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.customer.status}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_concept}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_fee_period}" />
+						</f:facet>
+						<aon:outputText value="#{to.period}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_quantity}" />
+						</f:facet>
+						<aon:outputText value="#{to.quantity}"> 
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_price}" />
+						</f:facet>
+						<aon:outputText value="#{to.price}"> 
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_discount}" />
+						</f:facet>
+						<aon:outputText value="#{to.discountExpression.discountExpr}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_fee_billing_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.billingDateMonth}" />
+						<aon:outputText value=" / #{to.billingDateYear}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date_to}" />
+						</f:facet>
+						<aon:outputText value="#{to.finalDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="feePrintData" showNote="true" />
+			</aon:div>
+			
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>

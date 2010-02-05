@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="bannerCategoryList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.banner_category}" />
+				<ui:param name="controller" value="#{banner_category}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="#{banner_category.getBack}" 
+						immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>				
+				</ui:define>
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+					
+				<aon:dataTable id="dataTable" value="#{banner_category.model}" var="to"
+					rows="#{banner_category.pageLimit}" rendered="#{banner_category.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
+			
+					<aon:rowSelector
+						action="banner_category_form" actionListener="#{banner_category.onSelect}" />							
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_label}" />
+						</f:facet>
+						<aon:outputText value="#{banner_category.i18nLabel}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_section}" />
+						</f:facet>
+						<aon:outputText value="#{to.section.alias}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_position}" />
+						</f:facet>
+						<aon:outputText value="#{to.position}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_active}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																					
+							<aon:commandLink title="#{appBundle.banner_category_activate}" 
+								action="banner_category_list"
+								actionListener="#{banner_category.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="BannerCategory_active" alt="#{appBundle.banner_category_activate}"
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.banner_category_deactivate}" 
+								action="banner_category_list"
+								actionListener="#{banner_category.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="BannerCategory_deactive" alt="#{appBundle.banner_category_deactivate}"
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:column>
+
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
+
+			</aon:div>
+		</aon:form>
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

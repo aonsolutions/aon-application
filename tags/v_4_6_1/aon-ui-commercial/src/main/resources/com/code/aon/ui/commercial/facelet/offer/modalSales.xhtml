@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showSalesWindow">
+		<c:if test="#{offer.showSalesWindow}">
+			<rich:modalPanel id="salesModalPanel" minHeight="220"
+				minWidth="520" rendered="#{offer.showSalesWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{commercialBundle.commercial_offer_to_sales}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showSalesWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{offer.showSalesWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="salesForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="sales-accept"
+										value="#{commercialBundle.commercial_offer_to_sales}"
+										actionListener="#{offer.onSales}"
+										action="sales_form"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+									</aon:commandButton>
+									<aon:commandButton id="sales-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showSalesWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{offer.showSalesWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+										<aon:outputLabel for="Offer_salesSeries"
+											value="#{bundle.aon_series}" />
+										<aon:selectOneMenu id="Offer_salesSeries"
+											value="#{offer.salesSeries}"
+											valueChangeListener="#{offer.onSalesSeriesChanged}" 
+											reRender="Offer_salesNumber">
+											<f:selectItem itemLabel=" " itemValue="#{null}" />
+											<f:selectItems value="#{configCollections.seriesIds}" />
+										</aon:selectOneMenu>
+
+										<aon:outputLabel for="Offer_salesNumber"
+											value="#{bundle.aon_number}" />
+										<aon:inputText id="Offer_salesNumber"
+											value="#{offer.salesNumber}" size="7" />
+
+										<aon:outputLabel for="Offer_salesDate"
+											value="#{bundle.aon_date}" />
+										<aon:selectInputDate id="Offer_salesDate" 
+											value="#{offer.salesDate}"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>
