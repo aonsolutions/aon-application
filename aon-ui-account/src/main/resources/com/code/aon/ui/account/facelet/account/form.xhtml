@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
@@ -20,9 +21,13 @@
 					<aon:outputLabel for="Account_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="Account_id" value="#{account.to.id}"
-						required="#{true}" size="10" maxlength="9"  
+						required="#{true}" size="10" maxlength="9"
 						disabled="#{!account.new}">
 						<f:validateLength maximum="9" />
+						<a4j:support event="onchange" ajaxSingle="true"
+						 	actionListener="#{account.onIdentifierChanged}" 
+							reRender="dataTable"
+							focus="Account_description"/>
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_description"

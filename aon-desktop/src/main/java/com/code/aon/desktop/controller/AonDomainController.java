@@ -407,7 +407,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	}
 	
 	public boolean isSelectedSystemProfile() {
-		return newProfile ? false : isSystemProfile(this.profile.getId());
+		return isSystemProfile(this.profile.getId());
 	}
 
 	public boolean isCurrentSystemProfile() {

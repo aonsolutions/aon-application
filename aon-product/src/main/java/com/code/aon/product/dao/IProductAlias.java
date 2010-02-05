@@ -7,6 +7,7 @@ import com.code.aon.product.Catalogue;
 import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
+import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.ItemPos;
 import com.code.aon.product.Product;
@@ -170,106 +171,143 @@ public interface IProductAlias {
 	String  ITEM_ID = ITEM_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Item_barcode
+	* Hibernate value: Item.barcode
+	*/
+	String  ITEM_BARCODE = ITEM_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Item_internet
 	* Hibernate value: Item.internet
 	*/
-	String  ITEM_INTERNET = ITEM_ENTRY.getAliasNames()[1];
+	String  ITEM_INTERNET = ITEM_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Item_product_id
 	* Hibernate value: Item.product.id
 	*/
-	String  ITEM_PRODUCT_ID = ITEM_ENTRY.getAliasNames()[2];
+	String  ITEM_PRODUCT_ID = ITEM_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Item_detail
 	* Hibernate value: Item.detail
 	*/
-	String  ITEM_DETAIL = ITEM_ENTRY.getAliasNames()[3];
+	String  ITEM_DETAIL = ITEM_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Item_price
 	* Hibernate value: Item.price
 	*/
-	String  ITEM_PRICE = ITEM_ENTRY.getAliasNames()[4];
+	String  ITEM_PRICE = ITEM_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Item_status
 	* Hibernate value: Item.status
 	*/
-	String  ITEM_STATUS = ITEM_ENTRY.getAliasNames()[5];
+	String  ITEM_STATUS = ITEM_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Item_expenses_percent
 	* Hibernate value: Item.expensesPercent
 	*/
-	String  ITEM_EXPENSES_PERCENT = ITEM_ENTRY.getAliasNames()[6];
+	String  ITEM_EXPENSES_PERCENT = ITEM_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Item_expenses_fixed
 	* Hibernate value: Item.expensesFixed
 	*/
-	String  ITEM_EXPENSES_FIXED = ITEM_ENTRY.getAliasNames()[7];
+	String  ITEM_EXPENSES_FIXED = ITEM_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Item_profit_percent
 	* Hibernate value: Item.profitPercent
 	*/
-	String  ITEM_PROFIT_PERCENT = ITEM_ENTRY.getAliasNames()[8];
+	String  ITEM_PROFIT_PERCENT = ITEM_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Item_purchase_price
 	* Hibernate value: Item.purchasePrice
 	*/
-	String  ITEM_PURCHASE_PRICE = ITEM_ENTRY.getAliasNames()[9];
+	String  ITEM_PURCHASE_PRICE = ITEM_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Item_product_name
 	* Hibernate value: Item.product.name
 	*/
-	String  ITEM_PRODUCT_NAME = ITEM_ENTRY.getAliasNames()[10];
+	String  ITEM_PRODUCT_NAME = ITEM_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Item_product_code
 	* Hibernate value: Item.product.code
 	*/
-	String  ITEM_PRODUCT_CODE = ITEM_ENTRY.getAliasNames()[11];
+	String  ITEM_PRODUCT_CODE = ITEM_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Item_product_brand_id
 	* Hibernate value: Item.product.brand.id
 	*/
-	String  ITEM_PRODUCT_BRAND_ID = ITEM_ENTRY.getAliasNames()[12];
+	String  ITEM_PRODUCT_BRAND_ID = ITEM_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Item_product_brand_name
 	* Hibernate value: Item.product.brand.name
 	*/
-	String  ITEM_PRODUCT_BRAND_NAME = ITEM_ENTRY.getAliasNames()[13];
+	String  ITEM_PRODUCT_BRAND_NAME = ITEM_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Item_product_category_id
 	* Hibernate value: Item.product.category.id
 	*/
-	String  ITEM_PRODUCT_CATEGORY_ID = ITEM_ENTRY.getAliasNames()[14];
+	String  ITEM_PRODUCT_CATEGORY_ID = ITEM_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Item_product_category_name
 	* Hibernate value: Item.product.category.name
 	*/
-	String  ITEM_PRODUCT_CATEGORY_NAME = ITEM_ENTRY.getAliasNames()[15];
+	String  ITEM_PRODUCT_CATEGORY_NAME = ITEM_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Item_product_inventoriable
 	* Hibernate value: Item.product.inventoriable
 	*/
-	String  ITEM_PRODUCT_INVENTORIABLE = ITEM_ENTRY.getAliasNames()[16];
+	String  ITEM_PRODUCT_INVENTORIABLE = ITEM_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Item_product_composition
 	* Hibernate value: Item.product.composition
 	*/
-	String  ITEM_PRODUCT_COMPOSITION = ITEM_ENTRY.getAliasNames()[17];
+	String  ITEM_PRODUCT_COMPOSITION = ITEM_ENTRY.getAliasNames()[18];
+
+
+
+	/** 
+	* DAOConstantsEntry for ItemAlternative entity.
+	*/ 
+	DAOConstantsEntry ITEM_ALTERNATIVE_ENTRY = DAOConstants.getDAOConstant(ItemAlternative.class);
+
+	/** 
+	* Alias value: ItemAlternative_alternativeItem_id
+	* Hibernate value: ItemAlternative.alternativeItem.id
+	*/
+	String  ITEM_ALTERNATIVE_ALTERNATIVE_ITEM_ID = ITEM_ALTERNATIVE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ItemAlternative_id
+	* Hibernate value: ItemAlternative.id
+	*/
+	String  ITEM_ALTERNATIVE_ID = ITEM_ALTERNATIVE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ItemAlternative_item_id
+	* Hibernate value: ItemAlternative.item.id
+	*/
+	String  ITEM_ALTERNATIVE_ITEM_ID = ITEM_ALTERNATIVE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ItemAlternative_priority
+	* Hibernate value: ItemAlternative.priority
+	*/
+	String  ITEM_ALTERNATIVE_PRIORITY = ITEM_ALTERNATIVE_ENTRY.getAliasNames()[3];
 
 
 
@@ -444,28 +482,34 @@ public interface IProductAlias {
 	DAOConstantsEntry PRODUCT_CATEGORY_ENTRY = DAOConstants.getDAOConstant(ProductCategory.class);
 
 	/** 
+	* Alias value: ProductCategory_category_group
+	* Hibernate value: ProductCategory.group
+	*/
+	String  PRODUCT_CATEGORY_CATEGORY_GROUP = PRODUCT_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: ProductCategory_category_group_id
 	* Hibernate value: ProductCategory.group.id
 	*/
-	String  PRODUCT_CATEGORY_CATEGORY_GROUP_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[0];
+	String  PRODUCT_CATEGORY_CATEGORY_GROUP_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ProductCategory_id
 	* Hibernate value: ProductCategory.id
 	*/
-	String  PRODUCT_CATEGORY_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[1];
+	String  PRODUCT_CATEGORY_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ProductCategory_itemPattern
 	* Hibernate value: ProductCategory.itemPattern
 	*/
-	String  PRODUCT_CATEGORY_ITEM_PATTERN = PRODUCT_CATEGORY_ENTRY.getAliasNames()[2];
+	String  PRODUCT_CATEGORY_ITEM_PATTERN = PRODUCT_CATEGORY_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ProductCategory_name
 	* Hibernate value: ProductCategory.name
 	*/
-	String  PRODUCT_CATEGORY_NAME = PRODUCT_CATEGORY_ENTRY.getAliasNames()[3];
+	String  PRODUCT_CATEGORY_NAME = PRODUCT_CATEGORY_ENTRY.getAliasNames()[4];
 
 
 

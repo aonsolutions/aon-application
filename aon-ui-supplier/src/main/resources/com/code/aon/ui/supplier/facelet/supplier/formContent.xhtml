@@ -7,9 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
-		<ui:param name="controller" value="#{controller}" />
-	</ui:include>
+		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
 
 	<aon:outputLabel for="Supplier_scope_id" value="#{bundle.aon_scope}" />
 	<aon:selectOneMenu id="Supplier_scope_id" value="#{controller.to.scope}">

@@ -23,7 +23,7 @@
 					<aon:div styleClass="aon-width-300">
 						<aon:editDataTable id="companyImages"
 							var="to" value="#{companyImages.model}"
-							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
+							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 			
 							<aon:rowSelector toggleOnClick="#{true}" actionListener="#{companyImages.onSelect}" reRender="image_form"/>
 							<aon:column>
@@ -61,6 +61,13 @@
 									</f:facet>
 								</c:if>
 							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_type}" />
+								</f:facet>
+								<aon:outputText value="#{to.mimeType}"/>
+							</aon:column>
 					
 						</aon:editDataTable>
 	
@@ -91,16 +98,21 @@
 											actionListener="#{companyImages.onCancel}"/>	
 									</aon:div>	
 			
-									<aon:panelGrid columns="2">	
+									<aon:panelGrid id="imagePanelGrid" columns="2">	
 																			
 										<aon:outputLabel for="RegistryAttachment_description" value="#{bundle.aon_name}" />
 										<aon:inputText id="RegistryAttachment_description" size="45" required="true"
 											validator="#{companyImages.imageNameCheck}"
 											maxlength="50" value="#{companyImages.to.description}" />		
 				
+										<c:if test="#{companyImages.aonFile.mimeType != null}">
+											<aon:outputText value="#{bundle.aon_type}" />
+											<aon:outputText value="#{companyImages.aonFile.mimeType}"/>
+										</c:if>
+											
 										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{companyBundle.company_image}" />
 										<a4j:region>
-											<h:panelGrid id="imageGrid">
+											<h:panelGrid>
 												<aon:fileUpload id="RegistryAttachment_inputFile"
 													addControlLabel="#{bundle.aon_fileUpload_add}"
 													stopControlLabel="#{bundle.aon_fileUpload_stop}"
@@ -112,16 +124,37 @@
 													<f:facet name="label">
 														<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 													</f:facet>
-													<a4j:support event="onuploadcomplete" reRender="imageGrid" />
+													<a4j:support event="onuploadcomplete" reRender="imagePanelGrid" />
 												</aon:fileUpload>
 												<a4j:mediaOutput id="RegistryAttachment_preview" 
 													element="img" cacheable="false"
 													value="#{companyImages.aonFile.key}" style="width:200px"
 													rendered="#{companyImages.aonFile.size > 0}" 
 													createContent="#{companyImages.paint}" 
-													mimeType="#{companyImages.mimeType}" />
+													mimeType="#{companyImages.aonFile.mimeType}" />
 											</h:panelGrid>
 										</a4j:region>
+
+										<c:if test="#{companyImages.image != null}">
+											<aon:outputLabel for="ratio" value="#{companyBundle.aon_image_ratio}"/>
+											<aon:selectBooleanCheckbox id="ratio" value="#{companyImages.ratio}" />
+	
+											<aon:outputLabel for="width" value="#{companyBundle.aon_width}" />
+											<rich:inputNumberSlider id="width" 
+												value="#{companyImages.width}" width="500"
+												minValue="1" maxValue="#{companyImages.maxWidth}">
+												<a4j:support event="onchange" reRender="imagePanelGrid" 
+													actionListener="#{companyImages.onChangeWidth}" />
+											</rich:inputNumberSlider>
+	
+											<aon:outputLabel for="height" value="#{companyBundle.aon_height}" />
+											<rich:inputNumberSlider id="height" 
+												value="#{companyImages.height}" width="500" 
+												minValue="1" maxValue="#{companyImages.maxHeight}">
+												<a4j:support event="onchange" reRender="imagePanelGrid" 
+													actionListener="#{companyImages.onChangeHeight}" />
+											</rich:inputNumberSlider>
+										</c:if>										
 									</aon:panelGrid>
 								</aon:div>
 							</aon:panel>			

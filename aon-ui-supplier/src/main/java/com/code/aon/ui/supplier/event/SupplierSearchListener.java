@@ -7,9 +7,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.supplier.enumeration.SupplierStatus;
-import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.ui.registry.controller.event.RegistryPayMethodSearchListener;
 
-public class SupplierSearchListener extends RegistrySearchListener {
+public class SupplierSearchListener extends RegistryPayMethodSearchListener {
 
 	private SupplierStatus[] supplierStatuses;
 	

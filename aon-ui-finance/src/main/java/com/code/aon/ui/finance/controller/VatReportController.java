@@ -21,7 +21,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.finance.enumeration.VatReportOrder;
 import com.code.aon.finance.enumeration.VatReportType;
 import com.code.aon.finance.enumeration.VatType;
 import com.code.aon.finance.vat.Vat;
@@ -46,7 +45,6 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	private Date fromDate;
 	private Date toDate;
 	private VatType vatType;
-	private VatReportOrder order;
 	private SecurityLevel securityLevel;
 	private Map<VatType,VatTypeBreakdown> summary;
 	private DataModel model;
@@ -74,13 +72,6 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
-	}
-
-	public VatReportOrder getOrder() {
-		return order;
-	}
-	public void setOrder(VatReportOrder order) {
-		this.order = order;
 	}
 
 	public VatType getVatType() {
@@ -334,7 +325,7 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 			}
 			setTitle(vcp);
 			VatCollection vc = new VatCollection();
-			List<Vat> list = vc.getVatDetailList(vcp,getOrder());
+			List<Vat> list = vc.getVatDetailList(vcp);
 			setModel(new ListDataModel(list));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());

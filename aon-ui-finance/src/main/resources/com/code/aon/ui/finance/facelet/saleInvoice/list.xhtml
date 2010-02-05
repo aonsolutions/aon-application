@@ -83,7 +83,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{configBundle.config_pay_method}" />
 							</f:facet>
-							<aon:outputText value="#{controller.payMethod}">
+							<aon:outputText value="#{saleInvoice.payMethod}">
 								<aon:abbreviateConverter maxWidth="15" />
 							</aon:outputText>
 						</aon:column>
@@ -92,14 +92,14 @@
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
 							</f:facet>
-							<aon:outputText value="#{controller.financeStatus}" />
+							<aon:outputText value="#{saleInvoice.financeStatus}" />
 						</aon:column>
 	
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
-							<aon:outputText value="#{controller.invoiceTotalPrice}">
+							<aon:outputText value="#{saleInvoice.invoiceTotalPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
@@ -107,14 +107,14 @@
 						<c:if test="#{company.EInvoice}">
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{signBundle.sign_signature}" />
+									<aon:outputText value="#{financeBundle.finance_signature}" />
 								</f:facet>
-								<aon:outputText value="&#160;" rendered="#{to.signed}"
-									title="#{signBundle.sign_signed}"
-									styleClass="aon-icon aon-icon-signed" />
-								<aon:outputText value="&#160;" rendered="#{!to.signed}"
-									title="#{signBundle.sign_sign_pending}"
-									styleClass="aon-icon aon-icon-unsigned" />
+								<aon:graphicImage rendered="#{to.signed}"
+									styleClass="aon-vertical-align-top aon-margin-left" title="#{financeBundle.finance_signed}"
+									url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/signed.png']}"/>
+								<aon:graphicImage rendered="#{!to.signed}"
+									styleClass="aon-vertical-align-top aon-margin-left" alt="#{financeBundle.finance_sign_pending}"
+									url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/not-signed.png']}"/>
 							</aon:column>
 						</c:if>
 					</ui:define>

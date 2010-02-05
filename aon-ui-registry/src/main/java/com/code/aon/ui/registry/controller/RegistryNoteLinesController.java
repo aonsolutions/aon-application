@@ -2,11 +2,12 @@ package com.code.aon.ui.registry.controller;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -19,7 +20,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class RegistryNoteLinesController extends LinesController {
 	
-	private static final Logger LOGGER = Logger.getLogger(RegistryNoteLinesController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryNoteLinesController.class);
 
 	private Date fromDate;
 	
@@ -58,7 +59,7 @@ public class RegistryNoteLinesController extends LinesController {
 			this.setCriteria(customCriteria);
 			this.onSearch(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error customizing search", e);
+			LOGGER.error( "Error customizing search", e);
 			AonUtil.addErrorMessage("Error customizing search");
 			throw new AbortProcessingException(e);
 		}

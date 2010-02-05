@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -114,10 +113,11 @@ public class BalanceDefaults {
 	private void loadFromFile(Balance balance, String file) throws ManagerBeanException, IOException {
 		IManagerBean detailBean = BeanManager.getManagerBean(BalanceDetail.class);
 		InputStream in = BalanceDefaults.class.getResourceAsStream(file);
-		InputStreamReader isr = new InputStreamReader(in,Charset.forName("ISO-8859-1")); 
+		InputStreamReader isr = new InputStreamReader(in); 
 		LineNumberReader reader = new LineNumberReader( isr );
 		while (reader.ready()) {
 			String line = reader.readLine();
+			System.out.println( line );
 			String[] tokens = StringUtils.splitPreserveAllTokens(line, '|');
 			BalanceDetail bd = new BalanceDetail();
 			bd.setBalance(balance);
@@ -133,5 +133,13 @@ public class BalanceDefaults {
 			detailBean.insert(bd);			
 		}
 	}
-
+	
+	public static void main(String[] args) throws ManagerBeanException, IOException {
+		BalanceDefaults bd = new BalanceDefaults();
+//		bd.loadFromFile(null,ABBREVIATED_PATRIMONY_BALANCE_FILE);
+//		bd.loadFromFile(null,ABBREVIATED_OPERATING_BALANCE_FILE);
+//		bd.loadFromFile(null,ABBREVIATED_CLOSING_BALANCE_FILE);
+//		bd.loadFromFile(null,OPERATING_BALANCE_FILE);
+		bd.loadFromFile(null,CLOSING_BALANCE_FILE);
+	}
 }

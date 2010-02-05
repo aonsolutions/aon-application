@@ -30,4 +30,10 @@
 		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 	</aon:selectOneMenu>
 
+	<aon:outputLabel for="Account_order"
+		value="#{bundle.aon_order}" />
+	<aon:selectOneMenu id="Account_order"
+		value="#{controller.orderColumn}">
+		<f:selectItems value="#{controller.orderColumns}" />
+	</aon:selectOneMenu>
 </ui:composition>

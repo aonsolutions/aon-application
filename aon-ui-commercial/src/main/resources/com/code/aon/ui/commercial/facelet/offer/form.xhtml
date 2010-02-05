@@ -70,12 +70,31 @@
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
-						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
-							<ui:param name="signController" value="#{offerSigner}" />
-							<ui:param name="skipSignButton" value="#{offer.new or offer.to.signed or (certificate.certificateCount==0)}" />
-							<ui:param name="skipCancelSignButton" value="#{offer.new or (!offer.to.signed)}" />
-							<ui:param name="signButtonReRender" value="offerForm,showNewMessageWindow" />
-						</ui:include>				
+						<c:if test="#{company.EInvoice}">
+							<c:if test="#{!offerSigner.sessionCertificateStored}">						
+								<aon:commandButton id="sign"
+									value="#{signBundle.sign_sign}"
+									actionListener="#{offerSigner.onShowSignWindow}"
+									rendered="#{!offer.new and !offer.to.signed and (offerSigner.certificateCount >0)}"
+									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+									reRender="showSignWindow" />
+							</c:if>
+							<c:if test="#{offerSigner.sessionCertificateStored}">						
+								<aon:commandButton id="sign"
+									value="#{signBundle.sign_sign}"
+									actionListener="#{offerSigner.onSign}"
+									rendered="#{!offer.new and !offer.to.signed and (offerSigner.certificateCount >0)}"
+									styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+									reRender="offerForm,showNewMessageWindow"
+									onclick="Richfaces.showModalPanel('waitProccess')" 
+						     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />									
+							</c:if>
+							<aon:commandButton id="cancel_sign"
+								value="#{signBundle.sign_cancel_sign}"
+								actionListener="#{offerSigner.onCancelSign}"
+								rendered="#{company.EInvoice and !offer.new and offer.to.signed and (offerSigner.certificateCount >0)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border" />
+						</c:if>					
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -448,6 +467,7 @@
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
+			<ui:param name="controller" value="#{offerSigner}" />
 			<ui:param name="signButtonreRender" value="offerForm,showNewMessageWindow" />
 			<aon:methodParam name="signActionListener" value="#{offerSigner.onSign}" type="actionListener" />
 		</ui:include>

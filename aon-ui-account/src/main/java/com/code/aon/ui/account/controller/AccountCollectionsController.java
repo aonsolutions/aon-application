@@ -279,6 +279,20 @@ public class AccountCollectionsController {
 		return getFixedAssetAccounts(false);
 	}
 
+	private List<SelectItem> getFixedAssetAccountsExtended(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "20*|21*");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getFixedAssetAccountsExtended() throws ManagerBeanException, ExpressionException {
+		return getFixedAssetAccountsExtended(true);
+	}
+	public List<SelectItem> getFixedAssetAccountsExtendedIds() throws ManagerBeanException, ExpressionException {
+		return getFixedAssetAccountsExtended(false);
+	}
+
 	private List<SelectItem> getAccumulatedDepreciationAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();

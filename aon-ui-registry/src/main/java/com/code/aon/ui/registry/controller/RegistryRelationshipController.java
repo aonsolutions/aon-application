@@ -1,10 +1,11 @@
 package com.code.aon.ui.registry.controller;
 
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ValueChangeEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,7 +19,7 @@ import com.code.aon.ui.form.BasicController;
 
 public class RegistryRelationshipController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(RegistryRelationshipController.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryRelationshipController.class);	
 	
 	@SuppressWarnings("unchecked")
 	public void onRegistryChanged(ValueChangeEvent event){
@@ -33,7 +34,7 @@ public class RegistryRelationshipController extends BasicController {
 					((RegistryRelationship)this.getTo()).setRelatedRegistry(registry);
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error loading registry with id=" + event.getNewValue(), e);
+				LOGGER.error( "Error loading registry with id=" + event.getNewValue(), e);
 			}
 		}
 	}
@@ -51,7 +52,7 @@ public class RegistryRelationshipController extends BasicController {
 					((RegistryRelationship)this.getTo()).setRelationship(relationship);
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error loading relationship with id=" + event.getNewValue(), e);
+				LOGGER.error( "Error loading relationship with id=" + event.getNewValue(), e);
 			}
 		}
 	}

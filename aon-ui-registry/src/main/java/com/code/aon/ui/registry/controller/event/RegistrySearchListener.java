@@ -31,7 +31,7 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	public List<MediaType> getMediaTypes() {
 		if (mediaTypes == null) {
 			mediaTypes = new LinkedList<MediaType>();
-			mediaTypes.add( null );
+			mediaTypes.add(null);
 		}
 		return mediaTypes;
 	}
@@ -45,9 +45,9 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	}
 	
 	public List<GeoZone> getGeoZones() {
-		if (geoZones == null ) {
+		if (geoZones == null) {
 			geoZones = new LinkedList<GeoZone>();
-			geoZones.add( EMPTY_GEOZONE );
+			geoZones.add(EMPTY_GEOZONE);
 		}
 		return geoZones;
 	}
@@ -62,9 +62,9 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	
 	public List<Integer> getGeoZonesIds() {
 		List<Integer> ids = new LinkedList<Integer>();
-		for( GeoZone geozone : getGeoZones() ) {
-			if ( (geozone != null) && (geozone.getId() != null) ) {
-				ids.add( geozone.getId() );
+		for(GeoZone geozone : getGeoZones()) {
+			if ((geozone != null) && (geozone.getId() != null)) {
+				ids.add(geozone.getId());
 			}
 		}
 		return ids;
@@ -75,6 +75,10 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	}
 	
 	public List<String> getSegments() {
+		if (segments == null) {
+			segments = new LinkedList<String>();
+			segments.add(null);
+		}
 		return segments;
 	}
 
@@ -88,9 +92,9 @@ public class RegistrySearchListener extends ControllerSearchListener {
 
 	public List<Integer> getSegmentsIds() {
 		List<Integer> ids = new LinkedList<Integer>();
-		for( String segment : getSegments() ) {
-			if (! StringUtils.isBlank(segment) ) {
-				ids.add( Integer.valueOf(segment) );
+		for(String segment : getSegments()) {
+			if (! StringUtils.isBlank(segment)) {
+				ids.add(Integer.valueOf(segment));
 			}
 		}
 		return ids;
@@ -98,73 +102,73 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setMediaTypes( new LinkedList<MediaType>() );
-		getMediaTypes().add( null );
-		setGeoZones( new LinkedList<GeoZone>() );
-		getGeoZones().add( EMPTY_GEOZONE );
-		setSegments( new LinkedList<String>() );
-		getSegments().add( null );
+		setMediaTypes(new LinkedList<MediaType>());
+		getMediaTypes().add(null);
+		setGeoZones(new LinkedList<GeoZone>());
+		getGeoZones().add(EMPTY_GEOZONE);
+		setSegments(new LinkedList<String>());
+		getSegments().add(null);
 	}
 	
 	public String getPreffix() throws ManagerBeanException {
-		if ( preffix == null ) {
+		if (preffix == null) {
 			Class<?> pojoClass = getController().getManagerBean().getPOJOClass();
 			preffix = ClassUtils.getShortClassName(pojoClass) + "_registry_";
 		}
 		return preffix;
 	}
 	
-	private String resolveAlias( String alias ) throws ManagerBeanException {
-		return getController().resolveAlias( getPreffix() + alias );
+	private String resolveAlias(String alias) throws ManagerBeanException {
+		return getController().resolveAlias(getPreffix() + alias);
 	}
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
 		String mediaType = resolveAlias("medias_mediaType");
-		addEnumToCriteria( criteria, mediaType, getMediaTypes().toArray() );
+		addEnumToCriteria(criteria, mediaType, getMediaTypes().toArray());
 		String geozone = resolveAlias("addresses_geozone_id");
-		addEnumToCriteria( criteria, geozone, getGeoZonesIds().toArray() );		
+		addEnumToCriteria(criteria, geozone, getGeoZonesIds().toArray());		
 		String segment = resolveAlias("segments_segment_id");
-		addEnumToCriteria( criteria, segment, getSegmentsIds().toArray() );
+		addEnumToCriteria(criteria, segment, getSegmentsIds().toArray());
 	}
 	
-	public void onAddMediaType( ActionEvent event ) {
-		this.mediaTypes.add( null );
+	public void onAddMediaType(ActionEvent event) {
+		this.mediaTypes.add(null);
 	}
 	
-	public void onRemoveMediaType( ActionEvent event ) {
+	public void onRemoveMediaType(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
-		int index = Integer.valueOf( context.getExternalContext().getRequestParameterMap().get("index") );		
-		this.mediaTypes.remove( index );
-		if ( this.mediaTypes.isEmpty() ) {
-			this.mediaTypes.add( null );
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		this.mediaTypes.remove(index);
+		if (this.mediaTypes.isEmpty()) {
+			this.mediaTypes.add(null);
 		}
 	}
 
-	public void onAddGeoZone( ActionEvent event ) {
-		getGeoZones().add( EMPTY_GEOZONE );
+	public void onAddGeoZone(ActionEvent event) {
+		getGeoZones().add(EMPTY_GEOZONE);
 	}
 	
-	public void onRemoveGeoZone( ActionEvent event ) {
+	public void onRemoveGeoZone(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
-		int index = Integer.valueOf( context.getExternalContext().getRequestParameterMap().get("index") );		
-		getGeoZones().remove( index );
-		if ( getGeoZones().isEmpty() ) {
-			getGeoZones().add( EMPTY_GEOZONE );
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		getGeoZones().remove(index);
+		if (getGeoZones().isEmpty()) {
+			getGeoZones().add(EMPTY_GEOZONE);
 		}
 	}	
 	
-	public void onAddSegment( ActionEvent event ) {
-		getSegments().add( null );
+	public void onAddSegment(ActionEvent event) {
+		getSegments().add(null);
 	}
 	
-	public void onRemoveSegment( ActionEvent event ) {
+	public void onRemoveSegment(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
-		int index = Integer.valueOf( context.getExternalContext().getRequestParameterMap().get("index") );		
-		getSegments().remove( index );
-		if ( getSegments().isEmpty() ) {
-			getSegments().add( null );
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		getSegments().remove(index);
+		if (getSegments().isEmpty()) {
+			getSegments().add(null);
 		}
 	}
 
