@@ -44,6 +44,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -706,7 +707,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		StringBuffer emails = new StringBuffer();
         for (int i = 0, max = lst.size(); i < max; i++) {
         	Contact e = lst.get(i);
-        	emails.append( e.getEmailLarge() );
+        	emails.append( StringEscapeUtils.unescapeHtml(e.getEmailLarge()) );
         	if (i+1 < max) {
         		emails.append(AonMessageUtils.EMAIL_SEPARATOR).append(" ");
         	}

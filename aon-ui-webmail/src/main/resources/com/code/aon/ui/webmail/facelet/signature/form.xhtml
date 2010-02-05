@@ -31,21 +31,11 @@
 					<aon:outputLabel for="Signature_signature"
 						value="#{webmailBundle.webmail_signature_signature}" />
 					<aon:div style="width:98%">
-						<a4j:region>
-							<aon:selectBooleanCheckbox id="Signature_signature_richTextEnabled"
-								value="#{signature.richTextEnabled}" >
-								<a4j:support reRender="Signature_signature" event="onclick"	/>
-							</aon:selectBooleanCheckbox>
-							<aon:outputLabel for="Signature_signature_richTextEnabled"
-								value="#{webmailBundle.webmail_richtext_enabled}" />	
-							<aon:inputRichText id="Signature_signature"
-								viewMode="#{signature.richTextEnabled?'visual':'source'}"
-								value="#{signature.to.signature}"
-								converter="chromeEditorConverter"
-								height="400" width="640" configuration="tinyMCE" > 
-							</aon:inputRichText>																		
-						</a4j:region>								
-					</aon:div>				
+						<aon:inputRichText id="Signature_signature"
+							value="#{signature.to.signature}" 
+							height="400" configuration="tinyMCE"
+							converter="chromeEditorConverter" />							
+					</aon:div>							
 							
 				</aon:panelGrid>
 			</aon:div>

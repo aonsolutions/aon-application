@@ -104,7 +104,7 @@
 						action="#{webmailMessage.getReturnAction}"
 						actionListener="#{webmailMessage.deleteSelectedMessage}"
 						value="#{bundle.aon_remove}"
-						styleClass="aon-finding-toolbar-item aon-icon-trash">
+						styleClass="aon-finding-toolbar-item aon-icon-mailDelete">
 					</aon:commandButton>
 								
 					<aon:confirmButton id="purgeMail"
@@ -259,7 +259,7 @@
 					value="#{webmailBundle.webmail_date}: " />
 				<aon:div>
 					<aon:outputText value="&#160;" />
-					<aon:outputText value="#{webmailMessage.message.sentDateFullString}" />
+					<aon:outputText value="#{webmailMessage.message.sentDateString}" />
 				</aon:div>
 				
 				<aon:outputText rendered="#{webmailAttach.attachment}" 
