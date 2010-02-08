@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
@@ -18,20 +16,15 @@ import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.ExtendedDataModel;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.richfaces.model.FilterField;
 import org.richfaces.model.Modifiable;
-import org.richfaces.model.Ordering;
 import org.richfaces.model.SortField2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Order;
 
 /**
  * DataModel that loads <code>Page</code>s to load objects.
@@ -60,23 +53,31 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 
     private SequenceRange cachedRange;
 			
-	private SortOderMap sortOrder;
+	private SortOrderMap sortOrder;
 	
 	private boolean sortable;
-	
-	private boolean updated;
     
 	/**
 	 * Instantiates a new page data model2.
 	 * 
 	 * @param dataProvider the IDataModelDataProvider
+	 * @param criteriaProvider the criteria provider
 	 */
-	public ExtendedPageDataModel(IDataModelDataProvider dataProvider) {
+	public ExtendedPageDataModel(IDataModelDataProvider dataProvider, ICriteriaProvider criteriaProvider) {
     	this.dataProvider = dataProvider;
     	this.page = Page.EMPTY_PAGE;
-    	this.sortOrder = new SortOderMap();
+    	this.sortOrder = new SortOrderMap(criteriaProvider);
 	}
 
+	/**
+	 * Instantiates a new extended page data model.
+	 * 
+	 * @param controller the controller
+	 */
+	public ExtendedPageDataModel(IController controller) {
+		this( controller, controller );
+	}	
+	
 	@Override
     public int getRowCount() {
         if (page.getList() == null) {
@@ -237,9 +238,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public void update( int start, int limit ) throws ManagerBeanException {
-		IManagerBean bean = dataProvider.getManagerBean();
-		Criteria criteria = dataProvider.getCriteria();
-		this.rowCount = bean.getCount(criteria);
+		this.rowCount = dataProvider.getRowCount();
 		this.page = getPage(start, limit);
 		this._rowIndex = (this.rowCount > 0) ? start : -1;		
     }
@@ -267,7 +266,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	 * 
 	 * @return the sort order
 	 */
-	public SortOderMap getSortOrder() {
+	public SortOrderMap getSortOrder() {
 		return sortOrder;
 	}	
 	
@@ -329,89 +328,13 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		}
 	}
 	
-	private String[] getAliases( String key ) {
-		String[] aliases = StringUtils.split( (String) key, ',' );
-		if ( aliases != null ) {
-			for( int i = 0; i < aliases.length; i++ ) {
-				aliases[i] = StringUtils.trim(aliases[i]);
-			}
-		}
-		return aliases;
-	}
-	
 	@Override
 	public void modify(List<FilterField> filterFields, List<SortField2> sortFields) {
-		if ( isSortable() && this.updated ) {
+		if ( isSortable() && this.sortOrder.isUpdated() ) {
 			setWrappedData( Collections.emptyList() );
 			this.cachedRange = null;
-			this.updated = false;
+			this.sortOrder.setUpdated(false);
 		}
 	}
-
-	/**
-	 * The Class FakeMap.
-	 */
-	public class SortOderMap extends AbstractMap<String,Ordering> {
-		
-		private Criteria getCriteria() {
-			try {
-				return dataProvider.getCriteria();
-			} catch (ManagerBeanException e) {
-				throw new FacesException(e.getMessage(), e); 
-			}
-		}
-		
-		@Override
-		public Ordering get(Object key) {
-			Criteria  criteria = getCriteria();
-			if ( criteria.hasOrders() ) {
-				String[] aliases = getAliases( (String) key );
-				if (! ArrayUtils.isEmpty(aliases) ) {
-					Order order = criteria.getOrderByList().get(aliases[0]);
-					if ( order != null ) {
-						return order.isAscending() ? Ordering.ASCENDING : Ordering.DESCENDING;
-					}					
-				}
-			}
-			return Ordering.UNSORTED;
-		}
-		
-		private void updateOrder( Criteria criteria, String alias, Ordering value ) {
-			int index = -1;
-			if ( criteria.hasOrders() ) {
-				index = criteria.getOrderByList().indexOf(alias);
-			}
-			if ( index != -1 ) {
-				Order order = criteria.getOrderByList().getOrders().get(index);
-				if (! order.isAscending()) {
-					criteria.getOrderByList().remove(index);
-				} else {
-					Order newOrder = new Order(order.getExpression(), false );
-					criteria.getOrderByList().getOrders().set(index, newOrder);
-				}
-			} else {
-				if ( value != Ordering.UNSORTED ) {
-					criteria.addOrder(alias, Ordering.ASCENDING == value);
-				}							
-			}
-		}
-		
-		@Override
-		public Ordering put(String key, Ordering value) {
-			Criteria  criteria = getCriteria();
-			String[] aliases = getAliases( key );
-			for( String alias : aliases ) {
-				updateOrder(criteria, alias, value);
-			}
-			updated = true;			
-			return value;
-		}
-
-		@Override
-		public Set<java.util.Map.Entry<String, Ordering>> entrySet() {
-			return null;
-		}
-		
-	}	
 	
 }
