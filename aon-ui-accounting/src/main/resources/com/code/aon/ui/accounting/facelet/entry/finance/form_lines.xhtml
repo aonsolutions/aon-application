@@ -30,7 +30,7 @@
 	</aon:div>
 
 	<aon:div id="lineDataDiv">
-		<aon:dataTable id="lineData" value="#{financeEntry.lines}"
+		<aon:dataTable id="lineData" value="#{financeEntry.lines}" sortMode="multi"
 			var="to" rows="20" rendered="#{financeEntry.lines.rowCount > 0}"
 			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
@@ -52,21 +52,24 @@
 				</aon:div>
 			</aon:column>
 
-			<aon:column>
+			<aon:column sortBy="#{to.invoice.referenceCode}"
+				sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_invoice}" />
 				</f:facet>
 				<aon:outputText value="#{to.invoice.referenceCode}" />
 			</aon:column>
 			
-			<aon:column>
+			<aon:column sortBy="#{to.invoice.registryName}"
+				sortOrder="#{financeEntry.order['Finance_invoice_registryName']}">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.invoice.registryName}" />
 			</aon:column>
 	
-			<aon:column>
+			<aon:column sortBy="#{to.dueDate}"
+				sortOrder="#{financeEntry.order['Finance_dueDate']}">
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_finance_date}" />
 				</f:facet>
@@ -76,28 +79,32 @@
 				</aon:outputText>
 			</aon:column>
 	
-			<aon:column>
+			<aon:column sortBy="#{to.payMethod.name}"
+				sortOrder="#{financeEntry.order['Finance_payMethod_name']}">
 				<f:facet name="header">
 					<aon:outputText value="#{configBundle.config_pay_method}" />
 				</f:facet>
 				<aon:outputText value="#{to.payMethod.name}" />
 			</aon:column>
 	
-			<aon:column>
+			<aon:column sortBy="#{to.bankAccount}"
+				sortOrder="#{financeEntry.order['Finance_bankAccount']}">
 				<f:facet name="header">
 					<aon:outputText value="#{configBundle.config_bank_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}"/>
 			</aon:column>
 	
-			<aon:column>
+			<aon:column sortBy="#{to.financeStatus}"
+				sortOrder="#{financeEntry.order['Finance_financeStatus']}">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_status}" />
 				</f:facet>
 				<aon:outputText value="#{to.financeStatus}"/>
 			</aon:column>
 	
-			<aon:column>
+			<aon:column sortBy="#{to.totalAmount}"
+				sortOrder="#{financeEntry.order['Finance_totalAmount']}">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_amount}" />
 				</f:facet>
