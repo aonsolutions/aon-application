@@ -34,6 +34,7 @@ public class ItemStock {
 
 	private Item item;
 	private Warehouse warehouse;
+	private Double rowStock;
 	private String componentId;
 	private String alternativeMethod;
 
@@ -72,6 +73,14 @@ public class ItemStock {
 
 	public void setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
+	}
+
+	public Double getRowStock() {
+		return rowStock;
+	}
+
+	public void setRowStock(Double rowStock) {
+		this.rowStock = rowStock;
 	}
 
 	public String getComponentId() {

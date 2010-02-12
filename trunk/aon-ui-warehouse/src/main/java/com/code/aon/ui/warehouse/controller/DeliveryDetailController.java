@@ -116,16 +116,30 @@ public class DeliveryDetailController extends LinesController {
 			if (iterator.hasNext()) {
 				stock = ((Stock)iterator.next()).getQuantity();
 			}
-
-			if (!isNew()) {
-				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(to.getId());
-				if (to.getItem().equals(deliveryDetail.getItem())) {
-					stock += deliveryDetail.getQuantity();
-				}
-			}
+			stock += getRowStock(to);
 		}
 		return stock;
+	}
+
+	private double getRowStock(DeliveryDetail to) throws ManagerBeanException {
+		double rowStock = 0;
+		if (!isNew()) {
+			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+			DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(to.getId());
+			if (to.getItem().equals(deliveryDetail.getItem())) {
+				rowStock = deliveryDetail.getQuantity();
+			}
+		}
+		return rowStock;
+	}
+
+	public Double getRowStock() throws ManagerBeanException {
+		double rowStock = 0;
+		DeliveryDetail to = (DeliveryDetail)getTo();
+		if (to != null && to.getItem() != null && to.getItem().getId() != null) {
+			rowStock = getRowStock(to);
+		}
+		return new Double(rowStock);
 	}
 
 	public boolean isStockWarning() throws ManagerBeanException {
