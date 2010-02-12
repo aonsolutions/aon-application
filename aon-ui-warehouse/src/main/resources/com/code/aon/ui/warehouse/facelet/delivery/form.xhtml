@@ -379,6 +379,7 @@
 													<aon:set var="#{itemStock.alternativesVisible}" value="#{true}" />
 													<aon:set var="#{itemStock.item}" value="#{deliveryDetail.to.item}" /> 
 													<aon:set var="#{itemStock.warehouse}" value="#{delivery.warehouse}" /> 
+													<aon:set var="#{itemStock.rowStock}" value="#{deliveryDetail.rowStock}" /> 
 													<aon:set var="#{itemStock.componentId}" value="DeliveryDetail_item_product_code" />
 													<aon:set var="#{itemStock.alternativeMethod}" value="deliveryDetail.onItemChanged" />
 												</aon:commandButton>															
@@ -435,6 +436,7 @@
 														<aon:set var="#{itemStock.alternativesVisible}" value="#{true}" />
 														<aon:set var="#{itemStock.item}" value="#{deliveryDetail.to.item}" /> 
 														<aon:set var="#{itemStock.warehouse}" value="#{delivery.warehouse}" /> 
+														<aon:set var="#{itemStock.rowStock}" value="#{deliveryDetail.rowStock}" /> 
 														<aon:set var="#{itemStock.componentId}" value="DeliveryDetail_item_product_code-New" />
 														<aon:set var="#{itemStock.alternativeMethod}" value="deliveryDetail.onItemChanged" />
 													</aon:commandButton>															
