@@ -39,17 +39,7 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 	
 	private Date dateToExpire;
 
-	private String selectedTab;
-	
 	private int page;
-	
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
 	
 	public int getPage() {
 		return page;

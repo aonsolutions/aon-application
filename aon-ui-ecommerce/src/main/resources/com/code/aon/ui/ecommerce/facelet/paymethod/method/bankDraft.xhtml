@@ -8,7 +8,56 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<div>
-	Bank Draft
-	</div>
+	<aon:form>
+		<div>
+			<aon:outputText value="Giro postal" />
+			<aon:div>
+				<aon:lookupInputText id="RegistryBank_code" property="#{cartOffer.offer.bank}"
+					reRender="RegistryBank_name" lookup="#{bankLookup}"
+					value="#{cartOffer.offer.bank.code}" size="5">
+					<aon:joinProperty alias="Bank_code" value="#{cartOffer.offer.bank.code}" />
+				</aon:lookupInputText>
+				<aon:lookupButton 
+					windowTitle="#{configBundle.config_bank_selection}"
+					selectReRender="RegistryBank_code,RegistryBank_name" actionType="search"
+					lookup="#{bankLookup}" minHeight="460" minWidth="650"
+					property="#{cartOffer.offer.bank}">
+				</aon:lookupButton>
+				<aon:inputText id="RegistryBank_name"
+					value="#{cartOffer.offer.bank.name}"
+					size="50" disabled="true" />		
+			</aon:div>
+			<aon:div>
+				<aon:inputText id="Offer_bank_office"
+					value="#{cartOffer.offer.bankAccount.office}"
+					size="4" maxlength="4">
+					<f:validateLength minimum="4" maximum="4" />
+				</aon:inputText>
+				<aon:inputText id="Offer_bank_control"
+					value="#{cartOffer.offer.bankAccount.control}"
+					size="2" maxlength="2">
+					<f:validateLength minimum="2" maximum="2" />
+				</aon:inputText>
+				<aon:inputText id="Offer_bank_account"
+					value="#{cartOffer.offer.bankAccount.account}"
+					size="10" maxlength="10">
+					<f:validateLength minimum="10" maximum="10" />
+				</aon:inputText>
+			</aon:div>
+		</div>
+		<div>
+		<!--  
+			<h:commandButton action="" value="" />
+			<h:commandLink action="" value="" />	
+		-->
+			<aon:commandButton id="aonToolbar-accept" value="#{bundle.aon_accept}"
+				action="cartOffer_form"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				accesskey="#{bundle.aon_key_accept}" >
+				<aon:actionListener method="#{cartOffer.onCheckBankAccount}" />
+				<aon:actionListener method="#{cartOffer.onAccept}" />
+			</aon:commandButton>
+		</div>
+	</aon:form>
+	<aon:lookupButtonPopup lookup="#{bankLookup}" />
 </ui:composition>

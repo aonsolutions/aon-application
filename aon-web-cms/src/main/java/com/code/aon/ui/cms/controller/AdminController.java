@@ -36,11 +36,6 @@ public class AdminController implements ICMSConstants {
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
-	
-	public String loginAction() {
-		CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
-		return cms.isAdministrator() ? HOME : null;
-	}
 
 	public void onAccept(ActionEvent event) {
 		String crypted = hash(passwd);
@@ -49,9 +44,6 @@ public class AdminController implements ICMSConstants {
 			domainUtilities.assignAdminProfile();
 			CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
 			cms.assignAdminProfile();
-		} else {
-			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", user);
-			AonUtil.addErrorMessage(message);
 		}
 		user = "";
 		passwd = "";

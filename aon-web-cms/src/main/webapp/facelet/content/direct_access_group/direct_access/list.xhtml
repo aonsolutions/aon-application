@@ -12,40 +12,67 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="directAccessList">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.direct_access}" />
-				<ui:param name="controller" value="#{direct_access}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="generate" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" immediate="true"
-						rendered="#{cms.roleEditor}"
-						actionListener="#{generator.onGenerateDirectAccess}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_save}">
-						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
-							actionListener="#{generator_status.onActivePoll}"  
-							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-					</aon:commandButton>	
-					<aon:commandButton id="home"
-						value="#{bundle.aon_home}"
-						action="home" 
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>
-					<aon:commandButton id="categories"
-						value="#{appBundle.direct_access_group}"
-						action="direct_access_group_list"
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item-no-icon">
-						<aon:actionListener method="#{direct_access_group.onSearch}" />
-					</aon:commandButton>
-				</ui:define>
-			</ui:decorate>
+		<aon:form id="list">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.direct_access}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" 
+							value="#{bundle.aon_reset}"
+							action="direct_access_form"
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{direct_access.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							action="direct_access_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{direct_access.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="generate" reRender="aonStatus"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateDirectAccess}" />
+							<a4j:support 
+								event="onclick" reRender="poll,grid" 
+								actionListener="#{generator_status.onActivePoll}"  
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+						</aon:commandButton>	
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+						<aon:commandButton id="categories"
+							value="#{appBundle.direct_access_group}"
+							action="direct_access_group_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item-no-icon">
+							<aon:actionListener method="#{direct_access_group.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -63,28 +90,29 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" />
+						<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.direct_access_label}" />
 						</f:facet>
-						<aon:outputText value="#{direct_access.i18nLabel}" />
+						<aon:outputText value="#{direct_access.i18nLabel}"
+							styleClass="aon-editDataTable-button"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.direct_access_group}" />
 						</f:facet>
-						<aon:outputText value="#{to.directAccessGroup.alias}" />
+						<aon:outputText value="#{to.directAccessGroup.alias}" styleClass="aon-editDataTable-button" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.direct_access_position}" />
 						</f:facet>
-						<aon:outputText value="#{to.position}" />
+						<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
 					</aon:column>
 					
 					<aon:column>

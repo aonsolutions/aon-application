@@ -13,10 +13,10 @@ import com.code.aon.product.Product;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.product.controller.ItemController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ItemControllerListener extends ControllerAdapter {
@@ -25,7 +25,7 @@ public class ItemControllerListener extends ControllerAdapter {
 
     @Override
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-        IController controller = event.getController();
+        ItemController controller = (ItemController)event.getController();
         try {
             controller.getCriteria().addEqualExpression(controller.getFieldName(IProductAlias.ITEM_PRODUCT_COMPOSITION), new Boolean(false));
         } catch (ManagerBeanException e) {
@@ -36,28 +36,18 @@ public class ItemControllerListener extends ControllerAdapter {
     @Override
     @SuppressWarnings("unchecked")
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-    	Item item = (Item)event.getController().getTo();
-    	try {
-            ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(CONFIG_COLLECTIONS_CONTROLLER);
+        ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(CONFIG_COLLECTIONS_CONTROLLER);
+        try {
         	List vats = collections.getVatTaxes();
         	if (vats.size() > 0) {
         		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();
-        		item.getProduct().setVat(vat);
+        		((Item)event.getController().getTo()).getProduct().setVat(vat);
         	}
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
         }
-        item.getProduct().setInventoriable(true);
-        item.getProduct().setComposition(false);
-    	item.getAlternativeItem().setProduct(new Product());
-    }
-
-    @Override
-    public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-    	Item item = (Item)event.getController().getTo();
-    	if (item.getAlternativeItem().getProduct() == null) {
-        	item.getAlternativeItem().setProduct(new Product());
-    	}
+        ((Item)event.getController().getTo()).getProduct().setInventoriable(true);
+        ((Item)event.getController().getTo()).getProduct().setComposition(false);
     }
 
 	@Override
@@ -75,26 +65,7 @@ public class ItemControllerListener extends ControllerAdapter {
 		}
 	}
 
-    @Override
-    public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-    	Item item = (Item)event.getController().getTo();
-    	initializeAlternativeItem(item);
-    }
-
-    @Override
-    public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-    	Item item = (Item)event.getController().getTo();
-    	initializeAlternativeItem(item);
-    }
-    
-	private void initializeAlternativeItem(Item item) {
-    	if (item.getAlternativeItem() == null) {
-    		item.setAlternativeItem(new Item());
-        	item.getAlternativeItem().setProduct(new Product());
-    	}
-	}
-
-    @Override
+	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Item item = (Item)event.getController().getTo();

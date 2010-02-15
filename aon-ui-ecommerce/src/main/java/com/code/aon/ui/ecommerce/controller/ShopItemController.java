@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -29,8 +27,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ShopItemController {
 	
-	private static final Logger LOGGER = Logger
-	.getLogger(ShopItemController.class.getName());
+	//private static final Logger LOGGER = LoggerFactory
+	//.getLogger(ShopItemController.class.getName());
 
 	private ShopItem item;
 	private List<ItemAttachment> imageList;
@@ -63,7 +61,7 @@ public class ShopItemController {
 	public void setItem(ShopItem item) {
 		this.item = item;
 	}
-
+	
 	public List<ItemAttachment> getImageList() {
 		if (imageList == null) {
 			imageList = new LinkedList<ItemAttachment>();
@@ -212,7 +210,7 @@ public class ShopItemController {
 			sos.close();
 			response.flushBuffer();
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			//LOGGER.error(e.getMessage(), e);
 		}
 	}
 	

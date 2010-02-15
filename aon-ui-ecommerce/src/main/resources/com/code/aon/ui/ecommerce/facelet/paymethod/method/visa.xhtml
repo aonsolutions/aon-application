@@ -8,62 +8,20 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-
-
-
 	<div>
-		<form action="#{creditCard.qbTestingUrl}" method="post">
+		<form action="#{creditCard.qbUrl}" method="post">
 <!--  
-		<form action="http://82.144.6.231/aon-ecommerce/qbPayment" method="post">
-		<form action="https://tpv2.4b.es/simulador/teargral.exe" method="post">
-			<input type="hidden" value="es"/> 
--->
 			<input type="hidden" name="order" value="COMPRA"/> 
-			<input type="hidden" name="store" value="PI00012936"/> 
-			<input type="submit" value="SUBMIT"/>
+			<input type="hidden" name="store" value="PI00012936"/>
+			<f:param name="locale" value="es" /> 
+-->
+			<input type="hidden" name="order" value="#{creditCard.purchaseRef}"/> 
+			<input type="hidden" name="store" value="#{creditCard.commerceKey}"/> 
+			<input type="submit" value="Acceder a la pasarela de pago."/>
 		</form>
 	</div>
-	<div>
-		<!--  
-		<h:outputLink
-			value="#" target="visa">
-			<f:param name="amount" value="#{shoppingCart.cart.total}" />
-			<f:param name="desc" value="COMPRA" />
-			<f:param name="id" value="PI00012936" />
-			<f:param name="locale" value="es" />
-						
-			
-			<aon:outputText style="color:#000;" value="PAGAR outputLink" />
-		</h:outputLink>
 		
-		<br />
-		-->
-
-			<!--  
-		<h:commandButton target="visa" value="PAGAR commandButom">
-			<f:param name="order" value="COMPRA" />
-			<f:param name="store" value="PI00012936" />
-			<f:param name="locale" value="es" />
-			<aon:actionListener method="#{creditCard.redirectUrl}" />
-						
-		</h:commandButton>
-			-->
-		
-			<!--  
-		<a4j:commandLink >
-		</a4j:commandLink>
-			-->
-
-		<!--  
-		<aon:commandButton >
-			<h:graphicImage style="margin-right:7px;"
-				value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
-			<aon:actionListener method="#{shop.paypalIpn}" />
-		</aon:commandButton>
-		-->
-	</div>
-	
-		<!--  
+<!--  
 	<div>	
 		<form action="https://tpv2.4b.es/simulador/teargral.exe" method="post">
 			<input type="hidden" value="COMPRA"/> 
@@ -74,6 +32,6 @@
 			
 		</form>
 	</div>
-		-->
+-->
 
 </ui:composition>

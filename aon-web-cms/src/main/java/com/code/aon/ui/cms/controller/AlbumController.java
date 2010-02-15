@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.FilenameUtils;
-
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumCategoryDetail;
@@ -34,16 +32,6 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 	private boolean showAlbumWindow;
 	
 	private int page;
-	
-	private boolean richTextEnabled;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}	
 	
 	public int getPage() {
 		return page;
@@ -158,9 +146,8 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 			albumCategoryDetail = (AlbumCategoryDetail)albumCategoryDetailBean.insert(albumCategoryDetail);
 			
 			this.status.add(0,GregorianCalendar.getInstance().getTime()+": Not exist. Category created.");
-		} else {
-			albumCategory = (AlbumCategory)albumCategoryList.get(0);
-		}
+		}else
+			albumCategory = (AlbumCategory)albumCategoryList.get(0); 
 
 		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Creating album...");
 
@@ -170,9 +157,8 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 		Criteria albumCriteria = new Criteria();
 		String alias = controller.getCurrentRelativePath();
 		alias = alias.replaceAll("[^A-Za-z0-9._-]+", "");
-		if ( alias.length()>32 ) {
+		if (alias.length()>32)
 			alias = alias.substring(0, 32);
-		}
 		
 		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Album name "+alias+".");
 		
@@ -235,8 +221,7 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 			
 			albumImageDetail = new AlbumImageDetail();
 			albumImageDetail.setAlbumImage(albumImage);
-			String title = FilenameUtils.getBaseName(image.getName());
-			albumImageDetail.setTitle(title);
+			albumImageDetail.setTitle(image.getName());
 			albumImageDetail.setLanguage(ControllerUtil.getCurrentLanguage());
 			albumImageDetailBean.insert(albumImageDetail);
 			

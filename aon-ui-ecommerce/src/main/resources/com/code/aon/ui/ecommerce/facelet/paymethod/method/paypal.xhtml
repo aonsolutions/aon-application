@@ -8,8 +8,19 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<div>
-	<form id="paypalForm">
+
+	<aon:div>
+<!-- 
+		<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" >
+			<input type="hidden" name="cmd" value="_notify-synch" />
+			<input type="hidden" name="tx" value="TransactionID" />
+			<input type="hidden" name="at" value="YourIdentityToken" />
+			<input type="submit" value="PDT" />
+ -->
+		<aon:form>
+		 
+	
+	
 		<!--  
 		<div>
 			<h:graphicImage style="width:120px; height: 70px;"
@@ -43,7 +54,7 @@
 		
 		
 		
-		<aon:div>
+		
 		
 			<!--  
 		<h:outputLink
@@ -80,22 +91,18 @@
 				value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
 			<aon:actionListener method="#{shop.paypalIpn}" />
 		</aon:commandButton>
-		
 	-->
 		
+		
+		<!--  
 		<aon:outputText value="" />
 		
-			<h:commandButton value="&#160;" >
-				<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
-				<aon:actionListener method="#{paypal.initialize}" />
-			</h:commandButton>
+		<h:commandButton value="&#160;" >
+			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
+			<aon:actionListener method="#{paypal.initialize}" />
+		</h:commandButton>
+		-->
 		
-		
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
 		
 		
 		<aon:commandLink>
@@ -110,7 +117,7 @@
 			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif"  />
 		</h:outputLink> 
 		-->
-		
+			</aon:form>
 		</aon:div>
 		
 		
@@ -128,13 +135,7 @@
 		<!--  
 									<f:param name="tx" value="1"/>
 									<f:param name="at" value="1"/>
-								<form method=post action="https://www.paypal.com/cgi-bin/webscr">
-									<input type="hidden" name="cmd" value="_notify-synch">
-									<input type="hidden" name="tx" value="TransactionID">
-									<input type="hidden" name="at" value="YourIdentityToken">
-									<input type="submit" value="PDT">
-								</form> 
 		-->
-	</form>
-	</div>
+								
+	
 </ui:composition>

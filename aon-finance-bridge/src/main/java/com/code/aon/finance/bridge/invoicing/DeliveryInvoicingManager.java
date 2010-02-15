@@ -67,7 +67,7 @@ public class DeliveryInvoicingManager {
 		invoice.setRegistry(delivery.getCustomer().getRegistry());
 		invoice.setRegistryDocument(delivery.getCustomer().getRegistry().getDocument());
 		invoice.setRegistryName(delivery.getCustomer().getRegistry().getFullName());
-		invoice.setRegistryAddress(delivery.getRegistryAddress());
+		invoice.setRegistryAddress(delivery.getRaddress());
 		invoice.setIssueDate(issueDate);
 		invoice.setTaxDate(issueDate);
 		invoice.setSecurityLevel(delivery.getSecurityLevel());

@@ -32,21 +32,21 @@
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!sport_coach.new and cms.roleEditor}"
-							reRender="dataTableDiv,gridToolbar"
+							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{sport_coach.onReset}" />
 						</aon:commandButton>
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{sport_coach.to!=null}"
-							reRender="dataTableDiv, gridToolbar"
+							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{sport_coach.onAccept}" />
 						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{sport_coach.to!=null}"
-							reRender="dataTableDiv, gridToolbar"
+							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}"
 							accesskey="#{bundle.aon_key_cancel}">
@@ -56,7 +56,7 @@
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div id="dataTableDiv" styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area">
 
 				<aon:dataTable id="dataTable"
 					value="#{sport_coach.model}" var="to" 
@@ -64,10 +64,6 @@
 					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 							   aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 							   aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
-
-					<aon:rowSelector immediate="true" reRender="dataTableDiv,gridToolbar"
-						toggleOnClick="#{sport_coach.to == null}"
-						actionListener="#{sport_coach.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">
@@ -82,7 +78,7 @@
 									title="[#{bundle.aon_reset}]"
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									value="" immediate="true"
-									reRender="dataTableDiv,gridToolbar"
+									reRender="dataTable,gridToolbar"
 									rendered="#{!sport_coach.new and cms.roleEditor}"
 									actionListener="#{sport_coach.onReset}"
 									accesskey="#{bundle.aon_key_new_line}">
@@ -96,7 +92,12 @@
 							<aon:outputText value="#{appBundle.sport_coach_sportClub}" />
 						</f:facet>
 						<aon:outputText value="#{to.sportClub.description}"
-							rendered="#{to!=sport_coach.to}" >
+							rendered="#{to!=sport_coach.to}" 
+							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								reRender="dataTable,gridToolbar"
+								actionListener="#{sport_coach.onSelect}"
+								event="onclick" />
 						</aon:outputText>	
 						<aon:selectOneMenu rendered="#{to==sport_coach.to}"  
 							value="#{sport_coach.to.sportClub.id}">
@@ -117,7 +118,12 @@
 							<aon:outputText value="#{appBundle.sport_coach_job}" />
 						</f:facet>
 						<aon:outputText value="#{to.job}"
-							rendered="#{to!=sport_coach.to}" >
+							rendered="#{to!=sport_coach.to}" 
+							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								reRender="dataTable,gridToolbar"
+								actionListener="#{sport_coach.onSelect}"
+								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{sport_coach.to.job}"
 							rendered="#{to==sport_coach.to}"
@@ -136,7 +142,12 @@
 							<aon:outputText value="#{appBundle.sport_coach_name}" />
 						</f:facet>
 						<aon:outputText value="#{to.name}"
-							rendered="#{to!=sport_coach.to}" >
+							rendered="#{to!=sport_coach.to}" 
+							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								reRender="dataTable,gridToolbar"
+								actionListener="#{sport_coach.onSelect}"
+								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{sport_coach.to.name}"
 							rendered="#{to==sport_coach.to}"
@@ -159,20 +170,20 @@
 							<aon:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
-								reRender="dataTableDiv,gridToolbar">
+								reRender="dataTable,gridToolbar">
 								<aon:actionListener method="#{sport_coach.onAccept}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
-								reRender="dataTableDiv,gridToolbar" immediate="true">
+								reRender="dataTable,gridToolbar" immediate="true">
 								<aon:actionListener method="#{sport_coach.onCancel}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineRemove"
 								rendered="#{cms.roleEditor}"
 								title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
-								reRender="dataTableDiv,gridToolbar" immediate="true"
+								reRender="dataTable,gridToolbar" immediate="true"
 								actionListener="#{sport_coach.onRemove}" />
 						</aon:div>
 						<f:facet name="footer">
@@ -181,13 +192,13 @@
 								<aon:commandButton id="newAccept"
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									reRender="dataTableDiv,gridToolbar">
+									reRender="dataTable,gridToolbar">
 									<aon:actionListener method="#{sport_coach.onAccept}" />
 								</aon:commandButton>
 								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									reRender="dataTableDiv,gridToolbar" immediate="true">
+									reRender="dataTable,gridToolbar" immediate="true">
 									<aon:actionListener method="#{sport_coach.onCancel}" />
 								</aon:commandButton>
 							</aon:div>
@@ -195,7 +206,7 @@
 					</aon:column>
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="dataTable" />					
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
 			
 			</aon:div>
 			

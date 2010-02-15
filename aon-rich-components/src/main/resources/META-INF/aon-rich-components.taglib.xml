@@ -18,7 +18,7 @@
 				com.code.aon.faces.PanelGrid
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.panelGrid.PanelGridHandler
+				com.code.aon.faces.component.AonComponentHandler
 			</handler-class>
 		</component>
 	</tag>
@@ -313,17 +313,6 @@
 		</component>
 	</tag>
 	<tag>
-		<tag-name>extendedDataTable </tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.ExtendedDataTable 
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.richfaces.dataTable.DataTableHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
 		<tag-name>editDataTable</tag-name>
 		<component>
 			<component-type>
@@ -556,19 +545,7 @@
 				com.code.aon.faces.component.richfaces.actionHotKey.ActionHotKeyHandler
 			</handler-class>
 		</component>
-	</tag>
-	<tag>
-		<tag-name>pickList</tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.PickList
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.richfaces.AonAjaxInputHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
+	</tag>	<tag>
 		<tag-name>methodParam</tag-name>
 		<handler-class>com.code.aon.faces.component.methodParam.MethodParamHandler</handler-class>
 	</tag>

@@ -117,9 +117,26 @@
 			<value>GenericPageDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>GenericPage_active DESC,GenericPage_alias</value>
-		</managed-property>								
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{genericPageControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>genericPageControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.GenericPageControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** MENU ************** -->
@@ -135,6 +152,10 @@
 			<property-name>beanName</property-name>
 			<value>menu</value>
 		</managed-property>												
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -224,9 +245,26 @@
 			<value>LinkCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>LinkCategory_alias</value>
-		</managed-property>										
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{linkCategoryListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>linkCategoryListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.LinkCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** LINK ************** -->
@@ -253,6 +291,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>LinkDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -295,9 +341,26 @@
 			<value>FaqCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>FaqCategory_alias</value>
-		</managed-property>								
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{faqCategoryListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>faqCategoryListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.FaqCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** FAQ ************** -->
@@ -324,6 +387,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>FaqDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -366,6 +437,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -404,6 +479,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>ProductCategoryDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -493,7 +576,29 @@
 			<property-name>languageAlias</property-name>
 			<value>ProductDetail_language_id</value>
 		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{productListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>productListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.ProductControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	
 	<!-- ************** ARTICLE CATEGORY ************** -->
 	<managed-bean>
@@ -521,9 +626,26 @@
 			<value>ArticleCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ArticleCategory_alias</value>
-		</managed-property>				
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{articleCategoryListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>articleCategoryListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.ArticleCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** ARTICLE ************** -->
@@ -550,6 +672,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>ArticleDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -592,9 +722,26 @@
 			<value>BannerCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>BannerCategory_alias</value>
-		</managed-property>						
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{bannerCategoryListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>bannerCategoryListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.BannerCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** BANNER ************** -->
@@ -621,6 +768,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>BannerDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -663,9 +818,26 @@
 			<value>DownloadCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>AlbumCategory_alias</value>
-		</managed-property>								
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{downloadCategoryListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>downloadCategoryListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.DownloadCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** DOWNLOAD ************** -->
@@ -692,6 +864,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>DownloadDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -734,9 +914,26 @@
 			<value>AlbumCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>AlbumCategory_alias</value>
-		</managed-property>						
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{albumCategoryListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>albumCategoryListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.AlbumCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** ALBUM ************** -->
@@ -763,6 +960,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>AlbumDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -805,6 +1010,14 @@
 			<value>AlbumImageDetail_language_id</value>
 		</managed-property>
 		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -821,7 +1034,7 @@
 	
 	<!-- ************** HEADER ************** -->
 	<managed-bean>
-		<managed-bean-name>cmsHeader</managed-bean-name>
+		<managed-bean-name>headers</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.HeaderController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -833,10 +1046,6 @@
 			<value>com.code.aon.cms.HeaderDetail</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>cmsHeader</value>
-		</managed-property>								
-		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>HeaderDetail_header_id</value>
 		</managed-property>
@@ -847,6 +1056,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -880,6 +1093,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -911,6 +1128,10 @@
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>		
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -994,6 +1215,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1034,9 +1259,13 @@
 			<value>ModularPageDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ModularPage_homepage DESC,ModularPage_active DESC,ModularPage_alias</value>
-		</managed-property>										
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1076,6 +1305,10 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>ModularPageOptionDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
@@ -1122,10 +1355,27 @@
 			<value>DirectAccessGroupDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>DirectAccessGroup_alias</value>
-		</managed-property>								
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{directAccessGroupListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>directAccessGroupListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.DirectAccessGroupControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
 
 	<!-- ************** DIRECT ACCESS ************** -->
 	<managed-bean>
@@ -1151,6 +1401,14 @@
 		<managed-property>
 			<property-name>languageAlias</property-name>
 			<value>DirectAccessDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1355,9 +1613,13 @@
 			<value>ActivityDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Activity_alias</value>
-		</managed-property>										
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1380,6 +1642,10 @@
 		<managed-bean-class>com.code.aon.ui.cms.controller.CompanyController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.cms.Company</value>
 		</managed-property>
@@ -1387,6 +1653,10 @@
 			<property-name>beanName</property-name>
 			<value>company</value>
 		</managed-property>								
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1432,6 +1702,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1464,6 +1738,10 @@
 			<value>bulletin_email</value>
 		</managed-property>				
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1495,6 +1773,10 @@
 			<property-name>beanName</property-name>
 			<value>bulletin_article</value>
 		</managed-property>						
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1586,6 +1868,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.cms.HiruOrganizerCentre</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1681,6 +1967,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1712,6 +2002,10 @@
 			<property-name>beanName</property-name>
 			<value>sport_club</value>
 		</managed-property>																
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1755,6 +2049,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1801,6 +2099,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1831,6 +2133,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1865,6 +2171,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1892,6 +2202,10 @@
 			<property-name>beanName</property-name>
 			<value>sport_career_path</value>
 		</managed-property>																								
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>10</value>
@@ -1927,6 +2241,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

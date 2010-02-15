@@ -9,8 +9,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
-	<ui:define name="content">
-	 
+	<ui:define name="content">	 
         
            <ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 				<ui:param name="statController" value="#{stat}" />
@@ -23,11 +22,18 @@
 				<aon:methodParam name="backMethod" value="" type="actionListener" />
 			    <aon:methodParam name="goMethod" value="#{stat.onAbcProductSelect}" type="actionListener" />
 				<ui:param name="paramName" value="product" />
-			     <ui:param name="showLastColumn" value="false" />
+			    <ui:param name="showLastColumn" value="false" />
+			    <aon:methodParam name="lastColumnAction" value="#{stat.onProductRegistryStats}" type="actionListener" />
+				<aon:methodParam  name="customerFacelet" value="customer_stat_list" />				
+				<c:if  test="#{stat.invoiceType==1}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==0}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
+				</c:if>		   
 				<ui:param name="reportKeyParam" value="abcStatsList" />
 				<ui:param name="reportGraphKeyParam" value="productStatsGraph" />
-			</ui:include>		
-       	
+			</ui:include>		      	
 		
 	</ui:define>
 </ui:composition>

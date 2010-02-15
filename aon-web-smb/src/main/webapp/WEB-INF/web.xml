@@ -168,7 +168,7 @@
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
-
+	 
 	<context-param>
 		<description>
 			Is a comma-separated list of custom ViewHandler instances

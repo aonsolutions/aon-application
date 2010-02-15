@@ -5,26 +5,37 @@ import java.io.FileFilter;
 
 public class FileSystemNode {
 
-    private static final FileSystemNode[] CHILDREN_ABSENT = new FileSystemNode[0];
-	
-    private File path;
+    private String path;
+    private static FileSystemNode[] CHILDREN_ABSENT = new FileSystemNode[0];
     private FileSystemNode[] children;
+    private String shortPath;
     private FileSystemBean bean_;
 
-    public FileSystemNode(File path, FileSystemBean bean_) {
-    	this.path = path;
+    public FileSystemNode(String path, FileSystemBean bean_) {
+        this.path = path.replace('\\', '/');
+        int idx = this.path.lastIndexOf('/');
+        if (idx != -1) {
+            shortPath = this.path.substring(idx + 1);
+        } else {
+            shortPath = this.path;
+        }
         this.bean_ = bean_;
     }
 
     public synchronized FileSystemNode[] getNodes() {
         if (children == null) {
-	    	if (path.isDirectory()) {
-	    		File[] nodes = path.listFiles(new FileFilter() {
+    		File dir = new File(path);
+	    	if (dir.isDirectory()) {
+	    		File[] nodes = dir.listFiles(new FileFilter() {
 	                public boolean accept(File path) { return path.isDirectory(); }
 	            });
                 children = new FileSystemNode[nodes.length];
                 for (int i = 0; i < nodes.length; i++) {
-                    children[i] = new FileSystemNode(nodes[i], this.bean_);
+                    String nodePath = nodes[i].toString();
+                    if (nodePath.endsWith("/")) {
+                        nodePath = nodePath.substring(0, nodePath.length() - 1);
+                    }
+                    children[i] = new FileSystemNode(nodePath, this.bean_);
                 }
             } else {
                 children = CHILDREN_ABSENT;
@@ -33,17 +44,16 @@ public class FileSystemNode {
         return children;
     }
 
-    public File getPath() {
+    public String toString() {
+        return shortPath;
+    }
+    
+    public String getPath() {
 		return path;
 	}
 
 	public void onSelectFolder(){
-		bean_.setSelected( getPath() );
+		bean_.setSelected(this);
     }
-
-	@Override
-	public String toString() {
-		return this.path.getName();
-	}
 
 }

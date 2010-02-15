@@ -8,43 +8,34 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		
+		<aon:form id="shopOffer">
 			<aon:div styleClass="menu" />
 			<aon:div styleClass="back-button" >
 			
-<!--  
-				<aon:outputLink target="_top" 
-					value="${facesContext.externalContext.requestContextPath}"
-					styleClass="aon-finding-toolbar-item aon-icon-accept" >
-					<aon:outputText 
-						value="#{securityBundle.aon_login_user_logout}" />
-					<a4j:support event="onclick">
-						<aon:actionListener method="#{shop.refreshView}" />
-						<aon:actionListener method="#{userLogin.onLogout}" />
-						<aon:actionListener method="#{cartOffer.onCloseSession}" />
-					</a4j:support>
-				</aon:outputLink>
--->
-
 				<h:commandButton style="border-right:0;" 
-					value="#{securityBundle.aon_login_user_logout}"
-					action="shop_from"
+					value="Aceptar pedido"
+					action="#"
+					rendered="#{paypal.payment}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept">
-					<aon:actionListener method="#{shop.refreshView}" />
-					<aon:actionListener method="#{userLogin.onLogout}" />
-					<aon:actionListener method="#{cartOffer.onCloseSession}" />
+					<aon:actionListener method="#{cartOffer.onAccept}" />
 				</h:commandButton>
 				
-			<!--  
-				<aon:commandButton id="aonToolbar-back"
-					 
+				<h:commandButton style="border-right:0;" 
 					value="#{bundle.aon_back}"
-					action="shop_from"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel"
-					immediate="true" accesskey="#{bundle.aon_key_cancel}">
+					action="shop_from" immediate="true"
+					rendered="#{paypal.payment}"
+					accesskey="#{bundle.aon_key_cancel}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel">
 					<aon:actionListener method="#{shop.refreshView}" />
+				</h:commandButton>
+
+				<aon:commandButton id="aonToolbar-back" value="#{securityBundle.aon_login_user_logout}"
+					action="shop_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					accesskey="#{bundle.aon_key_cancel}" >
+					<aon:actionListener method="#{userLogin.onLogout}" />
+					<aon:actionListener method="#{cartOffer.onCloseSession}" />
 				</aon:commandButton>
-			-->
 			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
@@ -163,6 +154,6 @@
 -->
 			</aon:panel>
 
-		
+		</aon:form>		
 	</ui:define>
 </ui:composition>

@@ -45,73 +45,47 @@
 	width: 50%;
 }
 
-.aon-homepage-column {
-	vertical-align: top;
-	width: 33%;
-	padding-top: 20px;
-	padding-bottom: 20px;
-}
-.aon-homepage-column-header {
-	font-weight: bold;
-	font-family: Helvetica;
-	width: 100%;
-	text-decoration: underline;
-	text-transform: uppercase;
-	white-space: nowrap;
-	margin-top: 2px;
-	padding-top: 2px;
-	padding-left: 26px;
-	padding-right: 2px;
-	padding-bottom: 2px;
-}
-
 .aonSubMenu {
 	margin-top: 2px;
 	padding-top: 2px;
 	padding-right: 2px;
 	padding-bottom: 2px;
-	padding-left: 20px;
+	padding-left: 26px;
 	color:#555555;
 	font-family: Helvetica;
-	font-size: 1.2em;
+	font-size: 1em;
 	width:80%;
-	white-space: nowrap; 
+	font-weight:bold;
 }
 .aonSubMenuOption {
-	background:#fff url(images/aon-content-menu/aon-content-option.gif) scroll left center no-repeat;
-}
-
-.aonSubMenuOptionCircle {
 	background:#fff url(images/aon-content-menu/aon-content-option-circle.gif) scroll left center no-repeat;
 }
-.aonSubMenuOptionRectangle {
+.aonSubMenuOptionReport {
 	background:#fff url(images/aon-content-menu/aon-content-option-rectangle.gif) scroll left center no-repeat;
 }
-.aonSubMenuOptionTriangle {
+.aonSubMenuOptionEntry {
 	background:#fff url(images/aon-content-menu/aon-content-option-triangle.gif) scroll left center no-repeat;
 }
-.aonSubMenuOptionPentagon {
+.aonSubMenuOptionBudget {
 	background:#fff url(images/aon-content-menu/aon-content-option-pentagon.gif) scroll left center no-repeat;
 }
-.aonSubMenuOptionCylinder {
+.aonSubMenuOptionFinance {
 	background:#fff url(images/aon-content-menu/aon-content-option-cylinder.gif) scroll left center no-repeat;
 }
-.aonSubMenuExtraLink {
-	font-size:0.7em;
-	font-style: italic;
-}
-
 .aonSubMenu a {
 	margin-left: 5px;
 	font-weight: normal;
 	font-size: 0.9em;
 	color: #000 !important; 
 }
-.aonSubMenu a:hover {
-	color: #E55302 !important;
-}
 .aonSubMenu a:visited {
 	color: #000 !important;
+}
+.aonSubMenuDescription {
+	font-family: Verdana;
+	color: #8D8D8D;
+	font-size: 8pt;
+	font-style: italic;
 }
 
 .aon-panelGrid-search-body {

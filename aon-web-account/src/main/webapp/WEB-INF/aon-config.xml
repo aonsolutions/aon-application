@@ -24,36 +24,21 @@
 			showNote="false"
 			showRelationship="false"
 			showRecordData="false"
-			showTaxInfoData="true"
-			showAddInfo="false"
 		/>
 	</customer:config>
-
-	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
-		<registry:rmedia showSendEmail="true" />
-	</registry:config>
 
 	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
 		<supplier:supplier
 			showFinanceData="true" 
 			showAccount="true"
 			showSegment="false"
-			showTaxInfoData="true"
-			showAddInfo="false"
 		/>
 	</supplier:config>
 
 	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
-		<finance:creditor
+		<finance:finance
 			showFinanceData="true" 
 			showAccount="true"
-			showTaxInfoData="true"
-			showAddInfo="false"
-			showSegment="false"
-		/>
-		<finance:invoice
-			showDeliveryData="false" 
 		/>
 	</finance:config>
 </config>
-

@@ -26,15 +26,8 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="accept"
-							value="#{bundle.aon_accept}"
-							action="#{admin.loginAction}"
-							actionListener="#{admin.onAccept}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-						</aon:commandButton>					
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -60,6 +53,13 @@
 							for="passwd"/>
 						<aon:inputSecret id="passwd" 
 							value="#{admin.passwd}" size="30" maxlength="20" />
+
+						<aon:outputText value="&#160;"/>
+						<aon:commandButton id="accept"
+							value="#{bundle.aon_accept}" action="home"
+							styleClass="aon-commandButton">
+							<aon:actionListener method="#{admin.onAccept}" />
+						</aon:commandButton>
 							
 					</aon:panelGrid>
 

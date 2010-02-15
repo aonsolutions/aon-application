@@ -19,9 +19,10 @@
 				<ui:param name="controller" value="#{sidebar}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="home"
-						value="#{bundle.aon_home}"
-						action="home" immediate="#{true}"
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="home" 
+						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
 					</aon:commandButton>				
@@ -32,7 +33,7 @@
 			<aon:div styleClass="aon-scroll-area">
 					
 				<aon:dataTable id="dataTable" value="#{sidebar.model}" var="to"
-					rows="#{sidebar.pageLimit}" rendered="#{sidebar.model.rowCount > 0}"
+					rows="#{sidebar.pageLimit}"
 					columnClasses="aon-editDataTable-textColumn,
 							aon-editDataTable-iconColumn">
 			
@@ -68,7 +69,7 @@
 
 				</aon:dataTable>
 			
-				<aon:dataScroller2 for="dataTable" showNote="true" />
+				<aon:dataScroller2 for="dataTable" />
 
 			</aon:div>
 		</aon:form>

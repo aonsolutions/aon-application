@@ -2,40 +2,30 @@ package com.code.aon.ui.product.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.product.util.ItemControllerUtil;
 
 public class ItemController extends BasicController {
 
-	private String selectedTab;
-	
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
-
 	public double getSalesPrice() {
-		return ItemControllerUtil.getSalesPrice( (Item) getTo() );
+		double price = ((Item)getTo()).getPrice();
+		double vatPercent = (((Item)getTo()).getProduct().getVat())!=null?((Item)getTo()).getProduct().getVat().getPercentage():0;
+		double retentionPercent = (((Item)getTo()).getProduct().getRetention())!=null?((Item)getTo()).getProduct().getRetention().getPercentage():0;
+		return CommonUtil.round(price * (1 + vatPercent / 100 - retentionPercent / 100));
 	}
 
 	public void setSalesPrice(double salesPrice) {
 	}
 
 	public void onSalesPriceChanged(ValueChangeEvent event) {
-		ItemControllerUtil.onSalesPriceChanged(event, (Item) getTo() );
-	}
-	
-	public void onAlternativeItemChanged(LookupChangeEvent event) {
-		Item item = (Item)getTo();
+		double price = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			Item alternativeItem = (Item)event.getNewValue();
-			item.setAlternativeItem(alternativeItem);
+			double salesPrice = new Double(event.getNewValue().toString()).doubleValue();
+			double vatPercent = (((Item)getTo()).getProduct().getVat())!=null?((Item)getTo()).getProduct().getVat().getPercentage():0;
+			double retentionPercent = (((Item)getTo()).getProduct().getRetention())!=null?((Item)getTo()).getProduct().getRetention().getPercentage():0;
+			price = CommonUtil.round(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100));
 		}
-	}	
-
+		((Item)getTo()).setPrice(price);
+	}
 }

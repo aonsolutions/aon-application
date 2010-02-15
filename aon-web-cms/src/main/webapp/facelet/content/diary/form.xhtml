@@ -36,13 +36,13 @@
 									<aon:actionListener method="#{diary.accept}" />
 								</aon:commandButton>
 								<aon:commandButton id="generate" reRender="aonStatus"
-									value="#{appBundle.aon_generate}" immediate="true"
-									actionListener="#{generator.onGenerateDiary}"
+									value="#{appBundle.aon_generate}" 
 									rendered="#{cms.roleEditor}"
 									styleClass="aon-finding-toolbar-item aon-icon-accept"
 									accesskey="#{bundle.aon_key_save}">
+									<aon:actionListener method="#{generator.onGenerateDiary}" />
 									<a4j:support 
-										event="onclick" reRender="poll,grid" ajaxSingle="true"
+										event="onclick" reRender="poll,grid" 
 										actionListener="#{generator_status.onActivePoll}"  
 										onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 								</aon:commandButton>	
@@ -79,29 +79,15 @@
 									<aon:selectBooleanCheckbox id="past_events" 
 										value="#{diary.to.pastEvents}" />
 								</aon:div>
-								
-								<aon:outputLabel for="Diary_section_id"
-									value="#{appBundle.cms_section}"/>
-								<aon:selectOneMenu id="Diary_section_id"  
-									value="#{diary.to.section}">
-									<f:selectItem itemLabel="-" value="#{null}" />
-									<f:selectItems value="#{collections.sectionList}" />
-								</aon:selectOneMenu>
-			
-								<aon:outputLabel for="Diary_elementSection_id"
-									value="#{appBundle.cms_section_elements}"/>
-								<aon:selectOneMenu id="Diary_elementSection_id"  
-									value="#{diary.to.elementSection}">
-									<f:selectItem itemLabel="-" value="#{null}" />
-									<f:selectItems value="#{collections.sectionList}" />
-								</aon:selectOneMenu>								
 
-								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
-									<ui:param name="inputTextId" value="content" />
-									<ui:param name="inputTextValue" value="#{diary.toI18n.content}" />
-									<ui:param name="richTextEnabled" value="#{diary.richTextEnabled}" />
-								</ui:include>																	
-																
+								<aon:outputLabel for="content"
+									value="#{appBundle.diary_content}" />
+								<aon:div style="width:600px">
+									<aon:inputRichText style="width:100%" 
+										id="content" 
+										value="#{diary.toI18n.content}" />
+								</aon:div>
+								
 							</aon:panelGrid>
 						</aon:div>
 		

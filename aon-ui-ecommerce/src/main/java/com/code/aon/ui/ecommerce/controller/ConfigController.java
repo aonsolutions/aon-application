@@ -75,26 +75,30 @@ public class ConfigController {
 		this.aonEbackoffice = aonEbackoffice;
 	}
 	
-	public boolean isPaypalReturn(){
-		if (FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestParameterMap().get("token") != null
-				&& FacesContext.getCurrentInstance().getExternalContext()
-						.getRequestParameterMap().get("PayerID") != null) {
-			PaypalController paypal = (PaypalController)AonUtil.getRegisteredBean(IECommerceConstants.PAYPAL_CONTROLLER);
-			paypal.setToken(FacesContext.getCurrentInstance().getExternalContext()
-					.getRequestParameterMap().get("token"));
-			paypal.setPayerId(FacesContext.getCurrentInstance().getExternalContext()
-					.getRequestParameterMap().get("PayerID"));
+	public boolean isPaypalReturn() {
+		String token = FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestParameterMap().get("token");
+		String payerId = FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestParameterMap().get("PayerID");
+		if (token != null && payerId != null) {
+			PaypalController paypal = (PaypalController) AonUtil
+					.getRegisteredBean(IECommerceConstants.PAYPAL_CONTROLLER);
+			paypal.setToken(token);
+			paypal.setPayerId(payerId);
+			paypal.setPayment(true);
 
 			// limpia la url de parametros
 			try {
-				FacesContext.getCurrentInstance().getExternalContext().redirect(ECommerceUtil.getUrl());
+				FacesContext.getCurrentInstance().getExternalContext()
+						.redirect(ECommerceUtil.getUrl());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			paypal.confirmPaymentFromPayPal(null);
-			((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setContentView(ViewEnum.PAYMETHOD);
+//			paypal.confirmPaymentFromPayPal(null);
+			((ShopController) AonUtil
+					.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
+					.setContentView(ViewEnum.PAYMETHOD);
 			return true;
 		}
 		return false;
@@ -146,7 +150,7 @@ public class ConfigController {
 			Ecconfig to = new Ecconfig();
 			to.setActive(true);
 			to.setName("default");
-			to.setSkin(SkinType.DEFAULT);
+			to.setSkin(SkinType.BASICO1);
 			to.setEmail("your@email.com");
 			Tariff tariff = new Tariff();
 			tariff.setId(1);

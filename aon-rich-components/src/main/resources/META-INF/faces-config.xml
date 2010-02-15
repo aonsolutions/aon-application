@@ -112,10 +112,6 @@
         <component-class>org.richfaces.component.html.HtmlDataTable</component-class>
     </component>
     <component>
-        <component-type>com.code.aon.faces.ExtendedDataTable</component-type>
-        <component-class>org.richfaces.component.html.HtmlExtendedDataTable</component-class>
-    </component>
-    <component>
         <component-type>com.code.aon.faces.EditDataTable</component-type>
         <component-class>org.richfaces.component.html.HtmlDataTable</component-class>
     </component>
@@ -189,10 +185,6 @@
         <component-type>com.code.aon.faces.HotKey</component-type>
         <component-class>org.richfaces.component.html.HtmlHotKey</component-class>
     </component>
-    <component>
-        <component-type>com.code.aon.faces.PickList</component-type>
-        <component-class>org.richfaces.component.html.HtmlPickList</component-class>
-    </component>    
 	<render-kit>
         <renderer>
             <component-family>com.code.aon.faces.DataPaginator</component-family>

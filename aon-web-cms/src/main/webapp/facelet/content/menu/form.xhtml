@@ -11,14 +11,56 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-	
-		<aon:form id="menuForm">
-
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.menu}" />
-				<ui:param name="controller" value="#{menu}" />
-				<ui:param name="skipSearchButton" value="#{true}" />
-			</ui:include>
+		<aon:form id="mainForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.menu}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{menu.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							reRender="mainForm"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{menu.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{menu.to!=null or menu.new}"
+							reRender="mainForm"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{menu.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!menu.new and !menu.to.defaultMenu}"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{menu.onRemove}"
+							confirmAction="menu_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="menu_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{menu.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true">
@@ -41,9 +83,9 @@
 						</aon:div>
 					
 						<aon:div rendered="#{menu_option.to == null}">
-
 							<aon:div styleClass="aon-toolbar">
 									
+								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										reRender="detail_panel" 
@@ -56,10 +98,9 @@
 							</aon:div>
 								
 							<aon:dataTable id="dataTable" value="#{menu_option.model}" var="to"
-								rows="#{menu_option.pageLimit}" rendered="#{menu_option.model.rowCount > 0}"
-								columnClasses="aon-editDataTable-textColumn, 
-										aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-										aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
+								rows="#{menu_option.pageLimit}" 
+								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
+										aon-editDataTable-textColumn">
 										
 								<aon:rowSelector immediate="true"
 									reRender="detail_panel" actionListener="#{menu_option.onSelect}" />							
@@ -69,21 +110,13 @@
 										<aon:outputText value="#{appBundle.cms_alias}"/>
 									</f:facet>
 									<aon:outputText value="#{to.alias}" 
-										style="#{to.separator?'font-weight:bold':'padding-left:20px'}" />
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.cms_label}"/>
-									</f:facet>
-									<aon:outputText value="#{menu_option.i18nLabel}"  />
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.menu_option_type}"/>
-									</f:facet>
-									<aon:outputText value="#{to.type}"  />
+										style="font-weight:bold"
+										styleClass="aon-editDataTable-button"
+										rendered="#{to.separator}"/>
+									<aon:outputText value="#{to.alias}"
+										rendered="#{!to.separator}" 
+										style="padding-left:20px"
+										styleClass="aon-editDataTable-button"/>
 								</aon:column>
 		
 								<aon:column>
@@ -138,15 +171,46 @@
 							<aon:dataScroller2 for="dataTable" showNote="true" />
 						</aon:div>					
 						
-						<c:if test="#{menu_option.new or menu_option.to != null}">
- 
-							<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-								<aon:valueParam name="toolbarID" default="menuOptionToolbar" />
-								<ui:param name="controller" value="#{menu_option}" />
-								<ui:param name="innerToolbar" value="#{true}" />
-								<ui:param name="skipToolbarDescription" value="#{true}" />
-								<ui:param name="skipSearchButton" value="#{true}" />
-							</ui:include>
+						<aon:div rendered="#{menu_option.new or menu_option.to != null}">
+						
+							<aon:div styleClass="aon-toolbar">
+								
+								<!-- start toolbar navigation -->
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+										reRender="detail_panel" 
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{menu_option.onReset}" />
+									</aon:commandButton>
+									<aon:commandButton id="save_list_form"
+										value="#{bundle.aon_save}" 
+										rendered="#{menu_option.to!=null or menu_option.new}"
+										reRender="detail_panel"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										accesskey="#{bundle.aon_key_save}">
+										<aon:actionListener method="#{menu_option.accept}" />
+									</aon:commandButton>
+									<aon:commandButton id="cancel_list_form"
+										value="#{bundle.aon_cancel}" 
+										rendered="#{menu_option.to!=null or menu_option.new}" immediate="#{true}"
+										reRender="detail_panel"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										accesskey="#{bundle.aon_key_cancel}">
+										<aon:actionListener method="#{menu_option.onCancel}" />
+									</aon:commandButton>
+									<aon:confirmButton id="remove_list_form"
+										value="#{bundle.aon_remove}" rendered="#{!menu_option.new}" 
+										immediate="true"
+										confirmTitle="Confirmation Dialog" 
+										confirmMessage="#{bundle.aon_remove_confirm}"
+										confirmActionListener="#{menu_option.onRemove}" 
+										confirmAction="menu_form"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										accesskey="#{bundle.aon_key_remove}"/>
+							    </aon:div>
+									
+							</aon:div>
 				
 							<aon:div styleClass="aon-scroll-area">
 								<aon:panelGrid id="menuOptionGrid" columns="2" dir="true">
@@ -160,7 +224,7 @@
 									</aon:inputText>
 				
 									<aon:outputLabel for="MenuOptionDetail_label"
-										value="#{appBundle.cms_label}" />
+										value="#{appBundle.menu_option_label}" />
 									<aon:inputText id="MenuOptionDetail_label"
 										required="true" size="50" maxlength="64"
 										value="#{menu_option.toI18n.label}" />
@@ -168,34 +232,37 @@
 									<aon:outputText for="MenuOption_separator"
 										value="#{appBundle.menu_option_separator}" />
 									<aon:selectBooleanCheckbox id="MenuOption_separator"
-										value="#{menu_option.to.separator}">
+											value="#{menu_option.to.separator}">
 									</aon:selectBooleanCheckbox>
 									
 									<aon:outputLabel for="MenuOption_type"
 										value="#{appBundle.menu_option_type}" />
-									<aon:selectOneMenu id="MenuOption_type" required="true"
-										valueChangeListener="#{menu_option.onTypeChange}"
+									<aon:selectOneMenu id="MenuOption_type" 
 										value="#{menu_option.to.type}" >
-										<f:selectItems value="#{collections.pageTypes}" />
-										<a4j:support ajaxSingle="true" process="MenuOption_alias,MenuOptionDetail_label,MenuOption_separator"
-											event="onchange" reRender="menuOptionGrid" />
+										<f:selectItems value="#{collections.pageTypes}">
+										</f:selectItems>
+											<a4j:support 
+												event="onchange"  
+												reRender="menuOptionGrid" />
 									</aon:selectOneMenu> 
 				
 									<aon:outputLabel for="MenuOption_level"
 										value="#{appBundle.menu_option_level}" rendered="#{menu_option.visibleLevel}"/>
 									<aon:selectOneMenu id="MenuOption_level" rendered="#{menu_option.visibleLevel}" 
 										value="#{menu_option.to.level}" required="true">
-										<f:selectItems value="#{menu_option.levels}" />
-										<a4j:support ajaxSingle="true" process="MenuOption_alias,MenuOptionDetail_label,MenuOption_separator"
-											event="onchange" reRender="menuOptionGrid" />
+										<f:selectItems value="#{menu_option.levels}">
+										</f:selectItems>
+											<a4j:support 
+												event="onchange"  
+												reRender="menuOptionGrid" />
 									</aon:selectOneMenu>
 				
 									<aon:outputLabel for="MenuOption_ident"
 										value="#{appBundle.menu_option_ident}" rendered="#{menu_option.visibleIdent}"/>
 									<aon:selectOneMenu id="MenuOption_ident" rendered="#{menu_option.visibleIdent}" 
-										value="#{menu_option.to.ident}" required="true">
+										value="#{menu_option.to.ident}">
 										<f:selectItems value="#{menu_option.idents}" />
-									</aon:selectOneMenu>
+									</aon:selectOneMenu> 
 				
 									<aon:outputLabel for="MenuOptionDetail_url"
 										value="#{appBundle.menu_option_url}" rendered="#{menu_option.visibleUrl}"/>
@@ -205,7 +272,7 @@
 				
 								</aon:panelGrid>
 							</aon:div>
-						</c:if>
+						</aon:div>
 					</aon:div>
 				</aon:div>
 			</aon:div>

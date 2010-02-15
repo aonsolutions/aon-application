@@ -137,14 +137,6 @@
     	<attribute name="cellspacing" value="0" />
 	</component>
 
-	<component localName="extendedDataTable">
-    	<attribute name="headerClass" value="aon-dataTable-header" />
-    	<attribute name="footerClass" value="aon-dataTable-footer" />    	
-    	<attribute name="rowClasses" value="aon-dataTable-row-odd, aon-dataTable-row-even" />
-    	<attribute name="cellpadding" value="0" />
-    	<attribute name="cellspacing" value="0" />
-	</component>
-
 	<component localName="editDataTable">
     	<attribute name="styleClass" value="aon-editDataTable" />			
     	<attribute name="headerClass" value="aon-editDataTable-header" />
@@ -214,15 +206,5 @@
 		<attribute name="styleClass" value="aon-group" /> 
 		<attribute name="headerClass" value="aon-group-title" /> 
 		<attribute name="bodyClass" value="aon-group-body" /> 	
-	</component>
-
-	<component localName="fileUpload">
-    	<attribute name="addControlLabel" value="#{bundle.aon_fileUpload_add}" />
-    	<attribute name="stopControlLabel" value="#{bundle.aon_fileUpload_stop}" />
-    	<attribute name="stopEntryControlLabel" value="#{bundle.aon_fileUpload_stop}" />
-    	<attribute name="uploadControlLabel" value="#{bundle.aon_fileUpload_upload}" />
-    	<attribute name="listHeight" value="0px" />
-    	<attribute name="immediateUpload" value="true" type="1" />    	
-    	<attribute name="autoclear" value="true" type="1" />
 	</component>
 </components>

@@ -13,72 +13,73 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.sport_club}"/>	  						
+				</aon:div>					
 				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.sport_club}"/>	  						
-					</aon:div>					
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{appBundle.aon_listing}" />
+				</aon:div>					
 					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{cms.roleEditor}"
-							action="sport_club_form"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{sport_club.onReset}" />
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{cms.roleEditor}"
+						action="sport_club_form"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{sport_club.onReset}" />
+					</aon:commandButton>
+			    </aon:div>
+				
+				<!-- end toolbar navigation -->
+			</aon:panelGrid>
+		</aon:div>
 		
-			<!--  aon-region-body -->
-			<aon:div styleClass="aon-scroll-area">
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="dataTable" value="#{sport_club.model}" var="to"
-					rows="#{sport_club.pageLimit}" rendered="#{sport_club.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
-					
-					<aon:rowSelector
-						action="sport_club_form" actionListener="#{sport_club.onSelect}" />					
-			
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.sport_club_desciption}" />
-						</f:facet>
-						<aon:outputText value="#{to.description}" />
-					</aon:column>
+					<aon:dataTable id="dataTable" value="#{sport_club.model}" var="to"
+						rows="#{sport_club.pageLimit}" 
+						columnClasses="aon-editDataTable-textColumn,
+								aon-editDataTable-iconColumn">
+				
+						<aon:column>
+							<a4j:support 
+								action="sport_club_form"
+								actionListener="#{sport_club.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.sport_club_desciption}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" styleClass="aon-editDataTable-button"/>
+						</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText for="sport_club_default" 
-								value="#{appBundle.sport_club_default}" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseout="enableRowSelector();" >																					
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="sport_club_default" 
+									value="#{appBundle.sport_club_default}" />
+							</f:facet>
 							<aon:selectBooleanCheckbox id="sport_club_default" 
-								value="#{to.default_}" rendered="#{!to.default_}">
-								<a4j:support 
-									actionListener="#{sport_club.defaultChanged}"
-									event="onclick" reRender="dataTable" />
+									value="#{to.default_}" 
+									rendered="#{!to.default_}">
+									<a4j:support 
+										actionListener="#{sport_club.defaultChanged}"
+										event="onclick"  
+										reRender="dataTable" />
 							</aon:selectBooleanCheckbox>
-						</aon:div>
-						<aon:graphicImage id="default_blocked" rendered="#{to.default_}"
-							url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" />
-					</aon:column>
+							<aon:graphicImage id="default_blocked" rendered="#{to.default_}"
+								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" />
+						</aon:column>
 
-				</aon:dataTable>
-			
-				<aon:dataScroller2 for="dataTable" showNote="true" />					
+					</aon:dataTable>
+				
+					<aon:dataScroller2 for="dataTable" showNote="true" />					
 
 			</aon:div>
 		</aon:form>

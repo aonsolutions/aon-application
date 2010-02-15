@@ -2,20 +2,24 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.cms.ActivityConfig;
 import com.code.aon.cms.ActivityDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class ActivityController extends BasicI18nController implements ICMSConstants, Constants {
 
-	public void onInit(ActionEvent event){
-		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(ActivityConfig.class);
-	}
+	private int page;
 	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
