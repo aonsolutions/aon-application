@@ -14,9 +14,6 @@ import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -30,8 +27,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ShopItemController {
 	
-	private static final Logger LOGGER = LoggerFactory
-	.getLogger(ShopItemController.class.getName());
+	//private static final Logger LOGGER = LoggerFactory
+	//.getLogger(ShopItemController.class.getName());
 
 	private ShopItem item;
 	private List<ItemAttachment> imageList;
@@ -64,7 +61,7 @@ public class ShopItemController {
 	public void setItem(ShopItem item) {
 		this.item = item;
 	}
-
+	
 	public List<ItemAttachment> getImageList() {
 		if (imageList == null) {
 			imageList = new LinkedList<ItemAttachment>();
@@ -213,7 +210,7 @@ public class ShopItemController {
 			sos.close();
 			response.flushBuffer();
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
+			//LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
