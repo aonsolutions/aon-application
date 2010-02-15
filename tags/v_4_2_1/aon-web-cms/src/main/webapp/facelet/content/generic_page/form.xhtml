@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="form_">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.generic_page}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{generic_page.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{!generic_page.new and cms.roleEditor}"
+							action="generic_page_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{generic_page.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{generic_page.to!=null or header.new}"
+							action="generic_page_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generic_page.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!generic_page.new and cms.roleEditor}" 
+							immediate="true"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{generic_page.onRemove}" 
+							confirmAction="generic_page_list"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="generic_page_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{generic_page.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
+							action="generic_page_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{generic_page.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{generic_page.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="generate_nodular" reRender="aonStatus"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{generic_page.to!=null and cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateCurrentGenericPage}" />
+							<a4j:support 
+								event="onclick" reRender="poll,grid" 
+								actionListener="#{generator_status.onActivePoll}"  
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+						</aon:commandButton>	
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width:99%;">
+	
+					<aon:panelTabSet id="menuTabSet">
+	
+						<aon:panelTab id="general" label="#{appBundle.aon_content}">
+							<aon:panelGrid id="generalGrid" columns="2" dir="true">
+							
+								<aon:outputLabel for="Alias"
+									value="#{appBundle.cms_alias}" />
+								<aon:inputText id="Alias"
+									required="true" size="32" maxlength="32"
+									value="#{generic_page.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
+			                    	
+								<aon:outputLabel for="GenericPageDetail_title"
+									value="#{appBundle.generic_page_title}" />
+								<aon:inputText id="GenericPageDetail_title"
+									required="true" size="100" maxlength="255"
+									value="#{generic_page.toI18n.title}" />
+	
+								<aon:outputLabel for="GenericPageDetail_richTextEnabled"
+									value="#{appBundle.generic_page_richtext_enabled}" />
+								<aon:selectBooleanCheckbox id="GenericPageDetail_richTextEnabled"
+									value="#{generic_page.richTextEnabled}">
+									<a4j:support
+										ajaxSingle="true" 
+										event="onclick"
+										reRender="generalGrid" />
+								</aon:selectBooleanCheckbox>
+	
+								<aon:outputLabel for="GenericPageDetail_content"
+									value="#{appBundle.generic_page_content}" 
+									rendered="#{generic_page.richTextEnabled}" />
+								<aon:div style="width:600px" rendered="#{generic_page.richTextEnabled}">
+									<aon:inputRichText style="width:100%" 
+											id="GenericPageDetail_content" 
+											value="#{generic_page.toI18n.content}" />
+								</aon:div>
+	
+								<aon:outputLabel for="GenericPageDetail_content_TA"
+									value="#{appBundle.generic_page_content}" 
+									rendered="#{!generic_page.richTextEnabled}"/>
+								<aon:inputTextarea id="GenericPageDetail_content_TA"
+										rendered="#{!generic_page.richTextEnabled}" 
+										cols="60" rows="20" 
+										value="#{generic_page.toI18n.content}"/>
+	
+								<aon:outputLabel for="GenericPage_menu"
+									value="#{appBundle.generic_page_menu}" />
+								<aon:selectOneMenu id="GenericPage_menu" 
+									value="#{generic_page.to.menu}">
+									<f:selectItems value="#{generic_page.menus}" />
+								</aon:selectOneMenu> 
+
+								<aon:outputLabel for="GenericPage_section"
+									value="#{appBundle.section}"/>
+								<aon:selectOneMenu id="GenericPage_section"  
+									value="#{generic_page.to.section.id}">
+									<f:selectItem itemLabel="-" itemValue="-1" />
+									<f:selectItems value="#{collections.sectionList}" />
+								</aon:selectOneMenu>
+															
+							</aon:panelGrid>
+						</aon:panelTab>
+	
+						<aon:panelTab id="tags"
+							label="#{appBundle.aon_meta_tags}">
+							<aon:panelGrid columns="2" dir="true">
+							
+								<aon:outputLabel for="GenericPage_description"
+									value="#{bundle.aon_description}" />
+								<aon:inputTextarea id="GenericPage_description" style="width:300px;height:60px"
+									value="#{generic_page.toI18n.description}" />
+	
+								<aon:outputLabel for="GenericPage_keywords" 
+									value="#{appBundle.generic_page_keywords}" />
+								<aon:inputTextarea id="GenericPage_keywords" style="width:300px;height:60px"
+									value="#{generic_page.toI18n.keywords}" />
+			
+							</aon:panelGrid>
+						</aon:panelTab>
+	
+					</aon:panelTabSet>
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

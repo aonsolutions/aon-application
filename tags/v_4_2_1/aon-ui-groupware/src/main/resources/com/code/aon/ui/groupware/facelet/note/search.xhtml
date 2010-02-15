@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="noteSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_note}" />
+				<ui:param name="controller" value="#{note}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{note}" />
+				<ui:define name="searchContent">
+
+					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputLabel for="Note_date-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Note_date-From"
+							valueChangeListener="#{note.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Note_date-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Note_date-To"
+							valueChangeListener="#{note.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+										
+					<aon:outputLabel for="Note_subject"
+						value="#{groupwareBundle.note_subject}" />
+					<aon:inputText id="Note_subject"
+						maxlength="64" size="100"
+						valueChangeListener="#{note.addExpression}" />
+				</ui:define>
+			</ui:decorate>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>

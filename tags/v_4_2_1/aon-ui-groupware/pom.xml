@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>1.0.1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon.ui.groupware</artifactId>
+	<version>4.2.1</version>
+	<description>AON UI GROUPWARE</description>
+	<name>AON UI GROUPWARE</name>
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.groupware</artifactId>
+			<version>4.0.4</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.messaging</artifactId>
+			<version>0.5.1</version>
+			<scope>compile</scope>
+		</dependency>			
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.9.0</version>
+			<scope>provided</scope>
+		</dependency> 
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>4.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>4.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.webmail</artifactId>
+			<version>4.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_14</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>javax.faces</groupId>
+		    <artifactId>jsf-impl</artifactId>
+		    <version>1.2_14</version>
+		    <scope>provided</scope>
+		</dependency> 		
+	</dependencies>
+</project>
