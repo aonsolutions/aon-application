@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="newUserForm">
+
+			<aon:div styleClass="menu" />
+
+			<aon:div styleClass="back-button">
+				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
+					action="shop_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
+			</aon:div>
+
+			<aon:panel id="login-panel" styleClass="login-panel">
+				<f:facet name="header">
+					<aon:outputText
+						value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
+				</f:facet>
+				<aon:panelGrid columns="2" style="width:100%;border:000 2px solid;">
+					<aon:outputLabel for="ectarget_email"
+						value="#{bundle.aon_login_user} *" />
+					<aon:div>
+						<aon:inputText id="ectarget_email" required="true"
+							value="#{shoppingCart.cartTarget.ecTarget.login}" size="20"
+							maxlength="48" />
+						<aon:outputLabel for="ectarget_email"
+							value="*debe ser un email v&#225;lido" />
+					</aon:div>
+
+					<aon:outputLabel for="ectarget_password"
+						value="#{bundle.aon_login_passwd} *" />
+					<aon:inputText id="ectarget_password" required="true"
+						value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"
+						maxlength="32" />
+
+					<aon:outputLabel for="ectarget_password_retype"
+						value="#{ecommerceBundle.aon_ecommerce_user_passwd_retype}" />
+					<aon:inputText id="ectarget_password_retype"
+						value="#{shoppingCart.newPasswd}" size="20" maxlength="32">
+						<a4j:support event="onblur" reRender="login-panel"
+							focus="ectarget_password"
+							actionListener="#{shoppingCart.checkUserPasswd}" />
+					</aon:inputText>
+				</aon:panelGrid>
+
+				<rich:spacer height="10" />
+
+				<ui:include 
+					src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
+				</ui:include>
+
+			</aon:panel>
+		</aon:form>
+	</ui:define>
+</ui:composition>
