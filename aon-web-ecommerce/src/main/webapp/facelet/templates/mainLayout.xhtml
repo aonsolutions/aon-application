@@ -32,7 +32,7 @@
 	</a4j:support>
 	<aon:div id="aon-content">				
 		<c:choose>
-			<c:when test="#{ecConfig.activeConfig.ecommerceStatus or ecConfig.aonEbackoffice}">
+			<c:when test="#{ecConfig.activeConfig.ecommerceStatus || ecConfig.aonEbackoffice}">
 				<ui:insert name="mainHeader" />
 					<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin || shop.logged)}">
 						<ui:insert name="mainContent" />
