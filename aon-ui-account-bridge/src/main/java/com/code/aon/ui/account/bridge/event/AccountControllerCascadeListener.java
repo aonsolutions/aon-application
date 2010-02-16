@@ -11,6 +11,7 @@ import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountConstants;
+import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -31,7 +32,7 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Account account = (Account)event.getController().getTo();
-			if(!account.isEntryEnabled()){
+			if(!account.isEntryEnabled() && isExtended(account)){
 				throw new ControllerListenerException("Imposible borrar cuenta. La cuenta está extendida.");
 			}else if(isSystemAccount(account)){
 				throw new ControllerListenerException("Imposible borrar cuenta. Cuenta necesaria para el sistema.");
@@ -46,6 +47,23 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
+	}
+
+	private boolean isExtended(Account account) throws ManagerBeanException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), account.getId()));
+		criteria.addExpression(ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), account.getId()+"%"));
+		return accountBean.getCount(criteria) > 0;
+	}
+
+	private boolean isSystemAccount(Account account) {
+		for(String systemAccount : AccountConstants.getSystemAccounts()){
+			if(systemAccount.equals(account.getId())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private int obtainAccountEntryDetailCount(Account account) throws ManagerBeanException {
@@ -114,12 +132,4 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 		}
 	}
 	
-	private boolean isSystemAccount(Account account) {
-		for(String systemAccount:AccountConstants.getSystemAccounts()){
-			if(systemAccount.equals(account.getId())){
-				return true;
-			}
-		}
-		return false;
-	}
 }

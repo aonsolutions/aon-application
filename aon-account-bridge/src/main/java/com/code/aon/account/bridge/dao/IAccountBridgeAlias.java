@@ -284,10 +284,10 @@ public interface IAccountBridgeAlias {
 	String  INVOICE_TAX_ACCOUNT_INVOICE_TAX_ID = INVOICE_TAX_ACCOUNT_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: InvoiceTaxAccount_invoiceTax_invoice_id
-	* Hibernate value: InvoiceTaxAccount.invoiceTax.invoice.id
+	* Alias value: InvoiceTaxAccount_invoiceTax_invoiceDetail_invoice_id
+	* Hibernate value: InvoiceTaxAccount.invoiceTax.invoiceDetail.invoice.id
 	*/
-	String  INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_ID = INVOICE_TAX_ACCOUNT_ENTRY.getAliasNames()[2];
+	String  INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID = INVOICE_TAX_ACCOUNT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: InvoiceTaxAccount_id

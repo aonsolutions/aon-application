@@ -96,6 +96,26 @@
 		</param-value>
 	</context-param>
 
+	<context-param>
+		<description>
+			When true JSF makes sure all managed beans components,validators, 
+			etc can be instantiated by the runtime
+		</description>
+		<param-name>com.sun.faces.verifyObjects</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			If true then all web configuration information (context initialization 
+			parameters and environment entries) will be written to the log. This 
+			is useful during development to confirm your application is configured 
+			as expected. Valid values for this parameter are true and false
+		</description>
+		<param-name>com.sun.faces.displayConfiguration</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
 	<!-- JSF-FACELETS CONFIGURATION -->
 
 	<context-param>
@@ -107,7 +127,7 @@
 			to be able to edit pages in a running application.
 		</description>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
-		<param-value>-1</param-value>
+		<param-value>0</param-value>
 	</context-param>
 
 	<context-param>
@@ -122,6 +142,7 @@
 		<param-name>facelets.DEVELOPMENT</param-name>
 		<param-value>true</param-value>
 	</context-param>
+
 	<context-param>
 		<description>
 			Improving render phase performance. You should increase
@@ -147,12 +168,6 @@
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
-
-	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
-	<context-param>
-		<param-name>org.richfaces.LoadScriptStrategy</param-name>
-		<param-value>ALL</param-value>
-    </context-param>
 	 
 	<context-param>
 		<description>
@@ -172,12 +187,18 @@
       <param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
       <param-value>8640000</param-value>
    </context-param>
-  	<!-- 
+
+	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
 	<context-param>
-		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>../aon-desktop/richFaces3.3.0/</param-value>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+    </context-param>
+<!-- 
+	<context-param>
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
 	</context-param>
-	-->
+-->
 
 	<filter>
 		<display-name>RichFaces Filter</display-name>
@@ -225,6 +246,18 @@
            com.code.aon.ui.common.listener.BeanRegisterContextListener
        </listener-class>
     </listener>
+
+	<!-- Listener, that does all the startup work (configuration, init). -->
+	<listener>
+		<listener-class>
+			com.sun.faces.config.ConfigureListener
+		</listener-class>
+	</listener>
+	    
+    <context-param>
+       <param-name>config-file</param-name>
+       <param-value>/WEB-INF/conf/bean_config.xml</param-value>
+    </context-param> 
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

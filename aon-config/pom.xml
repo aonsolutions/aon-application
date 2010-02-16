@@ -10,20 +10,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.config</artifactId>
-	<version>3.5.1</version>
+	<version>4.2.3</version>
 	<description>AON CONFIG</description>
 	<name>AON CONFIG</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.4.0</version>
+			<version>3.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.account</artifactId>
-			<version>3.2.0</version>
+			<version>4.0.3</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

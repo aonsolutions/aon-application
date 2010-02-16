@@ -1,11 +1,13 @@
 package com.code.aon.ui.report.converter;
 
-import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.report.OutputFormat;
 
@@ -23,7 +25,7 @@ public class OutputFormatConverter implements Converter {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-    private static final Logger LOG = Logger.getLogger(OutputFormatConverter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(OutputFormatConverter.class);
 
     /* (non-Javadoc)
      * @see javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext, javax.faces.component.UIComponent, java.lang.Object)
@@ -34,8 +36,8 @@ public class OutputFormatConverter implements Converter {
             return null;
         }
         if (!(outputFormat instanceof OutputFormat)) {
-            LOG.warning(outputFormat + " is not a valid object!"); //$NON-NLS-1$
-            throw new ConverterException(outputFormat + " is not a valid object!"); //$NON-NLS-1$
+            LOGGER.warn("{} is not a valid object!",outputFormat);
+            throw new ConverterException(outputFormat + " is not a valid object!");
         }
         return outputFormat.toString();
     }
@@ -51,7 +53,7 @@ public class OutputFormatConverter implements Converter {
             }
             return OutputFormat.get( text );
         } catch (NumberFormatException e) {
-            LOG.warning(e.getMessage());
+            LOGGER.warn(e.getMessage(),e);
             throw new ConverterException(e.getMessage(), e);
         }
     }

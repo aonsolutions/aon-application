@@ -1,0 +1,114 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+		
+		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+		<property name="connection.service">jboss.admin:service=AonLdap</property>
+		<property name="connection.datasource">java:comp/env/jdbc/AonEcommerce</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="show_sql">true</property>
+
+		<!-- C3P0 Stuff -->
+		<property name="c3p0.acquire_increment">1</property>
+		<property name="c3p0.idle_test_period">1900</property>
+		<property name="c3p0.timeout">3600</property>
+		<property name="c3p0.max_size">30</property>
+		<property name="c3p0.min_size">1</property>
+		<property name="c3p0.max_statements">0</property>
+		<property name="c3p0.preferredTestQuery">select 1;</property>
+				
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+		
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferAttachment"/>
+		<mapping class="com.code.aon.commercial.OfferTerm"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.CommercialTerm"/>
+		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.Expense"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
+		
+		
+		
+		
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		<!--  
+		-->
+
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+
+		<!-- EBACKOFFICE -->		
+		<mapping class="com.code.aon.ebackoffice.Eccatalogue"/>
+		<mapping class="com.code.aon.ebackoffice.Ecconfig"/>
+		<mapping class="com.code.aon.ebackoffice.EcOfferPayment"/>
+		<mapping class="com.code.aon.ebackoffice.EcPaymethod"/>
+		<mapping class="com.code.aon.ebackoffice.Ectarget"/>
+		
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoTree"/>
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+
+		<!-- AON-PRODUCT Mapping files -->	
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Catalogue"/>
+		<mapping class="com.code.aon.product.CatalogueCategory"/>
+		<mapping class="com.code.aon.product.CatalogueItem"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAlternative"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemPos"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+		<mapping class="com.code.aon.product.TariffCatalogue"/>
+
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Segment"/>
+		
+		<!-- AON-SELLER Mapping files -->	
+		<mapping class="com.code.aon.seller.Seller"/>
+
+	</session-factory>
+
+</hibernate-configuration>

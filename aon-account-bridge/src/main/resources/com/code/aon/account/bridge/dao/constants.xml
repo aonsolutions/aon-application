@@ -11,7 +11,7 @@
 	</bean>
 
 	<bean class="com.code.aon.account.bridge.InvoiceTaxAccount" sqlName="invoice_tax_account">
-		<alias names="account_id,invoiceTax_id,invoiceTax_invoice_id,id" />
-		<hibernate names="account.id,invoiceTax.id,invoiceTax.invoice.id,id" />
+		<alias names="account_id,invoiceTax_id,invoiceTax_invoiceDetail_invoice_id,id" />
+		<hibernate names="account.id,invoiceTax.id,invoiceTax.invoiceDetail.invoice.id,id" />
 	</bean>
 </dao>

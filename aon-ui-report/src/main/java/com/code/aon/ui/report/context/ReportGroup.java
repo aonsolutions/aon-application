@@ -42,7 +42,7 @@ public class ReportGroup {
 		list.add(element);
 	}
 
-	public List getElements() {
+	public List<Object> getElements() {
 		return list;
 	}
 }
