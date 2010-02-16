@@ -82,7 +82,13 @@
 					<rich:componentControl for="legalNote3Process" attachTo="legal-note3"
 						operation="show" event="onclick" />
 				</aon:outputLink>
-		
+				
+				<aon:div id="version-tag" style="text-align:right;" >
+					<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
+						styleClass="aon-finding-toolbar-item aon-icon-footer-note" 
+						style="font-size:0.9em;margin-top:0.3em;color:#ccc;"
+						rendered="#{aonConfiguration.applicationVersion != null}" />
+				</aon:div>
 			</aon:div>
 		</aon:form>
 		
