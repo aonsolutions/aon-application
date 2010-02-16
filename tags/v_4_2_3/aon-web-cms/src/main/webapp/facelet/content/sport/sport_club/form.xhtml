@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="main_form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.sport_club}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{sport_club.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{cms.roleEditor}"
+							action="sport_club_form"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{sport_club.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{sport_club.to!=null or sport_club.new}"
+							action="sport_club_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{sport_club.accept}" />
+						</aon:commandButton>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!sport_club.new and cms.roleEditor}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{sport_club.onRemove}"
+							confirmAction="sport_club_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="sport_club_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{sport_club.onSearch}" />
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="sport_club_description" style="width:100px"
+						value="#{appBundle.sport_club_desciption}" />
+					<aon:inputText id="sport_club_description"
+						required="true" 
+						size="40" maxlength="28"
+						value="#{sport_club.to.description}" />
+
+					<aon:outputLabel for="sport_club_sport_category"
+						value="#{appBundle.sport_club_sport_category}"/>
+					<aon:selectOneMenu id="sport_club_sport_category"  
+						value="#{sport_club.to.sportCategory.id}">
+						<f:selectItems value="#{collections.sportCategoryList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="sport_club_stadium" style="width:100px"
+						value="#{appBundle.sport_club_stadium}" />
+					<aon:inputText id="sport_club_stadium"
+						required="true" 
+						size="42" maxlength="32"
+						value="#{sport_club.to.stadium}" />
+
+					<aon:outputLabel for="sport_club_image" style="width:100px"
+						value="#{appBundle.sport_club_image}" />
+					<aon:panelGroup id="thumbnail_preview_1">
+						<aon:graphicImage 
+							url="#{sport_club.to.image}.thumbnail" 
+							alt="#{sport_club.to.image}"/>
+		                <aon:commandLink
+		                	immediate="#{true}"
+		                	reRender="thumbnail_preview_1"
+		                    actionListener="#{sport_club.onDelImage}">
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+		        		</aon:commandLink>
+						<ui:include src="/facelet/content/utils/image_modal.xhtml">
+							<ui:param name="modalPanelName" value="mp" />
+							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="listenerBean" value="#{sport_club}" />
+							<ui:param name="reRender" value="thumbnail_preview_1" />
+							<ui:param name="thumbnail" value="#{false}" />
+						</ui:include>
+		        	</aon:panelGroup>
+		        	
+					<aon:outputLabel for="sport_club_logo" style="width:100px"
+						value="#{appBundle.sport_club_logo}" />
+					<aon:panelGroup id="thumbnail_preview_2">
+						<aon:graphicImage 
+							url="#{sport_club.to.logo}.thumbnail" 
+							alt="#{sport_club.to.logo}"/>
+		                <aon:commandLink
+		                	immediate="#{true}"
+		                	reRender="thumbnail_preview_2"
+		                    actionListener="#{sport_club.onDelLogo}">
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+		        		</aon:commandLink>
+						<ui:include src="/facelet/content/utils/image_modal.xhtml">
+							<ui:param name="modalPanelName" value="mp_thumbnail" />
+							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="listenerBean" value="#{sport_club}" />
+							<ui:param name="reRender" value="thumbnail_preview_2" />
+							<ui:param name="thumbnail" value="#{true}" />
+						</ui:include>
+		        	</aon:panelGroup>
+		        	
+				</aon:panelGrid>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

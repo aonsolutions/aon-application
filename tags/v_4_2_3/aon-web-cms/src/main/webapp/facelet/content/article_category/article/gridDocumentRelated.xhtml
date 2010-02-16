@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="articleDocumentData" rendered="#{!article.new}">
+		<a4j:region>
+		<aon:dataTable id="articleDocumentDataTable" 
+			value="#{articleDocument.model}" var="to"
+			rows="#{articleDocument.pageLimit}"
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+					aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+					aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+	
+			<aon:rowSelector toggleOnClick="#{articleDocument.to == null}"
+				actionListener="#{articleDocument.onSelect}" />
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" rendered="#{to==articleDocument.to}" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton id="reset"
+							title="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset" value=""
+							immediate="true" reRender="articleDocumentData"
+							actionListener="#{articleDocument.onReset}"
+							rendered="#{!articleDocument.new}" 
+							accesskey="#{bundle.aon_key_new_line}">
+						</aon:commandButton>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.document_related_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.alias}" rendered="#{to!=articleDocument.to}" />
+				<aon:div rendered="#{to==articleDocument.to}">
+					<aon:panelGrid columns="2" dir="true">
+						<aon:outputLabel value="#{appBundle.cms_alias}"
+							for="ArticleDocument_Alias" />
+						<aon:inputText  
+							id="ArticleDocument_Alias"
+							size="60" maxlength="255"
+							value="#{articleDocument.to.alias}">
+							<f:validator validatorId="AliasValidator" />
+						</aon:inputText>
+							
+						<aon:outputLabel value="#{appBundle.document_related_title}"
+							for="ArticleDocument_Title" />
+						<aon:inputText 
+							id="ArticleDocument_Title"
+							size="60" maxlength="255"
+							value="#{articleDocument.toI18n.title}" />
+							
+						<aon:outputText value="#{appBundle.document_related}" />
+						<aon:outputText 
+							size="60" maxlength="255"
+							value="#{articleDocument.toI18n.file}" />
+						<aon:outputText value="#{bundle.aon_description}" 
+							for="ArticleDocument_Description" />
+						<aon:inputTextarea
+							id="ArticleDocument_Description"
+							cols="60" rows="20" 
+							value="#{articleDocument.toI18n.description}"/>
+					</aon:panelGrid>
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div rendered="#{articleDocument.new}">
+						<aon:panelGrid columns="2" dir="true">
+							<aon:outputLabel value="#{appBundle.cms_alias}" 
+								for="ArticleDocument_Alias-New" />
+							<aon:inputText 
+								id="ArticleDocument_Alias-New"
+								size="80" maxlength="255"
+								value="#{articleDocument.to.alias}" />
+								
+							<aon:outputLabel value="#{appBundle.document_related_title}" 
+								for="ArticleDocument_Title-New"/>
+							<aon:inputText 
+								id="ArticleDocument_Title-New"
+								size="80" maxlength="255"
+								value="#{articleDocument.toI18n.title}" />
+								
+							<aon:outputLabel value="#{appBundle.document_related}" 
+								for="ArticleDocument_File" />
+							<aon:div id="attachGrid" >
+								<aon:outputText 
+									size="60" maxlength="255"
+									value="#{articleDocument.toI18n.file}" />
+								<aon:fileUpload id="ArticleDocument_File"
+									addControlLabel="#{bundle.aon_fileUpload_add}"
+									stopControlLabel="#{bundle.aon_fileUpload_stop}"
+									stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+									uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+									fileUploadListener="#{articleDocument.fileUploaded}"
+									immediateUpload="true" autoclear="true" listWidth="0px"
+									listHeight="0px">
+									<f:facet name="label">
+										<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+									</f:facet>
+									<a4j:support event="onuploadcomplete" reRender="attachGrid" />
+								</aon:fileUpload>
+							</aon:div>								
+
+							<aon:outputLabel value="#{bundle.aon_description}" 
+								for="ArticleDocument_Description-New" />
+							<aon:inputTextarea
+								id="ArticleDocument_Description-New"
+								cols="80" rows="20" 
+								value="#{articleDocument.toI18n.description}"/>
+						</aon:panelGrid>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<f:verbatim rendered="#{to!=articleDocument.to}">&#160;</f:verbatim>
+				<aon:div rendered="#{to==articleDocument.to}">
+					<aon:commandButton title="[#{bundle.aon_accept}]"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						reRender="articleDocumentData">
+						<aon:actionListener method="#{articleDocument.accept}" />
+					</aon:commandButton>
+					<aon:commandButton title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						reRender="articleDocumentData" immediate="true">
+						<aon:actionListener method="#{articleDocument.onCancel}" />
+					</aon:commandButton>
+					<aon:commandButton title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						reRender="articleDocumentData" immediate="true">
+						<aon:actionListener method="#{articleDocument.onRemove}" />
+					</aon:commandButton>
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div rendered="#{articleDocument.new}">
+						<f:verbatim rendered="#{!articleDocument.new}">&#160;</f:verbatim>
+						<aon:commandButton title="[#{bundle.aon_accept}]"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							reRender="articleDocumentData" >
+							<aon:actionListener method="#{articleDocument.accept}" />
+						</aon:commandButton>
+						<aon:commandButton title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							reRender="articleDocumentData" immediate="true">
+							<aon:actionListener method="#{articleDocument.onCancel}" />
+						</aon:commandButton>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</aon:dataTable>
+									
+		<aon:dataScroller2 for="articleDocumentDataTable" />					
+
+		</a4j:region>
+
+	</aon:div>
+
+</ui:composition>
