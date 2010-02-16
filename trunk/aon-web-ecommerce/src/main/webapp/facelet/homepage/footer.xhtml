@@ -64,21 +64,21 @@
 				<aon:outputLink value="#" id="legal-note1"
 					rendered="#{!(ecConfig.activeConfig.noteTitle1=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText style="color:#ccc;" value="#{ecConfig.activeConfig.noteTitle1}" />
+					<aon:outputText style="color:#fff;" value="#{ecConfig.activeConfig.noteTitle1}" />
 					<rich:componentControl for="legalNote1Process" attachTo="legal-note1"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="legal-note2"
 					rendered="#{!(ecConfig.activeConfig.noteTitle2=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText style="color:#ccc;" value="#{ecConfig.activeConfig.noteTitle2}" />
+					<aon:outputText style="color:#fff;" value="#{ecConfig.activeConfig.noteTitle2}" />
 					<rich:componentControl for="legalNote2Process" attachTo="legal-note2"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="legal-note3"
 					rendered="#{!(ecConfig.activeConfig.noteTitle3=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText style="color:#ccc;" value="#{ecConfig.activeConfig.noteTitle3}" />
+					<aon:outputText style="color:#fff;" value="#{ecConfig.activeConfig.noteTitle3}" />
 					<rich:componentControl for="legalNote3Process" attachTo="legal-note3"
 						operation="show" event="onclick" />
 				</aon:outputLink>
@@ -86,7 +86,7 @@
 				<aon:div id="version-tag" style="text-align:right;" >
 					<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
 						styleClass="aon-finding-toolbar-item aon-icon-footer-note" 
-						style="font-size:0.9em;margin-top:0.3em;color:#ccc;"
+						style="font-size:0.9em;margin-top:0.3em;color:#fff;"
 						rendered="#{aonConfiguration.applicationVersion != null}" />
 				</aon:div>
 			</aon:div>
