@@ -64,29 +64,35 @@
 				<aon:outputLink value="#" id="legal-note1"
 					rendered="#{!(ecConfig.activeConfig.noteTitle1=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="#{ecConfig.activeConfig.noteTitle1}" />
+					<aon:outputText style="color:#ccc;" value="#{ecConfig.activeConfig.noteTitle1}" />
 					<rich:componentControl for="legalNote1Process" attachTo="legal-note1"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="legal-note2"
 					rendered="#{!(ecConfig.activeConfig.noteTitle2=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="#{ecConfig.activeConfig.noteTitle2}" />
+					<aon:outputText style="color:#ccc;" value="#{ecConfig.activeConfig.noteTitle2}" />
 					<rich:componentControl for="legalNote2Process" attachTo="legal-note2"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="legal-note3"
 					rendered="#{!(ecConfig.activeConfig.noteTitle3=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="#{ecConfig.activeConfig.noteTitle3}" />
+					<aon:outputText style="color:#ccc;" value="#{ecConfig.activeConfig.noteTitle3}" />
 					<rich:componentControl for="legalNote3Process" attachTo="legal-note3"
 						operation="show" event="onclick" />
 				</aon:outputLink>
-		
+				
+				<aon:div id="version-tag" style="text-align:right;" >
+					<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
+						styleClass="aon-finding-toolbar-item aon-icon-footer-note" 
+						style="font-size:0.9em;margin-top:0.3em;color:#ccc;"
+						rendered="#{aonConfiguration.applicationVersion != null}" />
+				</aon:div>
 			</aon:div>
 		</aon:form>
 		
-		<rich:modalPanel id="legalNote1Process" height="490" width="570"
+		<rich:modalPanel id="legalNote1Process" width="570" autosized="true"
 			zindex="2000" style="top: 0px; left:0px;">
 			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
         	<f:facet name="header">
@@ -97,7 +103,8 @@
 			<aon:div styleClass="aon-popupWindow-content">
 				<aon:div styleClass="aon-popupWindow-content-internal">
 					<aon:div id="legalNote1" styleClass="extra-info">
-						<aon:outputText value="#{ecConfig.activeConfig.legalNote1}" />
+						<aon:outputText escape="false"
+							value="#{ecConfig.activeConfig.legalNote1}" />
 					</aon:div>
 					<aon:div styleClass="aon-text-center">
 						<aon:outputLink id="legalNote1-hidelink" value="#">
@@ -108,7 +115,7 @@
 				</aon:div>
 			</aon:div>
 		</rich:modalPanel>
-		<rich:modalPanel id="legalNote2Process" height="490" width="570"
+		<rich:modalPanel id="legalNote2Process" width="570" autosized="true"
 			zindex="2000" style="top: 0px; left:0px;">
 			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
         	<f:facet name="header">
@@ -119,7 +126,8 @@
 			<aon:div styleClass="aon-popupWindow-content">
 				<aon:div styleClass="aon-popupWindow-content-internal">
 					<aon:div id="legalNote2" styleClass="extra-info">
-						<aon:outputText value="#{ecConfig.activeConfig.legalNote2}" />
+						<aon:outputText escape="false"
+							value="#{ecConfig.activeConfig.legalNote2}" />
 					</aon:div>
 					<aon:div styleClass="aon-text-center">
 						<aon:outputLink id="legalNote2-hidelink" value="#">
@@ -130,7 +138,7 @@
 				</aon:div>
 			</aon:div>
 		</rich:modalPanel>
-		<rich:modalPanel id="legalNote3Process" height="490" width="570"
+		<rich:modalPanel id="legalNote3Process" width="570" autosized="true"
 			zindex="2000" style="top: 0px; left:0px;">
 			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
         	<f:facet name="header">
@@ -142,7 +150,8 @@
 			<aon:div styleClass="aon-popupWindow-content">
 				<aon:div styleClass="aon-popupWindow-content-internal">
 					<aon:div id="legalNote3" styleClass="extra-info">
-						<aon:outputText escape="#{true}"  value="#{ecConfig.activeConfig.legalNote3}" />
+						<aon:outputText escape="false"  
+							value="#{ecConfig.activeConfig.legalNote3}" />
 					</aon:div>
 					<aon:div styleClass="aon-text-center">
 						<aon:outputLink id="legalNote3-hidelink" value="#">

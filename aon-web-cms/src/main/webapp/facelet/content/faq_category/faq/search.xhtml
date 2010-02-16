@@ -12,32 +12,65 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="faqSearch">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.faq}" />
-				<ui:param name="controller" value="#{faq}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-			</ui:include>		
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{faq}" />
-				<ui:define name="searchContent">
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.faq}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
+
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="faq_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{faq.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{cms.roleEditor}"
+						action="faq_form"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{faq.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="faq_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{faq.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="Faq_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="Faq_alias" size="50"
-						valueChangeListener="#{controller.addExpression}" />
+						valueChangeListener="#{faq.addExpression}" />
 
-					<aon:outputLabel for="Faq_details_question"
+					<aon:outputLabel for="Faq_question"
 						value="#{appBundle.faq_question}" />
-					<aon:inputText id="Faq_details_question" size="50"
-						valueChangeListener="#{controller.addExpression}" />
+					<aon:inputText id="Faq_question" size="50"
+						value="#{faq.question}" />
 
 					<aon:outputLabel for="Faq_faqCategory_id"
 						value="#{appBundle.faq_category}"/>
 					<aon:selectOneMenu id="Faq_faqCategory_id"  
-						valueChangeListener="#{controller.addExpression}">
+						valueChangeListener="#{faq.addExpression}">
 						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{collections.faqCategoryList}" />
 					</aon:selectOneMenu>
@@ -45,19 +78,10 @@
 					<aon:outputLabel for="Faq_position"
 						value="#{appBundle.faq_position}" />
 					<aon:inputText id="Faq_position" size="10"
-						valueChangeListener="#{controller.addExpression}" />
-						
-					<aon:outputLabel for="Faq_active"
-						value="#{appBundle.cms_active}" />
-					<aon:selectOneMenu id="Faq_active"
-						valueChangeListener="#{controller.addExpression}">
-						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneMenu>																		
+						valueChangeListener="#{faq.addExpression}" />
 	
-				</ui:define>
-			</ui:decorate>
+				</aon:panelGrid>
+			</aon:div>
 			
 		</aon:form>
 	</ui:define>

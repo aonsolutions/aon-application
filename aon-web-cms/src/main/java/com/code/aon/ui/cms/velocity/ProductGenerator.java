@@ -3,10 +3,10 @@ package com.code.aon.ui.cms.velocity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.hibernate.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.BrandDetail;
@@ -26,17 +26,15 @@ import com.code.aon.ui.cms.velocity.attribute.ProductCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.ProductHandler;
 
 public class ProductGenerator extends Generator {
-
-	private final static Logger LOGGER = LoggerFactory.getLogger(ProductGenerator.class);
 	
-	public static final String MAIN_PAGE = "main_page"; 
+	private static final Logger LOGGER = Logger.getLogger(ProductGenerator.class.getName());
 
-	public void generate() {
+	public static void generate() {
 		List<ProductCategoryDetail> productCategoryDetailList;
 		List<ProductCategoryDetail> productSubCategoryDetailList;
 		List<BrandDetail> brandDetailList;
 		try {
-			String mainPageURL = getMainPageUrl();
+			String mainPageURL = ProductGenerator.getMainPageUrl();
 			
 			String stmtPC = "SELECT pcd FROM ProductCategory pc,ProductCategoryDetail pcd " +
 					"WHERE pcd.productCategory.id = pc.id " +
@@ -50,13 +48,14 @@ public class ProductGenerator extends Generator {
 
 			List<ProductCategoryHandler> listCategoryHandler = new ArrayList<ProductCategoryHandler>();
 
-			for( ProductCategoryDetail productCategoryDetail : productCategoryDetailList ) {
+			for (Iterator<ProductCategoryDetail> iteratorPC = productCategoryDetailList.iterator(); iteratorPC.hasNext();) {
+				ProductCategoryDetail productCategoryDetail = iteratorPC.next();
 
 				ProductCategoryHandler categoryHandler = new ProductCategoryHandler(productCategoryDetail);
 
 				listCategoryHandler.add(categoryHandler);
 				
-				VelocityUtil vu = context.initVelocityUtil();
+				VelocityUtil vu = ProductGenerator.initVelocity();
 				vu.put("mainPageURL", mainPageURL);
 
 				String stmtPSC = "SELECT pcd FROM ProductCategory pc,ProductCategoryDetail pcd " +
@@ -70,15 +69,15 @@ public class ProductGenerator extends Generator {
 				queryPSC.setBoolean(2, Boolean.TRUE);
 				productSubCategoryDetailList = queryPSC.list();
 
-				chargeProductCategoryContext(vu, productCategoryDetail.getProductCategory());
+				ProductGenerator.chargeProductCategoryContext(vu, productCategoryDetail.getProductCategory());
 
 				List<ProductCategoryHandler> listSubCategoryHandler = new ArrayList<ProductCategoryHandler>();
 				
 				for (Iterator<ProductCategoryDetail> iteratorPSC = productSubCategoryDetailList.iterator(); iteratorPSC.hasNext();) {
 					ProductCategoryDetail productSubCategoryDetail = iteratorPSC.next();
-					chargeProductSubCategoryContext(vu, productSubCategoryDetail.getProductCategory());
+					ProductGenerator.chargeProductSubCategoryContext(vu, productSubCategoryDetail.getProductCategory());
 					List<ProductHandler> listProductHandler = new ArrayList<ProductHandler>();
-					listProductHandler = getProducts(productSubCategoryDetail.getProductCategory(),vu,true);
+					listProductHandler = ProductGenerator.getProducts(productSubCategoryDetail.getProductCategory(),vu,true);
 					
 					ProductCategoryHandler subCategoryHandler = new ProductCategoryHandler(productSubCategoryDetail);
 					listSubCategoryHandler.add(subCategoryHandler);
@@ -86,7 +85,7 @@ public class ProductGenerator extends Generator {
 					vu.put("category", categoryHandler);
 					vu.put("subCategory", subCategoryHandler);
 					vu.put("productList", listProductHandler);
-					logger.info(" Generando Subcategoria " + productSubCategoryDetail.getProductCategory().getAlias() + ".");
+					VelocityUtil.addMessage(" Generando Subcategoria " + productSubCategoryDetail.getProductCategory().getAlias() + ".", VelocityUtil.INFO);
 					generate(vu, Templates.PRODUCT_CATEGORY, productSubCategoryDetail.getProductCategory().getAlias());
 					vu.remove("productList");
 					vu.remove("subCategory");
@@ -97,28 +96,32 @@ public class ProductGenerator extends Generator {
 
 				vu.put("category", categoryHandler);
 				vu.put("subCategoryList", listSubCategoryHandler);
-				logger.info(" Generando Categoria " + productCategoryDetail.getProductCategory().getAlias() + ".");
+				VelocityUtil.addMessage(" Generando Categoria " + productCategoryDetail.getProductCategory().getAlias() + ".", VelocityUtil.INFO);
 				generate(vu, Templates.PRODUCT_CATEGORY, productCategoryDetail.getProductCategory().getAlias());
 				vu.remove("subCategoryList");
 				vu.remove("category");
 
 				listSubCategoryHandler = null;
 
-				vu.remove("mainPageURL");	
+				vu.remove("mainPageURL");
+				vu.finalize();
+				vu = null;		
 			}
 			
-			VelocityUtil vu = context.initVelocityUtil();
-			chargeProductCategoryContext(vu, null);
+			VelocityUtil vu = ProductGenerator.initVelocity();
+			ProductGenerator.chargeProductCategoryContext(vu, null);
 			vu.put("mainPageURL", mainPageURL);
 			vu.put("mainCategoryList", listCategoryHandler);
-			logger.info(" Generando category main.");
+			VelocityUtil.addMessage(" Generando category main.", VelocityUtil.INFO);
 			generate(vu, Templates.PRODUCT_CATEGORY, ProductGenerator.MAIN_PAGE);
 			vu.remove("mainCategoryList");
 			vu.remove("mainPageURL");
+			vu.finalize();
+			vu = null;		
 			
 			listCategoryHandler = null;
 
-			mainPageURL = getBrandMainPageUrl();
+			mainPageURL = ProductGenerator.getBrandMainPageUrl();
 
 			String stmtB = "SELECT bd FROM Brand b,BrandDetail bd " +
 					"WHERE bd.brand.id = b.id " +
@@ -131,8 +134,8 @@ public class ProductGenerator extends Generator {
 
 			List<BrandHandler> listBrandHandler = new ArrayList<BrandHandler>();
 
-			vu = context.initVelocityUtil();
-			chargeProductCategoryContext(vu, null);
+			vu = ProductGenerator.initVelocity();
+			ProductGenerator.chargeProductCategoryContext(vu, null);
 			vu.put("mainPageURL", mainPageURL);
 			
 			for (Iterator<BrandDetail> iteratorB = brandDetailList.iterator(); iteratorB.hasNext();) {
@@ -142,11 +145,11 @@ public class ProductGenerator extends Generator {
 				listBrandHandler.add(brandHandler);
 				
 				List<ProductHandler> listProductHandler = new ArrayList<ProductHandler>();
-				listProductHandler = getProducts(brandDetail.getBrand(),vu,false);
+				listProductHandler = ProductGenerator.getProducts(brandDetail.getBrand(),vu,false);
 
 				vu.put("brand", brandHandler);
 				vu.put("products", listProductHandler);
-				logger.info(" Generando marca "+brandDetail.getBrand().getAlias()+".");
+				VelocityUtil.addMessage(" Generando marca "+brandDetail.getBrand().getAlias()+".", VelocityUtil.INFO);
 				generate(vu, Templates.BRAND, brandDetail.getBrand().getAlias());
 				vu.remove("products");
 				vu.remove("brand");
@@ -155,34 +158,36 @@ public class ProductGenerator extends Generator {
 			}
 
 			vu.put("brandList", listBrandHandler);
-			logger.info(" Generando marcas.");
+			VelocityUtil.addMessage(" Generando marcas.", VelocityUtil.INFO);
 			generate(vu, Templates.BRAND, ProductGenerator.MAIN_PAGE);
 			vu.remove("brandList");
 
 			vu.remove("mainPageURL");
+			vu.finalize();
+			vu = null;		
 
 		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
-			logger.error(th.getMessage());
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			VelocityUtil.addMessage(th.getMessage(), VelocityUtil.ERROR);;
 		} finally {
 			productCategoryDetailList = null;
 			productSubCategoryDetailList = null;
 		}
 	}
 	
-	private String getMainPageUrl(){
+	private static String getMainPageUrl(){
 		String url = Templates.PRODUCT_CATEGORY.getHtmlName();
 		url = url.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 		return url;
 	}
 
-	private String getBrandMainPageUrl(){
+	private static String getBrandMainPageUrl(){
 		String url = Templates.BRAND.getHtmlName();
 		url = url.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 		return url;
 	}
 
-	private List<ProductHandler> getProducts(ProductCategory category,VelocityUtil vu,boolean generate) throws ManagerBeanException{
+	private static List<ProductHandler> getProducts(ProductCategory category,VelocityUtil vu,boolean generate) throws ManagerBeanException{
 		List<ProductHandler> list = new ArrayList<ProductHandler>();
 
 		String stmtP = "SELECT pd FROM Product p,ProductDetail pd " +
@@ -203,7 +208,7 @@ public class ProductGenerator extends Generator {
 			
 			if (generate){
 				vu.put("product", productHandler);
-				logger.info(" Generando producto " + productDetail.getProduct().getAlias() + ".");
+				VelocityUtil.addMessage(" Generando producto " + productDetail.getProduct().getAlias() + ".", VelocityUtil.INFO);
 				generate(vu, Templates.PRODUCT, productDetail.getProduct().getAlias());
 				vu.remove("product");
 			}
@@ -214,7 +219,7 @@ public class ProductGenerator extends Generator {
 		return list;
 	}
 
-	private List<ProductHandler> getProducts(Brand brand,VelocityUtil vu, boolean generate) throws ManagerBeanException{
+	private static List<ProductHandler> getProducts(Brand brand,VelocityUtil vu, boolean generate) throws ManagerBeanException{
 		List<ProductHandler> list = new ArrayList<ProductHandler>();
 
 		String stmtP = "SELECT pd FROM Product p,ProductDetail pd " +
@@ -234,7 +239,7 @@ public class ProductGenerator extends Generator {
 			ProductHandler productHandler = new ProductHandler(productDetail);
 			if (generate){
 				vu.put("product", productHandler);
-				logger.info(" Generando producto " + productDetail.getProduct().getAlias() + ".");
+				VelocityUtil.addMessage(" Generando producto " + productDetail.getProduct().getAlias() + ".", VelocityUtil.INFO);
 				generate(vu, Templates.PRODUCT, productDetail.getProduct().getAlias());
 				vu.remove("product");
 			}
@@ -245,19 +250,33 @@ public class ProductGenerator extends Generator {
 		return list;
 	}
 
-	private void chargeProductCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
+	private static VelocityUtil initVelocity(){
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		return vu;
+	}
+
+	private static void chargeProductCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
 		if (productCategory!=null && productCategory.getSection()!=null){
-			context.changeSection(vu, productCategory.getSection());
+			CommonGenerator.getCommonGenerator().chargeContext(vu, productCategory.getSection());
 		}else{
 			Section configSection = GeneratorConfigController.currentSection(ProductCategoryConfig.class);
-			context.changeSection(vu, configSection);
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 		}
 	}
 
-	private void chargeProductSubCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
+	private static void chargeProductSubCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
 		if (productCategory.getSection()!=null)
-			context.changeSection(vu, productCategory.getSection());
+			CommonGenerator.getCommonGenerator().chargeContext(vu, productCategory.getSection());
 	}
+	
+	public static void main(String[] args) {
+		ProductGenerator.generate();
+	}
+	
+	public static final String MAIN_PAGE = "main_page"; 
 
 
 }

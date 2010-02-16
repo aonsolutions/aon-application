@@ -31,7 +31,7 @@
    	</managed-property>
    	<managed-property>
    		<property-name>resourceURIPreffix</property-name>
-   		<value>/aonResource/4.1.0</value>
+   		<value>/aonResource/3.6.1</value>
    	</managed-property>
    </managed-bean>
 
@@ -48,7 +48,6 @@
 		   <property-name>styleSheets</property-name>
 		   <list-entries>
 			  <value>#{aonResource.resolve['/aon-richCss.css']}</value>
-			  <value>#{aonResource.resolveLocal['/css/cms.css']}</value>
 		   </list-entries>
 		</managed-property>
 	</managed-bean>

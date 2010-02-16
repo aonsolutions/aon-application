@@ -7,21 +7,49 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
-
-	<div>
-		<aon:outputText value="Transferencia" />
+	
+	<aon:form>
+		<div>
+			<aon:outputText value="Transferencia" />
 		
 		<aon:panelGrid columns="2" style="width:100%">
 			
-			<aon:outputLabel value="El pago debera hacerse en la siguiente cuenta bancaria" />
-			<aon:outputText value="no. cuenta" />
+			<aon:outputLabel value="El pago debera hacerse en una de las siguientes cuentas bancarias" />
+			<rich:dataList rows="10">
+	            <f:selectItems value="#{cartOffer.companyBanks}" />
+	        </rich:dataList>
+	        <h:dataTable value="#{cartOffer.companyBanks}" var="item">
+	        	<h:column>
+					<aon:outputText value="#{item.bank.name}" />
+	        	</h:column>
+	        	<h:column>
+					<aon:outputText value="#{item.bankAccount.office} " />
+					<aon:outputText value="#{item.bankAccount.control} " />
+					<aon:outputText value="#{item.bankAccount.account} " />
+				</h:column>
+	        </h:dataTable>
 			
 			<!--  
+			<aon:outputText value="no. cuenta" />
+			<aon:outputText value="#{cartOffer.companyBanks}" />
 			<aon:outputLabel value="#{bundle.aon_name}" />
 			<aon:outputText value="#{shopItem.item.product.name}" />
 			-->
 		
 		</aon:panelGrid>
-		
-	</div>
+		</div>
+		<div>
+		<!--  
+			<h:commandButton action="" value="" />
+			<h:commandLink action="" value="" />	
+		-->
+			<aon:commandButton id="aonToolbar-accept" value="#{bundle.aon_accept}"
+				action="cartOffer_form"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				immediate="true" accesskey="#{bundle.aon_key_accept}" >
+				<aon:actionListener method="#{cartOffer.onAccept}" />
+			</aon:commandButton>
+		</div>
+	</aon:form>
+	
 </ui:composition>

@@ -7,7 +7,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class DocumentGalleryController extends GalleryController {
 
-	public File recoverFilesPath() {
+	public String recoverFilesPath() {
 		return ControllerUtil.getDocumentsPath();
 	}
 
@@ -23,7 +23,7 @@ public class DocumentGalleryController extends GalleryController {
 	}
 	
 	public String getPreviewCurrentUrl() {
-		String url = ControllerUtil.getPreviewURL() + ControllerUtil.DOCUMENTS_PATH + getCurrentRelativePath();
+		String url = ControllerUtil.getPreviewURL() + "/" + ControllerUtil.DOCUMENTS_PATH + getCurrentRelativePath();
 		return url;
 	}
 

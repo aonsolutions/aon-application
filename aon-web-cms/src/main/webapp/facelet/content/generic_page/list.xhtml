@@ -13,40 +13,65 @@
 	<ui:define name="content">
 
 		<aon:form id="list_form">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.generic_page}" />
-				<ui:param name="controller" value="#{generic_page}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="home"
-						value="#{bundle.aon_home}"
-						action="home" 
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>
-					<aon:commandButton id="generate" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" immediate="true"
-						rendered="#{cms.roleEditor}"
-						actionListener="#{generator.onGenerateGenericPages}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_save}">
-						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
-							actionListener="#{generator_status.onActivePoll}"  
-							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-					</aon:commandButton>	
-				</ui:define>
-			</ui:decorate>		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.generic_page}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="generic_page_form"
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{generic_page.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="generic_page_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{generic_page.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="generate" reRender="aonStatus"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateGenericPages}" />
+							<a4j:support 
+								event="onclick" reRender="poll,grid" 
+								actionListener="#{generator_status.onActivePoll}"  
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+						</aon:commandButton>	
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="dataTable" rows="#{generic_page.pageLimit}" var="to"
 					value="#{generic_page.model}" rendered="#{generic_page.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
+							aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn">
 							
 					<aon:rowSelector
 						action="generic_page_form" actionListener="#{generic_page.onSelect}" />
@@ -55,35 +80,18 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" />
+						<aon:outputText value="#{to.alias}"
+							styleClass="aon-editDataTable-button" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.generic_page_title}" />
 						</f:facet>
-						<aon:outputText value="#{generic_page.i18nTitle}">
-							<aon:abbreviateConverter maxWidth="60" />
-						</aon:outputText>						
+						<aon:outputText value="#{generic_page.i18nTitle}"
+							styleClass="aon-editDataTable-button" />
 					</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_section}" />
-						</f:facet>
-						<aon:outputText value="#{to.section.alias}" />
-					</aon:column>
-						
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.generic_page_create_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.create_date}">
-							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.generic_page_active}" />
@@ -107,6 +115,23 @@
 						</aon:div>
 					</aon:column>
 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.generic_page_create_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.create_date}">
+							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.section}" />
+						</f:facet>
+						<aon:outputText value="#{to.section.alias}" />
+					</aon:column>
+						
 				</aon:dataTable>
 					
 				<aon:dataScroller2 for="dataTable" showNote="true" />					

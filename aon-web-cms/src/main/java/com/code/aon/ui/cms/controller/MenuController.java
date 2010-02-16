@@ -1,12 +1,11 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;
@@ -23,7 +22,7 @@ import com.code.aon.ui.form.FormUtil;
 
 public class MenuController extends BasicController implements ICMSConstants {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(MenuController.class);
+	private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
 
 	private int currentType = MenuType.SIDEBAR.ordinal();
 
@@ -32,7 +31,7 @@ public class MenuController extends BasicController implements ICMSConstants {
 			try {
 				changeMenuList();
 			} catch (ExpressionException e) {
-				LOGGER.error(e.getMessage(), e);
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 		return model;

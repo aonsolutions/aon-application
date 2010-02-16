@@ -8,8 +8,9 @@
 	<aon:panelGrid columns="4" dir="true" style="width:100%">
 
 		<aon:outputLabel for="Registry_document"
-			value="#{bundle.aon_company_document}" />
+			value="#{bundle.aon_company_document} *" />
 		<aon:inputText id="Registry_document" maxlength="16"
+			required="true"
 			value="#{shoppingCart.cartTarget.ecTarget.target.registry.document}"
 			size="16">
 			<f:validateLength minimum="1" maximum="16" />
@@ -34,10 +35,11 @@
 		</aon:inputText>
 
 		<aon:outputLabel for="Company_address"
-			value="#{registryBundle.registry_address}" />
+			value="#{registryBundle.registry_address} *" />
 		<aon:div>
 			<aon:div>
 				<aon:inputText id="Company_address"
+					required="true"
 					value="#{shoppingCart.cartTarget.mainAddress.address}" size="60"
 					maxlength="128" />
 			</aon:div>
@@ -57,8 +59,9 @@
 		<aon:outputLabel value="&#160;" />
 
 		<aon:outputLabel for="Company_address_zip"
-			value="#{registryBundle.registry_zip}" />
+			value="#{registryBundle.registry_zip} *" />
 		<aon:inputText id="Company_address_zip"
+			required="true"
 			value="#{shoppingCart.cartTarget.mainAddress.zip}" size="32"
 			maxlength="16" />
 
@@ -70,9 +73,10 @@
 
 
 		<aon:outputLabel for="Company_address_city"
-			value="#{registryBundle.registry_city}" />
+			value="#{registryBundle.registry_city} *" />
 		<aon:div>
 			<aon:inputText id="Company_address_city"
+				required="true"
 				value="#{shoppingCart.cartTarget.mainAddress.city}" size="60"
 				maxlength="64" />
 		</aon:div>
@@ -86,8 +90,9 @@
 		</aon:selectOneMenu>
 
 		<aon:outputLabel for="Company_address_geozone"
-			value="#{registryBundle.registry_geozone}" />
+			value="#{registryBundle.registry_geozone} *" />
 		<aon:selectOneMenu id="Company_address_geozone"
+			required="true"
 			value="#{shoppingCart.cartTarget.mainAddress.geozone}">
 			<f:selectItems value="#{geozoneCollections.geoTrees}" />
 		</aon:selectOneMenu>
@@ -100,7 +105,7 @@
 
 		<aon:outputLabel value="&#160;" />
 		<aon:commandButton id="aonToolbar-accept" value="#{bundle.aon_accept}"
-			action="paymethod_form"
+			action="shop_form"
 			styleClass="aon-finding-toolbar-item aon-icon-accept"
 			accesskey="#{bundle.aon_key_accept}"
 			actionListener="#{shoppingCart.onAddTarget}" />

@@ -1,17 +1,16 @@
 package com.code.aon.ui.cms.validator;
 
+import java.util.logging.Logger;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class AliasValidator implements Validator {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(AliasValidator.class);
+	private static final Logger LOGGER = Logger.getLogger(AliasValidator.class.getName());
 	
 	public AliasValidator() {
 	}

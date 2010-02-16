@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -17,8 +19,6 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -35,22 +35,23 @@ import com.code.aon.ql.Criteria;
 
 public class XmlBuilder {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(XmlBuilder.class);
+	private static final Logger LOGGER = Logger.getLogger(XmlBuilder.class.getName());
 	
-	private File destDir;
+	private String destDir;
 
 	private String url;
 
-	public XmlBuilder(File destDir, String url){
+	public XmlBuilder(String destDir, String url){
 		this.destDir = destDir;
 		this.url = url;
 	}
 
 	public void generate() throws FileNotFoundException, XmlBuilderException{
 		this.fireMessage("Start generation.");
-		if (!destDir.exists()){
+		File fileDir = new File(destDir);
+		if (!fileDir.exists()){
 			this.fireMessage("Creating directory....");
-			destDir.mkdir();
+			fileDir.mkdir();
 			this.fireMessage("Created.");
 		}
 		
@@ -217,7 +218,7 @@ public class XmlBuilder {
 				generateElement(hd,atts,"","","url_eu",value);
 				value = object.getInitDate()==null?"":sdf.format(object.getInitDate());
 				generateElement(hd,atts,"","","hasi",value);
-				value = object.getEndDate()==null?"":sdf.format(object.getEndDate());
+				value = object.getInitDate()==null?"":sdf.format(object.getInitDate());
 				generateElement(hd,atts,"","","bukatu",value);
 				value = objectDetailEs.getInfo()==null?"":objectDetailEs.getInfo();
 				generateElement(hd,atts,"","","info_es",value);
@@ -272,10 +273,10 @@ public class XmlBuilder {
 	public static void main(String[] args) {
 		try {
 			// ControllerUtil.getDocumentsPath()
-			XmlBuilder b = new XmlBuilder( new File("c:/tmp"+"/"+"hiru"),"http://hiru.com/xml");
+			XmlBuilder b = new XmlBuilder("c:/tmp"+"/"+"hiru","http://hiru.com/xml");
 			b.generate();			
 		}catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 	}
 	

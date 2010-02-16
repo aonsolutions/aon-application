@@ -13,30 +13,49 @@
 	<ui:define name="content">
 
 		<aon:form id="headerList">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.header}" />
-				<ui:param name="controller" value="#{cmsHeader}" />
-				<ui:param name="skipSearchButton" value="#{true}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="home"
-						value="#{bundle.aon_home}"
-						action="home" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>
-				</ui:define>
-			</ui:decorate>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.header}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="header_form"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{headers.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="dataTable" value="#{cmsHeader.model}" var="to"
-					rows="#{cmsHeader.pageLimit}" rendered="#{cmsHeader.model.rowCount > 0}"
+				<aon:dataTable id="dataTable" value="#{headers.model}" var="to"
+					rows="#{headers.pageLimit}" rendered="#{headers.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn,
 							aon-editDataTable-iconColumn">
 							
 					<aon:rowSelector
-						action="cmsHeader_form" actionListener="#{cmsHeader.onSelect}" />							
+						action="header_form" actionListener="#{headers.onSelect}" />							
 							
 					<aon:column>
 						<f:facet name="header">
@@ -55,7 +74,7 @@
 							<aon:selectBooleanCheckbox id="Header_defaultMenu" 
 								value="#{to.default_}" rendered="#{!to.default_}">
 								<a4j:support 
-									actionListener="#{cmsHeader.defaultChanged}"
+									actionListener="#{headers.defaultChanged}"
 									event="onclick"  
 									reRender="dataTable" />
 							</aon:selectBooleanCheckbox>
@@ -68,7 +87,7 @@
 					
 				</aon:dataTable>
 					
-				<aon:dataScroller2 for="dataTable" showNote="true" />
+				<aon:dataScroller2 for="dataTable" />
 					
 			</aon:div>
 		</aon:form>

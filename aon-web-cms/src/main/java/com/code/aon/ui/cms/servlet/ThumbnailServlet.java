@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,8 +18,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Config;
 import com.code.aon.ui.cms.Constants;
@@ -32,34 +32,37 @@ import com.code.aon.ui.cms.util.ImageUtil;
 
 public class ThumbnailServlet extends HttpServlet implements Constants{
 	
-	private static final String WIDTH = "width";
-	
-	private static final String LAST_MODIFIED = "lm";
-
 	private static final long serialVersionUID = 7628878719631691763L;
-	
-	private static final long EXPIRED = 8640000L;
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ThumbnailServlet.class);
+	private static final Logger LOGGER = Logger.getLogger(ThumbnailServlet.class.getName());
 	
-	private void setNoCacheControl( HttpServletResponse res ) {
+	private void setCacheControl( HttpServletResponse res, File file ) {
     	res.setHeader("Expires", "0");
     	res.setHeader("Pragma", "no-cache");
     	res.setHeader("Cache-Control", "no-store");								
 	}
-
-	private void setCacheableControl( HttpServletResponse res ) {
-        res.setDateHeader("Expires", System.currentTimeMillis() + (EXPIRED * 1000L));
-        res.setHeader("Cache-control", "max-age=" + EXPIRED);
+	
+	/*
+	private long getLastModified( File file ) {
+		if ( file.exists() && file.isFile() && file.canRead() ) {
+			long value = file.lastModified();
+			if ( value != 0 ) {
+				return value / 1000 * 1000;
+			}
+		}
+		return -1;
 	}
 	
-	private void setCacheControl( HttpServletRequest req, HttpServletResponse res ) {
-		if (req.getParameter(LAST_MODIFIED) != null) {
-			setCacheableControl(res);
-		} else {
-			setNoCacheControl(res);
+	@Override
+	protected long getLastModified(HttpServletRequest req) {
+		File file = new File( getFile(req) );
+		long value = getLastModified(file);
+		if ( value != -1 ) {
+			return value;
 		}
+		return super.getLastModified(req);
 	}
+	*/
 	
 	private String getFile( HttpServletRequest req ) {
 		String servlet = req.getServletPath();
@@ -71,9 +74,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		int maxDim = 100;
-		if (req.getParameter(WIDTH) != null) {
-			maxDim = Integer.parseInt(req.getParameter(WIDTH).toString());
-		}
+		if (req.getParameter("width") != null) maxDim = Integer.parseInt(req.getParameter("width").toString());
 		
 		InputStream is = null;
 		BufferedInputStream bis = null;
@@ -81,40 +82,45 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		BufferedOutputStream bos = null;
 		try {
 			String file = getFile(req);
+			boolean document = false;
 			//Comprobamos la extension...
 			String ext = FilenameUtils.getExtension(file);
-			String resource = null;
 			if (! StringUtils.isBlank(ext) ) {
 				if (ext.equals("doc") || ext.equals("docx") || ext.equals("wps")) {
-					resource = "word.png";
+					ext = "word.png";
+					document = true;
 				} else if (ext.equals("xls") || ext.equals("xlsx")) {
-					resource = "excel.png";
+					ext = "excel.png";
+					document = true;
 				} else if (ext.equals("pps") || ext.equals("pptx") || ext.equals("ppt")) {
-					resource = "powerpoint.png";
+					ext = "powerpoint.png";
+					document = true;
 				} else if (ext.equals("wmv") || ext.equals("avi") || ext.equals("mov")) {
-					resource = "video.png";
+					ext = "video.png";
+					document = true;
 				} else if (ext.equals("wma") || ext.equals("mp3") || ext.equals("rm")) {
-					resource = "audio.png";
+					ext = "audio.png";
+					document = true;
 				} else if (ext.equals("html") || ext.equals("htm")) {
-					resource = "html.png";
+					ext = "html.png";
+					document = true;
 				} else if (ext.equals("pdf")) {
-					resource = "pdf.png";
+					ext = "pdf.png";
+					document = true;
 				}
 			}
 			File f = new File(file);
-			if ( (resource == null) && f.exists() && f.isFile()) {
-				setCacheControl(req, res);
-	        	res.setContentType( "image/jpeg" );
+        	res.setContentType( "image/jpeg" );
+        	setCacheControl(res, f);
+			if (!document && f.exists() && f.isFile()) {
 				ImageUtil.resize(f, res.getOutputStream(), maxDim);
             } else {
             	String image = OTHER_IMAGE;
-            	if ( resource != null ) {
-            		image = resource;
-            	} else if (!f.exists() || !f.isFile()) {
+            	if (!f.exists() || !f.isFile()) {
             		image = BLANK_IMAGE;
             	}
-            	setCacheableControl(res);
             	res.setContentType( "image/png" );
+            	if (document) image = ext;
         		is = ThumbnailServlet.class.getResourceAsStream(image);
         		bis = new BufferedInputStream(is);
                 os = res.getOutputStream();
@@ -124,7 +130,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         	}
             res.flushBuffer();
         } catch (Throwable th) {
-        	LOGGER.error(th.getMessage(), th);
+        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
             throw new ServletException(th.getMessage(), th);
         } finally {
         	IOUtils.closeQuietly(bis);

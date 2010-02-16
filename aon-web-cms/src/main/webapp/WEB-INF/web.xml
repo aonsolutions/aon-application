@@ -34,10 +34,12 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
     <param-name>facelets.SKIP_COMMENTS</param-name>
     <param-value>true</param-value>
   </context-param>
+  <!-- 
   <context-param>
     <param-name>facelets.REFRESH_PERIOD</param-name>
     <param-value>-1</param-value>
   </context-param>
+  -->
   <context-param>
     <param-name>facelets.BUFFER_SIZE</param-name>
     <param-value>500000</param-value>
@@ -191,6 +193,50 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
   <servlet-mapping>
     <servlet-name>thumbnailServlet</servlet-name>
     <url-pattern>*.thumbnail</url-pattern>
+  </servlet-mapping>
+  <!-- FCK Faces Servlet -->
+  <servlet>
+    <servlet-name>InputRichText Servlet</servlet-name>
+    <servlet-class>
+    com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>InputRichText Servlet</servlet-name>
+    <url-pattern>/fckfaces/*</url-pattern>
+  </servlet-mapping>
+  <context-param>
+    <param-name>
+    org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
+    <param-value>/FCKeditor/fckconfig.js</param-value>
+  </context-param>
+  <!-- Connector FCKEditor Gallery -->
+  <servlet>
+    <servlet-name>Connector</servlet-name>
+    <servlet-class>
+    com.code.aon.ui.cms.servlet.GalleryConnectorServlet</servlet-class>
+    <init-param>
+      <param-name>baseDir</param-name>
+      <param-value>/UserFiles/</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Connector</servlet-name>
+    <url-pattern>
+    /fckfaces/FCKeditor/editor/filemanager/browser/default/connectors/jsp/connector</url-pattern>
+  </servlet-mapping>
+  <!-- FCKEditor Area CSS -->
+  <servlet>
+    <servlet-name>AreaCss</servlet-name>
+    <servlet-class>
+    com.code.aon.ui.cms.servlet.EditorAreaCssProviderServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AreaCss</servlet-name>
+    <url-pattern>
+    /fckfaces/FCKeditor/editor/css/fck_editorarea.css</url-pattern>
   </servlet-mapping>
   <!-- Resource Servlet -->
   <servlet>

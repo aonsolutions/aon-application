@@ -20,16 +20,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class HeaderController extends BasicI18nController implements ICMSConstants {
 
-	private boolean richTextEnabled;
-
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);

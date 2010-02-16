@@ -3,14 +3,13 @@ package com.code.aon.ui.cms.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.Language;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -25,7 +24,7 @@ import com.code.aon.ui.cms.event.I18NControllerListener;
 
 public class I18NController {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(I18NController.class);
+	private static final Logger LOGGER = Logger.getLogger(I18NController.class.getName());
 	
 	private Language currentLanguage;
 
@@ -37,7 +36,7 @@ public class I18NController {
 		try {
 			init();
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -45,12 +44,12 @@ public class I18NController {
 		try {
 			init();
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
 	private void init() throws ManagerBeanException {
-		LOGGER.info("CARGANDO LISTA DE IDIOMAS DISPONIBLES...");
+		LOGGER.info(">>>>>> CARGANDO LISTA DE IDIOMAS DISPONIBLES...");
 		IManagerBean languageBean = BeanManager.getManagerBean(Language.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(languageBean.getFieldName(ICMSAlias.LANGUAGE_POSITION));
@@ -73,7 +72,7 @@ public class I18NController {
 		this.currentLanguage = currentLanguage;
 		HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 		session.setAttribute(Constants.SESSION_CURRENT_LANGUAGE, currentLanguage);
-		LOGGER.info("SESSION CURRENT LANGUAGE: {}", currentLanguage.getDescription());
+		LOGGER.info(">>>>>>>>>> SESSION CURRENT LANGUAGE " + currentLanguage.getDescription());
 	}
 	
 	public void addListener(I18NControllerListener listener){
@@ -103,7 +102,7 @@ public class I18NController {
 
 	public void onChangeLanguage(ActionEvent event) throws ManagerBeanException {
 		Language language = (Language)language_list.getRowData();
-		LOGGER.info("CHANGE LANGUAGE TO: ", language.getDescription());
+		LOGGER.info(">>>>>>>>>>>>>>> CHANGE LANGUAGE TO: " + language.getDescription());
 		setCurrentLanguage(language);
 		fireEvent();
 	}

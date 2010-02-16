@@ -5,13 +5,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.sun.jimi.core.Jimi;
@@ -20,7 +20,7 @@ import com.sun.jimi.core.raster.JimiRasterImage;
 
 public class ImageUtil {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
+	private static final Logger LOGGER = Logger.getLogger(ImageUtil.class.getName());
 
 	public static int DEF_MAX_SIZE = 100;
 
@@ -68,9 +68,9 @@ public class ImageUtil {
 			Jimi.putImage(MimeType.MIME_JPEG.getName(), raster, os);
 			os.flush();
 		} catch (JimiException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -90,7 +90,7 @@ public class ImageUtil {
 				os = new FileOutputStream(newFile);
 				util.writeResizedImage(os);
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th);
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			} finally {
 				IOUtils.closeQuietly(os);
 			}
@@ -106,7 +106,7 @@ public class ImageUtil {
 				ImageUtil util = new ImageUtil(image, maxDim);
 				util.writeResizedImage(os);
 			} catch (Throwable th) {
-				LOGGER.error( "Error resizing " + file + ". " + th.getMessage(), th);
+				LOGGER.log(Level.SEVERE, "Error resizing " + file + ". " + th.getMessage(), th);
 			}
 		}
 	}
@@ -116,7 +116,7 @@ public class ImageUtil {
 		try {
 			image = ImageIO.read(file);
 		} catch ( Throwable th ) {
-			LOGGER.error( "ImageIO error reading image " + file + ". " + th.getMessage(), th);
+			LOGGER.log(Level.FINE, "ImageIO error reading image " + file + ". " + th.getMessage(), th);
 		}
 		if ( image == null ) {
 			image = new ImageIcon(file.getAbsolutePath()).getImage();

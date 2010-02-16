@@ -11,41 +11,64 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="productCategoryList">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.product_category}" />
-				<ui:param name="controller" value="#{productCategory}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="exit"
-						value="#{bundle.aon_close}"
-						action="#{productCategory.getBack}" 
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>
-				</ui:define>
-			</ui:decorate>	
-
+		<aon:form id="list">
 			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="sectionGrid" columns="2" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-toolbar">				
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.product_category}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="product_category_form"
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{productCategory.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="product_category_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{productCategory.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="#{productCategory.getBack}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="sectionGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 				
 					<aon:outputLabel for="ProductCategory_section"
-						styleClass="aon-margin-right" value="#{appBundle.cms_section_default}"/>
+						value="#{appBundle.section}"/>
 						
+					<aon:selectOneMenu id="ProductCategory_section"  
+						value="#{generator_config.sectionId}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+					
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-
-						<aon:selectOneMenu id="ProductCategory_section"  
-							value="#{generator_config.section}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{collections.sectionList}" />
-						</aon:selectOneMenu>
-						
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}"
-							action="productCategory_list" 
+							action="product_category_list" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<aon:actionListener method="#{generator_config.onSaveProductCategoryConfig}" />
 						</aon:commandButton>
@@ -59,30 +82,24 @@
 				<aon:dataTable id="dataTable" value="#{productCategory.model}" var="to"
 					rows="#{productCategory.pageLimit}" rendered="#{productCategory.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
+							aon-editDataTable-iconColumn">
 
 					<aon:rowSelector
-						action="productCategory_form" actionListener="#{productCategory.onSelect}" />							
+						action="product_category_form" actionListener="#{productCategory.onSelect}" />							
 			
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" />
+						<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.product_category_label}" />
 						</f:facet>
-						<aon:outputText value="#{productCategory.i18nLabel}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.cms_section}" />
-						</f:facet>
-						<aon:outputText value="#{to.section.alias}" />
+						<aon:outputText value="#{productCategory.i18nLabel}"
+							styleClass="aon-editDataTable-button"/>
 					</aon:column>
 
 					<aon:column>
@@ -92,14 +109,14 @@
 						<aon:div onmouseover="disableRowSelector();"
 							onmouseout="enableRowSelector();" >																																					
 							<aon:commandLink title="#{appBundle.product_category_activate}" 
-								reRender="dataTable" ajaxSingle="true"
+								reRender="dataTable"
 								actionListener="#{productCategory.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="ProductCategory_active" alt="#{appBundle.product_category_activate}"
 									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.product_category_deactivate}" 
-								reRender="dataTable" ajaxSingle="true"
+								reRender="dataTable"
 								actionListener="#{productCategory.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="ProductCategory_deactive" 

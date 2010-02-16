@@ -68,8 +68,8 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{sport_player.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -261,7 +261,8 @@
 										<aon:outputText value="#{appBundle.sport_career_path_sportClub}" />
 									</f:facet>
 									<aon:outputText value="#{to.club}"
-										rendered="#{to!=sport_career_path.to}">
+										rendered="#{to!=sport_career_path.to}" 
+										styleClass="aon-editDataTable-button">
 										<a4j:support 
 											reRender="dataTable,gridToolbar"
 											actionListener="#{sport_career_path.onSelect}"
@@ -284,7 +285,8 @@
 										<aon:outputText value="#{appBundle.sport_career_path_initDate}" />
 									</f:facet>
 									<aon:outputText value="#{to.initDate}"
-										rendered="#{to!=sport_career_path.to}">
+										rendered="#{to!=sport_career_path.to}" 
+										styleClass="aon-editDataTable-button">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 											timeZone="#{timeZoneController.timeZoneId}" />
 										<a4j:support 
@@ -321,7 +323,8 @@
 										<aon:outputText value="#{appBundle.sport_career_path_endDate}" />
 									</f:facet>
 									<aon:outputText value="#{to.endDate}"
-										rendered="#{to!=sport_career_path.to}">
+										rendered="#{to!=sport_career_path.to}" 
+										styleClass="aon-editDataTable-button">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 											timeZone="#{timeZoneController.timeZoneId}" />
 										<a4j:support 

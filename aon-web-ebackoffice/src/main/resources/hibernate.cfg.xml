@@ -34,6 +34,7 @@
 		<mapping class="com.code.aon.ebackoffice.EcOfferPayment"/>			
 		<mapping class="com.code.aon.ebackoffice.EcPaymethod"/>			
 		
+
 		<mapping class="com.code.aon.commercial.CommercialActivity" />
 		<mapping class="com.code.aon.commercial.CommercialTracking" />
 		<mapping class="com.code.aon.commercial.Offer" />
@@ -56,7 +57,9 @@
 		<mapping class="com.code.aon.company.WorkActivity" />
 		<mapping class="com.code.aon.company.resources.Resource" />
 		<mapping class="com.code.aon.company.resources.Employee" />
-		
+		<!--  
+		-->
+
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter" />
 		<mapping class="com.code.aon.config.Bank" />
@@ -72,29 +75,24 @@
 
 		<!-- EBACKOFFICE -->
 		<mapping class="com.code.aon.ebackoffice.Ectarget" />
-		<mapping class="com.code.aon.ebackoffice.Eccatalogue" />
-		<mapping class="com.code.aon.ebackoffice.Ecconfig" />
-		<mapping class="com.code.aon.ebackoffice.EcPaymethod" />
-		<mapping class="com.code.aon.ebackoffice.EcOfferPayment" />
 
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoTree" />
 		<mapping class="com.code.aon.geozone.GeoZone" />
 
 		<!-- AON-PRODUCT Mapping files -->
-		<mapping class="com.code.aon.product.Brand"/>
-		<mapping class="com.code.aon.product.Catalogue"/>
-		<mapping class="com.code.aon.product.CatalogueCategory"/>
-		<mapping class="com.code.aon.product.CatalogueItem"/>
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.ItemAlternative"/>
-		<mapping class="com.code.aon.product.ItemAttachment"/>
-		<mapping class="com.code.aon.product.ItemPos"/>
-		<mapping class="com.code.aon.product.Product"/>
-		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.ProductCategoryTree"/>
-		<mapping class="com.code.aon.product.TariffCatalogue"/>
+		<mapping class="com.code.aon.product.Brand" />
+		<mapping class="com.code.aon.product.Catalogue" />
+		<mapping class="com.code.aon.product.CatalogueCategory" />
+		<mapping class="com.code.aon.product.CatalogueItem" />
+		<mapping class="com.code.aon.product.Item" />
+		<mapping class="com.code.aon.product.ItemAttachment" />
+		<mapping class="com.code.aon.product.ItemPos" />
+		<mapping class="com.code.aon.product.Product" />
+		<mapping class="com.code.aon.product.ProductCategory" />
+		<mapping class="com.code.aon.product.ProductCategoryGroup" />
+		<mapping class="com.code.aon.product.ProductCategoryTree" />
+		<mapping class="com.code.aon.product.TariffCatalogue" />
 
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category" />

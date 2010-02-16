@@ -4,16 +4,10 @@ public interface ICMSConstants {
 	
 	String BUNDLE_NAME			= "appBundle";
 	
-	String
-	
-	CMS_GENERATOR_ERROR			= "cms_generator_error",
-	CMS_GENERATOR_FINISHED		= "cms_generator_finished";
-	
 	// Controller Names
 	
 	String
 	
-	ACTIVITY					= "activity",
 	ALBUM						= "album",
 	ALBUM_IMAGE					= "albumImage",
 	ALBUM_CATEGORY				= "album_category",
@@ -38,7 +32,6 @@ public interface ICMSConstants {
 	DOWNLOAD_CATEGORY			= "download_category",
 	FAQ							= "faq",
 	FAQ_CATEGORY				= "faq_category",
-	FILE_SYSTEM_BEAN			= "fileSystemBean",
 	FOOTER						= "footer",
 	FOOTER_BANNNER_CATEGORY		= "footer_banner_category",
 	GALLERY						= "gallery",
@@ -78,7 +71,7 @@ public interface ICMSConstants {
 	HOME					= "home",
 	ALBUM_FORM				= ALBUM + FORM,
 	ALBUM_LIST				= ALBUM + LIST,
-	ALBUM_IMAGE_FORM		= ALBUM_IMAGE + FORM,
+	ALBUM_IMAGE_FORM		= "album_image_form",
 	ARTICLE_FORM			= ARTICLE + FORM,
 	ARTICLE_LIST			= ARTICLE + LIST,
 	BANNNER_FORM			= BANNNER + FORM,

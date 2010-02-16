@@ -34,7 +34,7 @@ public class ConfigController {
 	private List<ITransferObject> configList;
 	private Ecconfig activeConfig;
 	private Company company;
-	private boolean aonEbackoffice;
+	private Boolean aonEbackoffice;
 //	private String PayerID;
 	
 //	public String getPayerID() {
@@ -49,8 +49,9 @@ public class ConfigController {
 	public Ecconfig getActiveConfig() {
 		if (activeConfig == null) {
 			searchActiveConfig();
-		} else if(isAonEbackoffice()==true){
+		} else if(isAonEbackoffice()){
 			searchActiveConfig();
+			//activeConfig.setEcommerceStatus(true);
 		}
 		return activeConfig;
 	}
@@ -67,7 +68,9 @@ public class ConfigController {
 	}
 
 	public boolean isAonEbackoffice(){
-		aonEbackoffice=Boolean.parseBoolean(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(IECommerceConstants.AON_EBACKOFFICE));
+		if(aonEbackoffice == null){
+			aonEbackoffice = Boolean.parseBoolean(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(IECommerceConstants.AON_EBACKOFFICE));
+		}
 		return aonEbackoffice;
 	}
 	

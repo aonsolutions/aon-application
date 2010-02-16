@@ -19,12 +19,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.util.AonUtil;
 
-
-
 public class LoginController extends EmailParentController{
-	
 	private static final String ECOMMERCE_BUNDLE = "ecommerceBundle";
-	
 	private String login;
 	private String password;
 	Ectarget ecTarget;

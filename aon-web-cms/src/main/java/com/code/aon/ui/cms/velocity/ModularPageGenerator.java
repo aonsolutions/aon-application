@@ -2,9 +2,8 @@ package com.code.aon.ui.cms.velocity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.ModularPageDetail;
@@ -24,10 +23,19 @@ import com.code.aon.ui.cms.velocity.attribute.ModularPageOptionHandler;
 
 public class ModularPageGenerator extends Generator {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(ModularPageGenerator.class);
+	private static final Logger LOGGER = Logger.getLogger(ModularPageGenerator.class.getName());
 
-	public void generate(ModularPage selected_modular) {
-		VelocityUtil vu = context.initVelocityUtil();			
+	public static void generate(ModularPage selected_modular) {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		
+		List<ITransferObject> modularPageList;
+		List<ITransferObject> modularPageOptionList;
+		ArrayList<ModularPageOptionHandler> modularPageOptionHandlerList;
+		List<ITransferObject> modularPageOptionDetailList;
+		List<ITransferObject> modularPageDetailList;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
 			IManagerBean moBean = BeanManager.getManagerBean(ModularPageOption.class);
@@ -39,50 +47,50 @@ public class ModularPageGenerator extends Generator {
 				criteria_mBean = new Criteria();
 				criteria_mBean.addEqualExpression(bean.getFieldName(ICMSAlias.MODULAR_PAGE_ID),selected_modular.getId());
 			}
-			List<ITransferObject> modularPageList = (List<ITransferObject>) bean.getList(criteria_mBean);
+			modularPageList = (List<ITransferObject>) bean.getList(criteria_mBean);
 
+			ModularPage mp;
+			ModularPageOption mpo;
+			ModularPageOptionDetail mpod;
+			Criteria criteria_moBean;
+			Criteria criteria_modBean;
+			Criteria criteria_mdBean;
 			for (int i = 0; i < modularPageList.size(); i++) {
-				ModularPage mp = (ModularPage) modularPageList.get(i);
+				mp = (ModularPage) modularPageList.get(i);
 				
-				Criteria criteria_mdBean = new Criteria();
+				criteria_mdBean = new Criteria();
 				criteria_mdBean.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_MODULAR_PAGE_ID),mp.getId());
 				criteria_mdBean.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> modularPageDetailList = (List<ITransferObject>) mdBean.getList(criteria_mdBean);
+				modularPageDetailList = (List<ITransferObject>) mdBean.getList(criteria_mdBean);
 				if (modularPageDetailList.isEmpty()) {
-					logger.warning("La pagina modular " + mp.getAlias() + " no esta internacionalizada.");
-				} else {
+					VelocityUtil.addMessage("La pagina modular " + mp.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
 					ModularPageDetail mpd = (ModularPageDetail)modularPageDetailList.get(0);
 	
-					Criteria criteria_moBean = new Criteria();
+					criteria_moBean = new Criteria();
 					criteria_moBean.addEqualExpression(moBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID),mp.getId());
 					criteria_moBean.addEqualExpression(moBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_ACTIVE),true);
 					criteria_moBean.addOrder(moBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_POSITION));
-					List<ITransferObject> modularPageOptionList = (List<ITransferObject>) moBean.getList(criteria_moBean);
+					modularPageOptionList = (List<ITransferObject>) moBean.getList(criteria_moBean);
 	
-					if (modularPageOptionList.isEmpty()) {
-						logger.warning("La pagina modular " + mp.getAlias() + " esta vacia.");
-					}
+					if (modularPageOptionList.isEmpty())
+						VelocityUtil.addMessage("La pagina modular " + mp.getAlias() + " esta vacia.", VelocityUtil.WARN);
 					
-					List<ModularPageOptionHandler> modularPageOptionHandlerList = new ArrayList<ModularPageOptionHandler>();
+					modularPageOptionHandlerList = new ArrayList<ModularPageOptionHandler>();
 					for (int j = 0; j < modularPageOptionList.size(); j++) {
-						ModularPageOption mpo = (ModularPageOption) modularPageOptionList.get(j);
-						if ( mpo.getIdent() == null ) {
-							getLogger().error("LA OPCION " + mpo.getAlias() + " DE LA PAGINA MODULAR " + mp.getAlias() + " NO REFERENCIA A NINGUN ELEMENTO");
-							continue;
-						}						
-						Criteria criteria_modBean = new Criteria();
+						mpo = (ModularPageOption) modularPageOptionList.get(j);
+						criteria_modBean = new Criteria();
 						criteria_modBean.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_MODULAR_PAGE_OPTION_ID),mpo.getId());
 						criteria_modBean.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
-						List<ITransferObject> modularPageOptionDetailList = (List<ITransferObject>) modBean.getList(criteria_modBean);
+						modularPageOptionDetailList = (List<ITransferObject>) modBean.getList(criteria_modBean);
 						if (modularPageOptionDetailList.isEmpty()) {
-							logger.warning("La opcion de la pagina modular " + mpo.getAlias() + " no esta internacionalizada.");
+							VelocityUtil.addMessage("La opcion de la pagina modular " + mpo.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
 						}else{
-							ModularPageOptionDetail mpod = (ModularPageOptionDetail) modularPageOptionDetailList.get(0);
+							mpod = (ModularPageOptionDetail) modularPageOptionDetailList.get(0);
 							if (mpod.getModular_page_option().isActive()) {
 								ModularPageOptionHandler mpoh = new ModularPageOptionHandler(mpod);
-								if (mpoh.getContent()!=null) {
+								if (mpoh.getContent()!=null)
 									modularPageOptionHandlerList.add(mpoh);
-								}
 							}
 						}
 						modularPageOptionDetailList = null;
@@ -94,9 +102,9 @@ public class ModularPageGenerator extends Generator {
 					vu.put("modules", modularPageOptionHandlerList);
 	
 					// Cargar datos comunes a todas las paginas
-					context.changeSection(vu, mp.getSection());
+					CommonGenerator.getCommonGenerator().chargeContext(vu, mp.getSection());
 	
-					logger.info(" Generando Página Modular '" + mp.getAlias()+ "'.");
+					VelocityUtil.addMessage(" Generando Página Modular '" + mp.getAlias()+ "'.", VelocityUtil.INFO);
 					if (mp.isHomepage()){
 						if (mp.getModularType()==null){
 							generate(vu, Templates.HOME, mp.getAlias());
@@ -120,12 +128,20 @@ public class ModularPageGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			modularPageList = null;
+			modularPageOptionList = null;
+			modularPageOptionHandlerList = null;
+			modularPageOptionDetailList = null;
+			modularPageDetailList = null;
 		}
+		vu.finalize();
+		vu = null;
 	}
 
-	public void generate() {
-		generate(null);
+	public static void generate() {
+		ModularPageGenerator.generate(null);
 	}
 	
 }

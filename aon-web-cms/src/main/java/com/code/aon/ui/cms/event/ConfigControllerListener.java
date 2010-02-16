@@ -1,7 +1,7 @@
 package com.code.aon.ui.cms.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.Config;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -15,7 +15,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class ConfigControllerListener extends ControllerAdapter {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ConfigControllerListener.class);
+	private static final Logger LOGGER = Logger.getLogger(ConfigControllerListener.class.getName());
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -27,7 +27,7 @@ public class ConfigControllerListener extends ControllerAdapter {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.CONFIG_ID), new Integer(1));
 			controller.setCriteria(criteria);
 		}catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			
 		}
 	}

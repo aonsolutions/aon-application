@@ -7,29 +7,39 @@ import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorApplicationController implements ICMSConstants {
 
-    private int cuenta = 0;
-	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		GeneratorController generator = (GeneratorController)AonUtil.getRegisteredBean(GENERATOR);
 		generator.getStatus().onInit(event);
-		generator.getStatus().info("ALL PROCESS WORKING...PLEASE WAIT TO START.");
-        lock();
-        generator.onGenerate(this);
-		unlock(); 
+		generator.getStatus().addMessage("ALL PROCESS WORKING...PLEASE WAIT TO START.");
+        this.limitar();
+        this.incCuenta();
+        this.process(generator, event);
+		this.decCuenta(); // 
+	    this.desbloquear();	}
+
+	private void process(GeneratorController generator, ActionEvent event) throws ManagerBeanException {
+		generator.onGenerate(event);
 	}
-	
-	private synchronized void lock() {		
+
+    private int cuenta = 0;
+    
+    public synchronized void incCuenta() {
+        cuenta++;
+    }
+    public synchronized void decCuenta() {
+        cuenta--; 
+    }
+    
+    public synchronized void limitar() {
     	while (cuenta == 2) {
     		try {
     			this.wait();
-    		} catch (InterruptedException e) {}
+    		}catch (InterruptedException e) {}
     	}
-    	cuenta++;
-	}
-	
-	public synchronized void unlock() {
-		cuenta--;
-		this.notifyAll();
-	}
+    }
+
+    public synchronized void desbloquear() {
+        this.notifyAll();             
+    }
 
 }

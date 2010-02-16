@@ -12,53 +12,63 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="downloadCategorySearch">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.download_category}" />
-				<ui:param name="controller" value="#{download_category}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-			</ui:include>		
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.download_category}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{download_category}" />
-				<ui:define name="searchContent">
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="download_category_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{download_category.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="download_category_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{download_category.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="download_category_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{download_category.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="DownloadCategory_alias"
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="DownloadCategory_alias" size="50"
 						valueChangeListener="#{download_category.addExpression}" />
-
-					<aon:outputLabel for="DownloadCategory_details_label"
-						value="#{appBundle.banner_label}" />
-					<aon:inputText id="DownloadCategory_details_label" size="50"
-						valueChangeListener="#{controller.addExpression}" />
 	
-					<aon:outputLabel for="DownloadCategory_section_id"
-						value="#{appBundle.cms_section}" />
-					<aon:selectOneMenu id="DownloadCategory_section_id"
-						valueChangeListener="#{controller.addIdEqualExpression}"
-						value="#{collections.section}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{collections.sectionList}" />
-					</aon:selectOneMenu>
-						
 					<aon:outputLabel for="DownloadCategory_position"
 						value="#{appBundle.download_category_position}" />
 					<aon:inputText id="DownloadCategory_position" size="10"
 						valueChangeListener="#{download_category.addExpression}" />
-						
-					<aon:outputLabel for="DownloadCategory_active"
-						value="#{appBundle.cms_active}" />
-					<aon:selectOneMenu id="DownloadCategory_active"
-						valueChangeListener="#{controller.addExpression}">
-						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneMenu>												
 	
-				</ui:define>
-			</ui:decorate>
+				</aon:panelGrid>
+			</aon:div>
 			
 		</aon:form>
 	</ui:define>

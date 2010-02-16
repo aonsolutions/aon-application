@@ -3,9 +3,8 @@ package com.code.aon.ui.cms.velocity.attribute;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.FooterBannerCategory;
 import com.code.aon.cms.FooterDetail;
@@ -19,11 +18,11 @@ import com.code.aon.ui.cms.velocity.MenuGenerator;
 
 public class FooterHandler {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(FooterHandler.class);
+	private static final Logger LOGGER = Logger.getLogger(FooterHandler.class.getName());
 
-	private List<MenuOptionHandler> menu;
+	private ArrayList<MenuOptionHandler> menu;
 
-	private List<BannerCategoryHandler> bannerCategory;
+	private ArrayList<BannerCategoryHandler> bannerCategory;
 
 	private String content;
 	
@@ -33,11 +32,11 @@ public class FooterHandler {
 		bannerCategory = getBanners(footer.getFooter().getId());
 	}
 
-	public List<MenuOptionHandler> getMenu() {
+	public ArrayList<MenuOptionHandler> getMenu() {
 		return menu;
 	}
 
-	public List<BannerCategoryHandler> getBannerCategory() {
+	public ArrayList<BannerCategoryHandler> getBannerCategory() {
 		return bannerCategory;
 	}
 
@@ -54,10 +53,10 @@ public class FooterHandler {
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			for (Iterator iterator = l.iterator(); iterator.hasNext();) {
 				FooterBannerCategory fbc = (FooterBannerCategory) iterator.next();
-				list.add(BannerGenerator.getBannerCategoryHandler(fbc.getBannerCategory()));
+				list.add((BannerCategoryHandler)BannerGenerator.getBannerCategoryHandler(fbc.getBannerCategory().getId()));
 			}
 		}catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		return list;
 	}

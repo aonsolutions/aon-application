@@ -11,7 +11,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="commercialMenu">
+		<aon:form id="salesMenu">
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
@@ -33,6 +33,11 @@
 									<aon:commandLink id="offer" 
 										action="offer_search" actionListener="#{offer.onEditSearch}"
 										value="#{commercialBundle.commercial_offer_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialSegment" 
+										action="commercialSegment" actionListener="#{commercialSegment.onSearch}"
+										value="#{commercialBundle.commercial_segment_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="seller" 

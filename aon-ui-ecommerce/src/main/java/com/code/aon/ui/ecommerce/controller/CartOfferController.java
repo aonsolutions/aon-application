@@ -3,11 +3,14 @@ package com.code.aon.ui.ecommerce.controller;
 
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 
 import com.code.aon.commercial.Offer;
@@ -20,13 +23,20 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
 import com.code.aon.config.Scope;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -67,7 +77,7 @@ public class CartOfferController extends EmailParentController {
 			offerBean = BeanManager.getManagerBean(Offer.class);
 			offerBean.insert(getOffer());
 		} catch (ManagerBeanException e) {
-			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
+			AonUtil.addInfoMessage("Fallo al guardar el offer.");
 			throw new AbortProcessingException(e);
 		}
 	}
@@ -97,7 +107,7 @@ public class CartOfferController extends EmailParentController {
 				offerDetailBean.insert(od);
 			}
 		} catch (ManagerBeanException e) {
-			AonUtil.addInfoMessage("Fallo al recuperar el offerDetail.");
+			AonUtil.addInfoMessage("Fallo al guardar el offerDetail.");
 			throw new AbortProcessingException(e);
 		}
 	}
@@ -110,6 +120,10 @@ public class CartOfferController extends EmailParentController {
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		if(getOffer().getBank().getId()==null){
+			getOffer().setBank(null);
 		}
 		
 		PaypalController paypalBean = (PaypalController) AonUtil
@@ -127,6 +141,8 @@ public class CartOfferController extends EmailParentController {
 			qbBean.setPayment(false);
 			getOffer().setStatus(OfferStatus.INVOICED);
 		}
+		
+		
 		
 		insertOffer();
 		insertOfferDetail();
@@ -180,8 +196,10 @@ public class CartOfferController extends EmailParentController {
 		offer.setDaysToFirstPayment(0);
 		offer.setDaysBetweenPayments(0);
 		offer.setPaymentDays("");
-		offer.setBank(null);
-		offer.setBankAccount(null);
+//		offer.setBank(new Bank());
+		offer.setBank(new Bank());
+		offer.setBankAccount(new BankAccount());
+		
 	}
 	
 	public void sendEmail(){
@@ -228,6 +246,54 @@ public class CartOfferController extends EmailParentController {
 		String message = "Operación realizada satisfactoriamente.";
 		message += "\n Se procede a la desconexión.";
 		AonUtil.addInfoMessage(message);
+	}
+	
+	public void onCheckBankAccount(ActionEvent event) {
+		getOffer().getBankAccount().setEntity(getOffer().getBank().getCode());
+		if (!getOffer().getBankAccount().isValid()) {
+			String msg = "Los datos bancarios no son correctos.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public List<SelectItem> getBanks() {
+		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		try {
+			return c.getCompanyBanks();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	public List<RegistryBank> getCompanyBanks() {
+		List<RegistryBank> list = new LinkedList<RegistryBank>();
+		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		
+		
+		try {
+			for (SelectItem item : c.getCompanyBanks()) {
+				RegistryBank rBank = (RegistryBank)item.getValue();
+				list.add(rBank);
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+		
+//		try {
+//			return c.getCompanyBanks().iterator();
+//		} catch (ManagerBeanException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return null;
+//		}
+		
+		
 	}
 	
 }

@@ -1,26 +1,22 @@
 package com.code.aon.ui.cms.controller;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
+import com.code.aon.ui.util.AonUtil;
 
-public class GeneratorStatusController implements IGeneratorLogger {
+public class GeneratorStatusController  {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(GeneratorStatusController.class);
-	
-	private static final DateFormat TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.MEDIUM); 
+	private static final Logger LOGGER = Logger.getLogger(GeneratorStatusController.class.getName());
 
 	private boolean generated;
 
@@ -34,11 +30,6 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	private List<String> errors;
 
-	public GeneratorStatusController() {
-		this.status = new ArrayList<String>();
-		this.errors = new ArrayList<String>();
-	}
-
 	public void onInit(ActionEvent event) {
 		onReset(event);
 		this.activePoll = true;
@@ -49,50 +40,29 @@ public class GeneratorStatusController implements IGeneratorLogger {
 		this.generatedOk = false;
 		this.published = false;
 		this.activePoll = false;
-		this.status.clear();
-		this.errors.clear();
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
 	}
 	
 	public List<String> getStatus() {
 		return this.status;
 	}
 	
-	public int getStatusSize() {
-		return this.status.size();
-	}
-
 	public List<String> getErrors() {
 		return this.errors;
 	}
 	
-	public int getErrorsSize() {
-		return this.errors.size();
-	}
-	
-	private void addMessage(String msg) {
-		String time = TIME_FORMAT.format(new Date());
+	public void addMessage(String msg) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
 		this.status.add(0,time+" "+msg);
 	}	
 	
-	private void addErrorMessage(String msg) {
-		String time = TIME_FORMAT.format(new Date());
+	public void addErrorMessage(String msg) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
 		this.errors.add(0, time+" "+msg);
 	}	
-
-	@Override
-	public void info(String msg) {
-		addMessage(" INFO: " + msg);
-	}
-	
-	@Override
-	public void error(String msg) {
-		addErrorMessage(" <b>ERROR: " + msg + "</b>");
-	}
-
-	@Override
-	public void warning(String msg) {
-		addErrorMessage(" <i>WARNING: " + msg + "</i>");
-	}
 
 	public boolean isActivePoll() {
 		return this.activePoll;
@@ -112,9 +82,8 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void finalized() {
 		this.generated = true;
-		if (this.errors.size()==0) {
+		if (this.errors.size()==0)
 			this.generatedOk = true;
-		}
 		this.activePoll = false;
 	}
 
@@ -124,14 +93,14 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
 		this.activePoll = true;
-		this.status.clear();
-		this.errors.clear();
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
 		try {
 			if (FTPUtil.uploadFTP())  {
 				this.published = true;
 			}
 		}catch (Throwable th) {		
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
 		}
@@ -139,13 +108,13 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void onPublishPreview(ActionEvent event) throws ManagerBeanException {
 		this.activePoll = true;
-		this.status.clear();
-		this.errors.clear();
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
 		try {
 			if (FTPUtil.uploadPreviewFTP())
 				this.published = true;
 		}catch (Throwable th) {			
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
 		}

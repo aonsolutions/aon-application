@@ -33,16 +33,14 @@
 	<aon:div id="aon-content">				
 		<c:choose>
 			<c:when test="#{ecConfig.activeConfig.ecommerceStatus or ecConfig.aonEbackoffice}">
-					<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin)}">
-						<ui:insert name="mainHeader" />
+				<ui:insert name="mainHeader" />
+					<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin || shop.logged)}">
 						<ui:insert name="mainContent" />
-						<ui:insert name="mainFooter" />
 					</c:if>
-					<c:if test="#{ecConfig.alwaisLogin}">
-						<ui:insert name="mainHeader" />
+					<c:if test="#{ecConfig.alwaisLogin and !shop.logged}">
 						<ui:include src="/facelet/login/login.xhtml" />
-						<ui:insert name="mainFooter" />
 					</c:if>
+				<ui:insert name="mainFooter" />
 			</c:when>
 			<c:otherwise>
 					<ui:insert name="mainHeader" />

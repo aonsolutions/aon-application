@@ -24,10 +24,24 @@ public class ProductCategoryControllerListener extends ControllerAdapter {
 		}
 	}
 
+	private void assignSection(ControllerEvent event){
+		ProductCategory to = (ProductCategory)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
+	}
+	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		checkAlias(event);
+		assignSection(event);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		assignSection(event);
 	}
 
 	@Override

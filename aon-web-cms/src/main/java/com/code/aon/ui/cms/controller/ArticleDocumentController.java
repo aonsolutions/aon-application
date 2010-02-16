@@ -11,13 +11,10 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.cms.Article;
-import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleDocumentDetail;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 
-public class ArticleDocumentController extends BasicI18nController implements Constants {
+public class ArticleDocumentController extends BasicI18nController {
 
 	private static final String ARTICLE_DOCUMENTS = "article_documents";
 	
@@ -58,35 +55,10 @@ public class ArticleDocumentController extends BasicI18nController implements Co
 	        outputStream.write(data);
 			outputStream.close();					
 			String fileName = File.separator + ARTICLE_DOCUMENTS + File.separator + file.getName();
-			ArticleDocumentDetail detail = (ArticleDocumentDetail) this.getToI18n();
-	        detail.setFile(fileName);
-	        String title = FilenameUtils.getBaseName(file.getName());
-	        detail.setTitle(title);
-	        ((ArticleDocument) getTo()).setAlias(title);
+	        ((ArticleDocumentDetail)this.getToI18n()).setFile(fileName);
         }catch (Throwable th) {
         	IOUtils.closeQuietly(outputStream);
 		}
 	}
-
-	public String getI18nTitle() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
-		ArticleDocumentDetail detail = (ArticleDocumentDetail) getModelRowdataI18n();
-		if (detail != null) label = detail.getTitle();
-		return label;
-	}
-
-	public String getI18nFile() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
-		ArticleDocumentDetail detail = (ArticleDocumentDetail) getModelRowdataI18n();
-		if (detail != null) label = detail.getFile();
-		return label;
-	}
-
-	public String getI18nDescription() throws ManagerBeanException {
-		String label = NO_VALUE_LABEL;
-		ArticleDocumentDetail detail = (ArticleDocumentDetail) getModelRowdataI18n();
-		if (detail != null) label = detail.getDescription();
-		return label;
-	}	
 
 }

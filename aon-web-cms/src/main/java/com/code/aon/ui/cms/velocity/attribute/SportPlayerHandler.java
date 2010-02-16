@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.SportCareerPath;
 import com.code.aon.cms.SportNationality;
@@ -26,7 +25,7 @@ import com.code.aon.ui.cms.velocity.SportGenerator;
 
 public class SportPlayerHandler {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(SportPlayerHandler.class);
+	private static final Logger LOGGER = Logger.getLogger(SportPlayerHandler.class.getName());
 
 	private String alias;
 	
@@ -66,7 +65,7 @@ public class SportPlayerHandler {
 		try{
 			this.bornDate = formatter.format(sportPlayer.getBornDate());
 		}catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.bornPlace = sportPlayer.getBornPlace();
 		this.weight = sportPlayer.getWeight();
@@ -74,20 +73,20 @@ public class SportPlayerHandler {
 		try{
 			this.sportNationality = getNationalityString(sportPlayer.getSportNationality());
 		}catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.comunitary = sportPlayer.isComunitary();
 		this.photo = sportPlayer.getPhoto();
 		try{
 			this.sportClub = sportPlayer.getSportClub().getDescription();
 		}catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.number = sportPlayer.getNumber();
 		try{
 			this.careers = fillCareer(sportPlayer.getId());
 		}catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.url = Templates.SPORT.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", SportGenerator.PLAYER + this.alias);
@@ -119,7 +118,7 @@ public class SportPlayerHandler {
 				listSportCareerHandler.add(new SportCareerHandler((SportCareerPath) iterator.next()));
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return listSportCareerHandler;
 	}

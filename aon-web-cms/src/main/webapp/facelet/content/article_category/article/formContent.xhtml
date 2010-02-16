@@ -9,7 +9,7 @@
 
 	<aon:panelGrid id="main_panel" columns="2" dir="true" style="width:100%">
 	
-		<aon:outputLabel for="Article_alias"
+		<aon:outputLabel for="Article_alias" style="width:100px"
 			value="#{appBundle.cms_alias}" />
 		<aon:inputText id="Article_alias"
 			required="true" size="32" maxlength="32"
@@ -28,11 +28,15 @@
 	
 		<aon:outputLabel for="Article_type"
 			value="#{appBundle.article_type_}"/>
-		<aon:selectOneMenu id="Article_type"
-			reRender="dates_initDate,dates_endDate" required="true"    
+		<aon:selectOneMenu id="Article_type"  
+			required="true"
 			value="#{article.to.articleType}">
 			<f:selectItem itemLabel="-" itemValue="" />
 			<f:selectItems value="#{collections.articleTypes}" />
+			<a4j:support 
+				event="onchange" 
+				ajaxSingle="true" 
+				reRender="dates_initDate,dates_endDate" />
 		</aon:selectOneMenu>
 		
 		<aon:outputLabel for="ArticleDetail_publishDate"
@@ -90,13 +94,33 @@
 			</aon:selectInputDate>	
 			<aon:outputText rendered="#{!article.diary}" value="Not allowed" />
 		</aon:div>
-  
-		<ui:include src="/facelet/content/utils/contentInput.xhtml" >
-			<ui:param name="inputTextId" value="ArticleDetail_content" />
-			<ui:param name="inputTextValue" value="#{article.toI18n.content}" />
-			<ui:param name="inputTextRequired" value="#{true}" />
-			<ui:param name="richTextEnabled" value="#{article.richTextEnabled}" />
-		</ui:include>		
+ 
+		<aon:outputLabel for="Article_richTextEnabled"
+			value="#{appBundle.generic_page_richtext_enabled}" />
+		<aon:selectBooleanCheckbox id="Article_richTextEnabled"
+			value="#{article.richTextEnabled}">
+			<a4j:support 
+				ajaxSingle="true"
+				event="onclick"  
+				reRender="article_richtext" />
+		</aon:selectBooleanCheckbox>
+	
+		<aon:outputLabel for="ArticleDetail_content" 
+			style="width:100px"
+			value="#{appBundle.article_content}" />
+		<aon:div id="article_richtext">		
+			<c:if test="#{article.richTextEnabled}">
+				<aon:div sytle="width:100%">
+					<aon:inputRichText style="width:800px" 
+						id="ArticleDetail_content" required="true"
+						value="#{article.toI18n.content}" />
+				</aon:div>
+			</c:if>
+			<aon:inputTextarea id="ArticleDetail_content-TA"
+				rendered="#{!article.richTextEnabled}" 
+				rows="20" style="width:98%" required="true"
+				value="#{article.toI18n.content}"/>
+		</aon:div>
 	
 		<aon:outputLabel 
 			value="#{appBundle.albumImage_image}" />

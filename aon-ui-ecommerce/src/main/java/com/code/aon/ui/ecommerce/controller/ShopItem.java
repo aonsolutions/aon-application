@@ -63,10 +63,12 @@ public class ShopItem implements ICalculable{
 
 
 	public Item getItem() {
+		item.setDescription(item.getDescription().replace("\r\n", "<br/>"));
 		return item;
 	}
 
 	public void setItem(Item item) {
+		item.setDescription(item.getDescription().replace("\r\n", "<br/>"));
 		this.item = item;
 	}
 

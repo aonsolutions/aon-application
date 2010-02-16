@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.code.aon.cms.Faq;
 import com.code.aon.cms.FaqCategory;
@@ -27,20 +26,20 @@ import com.code.aon.ui.cms.velocity.attribute.FaqHandler;
 
 public class FaqGenerator extends Generator {
 
-	public static final String FAQ_CATEGORY_LIST_PAGE = "category";
-
-	public static final String FAQ_CATEGORY_BY_SECTION_PAGE = "category_section_";
-	
-	public void generate() {
-		generate(null);
+	public static void generate() {
+		FaqGenerator.generate(null);
 	}
 
-	public void generate(FaqCategory selectedCategory) {
-		VelocityUtil vu = context.initVelocityUtil();	
+	public static void generate(FaqCategory selectedCategory) {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		
 		ArrayList<FaqCategoryHandler> fchList;
 		List<ITransferObject> faqCategoryList;
 		List<ITransferObject> faqCategoryDetailList;
-		Map<Section, List<FaqCategoryHandler>> categoryMap = new HashMap<Section, List<FaqCategoryHandler>>();
+		HashMap categoryMap = new HashMap<Section, List>();
 		try {
 			fchList = new ArrayList<FaqCategoryHandler>(); 
 			
@@ -54,7 +53,7 @@ public class FaqGenerator extends Generator {
 
 			FaqCategory fc;
 			FaqCategoryDetail fcd;
-			List<FaqCategoryHandler> l;
+			List l;
 			Section currentSection;
 			Section configSection = GeneratorConfigController.currentSection(FaqConfig.class);;
 			for (int i=0; i < faqCategoryList.size(); i++) {
@@ -66,14 +65,14 @@ public class FaqGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				faqCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
 				if(faqCategoryDetailList.isEmpty()){
-					logger.warning("La categoria de FAQ " + fc.getAlias() + " no esta internacionalizada.");
+					VelocityUtil.addMessage("La categoria de FAQ " + fc.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
 				}else{
 					fcd = (FaqCategoryDetail)faqCategoryDetailList.get(0);
 					if (fc.isActive()) {
 						FaqCategoryHandler fch = new FaqCategoryHandler(fcd,getFaqList(fc));
 						fchList.add(fch);
 						vu.put("faq_category", fch);
-						logger.info(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.");
+						VelocityUtil.addMessage(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.", VelocityUtil.INFO);
 						
 						if (fcd.getFaqCategory().getSection()!=null){
 							currentSection = fcd.getFaqCategory().getSection();
@@ -83,11 +82,11 @@ public class FaqGenerator extends Generator {
 							else
 								currentSection = GeneratorConfigController.defaultSection();
 						}
-						context.changeSection(vu, currentSection);
+						CommonGenerator.getCommonGenerator().chargeContext(vu, currentSection);
 						generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
 						vu.remove("faq_category");
 						
-						l = categoryMap.get(currentSection);
+						l = (List) categoryMap.get(currentSection);
 						if (l == null)
 							l = new ArrayList<FaqCategoryHandler>();
 						l.add(fch);
@@ -102,29 +101,31 @@ public class FaqGenerator extends Generator {
 				key = iter.next();
 				faqCategoryHandlerSet = (ArrayList<FaqCategoryHandler>)categoryMap.get(key);
 				vu.put("faq_categories", faqCategoryHandlerSet);
-				logger.info(" Generando listado categoria seccion Faq.");
-				context.changeSection(vu, key);
+				VelocityUtil.addMessage(" Generando listado categoria seccion Faq.", VelocityUtil.INFO);
+				CommonGenerator.getCommonGenerator().chargeContext(vu, key);
 				generate(vu, Templates.FAQ, FAQ_CATEGORY_BY_SECTION_PAGE + key.getId());
 				vu.remove("faq_categories");
 			}
 			iter = null;
 			
 			vu.put("faq_categories", fchList);
-			logger.info(" Generando listado categoria Faq.");
-			context.changeSection(vu, configSection);
+			VelocityUtil.addMessage(" Generando listado categoria Faq.", VelocityUtil.INFO);
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.FAQ, FAQ_CATEGORY_LIST_PAGE);
 			vu.remove("faq_categories");
 		} catch (ManagerBeanException e) {
-			logger.error(e.getMessage());
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		} finally {
 			fchList = null;
 			faqCategoryList = null;
 			faqCategoryDetailList = null;
 			categoryMap = null;
 		}
+		vu.finalize();
+		vu = null;
 	}
 	
-	private ArrayList<FaqHandler> getFaqList(FaqCategory fc) {
+	private static ArrayList<FaqHandler> getFaqList(FaqCategory fc) {
 		ArrayList<FaqHandler> list = new ArrayList<FaqHandler>();
 		List<ITransferObject> ld;
 		try {
@@ -136,7 +137,7 @@ public class FaqGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.FAQ_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty())
-				logger.warning("La categoria de FAQ " + fc.getAlias() + " no tiene FAQs.");
+				VelocityUtil.addMessage("La categoria de FAQ " + fc.getAlias() + " no tiene FAQs.", VelocityUtil.WARN);
 			Criteria detailCriteria;
 			Faq f;
 			FaqDetail fd;
@@ -147,7 +148,7 @@ public class FaqGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.FAQ_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				ld = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (ld.isEmpty()) {
-					logger.warning("La FAQ " + f.getAlias() + " no esta internacionalizada.");
+					VelocityUtil.addMessage("La FAQ " + f.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
 				}else{
 					fd = (FaqDetail)ld.get(0);
 					FaqHandler fh = new FaqHandler(fd);
@@ -155,11 +156,15 @@ public class FaqGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			logger.error(e.getMessage());
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		} finally {
 			ld = null;
 		}
 		return list;
 	}
+	
+	public static String FAQ_CATEGORY_LIST_PAGE = "category";
+
+	public static String FAQ_CATEGORY_BY_SECTION_PAGE = "category_section_";
 
 }

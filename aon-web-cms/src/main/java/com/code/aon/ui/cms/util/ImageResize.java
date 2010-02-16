@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.sun.jimi.core.Jimi;
@@ -17,7 +17,8 @@ import com.sun.jimi.core.raster.JimiRasterImage;
 
 public class ImageResize {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ImageResize.class);
+	private static final Logger LOGGER = Logger.getLogger(ImageResize.class
+			.getName());
 
 	public static File resize(File file, int width, int height) {
 		if (file.isFile()){
@@ -34,12 +35,12 @@ public class ImageResize {
 					Jimi.putImage(MimeType.MIME_JPEG.getName(), raster, os);
 					os.flush();
 				} catch (JimiException e) {
-					LOGGER.error(e.getMessage(), e);
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				} catch (IOException e) {
-					LOGGER.error(e.getMessage(), e);
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th);
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			} finally {
 				IOUtils.closeQuietly(os);
 			}
@@ -54,7 +55,7 @@ public class ImageResize {
 				Image image = ImageUtil.getImage(file);
 				return  image.getWidth(null);
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th);
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;
@@ -66,7 +67,7 @@ public class ImageResize {
 				Image image = ImageUtil.getImage(file);
 				return  image.getHeight(null);
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th);
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;
@@ -81,7 +82,7 @@ public class ImageResize {
 				double scale = (double)image_height / (double)height;
 				return (int)((double)image_width / scale);
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th);
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;
@@ -96,7 +97,7 @@ public class ImageResize {
 				double scale = (double)image_width / (double)width;
 				return (int)((double)image_height / scale);
 			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th);
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;
