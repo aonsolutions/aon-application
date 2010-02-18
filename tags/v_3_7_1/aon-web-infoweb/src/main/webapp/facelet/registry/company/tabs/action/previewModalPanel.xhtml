@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:form id="previewForm">
+		<aon:panelGroup id="showPreviewModalPanel">
+			<c:if test="#{webPageStyle.showPreviewModalPanel}">
+				<rich:modalPanel id="previewModalPanel"
+					rendered="#{webPageStyle.showPreviewModalPanel}" showWhenRendered="true"
+					minHeight="550" height="550" minWidth="800" width="800">
+
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="#{appBundle.infoweb_template_preview}" />
+						</aon:div>
+					</f:facet>				
+					<f:facet name="controls">
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+							reRender="showPreviewModalPanel" immediate="true">
+							<f:setPropertyActionListener target="#{webPageStyle.showPreviewModalPanel}" value="#{false}" />
+							<rich:componentControl for="previewModalPanel" operation="hide" event="onclick" />
+						</aon:commandButton>
+					</f:facet>
+					
+					<h:panelGrid>
+						<aon:div> 
+							<aon:graphicImage value="preview.template?tpl=#{webPageStyle.template}&amp;big=true" style="border:1px #CCC solid;"/>
+						</aon:div>
+	
+						<aon:div style="text-align:right;">
+							<rich:spacer height="3" />
+							<aon:panelGrid style="float:right;border:1px gray solid">
+								<aon:commandButton id="closeDocument"
+									reRender="showPreviewModalPanel" style="padding-right:15px"
+									value="#{bundle.aon_close}" immediate="true"
+									styleClass="aon-icon-commandButton aon-icon-cancel">
+									<f:setPropertyActionListener
+										target="#{webPageStyle.showPreviewModalPanel}" value="#{false}" />
+									<rich:componentControl for="previewModalPanel" operation="hide"
+										event="onclick" />
+								</aon:commandButton>
+							</aon:panelGrid>
+						</aon:div>
+					</h:panelGrid>
+
+				</rich:modalPanel>
+			</c:if>
+		</aon:panelGroup>
+	</aon:form>
+
+</ui:composition>
