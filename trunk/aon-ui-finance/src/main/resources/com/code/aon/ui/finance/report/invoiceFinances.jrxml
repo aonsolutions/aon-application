@@ -142,7 +142,7 @@
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="460" y="0" width="75" height="14"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
