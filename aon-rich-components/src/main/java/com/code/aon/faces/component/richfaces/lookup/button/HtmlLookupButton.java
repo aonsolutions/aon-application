@@ -8,6 +8,7 @@ import org.ajax4jsf.component.html.HtmlAjaxCommandButton;
 
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.controller.RichLookupBean;
 
 public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTags, ILookupComponent {
 
@@ -25,7 +26,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
     
     private ValueExpression property;
     
-    private ValueExpression lookup;
+    private RichLookupBean lookup;
     
     private String lookupProperty;
     
@@ -53,15 +54,15 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
         return (_vb != null) ? (LookupButtonType) _vb.getValue(getFacesContext().getELContext()) : null;
     }
 	
-	public ValueExpression getLookup() {
+	public RichLookupBean getLookup() {
     	if (null != this.lookup) {
             return this.lookup;
         }
     	ValueExpression _vb = getValueExpression(LOOKUP);
-        return (_vb != null) ? (ValueExpression) _vb.getValue(getFacesContext().getELContext()) : null;
+        return (_vb != null) ? (RichLookupBean) _vb.getValue(getFacesContext().getELContext()) : null;
 	}
 
-	public void setLookup(ValueExpression lookup) {
+	public void setLookup(RichLookupBean lookup) {
 		this.lookup = lookup;
 	}
 
@@ -154,7 +155,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
   	public void restoreState(FacesContext context, Object value) {  
   		this._state = (Object[]) value;  
   		super.restoreState(context, this._state[0]);  
-  		lookup = (ValueExpression) this._state[1];
+  		lookup = (RichLookupBean) this._state[1];
   		property = (ValueExpression) this._state[2];  
   		actionType = (LookupButtonType) this._state[3];  		
   		lookupChangeListener = (MethodExpression) this._state[4];  	

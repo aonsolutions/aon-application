@@ -20,33 +20,34 @@
 				<aon:commandLink id="otherdata" 
 					title="#{appBundle.infoweb_data}" action="otherdata" 
 					value="#{appBundle.infoweb_data}"
-					actionListener="#{company.onLoad}" styleClass="aon-top-menu-item">
+					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 				</aon:commandLink>
 	
 				<aon:commandLink id="images" 
-					title="#{appBundle.infoweb_images}" action="images" 
-					value="#{appBundle.infoweb_images}"
-					actionListener="#{company.onLoad}" styleClass="aon-top-menu-item">
+					title="#{companyBundle.company_images_module}" action="companyImages" 
+					value="#{companyBundle.company_images_module}"
+					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">					
+					<aon:actionListener method="#{companyImages.onCancel}" />
 				</aon:commandLink>
 	
 				<aon:commandLink id="pages" 
 					title="#{appBundle.infoweb_pages}" action="pages" 
 					value="#{appBundle.infoweb_pages}"
-					actionListener="#{company.onLoad}" styleClass="aon-top-menu-item">
+					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 				</aon:commandLink>
 	
 				<aon:commandLink id="templates" 
 					title="#{appBundle.infoweb_template}" action="templates" 
 					value="#{appBundle.infoweb_template}"
 					styleClass="aon-top-menu-item">
-					<aon:actionListener method="#{company.onLoad}" />
+					<aon:actionListener method="#{companyWebInfo.onInit}" />
 					<aon:actionListener method="#{webPageStyle.onLoad}" />
 				</aon:commandLink>
 	
 				<aon:commandLink id="generate" 
 					title="#{appBundle.infoweb_generate}" action="generate" 
 					value="#{appBundle.infoweb_generate}"
-					actionListener="#{company.onLoad}" styleClass="aon-top-menu-item">
+					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 				</aon:commandLink>
 				
 			</aon:div>

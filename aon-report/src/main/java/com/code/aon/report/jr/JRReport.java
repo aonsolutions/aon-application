@@ -1,5 +1,10 @@
 package com.code.aon.report.jr;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
@@ -7,12 +12,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.logging.Logger;
-
-import org.apache.commons.lang.time.DateUtils;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRDataSourceProvider;
@@ -25,6 +28,12 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRLoader;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IFinderBean;
@@ -52,7 +61,9 @@ public class JRReport {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(JRReport.class.getName());
+	private static Logger LOGGER = LoggerFactory.getLogger(JRReport.class);
+	
+	private static String REPORT_PATH = "/home/COMMON-RESOURCES/aon-report";
 
 	/**
 	 * The report configuration of this report.
@@ -98,7 +109,7 @@ public class JRReport {
 	public JRDataSourceProvider getJRPagedDataSourceProvider(Criteria criteria, int count)
 			throws ReportException {
 		IFinderBean bean = getFinderBean();
-		Class clazz = bean.getPOJOClass();
+		Class<?> clazz = bean.getPOJOClass();
 		JRPagedBeanDataSourceProvider dsp = new JRPagedBeanDataSourceProvider(
 				clazz, bean, criteria, count);
 		return dsp;
@@ -117,12 +128,53 @@ public class JRReport {
 	public JRDataSourceProvider getJRDataSourceProvider(Criteria criteria)
 			throws ReportException {
 		IFinderBean bean = getFinderBean();
-		Class clazz = bean.getPOJOClass();
+		Class<?> clazz = bean.getPOJOClass();
 		JRBeanCollectionDataSourceProvider dsp = new JRBeanCollectionDataSourceProvider(
 				clazz, bean, criteria);
 		return dsp;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private String getCustomTemplate( String reportKey ) {
+		try {
+			String factoryName = HibernateUtil.getSessionFactoryName();
+			Session session = HibernateUtil.getSession(factoryName);
+			String name = "REPORT_" + reportKey;
+	        String select = "select app_param.value from ApplicationParameter as app_param where app_param.name = '" + name + "'";
+			Query query = session.createQuery(select);
+			List list = query.list();
+			if (! list.isEmpty() ) {
+				return (String) list.get(0);
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error retrieving report app param", th );
+		}
+		return null;
+	}
 
+	private InputStream getTemplateInputStream( ReportConfig config ) {
+		InputStream input = null;
+		String customTemplate = getCustomTemplate(config.getId());
+		if (! StringUtils.isEmpty(customTemplate) ) {
+			File file = new File( config.getTemplate() );
+			File customDirectory = new File( REPORT_PATH, customTemplate );
+			if ( customDirectory.exists() && customDirectory.canRead() ) {
+				File customFile = new File( customDirectory, file.getName() );
+				if ( customFile.exists() && customFile.canRead() ) {
+					try {
+						input = new BufferedInputStream( new FileInputStream(customFile) );
+					} catch (FileNotFoundException e) {
+						LOGGER.error( "Custome template not found: " + customFile, e);
+					}
+				}
+			}
+		} 
+		if ( input == null ) {
+			input = JRReport.class.getResourceAsStream(config.getTemplate());
+		}
+		return input;
+	}
+	
 	/**
 	 * Returns the JasperReport object that this object represents.
 	 * 
@@ -131,15 +183,17 @@ public class JRReport {
 	 *             If an error ocurred.
 	 */
 	public JasperReport getJasperReport() throws ReportException {
-		String template = config.getTemplate();
-		InputStream input = JRReport.class.getResourceAsStream(template);
+		InputStream input = getTemplateInputStream( config );
 		if (input == null) {
 			throw new ReportException("Can not load report template!"); //$NON-NLS-1$
 		}
 		try {
 			Object o = JRLoader.loadObject(input);
+			input.close();
 			return (JasperReport) o;
 		} catch (JRException e) {
+			throw new ReportException(e.getMessage(), e);
+		} catch (IOException e) {
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
@@ -178,7 +232,7 @@ public class JRReport {
 	 *             Si se produce algún error. If an error ocurred.
 	 */
 	public String run(OutputFormat outputFormat, OutputStream out,
-			ResourceBundle bundle, Criteria criteria, Collection collection) throws ReportException {
+			ResourceBundle bundle, Criteria criteria, Collection<?> collection) throws ReportException {
 		try {
 
 			if (JRExporterFactoryManager.accept(outputFormat)) {
@@ -227,13 +281,14 @@ public class JRReport {
 				JasperPrint print = JasperFillManager.fillReport(jr, map, ds);
 
 				map.put(JRExporterParameter.JASPER_PRINT, print);
-				debugParameters( map );
+				if ( LOGGER.isDebugEnabled()) {
+					debugParameters( map );
+				}
 				JRExporter exporter = factory.getJRExporter();
 				exporter.setParameters(map);
 				exporter.exportReport();
-				Date endDate = new Date();
 				long  delay = (new Date()).getTime() - startDate.getTime(); 
-				LOGGER.info(" Report execution : " + ((double)(delay/1000)) + " seconds.");
+				LOGGER.info(" Report execution : {} seconds.",((double)(delay/1000)));
 				if (hasCache) {
 					cleanCache(map);
 				}
@@ -248,18 +303,18 @@ public class JRReport {
 	}
 
 	private void debugParameters(Map<Object, Object> map) {
-		LOGGER.finest( "Begin Parameters:" );
+		LOGGER.debug( "Begin Parameters:" );
 		Set<Object> keys = map.keySet();
 		for (Object key: keys){
 			Object value  = map.get(key);
-			LOGGER.finest( "\tParameter: "+ key + " ---> " + value );	
+			LOGGER.debug( "\tParameter: {} ---> {}",key,value );	
 		}
-		LOGGER.finest( "End Parameters:" );
+		LOGGER.debug( "End Parameters:" );
 	}
 
 	private void passDynamicParameters(Map<Object, Object> map) {
 		if (dynParams != null) {
-			LOGGER.fine("Passing Dynamic Parameters");
+			LOGGER.debug("Passing Dynamic Parameters");
 			map.putAll(dynParams);
 		}
 	}
@@ -286,8 +341,7 @@ public class JRReport {
 			JRFileVirtualizer virt;
 			String path = System.getProperty("java.io.tmpdir");
 			int vms = fetchMode.getVirtualizerPageMax();
-			LOGGER.info("Report Virtualizer. Page Max: " + vms + " Path: "
-					+ path);
+			LOGGER.info("Report Virtualizer. Page Max: {} Path: {}",vms,path);
 			virt = new JRFileVirtualizer(vms, path);
 			map.put(JRParameter.REPORT_VIRTUALIZER, virt);
 		}
@@ -300,7 +354,7 @@ public class JRReport {
 	 * @param map
 	 *            The parameters map.
 	 */
-	private void cleanCache(Map map) {
+	private void cleanCache(Map<?,?> map) {
 		JRFileVirtualizer virt;
 		virt = (JRFileVirtualizer) map.get(JRParameter.REPORT_VIRTUALIZER);
 		virt.cleanup();
@@ -324,7 +378,7 @@ public class JRReport {
 				JRReport nestedReport = JRReportFactory
 						.getJRReport(nestedReportKey);
 				JasperReport jnr = nestedReport.getJasperReport();
-				LOGGER.info("Nested Report " + nestedReportKey);
+				LOGGER.info("Nested Report {}",nestedReportKey);
 				nested.put(nestedReportKey, jnr);
 			}
 			map.put(IReportConstants.NESTED_REPORTS, nested);
@@ -342,7 +396,7 @@ public class JRReport {
 	protected void passCustomParameters(Map<Object, Object> map)
 			throws ReportException {
 		if (customParams != null) {
-			LOGGER.fine("Passing Custom Parameters");
+			LOGGER.debug("Passing Custom Parameters");
 			map.putAll(customParams);
 		}
 	}
@@ -359,7 +413,7 @@ public class JRReport {
 			throws ReportException {
 		ReportConfig defaultConfig = getDefaultConfig();
 		if (defaultConfig != null && defaultConfig.getParams() != null) {
-			LOGGER.fine("Passing Default Parameters");
+			LOGGER.debug("Passing Default Parameters");
 			map.putAll(defaultConfig.getParams());
 		}
 	}

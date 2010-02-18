@@ -55,11 +55,6 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>facelets.RESOURCE_RESOLVER</param-name>
-		<param-value>com.code.aon.ui.resources.TemplateResolver</param-value>
-	</context-param>
-	
-	<context-param>
 		<description>
 			Set this flag to true if you want the JavaServer Faces
 			Reference Implementation to validate the XML in your
@@ -114,21 +109,15 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>../aon-desktop/richFaces3.3.0/</param-value>
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.2.1/</param-value>
 	</context-param>
 	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
- 
-	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
-	<context-param>
-		<param-name>org.richfaces.LoadScriptStrategy</param-name>
-		<param-value>ALL</param-value>
-    </context-param>
-    		
+	
 	<!-- BackDoorAuthentication Filter -->
 	<filter>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
@@ -200,6 +189,7 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 
 	<!-- CID image Servlet -->
@@ -220,16 +210,28 @@
 		<servlet-class>
 			com.code.aon.ui.resources.servlet.ResourceServlet
 		</servlet-class>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>false</param-value>
-		</init-param>				
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ResourceServlet</servlet-name>
 		<url-pattern>/aonResource/*</url-pattern>
 	</servlet-mapping>
 
+	<!-- FCK Faces Servlet -->
+	<servlet>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<servlet-class>
+			com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<url-pattern>/fckfaces/*</url-pattern>
+	</servlet-mapping>
+	<context-param>
+		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
+		<param-value>/js/fckconfig.js</param-value>
+	</context-param>
+	
 	<!-- Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
@@ -244,6 +246,10 @@
 		<web-resource-collection>
 			<web-resource-name>webmail</web-resource-name>
 			<url-pattern>/webmail/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>groupware</web-resource-name>
+			<url-pattern>/groupware/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
@@ -261,8 +267,8 @@
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jspx</form-login-page>
-			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
 	<security-role>

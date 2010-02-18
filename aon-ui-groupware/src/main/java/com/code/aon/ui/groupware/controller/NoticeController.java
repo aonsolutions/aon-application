@@ -15,6 +15,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
+import javax.naming.Name;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -26,14 +29,11 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.Notice;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
@@ -44,10 +44,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private static final Logger LOGGER = Logger.getLogger(NoticeController.class.getName());
 	
 	public static final Integer SELECT_ONE_VALUE = -1;
-
-	private static final String USER_ALTERNATIVE_EMAIL = "mail";
-
-	private static final String USER_CELLULAR_NUMBER = "mobile";
 	
 	private List<SelectItem> workGroups;
 	
@@ -96,7 +92,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		mailList = null;
 		resetSMS();
 		Integer workGroupId = (Integer) event.getNewValue();
-    	if ( (! SELECT_ONE_VALUE.equals(workGroupId)) && (workGroupId != null) ) {
+    	if ( ! SELECT_ONE_VALUE.equals(workGroupId) ) {
     		((Notice)getTo()).setRecipient(null);
         	loadUsers(workGroupId);	
         }
@@ -147,16 +143,17 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	
 	private List<User> getSelectedUsers() throws ManagerBeanException {
 		Notice notice = (Notice) getTo();
-		WorkGroup wg = notice.getWorkGroup();
-		if ( wg != null ) {
-			if ( wg.getId() == null ) {
-				return getAllUsers();
-			} else if (! SELECT_ONE_VALUE.equals(wg.getId()) ) {
-				User recipient = notice.getRecipient();
-				if ( (recipient != null) && (recipient.getId() != null) ) {
-					return getUser(recipient.getId());
+		User recipient = notice.getRecipient();
+		if ( (recipient != null) && (recipient.getId() != null) ) {
+			return getUser(recipient.getId());
+		} else {
+			WorkGroup wg = notice.getWorkGroup();
+			if ( wg != null ) {
+				if ( wg.getId() == null ) {
+					return getAllUsers();
+				} else if (! SELECT_ONE_VALUE.equals(wg.getId()) ) {
+					return getWorkGroupUsers(wg.getId());
 				}
-				return getWorkGroupUsers(wg.getId());
 			}
 		}
 		return Collections.emptyList();
@@ -243,73 +240,61 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 
 	private String getLdapUserMail(String domain, String username) {
-		DistinguishedName userDN = AonDN.getUserDN( domain, username );
+		Name userDN = NameResolver.getUserDN( domain, username );
 		BasicLdap ldap = new BasicLdap();
 		String email = null;
 		if ( ldap.exists(userDN, USER) ) {
 			email = "<"+username+"@"+domain+">";
-			try {
-				LdapSession session = ldap.getLdapSession();
-				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,USER_ALTERNATIVE_EMAIL, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+			Entry userEntry = ldap.get(userDN, USER, MAIL_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+			if ( userEntry != null ) {
 				String alternativeEmail = null;
 				String name = username;
-				try {
-					String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
-					String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
-					name = "" + cn + " " + sn + "";
-					alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
-				}catch (NullPointerException npe) {}
-				email = ""+name+" "+email+"";
-				if (alternativeEmail != null) email = "" + email + ", "+ name +" <"+alternativeEmail+">";
-			} catch (LdapException e) {
-                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username, e);
-			} finally {
-				ldap.closeSession();
+				String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
+				String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
+				name = cn + " " + sn;
+				if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
+					alternativeEmail = userEntry.getAsString(MAIL_ATTRIBUTE);
+				}
+				email = name + " " + email;
+				if (! StringUtils.isEmpty(alternativeEmail) ) {
+					email = email + ", "+ name +" <"+alternativeEmail+">";
+				}
+			} else {
+                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username);
 			}
 		}
 		if (email == null) {
 			//Comprobamos si el dominio tiene algun dominio alternativo.
-			DistinguishedName domainDN = AonDN.getDomainDN(domain);
+			Name domainDN = NameResolver.getDomainDN(domain);
 			if ( ldap.exists(domainDN, DOMAIN) ) {
 				//Si existe entonces buscamos al usuario en el nuevo dominio.
-				try {
-					LdapSession session = ldap.getLdapSession();
-					String filter = LdapSession.getObjectClass(DOMAIN);
-					Entry domainEntry = session.get(domainDN.toString(), filter, MEMBER_ATTRIBUTE);
-					List<Object> alternativeDomain = null;
-					try {
-						alternativeDomain = (List<Object>)domainEntry.get(MEMBER_ATTRIBUTE);
-						for (int i=0;i<alternativeDomain.size();i++) {
-							String altdomain = ""+alternativeDomain.get(i);
-							altdomain = altdomain.substring(3, altdomain.indexOf(","));
-							DistinguishedName altuserDN = AonDN.getUserDN( altdomain, username );
-							if ( ldap.exists(altuserDN, USER) ) {
-								email = "<"+username+"@"+altdomain+">";
-								try {
-									LdapSession altsession = ldap.getLdapSession();
-									String altfilter = LdapSession.getObjectClass(USER);
-									Entry userEntry = altsession.get(altuserDN.toString(), altfilter, USER_ALTERNATIVE_EMAIL, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
-									String alternativeEmail = null;
-									String name = username;
-									try {
-										String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
-										String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
-										name = "" + cn + " " + sn + "";
-										alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
-									}catch (NullPointerException npe) {}
-									email = ""+name+" "+email+"";
-									if (alternativeEmail != null) email = "" + email + ", "+ name +" <"+alternativeEmail+">";
-								} catch (LdapException e) {
-					                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username, e);
+				Entry domainEntry = ldap.get(domainDN, DOMAIN, MEMBER_ATTRIBUTE);
+				List<Object> alternativeDomain = null;
+				if ( (domainEntry != null) && (domainEntry.containsKey(MEMBER_ATTRIBUTE)) ) {
+					alternativeDomain = (List<Object>)domainEntry.get(MEMBER_ATTRIBUTE);
+					for (int i=0;i<alternativeDomain.size();i++) {
+						String altdomain = ""+alternativeDomain.get(i);
+						altdomain = altdomain.substring(3, altdomain.indexOf(","));
+						Name altuserDN = NameResolver.getUserDN( altdomain, username );
+						if ( ldap.exists(altuserDN, USER) ) {
+							email = "<"+username+"@"+altdomain+">";
+							Entry userEntry = ldap.get(altuserDN, USER, MAIL_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+							if ( userEntry != null ) {
+								String alternativeEmail = null;
+								String name = username;
+								String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
+								String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
+								name = cn + " " + sn;
+								if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
+									alternativeEmail = userEntry.getAsString(MAIL_ATTRIBUTE);
+								}
+								email = name+" "+email;
+								if (! StringUtils.isEmpty(alternativeEmail) ) {
+									email = email + ", "+ name +" <"+alternativeEmail+">";
 								}
 							}
 						}
-					}catch (NullPointerException npe) {}
-				} catch (LdapException e) {
-	                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del dominio " + domain, e);
-				} finally {
-					ldap.closeSession();
+					}
 				}
 			}
 		}
@@ -317,25 +302,19 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 
 	private String getLdapUserSMS(String domain, String username) {
-		DistinguishedName userDN = AonDN.getUserDN( domain, username );
+		Name userDN = NameResolver.getUserDN( domain, username );
 		BasicLdap ldap = new BasicLdap();
 		String sms = null;
 		if ( ldap.exists(userDN, USER) ) {
-			try {
-				LdapSession session = ldap.getLdapSession();
-				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,USER_CELLULAR_NUMBER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
-				try {
-					String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
-					String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
-					String name = "" + cn + " " + sn + "";
-					sms = userEntry.getAsString(USER_CELLULAR_NUMBER);
-					sms = ""+name+"-"+sms+"";
-				}catch (NullPointerException npe) {}
-			} catch (LdapException e) {
-                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username, e);
-			} finally {
-				ldap.closeSession();
+			Entry userEntry = ldap.get(userDN, USER, MOBILE_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+			if ( userEntry != null ) {
+				String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
+				String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
+				String name = cn + " " + sn;
+				if ( userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
+					sms = userEntry.getAsString(MOBILE_ATTRIBUTE);	
+				}
+				sms = name+"-"+sms;
 			}
 		}
 		return sms;

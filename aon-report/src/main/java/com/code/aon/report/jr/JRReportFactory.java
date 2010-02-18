@@ -2,7 +2,9 @@ package com.code.aon.report.jr;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.report.ReportException;
 import com.code.aon.report.config.ReportConfig;
@@ -21,8 +23,7 @@ public class JRReportFactory {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(JRReportFactory.class
-			.getName());
+	private static Logger LOGGER = LoggerFactory.getLogger(JRReportFactory.class);
 
 	/**
 	 * Map of the registered reports.
@@ -39,10 +40,12 @@ public class JRReportFactory {
 	 *             If an error ocurred.
 	 */
 	public static JRReport getJRReport(String id) throws ReportException {
-		LOGGER.info("Searching Report ..: " + id);
+		LOGGER.debug("Searching Report ..: {}",id);
 		if (map.containsKey(id)) {
+			LOGGER.debug("Report found in cache.");
 			return map.get(id);
 		}
+		LOGGER.debug("Report not found in cache.");
 		ReportConfigurationParser parser = ReportConfigurationParser
 				.getInstance();
 		ReportConfigurationManager rcm = parser.getConfigurationManager();
@@ -79,7 +82,7 @@ public class JRReportFactory {
 	 *            The report object.
 	 */
 	public static void register(String id, JRReport report) {
-		LOGGER.info("Registering Report ..: " + id + "=" + report);
+		LOGGER.info("Registering Report ..: {}={}",id,report);
 		map.put(id, report);
 	}
 }

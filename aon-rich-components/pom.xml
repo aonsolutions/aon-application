@@ -10,20 +10,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.rich.components</artifactId>
-	<version>3.6.0</version>
+	<version>3.7.1</version>
 	<description>AON RICH COMPONENTS</description>
 	<name>AON RICH COMPONENTS</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.4.1</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.richfaces.ui</groupId>
 			<artifactId>richfaces-ui</artifactId>
-			<version>3.3.0.GA</version>
+			<version>3.3.1.GA</version>
 			<scope>compile</scope>			
 			<exclusions>
 				<exclusion>
@@ -55,13 +55,13 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_04-p02</version>
+			<version>1.2_09</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
-			<version>1.2_04-p02</version>
+			<version>1.2_09</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

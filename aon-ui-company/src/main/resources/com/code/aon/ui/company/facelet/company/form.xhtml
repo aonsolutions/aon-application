@@ -178,6 +178,11 @@
 										<aon:selectBooleanCheckbox id="Company_surcharge"
 											value="#{company.to.surcharge}" />
 					
+										<aon:outputLabel for="Company_withholding"
+											value="#{bundle.aon_retention}" />
+										<aon:selectBooleanCheckbox id="Company_withholding"
+											value="#{company.to.withholding}" />
+
 										<aon:outputLabel for="Company_print_header"
 											value="#{companyBundle.company_print_header}" />
 										<aon:selectBooleanCheckbox id="Company_print_header"
@@ -207,9 +212,24 @@
 						</aon:panelTab>
 						<c:if test="#{company.showRegistryBank}">
 							<aon:panelTab label="#{registryBundle.registry_banks_module}">
-								<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
-									<ui:param name="controller" value="#{companyRbank}" />
-								</ui:include>
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText
+											value="#{registryBundle.registry_banks_module}" />
+									</f:facet>
+									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+										<ui:param name="controller" value="#{companyRbank}" />
+										<ui:param name="showSuffix" value="#{true}" />
+									</ui:include>
+								</aon:panel>
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+									</f:facet>
+									<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
+										<ui:param name="controller" value="#{companyRPayMethod}" />
+									</ui:include>
+								</aon:panel>
 							</aon:panelTab>
 						</c:if>				
 						<aon:panelTab label="#{registryBundle.registry_rd_module}">

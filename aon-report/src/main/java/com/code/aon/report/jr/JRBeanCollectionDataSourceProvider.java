@@ -43,7 +43,7 @@ public class JRBeanCollectionDataSourceProvider extends
 	 * @param criteria
 	 *            The criteria that the data will match.
 	 */
-	public JRBeanCollectionDataSourceProvider(Class clazz, IFinderBean bean,
+	public JRBeanCollectionDataSourceProvider(Class<?> clazz, IFinderBean bean,
 			Criteria criteria) {
 		super(clazz);
 		this.bean = bean;

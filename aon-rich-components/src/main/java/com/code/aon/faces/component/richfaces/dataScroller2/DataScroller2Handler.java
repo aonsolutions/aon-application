@@ -1,7 +1,5 @@
 package com.code.aon.faces.component.richfaces.dataScroller2;
 
-import java.util.Map;
-
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
@@ -61,8 +59,7 @@ public class DataScroller2Handler extends TagHandler {
 		UIData table = (UIData) ComponentSupport.findChild( parent, id );
 		if ( table == null ) {
 			UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
-			Map<String,UIData> dataTableMap = (Map<String, UIData>) root.getAttributes().get( FormHandler.CURRENT_FORM_DATA_TABLE_MAP );
-			table = dataTableMap.get( id );
+			table = FormHandler.getDataTableMap(root).get( id );
 		}
 		return table;
 	}

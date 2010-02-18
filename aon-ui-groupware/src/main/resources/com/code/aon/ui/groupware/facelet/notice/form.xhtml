@@ -112,38 +112,39 @@
 					</aon:div>
 
 					<aon:outputLabel for="Notice_sendSMS" value="#{groupwareBundle.notice_send_sms}" rendered="#{notice.new and smsManager.noticeEnabled}"/>
-					<aon:div id="Notice_sendSMS" style="vertical-align:top" rendered="#{notice.new and smsManager.noticeEnabled}">
-						<aon:selectBooleanCheckbox id="Notice_sendSMS_checkbox" value="#{notice.sendSMS}" style="vertical-align:top" disabled="#{!smsManager.sidebarEnabled}">
-								<a4j:support event="onclick" reRender="Notice_sendSMS" />
-						</aon:selectBooleanCheckbox>
-
-						<aon:div id="Notice_sendSMS_list" rendered="#{notice.sendSMS}">
-							<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{notice.recipient}" >
-								<f:validateLength maximum="13" />
-								<f:validateLongRange maximum="0099999999999" />
-							</aon:inputText>
-							<aon:commandButton id="add2List" value="#{appBundle.aon_sms_add2list}" title="#{appBundle.aon_sms_add2list}"
-								styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
-								actionListener="#{notice.add2List}"
-								reRender="SMS_recipient, recipientList"
-								accesskey="#{bundle.aon_key_save}" />
-							<aon:div styleClass="aon-dataList-scroll">
-								<rich:dataList id="recipientList" var="recipient" value="#{notice.recipients}"
-										style="margin-left:1.1em;" rowKeyVar="row" >
-			           				<h:outputText value="#{recipient}"/>
-									<a4j:commandButton id="removeFromList" value="" 
-											title="#{appBundle.aon_sms_removeFromlist}"
+					<a4j:region>
+						<aon:div id="Notice_sendSMS" style="vertical-align:top" rendered="#{notice.new and smsManager.noticeEnabled}">
+							<aon:selectBooleanCheckbox id="Notice_sendSMS_checkbox" reRender="Notice_sendSMS"
+								value="#{notice.sendSMS}" style="vertical-align:top" disabled="#{!smsManager.sidebarEnabled}" />
+	
+							<aon:div id="Notice_sendSMS_list" rendered="#{notice.sendSMS}">
+								<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{notice.recipient}" >
+									<f:validateLength maximum="13" />
+									<f:validateLongRange maximum="0099999999999" />
+								</aon:inputText>
+								<aon:commandButton id="add2List"
+									value="#{smsBundle.sms_add2list}"
+									styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
+									actionListener="#{notice.add2List}"
+									reRender="SMS_recipient, recipientList"
+									accesskey="#{bundle.aon_key_save}" />
+								<aon:div styleClass="aon-dataList-scroll">
+									<rich:dataList id="recipientList" var="recipient" value="#{notice.recipients}"
+											style="margin-left:1.1em;" rowKeyVar="row" >
+				           				<h:outputText value="#{recipient}"/>
+										<a4j:commandButton id="removeFromList" value="" 
+											title="#{smsBundle.sms_removeFromlist}"
 											styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
-											actionListener="#{notice.removeFromList}"
 											reRender="SMS_recipient, recipientList"
-											accesskey="#{bundle.aon_key_save}" >
-							            <a4j:actionparam name="selected" value="#{row}" assignTo="#{notice.selected}"/>
-									</a4j:commandButton>
-						        </rich:dataList>
-					        </aon:div>
+											accesskey="#{bundle.aon_key_remove}" >
+								            <a4j:actionparam name="selected" value="#{row}"
+								            	assignTo="#{notice.selected}" actionListener="#{notice.removeFromList}"/>
+										</a4j:commandButton>
+							        </rich:dataList>
+						        </aon:div>
+							</aon:div>
 						</aon:div>
-
-					</aon:div>
+					</a4j:region>
 
 				</aon:panelGrid>
 					

@@ -6,6 +6,27 @@
 
 <bean-config>
 
+	<bean description="Añadir cuenta contable al crear el Customer.">
+		<pojo>com.code.aon.customer.Customer</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.CustomerBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Añadir cuenta contable al crear el Supplier.">
+		<pojo>com.code.aon.supplier.Supplier</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.SupplierBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Añadir cuenta contable al crear el Creditor.">
+		<pojo>com.code.aon.finance.Creditor</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.CreditorBeanListener</listener>
+		</listeners>
+	</bean>
+
 	<bean description="Borrado de una factura.">
 		<pojo>com.code.aon.finance.Invoice</pojo>
 		<vetoListeners>
@@ -24,6 +45,13 @@
 		<pojo>com.code.aon.account.bridge.AccountEntryInvoice</pojo>
 		<listeners>
 	        <listener>com.code.aon.account.bridge.event.AccountEntryInvoiceBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Borrado de la tabla de enlace entre seguimiento de vencimientos y apuntes">
+		<pojo>com.code.aon.account.bridge.AccountEntryFinanceTracking</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.AccountEntryFinanceTrackingBeanListener</listener>
 		</listeners>
 	</bean>
 

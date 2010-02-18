@@ -2,6 +2,7 @@ package com.code.aon.faces.component.richfaces.form;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.el.ELException;
 import javax.faces.FacesException;
@@ -39,6 +40,16 @@ public class FormHandler extends AonAjaxComponentHandler {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);
 		root.getAttributes().remove( CURRENT_FORM );
 		root.getAttributes().remove( CURRENT_FORM_DATA_TABLE_MAP );
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Map<String,UIData> getDataTableMap( UIViewRoot root ) {
+		Map<String,UIData> dataTableMap = (Map<String, UIData>) root.getAttributes().get( CURRENT_FORM_DATA_TABLE_MAP );
+		if ( dataTableMap == null ) {
+			dataTableMap = new HashMap<String, UIData>();
+			root.getAttributes().put( CURRENT_FORM_DATA_TABLE_MAP, dataTableMap );
+		}
+		return dataTableMap;
 	}
 	
 }

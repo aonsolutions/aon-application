@@ -6,6 +6,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -15,7 +16,6 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.URLName;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -29,6 +29,10 @@ import com.sun.mail.imap.IMAPStore;
 public class AonServer {
 	
 	private static final Logger LOGGER = Logger.getLogger(AonServer.class.getName());
+	
+	private static final String X_MAILER = "X-Mailer";
+	
+	private static final String WEBMAIL_MAILER = "OfficeWeb - AonWebMail 4.11.0";
 	
 	private static final String IMAP = "imap";
 	
@@ -111,6 +115,7 @@ public class AonServer {
 
         // mailProperties.setProperty("mail.debug", "true");
         // setup SSL connection factory
+        mailProperties.setProperty( "mail.mime.decodetext.strict", "false" );
         if (account.isIncomingSsl()) {
             mailProperties.setProperty("mail.imap.socketFactory.class",
                     "javax.net.ssl.SSLSocketFactory");
@@ -120,10 +125,9 @@ public class AonServer {
                     String.valueOf(account.getIncomingPort()));
             mailProperties.setProperty("mail.imap.socketFactory.port",
                     String.valueOf(account.getIncomingPort()));
-        }
-        // otherwise log on using http, avoid using incomingSsl properties as
-        // it will botch the connection .
-        else {
+        } else {
+            // otherwise log on using http, avoid using incomingSsl properties as
+            // it will botch the connection .
             mailProperties.remove("mail.imap.socketFactory.class");
             mailProperties.remove("mail.imap.socketFactory.fallback");
             mailProperties.remove("mail.imap.port");
@@ -178,7 +182,7 @@ public class AonServer {
 			if (parent == null){
 				new_folder = getRoot().getFolder(folderName);	
 			}else{
-				new_folder = getRoot().getFolder(parent.getFolder().getName()+getRoot().getSeparator()+folderName);
+				new_folder = getRoot().getFolder(parent.getFolder().getFullName()+getRoot().getSeparator()+folderName);
 			}
 			if (!new_folder.exists()) {
 				LOGGER.log(Level.INFO, "Creating folder : " + folderName);
@@ -199,10 +203,14 @@ public class AonServer {
         return this.account.toString();
     }
         
-    public AonMessage createAonMessage( String address, String personal ) throws AddressException, MessagingException, WebmailException, UnsupportedEncodingException{
+    public AonMessage createAonMessage( String address, String personal ) throws UnsupportedEncodingException, WebmailException {
+    	return createAonMessage(new InternetAddress(address, personal));
+    }
+
+    public AonMessage createAonMessage( Address from ) throws WebmailException {
     	AonMessage aonMessage = new AonMessage();
 		aonMessage.setMessage(new MimeMessage(session));
-		aonMessage.setSender(new InternetAddress(address, personal));
+		aonMessage.setSender( from );
     	return aonMessage;
     }
     
@@ -236,6 +244,7 @@ public class AonServer {
                     message != null &&
                     message.getFrom() != null) {
                 message.setSentDate(new Date());
+                message.setHeader(X_MAILER, WEBMAIL_MAILER);
                 transport.sendMessage(message,
                         message.getAllRecipients());
             } else {

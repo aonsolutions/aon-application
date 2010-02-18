@@ -8,12 +8,14 @@ import java.io.Serializable;
  * @author Consulting & Development. ecastellano - 14-nov-2005
  * 
  */
-public class OutputFormat implements Serializable, Comparable {
+public class OutputFormat implements Serializable, Comparable<OutputFormat> {
+
+	private static final long serialVersionUID = -474109916036902842L;
 
 	/**
 	 * Array to store all types.
 	 */
-	private static OutputFormat[] ALL = new OutputFormat[7];
+	private static OutputFormat[] ALL = new OutputFormat[8];
 
 	/**
 	 * PDF format.
@@ -56,6 +58,13 @@ public class OutputFormat implements Serializable, Comparable {
 	 */
 	public static final OutputFormat TXT = new OutputFormat(6, "TXT",
 			"text/plain");
+
+	/**
+	 * TEXT format.
+	 */
+	// MIME TYPE obtenido de --> http://support.microsoft.com/kb/936496/es
+	public static final OutputFormat DOCX = new OutputFormat(6, "DOCX",
+			"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
 	/**
 	 * Index of the element in the output formats array.
@@ -115,22 +124,6 @@ public class OutputFormat implements Serializable, Comparable {
 	 */
 	public String toString() {
 		return description;
-	}
-
-	/**
-	 * Compares this object with the argument for order. Returns a negative
-	 * integer, zero, or a positive integer as the first argument is less than,
-	 * equal to, or greater than this object.
-	 * 
-	 * @param outputFormat
-	 *            The object to be compared.
-	 * 
-	 * @return A negative integer, zero, or a positive integer as the first
-	 *         argument is less than, equal to, or greater than the second.
-	 * @see java.lang.Comparable#compareTo(Object)
-	 */
-	public int compareTo(Object outputFormat) {
-		return compareTo((OutputFormat) outputFormat);
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class AccountUtil {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
 			account.setId(obtainNextAccountId(AccountConstants.BANK_ACCOUNT_PREFIX));
-			account.setDescription(rBank.getBank().getName() + " " + rBank.getBankAccount());
+			account.setDescription(rBank.getBank().getName() + " " + rBank.getBankAccount().toString());
 			account.setEntryEnabled(true);
 			account.setAlias(account.getId());
 			account = (Account) accountBean.insert(account);
