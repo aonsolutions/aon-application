@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="userSearch">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
+				<ui:param name="controller" value="#{user}" />
+				<ui:param name="skipResetButton" value="#{!currentDomain.userManagement}" />
+			</ui:include>			
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{user.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="user_list" />		
+
+					<aon:outputLabel for="User_name"
+						value="#{configBundle.config_user_name}" />
+					<aon:inputText id="User_name" size="80"
+						valueChangeListener="#{user.addExpression}" />
+
+					<aon:outputLabel for="User_login"
+						value="#{configBundle.config_user_login}" />
+					<aon:inputText id="User_login" size="20"
+						valueChangeListener="#{user.addExpression}" />
+
+					<aon:outputLabel for="User_available"
+						value="#{configBundle.config_user_active}" />
+					<aon:selectOneMenu id="User_available"
+						valueChangeListener="#{user.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>
+				</ui:define>
+				
+			</ui:decorate>							
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
