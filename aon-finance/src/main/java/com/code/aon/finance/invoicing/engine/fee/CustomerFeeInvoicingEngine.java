@@ -19,6 +19,7 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
@@ -28,6 +29,7 @@ import com.code.aon.finance.InvoicingGroupDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingParameters;
@@ -319,10 +321,23 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSurcharge(customerFee.getCustomer().isSurcharge());
+		invoice.setTaxFree(customerFee.getCustomer().isTaxFree());
+		invoice.setWithholding(customerFee.getCustomer().isWithholding());
+		invoice.setInvestment(false);
+		
+		//TODO la asignación de de InvoiceTransactionType no es correcta,
+		//debería propagarse desde customer.
+		if (!customerFee.getCustomer().isTaxFree()) {
+			invoice.setTransaction( InvoiceTransactionType.NATIONAL);
+		} else {
+			invoice.setTransaction( InvoiceTransactionType.INTRACOMUNNITARY);
+		}
 		return invoice;
 	}
 	
 	private Invoice createInvoice(InvoicingGroup group, int counter, InvoicingParameters params) throws ManagerBeanException {
+		Customer parent = obtainRelatedCustomer(group.getParent());
 		Invoice invoice = new Invoice();
 		invoice.setNumber(counter);
 		invoice.setIssueDate(params.getInvoiceDate());
@@ -333,6 +348,9 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSurcharge(parent.isSurcharge());
+		invoice.setTaxFree(parent.isTaxFree());
+		invoice.setWithholding(parent.isWithholding());
 		return invoice;
 	}
 
@@ -405,6 +423,18 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	private long daysBetween(Date from, Date to) {
 		return ((to.getTime() - from.getTime()) / ((60 * 60 * 1000) * 24)) + 1;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Customer obtainRelatedCustomer(Registry parent) throws ManagerBeanException {
+		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), parent.getId());
+		Iterator iter = customerBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (Customer)iter.next();
+		}
+		return null;
 	}
 
 }

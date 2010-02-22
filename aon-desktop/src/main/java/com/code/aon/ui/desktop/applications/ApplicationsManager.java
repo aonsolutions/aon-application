@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -13,13 +12,18 @@ import javax.faces.context.FacesContext;
 
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.AonUserController;
+import com.code.aon.desktop.controller.DomainController;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class ApplicationsManager implements IDesktopConstants {
 
+	public static final String AON_CMS = "aon-cms";
+	
 	private List<App> applicationList;
 
 	@SuppressWarnings("unchecked")
@@ -37,10 +41,16 @@ public class ApplicationsManager implements IDesktopConstants {
 		List list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);
-			String context = app.getContext() + "/?aonDesktop=true";
-			String ip = Util.findStoredApplicationIp( thisIp, app.getContext() );
-			if ( !thisIp.equals( ip ) ) {
-				context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
+			String context = null;
+			if ( AON_CMS.equals(app.getId()) ) {
+				AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
+				context = DomainController.getCMSDomainURL(auc.getDomain());
+			} else {
+				context = app.getContext() + "/?aonDesktop=true";
+				String ip = Util.findStoredApplicationIp( thisIp, app.getContext() );
+				if ( !thisIp.equals( ip ) ) {
+					context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
+				}
 			}
 			String property = services.getProperty( app.getId() );
 			App application;
@@ -54,7 +64,6 @@ public class ApplicationsManager implements IDesktopConstants {
 			}
 			applicationList.add(application);
         }
-        Collections.sort( applicationList );
 	}
 
 	public List<App> getApplicationList(){
@@ -70,7 +79,7 @@ public class ApplicationsManager implements IDesktopConstants {
         return null;
 	}
 
-	public class App implements Comparable<App> {
+	public class App {
 
 		private String id;
 
@@ -118,11 +127,6 @@ public class ApplicationsManager implements IDesktopConstants {
 
 		public boolean isToolbarEnabled() {
 			return toolbar;
-		}
-
-		@Override
-		public int compareTo(App o) {
-			return name.compareTo(o.getName());
 		}
 
 	}

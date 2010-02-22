@@ -12,6 +12,15 @@ import com.code.aon.common.ManagerBeanException;
  */
 public interface IDataModelDataProvider {
 
+	/**
+	 * Gets the row count.
+	 * 
+	 * @return the row count
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public int getRowCount() throws ManagerBeanException;
+	
     /**
      * Search the list of ITransferObject conditioned by the criteria and the row interval delimited by parameters start and count.
      * 
@@ -22,4 +31,11 @@ public interface IDataModelDataProvider {
      */
     List<ITransferObject> search(int start, int count) throws ManagerBeanException;
 
+	/**
+	 * Gets the page limit.
+	 * 
+	 * @return the page limit
+	 */
+	int getPageLimit();
+    
 }

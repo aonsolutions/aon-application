@@ -6,11 +6,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.faces.model.DataModel;
 import javax.faces.model.DataModelEvent;
 import javax.faces.model.DataModelListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -27,8 +29,7 @@ public class PageDataModel extends DataModel implements Serializable {
 	private static final long serialVersionUID = 8811317880674890755L;
 
 	/** Obtains a suitable Logger. */
-	private static final Logger LOGGER = Logger
-			.getLogger(PageDataModel.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(PageDataModel.class);
 
 	/** Default limit of rows to be load from de data source. */
     public static final int LIMIT = 20;
@@ -253,7 +254,7 @@ public class PageDataModel extends DataModel implements Serializable {
 			List<ITransferObject> l = dataProvider.search(start, count);
 			return new Page(l, start);
 		} catch (ManagerBeanException e) {
-			LOGGER.fine("Error happened while Page loading[" + e.getMessage() + "] Empty Page will be return.");
+			LOGGER.error("Error happened while Page loading, empty Page will be return.",e);
 			return Page.EMPTY_PAGE;
 		}
 	}

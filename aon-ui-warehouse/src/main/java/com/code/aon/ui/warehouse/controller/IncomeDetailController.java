@@ -1,39 +1,149 @@
 package com.code.aon.ui.warehouse.controller;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.Item;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.strategy.ICalculable;
+import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.purchase.Purchase;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 
+/**
+ * Controller for Income Detail.
+ * 
+ * @author Consulting & Development.
+ * @since 1.0
+ *
+ */
 public class IncomeDetailController extends LinesController {
-
-	private boolean longDescription;
-
+	
+	/**
+	 * Income controller's name
+	 */
+	private static final String INCOME_CONTROLLER_NAME = "income";
+	
+	/**
+	 * This class assigned price strategy
+	 */
 	private IPriceStrategy priceStrategy;
 	
-	public boolean isLongDescription() {
-		return longDescription;
+	/**
+	 * Related purchase
+	 */
+	private Purchase purchase;
+	
+	/**
+	 * The invoice date
+	 */
+	private Date invoiceDate;
+	
+	
+	/**
+	 * Accepts the controller and edit new line 
+	 * 
+	 * @param event the event of the menu
+	 */
+    public void onAcceptEditNew(ActionEvent event) {
+		super.onAccept(event);
+		super.onReset(event);
+	}
+	
+	/**
+	 * Resets the controller
+	 * 
+	 * @param event the event of the menu
+	 * @throws ManagerBeanException
+	 */
+	public void onStart(ActionEvent event) throws ManagerBeanException{
+		super.onReset(null);
+		setPurchase(null);
+	}
+	
+	/**
+	 * Returns the invoice date
+	 * 
+	 * @return returns the date of the invoice
+	 */
+	public Date getInvoiceDate() {
+		return invoiceDate;
 	}
 
-	public void setLongDescription(boolean longDescription) {
-		this.longDescription = longDescription;
+	/**
+	 * Assigns the invoice date
+	 * 
+	 * @param invoiceDate the date to assign
+	 */
+	public void setInvoiceDate(Date invoiceDate) {
+		this.invoiceDate = invoiceDate;
 	}
-
+	
+	/**
+	 * Searchs the item instead of this events value and assigns to the transfer object, IncomeDetail
+	 * 
+	 * @param event the event that has the value
+	 * @throws ManagerBeanException
+	 */
+	@SuppressWarnings("unchecked")
+	public void itemData(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_ID),event.getNewValue());
+			Iterator iter = itemBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				Item item = (Item)iter.next();
+				((IncomeDetail)this.getTo()).setItem(item);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the base price of the transfer object
+	 * 
+	 * @return the base price
+	 */
+	public double getToBasePrice(){
+		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());
+	}
+	
+	/**
+	 * Returns the base price of this row
+	 * 
+	 * @return the base price
+	 * @throws ManagerBeanException
+	 */
+	public double getModelToBasePrice() throws ManagerBeanException {
+		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
+	}
+	
+	/**
+	 * Returns the taxable base of the transfer object
+	 * 
+	 * @return the taxable base
+	 */
+	public double getTaxableBase(){
+		IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
+		return getPriceStrategy().getTaxableBase((ICalculableContainer)incomeController.getTo());
+	}
+	
+	/**
+	 * Returns the price strategy linked to this class
+	 * 
+	 * @return price strategy
+	 */
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
@@ -41,83 +151,30 @@ public class IncomeDetailController extends LinesController {
 		return priceStrategy;
 	}
 
-	public void onLongDescription(ActionEvent event) {
-		setLongDescription(true);
+	/**
+	 * Returns the purchase
+	 * 
+	 * @return the purchase
+	 */
+	public Purchase getPurchase() {
+		return purchase;
 	}
 
-	public void onShortDescription(ActionEvent event) {
-		setLongDescription(false);
+	/**
+	 * Assigns the purchase
+	 * 
+	 * @param purchase the purchase
+	 */
+	public void setPurchase(Purchase purchase) {
+		this.purchase = purchase;
 	}
-
-	public boolean isPurchaseSource() throws ManagerBeanException {
-		IncomeDetail incomeDetail = (IncomeDetail)getTo();
-		if (incomeDetail != null) {
-			return (incomeDetail.getPurchaseDetail() != null && incomeDetail.getPurchaseDetail().getId() != null);
-		}
-		return false;
+	
+	/**
+	 * Assigns the invoice date 
+	 * 
+	 * @param event the event that contains the date
+	 */
+	public void loadInvoiceDate(ValueChangeEvent event) {
+		this.invoiceDate  = (Date)event.getNewValue();
 	}
-
-	public void onItemChanged(LookupChangeEvent event) {
-		IncomeDetail incomeDetail = (IncomeDetail)getTo();
-		double price = 0;
-		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			Item item = (Item)event.getNewValue();
-			incomeDetail.setItem(item);
-			incomeDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
-
-			price = item.getPurchasePrice();
-		}
-		incomeDetail.setPrice(price);
-	}	
-
-	public double getAmount() {
-		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());
-	}
-
-	public double getModelAmount() throws ManagerBeanException {
-		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
-	}
-
-	public String getLineSourceInfo() throws ManagerBeanException {
-		StringBuffer info = new StringBuffer(64);
-
-		IncomeDetail incomeDetail = (IncomeDetail)this.getModel().getRowData();
-		if (incomeDetail.getPurchaseDetail() != null && incomeDetail.getPurchaseDetail().getId() != null) {
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_source"));
-			info.append(" ");
-			info.append(AonUtil.getMessage("purchaseBundle", "purchase_purchase"));
-			info.append(" ");
-			info.append(incomeDetail.getPurchaseDetail().getPurchase().getReferenceCode());
-			info.append(" - ");
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_detail_line"));
-			info.append(" ");
-			info.append(incomeDetail.getPurchaseDetail().getLine());
-		}
-		return info.toString();
-	}
-
-	public String getLineStatusInfo() throws ManagerBeanException {
-		StringBuffer info = new StringBuffer(64);
-
-		IncomeDetail incomeDetail = (IncomeDetail)this.getModel().getRowData();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
-		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_transfered_to"));
-			info.append(" ");
-			info.append(AonUtil.getMessage("financeBundle", "finance_invoice"));
-			info.append(" ");
-			info.append(invoiceDetail.getInvoice().getReferenceCode());
-			info.append(" - ");
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_detail_line"));
-			info.append(" ");
-			info.append(invoiceDetail.getLine());
-		}
-		return info.toString();
-	}
-
 }

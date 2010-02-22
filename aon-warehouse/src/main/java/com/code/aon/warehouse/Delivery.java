@@ -58,7 +58,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	private static final Logger LOGGER = Logger.getLogger(Delivery.class.getName());
 	
 	/**
-	 * The Constructor. Sets TODAY to issueTime
+	 * The Constructor. Sets TODAY to issueDate
 	 */
 	public Delivery() {
 		this.issueTime = new Date();
@@ -77,7 +77,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	private Customer customer;
 	
 	/** The address. */
-	private RegistryAddress registryAddress;
+	private RegistryAddress raddress;
 	
 	/** The issue date. */
 	private Date issueTime;
@@ -215,8 +215,8 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	 */
 	@ManyToOne
 	@JoinColumn( name="address" )
-	public RegistryAddress getRegistryAddress() {
-		return registryAddress;
+	public RegistryAddress getRaddress() {
+		return raddress;
 	}
 
 	/**
@@ -224,8 +224,8 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	 * 
 	 * @param address the address
 	 */
-	public void setRegistryAddress(RegistryAddress registryAddress) {
-		this.registryAddress = registryAddress;
+	public void setRaddress(RegistryAddress raddress) {
+		this.raddress = raddress;
 	}
 
 	/**
@@ -552,11 +552,12 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	@SuppressWarnings("unchecked")
 	public List getOrderedDetailList() {
 		try {
-			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+			IManagerBean offerDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), getId());
-			criteria.addOrder(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
-			return deliveryDetailBean.getList(criteria);
+			criteria.addEqualExpression(offerDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), getId());
+			criteria.addOrder(offerDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ITEM_PRODUCT_TYPE));
+			criteria.addOrder(offerDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID));
+			return offerDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
 		}
@@ -569,11 +570,11 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
     		return super.equals(obj);
 		}
 		if (obj instanceof Delivery) {
-			Delivery d = (Delivery) obj;
-			if (d.getId() == null && id == null) {
+			Delivery s = (Delivery) obj;
+			if (s.getId() == null && id == null) {
 				return super.equals(obj);	
 			}
-			if (ObjectUtils.equals(getId(), d.getId())) {
+			if (ObjectUtils.equals(getId(), s.getId())) {
 				return true;
 			}
 		}

@@ -80,11 +80,9 @@
 					<aon:div styleClass="aon-toolbar">
 						<aon:commandButton id="save_id" value="#{appBundle.aon_save_password}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							action="logout" reRender="passwordChangedWindow"
+							action="changeuser_form" reRender="passwordChangedWindow"
 							actionListener="#{currentUser.acceptPassword}"
-							accesskey="#{bundle.aon_key_save}" >
-							<aon:actionListener method="#{aonConfiguration.logout}" />
-						</aon:commandButton>
+							accesskey="#{bundle.aon_key_save}" />
 					</aon:div>
 					<aon:div styleClass="aon-scroll-area">
 		

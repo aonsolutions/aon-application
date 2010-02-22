@@ -35,9 +35,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Scope;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -71,7 +71,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	public Invoice() {
 		this.issueDate = new Date();
-		this.defaultTaxInfo = true;
 	}
 
     /** The id. */
@@ -150,7 +149,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	private int issueYear;
 	private int issueMonth;
 	private int issueDay;
-	private boolean defaultTaxInfo;
 	/**
      * Gets the id.
      * 
@@ -545,7 +543,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 * @return the lines
 	 */
 	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy("line")
+	@OrderBy()
 	public Set<InvoiceDetail> getLines() {
 		return this.lines;
 	}
@@ -672,15 +670,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	@Transient
 	public boolean isRecorded() {
 		return getStatus() == InvoiceStatus.SCORED;
-	}
-
-	@Transient
-	public boolean isDefaultTaxInfo() {
-		return defaultTaxInfo;
-	}
-
-	public void setDefaultTaxInfo(boolean defaultTaxInfo) {
-		this.defaultTaxInfo = defaultTaxInfo;
 	}
 
 	@Override

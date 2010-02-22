@@ -86,7 +86,13 @@ public class StatementController extends BasicController {
 	}
 
 	public void onRefresh(ActionEvent event) {
-			onSelect(event);
+		try {
+			initialize();
+			initializeAmounts();
+			transformDetailModel();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 
 	private void initialize() {

@@ -1,6 +1,6 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class DiaryCategoriesHandler {
 
@@ -8,9 +8,11 @@ public class DiaryCategoriesHandler {
 	
 	private String content;
 	
-	private List<ArticleCategoryHandler> categoriesList;
+	private ArrayList<ArticleCategoryHandler> categoriesList;
 	
-	public DiaryCategoriesHandler (String content, boolean categories, List<ArticleCategoryHandler> categoriesList) {
+	public DiaryCategoriesHandler (String content, 
+			boolean categories,
+			ArrayList<ArticleCategoryHandler> categoriesList) {
 		this.categories = categories;
 		this.content = content;
 		this.categoriesList = categoriesList;
@@ -24,7 +26,7 @@ public class DiaryCategoriesHandler {
 		return content;
 	}
 
-	public List<ArticleCategoryHandler> getCategoriesList() {
+	public ArrayList<ArticleCategoryHandler> getCategoriesList() {
 		return categoriesList;
 	}
 	

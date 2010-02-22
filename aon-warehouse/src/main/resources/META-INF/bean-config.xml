@@ -17,29 +17,7 @@
 		<pojo>com.code.aon.warehouse.DeliveryDetail</pojo>
 		<listeners>
 	        <listener>com.code.aon.warehouse.event.DeliveryDetailBeanListener</listener>
-	        <listener>com.code.aon.warehouse.event.StockableBeanListener</listener>
 		</listeners>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.warehouse.event.StockableBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
-	<bean description="">
-		<pojo>com.code.aon.warehouse.Income</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.warehouse.event.IncomeBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
-		<pojo>com.code.aon.warehouse.IncomeDetail</pojo>
-		<listeners>
-	        <listener>com.code.aon.warehouse.event.IncomeDetailBeanListener</listener>
-	        <listener>com.code.aon.warehouse.event.StockableBeanListener</listener>
-		</listeners>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.warehouse.event.StockableBeanVetoListener</vetoListener>
-		</vetoListeners>
 	</bean>
 	
 </bean-config>

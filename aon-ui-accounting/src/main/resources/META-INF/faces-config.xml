@@ -71,7 +71,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>AccountBudget_period,AccountBudget_account_id</value>
+			<value>AccountEntry_accountPeriod,AccountBudget_account_id</value>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
@@ -445,24 +445,8 @@
 			<property-name>beanName</property-name>
 			<value>autConcept</value>
 		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>AutoConcept_description</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{autConceptControllerListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>autConceptControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.event.AutConceptControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
 	<!-- **************** ACCOUNT ENTRY ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountEntry</managed-bean-name>
@@ -673,22 +657,6 @@
 		<managed-bean-name>journalReport</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.accounting.controller.JournalReportController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.accounting.AccountEntryDetail</value>
-		</managed-property>
-	</managed-bean>
-
-	<!-- ********** LEDGER REPORT CONTROLLER ********* -->
-	<managed-bean>
-		<managed-bean-name>ledgerReport</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.LedgerReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1317,17 +1285,6 @@
 		<navigation-case>
 			<from-outcome>journal_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/journal/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!-- **************** LEDGER BOOK REPORT ************************** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>ledger_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/ledger/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>ledger_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/ledger/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- **************** MBASE IMPORT REPORT ************************** -->

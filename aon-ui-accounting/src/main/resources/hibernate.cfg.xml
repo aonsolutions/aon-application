@@ -72,6 +72,7 @@
 
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.CustomerSegment"/>
 
 		<!-- AON-FINANCE Mapping files -->	
 		<mapping class="com.code.aon.finance.Creditor"/>
@@ -122,6 +123,7 @@
 		
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
+		<mapping class="com.code.aon.supplier.SupplierSegment"/>
 	</session-factory>
 
 </hibernate-configuration>

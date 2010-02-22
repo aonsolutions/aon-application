@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition>
+
+	<aon:form id="addContactForm">
+	
+		<rich:modalPanel id="addContactModalPanel"
+			height="100" width="325" zindex="2000">
+			
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{webmailBundle.aon_webmail_email_add}" />
+				</aon:div>
+			</f:facet>
+	
+			<f:facet name="controls">
+				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+					immediate="true" reRender="aonStatus">
+					<rich:componentControl for="addContactModalPanel" operation="hide"
+						event="onclick" />
+				</aon:commandButton>
+			</f:facet>
+	
+			<aon:outputText value="#{groupwareBundle.contact_displayName}" />
+			<h:panelGrid cellpadding="2" cellspacing="0" columns="2"
+				styleClass="aon-panelGrid-formatting">
+				<aon:inputText id="Contact_name" required="true"
+					styleClass="aon-form-input-text" size="30" maxlength="128"
+					value="#{message.contactName}" />
+				<aon:commandButton id="closeModalAddContact"
+					styleClass="aon-commandButton" reRender="aonStatus"
+					actionListener="#{message.saveToContacts}"
+					value="#{bundle.aon_accept}">
+					<rich:componentControl for="addContactModalPanel" operation="hide"
+						event="onclick" />
+				</aon:commandButton>
+			</h:panelGrid>
+			
+		</rich:modalPanel>
+		
+	</aon:form>
+
+</ui:composition>
+
+</body>
+</html>

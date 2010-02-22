@@ -72,7 +72,6 @@ public class DeliveryController extends BasicController {
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
-	private Boolean valuableDelivery;
 
     public List<SelectItem> getAddresses() {
 		return addresses;
@@ -164,14 +163,6 @@ public class DeliveryController extends BasicController {
 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
-	}
-	
-	public Boolean getValuableDelivery() {
-		return valuableDelivery;
-	}
-
-	public void setValuableDelivery(Boolean valuableDelivery) {
-		this.valuableDelivery = valuableDelivery;
 	}
 
 	public boolean isPending(){
@@ -336,7 +327,7 @@ public class DeliveryController extends BasicController {
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
-		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SHIPPING_ADDRESS_ID), to.getRaddress().getId());
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_STATUS), SalesStatus.PENDING);
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());

@@ -66,7 +66,7 @@ public class ModularPageGenerator extends Generator {
 					for (int j = 0; j < modularPageOptionList.size(); j++) {
 						ModularPageOption mpo = (ModularPageOption) modularPageOptionList.get(j);
 						if ( mpo.getIdent() == null ) {
-							getLogger().error("LA OPCION " + mpo.getAlias() + " DE LA PAGINA MODULAR " + mp.getAlias() + " NO REFERENCIA A NINGUN ELEMENTO");
+							getLogger().error("OPCION " + mpo.getAlias() + " DE PAGINA MODULAR " + mp.getAlias() + " NO REFERENCIA A NINGUN ELEMENTO");
 							continue;
 						}						
 						Criteria criteria_modBean = new Criteria();
@@ -79,9 +79,8 @@ public class ModularPageGenerator extends Generator {
 							ModularPageOptionDetail mpod = (ModularPageOptionDetail) modularPageOptionDetailList.get(0);
 							if (mpod.getModular_page_option().isActive()) {
 								ModularPageOptionHandler mpoh = new ModularPageOptionHandler(mpod);
-								if (mpoh.getContent()!=null) {
+								if (mpoh.getContent()!=null)
 									modularPageOptionHandlerList.add(mpoh);
-								}
 							}
 						}
 						modularPageOptionDetailList = null;

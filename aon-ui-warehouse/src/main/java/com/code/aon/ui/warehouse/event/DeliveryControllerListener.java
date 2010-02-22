@@ -16,6 +16,12 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
+/**
+ * A listener for DeliveryController
+ * 
+ * @author Consulting & Development. Joseba Urkiri - 6-jun-2006
+ * @since 1.0
+ */
 public class DeliveryControllerListener extends ControllerAdapter {
 	
 	@Override

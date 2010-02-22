@@ -111,7 +111,6 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		hibernateProperties.put(Environment.PASS, getPassword());
 		hibernateProperties.put(Environment.URL, getLabeledURI());
 		hibernateProperties.put(Environment.DRIVER, getDriverClassName());
-		hibernateProperties.put(Environment.SHOW_SQL, Boolean.TRUE);
 		return hibernateProperties;
 	}
 	

@@ -7,6 +7,8 @@ import com.code.aon.common.enumeration.IResourceable;
 
 /**
  * Enummeration to identify the different status of a Sales.
+ * 
+ * @author jurkiri
  */
 public enum SalesStatus implements IResourceable{
 
@@ -37,5 +39,4 @@ public enum SalesStatus implements IResourceable{
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
-
 }

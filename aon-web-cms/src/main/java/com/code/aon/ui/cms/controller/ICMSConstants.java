@@ -13,7 +13,6 @@ public interface ICMSConstants {
 	
 	String
 	
-	ACTIVITY					= "activity",
 	ALBUM						= "album",
 	ALBUM_IMAGE					= "albumImage",
 	ALBUM_CATEGORY				= "album_category",

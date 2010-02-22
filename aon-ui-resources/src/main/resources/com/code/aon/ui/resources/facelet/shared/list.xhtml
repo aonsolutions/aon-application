@@ -8,11 +8,16 @@
 		<aon:valueParam name="dataTableId" default="#{controller.beanName}Data" />
 		<aon:valueParam name="dataModel" default="#{controller.model}" />
 		<aon:valueParam name="rows" default="#{controller.pageLimit}" />
-		<aon:valueParam name="showDataTable" default="#{controller.model.rowCount > 0}" />
+		<aon:valueParam name="showDataTable" default="#{dataModel.rowCount > 0}" />
 		<aon:valueParam name="showDataScroller" default="true" />
 		<aon:valueParam name="showNote" default="true" />
+		<aon:valueParam name="sortMode" default="multi" />
 		
+		<aon:valueParam name="rowSelectorReRender" default="aonContent" />
+		<aon:valueParam name="rowSelectorToggleOnClick" default="#{true}" />
+		<aon:valueParam name="rowSelectorImmediate" default="#{true}" />
 		<aon:methodParam name="rowSelectorAction" default="#{controller.beanName}_form" resolve="true" />
+		<aon:methodParam name="rowSelectorActionListener" default="#{controller.onSelect}" type="actionListener" />
 	</ui:include>
 	
 </ui:composition>

@@ -1,9 +1,13 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -11,11 +15,10 @@ import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-import javax.mail.Flags.Flag;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.richfaces.event.DropEvent;
-import org.richfaces.model.Ordering;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -24,14 +27,11 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageSortableList;
-import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
 public class FolderController implements WebMailConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(FolderController.class.getName());
-	
-	private static final int PAGE_SIZE = 20;
 	
 	private AonFolder folder;
 	
@@ -41,13 +41,7 @@ public class FolderController implements WebMailConstants {
 	
 	private FoldersTreeBean treeController;
 	
-	private boolean createAsSubfolder;
-	
 	private int currentPage = 1;
-
-	private String tableState;
-	
-	private Ordering dateOrder = Ordering.DESCENDING;
 	
 	public FolderController() {
 		this.model = new ArrayDataModel();
@@ -57,11 +51,11 @@ public class FolderController implements WebMailConstants {
 		return currentPage;
 	}
 	
-	public int getPageSize() {
-		return PAGE_SIZE;
-	}
-	
 	public DataModel getModel() {
+		AonMessage[] list = getFolder().getMessageList();
+		if (! ObjectUtils.equals(list, this.model.getWrappedData()) ) {
+			this.model.setWrappedData(list);
+		}
 		return this.model;
 	}
 
@@ -71,13 +65,16 @@ public class FolderController implements WebMailConstants {
 	
 	public void resetCurrentPage() {
 		setCurrentPage( 1 );
-		updateModel();		
-	}
-
-	public void updateModel() {
-		this.model.setWrappedData(folder.getMessageList());		
 	}
 	
+   @PostConstruct
+   public void initBean() {
+	   getWebMailController().setFolderController(this);
+	   getTreeController().setFolderController(this);
+	   // Nos aseguramos que esta creado el managed bean de Login
+	   AonUtil.getRegisteredBean(BEAN_LOGIN);
+   }	
+
 	/**
 	 * @return the folder
 	 */
@@ -119,7 +116,6 @@ public class FolderController implements WebMailConstants {
 		try{
 			if (folder!=null) {
 				folder.refresh();
-				resetCurrentPage();
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -129,46 +125,81 @@ public class FolderController implements WebMailConstants {
 
     public void deleteCheckedMessages(ActionEvent event) {
     	try{
-   			deleteMessages(folder.getSelectedMessages(), false);
+   			deleteMessages(folder.getSelectedMessages());
+   			resetCurrentPage();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
     }
 
-    public void purgeCheckedMessages(ActionEvent event) {
+    public void deleteAllMessages(ActionEvent event) {
     	try{
-   			deleteMessages(folder.getSelectedMessages(), true);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-    }
-    
-    public void purgeAllMessages(ActionEvent event) {
-    	try {
-	    	deleteMessages(folder.getMessageList(), true);
+	    	deleteMessages(folder.getMessageList());
+	    	resetCurrentPage();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
     }
 
-    protected void deleteMessages(AonMessage[] messages, boolean purge) throws MessagingException {
-    	AonServer server = getWebMailController().getServer();
-		if ( purge ) {
-			folder.deleteMessages(messages);
+    private void deleteMessages(AonMessage[] messagesLst) throws MessagingException {
+		if ((folder.getFolder().getFullName().equals(AonFolder.TRASH_FOLDER_NAME))
+				|| (folder.getFolder().getFullName().equals(AonFolder.SPAM_FOLDER_NAME))){
+			folder.deleteMessages(messagesLst);
 			try {
 				folder.refresh();
 			} catch (WebmailException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
-		} else {
-	    	AonFolder treeDest = getTreeController().recoverTreeNode(server.getTrashFolderName());
-	    	moveMessages(treeDest, messages);
+		}else{
+	    	AonFolder dest = getWebMailController().getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
+	    	AonFolder treeDest = getTreeController().recoverTreeNode(dest);
+	    	moveSelectedMessages(treeDest);
 	    	getTreeController().loadTree();
 		}
-    	resetCurrentPage();		
+    }
+
+	// *************************************************************************
+	// SELECT / UNSELECT ALL 
+	// *************************************************************************
+    public void selectAllMessages(ActionEvent event){
+    	for( AonMessage message : folder.getMessageList() ) {
+    		message.setSelected(true);
+    	}
+    }
+
+    public void deselectAllMessages(ActionEvent event){
+    	for( AonMessage message : folder.getMessageList() ) {
+    		message.setSelected(false);
+    	}
+    }
+
+    public void selectAllPageMessages(ActionEvent event){
+    	Iterator<AonMessage> iter = currentPageObjects().iterator();
+    	while (iter.hasNext()){
+    		iter.next().setSelected(true);
+    	}
+    }
+
+    public void deselectAllPageMessages(ActionEvent event){
+    	Iterator<AonMessage> iter = currentPageObjects().iterator();
+    	while (iter.hasNext()){
+    		iter.next().setSelected(false);
+    	}
+    }
+    
+    private List<AonMessage> currentPageObjects() {
+    	List<AonMessage> messages = new ArrayList<AonMessage>();
+    	int currentPage = getCurrentPage();
+    	currentPage--;
+    	AonMessage[] allMessages = folder.getMessageList();
+    	int pageObjectNumber = folder.getPageSize();
+    	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
+    		if (i < allMessages.length) {
+    			messages.add(allMessages[i]);
+    		}
+    	}
+    	return messages;
     }
 
     //*************************************************************
@@ -244,11 +275,7 @@ public class FolderController implements WebMailConstants {
     //*************************************************************
 
 	public void createFolder(ActionEvent event) {
-		AonFolder parent = null;
-		if ( isCreateAsSubfolder() ) {
-			parent = getTreeController().getCurrent();
-		}
-       	getWebMailController().getServer().createAonFolder(parent, newFolderName, Folder.HOLDS_MESSAGES);
+       	getWebMailController().getServer().createAonFolder(null, newFolderName, Folder.HOLDS_MESSAGES);
     	getTreeController().loadTree();
     }
 
@@ -260,7 +287,7 @@ public class FolderController implements WebMailConstants {
 			if (this.folder.getMessageCount()==0){
 				this.folder.deleteFolder(true);
 				this.folder = null;
-		    	getTreeController().initTree(getWebMailController().getServer());
+		    	getTreeController().initTree();
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -279,7 +306,8 @@ public class FolderController implements WebMailConstants {
     // SENDER OR DESTINY COLUMN
     //*************************************************************
 	public boolean isSentItemColumn(){
-		if (folder.isSentFolder() || folder.isDraftFolder())
+		if (folder.getFolder().getFullName().equals(AonFolder.SENT_FOLDER_NAME) ||
+				folder.isDraftFolder())
 			return true;
 		return false;
 	}
@@ -288,11 +316,8 @@ public class FolderController implements WebMailConstants {
 	// DESTINY FOLDER SELECTION POPUP
 	//********************************************************************************************
     public void moveSelectedMessages(AonFolder dest){
-    	moveMessages(dest, folder.getSelectedMessages());
-    }
-
-    public void moveMessages(AonFolder dest, AonMessage[] messages){
 		try {
+			AonMessage[] messages = folder.getSelectedMessages();
 			if (! ArrayUtils.isEmpty(messages) ) {
 				folder.moveMessages(messages, dest);
 			}
@@ -302,11 +327,10 @@ public class FolderController implements WebMailConstants {
 			} catch (WebmailException e) {
 			}
 		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+			e.printStackTrace();
 		}
     }
-    
+
     // *******************************************************
     // ORDER BY
     // *******************************************************
@@ -344,15 +368,6 @@ public class FolderController implements WebMailConstants {
 		}
 	}
 
-	public void orderBySize(ActionEvent event) {
-		try{
-			orderBy(AonMessageSortableList.SIZE_COLUMN);
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-	}
-	
 	public void orderByDate(ActionEvent event) {
 		try{
 			orderBy(AonMessageSortableList.DATE_COLUMN);
@@ -436,58 +451,5 @@ public class FolderController implements WebMailConstants {
     public AonMessage getSelectedMessage() {
     	return (AonMessage) getModel().getRowData();
     }
-
-    public void markAsReadCheckedMessages(ActionEvent event) {
-    	try{
-    		for( AonMessage message : folder.getSelectedMessages() ) {
-    			message.getMessage().setFlag( Flag.SEEN, true );
-    		}
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-    }
-
-    public void markAsUnreadCheckedMessages(ActionEvent event) {
-    	try{
-    		for( AonMessage message : folder.getSelectedMessages() ) {
-    			message.getMessage().setFlag( Flag.SEEN, false );
-    		}
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-    }
-
-	public boolean isCreateAsSubfolder() {
-		return createAsSubfolder;
-	}
-
-	public void setCreateAsSubfolder(boolean createAsSubfolder) {
-		this.createAsSubfolder = createAsSubfolder;
-	}
-
-	public String getTableState() {
-		return tableState;
-	}
-
-	public void setTableState(String tableState) {
-		this.tableState = tableState;
-	}
-
-	public Ordering getDateOrder() {
-		return dateOrder;
-	}
-
-	public void setDateOrder(Ordering dateOrder) {
-		this.dateOrder = dateOrder;
-	}
-	
-	public String getTableHeight() {
-		int count = getFolder().getMessageListCount();
-		int first = (getCurrentPage()-1) * getPageSize();
-		int visible = Math.min( count-first, getPageSize());
-		return ((visible * 26)+27) + "px";
-	}
-
+    
 }

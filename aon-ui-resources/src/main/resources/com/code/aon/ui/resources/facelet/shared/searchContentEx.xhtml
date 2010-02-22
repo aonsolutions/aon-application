@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div styleClass="aon-scroll-area">
@@ -19,6 +20,7 @@
 					<aon:outputText value="" />
 					<aon:div >
 						<aon:commandButton id="#{searchButtonId}"
+							title="#{bundle.aon_key_search_accelerator}"
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 							action="#{searchAction}" actionListener="#{searchActionListener}"
 							reRender="#{searchReRender}" oncomplete="#{searchOnComplete}"
@@ -30,6 +32,13 @@
 					</aon:div>	
 				</c:if>			
 			</aon:panelGrid>
+			
+			<c:if test="#{!skipFocusFirst}">
+				<rich:jQuery timing="onload"
+					selector="##{searchContentID} :input:visible:enabled:first"
+					query="focus()" />
+			</c:if>					
+			
 		</aon:div>		
 	</aon:div>
 	

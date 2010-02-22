@@ -18,7 +18,7 @@
 				com.code.aon.faces.PanelGrid
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
+				com.code.aon.faces.component.richfaces.panelGrid.PanelGridHandler
 			</handler-class>
 		</component>
 	</tag>

@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -18,11 +17,13 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.PurchaseDetail;
-import com.code.aon.warehouse.enumeration.IncomeDetailSource;
-import com.code.aon.warehouse.enumeration.IncomeDetailType;
 
 /**
  * Transfer Object that represents a Income Detail line.
+ * 
+ * @author Consulting & Development. 
+ * @since 1.0
+ *
  */
 @Entity
 @Table(name="income_detail")
@@ -30,200 +31,196 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	
 	private static final long serialVersionUID = 3100497435533821492L;
 
-	/** The id. */
+	/**
+	 * Unique Key
+	 */
 	private Integer id;
 	
-	/** The income. */
+	/**
+	 * The Income header
+	 */
 	private Income income;
 	
-	/** The line. */
-    private Integer line;
-	
-	/** The item. */
+	/**
+	 * The Item linked in this income detail
+	 */
 	private Item item;
 	
-	/** The description. */
+	/**
+	 * Description 
+	 */
 	private String description;
 	
-	/** The warehouse. */
+	/**
+	 * Warehouse linked
+	 */
 	private Warehouse warehouse;
 	
-	/** The quantity. */
+	/**
+	 * Item quantity
+	 */
 	private double quantity;
 	
-	/** The price. */
+	/**
+	 * Item price
+	 */
 	private double price;
 	
-	/** The discount expression. */
+	/**
+	 * Discount to be applied
+	 */
 	private DiscountExpression discountExpression;
 	
-    /** The type. */
-    private IncomeDetailType type;
-
-    /** The source. */
-    private IncomeDetailSource source;
-
-    /** The purchase detail. */
+	/**
+	 * Purchase detail line linked
+	 */
 	private PurchaseDetail purchaseDetail;
 	
-    /**
-	 * Gets the id.
+	/**
+	 * Returns the unique key
 	 * 
-	 * @return the id
+	 * @return unique key
 	 */
 	@Id
 	@GeneratedValue
-	@Column(nullable=false)	
+	@Column(nullable=false)
 	public Integer getId() {
 		return id;
 	}
-	
-    /**
-     * Sets the id.
-     * 
-     * @param id the id
-     */
-	public void setId(Integer primaryKey) {
-		this.id = primaryKey;
-	}
-	
+
 	/**
-	 * Gets the income.
+	 * Assigns the unique key
 	 * 
-	 * @return the income
+	 * @param primaryKey
+	 */
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	 * Returns the Income 
+	 * 
+	 * @return income
 	 */
 	@ManyToOne
-    @JoinColumn( name="income", nullable = false, updatable = false )
+    @JoinColumn(name="income", nullable = false, updatable = false)
 	public Income getIncome() {
 		return income;
 	}
 
-    /**
-     * Sets the income.
-     * 
-     * @param income the income
-     */
+	/**
+	 * Assigns the income
+	 * 
+	 * @param income
+	 */
 	public void setIncome(Income income) {
 		this.income = income;
 	}
 
-    /**
-     * Gets the line.
-     * 
-     * @return the line
-     */
-	public Integer getLine() {
-		return line;
-	}
-
-    /**
-     * Sets the line.
-     * 
-     * @param line the line
-     */
-	public void setLine(Integer line) {
-		this.line = line;
-	}
-
 	/**
-	 * Gets the item.
+	 * Returns the Item linked
 	 * 
-	 * @return the item
+	 *@return item
+	 * @see com.code.aon.product.strategy.ICalculable#getItem()
 	 */
 	@ManyToOne
-	@JoinColumn( name="item", nullable=false )
+    @JoinColumn(name="item", updatable = false)
 	public Item getItem() {
 		return item;
 	}
 
-    /**
-     * Sets the item.
-     * 
-     * @param item the item
-     */
+	/**
+	 * Assigns the Item
+	 * 
+	 * @param item
+	 */
 	public void setItem(Item item) {
 		this.item = item;
 	}
 
-    /**
-     * Gets the description.
-     * 
-     * @return the description
-     */
-	@Column(length=1024)
+	/**
+	 * Returns the description
+	 * 
+	 * @return description
+	 */
 	public String getDescription() {
 		return description;
 	}
 
-    /**
-     * Sets the description.
-     * 
-     * @param description the description
-     */
+	/**
+	 * Assgins a description
+	 * 
+	 * @param description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
-	 * Gets the warehouse
+	 * Returns the purchase detail linked to this Income Detail
 	 * 
-	 * @return the warehouse.
+	 * @return purchase detail
 	 */
 	@ManyToOne
-	@JoinColumn( name="warehouse", nullable = false )
-	public Warehouse getWarehouse() {
-		return warehouse;
+    @JoinColumn(name="purchase_detail", updatable = false)
+	public PurchaseDetail getPurchaseDetail() {
+		return purchaseDetail;
 	}
 
 	/**
-	 * Sets the warehouse.
+	 * Assigns a purchase detail to be linked to this Income Detail
 	 * 
-	 * @param warehouse the warehouse
+	 * @param purchaseDetail
 	 */
-	public void setWarehouse(Warehouse warehouse) {
-		this.warehouse = warehouse;
+	public void setPurchaseDetail(PurchaseDetail purchaseDetail) {
+		this.purchaseDetail = purchaseDetail;
 	}
 
-    /**
-     * Gets the quantity.
-     * 
-     * @return the quantity
-     */
+	/**
+	 * Returns the Item quantity
+	 * 
+	 * @return quantity of items
+	 * @see com.code.aon.product.strategy.ICalculable#getQuantity()
+	 */
+	@Column(name="quantity")
 	public double getQuantity() {
 		return quantity;
 	}
 
-    /**
-     * Sets the quantity.
-     * 
-     * @param quantity the quantity
-     */
+	/**
+	 * Assigns the item quantity
+	 * 
+	 * @param quantity
+	 */
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 	
-    /**
-     * Gets the price.
-     * 
-     * @return the price
-     */
+	/**
+	 * Returns the price of the Item in this Income
+	 * 
+	 * @return price
+	 * @see com.code.aon.product.strategy.ICalculable#getPrice()
+	 */
+	@Column(name="price")
 	public double getPrice() {
 		return price;
 	}
 
-    /**
-     * Sets the price.
-     * 
-     * @param price the price
-     */
+	/**
+	 * Assigns the price
+	 * 
+	 * @param price
+	 */
 	public void setPrice(double price) {
 		this.price = price;
 	}
 	
 	/**
-	 * Gets the discount expression.
+	 * Return the discount expression
 	 * 
-	 * @return the discount expression
+	 * @return discount expression applied
+	 * @see com.code.aon.product.strategy.ICalculable#getDiscountExpression()
 	 */
 	@Column(name ="discount_expr")
     @Type(type = "com.code.aon.product.util.DiscountExpressionUserType")
@@ -231,111 +228,61 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 		return discountExpression;
 	}
 
-    /**
-     * Sets the discount expression.
+	/**
+	 * Assigns the discount expression
      * 
-     * @param discountExpression the discount expression
+     * @param discountExpression
      */
 	public void setDiscountExpression(DiscountExpression discountExpression) {
 		this.discountExpression = discountExpression;
 	}
 
 	/**
-     * Gets the type.
-     * 
-     * @return the type
-     */
-	public IncomeDetailType getType() {
-		return type;
-	}
-
-	/**
-	 * Sets the type.
+	 * Returns the warehouse
 	 * 
-	 * @param type the type
+	 * @return the warehouse.
 	 */
-	public void setType(IncomeDetailType type) {
-		this.type = type;
-	}
-
-	/**
-     * Gets the source.
-     * 
-     * @return the source
-     */
-	public IncomeDetailSource getSource() {
-		return source;
-	}
-
-	/**
-	 * Sets the source.
-	 * 
-	 * @param source the source
-	 */
-	public void setSource(IncomeDetailSource source) {
-		this.source = source;
-	}
-
-	/**
-     * Gets the purchase detail.
-     * 
-     * @return the purchase detail
-     */
 	@ManyToOne
-    @JoinColumn( name="purchase_detail" )
-	public PurchaseDetail getPurchaseDetail() {
-		return purchaseDetail;
+    @JoinColumn(name="warehouse", updatable = false)
+	public Warehouse getWarehouse() {
+		return warehouse;
 	}
 
 	/**
-	 * Sets the purchase detail.
+	 * Assigns the warehouse to set.
 	 * 
-	 * @param purchaseDetail the purchase detail
+	 * @param warehouse The warehouse to set.
 	 */
-	public void setPurchaseDetail(PurchaseDetail purchaseDetail) {
-		this.purchaseDetail = purchaseDetail;
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
 	}
-
-	/**
-	 * Gets the taxes. Necessary to implement <code>ICalculable</code>
-	 * 
-	 * @return the taxes
-	 */
-	@Transient
-	public double getTaxes() throws ManagerBeanException {
-		return 0;
-	}
-
-	/**
-	 * Gets the taxes. Necessary to implement <code>IStockable</code>
-	 * 
-	 * @return the entry
+	
+	/* (non-Javadoc)
+	 * @see com.code.aon.warehouse.IStockable#isEntry()
 	 */
 	@Transient
 	public boolean isEntry() {
 		return true;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
-		}
-		if (obj instanceof IncomeDetail) {
-			IncomeDetail s = (IncomeDetail) obj;
-			if (s.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), s.getId())) {
-				return true;
-			}
-		}
-		return false;
+	
+	/**
+	 * @return taxes. Taxes applied to the incomeDetail
+	 */
+	@Transient
+	@SuppressWarnings("unused")
+	public double getTaxes() throws ManagerBeanException{
+		return getPurchaseDetail().getTaxes();
 	}
 
-	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof IncomeDetail) {
+            return (this.id.equals(((IncomeDetail)obj).getId()));
+        }
+        return false;
     }
 
 }

@@ -73,14 +73,13 @@
 						</f:facet>
 						<aon:outputText
 							value="#{webmailBundle.webmail_signature_active}"
-							rendered="#{mailAccount.currentToActiveAccount}" />
+							rendered="#{webmail.server.account.name==to.name}" />
 						<aon:commandButton id="mailAccountChange"
-							rendered="#{!mailAccount.currentToActiveAccount}"
+							rendered="#{webmail.server.account.name!=to.name}"
 							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
 							title="#{webmailBundle.webmail_mailAccountChange}"
 							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
 							value="#{webmailBundle.webmail_mailAccountChange}"
-							onclick="Richfaces.showModalPanel('waitProccess')"
 							styleClass="aon-icon-commandButton aon-icon-predetermine">
 						</aon:commandButton>
 					</aon:column>
@@ -91,8 +90,6 @@
 
 			</aon:div>
 		</aon:form>
-		
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 
 	</ui:define>
 

@@ -59,7 +59,7 @@
 
 					<aon:outputLabel for="Sales_series-New"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
-					<aon:div is="headerData">
+					<aon:div>
 						<aon:selectOneMenu id="Sales_series-New" 
 							value="#{sales.to.series}" rendered="#{sales.new}"
 							valueChangeListener="#{sales.onSeriesChanged}" 
@@ -81,19 +81,6 @@
 
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{sales.to.status}" />
-
-						<aon:commandButton id="block" value="&#160;"
-							actionListener="#{sales.onBlock}"
-							title="#{salesBundle.sales_to_block}"
-							immediate="true" rendered="#{!sales.new and sales.pending}"
-							styleClass="aon-icon-commandButton aon-icon-lock">
-						</aon:commandButton>										
-						<aon:commandButton id="unblock" value="&#160;"
-							actionListener="#{sales.onUnblock}"
-							title="#{salesBundle.sales_to_unblock}"
-							immediate="true" rendered="#{sales.blocked}"
-							styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
-						</aon:commandButton>										
  					</aon:div>
 
 					<aon:outputLabel for="Sales_issueDate" 
@@ -122,14 +109,6 @@
 								lookupChangeListener="#{sales.customerData}"
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv"								
 								actionType="search">
-							</aon:lookupButton>
-							<aon:lookupButton 
-								windowTitle="#{customerBundle.customer_new}"
-								disabled="#{!sales.pending}" minWidth="650" minHeight="600"
-								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}"
-								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv"
-								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 
 								value="#{(sales.to.customer.registry.fullName!=null)?(sales.to.customer.registry.fullName):('')}"
@@ -183,14 +162,6 @@
 								selectReRender="Seller_id,Seller_full_name"								
 								actionType="search">
 							</aon:lookupButton>
-							<aon:lookupButton 
-								windowTitle="#{salesBundle.sales_seller_new}"
-								disabled="#{!sales.pending}" minWidth="650" minHeight="600"
-								property="#{sales.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
-								lookupChangeListener="#{sales.sellerData}"
-								selectReRender="Seller_id,Seller_full_name"
-								actionType="new">
-							</aon:lookupButton>														
 							<aon:inputText id="Seller_full_name" 
 								value="#{(sales.to.seller.registry.fullName!=null)?(sales.to.seller.registry.fullName):('')}"
 								disabled="true" size="50" />
@@ -332,9 +303,9 @@
 							<ui:param name="resetButtonReRender" value="menuExt" />
 							<ui:param name="newCancelButtonReRender" value="menuExt" />
 							<ui:param name="cancelButtonReRender" value="menuExt" />
-							<ui:param name="newSaveButtonReRender" value="menuExt,headerData,Sales_total" />
-							<ui:param name="saveButtonReRender" value="menuExt,headerData,Sales_total" />
-							<ui:param name="removeButtonReRender" value="menuExt,headerData,Sales_total" />
+							<ui:param name="newSaveButtonReRender" value="menuExt,Sales_total" />
+							<ui:param name="saveButtonReRender" value="menuExt,Sales_total" />
+							<ui:param name="removeButtonReRender" value="menuExt,Sales_total" />
 							<ui:param name="focusOnAdd" value="SalesDetail_item_product_code-New" />
 							<ui:param name="focusOnSelect" value="SalesDetail_item_product_code" />
 
@@ -383,14 +354,6 @@
 												selectReRender="salesDetailItemEdit,SalesDetail_price,SalesDetail_discount,SalesDetail_amount"
 												actionType="search">
 											</aon:lookupButton>
-											<aon:lookupButton
-												windowTitle="#{productBundle.product_item_new}"
-												minHeight="360" minWidth="780"
-												property="#{salesDetail.to.item}" lookup="#{itemLookup}"
-												lookupChangeListener="#{salesDetail.onItemChanged}" 
-												selectReRender="salesDetailItemEdit,SalesDetail_price,SalesDetail_discount,SalesDetail_amount"
-												actionType="new">
-											</aon:lookupButton>
 											<aon:inputTextarea id="SalesDetail_item_product_name" 
 												value="#{salesDetail.to.description}"
 												cols="64" rows="#{!salesDetail.longDescription?1:5}"
@@ -424,14 +387,6 @@
 													lookupChangeListener="#{salesDetail.onItemChanged}"
 													selectReRender="salesDetailItemNew,SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New"
 													actionType="search">
-												</aon:lookupButton>
-												<aon:lookupButton
-													windowTitle="#{productBundle.product_item_new}"
-													minHeight="360" minWidth="780"
-													property="#{salesDetail.to.item}" lookup="#{itemLookup}"
-													lookupChangeListener="#{salesDetail.onItemChanged}" 
-													selectReRender="salesDetailItemNew,SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New"
-													actionType="new">
 												</aon:lookupButton>
 												<aon:inputTextarea id="SalesDetail_item_product_name-New"
 													value="#{salesDetail.to.description}"

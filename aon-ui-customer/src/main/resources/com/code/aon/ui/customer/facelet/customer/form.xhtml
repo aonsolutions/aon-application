@@ -2,24 +2,29 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="customerForm">
+		
+		<aon:form>
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{customerBundle.customer_module}" />
+				<ui:param name="toolbarTitle"
+					value="#{customerBundle.customer_module}" />
 				<ui:param name="controller" value="#{customer}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
+
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-120,
+						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
 					<ui:include
@@ -28,19 +33,9 @@
 					</ui:include>
 				</aon:panelGrid>
 
-				<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
+				<aon:panelGrid id="observationDataTable" styleClass="aon-margin-top"
 					columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
-
-					<c:if test="#{aonConfiguration.bean.customer.showTariff}">
-						<aon:outputLabel for="Customer_tariff_id"
-							value="#{productBundle.product_tariff}" />
-						<aon:selectOneMenu id="Customer_tariff_id"
-							value="#{customer.to.tariff}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{configCollections.tariffs}" />
-						</aon:selectOneMenu>
-					</c:if>
 
 					<c:if test="#{company.EInvoice}">
 						<aon:outputLabel for="Customer_eInvoice"
@@ -80,6 +75,7 @@
 								reRender="accountContainer"
 								actionListener="#{customerAccount.onNewAccount}">
 							</aon:commandButton>
+
 						</h:panelGrid>
 					</c:if>
 
@@ -91,18 +87,20 @@
 
 				<c:if test="#{!customer.new}">
 					<aon:panelTabSet id="customerTab" selectedTab="#{customer.selectedTab}">
-						<aon:panelTab id="adddress"	label="#{registryBundle.registry_address_module}">
-							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+						<aon:panelTab id="adddress"
+							label="#{registryBundle.registry_address_module}">
+							<ui:include
+								src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{customerAddress}" />
 							</ui:include>
 						</aon:panelTab>
-
-						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
-							<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+						<aon:panelTab id="media"
+							label="#{registryBundle.registry_media_module}">
+							<ui:include
+								src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{customerMedia}" />
 							</ui:include>
 						</aon:panelTab>
-
 						<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 							<aon:panelTab id="finance"
 								label="#{registryBundle.registry_finance_data_module}">
@@ -118,7 +116,8 @@
 								</aon:panel>
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText	value="#{configBundle.config_predef_paymethod}" />
+										<aon:outputText
+											value="#{configBundle.config_predef_paymethod}" />
 									</f:facet>
 									<ui:include
 										src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
@@ -182,27 +181,6 @@
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showSegment}">
-							<aon:panelTab id="segment"
-								label="#{registryBundle.registry_segment_module}">
-								<aon:div rendered="#{true}">
-									<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
-										<ui:param name="controller" value="#{customerSegment}" />
-									</ui:include>
-								</aon:div>
-							</aon:panelTab>
-						</c:if>
-
-						<c:if test="#{aonConfiguration.bean.customer.showAddInfo}">
-							<aon:panelTab id="addInfo"
-								label="#{registryBundle.registry_addInfo}">
-								<aon:div rendered="#{true}">
-									<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
-										<ui:param name="controller" value="#{customerAddInfo}" />
-									</ui:include>
-								</aon:div>
-							</aon:panelTab>
-						</c:if>
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
@@ -222,9 +200,6 @@
 		
 		<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
 			<ui:include src="/com/code/aon/ui/project/facelet/dossier/import.xhtml" />
-		</c:if>
-		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
-			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>
 	</ui:define>
 </ui:composition>

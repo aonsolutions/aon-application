@@ -86,20 +86,9 @@
 
 					<aon:outputLabel for="AccountEntry_concept"
 						value="#{bundle.aon_concept}" />
-<!-- 					
 					<aon:inputText id="AccountEntry_concept" required="true"
 						value="#{expenseEntry.header.concept}" size="50" maxlength="32" />
--->
-					<rich:comboBox id="AccountEntry_concept"
-						suggestionValues="#{accountingCollections.conceptsDescriptions}"
-						value="#{expenseEntry.header.concept}" required="true"
-						maxlength="32" width="200" 
-						directInputSuggestions="true"
-						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
-						buttonDisabledStyle="display:none;"
-						buttonInactiveStyle="display:none;"
-						buttonStyle="display:none;"/>
-					
+
 					<aon:outputLabel for="AccountEntry_account"
 						value="#{accountBundle.account_account}" />
 					<aon:selectOneMenu id="AccountEntry_account" required="true"

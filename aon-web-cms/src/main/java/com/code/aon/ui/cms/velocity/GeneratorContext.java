@@ -208,7 +208,7 @@ public class GeneratorContext implements IVelocityConstants {
 				Iterator<ITransferObject> sidebarOptionDetail_iter = sidebarOptionDetail_lst.iterator();
 				while (sidebarOptionDetail_iter.hasNext()) {
 					SidebarOptionDetail current = (SidebarOptionDetail)sidebarOptionDetail_iter.next();
-					SidebarOptionHandler current_h = new SidebarOptionHandler(sidebarOption);
+					SidebarOptionHandler current_h = new SidebarOptionHandler(current);
 					list.add(current_h);
 				}
 			}

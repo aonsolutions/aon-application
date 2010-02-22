@@ -51,8 +51,8 @@
 						
 							<aon:dataTable id="dataTable" value="#{sidebar_option.model}" var="to"
 								rows="#{sidebar_option.pageLimit}"
-								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-										 aon-editDataTable-textColumn, aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
+								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
+										aon-editDataTable-textColumn">
 										
 								<aon:rowSelector immediate="true"
 									reRender="detail_panel" actionListener="#{sidebar_option.onSelect}" />							
@@ -63,21 +63,7 @@
 									</f:facet>
 									<aon:outputText value="#{to.alias}" />
 								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.cms_label}"/>
-									</f:facet>
-									<aon:outputText value="#{sidebar_option.i18nLabel}" />
-								</aon:column>
 	
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.sidebar_option_type}"/>
-									</f:facet>
-									<aon:outputText value="#{to.type}" />
-								</aon:column>
-
 								<aon:column>
 									<f:facet name="header">
 										<aon:outputText value="#{appBundle.sidebar_option_active}" />

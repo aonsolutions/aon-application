@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.commercial.Target" sqlName="target">
-		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document,advertising,surcharge,withholding,transaction,status"/>
-		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document,advertising,surcharge,withholding,transaction,status"/>
+		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document,advertising,withholding"/>
+		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document,advertising,withholding"/>
 	</bean>	
 	<bean class="com.code.aon.commercial.OfferDetail">
 		<alias names="id,offer_id,line,item_id,item_product_type,description,quantity,price,discountExpression,status"/>

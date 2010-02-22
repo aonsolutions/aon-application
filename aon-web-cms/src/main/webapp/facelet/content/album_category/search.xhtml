@@ -28,20 +28,6 @@
 						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="AlbumCategory_alias" size="50"
 						valueChangeListener="#{album_category.addExpression}" />
-						
-					<aon:outputLabel for="AlbumCategory_details_label"
-						value="#{appBundle.cms_label}" />
-					<aon:inputText id="AlbumCategory_details_label" size="50"
-						valueChangeListener="#{controller.addExpression}" />						
-						
-					<aon:outputLabel for="AlbumCategory_section_id"
-						value="#{appBundle.cms_section}" />
-					<aon:selectOneMenu id="AlbumCategory_section_id"
-						valueChangeListener="#{album_category.addIdEqualExpression}"
-						value="#{collections.section}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{collections.sectionList}" />
-					</aon:selectOneMenu>						
 	
 					<aon:outputLabel for="AlbumCategory_position"
 						value="#{appBundle.album_category_position}" />

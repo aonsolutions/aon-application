@@ -7,7 +7,11 @@ import com.code.aon.common.enumeration.IResourceable;
 
 /**
  * Enummeration to identify the different types of document.
+ * 
+ * @author jurkiri
+ *  
  */
+
 public enum DocumentType implements IResourceable {
 
     /**
@@ -43,5 +47,4 @@ public enum DocumentType implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
-
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition>
+
+	<aon:form id="renameFolderForm">
+
+		<rich:modalPanel id="renameFolderModalPanel" height="100" width="300"
+			top="100" zindex="2000">
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{webmailBundle.aon_webmail_folder_rename}" />
+				</aon:div>
+			</f:facet>
+			<f:facet name="controls">
+				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+					immediate="true" reRender="aonStatus">
+					<rich:componentControl for="renameFolderModalPanel"
+						operation="hide" event="onclick" />
+				</aon:commandButton>
+			</f:facet>
+
+			<aon:outputLabel for="renameFolderName" value="#{webmailBundle.aon_webmail_folder_name}:" />
+			<h:panelGrid width="100%" cellpadding="2" cellspacing="0" columns="2"
+				styleClass="aon-panelGrid-formatting">
+
+				<aon:inputText id="renameFolderName" size="27" required="true"
+					value="#{folder.renameFolderName}" />
+				<aon:commandButton reRender="foldersTree"
+					actionListener="#{folder.renameFolder}"
+					value="#{bundle.aon_accept}">
+					<rich:componentControl for="renameFolderModalPanel"
+						operation="hide" event="onclick" />
+				</aon:commandButton>
+			</h:panelGrid>
+		</rich:modalPanel>
+
+	</aon:form>
+
+</ui:composition>
+
+</body>
+</html>

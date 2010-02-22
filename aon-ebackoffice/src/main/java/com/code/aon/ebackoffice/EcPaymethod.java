@@ -53,7 +53,7 @@ public class EcPaymethod implements ITransferObject {
 		this.paymethod = paymethod;
 	}
 	
-	@Column(name="user_name",length=32)
+	@Column(name="user_name",length=64)
 	public String getUserName() {
 		return userName;
 	}
@@ -70,15 +70,14 @@ public class EcPaymethod implements ITransferObject {
 		this.password = password;
 	}
 	
-	@Column(length=62)
+	@Column(length=128)
 	public String getSignature() {
 		return signature;
 	}
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}
-	
-		
+			
 }
 	
 	

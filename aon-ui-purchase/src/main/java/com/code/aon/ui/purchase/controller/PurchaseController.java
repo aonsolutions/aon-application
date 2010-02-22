@@ -1,5 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,6 +8,8 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,13 +31,18 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.report.ReportException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
@@ -61,8 +69,13 @@ public class PurchaseController extends BasicController {
 	private String invoiceRefCode;
 	private Date invoiceDate;
 	private Warehouse invoiceWarehouse;
+	private PurchaseEmailUtil emailUtil;
 	
-    public List<SelectItem> getAddresses() {
+    public PurchaseController() {
+    	this.emailUtil = new PurchaseEmailUtil();
+    }
+
+	public List<SelectItem> getAddresses() {
 		return addresses;
 	}
 	
@@ -341,4 +354,11 @@ public class PurchaseController extends BasicController {
 		return SeriesNumberUtil.obtainNumber(seriesId, "Income");
 	}
 
+	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+		messageController.initNewMessage();
+		emailUtil.initMessageController(messageController, (Purchase) getTo());
+		messageController.setShowNewMessageWindow(true);
+	}		
+	
 }

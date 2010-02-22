@@ -46,13 +46,13 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:panelGrid>
- 
-					<aon:outputLabel for="Vat_type" value="#{financeBundle.finance_invoice_order}" />
-						<aon:selectOneMenu id="Vat_type"
-							value="#{vatReport.order}">
-							<f:selectItems value="#{financeCollections.vatReportOrders}" />
-						</aon:selectOneMenu>
-
+<!-- 
+					<aon:outputLabel for="Vat_type" value="#{bundle.aon_type}" />
+						<aon:selectOneRadio id="Vat_type"
+							value="#{vatReport.vatType}">
+							<f:selectItems value="#{financeCollections.vatTypes}" />
+						</aon:selectOneRadio>
+ -->
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

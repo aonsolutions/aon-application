@@ -95,20 +95,9 @@
 
 					<aon:outputLabel for="Account_concept"
 						value="#{bundle.aon_concept}" />
-<!-- 
 					<aon:inputText id="Account_concept" required="true"
 						value="#{socialInsuranceEntry.header.concept}" size="50"
 						maxLength="32" />
--->						
-					<rich:comboBox id="Account_concept"
-						suggestionValues="#{accountingCollections.conceptsDescriptions}"
-						value="#{socialInsuranceEntry.header.concept}" required="true"
-						maxlength="32" width="200" 
-						directInputSuggestions="true"
-						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
-						buttonDisabledStyle="display:none;"
-						buttonInactiveStyle="display:none;"
-						buttonStyle="display:none;"/>
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />

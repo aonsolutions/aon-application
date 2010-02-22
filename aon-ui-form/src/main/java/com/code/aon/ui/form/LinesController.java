@@ -1,5 +1,6 @@
 package com.code.aon.ui.form;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 
 /**
  * LinesController is used to implement child Controllers.
@@ -171,6 +173,7 @@ public class LinesController extends BasicController {
 		while (i.hasNext()) {
 			ITransferObject object = (ITransferObject) i.next();
 			updateJoinProperties(masterTO, object);
+			getManagerBean().restoreNullSubPOJOs(object);
 			getManagerBean().insertOrUpdate(object);
 		}
 		this.model = null;
@@ -184,25 +187,29 @@ public class LinesController extends BasicController {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void deleteOrphans() throws ManagerBeanException {
-		int pageLimit = getPageLimit();
-		try {
+		if (this.cascadeDelete) {
 			if (this.masterController == null) {
 				throw new AbortProcessingException("Unable to locate Master Controller!");
 			}
-			if (this.cascadeDelete) {
-				setPageLimit( -1 );
-				initializeModel();
-				List list = (List) getModel().getWrappedData();
-				Iterator i = list.iterator();
-				while (i.hasNext()) {
-					ITransferObject to = (ITransferObject) i.next();
-					getManagerBean().remove(to);
-				}
+			ITransferObject masterTo = this.masterController.getTo(); 
+			if (masterTo == null) {
+				throw new AbortProcessingException("No row selected in Master Controller!");
 			}
-		} finally {
-			setPageLimit(pageLimit);
+			Serializable id = masterController.getManagerBean().getId(masterTo);
+			if (id == null) {
+				throw new AbortProcessingException("Found null id on row selected in Master Controller!");
+			}
+			Criteria criteria = getCriteria();
+			if (criteria == null || criteria.isEmpty()) {
+				throw new AbortProcessingException("Found null or empty criteria in Detail Controller!");
+			}
+
+			List<ITransferObject> list = getManagerBean().getList(criteria);
+			for (ITransferObject to : list) {
+				getManagerBean().remove(to);
+			}
+			
 		}
 	}
 

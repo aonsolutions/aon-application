@@ -6,9 +6,9 @@
 
 	<aon:div id="#{dataTableId}Div">
 
-		<aon:editDataTable id="#{dataTableId}" var="to"
+		<aon:editDataTable id="#{dataTableId}" var="to" sortMode="#{sortMode}"
 			value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
-			columnClasses="none, #{columnClasses}, none">
+			columnClasses=", #{columnClasses},">
 	
 			<aon:rowSelector id="#{dataTableId}-select" 
 				toggleOnClick="#{controller.to == null and !skipLineEdition}"
@@ -30,7 +30,7 @@
 					<f:facet name="footer">
 						<aon:div>
 							<aon:commandButton
-								id="#{dataTableId}-reset" title="#{bundle.aon_reset}"
+								id="#{dataTableId}-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 								action="#{resetAction}" actionListener="#{resetActionListener}"
 								rendered="#{!formNew}" reRender="#{resetButtonReRender}"
 								styleClass="aon-editDataTable-button aon-icon-reset"
@@ -52,9 +52,11 @@
 					<ui:insert name="endFormListContent"/>				
 				</aon:div>
 				<aon:div rendered="#{formEdit}">			
+					<ui:insert name="beforeEditLineButtons"/>
+
 					<c:if test="#{!skipSaveButton}">		
 						<aon:commandButton
-							id="#{dataTableId}-save" title="#{bundle.aon_accept}"
+							id="#{dataTableId}-save" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
 							action="#{saveAction}" actionListener="#{saveActionListener}"
 							reRender="#{dataTableId}Div#{(saveButtonReRender != null)?',':''}#{saveButtonReRender}"
 							styleClass="aon-editDataTable-button aon-icon-accept"
@@ -62,7 +64,7 @@
 					</c:if>
 					<c:if test="#{!skipCancelButton}">
 						<aon:commandButton
-							id="#{dataTableId}-cancel" title="#{bundle.aon_cancel}"
+							id="#{dataTableId}-cancel" title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
 							action="#{cancelEditAction}" actionListener="#{cancelEditActionListener}"
 							immediate="true" reRender="#{cancelButtonReRender}"
 							styleClass="aon-editDataTable-button aon-icon-cancel"
@@ -70,7 +72,7 @@
 					</c:if>
 					<c:if test="#{!skipRemoveButton}">				
 						<aon:confirmButton
-							id="#{dataTableId}-remove" title="#{bundle.aon_remove}"
+							id="#{dataTableId}-remove" title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
 							immediate="true"
 							reRender="#{dataTableId}Div#{(removeButtonReRender != null)?',':''}#{removeButtonReRender}"
 							confirmTitle="#{bundle.aon_confirm_title}"
@@ -83,10 +85,12 @@
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div>
+						<ui:insert name="beforeNewLineButtons"/>
+
 						<aon:outputText rendered="#{!formNew}" value="&#160;" />
 						<c:if test="#{!skipSaveButton}">		
 							<aon:commandButton
-								id="#{dataTableId}-new-save" title="#{bundle.aon_save}"
+								id="#{dataTableId}-new-save" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
 								action="#{newSaveAction}" actionListener="#{newSaveActionListener}"
 								rendered="#{formNew}"
 								reRender="#{dataTableId}Div#{(newSaveButtonReRender != null)?',':''}#{newSaveButtonReRender}"
@@ -95,7 +99,7 @@
 						</c:if>
 						<c:if test="#{!skipCancelButton}">
 							<aon:confirmButton
-								id="#{dataTableId}-new-cancel" title="#{bundle.aon_cancel}"
+								id="#{dataTableId}-new-cancel" title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
 								rendered="#{formNew}" reRender="#{newCancelButtonReRender}"
 								immediate="true"
 								confirmTitle="#{bundle.aon_confirm_title}"

@@ -55,15 +55,8 @@
 
 					<aon:outputLabel for="Opening_Concept"
 						value="#{bundle.aon_concept}" />
-					<rich:comboBox id="Opening_Concept"
-						suggestionValues="#{accountingCollections.conceptsDescriptions}"
-						value="#{endPeriodEntries.concept}" required="true"
-						maxlength="32" width="200" 
-						directInputSuggestions="true"
-						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
-						buttonDisabledStyle="display:none;"
-						buttonInactiveStyle="display:none;"
-						buttonStyle="display:none;"/>
+					<aon:inputText id="Opening_Concept"
+						value="#{endPeriodEntries.concept}" />
 
 					<aon:outputLabel for="Opening_securityLevel"
 						value="#{bundle.aon_security_level}" />

@@ -10,18 +10,10 @@
 
 		<aon:form id="domainList">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_domains}" />
 				<ui:param name="controller" value="#{domain}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="synchronize"
-						value="#{appBundle.desktop_domain_synchronize}"
-						actionListener="#{domain.synchronize}"
-						styleClass="aon-finding-toolbar-item aon-icon-sincronize"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-		     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />										
-				</ui:define>
-			</ui:decorate>
+			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -46,13 +38,6 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.desktop_domain_parent}" />
-						</f:facet>
-						<aon:outputText value="#{to.parentDomain.commonName}"/>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
 							<aon:outputText value="#{webmailBundle.webmail_contact_email}" />
 						</f:facet>
 						<aon:outputText value="#{to.mail}"/>
@@ -72,8 +57,6 @@
 			</aon:div>
 
 		</aon:form>
-		
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 
 	</ui:define>
 

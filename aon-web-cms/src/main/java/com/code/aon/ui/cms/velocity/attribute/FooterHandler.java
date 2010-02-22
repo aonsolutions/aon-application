@@ -20,9 +20,9 @@ public class FooterHandler {
 	
 	private static final Logger LOGGER = Logger.getLogger(FooterHandler.class.getName());
 
-	private List<MenuOptionHandler> menu;
+	private ArrayList<MenuOptionHandler> menu;
 
-	private List<BannerCategoryHandler> bannerCategory;
+	private ArrayList<BannerCategoryHandler> bannerCategory;
 
 	private String content;
 	
@@ -32,11 +32,11 @@ public class FooterHandler {
 		bannerCategory = getBanners(footer.getFooter().getId());
 	}
 
-	public List<MenuOptionHandler> getMenu() {
+	public ArrayList<MenuOptionHandler> getMenu() {
 		return menu;
 	}
 
-	public List<BannerCategoryHandler> getBannerCategory() {
+	public ArrayList<BannerCategoryHandler> getBannerCategory() {
 		return bannerCategory;
 	}
 
@@ -53,7 +53,7 @@ public class FooterHandler {
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			for (Iterator iterator = l.iterator(); iterator.hasNext();) {
 				FooterBannerCategory fbc = (FooterBannerCategory) iterator.next();
-				list.add(BannerGenerator.getBannerCategoryHandler(fbc.getBannerCategory()));
+				list.add((BannerCategoryHandler)BannerGenerator.getBannerCategoryHandler(fbc.getBannerCategory().getId()));
 			}
 		}catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);

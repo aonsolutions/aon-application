@@ -37,28 +37,15 @@
 							<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<h:commandLink id="valuableDelivery" value="#{warehouseBundle.warehouse_delivery_detail_valuated}"
+						<h:commandLink id="delivery" value="#{bundle.aon_report}"
 							target="_new" rendered="#{!delivery.new}"
-							action="#{report.onExecute}" 
+							action="#{report.onExecute}"
 							disabled="#{deliveryDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							styleClass="aon-finding-toolbar-item aon-icon-printer">
 							<f:param name="reportKey" value="delivery" />
 							<f:param name="outputFormat" value="PDF" />
-							<f:setPropertyActionListener target="#{delivery.valuableDelivery}"
-								value="#{true}" />
 						</h:commandLink>
-						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery_detail_no_valuated}"
-							target="_new" rendered="#{!delivery.new}"
-							action="#{report.onExecute}" 
-							disabled="#{deliveryDetail.to != null}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="delivery" />
-							<f:param name="outputFormat" value="PDF" />
-							<f:setPropertyActionListener target="#{delivery.valuableDelivery}"
-								value="#{false}" />
-						</h:commandLink>					
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -131,14 +118,6 @@
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
 								actionType="search">
 							</aon:lookupButton>
-							<aon:lookupButton 
-								windowTitle="#{customerBundle.customer_new}"
-								disabled="#{!delivery.pending}" minWidth="650" minHeight="600"
-								property="#{delivery.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}"
-								lookupChangeListener="#{delivery.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
-								actionType="new">
-							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 
 								value="#{(delivery.to.customer.registry.fullName!=null)?(delivery.to.customer.registry.fullName):('')}"
 								disabled="true" size="60" />
@@ -155,7 +134,7 @@
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="DeliveryAddress">
 						<aon:selectOneMenu id="Delivery_address" 
-							value="#{delivery.to.registryAddress}" rendered="#{delivery.addressCount > 0}"
+							value="#{delivery.to.raddress}" rendered="#{delivery.addressCount > 0}"
 							disabled="#{!delivery.pending}">
 							<f:selectItems value="#{delivery.addresses}" />
 						</aon:selectOneMenu>
@@ -176,7 +155,7 @@
 						value="#{warehouseBundle.warehouse_warehouse}" />
 					<aon:selectOneMenu id="Delivery_warehouse" 
 						value="#{delivery.warehouse}"
-						disabled="#{!delivery.new}">
+						disabled="#{!delivery.pending}">
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
 
@@ -366,14 +345,6 @@
 												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"
 												actionType="search">
 											</aon:lookupButton>
-											<aon:lookupButton
-												windowTitle="#{productBundle.product_item_new}"
-												minHeight="360" minWidth="780"
-												property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
-												lookupChangeListener="#{deliveryDetail.onItemChanged}" 
-												selectReRender="deliveryDetailItemEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount"
-												actionType="new">
-											</aon:lookupButton>
 											<aon:inputTextarea id="DeliveryDetail_item_product_name" 
 												value="#{deliveryDetail.to.description}"
 												cols="64" rows="#{!deliveryDetail.longDescription?1:5}"
@@ -407,14 +378,6 @@
 													lookupChangeListener="#{deliveryDetail.onItemChanged}"
 													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"
 													actionType="search">
-												</aon:lookupButton>
-												<aon:lookupButton
-													windowTitle="#{productBundle.product_item_new}"
-													minHeight="360" minWidth="780"
-													property="#{deliveryDetail.to.item}" lookup="#{itemLookup}"
-													lookupChangeListener="#{deliveryDetail.onItemChanged}" 
-													selectReRender="deliveryDetailItemNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New"
-													actionType="new">
 												</aon:lookupButton>
 												<aon:inputTextarea id="DeliveryDetail_item_product_name-New" 
 													value="#{deliveryDetail.to.description}"

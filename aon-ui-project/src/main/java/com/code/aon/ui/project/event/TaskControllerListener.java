@@ -2,10 +2,11 @@ package com.code.aon.ui.project.event;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
@@ -29,7 +30,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TaskControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(TaskControllerListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(TaskControllerListener.class);
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -51,7 +52,7 @@ public class TaskControllerListener extends ControllerAdapter {
 			}
 			controller.completeCriteria();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
+			LOGGER.error("Error initializing Task Model", e);
 		}
 	}
 
@@ -114,7 +115,7 @@ public class TaskControllerListener extends ControllerAdapter {
 			controller.setRichEditor(false);
 			controller.setAllMembers(false);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining Task from Task Model", e);
+			LOGGER.error("Error obtaining Task from Task Model", e);
 		}
 	}
 

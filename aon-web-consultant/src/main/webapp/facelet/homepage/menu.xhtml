@@ -10,11 +10,10 @@
 			<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
 
 				<aon:commandLink value="#{customerBundle.customer_module}"
-						actionListener="#{customer.onEditSearch}"
-						style="text-transform: uppercase;"
-						action="customer_search" 
-						rendered="#{aonRole.admin}"> 
-				</aon:commandLink >
+					actionListener="#{customer.onEditSearch}"
+					style="text-transform: uppercase;" 
+					action="customer_consultant_search">
+				</aon:commandLink>
 
 				<aon:dropDownMenu id="taskDropDownMenu"
 					value="#{projectBundle.aon_task_management_module}">
@@ -24,6 +23,7 @@
 					<aon:menuItem value="#{campaignBundle.aon_process_wizard_module}"
 						action="#{processWizard.start}" />
 					<aon:menuItem value="#{campaignBundle.aon_process_monitor_module}"
+						actionListener="#{campaign.onStart}"
 						action="campaign_list" />
 					<aon:menuSeparator />
 					<aon:menuGroup id="timeManagement"
@@ -39,8 +39,12 @@
 					</aon:menuGroup>
 				</aon:dropDownMenu>
 
-				<aon:dropDownMenu value="#{financeBundle.finance_invoice_module}"
+				<aon:dropDownMenu value="#{bundle.aon_sales}"
 					rendered="#{aonRole.invoicing}">
+					<aon:menuItem action="customer_search"
+						actionListener="#{customer.onEditSearch}"
+						value="#{customerBundle.customer_module}" />
+					<aon:menuSeparator />
 					<aon:menuItem action="item_search"
 						actionListener="#{item.onEditSearch}"
 						value="#{productBundle.product_module}" />
@@ -88,30 +92,86 @@
 						<aon:menuItem action="sales_accumulate_search"
 							value="#{statBundle.stat_menu_acumulado}">
 							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onSaleType}"/>
 						</aon:menuItem>
 						<aon:menuItem action="segment_stats_search"
 							value="#{statBundle.stat_menu_segment}">
 							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onSaleType}"/>
 						</aon:menuItem>
 						<aon:menuItem action="category_stats_search"
 							value="#{statBundle.stat_menu_category}">
 							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onSaleType}"/>
 						</aon:menuItem>
 						<aon:menuItem action="summary_stats_search"
 							value="#{statBundle.stat_menu_summary}">
 							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onSaleType}"/>
 						</aon:menuItem>
 						<aon:menuItem action="abc_stats_search"
 							value="#{statBundle.stat_abc_customer}">
 							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onSaleType}"/>
 						</aon:menuItem>
 						<aon:menuItem action="abc_stats_searchProduct"
 							value="#{statBundle.stat_abc_product}">
 							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onSaleType}"/>
 						</aon:menuItem>
 						<aon:menuItem action="abc_stats_searchCategory"
 							value="#{statBundle.stat_abc_category}">
 							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onSaleType}"/>
+						</aon:menuItem>
+					</aon:menuGroup>
+				</aon:dropDownMenu>
+
+				<aon:dropDownMenu value="#{bundle.aon_purchases}"
+					rendered="#{aonRole.invoicing}">
+					<aon:menuItem action="item_search"
+						actionListener="#{item.onEditSearch}"
+						value="#{productBundle.product_module}" />
+					<aon:menuSeparator />
+					<aon:menuItem id="supplier" 
+						action="supplier_search" actionListener="#{supplier.onEditSearch}"
+						value="#{supplierBundle.supplier_module}" >
+					</aon:menuItem>
+					<aon:menuSeparator />
+					<aon:menuItem id="aon_invoice_management"
+						action="purchaseInvoice_search"
+						actionListener="#{purchaseInvoice.onEditSearch}"
+						value="#{financeBundle.finance_purchase_invoice_management_module}" />
+					<aon:menuGroup value="#{bundle.aon_reports}">
+						<aon:menuItem action="sales_accumulate_search"
+							value="#{statBundle.stat_menu_acumulado2}">
+							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onPurchaseType}"/>
+						</aon:menuItem>
+						<aon:menuItem action="category_stats_search"
+							value="#{statBundle.stat_menu_category}">
+							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onPurchaseType}"/>
+						</aon:menuItem>
+						<aon:menuItem action="summary_stats_search"
+							value="#{statBundle.stat_menu_summary}">
+							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onPurchaseType}"/>
+						</aon:menuItem>
+						<aon:menuItem action="abc_stats_search"
+							value="#{statBundle.stat_abc_supplier}">
+							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onPurchaseType}"/>
+						</aon:menuItem>
+						<aon:menuItem action="abc_stats_searchProduct"
+							value="#{statBundle.stat_abc_product}">
+							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onPurchaseType}"/>
+						</aon:menuItem>
+						<aon:menuItem action="abc_stats_searchCategory"
+							value="#{statBundle.stat_abc_category}">
+							<aon:actionListener method="#{stat.onReset}" />
+							<aon:actionListener method="#{stat.onPurchaseType}"/>
 						</aon:menuItem>
 					</aon:menuGroup>
 				</aon:dropDownMenu>
@@ -294,10 +354,6 @@
 						<aon:menuItem action="defaultParams"
 							actionListener="#{accAppParams.onLoad}"
 							value="#{accountingBundle.accounting_default_params_module}" />
-						<aon:menuItem action="series"
-							value="#{configBundle.config_series_module}" />
-						<aon:menuItem action="tax"
-							value="#{configBundle.config_tax_module}" />
 						<aon:menuSeparator />
 						<aon:menuGroup value="#{accountingBundle.menu_utilities}">
 							<aon:menuItem action="accountChange_form"
@@ -326,17 +382,25 @@
 
 					<aon:menuGroup id="administrationAuxiliaries"
 						value="#{bundle.aon_auxiliaries}">
+						<aon:menuItem id="geotreeParent" action="geotreeParent_list"
+							actionListener="#{geotreeParent.onSearch}"
+							value="#{geozoneBundle.geozone_module}" />
 						<aon:menuItem action="relationship_form"
 							value="#{registryBundle.registry_relationship_module}" />
+						<aon:menuItem id="segment" action="segment_form"
+							value="#{registryBundle.registry_segment_module}" />
 						<aon:menuItem action="productCategory"
 							value="#{productBundle.product_category_module}" />
-						<aon:menuItem action="brand"
-							value="#{productBundle.product_brand_module}" />
 						<aon:menuItem action="bank"
 							value="#{configBundle.config_bank_module}" />
 						<aon:menuItem action="payMethod"
 							value="#{configBundle.config_paymethod_module}" />
-
+						<aon:menuItem action="series"
+							value="#{configBundle.config_series_module}" />
+						<aon:menuItem action="tax"
+							value="#{configBundle.config_tax_module}" />
+						<aon:menuItem id="workplace" action="workplace"
+							value="#{companyBundle.company_workplace_module}" />
 						<aon:menuGroup value="#{projectBundle.aon_task_management_module}">
 							<aon:menuItem id="dossier_type"
 								value="#{projectBundle.aon_dossier_type_module}"

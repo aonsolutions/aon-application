@@ -19,7 +19,8 @@
 			</ui:include>			
 			
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-margin-bottom">
+			<div>
+				<div style="margin-bottom:1.5em;">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputText value="#{webmailBundle.webmail_mailAccount_data}"/>
@@ -51,117 +52,86 @@
 							size="60" maxlength="45"
 							disabled="true"
 							value="#{mailAccount.to.protocol}" />
-					</aon:panelGrid>
-				</aon:div>
-				<aon:div styleClass="aon-margin-top aon-margin-bottom">
-					<aon:div styleClass="aon-form-group-title">
-						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputText value="#{webmailBundle.webmail_mailAccount_incoming_host}"/>
-						</aon:div>
+				</aon:panelGrid>
+			</div>
+			<div style="margin-bottom:1.5em;">
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{webmailBundle.webmail_mailAccount_incoming_host}"/>
 					</aon:div>
-					<aon:panelGrid columns="2" dir="true" style="width:500px;">
-						<aon:outputLabel for="MailAccount_host"
-							value="#{webmailBundle.webmail_mailAccount_host}" />
-						<aon:inputText id="MailAccount_host"
-							size="60" maxlength="45" disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.host}" />
-	
-						<aon:outputLabel for="MailAccount_incomingHost"
-							value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
-						<aon:inputText id="MailAccount_incomingHost"
-							size="60" maxlength="45" disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.incomingHost}" />
-	
-						<aon:outputLabel for="MailAccount_incomingPort"
-							value="#{webmailBundle.webmail_mailAccount_incomingPort}" />
-						<aon:inputText id="MailAccount_incomingPort"
-							size="60" maxlength="45" disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.incomingPort}" />
-	
-						<aon:outputLabel for="MailAccount_incomingSsl"
-							value="#{webmailBundle.webmail_mailAccount_incomingSsl}" />
-		                <aon:selectBooleanCheckbox id="MailAccount_incomingSsl"
-							disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.incomingSsl}"/>
-					</aon:panelGrid>
-			   </aon:div>
-			   <aon:div styleClass="aon-margin-top aon-margin-bottom">
-					<aon:div styleClass="aon-form-group-title">
-						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputText value="#{webmailBundle.webmail_mailAccount_outgoing_host}"/>
-						</aon:div>
-					</aon:div>
-					<aon:panelGrid columns="2" dir="true" style="width:500px;">	
-						<aon:outputLabel for="MailAccount_outgoingVerification"
-							value="#{webmailBundle.webmail_mailAccount_outgoingVerification}" />
-		                <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
-							disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.outgoingVerification}"/>
-	
-						<aon:outputLabel for="MailAccount_outgoingHost"
-							value="#{webmailBundle.webmail_mailAccount_outgoingHost}" />
-						<aon:inputText id="MailAccount_outgoingHost"
-							size="60" maxlength="45" disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.outgoingHost}" />
-	
-						<aon:outputLabel for="MailAccount_outgoingPort"
-							value="#{webmailBundle.webmail_mailAccount_outgoingPort}" />
-						<aon:inputText id="MailAccount_outgoingPort"
-							size="60" maxlength="45" disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.outgoingPort}" />
-	
-						<aon:outputLabel for="MailAccount_outgoingSsl"
-							value="#{webmailBundle.webmail_mailAccount_outgoingSsl}" />
-		                <aon:selectBooleanCheckbox id="MailAccount_outgoingSsl"
-		                 	disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.outgoingSsl}"/>
-	
-						<aon:outputLabel for="MailAccount_mailUsername"
-							value="#{webmailBundle.webmail_mailAccount_mailUsername}" />
-						<aon:inputText id="MailAccount_mailUsername"
-							size="60" maxlength="45" disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.mailUsername}" />
-	
-						<aon:outputLabel for="MailAccount_password"
-							value="#{webmailBundle.webmail_mailAccount_password}" />
-						<aon:inputSecret id="MailAccount_password" redisplay="true"
-							size="60" maxlength="45" disabled="#{mailAccount.to.default}"
-							value="#{mailAccount.to.passwordString}" />							
-							
-					</aon:panelGrid>
 				</aon:div>
-			   <aon:div styleClass="aon-margin-top">
-					<aon:div styleClass="aon-form-group-title">
-						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputText value="#{webmailBundle.webmail_mailAccount_folders}"/>
-						</aon:div>
+				<aon:panelGrid columns="2" dir="true" style="width:500px;">
+					<aon:outputLabel for="MailAccount_host"
+						value="#{webmailBundle.webmail_mailAccount_host}" />
+					<aon:inputText id="MailAccount_host"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.host}" />
+
+					<aon:outputLabel for="MailAccount_incomingHost"
+						value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
+					<aon:inputText id="MailAccount_incomingHost"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.incomingHost}" />
+
+					<aon:outputLabel for="MailAccount_incomingPort"
+						value="#{webmailBundle.webmail_mailAccount_incomingPort}" />
+					<aon:inputText id="MailAccount_incomingPort"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.incomingPort}" />
+
+					<aon:outputLabel for="MailAccount_incomingSsl"
+						value="#{webmailBundle.webmail_mailAccount_incomingSsl}" />
+	                <aon:selectBooleanCheckbox id="MailAccount_incomingSsl"
+						disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.incomingSsl}"/>
+			</aon:panelGrid>
+		   </div>
+		   <div>
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{webmailBundle.webmail_mailAccount_outgoing_host}"/>
 					</aon:div>
-					<aon:panelGrid columns="2" dir="true" style="width:500px;">	
-						<aon:outputLabel for="MailAccount_draftFolder"
-							value="#{webmailBundle.webmail_mailAccount_draft_folder}" />
-						<aon:inputText id="MailAccount_draftFolder"
-							size="60" maxlength="64"
-							value="#{mailAccount.to.draftFolder}" />
-	
-						<aon:outputLabel for="MailAccount_sentFolder"
-							value="#{webmailBundle.webmail_mailAccount_sent_folder}" />
-						<aon:inputText id="MailAccount_sentFolder"
-							size="60" maxlength="64"
-							value="#{mailAccount.to.sentFolder}" />
-	
-						<aon:outputLabel for="MailAccount_trashFolder"
-							value="#{webmailBundle.webmail_mailAccount_trash_folder}" />
-						<aon:inputText id="MailAccount_trashFolder"
-							size="60" maxlength="64"
-							value="#{mailAccount.to.trashFolder}" />
-	
-						<aon:outputLabel for="MailAccount_spamFolder"
-							value="#{webmailBundle.webmail_mailAccount_spam_folder}" />
-						<aon:inputText id="MailAccount_spamFolder"
-							size="60" maxlength="64"
-							value="#{mailAccount.to.spamFolder}" />
-					</aon:panelGrid>
 				</aon:div>
+				<aon:panelGrid columns="2" dir="true" style="width:500px;">	
+					<aon:outputLabel for="MailAccount_outgoingVerification"
+						value="#{webmailBundle.webmail_mailAccount_outgoingVerification}" />
+	                <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
+						disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.outgoingVerification}"/>
+
+					<aon:outputLabel for="MailAccount_outgoingHost"
+						value="#{webmailBundle.webmail_mailAccount_outgoingHost}" />
+					<aon:inputText id="MailAccount_outgoingHost"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.outgoingHost}" />
+
+					<aon:outputLabel for="MailAccount_outgoingPort"
+						value="#{webmailBundle.webmail_mailAccount_outgoingPort}" />
+					<aon:inputText id="MailAccount_outgoingPort"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.outgoingPort}" />
+
+					<aon:outputLabel for="MailAccount_outgoingSsl"
+						value="#{webmailBundle.webmail_mailAccount_outgoingSsl}" />
+	                <aon:selectBooleanCheckbox id="MailAccount_outgoingSsl"
+	                 	disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.outgoingSsl}"/>
+
+					<aon:outputLabel for="MailAccount_mailUsername"
+						value="#{webmailBundle.webmail_mailAccount_mailUsername}" />
+					<aon:inputText id="MailAccount_mailUsername"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.mailUsername}" />
+
+					<aon:outputLabel for="MailAccount_password"
+						value="#{webmailBundle.webmail_mailAccount_password}" />
+					<aon:inputSecret id="MailAccount_password"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
+						value="#{mailAccount.to.passwordString}" />							
+						
+				</aon:panelGrid>
+				</div>
+			</div>
 			</aon:div>
 			
 		</aon:form>

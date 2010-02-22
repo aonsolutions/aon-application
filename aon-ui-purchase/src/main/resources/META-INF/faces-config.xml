@@ -40,7 +40,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Purchase_issueDate,Purchase_series,Purchase_number</value>
+			<value>Purchase_issueDate desc,Purchase_series,Purchase_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

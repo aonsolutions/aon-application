@@ -44,19 +44,7 @@
 			<!--  aon-region-body -->
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
 				<aon:dataTable id="vatReportList" value="#{vatReport.model}"
-					rows="20" var="to" rendered="#{vatReport.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn">
+					rows="20" var="to" rendered="#{vatReport.model.rowCount > 0}">
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{financeBundle.finance_tax_date}" />
@@ -65,13 +53,6 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_invoice_order}" />
-						</f:facet>
-						<aon:outputText value="#{to.seriesNumber}" />
 					</aon:column>
 
 					<aon:column>

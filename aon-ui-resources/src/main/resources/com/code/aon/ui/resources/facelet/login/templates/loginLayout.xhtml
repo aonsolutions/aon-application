@@ -22,7 +22,11 @@
 
 	<body id="aon-body" onload="loadInnerWindow();">
 		<aon:div styleClass="aon-login">
-			<aon:panelGrid style="width:100%;height:100%;">
+			<h:panelGrid styleClass="aon-width-all aon-height-all"
+				columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-width-auto" columns="2">
+				<c:if test="#{companyDisplay.show}">
+					<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" />
+				</c:if>
 				<aon:div styleClass="aon-login-box-internal">
 					<form id="login" method="post" action="j_security_check">
 						<aon:div styleClass="aon-login-title">
@@ -32,7 +36,7 @@
 							<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
 							<ui:insert name="error"/>
 							
-							<aon:panelGrid style="width:100%;" columns="2" columnClasses="aon-login-box-left,aon-login-box-right">
+							<aon:panelGrid styleClass="aon-width-all" columns="2" columnClasses="aon-login-box-left,aon-login-box-right">
 						
 								<aon:outputLabel for="j_username_view" value="#{securityBundle.aon_login_user}:" styleClass="aon-login-label" />
 								<input type="text" id="j_username_view" name="j_username_view" class="aon-login-input"/>
@@ -66,13 +70,13 @@
 	
 							<aon:div styleClass="aon-login-info2">						
 								 <aon:outputText value="#{bundle.aon_trademark}" />
-								 <aon:outputText value="#{bundle.aon_esferalia} "  styleClass="aon-login-info2-company"/>
+								 <aon:outputText value="#{bundle.aon_esferalia} " styleClass="aon-login-info2-company"/>
 								 <aon:outputText value="#{bundle.aon_networks}" styleClass="aon-login-info2-company"/>
 							</aon:div>	
 						</aon:div>
 					</form>
 				</aon:div>
-			</aon:panelGrid>
+			</h:panelGrid>
 		</aon:div>	
 	</body>
   

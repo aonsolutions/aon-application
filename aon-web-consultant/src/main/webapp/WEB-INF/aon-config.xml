@@ -8,7 +8,7 @@
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
-			showPanelTabSet="false" 
+			showPanelTabSet="true" 
 			showDigitalCertificate="true"
 		/>
 	</company:config>
@@ -26,6 +26,7 @@
 			showRecordData="true" 
 			showTaxInfoData="true"
 			showAddInfo="true"
+			showDirStaff="true"
 		/>
 	</customer:config>
 
@@ -37,9 +38,9 @@
 		<supplier:supplier
 			showFinanceData="true" 
 			showAccount="true"
-			showSegment="false"
+			showSegment="true"
 			showTaxInfoData="true"
-			showAddInfo="false"
+			showAddInfo="true"
 		/>
 	</supplier:config>
 
@@ -61,11 +62,14 @@
 			showEcommerceData="false"
 		/>
 		<product:product
+			showBarcode="false"
+			showType="false"
+			showBrand="false"
 			showStock="false"
+			showSuppliers="false"
 			showAccount="true"
 			showAttachment="false"
 			showEcommerceData="false"
-			showType="false"
 		/>
 	</product:config>
 

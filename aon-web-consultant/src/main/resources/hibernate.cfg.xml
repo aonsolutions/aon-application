@@ -68,6 +68,16 @@
 		<mapping class="com.code.aon.campaign.ProcessDetailTransition"/>
 		<mapping class="com.code.aon.campaign.ProcessTransitionType"/>
 
+		<!-- AON-COMMERCIAL Mapping files -->
+		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
+
+		<!-- AON-SELLER Mapping files -->
+		<mapping class="com.code.aon.seller.Seller"/>
+
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
@@ -117,6 +127,7 @@
 		<mapping class="com.code.aon.product.CatalogueCategory"/>
 		<mapping class="com.code.aon.product.CatalogueItem"/>
 		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAlternative"/>
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemPos"/>
 		<mapping class="com.code.aon.product.Product"/>
@@ -164,6 +175,7 @@
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
+		<mapping class="com.code.aon.supplier.ItemSupplier"/>
 		
 	</session-factory>
 

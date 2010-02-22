@@ -1,7 +1,7 @@
 package com.code.aon.ui.config.event;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -16,7 +16,7 @@ import com.code.aon.ui.form.listener.LinesControllerListener;
 
 public class UserWorkGroupListener extends LinesControllerListener {
 	
-	private static final Logger LOGGER = Logger.getLogger(UserWorkGroupListener.class.getName());
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserWorkGroupListener.class);
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
@@ -34,7 +34,7 @@ public class UserWorkGroupListener extends LinesControllerListener {
 			group.setStatus(WorkGroupStatus.ACTIVE);
 			workGroupBean.insert(group);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error creating workGroup for User with id=" + user.getId(), e);
+			LOGGER.error( "Error creating workGroup for User with id=" + user.getId(), e);
 		}
 		return group;
 	}
@@ -47,7 +47,7 @@ public class UserWorkGroupListener extends LinesControllerListener {
 			userWorkGroup.setWorkGroup(group);
 			userWorkGroupBean.insert(userWorkGroup);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error adding user with id=" + user.getId() + "to group with id= " + group.getId(), e);
+			LOGGER.error( "Error adding user with id=" + user.getId() + "to group with id= " + group.getId(), e);
 		}
 	}
 }

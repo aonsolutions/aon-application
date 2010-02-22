@@ -1,18 +1,17 @@
 package com.code.aon.finance.event;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Company;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -28,7 +27,6 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
 
@@ -46,7 +44,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			sb.append(invoice.getNumber());
 			invoice.setReferenceCode(sb.toString());
 		} else {
-			invoice.setSeries(Integer.toString(CommonUtil.getYear(invoice.getIssueDate())));
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(invoice.getIssueDate());
+			invoice.setSeries(Integer.toString(calendar.get(Calendar.YEAR)));
 			if (invoice.getNumber() == 0) {
 				Criteria criteria = new Criteria();
 				criteria.addExpression(ExpressionUtilities.getNotEqualExpression("invoice.type", InvoiceType.SALES.ordinal()));
@@ -58,20 +58,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		if (invoice.getScope() == null || invoice.getScope().getId() == null) {
 			invoice.setScope(obtainInvoiceScope(invoice.getType(), invoice.getRegistry()));
-		}
-		if (invoice.isDefaultTaxInfo()) {
-			fillDefaultTaxInfo(invoice);
-		}
-	}
-
-	@Override
-	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-		Invoice invoice = (Invoice) evt.getTo();
-		if (InvoiceType.SALES == invoice.getType()) {
-			invoice.setTaxDate(invoice.getIssueDate());
-		}
-		if (invoice.isDefaultTaxInfo()) {
-			fillDefaultTaxInfo(invoice);
 		}
 	}
 
@@ -109,38 +95,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
-	}
-
-	private void fillDefaultTaxInfo(Invoice invoice) throws ManagerBeanVetoListenerException {
-		InvoiceType type = invoice.getType();
-		try {
-			Company company = getCompany();
-			IManagerBean bean;
-			if (type == InvoiceType.SALES) {
-				bean = BeanManager.getManagerBean(Customer.class);
-			} else if (type == InvoiceType.PURCHASE) {
-				bean = BeanManager.getManagerBean(Supplier.class);
-			} else {
-				bean = BeanManager.getManagerBean(Creditor.class);
-			}
-			ITaxInfo taxInfo = (ITaxInfo)bean.get(invoice.getRegistry().getId());
-
-			invoice.setWithholding((type == InvoiceType.SALES) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
-			invoice.setSurcharge((type == InvoiceType.SALES) ? taxInfo.isSurcharge() : company.isSurcharge());
-			invoice.setTaxFree(taxInfo.isTaxFree());
-			invoice.setTransaction(taxInfo.getTransaction());
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
-		}
-	}
-
-	private Company getCompany() throws ManagerBeanException {
-		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-		Iterator<ITransferObject> iterator = companyBean.getList(null, 0, 1).iterator();
-		if (iterator.hasNext()) {
-			return (Company) iterator.next();
-		}
-		return null;
 	}
 
 	private boolean isRemovable(Invoice invoice) throws ManagerBeanException {

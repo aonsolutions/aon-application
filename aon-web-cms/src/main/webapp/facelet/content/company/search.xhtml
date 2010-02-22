@@ -12,17 +12,50 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="companySearch">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.company}" />
-				<ui:param name="controller" value="#{company}" />
-				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
-			</ui:include>		
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.company}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{bundle.aon_search}" />
+				</aon:div>					
+					
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{company}" />
-				<ui:define name="searchContent">
+				<!--  toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="company_list"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{company.onSearch}" />
+					</aon:commandButton>					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="company_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{company.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="cancel"
+						value="#{bundle.aon_cancel}"
+						action="company_list" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<aon:actionListener method="#{company.onCancel}" />
+					</aon:commandButton>
+				</aon:div>			
+			<!-- end toolbar navigation -->
+			</aon:panelGrid>	
+		</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="Company_name"
 						value="#{appBundle.company_name}" />
@@ -39,8 +72,8 @@
 					<aon:inputText id="Company_province" size="50"
 						valueChangeListener="#{company.addExpression}" />
 	
-				</ui:define>
-			</ui:decorate>
+				</aon:panelGrid>
+			</aon:div>
 			
 		</aon:form>
 	</ui:define>

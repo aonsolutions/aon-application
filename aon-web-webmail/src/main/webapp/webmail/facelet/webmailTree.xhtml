@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition>
+
+	<aon:div>
+		 
+		<aon:div styleClass="aon-toolbar"  id="buttonsGrid" 
+			rendered="#{tree.treeLoaded}" style="padding-bottom:0;">					
+							
+			<aon:commandButton
+				id="newFolder" reRender="aonStatus"
+				title="#{webmailBundle.aon_webmail_newfolder}"
+				styleClass="aon-icon-commandButton aon-icon-newFolder"
+				actionListener="#{folder.openNewFolderPanelPopup}">
+				<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
+			</aon:commandButton>
+				
+			<aon:commandButton
+				id="deleteFolder_n"
+				rendered="#{folder.folder.deleteable}"
+				title="#{webmailBundle.aon_webmail_delfolder}"
+				actionListener="#{folder.deleteFolder}"
+				reRender="foldersTree,buttonsGrid,messageGrid"
+				styleClass="aon-icon-commandButton aon-icon-deleteFolder">
+			</aon:commandButton>
+			
+			<aon:commandButton
+				id="deleteFolder_d" disabled="true"
+				rendered="#{!folder.folder.deleteable}"
+				title="#{webmailBundle.aon_webmail_delfolder}"
+				styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
+			</aon:commandButton>
+		
+			<aon:commandButton
+				id="renameFolder_n" reRender="aonStatus"
+				rendered="#{folder.folder.renameable}"
+				title="#{webmailBundle.aon_webmail_renamefolder}"
+				actionListener="#{folder.openRenameFolderPanelPopup}"
+				styleClass="aon-icon-commandButton aon-icon-renameFolder">
+				<rich:componentControl for="renameFolderModalPanel" operation="show" event="onclick"/>
+			</aon:commandButton>
+			
+			<aon:commandButton
+				id="renameFolder_d" disabled="true"
+				rendered="#{!folder.folder.renameable}"
+				title="#{webmailBundle.aon_webmail_renamefolder}"					
+				styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
+			</aon:commandButton>
+			
+		</aon:div>
+
+	   <aon:div >
+			<h:outputText value="#{tree.account}" styleClass="aon-icon-tree-root aon-icon"/>
+		</aon:div>	
+	    
+		<rich:tree nodeSelectListener="#{tree.processSelection}" selectedClass="aon-tree-node-active" 
+				id="foldersTree" styleClass="aon-normal" adviseNodeSelected="#{tree.adviseNodeSelected}"
+				reRender="buttonsGrid,folderButtonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
+				value="#{tree.treeNode}" var="item"
+				nodeFace="#{item.folderTypeName}">
+			<rich:treeNode type="INBOX" 
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}">
+				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
+					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="Enviados" 
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}">
+				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
+					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="spam" 
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}">
+				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
+					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="Papelera" 
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}">
+				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
+					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="Borrador" 
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}">
+				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
+					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="other" 
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}">
+				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
+					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
+				<aon:outputText 
+					value="WebMail"
+					rendered="#{item.root}" />
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+		</rich:tree>	
+	    
+	</aon:div>
+	
+</ui:composition>
+
+</body>
+</html>

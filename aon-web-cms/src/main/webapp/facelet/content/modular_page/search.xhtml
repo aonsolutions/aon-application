@@ -12,7 +12,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="modulaPageSearch">
+		<aon:form id="list">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.modular_page}" />
@@ -29,17 +29,16 @@
 					<aon:inputText id="ModularPage_alias" size="50"
 						valueChangeListener="#{modular_page.addExpression}" />
 	
-					<aon:outputLabel for="ModularPage_details_title"
+					<aon:outputLabel for="ModularPage_title"
 						value="#{appBundle.modular_page_label}" />
-					<aon:inputText id="ModularPage_details_title" size="50"
-						valueChangeListener="#{modular_page.addExpression}" />
+					<aon:inputText id="ModularPage_title" size="50"
+						value="#{modular_page.title}" />
 
 					<aon:outputLabel for="ModularPage_section_id"
-						value="#{appBundle.cms_section}"/>
+						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="ModularPage_section_id"  
-						valueChangeListener="#{controller.addIdEqualExpression}"
-						value="#{collections.section}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						valueChangeListener="#{modular_page.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 	

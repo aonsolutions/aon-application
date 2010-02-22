@@ -110,17 +110,20 @@ public class DirectAccessGenerator extends Generator {
 		return list;
 	}
 	
-	public static Object getDirectAccessHandler(Integer ident, String message) {
+	public static Object getDirectAccessHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DirectAccess.class);
-			DirectAccess a = (DirectAccess) bean.get(ident);
-			if (a == null){
-				getLogger().error( message + " REFERENCIA A UN ACCESO DIRECTO ("+ident+") INEXISTENTE");
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ID), ident);
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.isEmpty()){
+				getLogger().warning("ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
+			DirectAccess a = (DirectAccess)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(DirectAccessDetail.class);
-				Criteria criteria = new Criteria();
+				criteria = new Criteria();
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
@@ -138,17 +141,20 @@ public class DirectAccessGenerator extends Generator {
 		return null;
 	}
 
-	public static Object getDirectAccessGroupHandler(Integer ident, String message) {
+	public static Object getDirectAccessGroupHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroup.class);
-			DirectAccessGroup a = (DirectAccessGroup) bean.get(ident);
-			if (a == null){
-				getLogger().error( message + " REFERENCIA A UN GRUPO DE ACCESO DIRECTO ("+ident+") INEXISTENTE");
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ID), ident);
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.isEmpty()){
+				getLogger().warning("GRUPO DE ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
+			DirectAccessGroup a = (DirectAccessGroup)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(DirectAccessGroupDetail.class);
-				Criteria criteria = new Criteria();
+				criteria = new Criteria();
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);

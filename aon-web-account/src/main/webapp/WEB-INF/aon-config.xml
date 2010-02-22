@@ -26,6 +26,7 @@
 			showRecordData="false"
 			showTaxInfoData="true"
 			showAddInfo="false"
+			showDirStaff="false"
 		/>
 	</customer:config>
 
@@ -52,7 +53,7 @@
 			showSegment="false"
 		/>
 		<finance:invoice
-			showDeliveryData="false" 
+			showWarehouseData="false" 
 		/>
 	</finance:config>
 </config>

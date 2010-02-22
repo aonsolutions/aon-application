@@ -5,20 +5,77 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:dataTable id="#{dataTableId}" var="to"
+	<aon:dataTable id="#{dataTableId}" var="to" sortMode="#{sortMode}"
 		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
-		columnClasses="#{columnClasses}">
+		columnClasses=", #{columnClasses}">
 
-		<aon:rowSelector id="#{dataTableId}-select" 
-			actionListener="#{controller.onSelect}" action="#{rowSelectorAction}"
+		<aon:rowSelector id="#{dataTableId}-select" reRender="#{rowSelectorReRender}"
+			actionListener="#{rowSelectorActionListener}" action="#{rowSelectorAction}"
+			toggleOnClick="#{rowSelectorToggleOnClick}" immediate="#{rowSelectorImmediate}"
 			focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
+
+		<c:if test="#{!skipSelectButton}">
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<aon:commandLink id="#{dataTableId}-selectButton" 
+					styleClass="aon-table-row-link" value="&#160;"
+					immediate="true" ajaxSingle="true" requestDelay="100"
+					action="#{rowSelectorAction}"
+					actionListener="#{controller.onSelect}"
+					onkeyup="#{dataTableId}KeyUp(this)"
+					onfocus="#{dataTableId}SelectRow(this)"
+					onblur="#{dataTableId}DeselectRow(this)"
+					focus="#{(focusOnSelect != null)?(focusOnSelect):''}"
+					reRender="#{rowSelectorReRender}" >
+				</aon:commandLink>
+				<f:facet name="footer">
+					<ui:insert name="selectFooterContent"/>
+				</f:facet>
+			</aon:column>
+		</c:if>
 
 		<ui:insert name="columns"/>
 
 	</aon:dataTable>
+	
+	<c:if test="#{!skipFocusFirst}">
+		<rich:jQuery selector="##{dataTableId} .aon-table-row-link:first" timing="onload"
+			query="focus().addClass('keyup-patch').parent().parent().addClass('aon-table-row-hover')" />
+	</c:if>
+
+	<c:if test="#{!skipSelectButton}">
+		<rich:jQuery name="#{dataTableId}FocusFirst" selector="##{dataTableId} a:first"
+			timing="onJScall" query="focus()" />		
+		<rich:jQuery name="#{dataTableId}SelectRow" timing="onJScall"
+			query="addClass('keyup-patch').parent().parent().addClass('aon-table-row-hover')" />		
+		<rich:jQuery name="#{dataTableId}DeselectRow" timing="onJScall"
+			query="removeClass('keyup-patch').parent().parent().removeClass('aon-table-row-hover')" />		
+		<rich:jQuery name="#{dataTableId}KeyUp" timing="onJScall"
+			query="keyup(function (event) {
+					if ( (event.keyCode == 40) || (event.keyCode == 38) ) {
+						var jthis = jQuery(this);
+						if ( jthis.hasClass('keyup-patch') ) {
+					        var list = jthis.parents('.aon-dataTable').find('.aon-table-row-link');
+					        var i = list.index(this);					
+						    if (event.keyCode == 40) {
+						        if ((i+1) &lt; list.size() ) {
+						        	list.get(i+1).focus();
+						        	jthis.removeClass('keyup-patch');
+						        	event.preventDefault();
+						        }
+						    } else if (event.keyCode == 38) {
+						        if (i &gt; 0 ) {
+						        	list.get(i-1).focus();
+	        					    jthis.removeClass('keyup-patch');
+	        					    event.preventDefault();
+						        }
+						    }
+						}
+					}
+	    		})" />
+	</c:if>
 
 	<c:if test="#{showDataScroller}">
-		<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" />
+		<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();" />
 	</c:if>	
 
 </ui:composition>

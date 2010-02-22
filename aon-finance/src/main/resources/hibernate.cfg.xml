@@ -64,6 +64,7 @@
 
 		<!-- AON-CUSTOMER Mapping files -->		
 		<mapping class="com.code.aon.customer.Customer"/>			
+		<mapping class="com.code.aon.customer.CustomerSegment"/>			
 
 	</session-factory>
 

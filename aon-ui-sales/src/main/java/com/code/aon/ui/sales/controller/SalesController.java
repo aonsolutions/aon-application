@@ -192,22 +192,6 @@ public class SalesController extends BasicController {
 		return false;
 	}
 
-	public boolean isBlocked(){
-		Sales sales = (Sales)this.getTo();
-		if (sales.getStatus() != null) {
-			return sales.getStatus().equals(SalesStatus.BLOCKED);
-		}
-		return false;
-	}
-
-	public boolean isClosed(){
-		Sales sales = (Sales)this.getTo();
-		if (sales.getStatus() != null) {
-			return sales.getStatus().equals(SalesStatus.CLOSED);
-		}
-		return false;
-	}
-
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
@@ -330,24 +314,11 @@ public class SalesController extends BasicController {
 		return getPriceStrategy().getTotalPrice(sales, sales.getCustomer());
 	}
 
-	public void onBlock(ActionEvent event) {
-		Sales to = (Sales)this.getTo();
-		to.setStatus(SalesStatus.BLOCKED);
-		accept(event);
-	}
-	
-	public void onUnblock(ActionEvent event) throws ManagerBeanException {
-		Sales to = (Sales)this.getTo();
-		to.setStatus(SalesStatus.PENDING);
-		accept(event);
-	}
-
 	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales)this.getTo();
 		setDeliverySeries(to.getSeries());
 		setDeliveryNumber(obtainMaxDeliveryNumber(to.getSeries()));
 		setDeliveryDate(new Date());
-		setDeliveryWarehouse(null);
 	}
 
 	public void onDeliverySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -378,7 +349,6 @@ public class SalesController extends BasicController {
 		setInvoiceSeries(to.getSeries());
 		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
 		setInvoiceDate(new Date());
-		setInvoiceWarehouse(null);
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -395,10 +365,9 @@ public class SalesController extends BasicController {
 		setShowInvoiceWindow(false);
 
 		Sales to = (Sales)this.getTo();
-		String deliverySeries = to.getSeries();
-		int deliveryNumber = obtainMaxDeliveryNumber(deliverySeries);
+		int deliveryNumber = obtainMaxDeliveryNumber(getInvoiceSeries());
 		DeliveryManager deliveryManager = new DeliveryManager();
-		Delivery delivery = deliveryManager.salesDelivery(to, deliverySeries, deliveryNumber, getInvoiceDate(), getInvoiceWarehouse(), DeliveryDetailType.AUTOMATIC);
+		Delivery delivery = deliveryManager.salesDelivery(to, getInvoiceSeries(), deliveryNumber, getInvoiceDate(), getInvoiceWarehouse(), DeliveryDetailType.AUTOMATIC);
 		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(delivery, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
