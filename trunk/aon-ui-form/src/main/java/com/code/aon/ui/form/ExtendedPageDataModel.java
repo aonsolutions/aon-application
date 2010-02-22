@@ -173,41 +173,19 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      * search.
      * 
      * @param i
-     * @return offset
      */
-    protected int ensureIndex(int i) {
-        int start = page != null ? page.getStart() : -1;
-        int offset = i - start;
-        if(i != -1 && offset < 0)
-            offset = backward(i);
-        else
-	        if(page == null || offset >= dataProvider.getPageLimit())
-	            offset = forward(i);
-        return offset;
-    }
-
-    /**
-     * Backward search
-     * 
-     * @param i
-     * @return new index
-     */
-    protected int backward(int i) {
-        int start = Math.max((i), 0);
-        page = getPage(start, dataProvider.getPageLimit());
-        return i - start;
-    }
-
-    /**
-     * Forward search
-     * 
-     * @param i
-     * @return new index
-     */
-    protected int forward(int i) {
-    	int start = i + 1 != rowCount ? i : rowCount - dataProvider.getPageLimit();
-        page = getPage(start, dataProvider.getPageLimit());
-        return i - start;
+    private void ensureIndex(int i) {
+    	if ( i != -1 ) {
+    		if ( (page == null) ||
+    			( (i < page.getStart()) || (i >= page.getStartOfNextPage()) ) ) {
+    			int start = 0;
+    			if ( dataProvider.getPageLimit() > 0 ) {
+        	    	int pageNumber = i / dataProvider.getPageLimit();
+        	    	start = pageNumber * dataProvider.getPageLimit();    				
+    			}
+    	        this.page = getPage(start, dataProvider.getPageLimit());
+    		}
+    	}
     }
 
     /**
