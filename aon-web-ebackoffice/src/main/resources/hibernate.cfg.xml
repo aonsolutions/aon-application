@@ -69,6 +69,9 @@
 		<mapping class="com.code.aon.config.User" />
 		<mapping class="com.code.aon.config.UserScope" />
 		<mapping class="com.code.aon.config.WorkGroup" />
+		
+		<!-- AON-CUSTOMER Mapping files -->	
+		<mapping class="com.code.aon.customer.Customer"/>
 
 		<!-- EBACKOFFICE -->
 		<mapping class="com.code.aon.ebackoffice.Ectarget" />
@@ -112,6 +115,10 @@
 		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Segment"/>
+		
+		<!-- AON-SALES Mapping files -->	
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
 
 		<!-- AON-SELLER Mapping files -->
 		<mapping class="com.code.aon.seller.Seller" />
