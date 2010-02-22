@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:define name="toolbarContent">
+			<aon:commandButton id="#{toolbarID}-clear"
+				value="#{bundle.aon_clear}"
+				type="reset" ajaxSingle="true"
+				styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+			<c:if test="#{!skipResetButton}">
+				<aon:commandButton id="#{toolbarID}-reset"
+					title="#{bundle.aon_key_new_accelerator}"
+					value="#{bundle.aon_reset}"
+					action="#{resetAction}" actionListener="#{resetActionListener}"
+					styleClass="aon-finding-toolbar-item aon-icon-reset"
+					accesskey="#{bundle.aon_key_new}" />
+			</c:if>
+			<c:if test="#{!skipBackButton}">
+				<aon:commandButton id="#{toolbarID}-back" 
+					title="#{bundle.aon_key_cancel_accelerator}"
+					value="#{bundle.aon_back}"
+					action="#{backAction}" actionListener="#{backActionListener}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+					accesskey="#{bundle.aon_key_cancel}" />			
+			</c:if>
+		</ui:define>
+	</ui:decorate>
+	
+</ui:composition>

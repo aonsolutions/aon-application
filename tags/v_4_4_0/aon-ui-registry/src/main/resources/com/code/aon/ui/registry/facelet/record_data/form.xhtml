@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+		<ui:param name="toolbarID" value="rdFormToolbar" />
+		<ui:param name="toolbarTitle" value="#{registryBundle.registry_rd_module}" />
+		<ui:param name="skipSearchButton" value="true" />
+
+		<aon:methodParam name="saveAction" value="" />
+		<ui:param name="saveButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="cancelAction" value="" />
+		<ui:param name="cancelButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="removeAction" value="" />
+		<ui:param name="removeButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="resetAction" value="" />
+		<ui:param name="resetButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="backAction" value="" />
+		<ui:param name="backButtonReRender" value="recordDataContent" />
+
+	</ui:include>
+	
+	<aon:div styleClass="aon-scroll-area">
+		<aon:panelGrid id="recordDataTable" columns="4"
+				style="width: 100%"
+				columnClasses="aon-panelGrid-odd aon-width-150
+							,aon-panelGrid-even aon-width-150
+							,aon-panelGrid-odd aon-width-150
+							,aon-panelGrid-odd aon-width-auto">
+		
+
+			<aon:outputLabel for="RecordData_creationDate"
+				value="#{registryBundle.registry_rd_creation_date}" />
+			<aon:selectInputDate id="RecordData_creationDate"
+				value="#{controller.to.creationDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+			<aon:outputLabel for="RecordData_description"
+				value="#{bundle.aon_description}" />
+			<aon:inputText id="RecordData_description"
+				value="#{controller.to.description}" size="40" />
+
+			<aon:outputLabel for="RecordData_recordDate"
+				value="#{registryBundle.registry_rd_record_date}" />
+			<aon:selectInputDate id="RecordData_recordDate"
+				value="#{controller.to.recordDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+			<aon:outputLabel for="RecordData_notary"
+				value="#{registryBundle.registry_rd_notary}" />
+			<aon:inputText id="RecordData_notary" value="#{controller.to.notary}"
+				size="40" />
+
+			<aon:outputLabel for="RecordData_number"
+				value="#{registryBundle.registry_rd_number}" />
+			<aon:inputText id="RecordData_number" value="#{controller.to.number}"
+				size="16" />
+
+			<aon:outputLabel for="RecordData_volume"
+				value="#{registryBundle.registry_rd_volume}" />
+			<aon:inputText id="RecordData_volume" value="#{controller.to.volume}"
+				size="16" />
+
+			<aon:outputLabel for="RecordData_section"
+				value="#{registryBundle.registry_rd_section}" />
+			<aon:inputText id="RecordData_section"
+				value="#{controller.to.section}" size="16" />
+
+			<aon:outputLabel for="RecordData_page"
+				value="#{registryBundle.registry_rd_page}" />
+			<aon:inputText id="RecordData_page" value="#{controller.to.page}"
+				size="16" />
+
+			<aon:outputLabel for="RecordData_sheet"
+				value="#{registryBundle.registry_rd_sheet}" />
+			<aon:inputText id="RecordData_sheet" value="#{controller.to.sheet}"
+				size="16" />
+
+			<aon:outputLabel for="RecordData_registration"
+				value="#{registryBundle.registry_rd_registration}" />
+			<aon:inputText id="RecordData_registration"
+				value="#{controller.to.registration}" size="16" />
+		</aon:panelGrid>
+
+		<aon:div styleClass="aon-padding-top" id="recordDataGrid">
+			<aon:panelGrid columns="2" style="width: 100%"
+				columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+			
+				<aon:outputLabel for="RecordData_file"
+					value="#{bundle.aon_fileupload_element}" />
+				<aon:div>
+					<a4j:region>
+						<aon:commandLink styleClass="aon-icon aon-icon-delete"
+							rendered="#{controller.attachAvailable}" reRender="recordDataGrid"
+							actionListener="#{controller.onAttachRemove}"
+							title="#{bundle.aon_fileupload_remove}">
+							<aon:outputText value="&#160;" />
+						</aon:commandLink>
+						<a4j:htmlCommandLink target="_blank"
+							rendered="#{controller.attachAvailable}"
+							actionListener="#{controller.downloadAttachment}"
+							styleClass="aon-icon aon-icon-mail-save"
+							title="#{bundle.aon_fileupload_download}">
+							<aon:outputText value="#{controller.attachDescription}" />
+						</a4j:htmlCommandLink>									
+						<aon:fileUpload id="RecordData_file"
+							addControlLabel="#{bundle.aon_fileUpload_add}"
+							stopControlLabel="#{bundle.aon_fileUpload_stop}"
+							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+							fileUploadListener="#{controller.fileUploaded}"
+							immediateUpload="true" autoclear="true" listWidth="0px"
+							listHeight="0px">
+							<f:facet name="label">
+								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+							</f:facet>
+							<a4j:support event="onuploadcomplete" reRender="recordDataContent" />
+						</aon:fileUpload>
+					</a4j:region>				
+				</aon:div>
+			</aon:panelGrid>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

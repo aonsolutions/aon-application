@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div styleClass="#{(innerToolbar)?'aon-toolbar':'aon-finding-title-toolbar'}">
+		<aon:panelGrid columns="3" dir="true"
+			columnClasses="#{(toolbarTitle!=null)?'aon-finding-title,':''}#{(toolbarDescription!=null)?'aon-finding-subtitle,':''}aon-finding-toolbar">
+
+			<c:if test="#{(toolbarTitle!=null) and (!skipToolbarTitle)}">
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{toolbarTitle}" />
+				</aon:div>
+			</c:if>
+
+			<c:if test="#{(toolbarDescription!=null) and (!skipToolbarDescription)}">
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText value="#{toolbarDescription}" />			
+				</aon:div>
+			</c:if>
+			<ui:insert name="toolbarActions"/>
+			<aon:div id="#{toolbarID}" styleClass="aon-finding-toolbar-item-group">
+				<ui:insert name="beforeToolbarContent"/>
+				<ui:insert name="toolbarContent"/>
+				<ui:insert name="additionalToolbarContent"/>
+			</aon:div>
+		</aon:panelGrid>
+	</aon:div>
+	
+</ui:composition>
