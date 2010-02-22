@@ -26,7 +26,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.9.0</value>
+			<value>/aonResource/3.11.0</value>
 		</managed-property>
 	</managed-bean>
 
@@ -95,7 +95,7 @@
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.product -->
-			<value>#{catalogueOptionalControllerListener}</value>
+			<!--  <value>#{catalogueOptionalControllerListener}</value>-->
 			<value>#{catalogueEccatalogueListener}</value>
 		</list-entries>
 	</managed-bean>

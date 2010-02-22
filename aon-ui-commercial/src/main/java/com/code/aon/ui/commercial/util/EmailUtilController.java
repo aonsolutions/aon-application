@@ -19,7 +19,6 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -147,16 +146,17 @@ public class EmailUtilController implements ICommercialMessages, ICommercialCons
 	public AonFile getOfferFile( Offer offer ) throws IOException, ReportException, ManagerBeanException {
 		SignerController signer = (SignerController) AonUtil.getRegisteredBean(OFFER_SIGNER_CONTROLLER_NAME);
 		File file = File.createTempFile( signer.getReportKey(), ".pdf" );
-		IAttachment attach = null;
+		byte[] data = null;
 		if ( offer.isSigned() ) {
-			attach = signer.getSignedAttachment(offer.getId());
+			data = signer.getSignedAttachment(offer.getId()).getData();
 		} else {
-			attach = signer.getReport(offer);
+			data = signer.getReport(offer);
 		}
-		FileUtils.writeByteArrayToFile(file, attach.getData());
+		FileUtils.writeByteArrayToFile(file, data);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
-		aonFile.setFileName( attach.getDescription() + ".pdf" );
+		String fileName = "offer_" + offer.getSeries() + "-" + offer.getNumber() + ".pdf";
+		aonFile.setFileName( fileName );
 		return aonFile;
 	}
 

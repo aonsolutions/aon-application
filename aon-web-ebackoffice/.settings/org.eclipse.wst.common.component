@@ -9,16 +9,22 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-product/aon-ui-product">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-commercial/aon-ui-commercial">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ebackoffice/aon-ebackoffice">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-company/aon-ui-company">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-sign/aon-ui-sign">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-product/aon-product">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-warehouse/aon-warehouse">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-commercial/aon-commercial">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-commercial/aon-ui-commercial">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="aon-web-ebackoffice"/>

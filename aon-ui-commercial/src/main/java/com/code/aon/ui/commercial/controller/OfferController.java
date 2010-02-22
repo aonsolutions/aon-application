@@ -45,10 +45,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.SalesManager;
@@ -60,7 +58,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
-import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -504,12 +501,12 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	@Override
-	public String getAttachmentMimeTypeAlias() {
+	public String getAttchmentMimeTypeAlias() {
 		return ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE;
 	}
 
 	@Override
-	public String getAttachmentParentAlias() {
+	public String getAttchmentParentAlias() {
 		return ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID;
 	}
 
@@ -530,91 +527,4 @@ public class OfferController extends BasicController implements ISignatureContro
 		((Offer) to).setSigned(value);
 	}	
 	
-	@Override
-	public IAttachment generateReportAttachment(ITransferObject to) {
-		return getSignerController().getReport(to);
-	}
-
-	@Override
-	public IAttachment getUnsignedAttachment(ITransferObject to) {
-		return generateReportAttachment(to);
-	}
-
-	@Override
-	public String getDescription(ITransferObject parent) {
-		Offer offer = (Offer) parent;
-		return "offer_" + offer.getSeries() + "-" + offer.getNumber();
-	}
-
-	public SignerController getSignerController() {
-		return (SignerController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_SIGNER_CONTROLLER_NAME);
-	}		
-	
-	public String getTargetPhone() throws ManagerBeanException{			
-		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.FIXED_PHONE);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
-		Iterator<?> iter = mediaBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			RegistryMedia rmedia = (RegistryMedia)iter.next();
-			return rmedia.getValue();
-		}
-		return null;
-	}
-	
-	public String getTargetCellularPhone() throws ManagerBeanException{			
-		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.CELLULAR);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
-		Iterator<?> iter = mediaBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			RegistryMedia rmedia = (RegistryMedia)iter.next();
-			return rmedia.getValue();
-		}
-		return null;
-	}
-	
-	public String getTargetFax() throws ManagerBeanException{		
-		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.FAX);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
-		Iterator<?> iter = mediaBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			RegistryMedia rmedia = (RegistryMedia)iter.next();
-			return rmedia.getValue();
-		}
-		return null;
-	}
-	
-	public String getTargetEmail() throws ManagerBeanException{			
-		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.EMAIL);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
-		Iterator<?> iter = mediaBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			RegistryMedia rmedia = (RegistryMedia)iter.next();
-			return rmedia.getValue();
-		}
-		return null;
-	}
-	
-	public RegistryPayMethod getTargetPayMethod() throws ManagerBeanException{			
-		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryPayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
-		Iterator<?> iter = mediaBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			RegistryPayMethod rpay = (RegistryPayMethod)iter.next();
-			return rpay;
-		}
-		return null;
-	}
 }

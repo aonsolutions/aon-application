@@ -11,7 +11,7 @@
 		<property name="connection.service">jboss.admin:service=AonLdap</property>
 		<property name="connection.datasource">java:comp/env/jdbc/AonEcommerce</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-		<property name="show_sql">true</property>
+		<property name="show_sql">false</property>
 
 		<!-- C3P0 Stuff -->
 		<property name="c3p0.acquire_increment">1</property>
@@ -31,9 +31,10 @@
 		<mapping class="com.code.aon.ebackoffice.Ectarget" />
 		<mapping class="com.code.aon.ebackoffice.Ecconfig" />
 		<mapping class="com.code.aon.ebackoffice.Eccatalogue" />
-
+		<mapping class="com.code.aon.ebackoffice.EcOfferPayment"/>			
+		<mapping class="com.code.aon.ebackoffice.EcPaymethod"/>			
+		
 		<mapping class="com.code.aon.commercial.CommercialActivity" />
-		<mapping class="com.code.aon.commercial.CommercialSegment" />
 		<mapping class="com.code.aon.commercial.CommercialTracking" />
 		<mapping class="com.code.aon.commercial.Offer" />
 		<mapping class="com.code.aon.commercial.OfferAttachment" />
@@ -41,8 +42,12 @@
 		<mapping class="com.code.aon.commercial.OfferDetail" />
 		<mapping class="com.code.aon.commercial.Target" />
 		<mapping class="com.code.aon.commercial.TargetItem" />
-		<mapping class="com.code.aon.commercial.TargetSegment" />
+		
 		<mapping class="com.code.aon.commercial.TargetSeller" />
+		<mapping class="com.code.aon.commercial.Expense" />
+		<mapping class="com.code.aon.commercial.ExpenseAccount" />
+		<mapping class="com.code.aon.commercial.ExpenseAccountDetail" />
+		<mapping class="com.code.aon.commercial.CommercialTerm" />
 
 
 		<!-- AON-COMPANY Mapping files -->
@@ -51,9 +56,7 @@
 		<mapping class="com.code.aon.company.WorkActivity" />
 		<mapping class="com.code.aon.company.resources.Resource" />
 		<mapping class="com.code.aon.company.resources.Employee" />
-		<!--  
-		-->
-
+		
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter" />
 		<mapping class="com.code.aon.config.Bank" />
@@ -66,27 +69,35 @@
 		<mapping class="com.code.aon.config.User" />
 		<mapping class="com.code.aon.config.UserScope" />
 		<mapping class="com.code.aon.config.WorkGroup" />
+		
+		<!-- AON-CUSTOMER Mapping files -->	
+		<mapping class="com.code.aon.customer.Customer"/>
 
 		<!-- EBACKOFFICE -->
 		<mapping class="com.code.aon.ebackoffice.Ectarget" />
+		<mapping class="com.code.aon.ebackoffice.Eccatalogue" />
+		<mapping class="com.code.aon.ebackoffice.Ecconfig" />
+		<mapping class="com.code.aon.ebackoffice.EcPaymethod" />
+		<mapping class="com.code.aon.ebackoffice.EcOfferPayment" />
 
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoTree" />
 		<mapping class="com.code.aon.geozone.GeoZone" />
 
 		<!-- AON-PRODUCT Mapping files -->
-		<mapping class="com.code.aon.product.Brand" />
-		<mapping class="com.code.aon.product.Catalogue" />
-		<mapping class="com.code.aon.product.CatalogueCategory" />
-		<mapping class="com.code.aon.product.CatalogueItem" />
-		<mapping class="com.code.aon.product.Item" />
-		<mapping class="com.code.aon.product.ItemAttachment" />
-		<mapping class="com.code.aon.product.ItemPos" />
-		<mapping class="com.code.aon.product.Product" />
-		<mapping class="com.code.aon.product.ProductCategory" />
-		<mapping class="com.code.aon.product.ProductCategoryGroup" />
-		<mapping class="com.code.aon.product.ProductCategoryTree" />
-		<mapping class="com.code.aon.product.TariffCatalogue" />
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Catalogue"/>
+		<mapping class="com.code.aon.product.CatalogueCategory"/>
+		<mapping class="com.code.aon.product.CatalogueItem"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAlternative"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemPos"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category" />
@@ -101,6 +112,13 @@
 		<mapping class="com.code.aon.registry.RegistryPayMethod" />
 		<mapping class="com.code.aon.registry.RegistryRelationship" />
 		<mapping class="com.code.aon.registry.Relationship" />
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Segment"/>
+		
+		<!-- AON-SALES Mapping files -->	
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
 
 		<!-- AON-SELLER Mapping files -->
 		<mapping class="com.code.aon.seller.Seller" />

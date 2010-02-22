@@ -64,8 +64,6 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	private String domainSuffix;
 	
-	private int domainNameMaxLength;
-	
 	private LdapDAO dbConnectionDAO;
 	
 	private BasicManagerBean dbConnectionManagerBean;
@@ -84,10 +82,11 @@ public class DomainController extends BasicController implements IDesktopConstan
 		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
 		this.currentDomain = auc.getDomain();
 		String[] parts = StringUtils.split(this.currentDomain, ".");
-		if ( ArrayUtils.getLength(parts) > 0 ) {
-			this.domainSuffix = parts[parts.length-1]; 
+		if ( ArrayUtils.getLength(parts) > 2 ) {
+			this.domainSuffix = parts[parts.length-2] + "." + parts[parts.length-1]; 
+		} else {
+			this.domainSuffix = this.currentDomain;
 		}
-		this.domainNameMaxLength = 14 - StringUtils.length(this.domainSuffix);
 		manager = new DBManager();
 	}
 
@@ -98,19 +97,41 @@ public class DomainController extends BasicController implements IDesktopConstan
 	public void setSelectedApplication(ApplicationsManager.App selectedApplication) {
 		this.selectedApplication = selectedApplication;
 	}
+	
+	public static String getCMSDomainURL( String domain ) {
+		StringBuffer url = new StringBuffer( "http://cms" );
+		String[] parts = StringUtils.split(domain, ".");
+		if ( ArrayUtils.getLength(parts) > 2 ) {
+			for( String part : parts ) {
+				url.append(".").append(part);
+			}
+		} else {
+			url.append(".").append(domain);
+		}
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		if ( request.getRemotePort() != 80 ) {
+			url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+		}		
+		return url.toString();
+	}
 
 	public String getCurrentDomainApplicationURL() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
 			Domain domain = (Domain) getModel().getRowData();
-			StringBuffer url = new StringBuffer( "http://" );
-			url.append( domain.getCommonName() );
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-			if ( request.getRemotePort() != 80 ) {
-				url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+			if ( ApplicationsManager.AON_CMS.equals(selectedApplication.getId()) ) {
+				return getCMSDomainURL(domain.getCommonName());
+			} else {
+				StringBuffer url = new StringBuffer( "http://" );
+				url.append( domain.getCommonName() );
+				FacesContext context = FacesContext.getCurrentInstance();
+				HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+				if ( request.getRemotePort() != 80 ) {
+					url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+				}
+				url.append( selectedApplication.getContext() );
+				return url.toString();				
 			}
-			url.append( selectedApplication.getContext() );
-			return url.toString();				
 		}
 		return null;
 	}
@@ -121,10 +142,6 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	public String getDomainSuffix() {
 		return domainSuffix;
-	}
-	
-	public int getDomainNameMaxLength() {
-		return domainNameMaxLength;
 	}
 
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) {

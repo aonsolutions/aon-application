@@ -861,7 +861,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>OfferTerm_id</value>
+			<value>OfferTerm_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>general</property-name>
@@ -920,7 +920,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>OfferTerm_id</value>
+			<value>OfferTerm_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -939,151 +939,6 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
-		<!-- ************ EXPENSE ************** -->
-	<managed-bean>
-		<managed-bean-name>expense</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.commercial.Expense</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>expense</value>
-		</managed-property>
-	</managed-bean>
-		
-	
-	<!-- ****** EXPENSE ACCOUNT ****** -->
-	<managed-bean>
-		<managed-bean-name>expenseAccount</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.controller.ExpenseAccountController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.commercial.ExpenseAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>expenseAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{expenseSearch}</value>				
-				<value>#{expenseAccountDetailListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>expenseSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.event.ExpenseSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>expenseAccountDetailListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>expenseAccountDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ExpenseAccountDetail_expenseAccount_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-
-	<!-- ****** EXPENSE ACCOUNT DETAIL ****** -->
-	<managed-bean>
-		<managed-bean-name>expenseAccountDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.controller.ExpenseAccountDetailController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.commercial.ExpenseAccountDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>expenseAccountDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ExpenseAccountDetail_id</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>expenseAccount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>expenseAccount.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-	</managed-bean>
-
-		<!-- ************ EXPENSE LOOKUP ************** -->
-	<managed-bean>
-		<managed-bean-name>expenseLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>expenseLookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.commercial.Expense</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/expense/list.xhtml</value>
-		</managed-property>
-		<managed-property>
-			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/expense/form.xhtml</value>
-		</managed-property>
-	</managed-bean>
-	
 
 	<!-- ************ COMMERCIAL TERM LOOKUP ************** -->
 	<managed-bean>
@@ -1161,24 +1016,7 @@
 			<from-outcome>offer_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/commercial/facelet/offer/search.xhtml</to-view-id>
 		</navigation-case>
-		<navigation-case>
-			<from-outcome>commercialExpense</from-outcome>
-			<to-view-id>/com/code/aon/ui/commercial/facelet/expense/grid.xhtml</to-view-id>
-		</navigation-case>		
-		<navigation-case>
-			<from-outcome>expenseAccount_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/commercial/facelet/expenseAccount/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>expenseAccount_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/commercial/facelet/expenseAccount/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>expenseAccount_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/commercial/facelet/expenseAccount/search.xhtml</to-view-id>
-		</navigation-case>	
-	</navigation-rule>
-		
+	</navigation-rule>		
 	
 	<!-- =================== Commercial Tracking ================= -->	
 	<navigation-rule>

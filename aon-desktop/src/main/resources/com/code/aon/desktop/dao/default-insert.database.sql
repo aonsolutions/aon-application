@@ -1107,7 +1107,6 @@ INSERT INTO `account` (`id`, `description`, `alias`, `entryEnabled`, `level`) VA
   ('640000000','Sueldos y salarios.',NULL,1,5),
   ('641','Indemnizaciones.',NULL,0,3),
   ('6410','Indemnizaciones.',NULL,0,4),
-  ('641000000','Indemnizaciones.',NULL,1,5),
   ('642','Seguridad Social a cargo de la empresa.',NULL,0,3),
   ('6420','Seguridad Social a cargo de la empresa.',NULL,0,4),
   ('642000000','Seguridad Social a cargo de la empresa.',NULL,1,5),
