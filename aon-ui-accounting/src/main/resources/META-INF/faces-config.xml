@@ -269,6 +269,21 @@
 			com.code.aon.ui.accounting.controller.BalanceSheetController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!--  ********* BALANCE EXPORTER  ***************** -->
+	<managed-bean>
+		<managed-bean-name>balanceExporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.BalanceExporter</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<!--  ********* BALANCE IMPORTER  ***************** -->
+	<managed-bean>
+		<managed-bean-name>balanceImporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.BalanceImporter</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- **************** AMORTIZATION ************************** -->
 	<managed-bean>
@@ -418,6 +433,21 @@
 			<property-name>beanName</property-name>
 			<value>amortizationType</value>
 		</managed-property>
+	</managed-bean>
+
+	<!--  ********* AMORTIZATION TYPE EXPORTER  ***************** -->
+	<managed-bean>
+		<managed-bean-name>amortizationTypeExporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.AmortizationTypeExporter</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<!--  ********* AMORTIZATION IMPORTER  ***************** -->
+	<managed-bean>
+		<managed-bean-name>amortizationTypeImporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.AmortizationTypeImporter</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- **************** END PERIOD ENTRIES ************************** -->
@@ -1037,6 +1067,24 @@
 				/com/code/aon/ui/accounting/facelet/balance/sheet/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- ****************** BALANCE EXPORTER **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>balance_exporter</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/balance/exporter/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- ****************** BALANCE IMPORTER **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>balance_importer</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/balance/importer/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 
 	<!-- **************** LOAN ************************** -->
@@ -1116,6 +1164,24 @@
 			<from-outcome>amortizationType_search</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/accounting/facelet/amortization/type/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- ****************** AMORTIZATION EXPORTER **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>amortization_exporter</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/amortization/exporter/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- ****************** AMORTIZATION IMPORTER **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>amortization_importer</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/amortization/importer/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

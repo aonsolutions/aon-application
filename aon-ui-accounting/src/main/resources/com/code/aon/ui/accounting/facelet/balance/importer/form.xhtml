@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_balance_importer_module}" />
+
+				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
+
+				<ui:define name="toolbarContent">
+					<h:commandButton id="execute" value="#{accountingBundle.balance_import}"
+						rendered="#{balanceImporter.aonFile.size > 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{balanceImporter.onImport}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" style="width:90%; margin:10px;">
+					<aon:outputLabel for="attach_file" value="FICHERO" />
+					<a4j:region>
+						<h:panelGrid id="attachGrid" columns="2">
+							<aon:outputText rendered="#{balanceImporter.aonFile.size > 0}"
+								value="#{balanceImporter.aonFile.fileName} - ( #{balanceImporter.aonFile.size} bytes)" />
+							<aon:fileUpload id="attach_file"
+								addControlLabel="#{bundle.aon_fileUpload_add}"
+								stopControlLabel="#{bundle.aon_fileUpload_stop}"
+								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+								fileUploadListener="#{balanceImporter.fileUploaded}"
+								immediateUpload="true" autoclear="true" listWidth="0px"
+								listHeight="0px">
+								<f:facet name="label">
+									<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+								</f:facet>
+								<a4j:support event="onuploadcomplete" reRender="attachGrid,aonToolbar" />
+							</aon:fileUpload>
+						</h:panelGrid>
+					</a4j:region>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
