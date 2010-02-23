@@ -82,7 +82,13 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 
 	private WorkPlace workPlace;
 
-    /**
+	private boolean taxDataInDetail;
+	private double vatPercent;
+	private double vatQuota;
+	private double retentionPercent;
+	private double retentionQuota;
+
+	/**
      * Gets the id.
      * 
      * @return the id
@@ -356,6 +362,51 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 			e.printStackTrace();
 		}
 		return taxBreakDowns;
+	}
+
+	@Transient
+	public boolean isTaxDataInDetail() {
+		return taxDataInDetail;
+	}
+
+	public void setTaxDataInDetail(boolean taxDataInDetail) {
+		this.taxDataInDetail = taxDataInDetail;
+	}
+
+	@Transient
+	public double getVatPercent() {
+		return vatPercent;
+	}
+
+	public void setVatPercent(double vatPercent) {
+		this.vatPercent = vatPercent;
+	}
+
+	@Transient
+	public double getVatQuota() {
+		return vatQuota;
+	}
+
+	public void setVatQuota(double vatQuota) {
+		this.vatQuota = vatQuota;
+	}
+
+	@Transient
+	public double getRetentionPercent() {
+		return retentionPercent;
+	}
+
+	public void setRetentionPercent(double retentionPercent) {
+		this.retentionPercent = retentionPercent;
+	}
+
+	@Transient
+	public double getRetentionQuota() {
+		return retentionQuota;
+	}
+
+	public void setRetentionQuota(double retentionQuota) {
+		this.retentionQuota = retentionQuota;
 	}
 
 	@Override
