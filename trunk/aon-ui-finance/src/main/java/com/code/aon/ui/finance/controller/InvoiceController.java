@@ -69,38 +69,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private FinanceEmailUtil emailController;
 	private String backAction;
 
-	public String getBackAction() {
-		return backAction;
-	}
-	public void setBackAction(String backAction) {
-		this.backAction = backAction;
-	}
-	
-	public String backAction() {
-		return backAction;
-	}
-	
-	public void onSelectTo(ActionEvent event) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		String alias = getIdAlias();
-		criteria.addEqualExpression(this.getManagerBean().getFieldName(alias),getManagerBean().getId( getTo() ));
-		this.setCriteria(criteria);
-		this.onSearch(event);
-		this.onSelectFirst(event);
-	}
-	
-	private String getIdAlias() {
-		String factoryName = HibernateUtil.getSessionFactoryName();
-		SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
-		ClassMetadata cm = factory.getClassMetadata(getPojo());
-		String id = getPojoShortName() + "_" + cm.getIdentifierPropertyName();
-		return id;
-	}
-	
-	public InvoiceController() {
-		this.emailController = new FinanceEmailUtil();
-	}
-
 	public String getInvoiceAddressControllerName() {
 		return invoiceAddressControllerName;
 	}
@@ -330,11 +298,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public boolean isRecorded() {
-		return InvoiceStatus.SCORED == getInvoice().getStatus();
+		return getInvoice().isRecorded();
 	}
 
 	public boolean isReadOnly() {
-		return (isRecorded() || getInvoice().isSigned());
+		return (getInvoice().isRecorded() || getInvoice().isSigned());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -455,4 +423,36 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		messageController.setSecurityInfo( securyInfo );
 	}
 	
+	public String getBackAction() {
+		return backAction;
+	}
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
+	
+	public String backAction() {
+		return backAction;
+	}
+	
+	public void onSelectTo(ActionEvent event) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		String alias = getIdAlias();
+		criteria.addEqualExpression(this.getManagerBean().getFieldName(alias),getManagerBean().getId( getTo() ));
+		this.setCriteria(criteria);
+		this.onSearch(event);
+		this.onSelectFirst(event);
+	}
+	
+	private String getIdAlias() {
+		String factoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
+		ClassMetadata cm = factory.getClassMetadata(getPojo());
+		String id = getPojoShortName() + "_" + cm.getIdentifierPropertyName();
+		return id;
+	}
+	
+	public InvoiceController() {
+		this.emailController = new FinanceEmailUtil();
+	}
+
 }
