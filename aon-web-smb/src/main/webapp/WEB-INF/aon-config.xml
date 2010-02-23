@@ -66,7 +66,7 @@
 		/>
 		<product:product
 			showBarcode="false"
-			showType="false"
+			showType="true"
 			showBrand="true"
 			showStock="false"
 			showSuppliers="false"
