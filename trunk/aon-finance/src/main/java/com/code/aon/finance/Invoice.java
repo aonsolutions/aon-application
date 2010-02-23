@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
@@ -672,6 +673,16 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	@Transient
 	public boolean isRecorded() {
 		return getStatus() == InvoiceStatus.SCORED;
+	}
+
+	@Transient
+	public String getDocumentNumber() {
+		String documentNumber = (InvoiceType.SALES == getType()) ? "E" : "R";
+		if (!StringUtils.isEmpty(getSeries())) {
+			documentNumber += "-" + getSeries();
+		}
+		documentNumber += "-" + StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		return documentNumber;
 	}
 
 	@Transient
