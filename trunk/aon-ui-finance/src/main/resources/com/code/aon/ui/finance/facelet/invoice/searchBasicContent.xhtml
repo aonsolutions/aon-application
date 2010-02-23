@@ -37,8 +37,8 @@
 
 	<aon:outputLabel for="Supplier_id"
 		value="#{supplierBundle.supplier_supplier}"
-		rendered="#{!searchController.sales}" />
-	<aon:div styleClass="aon-lookup" rendered="#{!searchController.sales}">
+		rendered="#{searchController.purchase}" />
+	<aon:div styleClass="aon-lookup" rendered="#{searchController.purchase}">
 		<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
 			reRender="Supplier_full_name" lookupProperty="registry"
 			value="#{searchController.registry.id}" size="5" />
@@ -48,6 +48,23 @@
 			property="#{searchController.registry}" lookupProperty="registry">
 		</aon:lookupButton>
 		<aon:inputText id="Supplier_full_name"
+			value="#{(searchController.registry.name!=null)?(searchController.registry.fullName):('')}"
+			size="50" disabled="true" />
+	</aon:div>
+
+	<aon:outputLabel for="Creditor_id"
+		value="#{financeBundle.finance_creditor}"
+		rendered="#{searchController.expenses}" />
+	<aon:div styleClass="aon-lookup" rendered="#{searchController.expenses}">
+		<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
+			reRender="Creditor_full_name" lookupProperty="registry"
+			value="#{searchController.registry.id}" size="5" />
+		<aon:lookupButton windowTitle="#{financeBundle.finance_creditor_selection}"
+			selectReRender="Creditor_id,Creditor_full_name" actionType="search"
+			lookup="#{creditorLookup}" minHeight="460" minWidth="650"
+			property="#{searchController.registry}" lookupProperty="registry">
+		</aon:lookupButton>
+		<aon:inputText id="Creditor_full_name"
 			value="#{(searchController.registry.name!=null)?(searchController.registry.fullName):('')}"
 			size="50" disabled="true" />
 	</aon:div>
@@ -68,6 +85,23 @@
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:div>
+
+	<c:if test="#{!searchController.sales}">
+		<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+		<aon:div>
+			<aon:outputLabel for="Invoice_series"
+				styleClass="aon-form-date-label aon-margin-right" value="R-" />
+			<aon:inputText id="Invoice_series"
+				onblur="toUpperCase(this);"
+				valueChangeListener="#{controller.addExpression}"
+				size="5" maxlength="5" />
+			<aon:outputLabel for="Invoice_number"
+				styleClass="aon-form-date-label aon-margin-right" value="-" />
+			<aon:inputText id="Invoice_number"
+				valueChangeListener="#{controller.addExpression}"
+				size="6" />
+		</aon:div>
+	</c:if>
 
 	<aon:outputLabel for="Invoice_securityLevel"
 		value="#{bundle.aon_security_level}" />
