@@ -18,6 +18,7 @@
 						value="#{financeBundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="true" />
+					<ui:param name="skipSaveButton" value="#{saleInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
@@ -84,21 +85,18 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-200">
 
-					<aon:outputLabel for="Invoice_series-New"
+					<aon:outputLabel for="Invoice_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
-						<aon:selectOneMenu id="Invoice_series-New"
+						<aon:selectOneMenu id="Invoice_series"
 							value="#{saleInvoice.to.series}" rendered="#{saleInvoice.new}"
 							valueChangeListener="#{saleInvoice.onSeriesChanged}"
 							reRender="Invoice_number,Invoice_securityLevel">
 							<f:selectItem itemLabel=" " value="#{null}" />
 							<f:selectItems value="#{configCollections.seriesIds}" />
 						</aon:selectOneMenu>
-						<aon:inputText id="Invoice_series-Edit" 
-							value="#{saleInvoice.to.series}" rendered="#{!saleInvoice.new}"
-							disabled="true" size="4" />
 						<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
-							value="#{saleInvoice.to.number}" disabled="#{!saleInvoice.new}"
+							value="#{saleInvoice.to.number}" rendered="#{saleInvoice.new}"
 							required="true" size="7" />
 						<aon:commandButton value="&#160;"
 							title="#{financeBundle.finance_invoice_find_next_number}"
@@ -107,6 +105,9 @@
 							actionListener="#{saleInvoice.onFindNextFreeNumber}"
 							reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
 						</aon:commandButton>															
+						<aon:outputText styleClass="aon-bold"
+							value="#{saleInvoice.to.referenceCode}"
+							rendered="#{!saleInvoice.new}" />
 
 						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left aon-margin-right"
 							value="#{saleInvoice.to.securityLevel}" disabled="#{saleInvoice.readOnly}">
@@ -223,13 +224,20 @@
 
 				<aon:panelGrid columns="2" style="width: 100%;"
 					styleClass="aon-margin-top"
-					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="Invoice_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="Invoice_comments" cols="150" rows="2"
 						disabled="#{saleInvoice.readOnly}"
 						value="#{saleInvoice.to.comments}" />
+
+					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}"
+						rendered="#{!saleInvoice.new}" />
+					<aon:outputText styleClass="aon-bold"
+						value="#{saleInvoice.to.documentNumber}"
+						rendered="#{!saleInvoice.new}" />
 
 				</aon:panelGrid>
 
