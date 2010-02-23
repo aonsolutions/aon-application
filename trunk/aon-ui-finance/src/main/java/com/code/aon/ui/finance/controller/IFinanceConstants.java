@@ -6,6 +6,8 @@ public interface IFinanceConstants {
 	
 	String INVOICE_PRINTER_CONTROLLER = "invoicePrint";
 
+	String INVOICE_SIGNER_CONTROLLER_NAME = "invoiceSigner";
+	
 	String FINANCE_CONTROLLER_NAME = "finance";
 	
 	String FINANCE_PRINTER_CONTROLLER = "financePrint";
@@ -24,6 +26,8 @@ public interface IFinanceConstants {
 	
 	String SALE_INVOICE_FINANCE_CONTROLLER_NAME = "saleInvoiceFinance";
 	
+	String SALE_INVOICE_SIGNER_CONTROLLER_NAME = "saleInvoiceSigner";
+
 	String PURCHASE_INVOICE_CONTROLLER_NAME = "purchaseInvoice";
 	
 	String PURCHASE_INVOICE_ADDRESS_CONTROLLER_NAME = "purchaseInvoiceAddress";
@@ -34,8 +38,14 @@ public interface IFinanceConstants {
 	
 	String PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME = "purchaseInvoiceSigner";
 	
-	String INVOICE_SIGNER_CONTROLLER_NAME = "invoiceSigner";
+	String EXPENSE_INVOICE_CONTROLLER_NAME = "expenseInvoice";
 	
-	String SALE_INVOICE_SIGNER_CONTROLLER_NAME = "saleInvoiceSigner";
+	String EXPENSE_INVOICE_ADDRESS_CONTROLLER_NAME = "expenseInvoiceAddress";
 	
+	String EXPENSE_INVOICE_DETAIL_CONTROLLER_NAME = "expenseInvoiceDetail";
+	
+	String EXPENSE_INVOICE_FINANCE_CONTROLLER_NAME = "expenseInvoiceFinance";
+	
+	String EXPENSE_INVOICE_SIGNER_CONTROLLER_NAME = "expenseInvoiceSigner";
+
 }
