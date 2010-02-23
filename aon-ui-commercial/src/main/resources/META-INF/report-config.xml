@@ -17,6 +17,7 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
 
