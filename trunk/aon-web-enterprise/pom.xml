@@ -58,6 +58,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.audit</artifactId>
+			<version>1.3.0</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
 			<version>4.3.3</version>
 			<scope>runtime</scope>
