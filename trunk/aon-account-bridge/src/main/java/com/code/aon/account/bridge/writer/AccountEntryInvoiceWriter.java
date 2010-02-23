@@ -110,19 +110,21 @@ public class AccountEntryInvoiceWriter {
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
 		AccountEntryType accountEntryType = null;
+		Account account = null;
 		if (invoice.getType() == InvoiceType.SALES) {
 			accountEntryType = AccountEntryType.SALES_INVOICE;
+			account = getAccountBridgeUtil().obtainCustomerAccount(invoice.getRegistry());
 		} else if (invoice.getType() == InvoiceType.PURCHASE) {
 			accountEntryType = AccountEntryType.PURCHASE_INVOICE;
+			account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
 		} else {
-			throw new ManagerBeanException("Unsupported invoice Type '" + invoice.getType() + "'");
+			accountEntryType = AccountEntryType.EXPENSE_INVOICE;
+			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
 		}
 		entry.setType(accountEntryType);
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = insertOrUpdateAccountEntry(entry);
-		Account account = (invoice.getType().equals(InvoiceType.SALES) ? 
-				getAccountBridgeUtil().obtainCustomerAccount(invoice.getRegistry()) : 
-				getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry()));
+
 		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
 		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
 		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
