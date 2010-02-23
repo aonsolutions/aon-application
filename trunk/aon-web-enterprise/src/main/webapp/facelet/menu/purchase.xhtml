@@ -59,6 +59,12 @@
 										actionListener="#{purchaseInvoice.onEditSearch}"
 										value="#{financeBundle.finance_purchase_invoice_management_module}" />
 								</aon:div>
+ 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="expenseInvoiceManagement"
+										action="expenseInvoice_search"
+										actionListener="#{expenseInvoice.onEditSearch}"
+										value="#{financeBundle.finance_expense_invoice_management_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panel>
 					</aon:panelGroup>
