@@ -43,6 +43,8 @@ public class FaceletUtil {
 	
 	public final static Class[] LOOKUP_CHANGE_LISTENER_SIG = new Class[] { LookupChangeEvent.class };
 	
+	public final static Class[] COMPONENT_GROUP_SIG = new Class[] { UIComponent.class, UIComponent.class };
+	
 	public final static Class[] VALIDATOR_SIG = new Class[] { FacesContext.class, UIComponent.class, Object.class };
 	
     public final static FaceletHandler LEAF_HANDLER = new FaceletHandler() {
