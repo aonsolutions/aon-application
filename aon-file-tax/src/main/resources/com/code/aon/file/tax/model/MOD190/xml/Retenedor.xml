@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Retenedor">
+
+ <field name="type" value="1" format="Numeric" pattern="9(1)" />
+ <field name="modelo" value="190" format="Numeric" pattern="9(3)" />
+ <field name="ejercicio" value="bean" bean="WITHHOLDER" property="year" format="Numeric" pattern="9(4)" />
+ <field name="nif" value="bean" bean="WITHHOLDER" property="code" format="Nif" pattern="X(9)" />
+ <field name="nombre" value="bean" bean="WITHHOLDER" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="tipo_soporte" value="D" format="Alphabetic" pattern="X(1)" />
+ <field name="telfcont" value="bean" bean="WITHHOLDER" property="relPhone" format="Numeric" pattern="9(9)" />
+ <field name="perscont" value="bean" bean="WITHHOLDER" property="relName" format="AlphaNumeric" pattern="X(40)" />
+ <field name="justificante" value="bean" bean="WITHHOLDER" property="justify" format="Numeric" pattern="9(13)" />
+ <field name="complementaria" value="bean" bean="WITHHOLDER" property="complementary" format="Alphabetic" pattern="X(1)" />
+ <field name="sustitutiva" value="bean" bean="WITHHOLDER" property="replaces" format="Alphabetic" pattern="X(1)" />
+ <field name="justificante_sustitutiva" value="bean" bean="WITHHOLDER" property="replacedJustify" format="Numeric" pattern="9(13)" />
+ <field name="c001" value="bean" bean="WITHHOLDER" property="c001" format="Numeric" pattern="9(9)" />
+ <field name="c002" value="bean" bean="WITHHOLDER" property="c002" format="Numeric" pattern="S9(13)V99" />
+ <field name="c003" value="bean" bean="WITHHOLDER" property="c003" format="Numeric" pattern="9(13)V99" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(62)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(13)" />
+ 
+</register>
