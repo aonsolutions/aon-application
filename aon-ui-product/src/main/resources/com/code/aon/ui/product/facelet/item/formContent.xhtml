@@ -60,7 +60,7 @@
 		<aon:div>
 			<c:if test="#{aonConfiguration.bean.product.showType}">
 				<aon:selectOneMenu id="Item_product_type" value="#{controller.to.product.type}">
-					<f:selectItems value="#{productCollections.productTypes}" />
+					<f:selectItems value="#{productCollections.noExpenseProductTypes}" />
 				</aon:selectOneMenu>
 	 		</c:if>
 			<aon:outputText value="&#160;" />
