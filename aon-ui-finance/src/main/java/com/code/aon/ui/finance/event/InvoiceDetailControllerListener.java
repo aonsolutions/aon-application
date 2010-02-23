@@ -3,15 +3,19 @@ package com.code.aon.ui.finance.event;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceDetailControllerListener extends ControllerAdapter {
 
@@ -23,9 +27,24 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		controller.setLongDescription(false);
 		try {
 			invoiceDetail.setLine(calculateNextLine((Invoice)controller.getMasterController().getTo()));
+
+			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
+			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);
+			if (compCollections.getWorkPlacesCount() == 1) {
+				WorkPlace workPlace = (WorkPlace)compCollections.getWorkPlaces().get(0).getValue();
+				invoiceDetail.setWorkPlace(workPlace);
+			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+
+		controller.setLongDescription((invoiceDetail.getDescription().length() > 64) ? true : false);
 	}
 
 	@Override
@@ -46,11 +65,8 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	}
 
 	@Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-
-		controller.setLongDescription((invoiceDetail.getDescription().length() > 64) ? true : false);
+	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
+		event.getController().initializeModel();
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
