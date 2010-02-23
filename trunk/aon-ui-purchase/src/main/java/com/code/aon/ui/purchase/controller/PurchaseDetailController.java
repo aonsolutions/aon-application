@@ -86,7 +86,10 @@ public class PurchaseDetailController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			purchaseDetail.setItem(item);
-			purchaseDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+			purchaseDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			if (purchaseDetail.getQuantity() == 0) {
+				purchaseDetail.setQuantity(1);
+			}
 
 			price = item.getPurchasePrice();
 		}

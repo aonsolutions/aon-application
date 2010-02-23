@@ -98,7 +98,10 @@ public class SalesDetailController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			salesDetail.setItem(item);
-			salesDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+			salesDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			if (salesDetail.getQuantity() == 0) {
+				salesDetail.setQuantity(1);
+			}
 
 			Date date = salesDetail.getSales().getIssueDate();
 			SalesController master = (SalesController)getMasterController();
