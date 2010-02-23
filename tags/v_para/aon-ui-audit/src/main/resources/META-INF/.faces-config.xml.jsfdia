@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="actionFavorite::#com#code#aon#ui#audit#facelet#action#favorite.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/audit/facelet/action/favorite.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#action#favorite.xhtml"
+    TITLE="actionFavorite" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="actionDenied::#com#code#aon#ui#audit#facelet#action#denied.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/audit/facelet/action/denied.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#action#denied.xhtml"
+    TITLE="actionDenied" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::1" SHAPE="32,417,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="auditSession_list::#com#code#aon#ui#audit#facelet#auditSession#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/audit/facelet/auditSession/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#auditSession#list.xhtml"
+    TITLE="auditSession_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="auditSession_form::#com#code#aon#ui#audit#facelet#auditSession#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/audit/facelet/auditSession/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#auditSession#form.xhtml"
+    TITLE="auditSession_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="auditSession_search::#com#code#aon#ui#audit#facelet#auditSession#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/audit/facelet/auditSession/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#auditSession#search.xhtml"
+    TITLE="auditSession_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#auditApplication#list.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/auditApplication/list.xhtml"
+  SHAPE="272,833,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#auditSession#list.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/auditSession/list.xhtml"
+  SHAPE="272,433,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#auditApplication#form.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/auditApplication/form.xhtml"
+  SHAPE="272,1009,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#auditApplication#search.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/auditApplication/search.xhtml"
+  SHAPE="272,1121,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#auditSession#form.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/auditSession/form.xhtml"
+  SHAPE="272,609,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#auditSession#search.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/auditSession/search.xhtml"
+  SHAPE="272,721,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,865,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="auditApplication_list::#com#code#aon#ui#audit#facelet#auditApplication#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/audit/facelet/auditApplication/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#auditApplication#list.xhtml"
+    TITLE="auditApplication_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="auditApplication_form::#com#code#aon#ui#audit#facelet#auditApplication#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/audit/facelet/auditApplication/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#auditApplication#form.xhtml"
+    TITLE="auditApplication_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="auditApplication_search::#com#code#aon#ui#audit#facelet#auditApplication#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/audit/facelet/auditApplication/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#audit#facelet#auditApplication#search.xhtml"
+    TITLE="auditApplication_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#action#favorite.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/action/favorite.xhtml"
+  SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#audit#facelet#action#denied.xhtml"
+  PATH="/com/code/aon/ui/audit/facelet/action/denied.xhtml"
+  SHAPE="256,177,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>
