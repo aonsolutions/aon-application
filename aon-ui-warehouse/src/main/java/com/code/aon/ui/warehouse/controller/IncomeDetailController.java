@@ -73,7 +73,10 @@ public class IncomeDetailController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			incomeDetail.setItem(item);
-			incomeDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+			incomeDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			if (incomeDetail.getQuantity() == 0) {
+				incomeDetail.setQuantity(1);
+			}
 
 			price = item.getPurchasePrice();
 		}
