@@ -15,7 +15,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class PurchaInvoiceAttachmentListener extends ControllerAdapter implements IAttachmentController {
+public class PurchaseInvoiceAttachmentListener extends ControllerAdapter implements IAttachmentController {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
@@ -27,7 +27,7 @@ public class PurchaInvoiceAttachmentListener extends ControllerAdapter implement
 	/**
 	 * Instantiates a new attachment controller.
 	 */
-	public PurchaInvoiceAttachmentListener() {
+	public PurchaseInvoiceAttachmentListener() {
 		this.maximumSize = -1;
 	}
 
