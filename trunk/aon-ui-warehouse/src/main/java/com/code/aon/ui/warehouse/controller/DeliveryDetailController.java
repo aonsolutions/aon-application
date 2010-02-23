@@ -31,6 +31,7 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
 public class DeliveryDetailController extends LinesController {
 
 	private IPriceStrategy priceStrategy;
+	private boolean stockWarning;
 	private boolean longDescription;
 	
 	public IPriceStrategy getPriceStrategy(){
@@ -38,6 +39,14 @@ public class DeliveryDetailController extends LinesController {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public boolean isStockWarning() {
+		return stockWarning;
+	}
+
+	public void setStockWarning(boolean stockWarning) {
+		this.stockWarning = stockWarning;
 	}
 
 	public boolean isLongDescription() {
@@ -78,7 +87,10 @@ public class DeliveryDetailController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			deliveryDetail.setItem(item);
-			deliveryDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+			deliveryDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			if (deliveryDetail.getQuantity() == 0) {
+				deliveryDetail.setQuantity(1);
+			}
 
 			Date date = deliveryDetail.getDelivery().getIssueTime();
 			DeliveryController master = (DeliveryController)getMasterController();
@@ -142,9 +154,12 @@ public class DeliveryDetailController extends LinesController {
 		return new Double(rowStock);
 	}
 
-	public boolean isStockWarning() throws ManagerBeanException {
+	public void checkStockWarning(ActionEvent event) throws ManagerBeanException {
 		DeliveryDetail to = (DeliveryDetail)getTo();
-		return (to.getItem().getProduct().isInventoriable() && (getStock() < to.getQuantity()));
+		stockWarning = to.getItem().getProduct().isInventoriable() && (getStock() < to.getQuantity());
+		if (!stockWarning) {
+			onAccept(event);
+		}
 	}
 
 	public double getAmount() {
