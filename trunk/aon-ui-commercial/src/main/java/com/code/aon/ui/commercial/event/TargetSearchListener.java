@@ -1,11 +1,7 @@
 package com.code.aon.ui.commercial.event;
 
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
-
-import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
@@ -18,9 +14,7 @@ import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
@@ -40,14 +34,6 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	
 	private String userName;
 		
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	public TargetStatus[] getTargetStatuses() {
 		return targetStatuses;
 	}
@@ -80,6 +66,14 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		this.trackingStatuses = trackingStatuses;
 	}
 	
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		TargetStatus[] defaultTargetStatus = {TargetStatus.ACTIVE};
@@ -113,31 +107,21 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
 		if (getUserName()!= null){					
-			criteria.addEqualExpression("id",getTargetId());
+			criteria.addEqualExpression("id", getTargetId());
 		}
 		super.completeCriteria();
 	}
 	
-	private List<Target> targetList;
-	
-	public List<Target> getTargetList() {
-		return targetList;
-	}
-
-	public void setTargetList(List<Target> targetList) {
-		this.targetList = targetList;
-	}
-	
+	@SuppressWarnings("unchecked")
 	private Integer getTargetId() throws ManagerBeanException {
-
 		String select = "select ec.target "
 			+ "from Ectarget as ec "
-			+ "where ec.login='"+getUserName()+ "')))";	
+			+ "where ec.login='" + getUserName() + "')))";	
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		targetList = query.list();
-		if(targetList.size()>0){
-		return targetList.get(0).getId();}
-		else return -1;
+		List<Target> targetList = query.list();
+		if (targetList.size() > 0)
+			return targetList.get(0).getId();
+		return -1;
 	}
 }
