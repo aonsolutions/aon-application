@@ -113,14 +113,16 @@
 								disabled="#{!purchase.pending}" size="5"
 								lookupProperty="registry" lookup="#{supplierLookup}" 
 								lookupChangeListener="#{purchase.supplierData}" 
-								reRender="Supplier_full_name,Supplier_registry_document,PurchaseAddress,Purchase_scope,Purchase_defaultPayMethod,payMethodDiv"
+								reRender="Supplier_full_name,Supplier_registry_document,PurchaseAddress,
+									Purchase_scope,Purchase_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true"  />
 							<aon:lookupButton
 								windowTitle="#{supplierBundle.supplier_selection}"
 								disabled="#{!purchase.pending}" minHeight="460" minWidth="650" 
 								property="#{purchase.to.supplier.registry}" lookupProperty="registry" lookup="#{supplierLookup}" 
 								lookupChangeListener="#{purchase.supplierData}"
-								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,PurchaseAddress,Purchase_scope,Purchase_defaultPayMethod,payMethodDiv"								
+								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,PurchaseAddress,
+									Purchase_scope,Purchase_defaultPayMethod,payMethodDiv"								
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -128,7 +130,8 @@
 								disabled="#{!purchase.pending}" minWidth="650" minHeight="600"
 								property="#{purchase.to.supplier.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 								lookupChangeListener="#{purchase.supplierData}"
-								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,PurchaseAddress,Purchase_scope,Purchase_defaultPayMethod,payMethodDiv"
+								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,PurchaseAddress,
+									Purchase_scope,Purchase_defaultPayMethod,payMethodDiv"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Supplier_full_name" 
@@ -330,7 +333,8 @@
 												value="#{purchaseDetail.to.item.product.code}"
 												lookup="#{itemLookup}" 
 												lookupChangeListener="#{purchaseDetail.onItemChanged}"
-												reRender="purchaseDetailItemEdit,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount"  
+												reRender="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,
+													PurchaseDetail_amount"  
 												ajaxSingle="false" required="true" size="10" 
 												onblur="toUpperCase(this);" focus="PurchaseDetail_item_product_name">
 												<aon:joinProperty alias="Item_product_code" value="#{purchaseDetail.to.item.product.code}" />
@@ -340,7 +344,8 @@
 												minHeight="460" minWidth="650"
 												property="#{purchaseDetail.to.item}" lookup="#{itemLookup}" 
 												lookupChangeListener="#{purchaseDetail.onItemChanged}"
-												selectReRender="purchaseDetailItemEdit,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount"
+												selectReRender="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,
+													PurchaseDetail_amount"
 												actionType="search">
 											</aon:lookupButton>
 											<aon:lookupButton
@@ -348,7 +353,8 @@
 												minHeight="360" minWidth="780"
 												property="#{purchaseDetail.to.item}" lookup="#{itemLookup}"
 												lookupChangeListener="#{purchaseDetail.onItemChanged}" 
-												selectReRender="purchaseDetailItemEdit,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount"
+												selectReRender="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,
+													PurchaseDetail_amount"
 												actionType="new">
 											</aon:lookupButton>
 										</a4j:region>
@@ -372,7 +378,8 @@
 													value="#{purchaseDetail.to.item.product.code}"
 													lookup="#{itemLookup}" 
 													lookupChangeListener="#{purchaseDetail.onItemChanged}" 
-													reRender="purchaseDetailItemNew,PurchaseDetail_price-New,PurchaseDetail_discount-New,PurchaseDetail_amount-New"  
+													reRender="purchaseDetailItemNew,PurchaseDetail_quantity-New,PurchaseDetail_price-New,
+														PurchaseDetail_amount-New"  
 													ajaxSingle="false" required="true" size="10" 
 													onblur="toUpperCase(this);" focus="PurchaseDetail_item_product_name-New">
 													<aon:joinProperty alias="Item_product_code"	value="#{purchaseDetail.to.item.product.code}" />
@@ -382,7 +389,8 @@
 													minHeight="460" minWidth="650" 
 													property="#{purchaseDetail.to.item}" lookup="#{itemLookup}" 
 													lookupChangeListener="#{purchaseDetail.onItemChanged}"
-													selectReRender="purchaseDetailItemNew,PurchaseDetail_price-New,PurchaseDetail_discount-New,PurchaseDetail_amount-New"
+													selectReRender="purchaseDetailItemNew,PurchaseDetail_quantity-New,PurchaseDetail_price-New,
+														PurchaseDetail_amount-New"
 													actionType="search">
 												</aon:lookupButton>
 												<aon:lookupButton
@@ -390,7 +398,8 @@
 													minHeight="360" minWidth="780"
 													property="#{purchaseDetail.to.item}" lookup="#{itemLookup}"
 													lookupChangeListener="#{purchaseDetail.onItemChanged}" 
-													selectReRender="purchaseDetailItemNew,PurchaseDetail_price-New,PurchaseDetail_discount-New,PurchaseDetail_amount-New"
+													selectReRender="purchaseDetailItemNew,PurchaseDetail_quantity-New,PurchaseDetail_price-New,
+														PurchaseDetail_amount-New"
 													actionType="new">
 												</aon:lookupButton>
 											</a4j:region>
