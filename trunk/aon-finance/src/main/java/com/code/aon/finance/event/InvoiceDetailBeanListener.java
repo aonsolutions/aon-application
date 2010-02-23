@@ -13,6 +13,7 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -154,23 +155,33 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	 * @return the invoice tax
 	 */
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) throws ManagerBeanException {
-		Date date = invoiceDetail.getInvoice().getIssueDate();
-		if (date.before(tax.getStartDate())) {
-			tax = obtainTax(tax.getId(),date);
-		}
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
 		invoiceTax.setTaxType(tax.getType());
-		double surcharge = 0.0;
 		double percentage = 0.0;
-		if (!invoiceDetail.getInvoice().isTaxFree()) {
-			percentage = tax.getPercentage();
-			if (invoiceDetail.getInvoice().isSurcharge()) {
-				surcharge = tax.getSurcharge();
+		double surcharge = 0.0;
+		double quota = 0.0;
+
+		if (invoiceDetail.isTaxDataInDetail()) {
+			percentage = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
+			quota = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
+		} else {
+			Date date = invoiceDetail.getInvoice().getIssueDate();
+			if (date.before(tax.getStartDate())) {
+				tax = obtainTax(tax.getId(),date);
+			}
+
+			if (!invoiceDetail.getInvoice().isTaxFree()) {
+				percentage = tax.getPercentage();
+				if (invoiceDetail.getInvoice().isSurcharge()) {
+					surcharge = tax.getSurcharge();
+				}
 			}
 		}
 		invoiceTax.setPercentage(percentage);
 		invoiceTax.setSurcharge(surcharge);
+		invoiceTax.setQuota(quota);
+
 		return invoiceTax;
 	}
 
