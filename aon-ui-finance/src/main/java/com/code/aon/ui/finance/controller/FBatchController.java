@@ -41,10 +41,10 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
-import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
@@ -58,9 +58,9 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.csb.CSB19Writer;
-import com.code.aon.ui.finance.csb.CSB32Writer;
-import com.code.aon.ui.finance.csb.CSB58Writer;
+import com.code.aon.ui.finance.file.CSB19Writer;
+import com.code.aon.ui.finance.file.CSB32Writer;
+import com.code.aon.ui.finance.file.CSB58Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -75,7 +75,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchController.class.getName());
 
 	private Company company;
-	private CSBOutput csbOutput;
+	private FileOutput csbOutput;
 	private Date recordDate;
 	private boolean showFbatchRecordWindow;
 	private AccountingUtil accountingUtil;
@@ -93,11 +93,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.company = company;
 	}
 
-	public CSBOutput getCsbOutput() {
+	public FileOutput getCsbOutput() {
 		return csbOutput;
 	}
 
-	public void setCsbOutput(CSBOutput csbOutput) {
+	public void setCsbOutput(FileOutput csbOutput) {
 		this.csbOutput = csbOutput;
 	}
 

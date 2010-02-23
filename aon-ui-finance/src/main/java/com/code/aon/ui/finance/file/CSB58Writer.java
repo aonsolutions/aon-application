@@ -1,4 +1,4 @@
-package com.code.aon.ui.finance.csb;
+package com.code.aon.ui.finance.file;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,18 +11,18 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.csb.fd0.core.Account;
-import com.code.aon.csb.fd0.model.FileFiller;
-import com.code.aon.csb.fd0.model.CSB58.CSB58;
-import com.code.aon.csb.fd0.model.CSB58.data.Individual;
-import com.code.aon.csb.fd0.model.CSB58.data.Lot;
-import com.code.aon.csb.fd0.model.CSB58.data.Orderer;
-import com.code.aon.csb.fd0.model.CSB58.data.Presenter;
+import com.code.aon.file.format.core.Account;
+import com.code.aon.file.format.model.FileFiller;
+import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.file.bank.model.CSB58.CSB58;
+import com.code.aon.file.bank.model.CSB58.data.Individual;
+import com.code.aon.file.bank.model.CSB58.data.Lot;
+import com.code.aon.file.bank.model.CSB58.data.Orderer;
+import com.code.aon.file.bank.model.CSB58.data.Presenter;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
-import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -36,13 +36,13 @@ import com.code.aon.ui.form.FormUtil;
 public class CSB58Writer implements IFinanceConstants {
 
 	@SuppressWarnings("unchecked")
-	public CSBOutput createCSB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+	public FileOutput createCSB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createCSB58(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public CSBOutput createCSB58(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public FileOutput createCSB58(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
 		RegistryBank companyRBank = fbatch.getRegistryBank();
 		Presenter presenter = new Presenter();
@@ -74,7 +74,7 @@ public class CSB58Writer implements IFinanceConstants {
 		try {
 			File file = File.createTempFile("CSB58_", ".txt");
 			FileFiller csb58 = new CSB58(lot, file.getAbsolutePath());
-			CSBOutput output = new CSBOutput();
+			FileOutput output = new FileOutput();
 			output.setFile(file);
 			output.setErrors(csb58.create());
 			return output;

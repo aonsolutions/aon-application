@@ -15,6 +15,9 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.Model347ReportOrder;
+import com.code.aon.finance.enumeration.Model347Type;
+import com.code.aon.finance.enumeration.VatPeriod;
 import com.code.aon.finance.enumeration.VatReportOrder;
 import com.code.aon.finance.enumeration.VatType;
 
@@ -36,6 +39,9 @@ public class FinanceCollectionsController {
 	private List<SelectItem> vatOrders;
 	private List<SelectItem> invoiceTypes;
 	private List<SelectItem> invoiceStatuses;
+	private List<SelectItem> vatPeriods;
+	private List<SelectItem> model347Orders;
+	private List<SelectItem> model347Types;
 
 	public List<SelectItem> getBillingPeriods() {
 		if (billingPeriods == null) {
@@ -167,4 +173,43 @@ public class FinanceCollectionsController {
 		return invoiceStatuses;
 	}
 
+	public List<SelectItem> getVatPeriods() {
+		if (vatPeriods == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			vatPeriods = new LinkedList<SelectItem>();
+			for (VatPeriod period:VatPeriod.values()) {
+				String name = period.getName(locale);
+				SelectItem item = new SelectItem(period, name);
+				vatPeriods.add(item);
+			}
+		}
+		return vatPeriods;
+	}
+
+	public List<SelectItem> getModel347ReportOrders() {
+		if (model347Orders == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			model347Orders = new LinkedList<SelectItem>();
+			for (Model347ReportOrder order:Model347ReportOrder.values()) {
+				String name = order.getName(locale);
+				SelectItem item = new SelectItem(order, name);
+				model347Orders.add(item);
+			}
+		}
+		return model347Orders;
+	}
+	
+	public List<SelectItem> getModel347Types() {
+		if (model347Types == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			model347Types = new LinkedList<SelectItem>();
+			for (Model347Type type:Model347Type.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				model347Types.add(item);
+			}
+		}
+		return model347Types;
+	}
+	
 }

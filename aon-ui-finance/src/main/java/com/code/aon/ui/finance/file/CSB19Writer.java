@@ -1,4 +1,4 @@
-package com.code.aon.ui.finance.csb;
+package com.code.aon.ui.finance.file;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,20 +16,20 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.csb.fd0.core.Account;
-import com.code.aon.csb.fd0.model.FileFiller;
-import com.code.aon.csb.fd0.model.CSB19.CSB19;
-import com.code.aon.csb.fd0.model.CSB19.data.Individual;
-import com.code.aon.csb.fd0.model.CSB19.data.Lot;
-import com.code.aon.csb.fd0.model.CSB19.data.Orderer;
-import com.code.aon.csb.fd0.model.CSB19.data.Presenter;
+import com.code.aon.file.bank.model.CSB19.CSB19;
+import com.code.aon.file.bank.model.CSB19.data.Individual;
+import com.code.aon.file.bank.model.CSB19.data.Lot;
+import com.code.aon.file.bank.model.CSB19.data.Orderer;
+import com.code.aon.file.bank.model.CSB19.data.Presenter;
+import com.code.aon.file.format.core.Account;
+import com.code.aon.file.format.model.FileFiller;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -46,13 +46,13 @@ import com.code.aon.ui.form.FormUtil;
 public class CSB19Writer implements IFinanceConstants {
 	
 	@SuppressWarnings("unchecked")
-	public CSBOutput createCSB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+	public FileOutput createCSB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createCSB19(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public CSBOutput createCSB19(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public FileOutput createCSB19(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
 		if(fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
 			lot.setType(Lot.RESUMED);
@@ -92,7 +92,7 @@ public class CSB19Writer implements IFinanceConstants {
 		try {
 			File file = File.createTempFile("CSB19_", ".txt");
 			FileFiller csb19 = new CSB19(lot, file.getAbsolutePath());
-			CSBOutput output = new CSBOutput();
+			FileOutput output = new FileOutput();
 			output.setFile(file);
 			output.setErrors(csb19.create());
 			return output;
