@@ -18,6 +18,7 @@
 						value="#{financeBundle.finance_purchase_invoice_management_module}" />
 					<ui:param name="controller" value="#{purchaseInvoice}" />
 					<ui:param name="skipFocusFirst" value="true" />
+					<ui:param name="skipSaveButton" value="#{purchaseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
@@ -89,12 +90,20 @@
 					<aon:div>
 						<aon:inputText id="Invoice_referenceCode" 
 							value="#{purchaseInvoice.to.referenceCode}"
-							size="15" />
+							rendered="#{!purchaseInvoice.readOnly}" size="15" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{purchaseInvoice.to.referenceCode}"
+							rendered="#{purchaseInvoice.readOnly}" />
 
-						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left aon-margin-right"
+						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left"
 							value="#{purchaseInvoice.to.securityLevel}" disabled="#{purchaseInvoice.readOnly}">
 							<f:selectItems value="#{commonCollections.securityLevels}" />
 						</aon:selectOneMenu>
+
+						<aon:selectBooleanCheckbox id="Invoice_investment" styleClass="aon-margin-left"
+							value="#{purchaseInvoice.to.investment}" disabled="#{purchaseInvoice.readOnly}" />
+						<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+							value="#{financeBundle.finance_invoice_investment}" />
 
 						<c:if test="#{company.EInvoice}">
 							<aon:outputText value="&#160;"
@@ -206,7 +215,28 @@
 
 				<aon:panelGrid columns="2" style="width: 100%;"
 					styleClass="aon-margin-top"
-					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel for="Invoice_comments"
+						value="#{bundle.aon_comment}" />
+					<aon:inputTextarea id="Invoice_comments" cols="150" rows="2"
+						disabled="#{purchaseInvoice.readOnly}"
+						value="#{purchaseInvoice.to.comments}" />
+
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto,
+						aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-200">
+
+					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}"
+						rendered="#{!purchaseInvoice.new}" />
+					<aon:outputText styleClass="aon-bold"
+						value="#{purchaseInvoice.to.documentNumber}"
+						rendered="#{!purchaseInvoice.new}" />
 
 					<aon:outputLabel for="Invoice_file" rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}"
 						value="#{financeBundle.finance_invoice_file}" />
@@ -238,12 +268,6 @@
 							</h:panelGrid>							
 						</a4j:region>
 					</aon:div>	
-
-					<aon:outputLabel for="Invoice_comments"
-						value="#{bundle.aon_comment}" />
-					<aon:inputTextarea id="Invoice_comments" cols="150" rows="2"
-						disabled="#{purchaseInvoice.readOnly}"
-						value="#{purchaseInvoice.to.comments}" />
 
 				</aon:panelGrid>
 
