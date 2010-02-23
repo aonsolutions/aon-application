@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="listFileManager">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{richBundle.rich_fileManager}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="createFolder"
+						value="#{richBundle.aon_create_folder}"
+						reRender="createSubFolderGrid"
+						styleClass="aon-finding-toolbar-item aon-icon-new">		
+						<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
+						<f:setPropertyActionListener value="#{null}" target="#{fileManager.folderName}" />
+					</aon:commandButton>						
+					<aon:commandButton id="uploadFile"
+						value="#{richBundle.aon_file_upload}"
+						reRender="createSubFolderGrid"
+						styleClass="aon-finding-toolbar-item aon-icon-new">		
+						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
+					</aon:commandButton>						
+				</ui:define>
+			</ui:decorate>
+			
+			<!--  aon-region-body -->
+			<aon:div id="fileManagerList" styleClass="aon-scroll-area">
+
+				<aon:div styleClass="aon-header aon-margin-bottom">
+					<aon:panelGrid width="100%" columns="2"
+						columnClasses="aon-editDataTable-buttonsColumn,aon-header-name">
+						<aon:panelGroup>
+							<aon:commandButton id="goRoot"
+								value="/" immediate="true"
+								actionListener="#{fileManager.onGoRoot}" />				
+							<aon:commandButton id="goParent"
+								value=".." immediate="true"
+								actionListener="#{fileManager.onGoParent}" />
+						</aon:panelGroup>				
+						<aon:panelGroup>
+							<aon:outputText value="#{richBundle.aon_current_folder}: " styleClass="aon-applicationName"/>
+							<aon:outputText value="#{fileManager.currentDirectory}" styleClass="aon-applicationName"/>
+						</aon:panelGroup>
+					</aon:panelGrid>
+				</aon:div>
+				
+				<aon:methodParam name="rowSelectorAction" value="#{fileManager.getSelectAction}" />
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{fileManager}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div
+								onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();" >							
+								<aon:confirmButton id="remove"
+									title="#{bundle.aon_remove}"
+									value="&#160;" immediate="true"
+									styleClass="aon-icon aon-icon-trash"
+									style="line-height:16px;margin-right:0;border:0;padding-left:10px;"
+									confirmTitle="#{bundle.aon_confirm_title}"
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{fileManager.onCurrentRemove}" />
+								<a4j:htmlCommandLink id="download"
+									value="&#160;" target="_blank"
+									rendered="#{to.file}" immediate="true"
+									actionListener="#{fileManager.downloadAttachment}"
+									styleClass="aon-icon aon-icon-mail-save"
+									style="line-height:16px;margin-right:0;"
+									title="#{bundle.aon_fileupload_download}" />
+							</aon:div>								
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" 
+								styleClass="aon-list-icon #{fileManager.styleClass}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{richBundle.aon_size}" />
+							</f:facet>
+							<aon:outputText value="#{fileManager.length}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{richBundle.aon_permissions}" />
+							</f:facet>
+							<aon:outputText value="#{fileManager.permissions}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{fileManager.lastModified}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+
+		</aon:form>
+		
+		<ui:include src="/com/code/aon/faces/file/createFolder.xhtml" />
+
+	</ui:define>
+
+</ui:composition>
