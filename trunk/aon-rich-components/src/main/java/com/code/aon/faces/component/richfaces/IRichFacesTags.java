@@ -30,4 +30,8 @@ public interface IRichFacesTags {
 	
 	String SORT_ORDER = "sortOrder";
 	
+	String METHOD = "method";
+	
+	String FAMILY = "family";
+	
 }

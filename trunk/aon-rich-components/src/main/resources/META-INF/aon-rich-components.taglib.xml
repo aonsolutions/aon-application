@@ -594,4 +594,10 @@
 			com.code.aon.faces.component.richfaces.set.SetHandler
 		</handler-class>
 	</tag>
+	<tag>
+		<tag-name>componentGroup</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.componentGroup.ComponentGroupHandler
+		</handler-class>
+	</tag>
 </facelet-taglib>
