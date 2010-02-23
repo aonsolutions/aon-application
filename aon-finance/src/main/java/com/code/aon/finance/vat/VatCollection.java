@@ -37,6 +37,24 @@ public class VatCollection {
 			if (params.getToDate() != null) {
 				stmt.append(" AND i.tax_date <= ?");
 			}
+			if (params.getFromInvoiceDate() != null) {
+				stmt.append(" AND i.issue_date >= ?");
+			}
+			if (params.getToInvoiceDate() != null) {
+				stmt.append(" AND i.issue_date <= ?");
+			}
+			if (params.getFromSeries() != null) {
+				stmt.append(" AND i.series >= ?");
+			}
+			if (params.getToSeries() != null) {
+				stmt.append(" AND i.series <= ?");
+			}
+			if (params.getFromNumber() != null) {
+				stmt.append(" AND i.number >= ?");
+			}
+			if (params.getToNumber() != null) {
+				stmt.append(" AND i.number <= ?");
+			}
 			if (params.getSecurityLevel() != null) {
 				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 			}
@@ -44,14 +62,37 @@ public class VatCollection {
 			stmt.append("         it.percentage,it.surcharge,i.transaction,i.investment");
 			stmt.append(" ORDER BY type DESC,year,quarter,month,i.transaction,i.investment,");
 			stmt.append("		 it.percentage,it.surcharge");
-			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(),
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			int i = 0;
 			if (params.getFromDate() != null) {
-				ps.setDate(1, new java.sql.Date( params.getFromDate().getTime()));
+				ps.setDate(++i, new java.sql.Date( params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
-				ps.setDate(2, new java.sql.Date( params.getToDate().getTime()));
+				ps.setDate(++i, new java.sql.Date( params.getToDate().getTime()));
 			}
+			if (params.getFromInvoiceDate() != null) {
+				ps.setDate(++i, new java.sql.Date( params.getFromInvoiceDate().getTime()));
+			}
+			if (params.getToInvoiceDate() != null) {
+				ps.setDate(++i, new java.sql.Date( params.getToInvoiceDate().getTime()));
+			}
+			
+			if (params.getFromSeries() != null) {
+				ps.setString(++i, params.getFromSeries());
+			}
+			if (params.getToSeries() != null) {
+				ps.setString(++i, params.getToSeries());
+			}
+			
+			if (params.getFromNumber() != null) {
+				ps.setInt(++i, params.getFromNumber());
+			}
+			if (params.getToNumber() != null) {
+				ps.setInt(++i, params.getToNumber());
+			}
+
 			rs = ps.executeQuery();
 			List<Vat> vats = new LinkedList<Vat>();
 			while (rs.next()) {
@@ -115,8 +156,33 @@ public class VatCollection {
 			if (params.getToDate() != null) {
 				stmt.append(" AND i.tax_date <= ?");
 			}
+			if (params.getFromInvoiceDate() != null) {
+				stmt.append(" AND i.issue_date >= ?");
+			}
+			if (params.getToInvoiceDate() != null) {
+				stmt.append(" AND i.issue_date <= ?");
+			}
+			if (params.getFromSeries() != null) {
+				stmt.append(" AND i.series >= ?");
+			}
+			if (params.getToSeries() != null) {
+				stmt.append(" AND i.series <= ?");
+			}
+			if (params.getFromNumber() != null) {
+				stmt.append(" AND i.number >= ?");
+			}
+			if (params.getToNumber() != null) {
+				stmt.append(" AND i.number <= ?");
+			}
 			if (params.getVatPercent() != null) {
-				stmt.append(" AND it.percentage = ?");
+				if (params.getVatPercent() != -1) {
+					stmt.append(" AND it.percentage = ?");
+				} else {
+					stmt.append(" AND it.percentage != 16");
+					stmt.append(" AND it.percentage != 7");
+					stmt.append(" AND it.percentage != 4");
+					stmt.append(" AND it.percentage != 0");
+				}
 			}
 			if (params.getSurchargePercent() != null) {
 				stmt.append(" AND it.surcharge = ?");
@@ -158,8 +224,8 @@ public class VatCollection {
 			} else if (order == VatReportOrder.INVOICE_REGISTRY_NAME) {
 				stmt.append(" ORDER BY i.rname,i.reference_code");
 			}
-			
-			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(),
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromDate() != null) {
@@ -167,6 +233,24 @@ public class VatCollection {
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(++i, new java.sql.Date( params.getToDate().getTime()));
+			}
+			if (params.getFromInvoiceDate() != null) {
+				ps.setDate(++i, new java.sql.Date( params.getFromInvoiceDate().getTime()));
+			}
+			if (params.getToInvoiceDate() != null) {
+				ps.setDate(++i, new java.sql.Date( params.getToInvoiceDate().getTime()));
+			}
+			if (params.getFromSeries() != null) {
+				ps.setString(++i, params.getFromSeries());
+			}
+			if (params.getToSeries() != null) {
+				ps.setString(++i, params.getToSeries());
+			}
+			if (params.getFromNumber() != null) {
+				ps.setInt(++i, params.getFromNumber());
+			}
+			if (params.getToNumber() != null) {
+				ps.setInt(++i, params.getToNumber());
 			}
 			if (params.getVatPercent() != null) {
 				ps.setDouble(++i, params.getVatPercent());
