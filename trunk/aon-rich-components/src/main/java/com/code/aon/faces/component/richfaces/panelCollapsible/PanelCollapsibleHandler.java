@@ -27,5 +27,11 @@ public class PanelCollapsibleHandler extends SimpleTogglePanelListenerTagHandler
 		super.setAttributes(ctx, instance);
 		ComponentManager.getInstance().setAttributes( tag, ctx, (UIComponent) instance );
 	}
+
+	@Override
+	protected void onComponentCreated(FaceletContext ctx, UIComponent c,
+			UIComponent parent) {
+		ComponentManager.getInstance().onComponentCreated( ctx, c, parent );
+	}	
 	
 }

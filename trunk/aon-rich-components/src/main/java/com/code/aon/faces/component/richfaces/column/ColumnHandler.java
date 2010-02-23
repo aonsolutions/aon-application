@@ -44,6 +44,7 @@ public class ColumnHandler extends ColumnTagHandler implements IRichFacesTags {
 	@Override
 	protected void onComponentPopulated(FaceletContext ctx, UIComponent c,
 			UIComponent parent) {
+		ComponentManager.getInstance().onComponentCreated( ctx, c, parent );		
 		TagAttribute aliasTag = getAttribute(ALIAS);
 		if ( aliasTag != null ) {
 			HtmlColumn column = (HtmlColumn) c;
