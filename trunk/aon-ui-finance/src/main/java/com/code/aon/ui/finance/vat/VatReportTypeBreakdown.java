@@ -1,7 +1,12 @@
 package com.code.aon.ui.finance.vat;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.VatReportType;
@@ -13,6 +18,7 @@ public class VatReportTypeBreakdown  {
 	private Map<Double,VatBreakdown> map;
 	private double base;
 	private double quota;
+	private DataModel model;
 
 	public VatReportTypeBreakdown(VatReportType vatReportType) {
 		setVatReportType(vatReportType);
@@ -25,7 +31,7 @@ public class VatReportTypeBreakdown  {
 	}
 	public Map<Double, VatBreakdown> getMap() {
 		if (map== null) {
-			map = new HashMap<Double, VatBreakdown>(); 
+			map = new TreeMap<Double, VatBreakdown>(); 
 		}
 		return map;
 	}
@@ -39,6 +45,7 @@ public class VatReportTypeBreakdown  {
 		VatBreakdown vb = getMap().get(percent);
 		if (vb == null) {
 			vb = new VatBreakdown();
+			vb.setPercent(percent);
 		}
 		setBase(CommonUtil.round(getBase() + vat.getBase()));
 		vb.setBase(CommonUtil.round(vb.getBase() + vat.getBase()));
@@ -59,4 +66,12 @@ public class VatReportTypeBreakdown  {
 		this.quota = quota;
 	}
 	
+	public DataModel getModel() {
+		if (model == null) {
+			List<VatBreakdown> ret = new LinkedList<VatBreakdown>();
+			ret.addAll( getMap().values());
+			model = new ListDataModel(ret);
+		}
+		return model;
+	}
 }

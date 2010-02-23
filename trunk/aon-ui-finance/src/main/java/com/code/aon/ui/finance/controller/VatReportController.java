@@ -12,6 +12,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -21,6 +22,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.enumeration.VatPeriod;
 import com.code.aon.finance.enumeration.VatReportOrder;
 import com.code.aon.finance.enumeration.VatReportType;
 import com.code.aon.finance.enumeration.VatType;
@@ -38,6 +40,7 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	private static final Double REDUCED_PERCENT = new Double(7);
 	private static final Double SUPERREDUCED_PERCENT = new Double(4);
 	private static final Double EXENT_PERCENT = new Double(0);
+	private static final Double OTHER_PERCENT = new Double(-1);
 	private static final Double SURCHARGE_GENERAL_PERCENT = new Double(4);
 	private static final Double SURCHARGE_REDUCED_PERCENT = new Double(1);
 	private static final Double SURCHARGE_SUPERREDUCED_PERCENT = new Double(0.5);
@@ -45,7 +48,19 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	private Date date;
 	private Date fromDate;
 	private Date toDate;
+
+	private Date fromInvoiceDate;
+	private Date toInvoiceDate;
+	
+	private String fromSeries;
+	private String toSeries;
+	private Integer fromNumber;
+	private Integer toNumber;
+
 	private VatType vatType;
+	private Integer year;
+	private VatPeriod vatPeriod;
+
 	private VatReportOrder order;
 	private SecurityLevel securityLevel;
 	private Map<VatType,VatTypeBreakdown> summary;
@@ -55,7 +70,6 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public Date getDate() {
 		return date;
 	}
-
 	public void setDate(Date date) {
 		this.date = date;
 	}
@@ -63,7 +77,6 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public Date getFromDate() {
 		return fromDate;
 	}
-
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
@@ -71,9 +84,50 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public Date getToDate() {
 		return toDate;
 	}
-
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
+	}
+
+	public Date getFromInvoiceDate() {
+		return fromInvoiceDate;
+	}
+	public void setFromInvoiceDate(Date fromInvoiceDate) {
+		this.fromInvoiceDate = fromInvoiceDate;
+	}
+
+	public Date getToInvoiceDate() {
+		return toInvoiceDate;
+	}
+	public void setToInvoiceDate(Date toInvoiceDate) {
+		this.toInvoiceDate = toInvoiceDate;
+	}
+
+	public String getFromSeries() {
+		return fromSeries;
+	}
+	public void setFromSeries(String fromSeries) {
+		this.fromSeries = fromSeries;
+	}
+
+	public String getToSeries() {
+		return toSeries;
+	}
+	public void setToSeries(String toSeries) {
+		this.toSeries = toSeries;
+	}
+
+	public Integer getFromNumber() {
+		return fromNumber;
+	}
+	public void setFromNumber(Integer fromNumber) {
+		this.fromNumber = fromNumber;
+	}
+
+	public Integer getToNumber() {
+		return toNumber;
+	}
+	public void setToNumber(Integer toNumber) {
+		this.toNumber = toNumber;
 	}
 
 	public VatReportOrder getOrder() {
@@ -86,9 +140,22 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public VatType getVatType() {
 		return vatType;
 	}
-
 	public void setVatType(VatType vatType) {
 		this.vatType = vatType;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+	public VatPeriod getVatPeriod() {
+		return vatPeriod;
+	}
+	public void setVatPeriod(VatPeriod vatPeriod) {
+		this.vatPeriod = vatPeriod;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -110,13 +177,15 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public void onReset(ActionEvent event) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
-		setDate(new Date());
-		c.set(Calendar.MONTH, 0);
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		setFromDate(c.getTime());
-		c.set(Calendar.MONTH, 11);
-		c.set(Calendar.DAY_OF_MONTH, 31);
-		setToDate(c.getTime());
+		setDate(c.getTime());
+		setYear(c.get(Calendar.YEAR));
+		setVatPeriod( VatPeriod.getQuarterlyVatPeriod( c.get(Calendar.MONTH )) );
+		setFromDate(getVatPeriod().getStartDate(getYear()));	
+		setToDate(getVatPeriod().getDueDate(getYear()));
+		setFromSeries(null);
+		setFromNumber(null);
+		setToSeries(null);
+		setToNumber(null);
 		setVatType(VatType.OUTPUT);
 		setSecurityLevel(null);
 		setSummary(null);
@@ -137,6 +206,14 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		vcp.setDate(getDate());
 		vcp.setFromDate(getFromDate());
 		vcp.setToDate(getToDate());
+		
+		vcp.setFromInvoiceDate(getToInvoiceDate());
+		vcp.setToInvoiceDate(getToInvoiceDate());
+		vcp.setFromSeries(getFromSeries());
+		vcp.setToSeries(getToSeries());
+		vcp.setFromNumber(getFromNumber());
+		vcp.setToNumber(getToNumber());
+		
 		vcp.setVatType(getVatType());
 		vcp.setSecurityLevel(getSecurityLevel());
 		vcp.setVatPercent(null);
@@ -149,6 +226,9 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		VatCollection vc = new VatCollection();
 		List<Vat> list = vc.getVatList(params);
 		Map<VatType,VatTypeBreakdown> map = new HashMap<VatType, VatTypeBreakdown>();
+		map.put(VatType.INPUT,new VatTypeBreakdown(VatType.INPUT));
+		map.put(VatType.OUTPUT,new VatTypeBreakdown(VatType.OUTPUT));
+		map.put(VatType.INVESTMENT,new VatTypeBreakdown(VatType.INVESTMENT));
 		for (Vat vat:list) {
 			VatTypeBreakdown vtb = map.get(vat.getVatType());
 			if (vtb == null) {
@@ -156,11 +236,43 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 				map.put(vat.getVatType(),vtb);
 			}
 			vtb.addVat(vat);
+			expandVatToOtherTypes(map,vat.getVatType(),vat);
 		}
 		return map;
 	}
 	
 
+	private void expandVatToOtherTypes(Map<VatType,VatTypeBreakdown> map,VatType vatType,Vat vat) {
+		VatType type1;		
+		VatType type2;
+		if (vatType == VatType.INPUT) {
+			type1 = VatType.OUTPUT;
+			type2 = VatType.INVESTMENT;
+		} else if (vatType == VatType.OUTPUT) {
+			type1 = VatType.INPUT;
+			type2 = VatType.INVESTMENT;
+		} else {
+			type1 = VatType.INPUT;
+			type2 = VatType.OUTPUT;
+		}
+		vat.setBase(0);
+		vat.setVatQuota(0);
+		vat.setSurchargeQuota(0);
+		
+		VatTypeBreakdown vtb = map.get(type1);
+		if (vtb == null) {
+			vtb = new VatTypeBreakdown(type1);
+			map.put(type1,vtb);
+		}
+		vtb.addVat(vat);
+		
+		vtb = map.get(type2);
+		if (vtb == null) {
+			vtb = new VatTypeBreakdown(type2);
+			map.put(type2,vtb);
+		}
+		vtb.addVat(vat);
+	}
 	public void onSearch(ActionEvent event) {
 		setSummary( search());
 	}
@@ -258,6 +370,9 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public Double getExentPercent() {
 		return EXENT_PERCENT;
 	}
+	public Double getOtherPercent() {
+		return OTHER_PERCENT;
+	}
 	
 	public double getOutputGeneralTotalBase() {
 		return getGeneralTotalBase(VatType.OUTPUT);	
@@ -348,5 +463,29 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 
 	public void setModel(DataModel model) {
 		this.model = model;
+	}
+	
+	public void onYearChanged(ValueChangeEvent event) {
+		setFromDate(null);
+		setToDate(null);
+		if (event.getNewValue() != null) {
+			Integer year = (Integer) event.getNewValue(); 
+			setFromDate(getVatPeriod().getStartDate(year));	
+			setToDate(getVatPeriod().getDueDate(year));
+		}
+	}
+	
+	public void onVatPeriodChanged(ValueChangeEvent event) {
+		setFromDate(null);
+		setToDate(null);
+		if (getYear() != null) {
+			VatPeriod vp = (VatPeriod) event.getNewValue(); 
+			setFromDate(vp.getStartDate(getYear()));	
+			setToDate(vp.getDueDate(getYear()));
+		} else {
+			String msg = "El Periodo IVA es necesario para calcular las fecha de incio y fin del periodo.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 }
