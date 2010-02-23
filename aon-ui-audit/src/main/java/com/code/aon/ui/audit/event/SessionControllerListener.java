@@ -22,7 +22,6 @@ public class SessionControllerListener extends ControllerAdapter implements IAud
 		AuditCollectionsController collections = (AuditCollectionsController) AonUtil.getRegisteredBean(AUDIT_COLLECTIONS_CONTROLLER_NAME);
 		try {
 			collections.refreshApplications();
-			collections.refreshDomains();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}

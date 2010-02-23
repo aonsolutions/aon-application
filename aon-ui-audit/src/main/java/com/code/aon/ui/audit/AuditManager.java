@@ -7,51 +7,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
-import com.code.aon.audit.ActionExecution;
+import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.Application;
-import com.code.aon.audit.Domain;
-import com.code.aon.audit.DomainApplication;
 import com.code.aon.audit.Session;
-import com.code.aon.audit.User;
 import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.hibernate.IConfigurationFactory;
-import com.code.aon.common.dao.hibernate.ISessionFactoryNameProvider;
+import com.code.aon.config.User;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.audit.controller.ApplicationOptionController;
+import com.code.aon.ui.audit.controller.IAuditConstants;
+import com.code.aon.ui.util.AonUtil;
 
-public class AuditManager implements IAuditAlias {
+public class AuditManager implements IAuditAlias, IAuditConstants {
 	
 	/** Obtiene un logger apropiado. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
 	
-	public static final String AUDIT = "aon-audit";
-	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
-	
-	public static final String AUDIT_DOMAIN_APPLICATION_PROPERTY = "com.code.aon.audit.domainApplication";
 
 	private static final AuditManager SINGLETON = new AuditManager();
 	
 	private boolean auditConfigured;
 	
-	private IManagerBean domainBean;
-	
 	private IManagerBean applicationBean;
-	
-	private IManagerBean domainApplicationBean;
-	
-	private IManagerBean userBean;
 	
 	private IManagerBean sessionBean;
 	
 	private IManagerBean actionBean;
 	
-	private IManagerBean actionExecutionBean;
+	private IManagerBean actionEntryBean;
 	
 	private AuditManager() {
 	}
@@ -61,16 +51,14 @@ public class AuditManager implements IAuditAlias {
 		return SINGLETON;
 	}
 	
-	private void initManagerBeans() {
-		if ( actionExecutionBean == null ) {
+	public void configureAudit() {
+		if (! this.auditConfigured ) {
 			try {
-				domainBean = BeanManager.getManagerBean(Domain.class);
 				applicationBean = BeanManager.getManagerBean(Application.class);
-				domainApplicationBean = BeanManager.getManagerBean(DomainApplication.class);
-				userBean = BeanManager.getManagerBean(User.class);
 				sessionBean = BeanManager.getManagerBean(Session.class);
 				actionBean = BeanManager.getManagerBean(Action.class);
-				actionExecutionBean = BeanManager.getManagerBean(ActionExecution.class);
+				actionEntryBean = BeanManager.getManagerBean(ActionEntry.class);
+				this.auditConfigured = true;
 			} catch (ManagerBeanException e) {
 				LOGGER.error( "Error initalizing Audit Manager Beans", e );
 			}
@@ -80,31 +68,18 @@ public class AuditManager implements IAuditAlias {
 	public boolean isAuditConfigured() {
 		return auditConfigured;
 	}
-
-	public void configureAudit() {
-		ISessionFactoryNameProvider auditNameProvider = new AuditSessionFactoryNameProvider(HibernateUtil.getSessionFactoryNameProvider());
-		HibernateUtil.setSessionFactoryNameProvider(auditNameProvider);
-		IConfigurationFactory auditConfigurationFactory = new AuditConfigurationFactory(HibernateUtil.getConfigurationFactory());
-		HibernateUtil.setConfigurationFactory(auditConfigurationFactory);
-		this.auditConfigured = true;
-		initManagerBeans();
-	}
 	
-	public Domain getDomain( String name ) throws ManagerBeanException {
-		Domain domain = null;
-		String field = domainBean.getFieldName(DOMAIN_NAME);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( field, name );
-		List<ITransferObject> list = domainBean.getList(criteria);
-		if ( list.isEmpty() ) {
-			domain = new Domain();
-			domain.setName( name );
-			domainBean.insert( domain );
-		} else {
-			domain = (Domain) list.get(0);
+	public String getApplicationName( String context ) {
+		String application = context;
+		if ( application.startsWith("/") ) {
+			application = application.substring(1);
 		}
-		return domain;
-	}
+		int pos = application.lastIndexOf(".");
+		if ( pos != -1 ) {
+			application = application.substring(0, pos);
+		}
+		return application;
+	}		
 
 	public Application getApplication( String name ) throws ManagerBeanException {
 		Application application = null;
@@ -115,6 +90,7 @@ public class AuditManager implements IAuditAlias {
 		if ( list.isEmpty() ) {
 			application = new Application();
 			application.setName( name );
+			application.setAuditLevel(AuditLevel.MODULE);
 			applicationBean.insert( application );
 		} else {
 			application = (Application) list.get(0);
@@ -122,44 +98,26 @@ public class AuditManager implements IAuditAlias {
 		return application;
 	}
 
-	public DomainApplication getDomainApplication( Application application, Domain domain ) throws ManagerBeanException {
-		DomainApplication domainApplication = null;
-		Criteria criteria = new Criteria();
-		String applicationField = domainApplicationBean.getFieldName(DOMAIN_APPLICATION_APPLICATION_ID);		
-		criteria.addEqualExpression( applicationField, application.getId() );
-		String domainField = domainApplicationBean.getFieldName(DOMAIN_APPLICATION_DOMAIN_ID);		
-		criteria.addEqualExpression( domainField, domain.getId() );
-		List<ITransferObject> list = domainApplicationBean.getList(criteria);
-		if ( list.isEmpty() ) {
-			domainApplication = new DomainApplication();
-			domainApplication.setApplication(application);
-			domainApplication.setDomain( domain );
-			domainApplication.setAuditLevel(AuditLevel.MODULE);
-			domainApplicationBean.insert( domainApplication );
-		} else {
-			domainApplication = (DomainApplication) list.get(0);
-		}
-		return domainApplication;
+	public Application getApplication( AuthPrincipal principal ) throws ManagerBeanException {
+		String applicationName = getApplicationName(principal.getContext() );
+		return getApplication(applicationName);
 	}
 	
-	public User getUser( String name, Domain domain ) throws ManagerBeanException {
-		User user = null;
-		Criteria criteria = new Criteria();
-		String loginField = userBean.getFieldName(USER_LOGIN);		
-		criteria.addEqualExpression( loginField, name );
-		String domainField = userBean.getFieldName(USER_DOMAIN_ID);		
-		criteria.addEqualExpression( domainField, domain.getId() );
-		List<ITransferObject> list = userBean.getList(criteria);
-		if ( list.isEmpty() ) {
-			user = new User();
-			user.setLogin( name );
-			user.setDomain( domain );
-			userBean.insert( user );
-		} else {
-			user = (User) list.get(0);
-		}
-		return user;
+	public User getUser( String shortName ) {
+		try {
+            IManagerBean bean = BeanManager.getManagerBean(User.class);
+            Criteria criteria = new Criteria();
+            criteria.addEqualExpression( bean.getFieldName(IConfigAlias.USER_LOGIN), shortName );
+            List<ITransferObject> list = bean.getList(criteria);
+            if ( (list!=null) && (list.size() == 1) ) {
+                return (User) list.get(0);
+            }
+        } catch (ManagerBeanException e) {
+        	LOGGER.error( "Error obtaining the USER related with the logged user: " + shortName, e);
+        }
+        return null;		
 	}
+	
 	
 	public void insertSession( Session session ) throws ManagerBeanException {
 		sessionBean.insert( session );
@@ -168,6 +126,11 @@ public class AuditManager implements IAuditAlias {
 	public void closeLoginAudit( Session session ) throws ManagerBeanException {
 		session.setEndDate( new Date() );
 		sessionBean.update( session );
+	}
+	
+	private boolean isMenuAction( String name ) {
+		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return aoc.getOptionMap().containsKey(name);
 	}
 
 	public Action getAction( String name, Application application ) throws ManagerBeanException {
@@ -182,19 +145,20 @@ public class AuditManager implements IAuditAlias {
 			action = new Action();
 			action.setName( name );
 			action.setApplication(application);
+			action.setMenu(isMenuAction(name));
 			actionBean.insert( action );
 		} else {
 			action = (Action) list.get(0);
 		}
 		return action;
 	}	
-
-	public void createActionExecution( Session session, Action action ) throws ManagerBeanException {
-		ActionExecution ae = new ActionExecution();
+	
+	public void createActionEntry( Session session, Action action ) throws ManagerBeanException {
+		ActionEntry ae = new ActionEntry();
 		ae.setSession( session );
 		ae.setAction(action);
 		ae.setExecutionDate( new Date() );
-		actionExecutionBean.insert( ae );
+		actionEntryBean.insert( ae );
 	}
 
 }

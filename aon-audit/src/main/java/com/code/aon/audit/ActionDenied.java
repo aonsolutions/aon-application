@@ -2,13 +2,10 @@ package com.code.aon.audit;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -19,40 +16,43 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.User;
 
 
 /**
- * Transfer Object that represents the user.
+ * Transfer Object that represents the Favorite Options.
  * 
- * @author Consulting & Development. Aimar Tellitu - 27-ago-2008
+ * @author Consulting & Development. Aimar Tellitu - 15-feb-2010
  * @since 1.0
  * @version 1.0
  */
 @Entity
-@Table(name = "USER", schema = "AUDIT")
-@SequenceGenerator(name="USER_GENERATOR", sequenceName="SEQ_USER",allocationSize=1)
-public class User implements ITransferObject {
+@Table(name="action_denied")
+public class ActionDenied implements ITransferObject {
 
-	private static final long serialVersionUID = 4697467776631297515L;
+	private static final long serialVersionUID = 3797118579358664083L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "USER_GENERATOR")
-	@Column(name = "ID", nullable = false)
+	@GeneratedValue
+	@Column(nullable = false)
     private Integer id;
+    
+	@ManyToOne
+    @JoinColumn( name="user_id", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_ACTION_DENIED_USER_ID")
+	@Index(name = "IDX_ACTION_DENIED_USER_ID")
+	private User user;
 
-	@Column(name = "LOGIN", nullable = false, length = 16)
-	@Index(name="IDX_USER_LOGIN")
-    private String login;
-	
-	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="DOMAIN", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_USER_DOMAIN")
-	private Domain domain;
+	@ManyToOne
+    @JoinColumn( name="action_id", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_ACTION_DENIED_ACTION_ID")
+	@Index(name = "IDX_ACTION_DENIED_ACTION_ID")
+	private Action action;
 
     /**
      * The empty constructor.
      */
-    public User() {
+    public ActionDenied() {
     }
 
     /**
@@ -60,7 +60,7 @@ public class User implements ITransferObject {
      * 
      * @param id the id
      */
-    public User(Integer id) {
+    public ActionDenied(Integer id) {
         this.id = id;
     }
 
@@ -81,41 +81,41 @@ public class User implements ITransferObject {
     public void setId(Integer id) {
         this.id = id;
     }
-
-    /**
-     * Gets the login.
-     * 
-     * @return the login
-     */
-	public String getLogin() {
-        return login;
-    }
-
-    /**
-     * Sets the login.
-     * 
-     * @param name the login
-     */
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
+    
 	/**
-	 * Gets the domain.
+	 * Gets the user.
 	 * 
-	 * @return the domain
+	 * @return the user
 	 */
-	public Domain getDomain() {
-		return domain;
+	public User getUser() {
+		return user;
 	}
 
 	/**
-	 * Sets the domain.
+	 * Sets the user.
 	 * 
-	 * @param domain the new domain
+	 * @param user the new user
 	 */
-	public void setDomain(Domain domain) {
-		this.domain = domain;
+	public void setUser(User user) {
+		this.user = user;
+	}    
+	
+	/**
+	 * Gets the action.
+	 * 
+	 * @return the action
+	 */
+	public Action getAction() {
+		return action;
+	}
+
+	/**
+	 * Sets the action.
+	 * 
+	 * @param action the new action
+	 */
+	public void setAction(Action action) {
+		this.action = action;
 	}
 
 	@Override
@@ -123,11 +123,11 @@ public class User implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final User o = (User) obj;
+		final ActionDenied o = (ActionDenied) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.domain, o.domain)
-				.append(this.login, o.login)
+				.append(this.action, o.action)
+				.append(this.user, o.user)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -136,9 +136,9 @@ public class User implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(domain)
+			.append(action)
 			.append(id)
-			.append(login)
+			.append(user)
 			.toHashCode();
 	}
 
@@ -146,5 +146,4 @@ public class User implements ITransferObject {
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
 	}	
-	
 }

@@ -1,0 +1,81 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="actionDenied">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{auditBundle.audit_action_denied_module}" />
+				<ui:define name="toolbarContent">	
+					<aon:commandButton id="save"
+						title="#{bundle.aon_key_save_accelerator}"
+						value="#{bundle.aon_save}"
+						actionListener="#{actionDenied.accept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="menuGrid" columns="2" styleClass="aon-margin-bottom">
+					<aon:outputLabel for="User_login"
+						value="#{bundle.aon_login_user}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="User_login" property="#{actionDenied.user}"
+							reRender="User_name,optionList" lookup="#{userLookup}"
+							lookupChangeListener="#{actionDenied.userChanged}"
+							value="#{actionDenied.user.login}" size="20">
+							<aon:joinProperty alias="User_login" value="#{actionDenied.user.login}" />
+						</aon:lookupInputText>
+						<aon:lookupButton 
+							windowTitle="#{configBundle.config_user_selection}"
+							selectReRender="User_login,User_name,optionList" 
+							lookup="#{userLookup}" minHeight="460" minWidth="650"
+							lookupChangeListener="#{actionDenied.userChanged}"
+							property="#{actionDenied.user}">
+						</aon:lookupButton>
+						<aon:inputText id="User_name"
+							value="#{actionDenied.user.name}"
+							size="50" disabled="true" />							
+					</aon:div>
+				</aon:panelGrid>			
+			
+				<rich:listShuttle id="optionList"
+					sourceValue="#{actionDenied.options}" targetValue="#{actionDenied.selected}"
+					converter="applicationOptionConverter"  
+					targetRequired="true" var="to"
+					listsHeight="300" sourceListWidth="350" targetListWidth="350"
+					orderControlsVisible="false" fastOrderControlsVisible="false"
+					sourceCaptionLabel="#{auditBundle.audit_available_actions}"
+					targetCaptionLabel="#{auditBundle.audit_action_denied_module}"
+					copyAllControlLabel="#{auditBundle.aon_copyAll}"
+					copyControlLabel="#{auditBundle.aon_copy}"
+					removeControlLabel="#{bundle.aon_remove}"
+					removeAllControlLabel="#{auditBundle.aon_removeAll}" >
+					<rich:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_name}" />
+						</f:facet>					
+						<aon:outputText value="#{to.description}" />
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<aon:outputText value="#{auditBundle.audit_group}" />
+						</f:facet>					
+						<aon:outputText value="#{to.category}" />
+					</rich:column>
+        		</rich:listShuttle>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
+	</ui:define>
+</ui:composition>

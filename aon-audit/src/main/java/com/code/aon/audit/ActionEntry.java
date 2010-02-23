@@ -6,11 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,6 +17,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -32,25 +31,26 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  * @version 1.0
  */
 @Entity
-@Table(name = "ACTION_EXECUTION", schema = "AUDIT")
-@SequenceGenerator(name="ACTION_EXECUTION_GENERATOR", sequenceName="SEQ_ACTION_EXECUTION",allocationSize=1)
-public class ActionExecution implements ITransferObject {
+@Table(name = "action_entry")
+public class ActionEntry implements ITransferObject {
 
-	private static final long serialVersionUID = -4428829681920654096L;
+	private static final long serialVersionUID = -6764112294733992208L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "ACTION_EXECUTION_GENERATOR")
-	@Column(name = "ID", nullable = false)
+	@GeneratedValue
+	@Column(nullable = false)
     private Integer id;
 
 	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="ACTION_ID", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_ACTION_EXECUTION_ACTION")
+    @JoinColumn(name="action_id", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_ACTION_ENTRY_ACTION_ID")
+	@Index(name = "IDX_ACTION_ENTRY_ACTION_ID")
     private Action action;
 
 	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="SESSION_ID", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_ACTION_EXECUTION_SESSION")
+    @JoinColumn(name="session_id", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_ACTION_ENTRY_SESSION_ID")
+	@Index(name = "IDX_ACTION_ENTRY_SESSION_ID")
 	private Session session;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -60,7 +60,7 @@ public class ActionExecution implements ITransferObject {
     /**
      * The empty constructor.
      */
-    public ActionExecution() {
+    public ActionEntry() {
     }
 
     /**
@@ -68,7 +68,7 @@ public class ActionExecution implements ITransferObject {
      * 
      * @param id the id
      */
-    public ActionExecution(Integer id) {
+    public ActionEntry(Integer id) {
         this.id = id;
     }
 
@@ -149,7 +149,7 @@ public class ActionExecution implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final ActionExecution o = (ActionExecution) obj;
+		final ActionEntry o = (ActionEntry) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.action, o.action)

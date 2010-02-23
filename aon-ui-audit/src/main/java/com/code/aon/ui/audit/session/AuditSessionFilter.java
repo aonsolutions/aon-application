@@ -17,11 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Application;
-import com.code.aon.audit.Domain;
-import com.code.aon.audit.DomainApplication;
 import com.code.aon.audit.Session;
-import com.code.aon.audit.User;
 import com.code.aon.audit.enumeration.AuditLevel;
+import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
 
@@ -45,28 +43,16 @@ public class AuditSessionFilter implements Filter {
 		return user;
 	}	
 	
-	public String getApplicationName( String context ) {
-		String application = context;
-		if ( application.startsWith("/") ) {
-			application = application.substring(1);
-		}
-		int pos = application.lastIndexOf(".");
-		if ( pos != -1 ) {
-			application = application.substring(0, pos);
-		}
-		return application;
-	}	
-	
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
 		AuditManager manager = AuditManager.getInstance();
 		try {
+			if (! manager.isAuditConfigured() ) {
+				manager.configureAudit();
+			}			
 			AuthPrincipal principal = getPrincipal(request);
-			String applicationName = getApplicationName(principal.getContext() );
-			Application application = manager.getApplication(applicationName);
-			Domain domain = manager.getDomain(principal.getDomain());
-			DomainApplication domainApplication = manager.getDomainApplication(application, domain);
-			User user = manager.getUser( principal.getShortName(), domain );
-			if ( domain.isEnableAudit() && (domainApplication.getAuditLevel() != AuditLevel.NONE) ) {
+			Application application = manager.getApplication(principal);
+			User user = manager.getUser( principal.getShortName() );
+			if ( application.getAuditLevel() != AuditLevel.NONE ) {
 				Session session = new Session();
 				session.setApplication( application );
 				session.setUser( user );
@@ -76,7 +62,6 @@ public class AuditSessionFilter implements Filter {
 				session.setRemoteHost( request.getRemoteHost() );
 				manager.insertSession( session );
 				httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );				
-				httpSession.setAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY, domainApplication );
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error login audit", th );
