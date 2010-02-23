@@ -28,14 +28,14 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Invoice invoice = (Invoice) evt.getTo();
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-			if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
+			if(!invoiceDetail.getSource().equals(InvoiceSource.DIRECT_EXPENSE) && !invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
 				invoiceDetailBean.update(invoiceDetail);
 			}
 		}
