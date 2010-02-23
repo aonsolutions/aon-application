@@ -20,7 +20,11 @@ public class PurchaseInvoiceDetailController extends InvoiceDetailController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			invoiceDetail.setItem(item);
-			invoiceDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+			invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
+			if (invoiceDetail.getQuantity() == 0) {
+				invoiceDetail.setQuantity(1);
+			}
+
 			price = item.getPurchasePrice();
 		}
 		invoiceDetail.setPrice(price);
