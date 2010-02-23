@@ -1,11 +1,14 @@
 package com.code.aon.ui.product.controller;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.stat.controller.ProductStatEngineController;
+import com.code.aon.ui.util.AonUtil;
 
 public class ItemController extends BasicController {
 
@@ -29,5 +32,11 @@ public class ItemController extends BasicController {
 			price = CommonUtil.round(salesPrice	/ (1 + vatPercent / 100 - retentionPercent / 100));
 		}
 		((Item)this.getTo()).setPrice(price);
+	}
+	
+	public void onProductData(ActionEvent e){
+		ProductStatEngineController controller =(ProductStatEngineController)AonUtil.getRegisteredBean("productStat");
+		controller.setItem((Item)this.getTo());
+		controller.getProductData();
 	}
 }

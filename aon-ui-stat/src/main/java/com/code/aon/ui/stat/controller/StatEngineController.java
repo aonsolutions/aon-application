@@ -518,7 +518,6 @@ public class StatEngineController {
 			}
 			monthStatModel = null;
 		}
-
 		/*
 		 * if (init.get(Calendar.YEAR) != currentYear.intValue() &&
 		 * fin.get(Calendar.YEAR) ==currentYear.intValue()) { Calendar fecini =

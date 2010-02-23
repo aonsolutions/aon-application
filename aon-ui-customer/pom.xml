@@ -67,6 +67,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.stat</artifactId>
+			<version>4.2.4</version>
+			<scope>compile</scope>
+		</dependency> 
+		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
 			<version>1.2_14</version>

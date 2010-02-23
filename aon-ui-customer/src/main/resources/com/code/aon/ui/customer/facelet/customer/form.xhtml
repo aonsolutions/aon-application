@@ -9,13 +9,20 @@
 
 	<ui:define name="content">
 		<aon:form id="customerForm">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{customerBundle.customer_module}" />
 				<ui:param name="controller" value="#{customer}" />
-			</ui:include>
-
+				<ui:define name="beforeSpinToolbarContent">
+				<aon:commandButton value="Historial" id="CustomerData" action="registry_stats"
+					styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+					actionListener="#{customer.onCustomerData}">
+				</aon:commandButton>				
+				</ui:define>
+			</ui:decorate>
+			
 			<aon:div styleClass="aon-scroll-area">
+
 				<c:if test="#{customer.new}">
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/formNewContent.xhtml" >
 						<ui:param name="controller" value="#{customer}" />

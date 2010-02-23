@@ -10,6 +10,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +23,7 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
@@ -64,6 +67,35 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private List<SelectItem> addresses;
 	private boolean showInvoiceAddressWindow;
 	private FinanceEmailUtil emailController;
+	private String backAction;
+
+	public String getBackAction() {
+		return backAction;
+	}
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
+	
+	public String backAction() {
+		return backAction;
+	}
+	
+	public void onSelectTo(ActionEvent event) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		String alias = getIdAlias();
+		criteria.addEqualExpression(this.getManagerBean().getFieldName(alias),getManagerBean().getId( getTo() ));
+		this.setCriteria(criteria);
+		this.onSearch(event);
+		this.onSelectFirst(event);
+	}
+	
+	private String getIdAlias() {
+		String factoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
+		ClassMetadata cm = factory.getClassMetadata(getPojo());
+		String id = getPojoShortName() + "_" + cm.getIdentifierPropertyName();
+		return id;
+	}
 	
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();

@@ -10,12 +10,18 @@
 
 	<ui:define name="content">
 		<aon:form id="itemForm">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{productBundle.product_module}" />
 				<ui:param name="controller" value="#{item}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent">
+				<aon:commandButton value="Informacion" id="ProductData" action="product_stats"
+					styleClass="aon-finding-toolbar-item aon-icon-info"
+					actionListener="#{item.onProductData}">
+				</aon:commandButton>				
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
