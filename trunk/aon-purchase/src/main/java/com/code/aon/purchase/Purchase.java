@@ -111,7 +111,7 @@ public class Purchase implements ITransferObject, IHeaderObject, ICalculableCont
 
     @Transient
     public String getReferenceCode() {
-    	String referenceCode = "" + getNumber();
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
 		if (!StringUtils.isEmpty(getSeries())) {
 			referenceCode = getSeries() + "/" + referenceCode;
 		}
