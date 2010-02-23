@@ -123,6 +123,22 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		return false;
 	}
 
+	public boolean isPurchase() {
+		if (getDefaultType() != null) {
+			InvoiceType type = InvoiceType.valueOf(getDefaultType());
+			return InvoiceType.PURCHASE == type;
+		}
+		return false;
+	}
+
+	public boolean isExpenses() {
+		if (getDefaultType() != null) {
+			InvoiceType type = InvoiceType.valueOf(getDefaultType());
+			return InvoiceType.EXPENSES == type;
+		}
+		return false;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
