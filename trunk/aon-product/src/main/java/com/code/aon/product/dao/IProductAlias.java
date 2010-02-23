@@ -278,6 +278,12 @@ public interface IProductAlias {
 	*/
 	String  ITEM_PRODUCT_COMPOSITION = ITEM_ENTRY.getAliasNames()[18];
 
+	/** 
+	* Alias value: Item_product_type
+	* Hibernate value: Item.product.type
+	*/
+	String  ITEM_PRODUCT_TYPE = ITEM_ENTRY.getAliasNames()[19];
+
 
 
 	/** 
