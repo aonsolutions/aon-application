@@ -198,7 +198,7 @@
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
 	</context-param>
-
+	
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -213,7 +213,21 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-        <!-- Sessions Filter -->
+	<!-- Audit Filter -->
+	<filter>
+		<filter-name>AuditFilter</filter-name>
+		<filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuditFilter</filter-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</filter-mapping>
+	<!-- Listener, that enables Audit Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
+	</listener>
+
+	<!-- Sessions Filter -->
 	<filter>
 		<description>Enables and Registers session for concurrent sessions</description>
 	   <filter-name>SessionFilter</filter-name>
