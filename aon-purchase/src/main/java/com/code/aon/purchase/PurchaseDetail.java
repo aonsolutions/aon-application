@@ -1,6 +1,6 @@
 package com.code.aon.purchase;
 
-import java.util.List;
+import java.util.Iterator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -155,15 +155,13 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_ITEM_ID),getItem().getId());
 			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_SUPPLIER_ID),getPurchase().getSupplier().getId());
-			List<ITransferObject> lista;
-			lista = itemSupplierBean.getList(criteria);
-			if (lista.size() > 0) {
-				String code = ((ItemSupplier) lista.get(0)).getCode();
-				return (StringUtils.isNotEmpty(code)) ? code : getItem()
-						.getProduct().getCode();
+			Iterator<?> iterator = itemSupplierBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				ItemSupplier itemSupplier = (ItemSupplier)iterator.next();
+				return !StringUtils.isEmpty(itemSupplier.getCode()) ? itemSupplier.getCode() : getItem().getProduct().getCode();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("can't get ItemSupplier.code",e);
+			LOGGER.error("Can't get ItemSupplier.code", e);
 		}
 		return getItem().getProduct().getCode();
 	}   		
@@ -177,17 +175,17 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.item, o.item)
-				.append(purchase, o.purchase)
-				.append(line, o.line)			
-				.append(item, o.item)			
-				.append(description, o.description)
-				.append(quantity, o.quantity)
-				.append(price, o.price)
-				.append(discountExpression, o.discountExpression)
-				.append(taxes, o.taxes)
-				.append(status, o.status)
-				.append(delivered, o.delivered)
-				.append(transfered, o.transfered)
+				.append(this.purchase, o.purchase)
+				.append(this.line, o.line)			
+				.append(this.item, o.item)			
+				.append(this.description, o.description)
+				.append(this.quantity, o.quantity)
+				.append(this.price, o.price)
+				.append(this.discountExpression, o.discountExpression)
+				.append(this.taxes, o.taxes)
+				.append(this.status, o.status)
+				.append(this.delivered, o.delivered)
+				.append(this.transfered, o.transfered)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -197,17 +195,17 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)	
-			.append(purchase)
-			.append(line)			
-			.append(item)			
-			.append(description)
-			.append(quantity)
-			.append(price)
-			.append(discountExpression)
-			.append(taxes)
-			.append(status)
-			.append(delivered)
-			.append(transfered)
+			.append(this.purchase)
+			.append(this.line)			
+			.append(this.item)			
+			.append(this.description)
+			.append(this.quantity)
+			.append(this.price)
+			.append(this.discountExpression)
+			.append(this.taxes)
+			.append(this.status)
+			.append(this.delivered)
+			.append(this.transfered)
 			.toHashCode();
 	}
 

@@ -1,6 +1,6 @@
 package com.code.aon.warehouse;
 
-import java.util.List;
+import java.util.Iterator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -170,15 +170,13 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_ITEM_ID),getItem().getId());
 			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_SUPPLIER_ID),getIncome().getSupplier().getId());
-			List<ITransferObject> lista;
-			lista = itemSupplierBean.getList(criteria);
-			if (lista.size() > 0) {
-				String code = ((ItemSupplier) lista.get(0)).getCode();
-				return (StringUtils.isNotEmpty(code)) ? code : getItem()
-						.getProduct().getCode();
+			Iterator<?> iterator = itemSupplierBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				ItemSupplier itemSupplier = (ItemSupplier)iterator.next();
+				return !StringUtils.isEmpty(itemSupplier.getCode()) ? itemSupplier.getCode() : getItem().getProduct().getCode();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("can't get ItemSupplier.code",e);
+			LOGGER.error("Can't get ItemSupplier.code", e);
 		}
 		return getItem().getProduct().getCode();
 	}  
