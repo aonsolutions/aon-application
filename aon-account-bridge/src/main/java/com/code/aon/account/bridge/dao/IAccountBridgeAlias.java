@@ -110,22 +110,28 @@ public interface IAccountBridgeAlias {
 	String  PRODUCT_ACCOUNT_ACCOUNT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: ProductAccount_id
-	* Hibernate value: ProductAccount.id
-	*/
-	String  PRODUCT_ACCOUNT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: ProductAccount_product_id
 	* Hibernate value: ProductAccount.product.id
 	*/
-	String  PRODUCT_ACCOUNT_PRODUCT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[2];
+	String  PRODUCT_ACCOUNT_PRODUCT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProductAccount_product_name
+	* Hibernate value: ProductAccount.product_name
+	*/
+	String  PRODUCT_ACCOUNT_PRODUCT_NAME = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ProductAccount_type
 	* Hibernate value: ProductAccount.type
 	*/
 	String  PRODUCT_ACCOUNT_TYPE = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ProductAccount_id
+	* Hibernate value: ProductAccount.id
+	*/
+	String  PRODUCT_ACCOUNT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[4];
 
 
 
