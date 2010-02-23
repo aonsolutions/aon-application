@@ -30,29 +30,29 @@
 				<aon:outputLabel value="#{productBundle.product_brand}" />
 				<aon:outputText value="#{shopItem.item.product.brand.name}" />
 
-				<aon:outputLabel value="#{productBundle.product_category}" />
+				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_category}" />
 				<aon:outputText value="#{shopItem.item.product.category.name}" />
 
 				<aon:outputLabel value="#{bundle.aon_price}" />
-				<!-- 
+<!-- 
 				<aon:outputText value="#{shopItem.item.price}">
 					<f:convertNumber pattern="#,##0.00"/>
 				</aon:outputText>
  -->
 				<aon:div>
 					<c:if test="#{ecConfig.taxIncluded}">
-						<aon:outputText value="#{shopItem.item.total}"
-							style="font-size: 1.4em;">
+						<aon:outputText value="#{shopItem.item.total}" 
+							style="font-size: 1.4em;float: left;">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</c:if>
 					<c:if test="#{!ecConfig.taxIncluded}">
-						<aon:outputText value="#{shopItem.item.price}"
-							style="font-size: 1.4em;">
+						<aon:outputText value="#{shopItem.item.price}" 
+							style="font-size: 1.4em;float: left;">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</c:if>
-					<aon:outputText value="&#8364;&#160;" style="font-size: 1.4em;" />
+					<h:outputText value="&#8364;&#160;" style="font-size: 1.4em;float: left;" />
 
 					<c:if test="#{!ecConfig.taxIncluded}">
 						<aon:outputText

@@ -33,7 +33,8 @@
 				<f:facet name="header">
 					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_quantity}" />
 				</f:facet>
-				<aon:inputText value="#{to.quantity}" size="2" maxlength="3">
+				<aon:inputText value="#{to.quantity}" size="1" maxlength="3"
+					style="width:20px;;" >
 					<f:convertNumber pattern="#,##0" />
 					<a4j:support event="onblur" reRender="shopForm"
 						actionListener="#{shoppingCart.refreshPrice}"
@@ -72,6 +73,9 @@
 					<aon:outputText value="#{shoppingCart.total}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
+					<!--  
+					<aon:outputText value="&#8364;" style="font-size: 0.9em;" />
+					-->
 				</f:facet>
 			</aon:column>
 			<aon:column>

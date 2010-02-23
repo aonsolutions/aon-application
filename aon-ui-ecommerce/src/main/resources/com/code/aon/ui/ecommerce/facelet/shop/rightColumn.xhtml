@@ -40,7 +40,7 @@
 					</aon:commandLink>
 				</aon:div>
 			
-				<aon:panelGrid columns="2" dir="true" rendered="#{shop.logged}">
+				<aon:panelGrid columns="2" dir="true" rendered="#{shop.logged}" styleClass="login-box-content" >
 					<aon:outputLabel for="User" value="#{ecommerceBundle.aon_ecommerce_user_registered}" />
 					<aon:outputLabel value="&#160;" />
 					<aon:outputText id="User" value="#{userLogin.login}" />
@@ -86,7 +86,7 @@
 				</aon:commandLink>
 			</aon:div>
 			
-			<aon:panelGrid columns="2" dir="true" styleClass="none">
+			<aon:panelGrid columns="2" dir="true" styleClass="list-info-box-content">
 				<aon:outputLabel for="cart_quantity" value="#{ecommerceBundle.aon_ecommerce_list_size}" />
 				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
 	
@@ -116,9 +116,11 @@
 				</aon:commandLink>
 			</aon:div>
 			
-			<aon:panelGrid columns="2" dir="true" styleClass="none">
-				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_telephone}" />
-				<aon:outputText value="#{ecConfig.activeConfig.telephone}" />
+			<aon:panelGrid columns="2" dir="true" styleClass="helpdesk-box-content">
+				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_telephone}" 
+					rendered="#{(ecConfig.activeConfig.telephone=='')?'false':'true'}"/>
+				<aon:outputText value="#{ecConfig.activeConfig.telephone}" 
+					rendered="#{(ecConfig.activeConfig.telephone=='')?'false':'true'}"/>
 
 				<aon:outputLabel value="#{ecommerceBundle.aon_ecommerce_contact_email}" />
 				<aon:outputText value="#{ecConfig.activeConfig.email}" />
