@@ -17,6 +17,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <build>
     <finalName>aon-finance</finalName>
   </build>
+  
   <properties>
     <dbVersion>1.11.0</dbVersion>
   </properties>
