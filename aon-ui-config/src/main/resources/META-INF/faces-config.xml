@@ -292,6 +292,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{taxDetailListener}</value>
+				<value>#{taxValidatorListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -323,6 +324,14 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+	</managed-bean>
+	
+	
+	<!-- ********* TAX VALIDATOR LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>taxValidatorListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.TaxValidationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!--  **** TAX DETAIL ****	-->
@@ -357,7 +366,7 @@
 			<value>true</value>
 		</managed-property>
 	</managed-bean>
-
+	
 	<!-- ************* PAYMETHOD ***************** -->
 	<managed-bean>
 		<managed-bean-name>payMethod</managed-bean-name>
@@ -477,6 +486,16 @@
 			<description>TAX NAVIGATION</description>
 			<from-outcome>tax</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/tax/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<description>TAX LIST NAVIGATION</description>
+			<from-outcome>tax_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/tax/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<description>TAX FORM NAVIGATION</description>
+			<from-outcome>tax_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/tax/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<description>PAY METHOD NAVIGATION</description>
