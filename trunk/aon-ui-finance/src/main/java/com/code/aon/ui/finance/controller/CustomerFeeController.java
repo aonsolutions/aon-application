@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
@@ -113,7 +112,7 @@ public class CustomerFeeController extends LinesController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onNoFeeCustomers(ActionEvent event) throws ManagerBeanException {
+	public void onNoFeeCustomers(ActionEvent event) {
 		Calendar calendar = new GregorianCalendar();
 		String select = "select distinct(customer) "
 			+ "from Customer as customer "
