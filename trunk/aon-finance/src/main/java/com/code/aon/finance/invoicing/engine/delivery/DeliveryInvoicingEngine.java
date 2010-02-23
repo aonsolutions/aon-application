@@ -29,7 +29,6 @@ import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.finance.invoicing.engine.IInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
