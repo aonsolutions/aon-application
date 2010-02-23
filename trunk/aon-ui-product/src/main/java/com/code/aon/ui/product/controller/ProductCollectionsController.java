@@ -167,10 +167,30 @@ public class ProductCollectionsController {
 		if (productTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			productTypes = new LinkedList<SelectItem>();
-			for (ProductType status:ProductType.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
+			for (ProductType type:ProductType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
 				productTypes .add(item);
+			}
+		}
+		return productTypes;
+	}
+	
+	/**
+	 * Gets the product types
+	 * 
+	 * @return the product types
+	 */
+	public List<SelectItem> getNoExpenseProductTypes() {
+		if (productTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			productTypes = new LinkedList<SelectItem>();
+			for (ProductType type:ProductType.values()) {
+				if (type != ProductType.EXPENSE) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					productTypes .add(item);
+				}
 			}
 		}
 		return productTypes;
