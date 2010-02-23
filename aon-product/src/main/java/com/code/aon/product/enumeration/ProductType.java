@@ -21,24 +21,24 @@ public enum ProductType implements IResourceable {
 	LABOUR,
 	
     /**
-     * raw material
+     * Service
      */
-    RAW_MATERIAL,
+    SERVICE,
 
 	/**
-     * commercial product
+     * Commercial product
      */
 	COMMERCIAL_PRODUCT,
 
     /**
-     * external work
+     * External work
      */
 	EXTERNAL_WORK,
 	
     /**
-     * tool
+     * Expense
      */
-	TOOL;
+	EXPENSE;
    
     /**
      * Message file base path.
