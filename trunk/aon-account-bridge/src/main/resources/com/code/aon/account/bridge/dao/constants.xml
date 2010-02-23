@@ -14,4 +14,9 @@
 		<alias names="account_id,invoiceTax_id,invoiceTax_invoiceDetail_invoice_id,id" />
 		<hibernate names="account.id,invoiceTax.id,invoiceTax.invoiceDetail.invoice.id,id" />
 	</bean>
+
+	<bean class="com.code.aon.account.bridge.ProductAccount" sqlName="product_account">
+		<alias names="account_id,product_id,product_name,type,id" />
+		<hibernate names="account.id,product.id,product.name,type,id" />
+	</bean>
 </dao>
