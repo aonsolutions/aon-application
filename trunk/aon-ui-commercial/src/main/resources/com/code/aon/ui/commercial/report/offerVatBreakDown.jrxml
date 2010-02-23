@@ -93,7 +93,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-11" mode="Opaque" x="434" y="1" width="80" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-11" mode="Opaque" x="434" y="1" width="80" height="12" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -152,7 +152,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{taxPercent}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-8" x="206" y="0" width="88" height="12"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -165,7 +165,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{taxQuota}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-12" isPrintRepeatedValues="false" x="434" y="0" width="80" height="12" isPrintInFirstWholeBand="true"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -176,9 +176,9 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{PriceStrategy}.getTotalPrice($P{offer},$P{offer}.getTarget()))]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[new Double($P{PriceStrategy}.getTotalPrice($P{offer},$P{offer}.getTarget()))+" €"]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-13" x="34" y="0" width="107" height="12"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

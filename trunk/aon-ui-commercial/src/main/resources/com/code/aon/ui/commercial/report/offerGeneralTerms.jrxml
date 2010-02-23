@@ -22,7 +22,7 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="16" splitType="Stretch">
+		<band height="14" splitType="Stretch">
 			<printWhenExpression><![CDATA[new Boolean(!$F{name}.isEmpty())]]></printWhenExpression>
 			<elementGroup>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
