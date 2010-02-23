@@ -79,7 +79,7 @@ public class OfferDetailController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			offerDetail.setItem(item);
-			offerDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+			offerDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
 
 			Date date = offerDetail.getOffer().getIssueDate();
 			OfferController master = (OfferController)getMasterController();
