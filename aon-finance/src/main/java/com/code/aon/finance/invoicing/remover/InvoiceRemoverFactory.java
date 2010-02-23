@@ -55,8 +55,9 @@ public class InvoiceRemoverFactory {
 
 	static {
 		try {
-			register(DirectSalesInvoiceDetailRemover.class);
+			register(DirectExpenseInvoiceDetailRemover.class);
 			register(DirectPurchaseInvoiceDetailRemover.class);
+			register(DirectSalesInvoiceDetailRemover.class);
 			register(DeliveryInvoiceDetailRemover.class);
 			register(IncomeInvoiceDetailRemover.class);
 			register(FeeInvoiceDetailRemover.class);
