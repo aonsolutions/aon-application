@@ -2137,6 +2137,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- **************** MODEL 347 REPORT  *************** -->
+	<managed-bean>
+		<managed-bean-name>model347Report</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.Model347ReportController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
@@ -2216,6 +2225,18 @@
 		<navigation-case>
 			<from-outcome>vat_report_detail</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/vat/detailList.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== MODEL 347 REPORT ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>model_347_report_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/model347/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>model_347_report_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/model347/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

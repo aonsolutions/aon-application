@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{financeBundle.finance_model_347_report_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{model347Report.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="model_347_report_list" />
+
+					<aon:outputLabel for="reportDate"
+						value="#{financeBundle.finance_report_date}" />
+					<aon:selectInputDate id="reportDate" 
+						inputStyle="margin-left: 0.5em;"
+						value="#{model347Report.params.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+
+					<aon:outputLabel for="Vat_period"
+						value="#{bundle.aon_year}" />
+					<rich:inputNumberSpinner cycled="false"	
+							id="Vat_Year" style="margin-left: 0.5em;" 
+							value="#{model347Report.year}" inputSize="5"
+							maxValue="2020"
+							minValue="2000"
+							maxlength="4">
+							<a4j:support event="onchange"
+								 actionListener="#{model347Report.onYearChanged}"
+								 reRender="entryDate-From,entryDate-To"								 
+							/>
+					</rich:inputNumberSpinner>
+
+					<aon:outputLabel for="entryDate-From"
+						value="#{financeBundle.finance_tax_date}" />
+					<aon:panelGrid columns="3">
+						<aon:selectInputDate id="entryDate-From"
+							value="#{model347Report.params.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+						<aon:outputLabel for="entryDate-To" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="entryDate-To" 
+							value="#{model347Report.params.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:panelGrid>
+
+					<aon:outputLabel for="Model_347_type"
+						value="#{financeBundle.finance_show_key}" />
+					<aon:selectOneMenu id="Model_347_type" 
+						value="#{model347Report.params.type}" style="margin-left: 0.5em;">
+						<f:selectItems value="#{financeCollections.model347Types}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Model_347_order"
+						value="#{financeBundle.finance_invoice_order_by}" />
+					<aon:selectOneMenu id="Model_347_order" 
+						value="#{model347Report.params.order}" style="margin-left: 0.5em;">
+						<f:selectItems value="#{financeCollections.model347ReportOrders}" />
+					</aon:selectOneMenu>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>
