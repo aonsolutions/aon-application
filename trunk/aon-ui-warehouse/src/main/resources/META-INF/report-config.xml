@@ -227,6 +227,7 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
 			<param id="defaultPayMethod" value="#{income.getDefaultPayMethod}" />
+			<param id="warehouse" value="#{income.getWarehouse}" />
 		</params>
 			 <nested-report report="incomeDetail"/>
 	    	 <nested-report report="incomeTaxBreakDown"/> 

@@ -349,27 +349,6 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{workPlace}.getDescription()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" x="448" y="112" width="88" height="23"/>
-				<box leftPadding="3" bottomPadding="2">
-					<pen lineWidth="0.5" lineStyle="Solid"/>
-					<topPen lineWidth="0.0" lineStyle="Solid"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{warehouse}.getName()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="395" y="112" width="53" height="23"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_warehouse}+ ":"]]></textFieldExpression>
-			</textField>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" x="2" y="165" width="536" height="36"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -471,7 +450,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_text_financial3}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="315" y="291" width="124" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="321" y="291" width="141" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -499,7 +478,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{purchase_bank_account}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="315" y="314" width="124" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="321" y="314" width="141" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>

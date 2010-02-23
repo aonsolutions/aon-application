@@ -28,8 +28,8 @@
 				<f:facet name="header">
 					<aon:outputLabel value="Password" />
 				</f:facet>
-				<aon:outputText  value="#{to.password}" rendered="#{formList}" />
-				<aon:inputText id="password" rendered="#{formEdit}" size="20"
+				<h:outputText type="password"  value="#{to.password}" rendered="#{formList}" />
+				<aon:inputSecret id="password" rendered="#{formEdit}" size="20"
 					value="#{ecpaymethod.to.password}" maxlength="32" />
 				<f:facet name="footer">
 					<aon:inputSecret required="true" rendered="#{formNew}" size="20"
@@ -42,7 +42,7 @@
 					<aon:outputLabel value="Signature" />
 				</f:facet>
 				<aon:outputText  value="#{to.signature}" rendered="#{formList}" />
-				<aon:inputText id="signature" rendered="#{formEdit}" size="40"
+				<aon:inputSecret id="signature" rendered="#{formEdit}" size="40"
 					value="#{ecpaymethod.to.signature}" maxlength="128" />
 				<f:facet name="footer">
 					<aon:inputSecret required="true" rendered="#{formNew}" size="40"

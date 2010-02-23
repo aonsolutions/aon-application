@@ -419,7 +419,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_phone}+ ":"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" x="448" y="26" width="89" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -491,7 +491,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_text_financial3}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="315" y="274" width="124" height="23">
+				<reportElement key="textField-119" positionType="Float" x="320" y="274" width="142" height="23">
 					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -525,7 +525,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_bank_account}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="315" y="297" width="124" height="23">
+				<reportElement key="textField-119" positionType="Float" x="320" y="297" width="142" height="23">
 					<printWhenExpression><![CDATA[new Boolean($F{customer}.isDeliveryValuated())]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
