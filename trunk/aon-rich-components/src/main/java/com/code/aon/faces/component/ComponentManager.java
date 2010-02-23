@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.richfaces.componentGroup.ComponentGroup;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
@@ -136,6 +137,13 @@ public class ComponentManager {
 		}
 	}
 	
+	private void updateComponent(FaceletContext ctx, UIComponent c, UIComponent parent) {
+		ComponentGroup componentGroup = ComponentGroup.getComponentGroup(ctx, c);
+		if ( (componentGroup != null) && (componentGroup.isAppicable(c)) ) {
+			componentGroup.apply(ctx, c, parent);
+		}		
+	}
+	
 	public void setAttributes( Tag tag, FaceletContext ctx, UIComponent component ) {
 		ComponentInfo componentInfo = getComponentInfo( tag );
 		if ( componentInfo != null ) {
@@ -145,6 +153,10 @@ public class ComponentManager {
 		}
 		updateRendered(tag, ctx, component);
 		updateDisabledStyleClass(tag, ctx, component);
+	}
+	
+	public void onComponentCreated(FaceletContext ctx, UIComponent component, UIComponent parent) {
+		updateComponent(ctx, component, parent);
 	}
 	
 }
