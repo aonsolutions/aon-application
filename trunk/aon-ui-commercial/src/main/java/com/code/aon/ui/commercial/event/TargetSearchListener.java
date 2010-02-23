@@ -1,13 +1,26 @@
 package com.code.aon.ui.commercial.event;
 
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.faces.event.ActionEvent;
+
 import org.apache.commons.lang.ArrayUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
@@ -25,6 +38,16 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	
 	private CommercialTrackingStatus[] trackingStatuses;
 	
+	private String userName;
+		
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	public TargetStatus[] getTargetStatuses() {
 		return targetStatuses;
 	}
@@ -62,6 +85,7 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		TargetStatus[] defaultTargetStatus = {TargetStatus.ACTIVE};
 		setTargetStatuses(defaultTargetStatus);
 		setActivity(null);
+		setUserName(null);
 		setTrackingStatuses( new CommercialTrackingStatus[0] );
 		setSeller( new Seller() );
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
@@ -88,7 +112,32 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			String status = getController().resolveAlias("Target_trackings_status");
 			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
+		if (getUserName()!= null){					
+			criteria.addEqualExpression("id",getTargetId());
+		}
 		super.completeCriteria();
 	}
 	
+	private List<Target> targetList;
+	
+	public List<Target> getTargetList() {
+		return targetList;
+	}
+
+	public void setTargetList(List<Target> targetList) {
+		this.targetList = targetList;
+	}
+	
+	private Integer getTargetId() throws ManagerBeanException {
+
+		String select = "select ec.target "
+			+ "from Ectarget as ec "
+			+ "where ec.login='"+getUserName()+ "')))";	
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		targetList = query.list();
+		if(targetList.size()>0){
+		return targetList.get(0).getId();}
+		else return -1;
+	}
 }

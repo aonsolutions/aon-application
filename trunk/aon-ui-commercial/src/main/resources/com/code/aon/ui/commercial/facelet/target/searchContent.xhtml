@@ -241,7 +241,17 @@
 					</aon:div>
 				</aon:panelGrid>
 			</aon:panelCollapsible>
-		</c:if>								
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.target.showEcommerceTab}">						
+			<aon:panelCollapsible expanded="false" label="#{commercialBundle.commercial_target_ecommerce}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
+					<aon:outputLabel 
+						value="#{commercialBundle.commercial_offer_user}" />
+					<aon:inputText  size="60"
+						value="#{targetSearch.userName}" />
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</c:if>		
 	</aon:div>
 
 </ui:composition>
