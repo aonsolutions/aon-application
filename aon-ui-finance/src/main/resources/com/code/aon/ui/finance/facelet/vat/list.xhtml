@@ -46,8 +46,8 @@
 				</aon:div>
 				
 				<aon:outputText value="&#160;"/>
-				
-				<aon:panelGrid columns="4" 
+
+				<aon:panelGrid columns="4"
 					columnClasses="aon-panelGrid2-header-first,
 								   aon-panelGrid2-header,
 								   aon-panelGrid2-header,
@@ -78,170 +78,102 @@
 							<f:param name="vatType" value="#{vatReport.investment}"/>
 						</aon:commandLink>
 					</aon:div>
-				
-					<aon:div styleClass="aon-panelGrid2-header-text">
-					<aon:div styleClass="aon-panelGrid2-header-text">
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.general}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-						</aon:commandLink>
-					</aon:div>
-					</aon:div>
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA REPERCUTIDO - REGIMEN GENERAL - 16% -->
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - REGIMEN GENERAL - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - REGIMEN GENERAL - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - REGIMEN GENERAL - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.general].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
 
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA SOPORTADO - REGIMEN GENERAL - 16% -->
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - REGIMEN GENERAL - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - REGIMEN GENERAL - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - REGIMEN GENERAL - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.general].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
+					<aon:div styleClass="aon-panelGrid2-header-text">
+						<aon:div styleClass="aon-panelGrid2-header-text">
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{vatReport.general}" />
+								<f:param name="vatReportType" value="#{vatReport.general}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
 
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA INVERSION - REGIMEN GENERAL - 16% -->
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - REGIMEN GENERAL - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - REGIMEN GENERAL - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - REGIMEN GENERAL - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.general}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.general].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
+					<!-- IVA REPERCUTIDO - REGIMEN GENERAL -->
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.output].map[vatReport.general].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.output}" />
+								<f:param name="vatReportType" value="#{vatReport.general}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+
+					<!-- IVA SOPORTADO - REGIMEN GENERAL -->
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.input].map[vatReport.general].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.input}" />
+								<f:param name="vatReportType" value="#{vatReport.general}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+
+					<!-- IVA INVERSION - REGIMEN GENERAL -->
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%" 
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.investment].map[vatReport.general].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.investment}" />
+								<f:param name="vatReportType" value="#{vatReport.general}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+				</aon:panelGrid>
 				
+				<aon:panelGrid columns="4" style="margin-top: 0.5em;"
+					columnClasses="aon-panelGrid2-header-first,
+								   aon-panelGrid2-header,
+								   aon-panelGrid2-header-next,
+								   aon-panelGrid2-header-next">
 					<aon:div styleClass="aon-panelGrid2-header-text">
 						<aon:commandLink styleClass="aon-dataTable-link-noicon"
 							actionListener="#{vatReport.onDetail}" 
@@ -250,80 +182,40 @@
 							<f:param name="vatReportType" value="#{vatReport.surcharge}"/>
 						</aon:commandLink>
 					</aon:div>
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA REPERCUTIDO - RECARGO EQUIVALENCIA - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.surcharge].map[vatReport.surchargeGeneralPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.surchargeGeneralPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.surcharge}"/>
-							<f:param name="vatPercent" value="#{vatReport.surchargeGeneralPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.surcharge].map[vatReport.surchargeGeneralPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - RECARGO EQUIVALENCIA - 1% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.surcharge].map[vatReport.surchargeReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.surchargeReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.surcharge}"/>
-							<f:param name="vatPercent" value="#{vatReport.surchargeReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.surcharge].map[vatReport.surchargeReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - RECARGO EQUIVALENCIA - 0.5% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.surcharge].map[vatReport.surchargeSuperReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.surchargeSuperReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.surcharge}"/>
-							<f:param name="vatPercent" value="#{vatReport.surchargeSuperReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.surcharge].map[vatReport.surchargeSuperReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
-
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA SOPORTADO - RECARGO EQUIVALENCIA - 4% -->				
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						
-						<!-- IVA SOPORTADO - RECARGO EQUIVALENCIA - 1% -->				
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						
-						<!-- IVA SOPORTADO - RECARGO EQUIVALENCIA - 0.5% -->				
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-					</aon:panelGrid>
 					
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA INVERSION - RECARGO EQUIVALENCIA - 4% -->				
+					<!-- IVA REPERCUTIDO - RECARGO EQUIVALENCIA -->
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.output].map[vatReport.surcharge].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.output}" />
+								<f:param name="vatReportType" value="#{vatReport.surcharge}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+					<!-- IVA SOPORTADO - RECARGO EQUIVALENCIA -->
+					<aon:div style="background-color:#f2f2f2; height: 100%;">
 						<aon:outputText value="&#160;"/>
+					</aon:div>
+					<!-- IVA INVERSION - RECARGO EQUIVALENCIA -->
+					<aon:div style="background-color:#f2f2f2; height: 100%;">
 						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						
-						<!-- IVA INVERSION - RECARGO EQUIVALENCIA - 1% -->				
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						
-						<!-- IVA INVERSION - RECARGO EQUIVALENCIA - 0.5% -->				
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="&#160;"/>
-					</aon:panelGrid>
+					</aon:div>
 				
 					<aon:div styleClass="aon-panelGrid2-total-title">
 						<aon:outputText value="#{bundle.aon_total}:"/>
@@ -350,6 +242,37 @@
 						<aon:outputText value="#{vatReport.investmentGeneralTotalQuota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
 					</aon:panelGrid>
 
+				</aon:panelGrid>
+				
+				<aon:div styleClass="aon-panelGrid2-total-text"  
+					style="text-align:center;border:solid #c4c4c4 1px; margin-top: 1em;width: 1050px;">
+					<aon:outputText value="#{financeBundle.finance_vat_result}"/>
+					<aon:panelGroup
+						rendered="#{!(vatReport.result lt 0)}" 
+						style="color:green;">
+						<aon:outputText  value="#{vatReport.result}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText value="#{financeBundle.finance_vat_result_compensate}"/>
+					</aon:panelGroup>
+					
+					<aon:panelGroup
+						rendered="#{vatReport.result lt 0}" 
+						style="color:red;">
+						<aon:outputText value="#{vatReport.result * (-1)}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText value=" (#{financeBundle.finance_vat_result_pay_in})"/>
+					</aon:panelGroup>
+				</aon:div>
+
+				<aon:panelGrid columns="4" style="margin-top: 1em;"
+					columnClasses="aon-panelGrid2-header-first,
+								   aon-panelGrid2-header,
+								   aon-panelGrid2-header,
+								   aon-panelGrid2-header">
+
+					<!-- IVA INTRACOMUNITARIO -->
 					<aon:div styleClass="aon-panelGrid2-header-text">
 						<aon:commandLink styleClass="aon-dataTable-link-noicon"
 							actionListener="#{vatReport.onDetail}" 
@@ -358,157 +281,84 @@
 							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
 						</aon:commandLink>
 					</aon:div>
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA REPERCUTIDO - INTRACOMUNITARIO - 16% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - INTRACOMUNITARIO - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - INTRACOMUNITARIO - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - INTRACOMUNITARIO - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA SOPORTADO - INTRACOMUNITARIO - 16% -->
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - INTRACOMUNITARIO - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - INTRACOMUNITARIO - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - INTRACOMUNITARIO - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
 
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA INVERSION - INTRACOMUNITARIO - 16% -->
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - INTRACOMUNITARIO - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - INTRACOMUNITARIO - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - INTRACOMUNITARIO - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.intracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
+					<!-- IVA REPERCUTIDO - INTRACOMUNITARIO -->
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.output].map[vatReport.intracommunity].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.output}" />
+								<f:param name="vatReportType" value="#{vatReport.intracommunity}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+
+					<!-- IVA SOPORTADO - INTRACOMUNITARIO -->
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.input].map[vatReport.intracommunity].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.input}" />
+								<f:param name="vatReportType" value="#{vatReport.intracommunity}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+
+					<!-- IVA INVERSION - INTRACOMUNITARIO -->
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.investment}" />
+								<f:param name="vatReportType" value="#{vatReport.intracommunity}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
 				
 					<aon:div styleClass="aon-panelGrid2-total-title">
 						<aon:outputText value="#{bundle.aon_total}:"/>
@@ -534,7 +384,15 @@
 						<aon:outputText value="&#160;"/>
 						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.intracommunity].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
 					</aon:panelGrid>
+				</aon:panelGrid>
 
+				<aon:panelGrid columns="4" style="margin-top: 1em;"
+					columnClasses="aon-panelGrid2-header-first,
+								   aon-panelGrid2-header,
+								   aon-panelGrid2-header,
+								   aon-panelGrid2-header">
+
+					<!-- IVA EXTRACOMUNITARIO -->				
 					<aon:div styleClass="aon-panelGrid2-header-text">
 						<aon:commandLink styleClass="aon-dataTable-link-noicon"
 							actionListener="#{vatReport.onDetail}" 
@@ -543,158 +401,85 @@
 							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
 						</aon:commandLink>
 					</aon:div>
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA REPERCUTIDO - EXTRACOMUNITARIO - 16% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - EXTRACOMUNITARIO - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - EXTRACOMUNITARIO - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA REPERCUTIDO - EXTRACOMUNITARIO - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.output}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA SOPORTADO - EXTRACOMUNITARIO - 16% -->
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - EXTRACOMUNITARIO - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - EXTRACOMUNITARIO - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA SOPORTADO - EXTRACOMUNITARIO - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.input}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
+				
+					<!-- IVA REPERCUTIDO - EXTRACOMUNITARIO -->				
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.output].map[vatReport.extracommunity].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.output}" />
+								<f:param name="vatReportType" value="#{vatReport.extracommunity}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
 
-					<aon:panelGrid columns="3" style="width: 100%"
-						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd">				
-						<!-- IVA INVERSION - EXTRACOMUNITARIO - 16% -->
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.generalPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.generalPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.generalPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.generalPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - EXTRACOMUNITARIO - 7% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.reducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.reducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.reducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.reducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - EXTRACOMUNITARIO - 4% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.superReducedPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.superReducedPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.superReducedPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.superReducedPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						
-						<!-- IVA INVERSION - EXTRACOMUNITARIO - 0% -->				
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.exentPercent].base}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-						<aon:commandLink styleClass="aon-dataTable-link-noicon"
-							actionListener="#{vatReport.onDetail}" 
-							action="vat_report_detail">
-							<aon:outputText value="#{vatReport.exentPercent}%"/>
-							<f:param name="vatType" value="#{vatReport.investment}"/>
-							<f:param name="vatReportType" value="#{vatReport.extracommunity}"/>
-							<f:param name="vatPercent" value="#{vatReport.exentPercent}"/>
-						</aon:commandLink>
-						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].map[vatReport.exentPercent].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
-					</aon:panelGrid>
-	
+					<!-- IVA SOPORTADO - EXTRACOMUNITARIO -->				
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.input].map[vatReport.extracommunity].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.input}" />
+								<f:param name="vatReportType" value="#{vatReport.extracommunity}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+
+					<!-- IVA INVERSION - EXTRACOMUNITARIO -->				
+					<aon:dataTable var="rep" rows="0" rowClasses="none,none" style="width: 100%"
+						columnClasses="aon-panelGrid2-odd,aon-panelGrid2-even,aon-panelGrid2-odd"
+						value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].model}">
+						<aon:column>
+							<aon:outputText value="#{rep.base}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column>
+							<aon:commandLink styleClass="aon-dataTable-link-noicon"
+								actionListener="#{vatReport.onDetail}"
+								action="vat_report_detail">
+								<aon:outputText value="#{rep.percent} %" />
+								<f:param name="vatType" value="#{vatReport.investment}" />
+								<f:param name="vatReportType" value="#{vatReport.extracommunity}" />
+								<f:param name="vatPercent" value="#{rep.percent}" />
+							</aon:commandLink>
+						</aon:column>
+						<aon:column>
+							<aon:outputText value="#{rep.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</aon:dataTable>
+
 					<aon:div styleClass="aon-panelGrid2-total-title">
 						<aon:outputText value="#{bundle.aon_total}:"/>
 					</aon:div>
@@ -719,7 +504,13 @@
 						<aon:outputText value="&#160;"/>
 						<aon:outputText value="#{vatReport.summary[vatReport.investment].map[vatReport.extracommunity].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
 					</aon:panelGrid>
+				</aon:panelGrid>
 					
+				<aon:panelGrid columns="4" style="margin-top: 1em;"
+					columnClasses="aon-panelGrid2-header-first,
+								   aon-panelGrid2-header,
+								   aon-panelGrid2-header,
+								   aon-panelGrid2-header">
 					<aon:div styleClass="aon-panelGrid2-header-text">
 						<aon:outputText value="&#160;"/>
 					</aon:div>
@@ -745,31 +536,6 @@
 						<aon:outputText value="#{vatReport.summary[vatReport.investment].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
 					</aon:panelGrid>
 				</aon:panelGrid>
-
-				<aon:outputText value="&#160;"/>
-
-				<aon:div styleClass="aon-panelGrid2-total-text" 
-					style="text-align:center;border:solid #c4c4c4 1px;margint-top: 5px;width: 1050px;">
-					<aon:outputText value="#{financeBundle.finance_vat_result}"/>
-					<aon:panelGroup
-						rendered="#{!(vatReport.result lt 0)}" 
-						style="color:green;">
-						<aon:outputText  value="#{vatReport.result}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:outputText value="#{financeBundle.finance_vat_result_compensate}"/>
-					</aon:panelGroup>
-					
-					<aon:panelGroup
-						rendered="#{vatReport.result lt 0}" 
-						style="color:red;">
-						<aon:outputText value="#{vatReport.result * (-1)}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:outputText value=" (#{financeBundle.finance_vat_result_pay_in})"/>
-					</aon:panelGroup>
-				</aon:div>
-				
 			</aon:div>
 
 			
