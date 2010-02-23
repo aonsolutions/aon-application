@@ -21,10 +21,6 @@ public class AuditSessionListener implements HttpSessionListener {
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
 		LOGGER.info( "Session Created: {}", session.getId() );
-		AuditManager manager = AuditManager.getInstance();
-		if (! manager.isAuditConfigured() ) {
-			manager.configureAudit();
-		}
 	}
 
 	public void sessionDestroyed(HttpSessionEvent event) {

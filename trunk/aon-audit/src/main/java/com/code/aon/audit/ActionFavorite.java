@@ -2,7 +2,6 @@ package com.code.aon.audit;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,44 +16,46 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.User;
 
 
 /**
- * Transfer Object that represents the user.
+ * Transfer Object that represents the Favorite Options.
  * 
- * @author Consulting & Development. Aimar Tellitu - 28-ago-2008
+ * @author Consulting & Development. Aimar Tellitu - 15-feb-2010
  * @since 1.0
  * @version 1.0
  */
 @Entity
-@Table(name = "action")
-@org.hibernate.annotations.Table( appliesTo = "action", indexes = { @Index(name="IDX_ACTION", columnNames={"name","application_id"})})
-public class Action implements ITransferObject {
+@Table(name="action_favorite")
+public class ActionFavorite implements ITransferObject {
 
-	private static final long serialVersionUID = -7135601793952520234L;
+	private static final long serialVersionUID = -4211764196728565100L;
 
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
     private Integer id;
+    
+	@ManyToOne
+    @JoinColumn( name="user_id", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_ACTION_FAVORITE_USER_ID")
+	@Index(name = "IDX_ACTION_FAVORITE_USER_ID")
+	private User user;
 
-	@Column(nullable = false, length = 64)
-	@Index(name="IDX_ACTION_NAME")
-    private String name;
-	
-	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn(name="application_id", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_ACTION_APPLICATION")
-	@Index(name="IDX_ACTION_APPLICATION")
-	private Application application;
+	@ManyToOne
+    @JoinColumn( name="action_id", nullable = false )	
+	@ForeignKey(name = "FK_ACTION_FAVORITE_ACTION_ID")
+	@Index(name = "IDX_ACTION_FAVORITE_ACTION_ID")
+	private Action action;
 	
 	@Column(nullable = false)
-	private boolean menu;
+	private Integer position;
 
     /**
      * The empty constructor.
      */
-    public Action() {
+    public ActionFavorite() {
     }
 
     /**
@@ -62,7 +63,7 @@ public class Action implements ITransferObject {
      * 
      * @param id the id
      */
-    public Action(Integer id) {
+    public ActionFavorite(Integer id) {
         this.id = id;
     }
 
@@ -83,72 +84,72 @@ public class Action implements ITransferObject {
     public void setId(Integer id) {
         this.id = id;
     }
+    
+	/**
+	 * Gets the user.
+	 * 
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
 
 	/**
-	 * Gets the name.
+	 * Sets the user.
 	 * 
-	 * @return the name
+	 * @param user the new user
 	 */
-	public String getName() {
-		return name;
-	}
+	public void setUser(User user) {
+		this.user = user;
+	}    
 	
 	/**
-	 * Checks if is menu.
+	 * Gets the action.
 	 * 
-	 * @return true, if is menu
+	 * @return the action
 	 */
-	public boolean isMenu() {
-		return menu;
+	public Action getAction() {
+		return action;
 	}
 
 	/**
-	 * Sets the menu.
+	 * Sets the action.
 	 * 
-	 * @param menu the new menu
+	 * @param action the new action
 	 */
-	public void setMenu(boolean menu) {
-		this.menu = menu;
+	public void setAction(Action action) {
+		this.action = action;
 	}
 
 	/**
-	 * Sets the name.
+	 * Gets the position.
 	 * 
-	 * @param name the new name
+	 * @return the position
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public Integer getPosition() {
+		return position;
 	}
 
 	/**
-	 * Gets the application.
+	 * Sets the position.
 	 * 
-	 * @return the application
+	 * @param position the new position
 	 */
-	public Application getApplication() {
-		return application;
+	public void setPosition(Integer position) {
+		this.position = position;
 	}
 
-	/**
-	 * Sets the application.
-	 * 
-	 * @param application the new application
-	 */
-	public void setApplication(Application application) {
-		this.application = application;
-	}
- 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final Action o = (Action) obj;
+		final ActionFavorite o = (ActionFavorite) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.application, o.application)
-				.append(this.menu, o.menu)
-				.append(this.name, o.name)
+				.append(this.action, o.action)
+				.append(this.position, o.position)
+				.append(this.user, o.user)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -157,16 +158,15 @@ public class Action implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(application)
+			.append(action)
 			.append(id)
-			.append(menu)
-			.append(name)
+			.append(position)
+			.append(user)
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
-	}
-	
+	}	
 }

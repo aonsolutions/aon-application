@@ -23,14 +23,6 @@
 					<aon:inputText id="Session_id" size="60"
 						valueChangeListener="#{auditSession.addExpression}" />
 
-					<aon:outputLabel for="Session_user_domain_id"
-						value="#{auditBundle.audit_domain}" />
-					<aon:selectOneMenu id="Session_user_domain_id"
-						valueChangeListener="#{auditSession.addExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{auditCollections.domains}" />
-					</aon:selectOneMenu>					
-
 					<aon:outputLabel for="Session_application_id"
 						value="#{auditBundle.audit_application}" />
 					<aon:selectOneMenu id="Session_application_id"

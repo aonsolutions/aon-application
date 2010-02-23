@@ -9,6 +9,12 @@
 		</resource-bundle>
 	</application>
 
+   	<!-- ************* APPLICATION OPTION CONVERTER ***************** -->
+	<converter>
+		<converter-id>applicationOptionConverter</converter-id>
+		<converter-class>com.code.aon.ui.audit.converter.ApplicationOptionConverter</converter-class>
+	</converter>
+	
 	<!--  *************** COLLECTIONS ***************** -->
 
 	<managed-bean>
@@ -52,7 +58,7 @@
 	<managed-bean>
 		<managed-bean-name>applicationActionListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.audit.event.MasterControllerListener
+			com.code.aon.ui.form.listener.MasterControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
@@ -86,104 +92,6 @@
 		</managed-property>
 	</managed-bean>	
 
-	<!-- ************ DOMAIN ************** -->
-	<managed-bean>
-		<managed-bean-name>domain</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.audit.controller.DomainController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.Domain</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>domain</value> 
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Domain_name</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{domainListener}</value>
-				<value>#{domainUserListener}</value>
-				<value>#{domainApplicationListener}</value>
-			</list-entries>
-		</managed-property>					
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>domainListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.audit.event.DomainControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
-	
-	<managed-bean>
-		<managed-bean-name>domainUserListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.audit.event.MasterControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>user</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>User_domain_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>	
-
-	<managed-bean>
-		<managed-bean-name>domainApplicationListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.audit.event.MasterControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>domainApplication</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>DomainApplication_domain_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>		
-	
-	<managed-bean>
-		<managed-bean-name>domainChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.ChildControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>masterBean</property-name>
-			<value>domain</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterPropertyName</property-name>
-			<value>domain</value>
-		</managed-property>
-	</managed-bean>		
-
 	<!-- ************ SESSION ************** -->
 	<managed-bean>
 		<managed-bean-name>auditSession</managed-bean-name>
@@ -209,27 +117,27 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{sessionActionExecutionListener}</value>
+				<value>#{sessionActionEntryListener}</value>
 				<value>#{sessionControllerListener}</value>
 			</list-entries>
 		</managed-property>					
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>sessionActionExecutionListener</managed-bean-name>
+		<managed-bean-name>sessionActionEntryListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.audit.event.MasterControllerListener
+			com.code.aon.ui.form.listener.MasterControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
-			<value>actionExecution</value>
+			<value>actionEntry</value>
 		</managed-property>
 		<managed-property>
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>ActionExecution_session_id</key>
+					<key>ActionEntry_session_id</key>
                     <value>id</value>
 				</map-entry>
 			</map-entries>
@@ -244,9 +152,9 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>		
 
-	<!-- ************ ACTION EXECUTION ************** -->
+	<!-- ************ ACTION ENTRY ************** -->
 	<managed-bean>
-		<managed-bean-name>actionExecution</managed-bean-name>
+		<managed-bean-name>actionEntry</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -255,15 +163,15 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.ActionExecution</value>
+			<value>com.code.aon.audit.ActionEntry</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>actionExecution</value> 
+			<value>actionEntry</value> 
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ActionExecution_executionDate</value>
+			<value>ActionEntry_executionDate</value>
 		</managed-property>										
 	</managed-bean>
 
@@ -296,79 +204,45 @@
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
+
+	<!-- ************ APPLICATION OPTION CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>appOption</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ApplicationOptionController
+		</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ ACTION FAVORITE CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>actionFavorite</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ActionFavoriteController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
-	<!-- ************ USER ************** -->
+	<!-- ************ ACTION DENIED CONTROLLER **************** -->
 	<managed-bean>
-		<managed-bean-name>user</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-name>actionDenied</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ActionDeniedController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.User</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>user</value> 
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>User_login</value>
-		</managed-property>								
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{domainChildListener}</value>
-			</list-entries>
-		</managed-property>		
 	</managed-bean>	
 
-	<!-- ************ DOMAIN APPLICATION ************** -->
-	<managed-bean>
-		<managed-bean-name>domainApplication</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.DomainApplication</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>domainApplication</value> 
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{domainChildListener}</value>
-			</list-entries>
-		</managed-property>		
-	</managed-bean>	
-
-	<!-- =================== Domain ================= -->	
+	<!-- =================== Action ================= -->	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>domain_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/audit/facelet/domain/list.xhtml</to-view-id>
+			<from-outcome>actionFavorite</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/action/favorite.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>domain_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/audit/facelet/domain/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domain_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/audit/facelet/domain/search.xhtml</to-view-id>
+			<from-outcome>actionDenied</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/action/denied.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
-
 
 	<!-- =================== Session ================= -->	
 	<navigation-rule>

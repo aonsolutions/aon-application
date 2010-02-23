@@ -2,13 +2,12 @@ package com.code.aon.audit.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
-import com.code.aon.audit.Domain;
-import com.code.aon.audit.Application;
-import com.code.aon.audit.User;
-import com.code.aon.audit.Session;
 import com.code.aon.audit.Action;
-import com.code.aon.audit.ActionExecution;
-import com.code.aon.audit.DomainApplication;
+import com.code.aon.audit.ActionDenied;
+import com.code.aon.audit.ActionEntry;
+import com.code.aon.audit.ActionFavorite;
+import com.code.aon.audit.Application;
+import com.code.aon.audit.Session;
 
 /** 
 * Interface for holding entity properties constants.
@@ -18,27 +17,120 @@ public interface IAuditAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Domain entity.
+	* DAOConstantsEntry for Action entity.
 	*/ 
-	DAOConstantsEntry DOMAIN_ENTRY = DAOConstants.getDAOConstant(Domain.class);
+	DAOConstantsEntry ACTION_ENTRY = DAOConstants.getDAOConstant(Action.class);
 
 	/** 
-	* Alias value: Domain_enableAudit
-	* Hibernate value: Domain.enableAudit
+	* Alias value: Action_application_id
+	* Hibernate value: Action.application.id
 	*/
-	String  DOMAIN_ENABLE_AUDIT = DOMAIN_ENTRY.getAliasNames()[0];
+	String  ACTION_APPLICATION_ID = ACTION_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Domain_id
-	* Hibernate value: Domain.id
+	* Alias value: Action_id
+	* Hibernate value: Action.id
 	*/
-	String  DOMAIN_ID = DOMAIN_ENTRY.getAliasNames()[1];
+	String  ACTION_ID = ACTION_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Domain_name
-	* Hibernate value: Domain.name
+	* Alias value: Action_menu
+	* Hibernate value: Action.menu
 	*/
-	String  DOMAIN_NAME = DOMAIN_ENTRY.getAliasNames()[2];
+	String  ACTION_MENU = ACTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Action_name
+	* Hibernate value: Action.name
+	*/
+	String  ACTION_NAME = ACTION_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActionDenied entity.
+	*/ 
+	DAOConstantsEntry ACTION_DENIED_ENTRY = DAOConstants.getDAOConstant(ActionDenied.class);
+
+	/** 
+	* Alias value: ActionDenied_action_id
+	* Hibernate value: ActionDenied.action.id
+	*/
+	String  ACTION_DENIED_ACTION_ID = ACTION_DENIED_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActionDenied_id
+	* Hibernate value: ActionDenied.id
+	*/
+	String  ACTION_DENIED_ID = ACTION_DENIED_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ActionDenied_user_id
+	* Hibernate value: ActionDenied.user.id
+	*/
+	String  ACTION_DENIED_USER_ID = ACTION_DENIED_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActionEntry entity.
+	*/ 
+	DAOConstantsEntry ACTION_ENTRY_ENTRY = DAOConstants.getDAOConstant(ActionEntry.class);
+
+	/** 
+	* Alias value: ActionEntry_action_id
+	* Hibernate value: ActionEntry.action.id
+	*/
+	String  ACTION_ENTRY_ACTION_ID = ACTION_ENTRY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActionEntry_executionDate
+	* Hibernate value: ActionEntry.executionDate
+	*/
+	String  ACTION_ENTRY_EXECUTION_DATE = ACTION_ENTRY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ActionEntry_id
+	* Hibernate value: ActionEntry.id
+	*/
+	String  ACTION_ENTRY_ID = ACTION_ENTRY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ActionEntry_session_id
+	* Hibernate value: ActionEntry.session.id
+	*/
+	String  ACTION_ENTRY_SESSION_ID = ACTION_ENTRY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActionFavorite entity.
+	*/ 
+	DAOConstantsEntry ACTION_FAVORITE_ENTRY = DAOConstants.getDAOConstant(ActionFavorite.class);
+
+	/** 
+	* Alias value: ActionFavorite_action_id
+	* Hibernate value: ActionFavorite.action.id
+	*/
+	String  ACTION_FAVORITE_ACTION_ID = ACTION_FAVORITE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActionFavorite_id
+	* Hibernate value: ActionFavorite.id
+	*/
+	String  ACTION_FAVORITE_ID = ACTION_FAVORITE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ActionFavorite_position
+	* Hibernate value: ActionFavorite.position
+	*/
+	String  ACTION_FAVORITE_POSITION = ACTION_FAVORITE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ActionFavorite_user_id
+	* Hibernate value: ActionFavorite.user.id
+	*/
+	String  ACTION_FAVORITE_USER_ID = ACTION_FAVORITE_ENTRY.getAliasNames()[3];
 
 
 
@@ -48,41 +140,22 @@ public interface IAuditAlias {
 	DAOConstantsEntry APPLICATION_ENTRY = DAOConstants.getDAOConstant(Application.class);
 
 	/** 
+	* Alias value: Application_auditLevel
+	* Hibernate value: Application.auditLevel
+	*/
+	String  APPLICATION_AUDIT_LEVEL = APPLICATION_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Application_id
 	* Hibernate value: Application.id
 	*/
-	String  APPLICATION_ID = APPLICATION_ENTRY.getAliasNames()[0];
+	String  APPLICATION_ID = APPLICATION_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Application_name
 	* Hibernate value: Application.name
 	*/
-	String  APPLICATION_NAME = APPLICATION_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for User entity.
-	*/ 
-	DAOConstantsEntry USER_ENTRY = DAOConstants.getDAOConstant(User.class);
-
-	/** 
-	* Alias value: User_domain_id
-	* Hibernate value: User.domain.id
-	*/
-	String  USER_DOMAIN_ID = USER_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: User_id
-	* Hibernate value: User.id
-	*/
-	String  USER_ID = USER_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: User_login
-	* Hibernate value: User.login
-	*/
-	String  USER_LOGIN = USER_ENTRY.getAliasNames()[2];
+	String  APPLICATION_NAME = APPLICATION_ENTRY.getAliasNames()[2];
 
 
 
@@ -138,93 +211,6 @@ public interface IAuditAlias {
 	* Hibernate value: Session.user.id
 	*/
 	String  SESSION_USER_ID = SESSION_ENTRY.getAliasNames()[7];
-
-
-
-	/** 
-	* DAOConstantsEntry for Action entity.
-	*/ 
-	DAOConstantsEntry ACTION_ENTRY = DAOConstants.getDAOConstant(Action.class);
-
-	/** 
-	* Alias value: Action_application_id
-	* Hibernate value: Action.application.id
-	*/
-	String  ACTION_APPLICATION_ID = ACTION_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Action_id
-	* Hibernate value: Action.id
-	*/
-	String  ACTION_ID = ACTION_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Action_name
-	* Hibernate value: Action.name
-	*/
-	String  ACTION_NAME = ACTION_ENTRY.getAliasNames()[2];
-
-
-
-	/** 
-	* DAOConstantsEntry for ActionExecution entity.
-	*/ 
-	DAOConstantsEntry ACTION_EXECUTION_ENTRY = DAOConstants.getDAOConstant(ActionExecution.class);
-
-	/** 
-	* Alias value: ActionExecution_action_id
-	* Hibernate value: ActionExecution.action.id
-	*/
-	String  ACTION_EXECUTION_ACTION_ID = ACTION_EXECUTION_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: ActionExecution_executionDate
-	* Hibernate value: ActionExecution.executionDate
-	*/
-	String  ACTION_EXECUTION_EXECUTION_DATE = ACTION_EXECUTION_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: ActionExecution_id
-	* Hibernate value: ActionExecution.id
-	*/
-	String  ACTION_EXECUTION_ID = ACTION_EXECUTION_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: ActionExecution_session_id
-	* Hibernate value: ActionExecution.session.id
-	*/
-	String  ACTION_EXECUTION_SESSION_ID = ACTION_EXECUTION_ENTRY.getAliasNames()[3];
-
-
-
-	/** 
-	* DAOConstantsEntry for DomainApplication entity.
-	*/ 
-	DAOConstantsEntry DOMAIN_APPLICATION_ENTRY = DAOConstants.getDAOConstant(DomainApplication.class);
-
-	/** 
-	* Alias value: DomainApplication_application_id
-	* Hibernate value: DomainApplication.application.id
-	*/
-	String  DOMAIN_APPLICATION_APPLICATION_ID = DOMAIN_APPLICATION_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: DomainApplication_auditLevel
-	* Hibernate value: DomainApplication.auditLevel
-	*/
-	String  DOMAIN_APPLICATION_AUDIT_LEVEL = DOMAIN_APPLICATION_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: DomainApplication_domain_id
-	* Hibernate value: DomainApplication.domain.id
-	*/
-	String  DOMAIN_APPLICATION_DOMAIN_ID = DOMAIN_APPLICATION_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: DomainApplication_id
-	* Hibernate value: DomainApplication.id
-	*/
-	String  DOMAIN_APPLICATION_ID = DOMAIN_APPLICATION_ENTRY.getAliasNames()[3];
 
 
 }

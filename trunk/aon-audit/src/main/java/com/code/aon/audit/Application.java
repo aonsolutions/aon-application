@@ -7,10 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -18,6 +16,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Index;
 
+import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
@@ -30,20 +29,22 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  * @version 1.0
  */
 @Entity
-@Table(name = "APPLICATION", schema = "AUDIT")
-@SequenceGenerator(name="APPLICATION_GENERATOR", sequenceName="SEQ_APPLICATION",allocationSize=1)
+@Table(name = "application")
 public class Application implements ITransferObject {
 
 	private static final long serialVersionUID = 3375874695541393974L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "APPLICATION_GENERATOR")
-	@Column(name = "ID", nullable = false)
+	@GeneratedValue
+	@Column(nullable = false)
     private Integer id;
 
-	@Column(name = "NAME", nullable = false, length = 64, unique = true)
+	@Column(nullable = false, length = 64, unique = true)
 	@Index(name="IDX_APPLICATION_NAME")
     private String name;
+	
+	@Column(name = "audit_level", nullable = false)
+	private AuditLevel auditLevel;	
 	
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REMOVE }, mappedBy = "application")
@@ -104,6 +105,24 @@ public class Application implements ITransferObject {
     }
 
 	/**
+	 * Gets the audit level.
+	 * 
+	 * @return the audit level
+	 */
+	public AuditLevel getAuditLevel() {
+		return auditLevel;
+	}
+
+	/**
+	 * Sets the audit level.
+	 * 
+	 * @param auditLevel the new audit level
+	 */
+	public void setAuditLevel(AuditLevel auditLevel) {
+		this.auditLevel = auditLevel;
+	}
+    
+	/**
 	 * Gets the actions.
 	 * 
 	 * @return the actions
@@ -129,6 +148,7 @@ public class Application implements ITransferObject {
 		final Application o = (Application) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.auditLevel, o.auditLevel)
 				.append(this.name, o.name)
 				.isEquals();
 		}
@@ -138,6 +158,7 @@ public class Application implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(auditLevel)
 			.append(id)
 			.append(name)
 			.toHashCode();

@@ -6,23 +6,24 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:postgresql://192.168.2.49:5432/audit-code-es</property>		
-		<property name="show_sql">true</property>		
-		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-		<property name="connection.driver_class">org.postgresql.Driver</property>				
+		<property name="connection.url">jdbc:mysql://volga:3306/aon-esferalia-com</property>		
 		<property name="connection.username">dbuser</property>		
-		<property name="connection.password">serubd2000</property>
-		<property name="default_schema">AUDIT</property>
+		<property name="show_sql">true</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.password">serubd2000</property>		
 
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.audit.Domain"/>
-		<mapping class="com.code.aon.audit.Application"/>
-		<mapping class="com.code.aon.audit.User"/>
-		<mapping class="com.code.aon.audit.Session"/>
 		<mapping class="com.code.aon.audit.Action"/>
-		<mapping class="com.code.aon.audit.ActionExecution"/>
-		<mapping class="com.code.aon.audit.DomainApplication"/>
-		
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>
+
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.config.User"/>
+
 	</session-factory>
 
 </hibernate-configuration>

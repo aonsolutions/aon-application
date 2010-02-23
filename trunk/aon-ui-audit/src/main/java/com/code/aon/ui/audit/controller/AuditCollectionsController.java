@@ -9,7 +9,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.audit.Application;
-import com.code.aon.audit.Domain;
 import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.BeanManager;
@@ -23,8 +22,6 @@ public class AuditCollectionsController {
 	private List<SelectItem> auditLevels;
 	
 	private List<SelectItem> applications;
-	
-	private List<SelectItem> domains;
 	
 	/**
 	 * Gets the audit levels.
@@ -48,7 +45,6 @@ public class AuditCollectionsController {
 		return applications;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void refreshApplications() throws ManagerBeanException {
 		applications = new LinkedList<SelectItem>();
 		IManagerBean segmentBean = BeanManager.getManagerBean(Application.class);
@@ -59,24 +55,6 @@ public class AuditCollectionsController {
 			Application application = (Application)iter.next();
 			SelectItem item = new SelectItem(application.getId(), application.getName());
 			applications.add(item);
-		}
-	}
-
-	public List<SelectItem> getDomains() {
-		return domains;
-	}
-
-	@SuppressWarnings("unchecked")
-	public void refreshDomains() throws ManagerBeanException {
-		domains = new LinkedList<SelectItem>();
-		IManagerBean segmentBean = BeanManager.getManagerBean(Domain.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(segmentBean.getFieldName(IAuditAlias.DOMAIN_NAME));
-		Iterator<ITransferObject> iter = segmentBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			Domain domain = (Domain)iter.next();
-			SelectItem item = new SelectItem(domain.getId(), domain.getName());
-			domains.add(item);
 		}
 	}
 	

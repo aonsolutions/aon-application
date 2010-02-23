@@ -36,14 +36,14 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.6.0</version>
+			<version>4.8.0</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.2.0</version>
+			<version>4.4.0</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>

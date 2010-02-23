@@ -6,11 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,6 +21,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.User;
 
 
 /**
@@ -33,35 +32,35 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  * @version 1.0
  */
 @Entity
-@Table(name = "SESSION", schema = "AUDIT")
-@SequenceGenerator(name="SESSION_GENERATOR", sequenceName="SEQ_SESSION",allocationSize=1)
+@Table(name = "session")
 public class Session implements ITransferObject {
 
 	private static final long serialVersionUID = -1655581325873540066L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "SESSION_GENERATOR")
-	@Column(name = "ID", nullable = false)
+	@GeneratedValue
+	@Column(nullable = false)
     private Integer id;
 
-	@Column(name = "SESSION_ID", nullable = false, length = 32)
-	@Index(name="IDX_SESSION_SESSION_ID")
+	@Column(name = "session_id", nullable = false, length = 32)
     private String sessionId;
 
-	@Column(name = "REMOTE_ADDRESS", nullable = false, length = 15)
+	@Column(name = "remote_address", nullable = false, length = 15)
     private String remoteAddress;
 
-	@Column(name = "REMOTE_HOST", nullable = false, length = 64)
+	@Column(name = "remote_host", nullable = false, length = 64)
     private String remoteHost;
 	
 	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="APPLICATION_ID", nullable = false, updatable = false )	
+    @JoinColumn(name="application_id", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_SESSION_APPLICATION")
+	@Index(name = "IDX_SESSION_APPLICATION_ID")
 	private Application application;
 	
 	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="USER_ID", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_SESSION_USER")
+    @JoinColumn( name="user_id", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_SESSION_USER_ID")
+	@Index(name = "IDX_SESSION_USER_ID")
 	private User user;
 
 	@Temporal(TemporalType.TIMESTAMP)

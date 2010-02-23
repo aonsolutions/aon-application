@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
-import com.code.aon.audit.DomainApplication;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
 
@@ -24,14 +23,14 @@ public class AuditNavigationHandler extends NavigationHandler {
 		_base = base;
 	}	
 	
-	private void insertActionExecution( HttpSession httpSession, String name ) {
+	private void insertActionEntry( HttpSession httpSession, String name ) {
 		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
 		if ( session != null ) {		
 			AuditManager manager = AuditManager.getInstance();
 			try {
 				Action action = manager.getAction( name, session.getApplication() );
 				if ( isActionExecutionAuditEnabled(httpSession) ) {
-					manager.createActionExecution(session, action);
+					manager.createActionEntry(session, action);
 				}
 			} catch ( Throwable th ) {
 				LOGGER.error( "Error in insert action execution", th );
@@ -40,9 +39,9 @@ public class AuditNavigationHandler extends NavigationHandler {
 	}	
 	
 	private boolean isActionExecutionAuditEnabled( HttpSession httpSession ) {
-		DomainApplication da = (DomainApplication) httpSession.getAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY );
-		if ( da != null ) {
-			return da.getAuditLevel() == AuditLevel.MODULE;
+		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+		if ( session != null ) {
+			return session.getApplication().getAuditLevel() == AuditLevel.MODULE;
 		}
 		return false;
 	}
@@ -52,7 +51,7 @@ public class AuditNavigationHandler extends NavigationHandler {
 		if (! StringUtils.isEmpty(actionNameCurrent) ) {
 	    	HttpSession httpSession = (HttpSession) fc.getExternalContext().getSession(false);
 	    	if ( httpSession != null ) {
-	    		insertActionExecution(httpSession, actionNameCurrent);	
+	    		insertActionEntry(httpSession, actionNameCurrent);	
 	    	}	
 		}
 		_base.handleNavigation(fc, actionMethodCurrent, actionNameCurrent);
