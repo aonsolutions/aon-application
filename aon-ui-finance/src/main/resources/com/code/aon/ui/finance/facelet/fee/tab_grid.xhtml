@@ -2,9 +2,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate
@@ -226,25 +227,28 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
-				</f:facet>
-				<aon:outputText value="#{to.workPlace.description}"
-					rendered="#{to.id!=customerFee.to.id}" />
-				<aon:selectOneMenu id="CustomerFee_workPlace" 
-					value="#{customerFee.to.workPlace}"
-					rendered="#{to==customerFee.to}">
-					<f:selectItems value="#{companyCollections.workPlaces}" />
-				</aon:selectOneMenu>
-				<f:facet name="footer">
-					<aon:selectOneMenu id="CustomerFee_workPlace-New"
+			<c:if test="#{companyCollections.workPlacesCount > 1}">
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
+					</f:facet>
+					<aon:outputText value="#{to.workPlace.description}"
+						rendered="#{to.id!=customerFee.to.id}" />
+					<aon:selectOneMenu id="CustomerFee_workPlace" 
 						value="#{customerFee.to.workPlace}"
-						rendered="#{customerFee.new}">
+						rendered="#{to==customerFee.to}">
 						<f:selectItems value="#{companyCollections.workPlaces}" />
 					</aon:selectOneMenu>
-				</f:facet>
-			</aon:column>
+					<f:facet name="footer">
+						<aon:selectOneMenu id="CustomerFee_workPlace-New"
+							value="#{customerFee.to.workPlace}"
+							rendered="#{customerFee.new}">
+							<f:selectItems value="#{companyCollections.workPlaces}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+			</c:if>
+
 		</ui:define>
 
 	</ui:decorate>
