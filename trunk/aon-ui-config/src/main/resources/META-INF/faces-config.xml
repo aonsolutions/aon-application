@@ -423,6 +423,29 @@
 		</managed-property>				
 	</managed-bean>
 
+	<!-- ************ USER LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>userLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>userLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_login</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/user/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ********* BANK ACCOUNT VALIDATOR LISTENER ************** -->
 	<managed-bean>
 		<managed-bean-name>bankAccountValidatorListener</managed-bean-name>
