@@ -6,185 +6,186 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="taxList">
 
+		<aon:form id="taxList">
 			<aon:div ajaxRendered="true" layout="none">
-				<ui:include
+
+				<ui:decorate
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle"
 						value="#{configBundle.config_tax_module}" />
 					<ui:param name="controller" value="#{tax}" />
-				</ui:include>
-			</aon:div>
+				</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area">
-				<ui:decorate
-					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-					<ui:param name="controller" value="#{tax}" />
-					<ui:param name="columnClasses"
-						value="aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,
-								aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text" />
+				<aon:div styleClass="aon-scroll-area">
 
-					<ui:define name="columns">
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel for="Tax_name" value="#{bundle.aon_description}" />
-							</f:facet>
-							<aon:outputText value="#{to.name}"
-								rendered="#{formList}" />
-							<aon:inputText id="Tax_name" rendered="#{formEdit}"
-								value="#{tax.to.name}" required="true" />
-							<f:facet name="footer">
-								<aon:inputText id="Tax_name-New" rendered="#{formNew}"
+					<ui:decorate
+						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+						<ui:param name="controller" value="#{tax}" />
+						<ui:param name="columnClasses"
+							value="aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,
+									aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text" />
+	
+						<ui:define name="columns">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Tax_name" value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}"
+									rendered="#{formList}" />
+								<aon:inputText id="Tax_name" rendered="#{formEdit}"
 									value="#{tax.to.name}" required="true" />
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel for="Tax_type" value="#{bundle.aon_type}" />
-							</f:facet>
-							<aon:outputText value="#{to.type}"
-								rendered="#{formList}" />
-							<aon:selectOneMenu id="Tax_type" rendered="#{formEdit}"
-								required="true" value="#{tax.to.type}">
-								<f:selectItems value="#{configCollections.taxTypes}" />
-							</aon:selectOneMenu>
-							<f:facet name="footer">
-								<aon:selectOneMenu id="Tax_type-New" rendered="#{formNew}"
+								<f:facet name="footer">
+									<aon:inputText id="Tax_name-New" rendered="#{formNew}"
+										value="#{tax.to.name}" required="true" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Tax_type" value="#{bundle.aon_type}" />
+								</f:facet>
+								<aon:outputText value="#{to.type}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu id="Tax_type" rendered="#{formEdit}"
 									required="true" value="#{tax.to.type}">
 									<f:selectItems value="#{configCollections.taxTypes}" />
 								</aon:selectOneMenu>
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_date_from}" />
-							</f:facet>
-							<aon:outputText value="#{to.startDate}"
-								rendered="#{formList}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							<aon:selectInputDate id="Tax_startDate"
-								value="#{tax.to.startDate}" rendered="#{formEdit}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-							<f:facet name="footer">
-								<aon:selectInputDate id="Tax_startDate-New"
-									rendered="#{formNew}" value="#{tax.to.startDate}"
+								<f:facet name="footer">
+									<aon:selectOneMenu id="Tax_type-New" rendered="#{formNew}"
+										required="true" value="#{tax.to.type}">
+										<f:selectItems value="#{configCollections.taxTypes}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_date_from}" />
+								</f:facet>
+								<aon:outputText value="#{to.startDate}"
+									rendered="#{formList}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:selectInputDate id="Tax_startDate"
+									value="#{tax.to.startDate}" rendered="#{formEdit}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel for="Tax_percentage" value="#{bundle.aon_percentage}" />
-							</f:facet>
-							<aon:outputText value="#{to.percentage}"
-								rendered="#{formList}" />
-							<aon:inputText id="Tax_percentage" rendered="#{formEdit}" size="6"
-								value="#{tax.to.percentage}" required="true" />
-							<f:facet name="footer">
-								<aon:inputText id="Tax_percentage-New" rendered="#{formNew}" size="6"
+								<f:facet name="footer">
+									<aon:selectInputDate id="Tax_startDate-New"
+										rendered="#{formNew}" value="#{tax.to.startDate}"
+										timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}"/>
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Tax_percentage" value="#{bundle.aon_percentage}" />
+								</f:facet>
+								<aon:outputText value="#{to.percentage}"
+									rendered="#{formList}" />
+								<aon:inputText id="Tax_percentage" rendered="#{formEdit}" size="6"
 									value="#{tax.to.percentage}" required="true" />
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel for="Tax_surcharge" value="#{bundle.aon_surcharge}" />
-							</f:facet>
-							<aon:outputText value="#{to.surcharge}"
-								rendered="#{formList}" />
-							<aon:inputText id="Tax_surcharge" rendered="#{formEdit}" size="6"
-								value="#{tax.to.surcharge}" required="true" />
-							<f:facet name="footer">
-								<aon:inputText id="Tax_surcharge-New" rendered="#{formNew}" size="6"
+								<f:facet name="footer">
+									<aon:inputText id="Tax_percentage-New" rendered="#{formNew}" size="6"
+										value="#{tax.to.percentage}" required="true" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Tax_surcharge" value="#{bundle.aon_surcharge}" />
+								</f:facet>
+								<aon:outputText value="#{to.surcharge}"
+									rendered="#{formList}" />
+								<aon:inputText id="Tax_surcharge" rendered="#{formEdit}" size="6"
 									value="#{tax.to.surcharge}" required="true" />
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel for="Tax_salesAccount" value="#{configBundle.config_tax_sales_account}" />
-							</f:facet>
-							<aon:outputText value="#{to.salesAccount}"
-								rendered="#{formList}" />
-							<ui:include
-								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-								<ui:param name="wizard" value="#{accountWizard}" />
-								<ui:param name="id" value="Tax_salesAccount" />
-								<ui:param name="required" value="#{false}" />
-								<ui:param name="size" value="12" />
-								<ui:param name="maxlength" value="12" />
-								<ui:param name="renderDescription" value="#{false}" />
-								<ui:param name="renderedAttr" value="#{formEdit}" />
-								<ui:param name="disabled" value="#{false}" />
-								<ui:param name="reRenderAttr" value="none" />
-								<ui:param name="entity" value="#{tax.to.salesAccount}" />
-								<ui:param name="ELExpression" value="tax.to.salesAccount" />
-							</ui:include>
-							<f:facet name="footer">
+								<f:facet name="footer">
+									<aon:inputText id="Tax_surcharge-New" rendered="#{formNew}" size="6"
+										value="#{tax.to.surcharge}" required="true" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Tax_salesAccount" value="#{configBundle.config_tax_sales_account}" />
+								</f:facet>
+								<aon:outputText value="#{to.salesAccount}"
+									rendered="#{formList}" />
 								<ui:include
 									src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 									<ui:param name="wizard" value="#{accountWizard}" />
-									<ui:param name="id" value="Tax_salesAccount-New" />
+									<ui:param name="id" value="Tax_salesAccount" />
 									<ui:param name="required" value="#{false}" />
 									<ui:param name="size" value="12" />
 									<ui:param name="maxlength" value="12" />
 									<ui:param name="renderDescription" value="#{false}" />
-									<ui:param name="renderedAttr" value="#{formNew}" />
+									<ui:param name="renderedAttr" value="#{formEdit}" />
 									<ui:param name="disabled" value="#{false}" />
 									<ui:param name="reRenderAttr" value="none" />
 									<ui:param name="entity" value="#{tax.to.salesAccount}" />
 									<ui:param name="ELExpression" value="tax.to.salesAccount" />
 								</ui:include>
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel for="Tax_purchaseAccount" value="#{configBundle.config_tax_purchase_account}" />
-							</f:facet>
-							<aon:outputText value="#{to.purchaseAccount}"
-								rendered="#{formList}" />
-							<ui:include
-								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-								<ui:param name="wizard" value="#{accountWizard}" />
-								<ui:param name="id" value="Tax_purchaseAccount" />
-								<ui:param name="required" value="#{false}" />
-								<ui:param name="size" value="12" />
-								<ui:param name="maxlength" value="12" />
-								<ui:param name="renderDescription" value="#{false}" />
-								<ui:param name="renderedAttr" value="#{formEdit}" />
-								<ui:param name="disabled" value="#{false}" />
-								<ui:param name="reRenderAttr" value="none" />
-								<ui:param name="entity" value="#{tax.to.purchaseAccount}" />
-								<ui:param name="ELExpression" value="tax.to.purchaseAccount" />
-							</ui:include>
-							<f:facet name="footer">
+								<f:facet name="footer">
+									<ui:include
+										src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+										<ui:param name="wizard" value="#{accountWizard}" />
+										<ui:param name="id" value="Tax_salesAccount-New" />
+										<ui:param name="required" value="#{false}" />
+										<ui:param name="size" value="12" />
+										<ui:param name="maxlength" value="12" />
+										<ui:param name="renderDescription" value="#{false}" />
+										<ui:param name="renderedAttr" value="#{formNew}" />
+										<ui:param name="disabled" value="#{false}" />
+										<ui:param name="reRenderAttr" value="none" />
+										<ui:param name="entity" value="#{tax.to.salesAccount}" />
+										<ui:param name="ELExpression" value="tax.to.salesAccount" />
+									</ui:include>
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Tax_purchaseAccount" value="#{configBundle.config_tax_purchase_account}" />
+								</f:facet>
+								<aon:outputText value="#{to.purchaseAccount}"
+									rendered="#{formList}" />
 								<ui:include
 									src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 									<ui:param name="wizard" value="#{accountWizard}" />
-									<ui:param name="id" value="Tax_purchaseAccount-New" />
+									<ui:param name="id" value="Tax_purchaseAccount" />
 									<ui:param name="required" value="#{false}" />
 									<ui:param name="size" value="12" />
 									<ui:param name="maxlength" value="12" />
 									<ui:param name="renderDescription" value="#{false}" />
-									<ui:param name="renderedAttr" value="#{formNew}" />
+									<ui:param name="renderedAttr" value="#{formEdit}" />
 									<ui:param name="disabled" value="#{false}" />
 									<ui:param name="reRenderAttr" value="none" />
 									<ui:param name="entity" value="#{tax.to.purchaseAccount}" />
 									<ui:param name="ELExpression" value="tax.to.purchaseAccount" />
 								</ui:include>
-							</f:facet>
-						</aon:column>
-					</ui:define>
-				</ui:decorate>
+								<f:facet name="footer">
+									<ui:include
+										src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+										<ui:param name="wizard" value="#{accountWizard}" />
+										<ui:param name="id" value="Tax_purchaseAccount-New" />
+										<ui:param name="required" value="#{false}" />
+										<ui:param name="size" value="12" />
+										<ui:param name="maxlength" value="12" />
+										<ui:param name="renderDescription" value="#{false}" />
+										<ui:param name="renderedAttr" value="#{formNew}" />
+										<ui:param name="disabled" value="#{false}" />
+										<ui:param name="reRenderAttr" value="none" />
+										<ui:param name="entity" value="#{tax.to.purchaseAccount}" />
+										<ui:param name="ELExpression" value="tax.to.purchaseAccount" />
+									</ui:include>
+								</f:facet>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
 			</aon:div>
 		</aon:form>
 	</ui:define>
