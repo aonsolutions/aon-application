@@ -448,9 +448,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				if (getHeader().isWithholding()) {
 					coef = coef - (getHeader().getRetPercent()/100);	
 				}
-				double tb = CommonUtil.round(total / coef ); 
+				double tb = total / coef; 
 				getHeader().setTaxableBase(tb);
 				onTaxableBaseWizard(event);
+				currentDetail.setTaxableBase(total-currentDetail.getVatQuota()-currentDetail.getSurchargeQuota()+currentDetail.getRetentionQuota());
 			} catch (Exception e) {
 				String msg = "No se puede realizar el cálculo. Revise los datos introducidos.";
 				LOGGER.warn(msg);
@@ -1108,6 +1109,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setLine(1);
 			invoiceDetail.setSourceId(null);
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setInvoice(invoice);
