@@ -35,7 +35,7 @@ public class AmortizationType implements ITransferObject {
     private Account fixedAssetAccount;
     private Account accumulatedAccount;
     private Account allocationAccount;
-    private double percentage;
+    private Double percentage;
 
 	@Id
     @GeneratedValue	
@@ -111,11 +111,11 @@ public class AmortizationType implements ITransferObject {
 	}
 
 	@Column(nullable=true)
-    public double getPercentage() {
+    public Double getPercentage() {
 		return percentage;
 	}
 
-	public void setPercentage(double percentage) {
+	public void setPercentage(Double percentage) {
 		this.percentage = percentage;
 	}
 
@@ -131,7 +131,7 @@ public class AmortizationType implements ITransferObject {
 		if (years != 0) {
 			setPercentage(CommonUtil.round( 100.0 / years));
 		} else {
-			setPercentage(0);	
+			setPercentage(0.0);	
 		}
 	}
 
