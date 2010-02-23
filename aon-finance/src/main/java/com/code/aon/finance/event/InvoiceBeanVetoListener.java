@@ -39,13 +39,11 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.getType() == InvoiceType.SALES) {
-			StringBuilder sb = new StringBuilder();
+	    	String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
 			if (!StringUtils.isEmpty(invoice.getSeries())) {
-				sb.append(invoice.getSeries());
-				sb.append("/");
+				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
-			sb.append(invoice.getNumber());
-			invoice.setReferenceCode(sb.toString());
+			invoice.setReferenceCode(referenceCode);
 		} else {
 			invoice.setSeries(Integer.toString(CommonUtil.getYear(invoice.getIssueDate())));
 			if (invoice.getNumber() == 0) {
@@ -130,7 +128,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			ITaxInfo taxInfo = (ITaxInfo)bean.get(invoice.getRegistry().getId());
 
 			invoice.setWithholding((type == InvoiceType.SALES) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
-			invoice.setSurcharge((type == InvoiceType.SALES) ? taxInfo.isSurcharge() : company.isSurcharge());
+			invoice.setSurcharge((type == InvoiceType.SALES) ? taxInfo.isSurcharge() : (type == InvoiceType.PURCHASE) ? company.isSurcharge() : false);
 			invoice.setTaxFree(taxInfo.isTaxFree());
 			invoice.setTransaction(taxInfo.getTransaction());
 		} catch (ManagerBeanException e) {
