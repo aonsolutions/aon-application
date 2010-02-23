@@ -503,7 +503,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		currentDetail.setVatQuota(0.0);
 		currentDetail.setSurchargeQuota(0.0);
 		currentDetail.setRetentionQuota(0.0);
-		
 		if(currentDetail.getVatPercent() != 0){
 			currentDetail.setVatQuota(CommonUtil.round(taxableBase * currentDetail.getVatPercent() / 100, 2));
 		}
@@ -518,9 +517,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public void onChangeVatPercent(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
 			double p = (Double) event.getNewValue();
-
 			currentDetail.setVatQuota(0.0);
-			if(currentDetail.getVatPercent() != 0){
+			if(p != 0){
 				currentDetail.setVatQuota(CommonUtil.round(currentDetail.getTaxableBase() * p / 100, 2));
 			}
 		}
@@ -529,9 +527,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public void onChangeSurchargePercent(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
 			double p = (Double) event.getNewValue();
-
 			currentDetail.setSurchargeQuota(0.0);
-			if(currentDetail.getSurchargePercent() != 0){
+			if(p != 0){
 				currentDetail.setSurchargeQuota(CommonUtil.round(currentDetail.getTaxableBase() * p / 100, 2));
 			}
 		}
@@ -540,9 +537,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public void onChangeRetentionPercent(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
 			double p = (Double) event.getNewValue();
-
 			currentDetail.setRetentionQuota(0.0);
-			if(currentDetail.getRetentionPercent() != 0){
+			if(p != 0){
 				currentDetail.setRetentionQuota(CommonUtil.round(currentDetail.getTaxableBase() * p / 100, 2));
 			}
 		}
