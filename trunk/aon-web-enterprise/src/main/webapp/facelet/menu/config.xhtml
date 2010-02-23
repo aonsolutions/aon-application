@@ -11,7 +11,9 @@
 	<ui:define name="content">
 
 		<aon:form id="configMenu">
-		
+			<aon:componentGroup
+				family="javax.faces.Command"
+				method="#{actionDenied.renderedCommand}">
 			<aon:div styleClass="aon-scroll-area">		
 		
 				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
@@ -59,20 +61,12 @@
 										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
 										value="#{geozoneBundle.geozone_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accPeriod" action="accPeriod"
-										value="#{accountingBundle.accounting_period_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="defaultParams" action="defaultParams"
-										actionListener="#{accAppParams.onLoad}"
-										value="#{accountingBundle.accounting_default_params_module}" />
-								</aon:div>
 							</aon:div>
 						</aon:panel>
 					</aon:panelGroup>
 				</aon:panelGrid>
 			</aon:div>
+			</aon:componentGroup>
 		</aon:form>
 	</ui:define>
 </ui:composition>

@@ -5,22 +5,21 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div id="aon-scroll-area">
-		<aon:div>
-			<aon:div style="text-align:center;padding-top: 100px;">
-				<!-- 
-				<aon:graphicImage rendered="#{company.withLogo}" url="company.logo"/>
-				-->
-				<a4j:mediaOutput element="img" cacheable="false"
-					rendered="#{company.withLogo}" 
-					value="#{company.aonFile.key}"
-					createContent="#{company.createLogoContent}" />
-				<aon:div style="font-weight: bold;font-size:14px;padding:2em;">
-					<aon:outputText value="#{company.companyLabel}" />
-				</aon:div>
-			</aon:div>
-		</aon:div>
+		<aon:form>
+			<h:panelGrid styleClass="aon-width-all aon-height-all"
+				columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-width-auto" columns="2">
+				<c:if test="#{companyDisplay.show}">
+					<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" />
+				</c:if>
+				<h:panelGrid columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto" styleClass="aon-width-all" columns="2">
+					<ui:include src="#{actionFavorite.template}" />
+					<ui:include src="#{actionFavorite.lastExecutedsTemplate}" />				
+				</h:panelGrid>
+			</h:panelGrid>
+		</aon:form>		
 	</aon:div>
 </ui:composition>
