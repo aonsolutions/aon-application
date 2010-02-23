@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.stat_menu_summary}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{productStat.onProductStats}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="product_stats" />
+
+					<aon:panelGrid columns="2"
+						columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+						<aon:outputLabel 
+							value="Producto" />
+						<aon:div styleClass="aon-lookup">
+
+							<aon:lookupInputText id="item_product_code"
+								value="#{productStat.item.product.code}"
+								lookup="#{itemLookup}"
+								reRender="item_product_name" ajaxSingle="false"
+								required="true" size="10" />
+							<aon:lookupButton
+								windowTitle="#{productBundle.product_item_selection}"
+								minHeight="460" minWidth="650"
+								selectReRender="item_product_code,item_product_name"
+								property="#{productStat.item}" lookup="#{itemLookup}"
+								actionType="search">
+							</aon:lookupButton>
+							<aon:inputText id="item_product_name" size="60"
+								value="#{productStat.item.product.name}" >
+							</aon:inputText>
+						</aon:div>
+					</aon:panelGrid>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+	</ui:define>
+</ui:composition>
