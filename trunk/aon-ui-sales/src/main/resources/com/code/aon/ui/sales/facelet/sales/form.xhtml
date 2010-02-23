@@ -77,9 +77,9 @@
 						</aon:selectOneMenu>
 						<aon:inputText id="Sales_series-Edit" 
 							value="#{sales.to.series}" rendered="#{!sales.new}" 
-							disabled="true" size="4" />
+							disabled="#{!sales.pending}" size="4" />
 						<aon:inputText id="Sales_number" styleClass="aon-margin-left"
-							value="#{sales.to.number}" disabled="#{!sales.new}" 
+							value="#{sales.to.number}" disabled="#{!sales.pending}" 
 							required="true" size="7" />
 
 						<aon:selectOneMenu id="Sales_securityLevel" styleClass="aon-margin-left"
@@ -121,14 +121,16 @@
 								disabled="#{!sales.pending}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{sales.customerData}" 
-								reRender="Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv"
+								reRender="Customer_full_name,Customer_registry_document,SalesAddress,
+									Sales_scope,Sales_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true"  />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{!sales.pending}" minHeight="460" minWidth="650" 
 								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv"								
+								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,
+									Sales_scope,Sales_defaultPayMethod,payMethodDiv"								
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -136,7 +138,8 @@
 								disabled="#{!sales.pending}" minWidth="650" minHeight="600"
 								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv"
+								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,
+									Sales_scope,Sales_defaultPayMethod,payMethodDiv"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 
@@ -172,7 +175,7 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Sales_seller_id" 
+					<aon:outputLabel for="Seller_id" 
 						value="#{salesBundle.sales_seller}" />
 					<aon:div styleClass="aon-lookup">
 						<a4j:region>
@@ -378,7 +381,8 @@
 												value="#{salesDetail.to.item.product.code}"
 												lookup="#{itemLookup}" 
 												lookupChangeListener="#{salesDetail.onItemChanged}"
-												reRender="salesDetailItemEdit,SalesDetail_price,SalesDetail_discount,SalesDetail_amount"  
+												reRender="salesDetailItemEdit,SalesDetail_quantity,SalesDetail_price,
+													SalesDetail_discount,SalesDetail_amount"  
 												ajaxSingle="false" required="true" size="10" 
 												onblur="toUpperCase(this);" focus="SalesDetail_item_product_name">
 												<aon:joinProperty alias="Item_product_code" value="#{salesDetail.to.item.product.code}" />
@@ -388,7 +392,8 @@
 												minHeight="460" minWidth="650"
 												property="#{salesDetail.to.item}" lookup="#{itemLookup}" 
 												lookupChangeListener="#{salesDetail.onItemChanged}"
-												selectReRender="salesDetailItemEdit,SalesDetail_price,SalesDetail_discount,SalesDetail_amount"
+												selectReRender="salesDetailItemEdit,SalesDetail_quantity,SalesDetail_price,
+													SalesDetail_discount,SalesDetail_amount"
 												actionType="search">
 											</aon:lookupButton>
 											<aon:lookupButton
@@ -396,7 +401,8 @@
 												minHeight="360" minWidth="780"
 												property="#{salesDetail.to.item}" lookup="#{itemLookup}"
 												lookupChangeListener="#{salesDetail.onItemChanged}" 
-												selectReRender="salesDetailItemEdit,SalesDetail_price,SalesDetail_discount,SalesDetail_amount"
+												selectReRender="salesDetailItemEdit,SalesDetail_quantity,SalesDetail_price,
+													SalesDetail_discount,SalesDetail_amount"
 												actionType="new">
 											</aon:lookupButton>
 											<c:if test="#{aonConfiguration.bean.product.showStock}">
@@ -434,7 +440,8 @@
 													value="#{salesDetail.to.item.product.code}"
 													lookup="#{itemLookup}" 
 													lookupChangeListener="#{salesDetail.onItemChanged}" 
-													reRender="salesDetailItemNew,SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New"  
+													reRender="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,
+														SalesDetail_discount-New,SalesDetail_amount-New"  
 													ajaxSingle="false" required="true" size="10" 
 													onblur="toUpperCase(this);" focus="SalesDetail_item_product_name-New">
 													<aon:joinProperty alias="Item_product_code"	value="#{salesDetail.to.item.product.code}" />
@@ -444,7 +451,8 @@
 													minHeight="460" minWidth="650" 
 													property="#{salesDetail.to.item}" lookup="#{itemLookup}" 
 													lookupChangeListener="#{salesDetail.onItemChanged}"
-													selectReRender="salesDetailItemNew,SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New"
+													selectReRender="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,
+														SalesDetail_discount-New,SalesDetail_amount-New"
 													actionType="search">
 												</aon:lookupButton>
 												<aon:lookupButton
@@ -452,7 +460,8 @@
 													minHeight="360" minWidth="780"
 													property="#{salesDetail.to.item}" lookup="#{itemLookup}"
 													lookupChangeListener="#{salesDetail.onItemChanged}" 
-													selectReRender="salesDetailItemNew,SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New"
+													selectReRender="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,
+														SalesDetail_discount-New,SalesDetail_amount-New"
 													actionType="new">
 												</aon:lookupButton>
 												<c:if test="#{aonConfiguration.bean.product.showStock}">
