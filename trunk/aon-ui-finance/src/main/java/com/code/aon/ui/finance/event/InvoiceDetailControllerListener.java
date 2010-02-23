@@ -66,7 +66,9 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-		event.getController().initializeModel();
+		if (!event.getController().isNew()) {
+			event.getController().initializeModel();
+		}
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
