@@ -3,7 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
 
 
 	<aon:panel rendered="#{invoiceEntry.registryFilled}">
@@ -254,8 +255,14 @@
 					<aon:outputText 
 						value="#{accountBundle.account_account}" />
 				</f:facet>
-				<aon:outputText value="#{to.account}"
-					rendered="#{to!=invoiceEntry.currentDetail}" />
+				
+				<aon:div style="width: 90%;" rendered="#{to!=invoiceEntry.currentDetail}" ajaxRendered="true">
+					<aon:outputText value="#{to.account}" />
+					<rich:toolTip value="#{to.account.description}"
+							hideEvent="onmouseout" showDelay="200">
+					</rich:toolTip>
+				</aon:div>
+					
 				<ui:include
 					src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 					<ui:param name="wizard" value="#{accountWizard}" />

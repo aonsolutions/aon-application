@@ -669,15 +669,16 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		iter = accountEntryDetailBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
-			if (accountEntryDetail.getAccount().getId().substring(0, 3).equals(AccountConstants.BANK_ACCOUNT_PREFIX.substring(0, 3))) {
-				setDeposit(0);
-				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
-				setCashAccount(null);
-			} else {
+			if (accountEntryDetail.getAccount().getId().substring(0, 3).equals(AccountConstants.CASH_ACCOUNT_PREFIX.substring(0, 3))) {
 				setDeposit(1);
 				setRegistryBank(null);
 				setCashAccount(accountEntryDetail.getAccount());
+			} else {
+				setDeposit(0);
+				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
+				setCashAccount(null);
 			}
+
 			setConcept(accountEntryDetail.getConcept());
 		}
 
