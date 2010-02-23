@@ -28,4 +28,10 @@ public class DropDownMenuHandler extends DropDownMenuTagHandler {
 		ComponentManager.getInstance().setAttributes( tag, ctx, (UIComponent) instance );
 	}
 	
+	@Override
+	protected void onComponentCreated(FaceletContext ctx, UIComponent c,
+			UIComponent parent) {
+		ComponentManager.getInstance().onComponentCreated( ctx, c, parent );
+	}	
+	
 }

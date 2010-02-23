@@ -82,6 +82,12 @@ public class DataPaginatorHandler extends DataScrollerTagHandler {
 	}
 	
 	@Override
+	protected void onComponentCreated(FaceletContext ctx, UIComponent c,
+			UIComponent parent) {
+		ComponentManager.getInstance().onComponentCreated( ctx, c, parent );
+	}		
+	
+	@Override
 	protected void applyNextHandler(FaceletContext ctx, UIComponent c)
 			throws IOException, FacesException, ELException {
 		if ( isPaginator(ctx) ) {
