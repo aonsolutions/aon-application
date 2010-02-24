@@ -16,8 +16,12 @@
 					<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" />
 				</c:if>
 				<h:panelGrid columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto" styleClass="aon-width-all" columns="2">
-					<ui:include src="#{actionFavorite.template}" />
-					<ui:include src="#{actionFavorite.lastExecutedsTemplate}" />				
+					<aon:panelGroup>
+						<aon:dynamicInclude src="#{actionFavorite.template}" />
+					</aon:panelGroup>
+					<aon:panelGroup> 
+						<aon:dynamicInclude src="#{actionFavorite.lastExecutedsTemplate}" />
+					 </aon:panelGroup>				
 				</h:panelGrid>
 			</h:panelGrid>
 		</aon:form>		
