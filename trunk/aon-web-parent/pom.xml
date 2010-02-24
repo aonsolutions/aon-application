@@ -64,16 +64,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
                                                         <directory>/var/lib/jbossas/server/default/deploy</directory>
                                                 </mapping>
                                         </mappings>
-					<requires>
-						<require></require>
-					</requires>
-					<!-- Este paquete sustituye al 'aon-*' correspondiente -->
-					<provides>
-						<provide>${project.build.finalName} ${project.parent.version}</provide>
-					</provides>
-					<conflicts>
-						<conflict>${project.build.finalName} < ${project.parent.version}</conflict>
-					</conflicts>              
 					
                                 </configuration>
                         </plugin>
