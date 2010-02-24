@@ -41,7 +41,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 					<execution>
 					<phase>deploy</phase>
 					<goals>
-						<goal>rpm</goal>
+						<goal>attached-rpm</goal>
 					</goals>
 					</execution>
 				</executions>
