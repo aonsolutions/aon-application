@@ -600,4 +600,10 @@
 			com.code.aon.faces.component.richfaces.componentGroup.ComponentGroupHandler
 		</handler-class>
 	</tag>
+	<tag>
+		<tag-name>dynamicInclude</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.dynamicInclude.DynamicIncludeHandler
+		</handler-class>
+	</tag>
 </facelet-taglib>
