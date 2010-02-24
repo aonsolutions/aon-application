@@ -38,7 +38,8 @@
 						cols="120" rows="30"
 						value="#{fileManager.fileValue}" />
 					<aon:div rendered="#{fileManager.image}" styleClass="aon-width-all">	
-						<a4j:mediaOutput element="img"
+						<a4j:mediaOutput element="img" cacheable="false"
+							value="#{fileManager.aonFile.key}"
 							createContent="#{fileManager.createImageContent}" />
 					</aon:div>								
 							
