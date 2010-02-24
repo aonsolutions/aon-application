@@ -6,9 +6,6 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <f:view>
-<c:forEach items="#{aonConfiguration.applicationBundleList}" var="aBundle">
-	<f:loadBundle basename="#{aBundle.value}" var="#{aBundle.key}" />
-</c:forEach>
 <head>
 	<title><ui:insert name="title">Title</ui:insert></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -18,13 +15,17 @@
 	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">
 		<a4j:loadStyle src="#{styleSheet}"/>
 	</c:forEach>
+
+	<!-- Necesario si se pone el LoadScriptStrategy a ALL -->
+	<a4j:loadScript src="#{aonResource.resolve['/com/code/aon/faces/component/richfaces/rowSelector/rowSelector.js']}"/>
+	
 	<a4j:loadScript src="#{aonResource.resolveLocal['/js/richFaces.js']}"/>
 	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />
-	<ui:insert name="head" />
+ 	<ui:insert name="head" />
 </head>
 <body>
 	<aon:div id="aon-content">			
-		<ui:insert name="mainHeader" />		
+		<ui:insert name="mainHeader" />
 		<ui:insert name="mainContent" />
 	</aon:div>
 </body>

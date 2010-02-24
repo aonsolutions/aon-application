@@ -3,32 +3,6 @@
 	<name>aon-web-finance</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ui-mailing</project>
-		<project>aon-ui-finance</project>
-		<project>aon-ui-account-bridge</project>
-		<project>aon-account</project>
-		<project>aon-finance</project>
-		<project>aon-ui-sales</project>
-		<project>aon-accounting</project>
-		<project>aon-account-bridge</project>
-		<project>aon-product</project>
-		<project>aon-ui-product</project>
-		<project>aon-sales</project>
-		<project>aon-ui-account</project>
-		<project>aon-ui-customer</project>
-		<project>aon-ui-resources</project>
-		<project>aon-ui-form</project>
-		<project>aon-ui-company</project>
-		<project>aon-ui-config</project>
-		<project>aon-config</project>
-		<project>aon-registry</project>
-		<project>aon-purchase</project>
-		<project>aon-warehouse</project>
-		<project>aon-ui-registry</project>
-		<project>aon-customer</project>
-		<project>aon-supplier</project>
-		<project>aon-ui-supplier</project>
-		<project>aon-company</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
