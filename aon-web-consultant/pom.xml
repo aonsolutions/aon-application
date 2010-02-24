@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>1.0.7</version>
+		<version>5.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.consultant</artifactId>
 	<packaging>war</packaging>
-	<version>4.4.5</version>
+	<version>${aon-version}</version>
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
@@ -23,91 +23,91 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.8.0</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.4.0</version>
+			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>4.3.3</version>
+			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.14.2</version>
+			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.campaign</artifactId>
-			<version>4.3.4</version>
+			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.8.0</version>
+			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>4.4.1</version>
+			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.9.1</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>4.17.0</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.12.1</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.project</artifactId>
-			<version>4.4.0</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>4.2.3</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>4.4.0</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.stat</artifactId>
-			<version>4.2.4</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.6.1</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
