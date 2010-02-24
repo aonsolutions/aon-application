@@ -5,25 +5,25 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>1.0.1</version>
+		<version>5.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.mailing</artifactId>
-	<version>4.0.2</version>
+	<version>${aon-version}</version>
 	<description>AON UI MAILING</description>
 	<name>AON UI MAILING</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.4.0</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>4.5.0</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

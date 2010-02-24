@@ -6,37 +6,37 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>1.0.1</version>
+		<version>5.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.ui.account</artifactId>
-  <version>4.7.0</version>
+  <version>${aon-version}</version>
   <description>AON UI ACCOUNT</description>
   <name>AON UI ACCOUNT</name>
   <dependencies>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.form</artifactId>
-      <version>4.4.0</version>
+      <version>${aon-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.account</artifactId>
-      <version>4.0.3</version>
+      <version>${aon-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.config</artifactId>
-      <version>4.2.3</version>
+      <version>${aon-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.rich.components</artifactId>
-      <version>4.8.0</version>
+      <version>${aon-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
