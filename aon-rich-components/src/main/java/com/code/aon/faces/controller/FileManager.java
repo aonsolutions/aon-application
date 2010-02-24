@@ -31,6 +31,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FileManager {
 	
+	private static final String FILE_MANAGER_FORM = "fileManager_form";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileManager.class);
 
 	private static final DecimalFormat BYTES_FORMAT = new DecimalFormat("0 bytes");
@@ -48,6 +50,8 @@ public class FileManager {
 	private DataModel model;
 	
 	private boolean _new;
+	
+	private String nextAction;
 	
 	private AonFile aonFile;
 	
@@ -135,16 +139,19 @@ public class FileManager {
 	private void loadModel( File directory ) {
 		List<File> list = new ArrayList<File>();
 		List<File> files = new ArrayList<File>();
-		for( File file : directory.listFiles() ) {
-			if ( file.isDirectory() ) {
-				list.add( file );
-			} else {
-				files.add( file );
+		File[] fileArray = directory.listFiles();
+		if (! ArrayUtils.isEmpty(fileArray) ) {
+			for( File file : fileArray ) {
+				if ( file.isDirectory() ) {
+					list.add( file );
+				} else {
+					files.add( file );
+				}
 			}
+			Collections.sort(list);
+			Collections.sort(files);
+			list.addAll( files );			
 		}
-		Collections.sort(list);
-		Collections.sort(files);
-		list.addAll( files );
 		this.model = new ListDataModel( list );
 	}
 
@@ -224,11 +231,7 @@ public class FileManager {
 	}	
 
 	public String getSelectAction() {
-		File file = getFile();
-		if ( (file != null) && file.isFile() ) {
-			return "fileManager_form";
-		}		
-		return null;
+		return this.nextAction;
 	}
 
 	private AonFile getAonFile( File file ) {
@@ -258,11 +261,13 @@ public class FileManager {
 	public void onSelect( ActionEvent event ) {
 		File file = getFile();
 		if ( (file != null) ) {
+			this.nextAction = null;
 			if ( file.isDirectory() ) {
 				setCurrentDirectory( file );
 				loadModel( getCurrentDirectory() );
 			} else {
-				changeCurrentFile(file); 
+				changeCurrentFile(file);
+				this.nextAction = FILE_MANAGER_FORM;
 			}
 		}		
 	}
@@ -292,7 +297,7 @@ public class FileManager {
 	}
 
 	public void onGoRoot( ActionEvent event ) {
-		String parent = FilenameUtils.normalize( getCurrentDirectory().getParent() );
+		String parent = getCurrentDirectory().getParent();
 		File root = new File( FilenameUtils.getPrefix(parent) );
 		if ( root.canRead() ) {
 			setCurrentDirectory(root);
@@ -326,12 +331,17 @@ public class FileManager {
 	public void onCancel( ActionEvent event ) {
 		reset();
 	}
+
+	public void onRefresh( ActionEvent event ) {
+		loadModel( getCurrentDirectory() );
+		reset();
+	}
 	
 	private void reset() {
 		this.currentFile = null;
-		this.aonFile = null;
-		this.fileValue = null;		
-		this.folderName = null;
+		setAonFile(null);
+		setFileValue(null);		
+		setFolderName(null);
 	}
 
 	public void createImageContent(OutputStream out, Object data) throws IOException {
