@@ -6,9 +6,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<h:panelGrid styleClass="aon-width-all">
-		<aon:outputText value="#{companyBundle.company_connected_to}" />
-		<h:panelGrid columnClasses="logo-left" styleClass="aon-width-all">	
+	<h:panelGrid styleClass="aon-width-all aon-text-center">
+		<c:if test="#{!skipConnectedLabel}" >
+			<aon:outputText value="#{companyBundle.company_connected_to}" />
+		</c:if>
+		<h:panelGrid columnClasses="aon-logo-left" styleClass="aon-width-all">	
 			<a4j:mediaOutput element="img"
 				rendered="#{companyDisplay.companyLogo != null}" 
 				value="#{companyDisplay.logoKey}"
