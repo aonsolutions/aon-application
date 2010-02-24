@@ -26,6 +26,11 @@
 						reRender="createSubFolderGrid"
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload">		
 						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
+					</aon:commandButton>
+					<aon:commandButton id="refresh"
+						value="#{richBundle.aon_refresh}"
+						actionListener="#{fileManager.onRefresh}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh">		
 					</aon:commandButton>						
 				</ui:define>
 			</ui:decorate>
