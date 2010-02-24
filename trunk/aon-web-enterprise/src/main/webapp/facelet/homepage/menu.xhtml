@@ -40,13 +40,10 @@
 					value="#{bundle.aon_configuration}"
 					action="menu_config" immediate="true"
 					styleClass="aon-top-menu-item" />
-
- 				<aon:commandLink id="actionDenied"
-					value="#{auditBundle.audit_action_denied_module}"
-					action="actionDenied" immediate="true"
-					actionListener="#{actionDenied.onInit}"
-					styleClass="aon-top-menu-item" />
-					
+										
+				<aon:div layout="none">
+					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
+				</aon:div>
 	 		</aon:menuBar>
 		</aon:form>
 	</c:if>
