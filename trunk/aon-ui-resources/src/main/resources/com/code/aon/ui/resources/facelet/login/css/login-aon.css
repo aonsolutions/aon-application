@@ -69,7 +69,7 @@ input:focus{
 	margin-top: 1em;
 }
 
-.logo-left{
+.aon-logo-left{
 	border-right:1px solid #ccc;
 	height:350px;	
 	vertical-align:middle;	
@@ -136,10 +136,11 @@ input:focus{
 	padding:15px;
 }
 
-.aon-login-info2-company{
+.aon-footer-company-label{
 	font-family:arial narrow, arial, sans;
 	text-transform:uppercase;
-	}
+}
+
 /* Layer that contains all the error messages. Use a id with the same name and a forceId if you don´t want them to scroll */
 .aon-errors{
 	border:#ccc 1px solid;
