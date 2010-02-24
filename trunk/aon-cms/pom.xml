@@ -5,19 +5,19 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>1.0.1</version>
+		<version>5.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.cms</artifactId>
-	<version>3.8.0</version>
+	<version>${aon-version}</version>
 	<description>AON CMS</description>
 	<name>AON CMS</name>
 	<dependencies>
 		<dependency>
 		   <groupId>com.code.aon</groupId>
 		   <artifactId>aon.common</artifactId>
-		   <version>3.6.1</version>
+		   <version>${aon-version}</version>
 		   <scope>compile</scope>
 		</dependency>
 	</dependencies>
