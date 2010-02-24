@@ -8,22 +8,38 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<aon:div id="aon-scroll-area">
-		<aon:form>
-			<h:panelGrid styleClass="aon-width-all aon-height-all"
-				columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-width-auto" columns="2">
-				<c:if test="#{companyDisplay.show}">
-					<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" />
-				</c:if>
-				<h:panelGrid columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto" styleClass="aon-width-all" columns="2">
-					<aon:panelGroup>
-						<aon:dynamicInclude src="#{actionFavorite.template}" />
-					</aon:panelGroup>
-					<aon:panelGroup> 
-						<aon:dynamicInclude src="#{actionFavorite.lastExecutedsTemplate}" />
-					 </aon:panelGroup>				
-				</h:panelGrid>
-			</h:panelGrid>
-		</aon:form>		
-	</aon:div>
+	<h:panelGrid styleClass="aon-width-all aon-height-all aon-margin-top aon-padding-right"
+		headerClass="aon-text-right aon-normal"
+		columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-width-auto" columns="2">
+		<f:facet name="header">
+			<aon:outputText value="#{aonConfiguration.currentDate}" />
+		</f:facet>		
+		<c:if test="#{companyDisplay.show}">
+			<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" >
+				<ui:param name="skipConnectedLabel" value="#{true}" />
+			</ui:include>
+		</c:if>	
+		<h:panelGrid columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto" styleClass="aon-width-all" columns="2">
+			<aon:form>
+				<aon:panelGroup>
+					<aon:dynamicInclude value="#{actionFavorite.template}" />
+				</aon:panelGroup>
+				<aon:panelGroup> 
+					<aon:dynamicInclude value="#{actionFavorite.lastExecutedsTemplate}" />
+				 </aon:panelGroup>
+			</aon:form>	
+		</h:panelGrid>		
+	</h:panelGrid>
+	<aon:div styleClass="aon-footer-box">						
+		 <aon:outputText value="#{bundle.aon_trademark}" />
+		 <aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
+		 	styleClass="aon-footer-company-label aon-margin-right"/>
+		 <aon:outputText value="#{bundle.aon_support_title}:  " />
+		 <aon:outputText value="#{bundle.aon_support_telephone_number}"
+		 	styleClass="aon-outputText aon-bold aon-margin-right" />
+		<aon:outputLink target="_blank"
+			value="mail:#{bundle.aon_support_send_email}">	
+			<aon:outputText value="#{bundle.aon_support_send_email}" />
+		</aon:outputLink> 	
+	</aon:div>	
 </ui:composition>
