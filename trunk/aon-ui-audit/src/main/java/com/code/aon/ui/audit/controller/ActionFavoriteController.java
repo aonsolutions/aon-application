@@ -1,10 +1,6 @@
 package com.code.aon.ui.audit.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +8,6 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +43,8 @@ public class ActionFavoriteController implements IAuditConstants {
 	
 	private static final String FAVORITES_TEMPLATE = "favorites.xhtml.vm";
 	
+	private static final String FAVORITES_MENU_TEMPLATE = "favoritesMenu.xhtml.vm";
+	
 	private static final String RECENTS_TEMPLATE = "recents.xhtml.vm";
 	
 	private List<ApplicationOption> options;
@@ -56,7 +53,9 @@ public class ActionFavoriteController implements IAuditConstants {
 	
 	private VelocityHelper velocityHelper;
 	
-	private File favoritesTemplate;
+	private String template;
+	
+	private String menuTemplate;
 	
 	public ActionFavoriteController() {
 		this.favorites = loadFavorites();
@@ -110,7 +109,8 @@ public class ActionFavoriteController implements IAuditConstants {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
-		this.favoritesTemplate = null;
+		this.template = null;
+		this.menuTemplate = null;
 	}
 	
 	public void setFavorites(List<ApplicationOption> favorites) {
@@ -201,35 +201,37 @@ public class ActionFavoriteController implements IAuditConstants {
 		return this.velocityHelper;
 	}
 	
-	private File getTemplate( String template, Object ... objects  ) throws IOException {
-		File file = File.createTempFile( FilenameUtils.getBaseName(template), ".xhtml" );
+	private String getTemplate( String template, Object ... objects  ) throws IOException {
 		try {
 			TemplateHelper th = getVelocityHelper().getTemplateHelper();
 			for( int i = 0; i < objects.length; i++ ) {
 				th.putInContext( (String) objects[i++], objects[i]);
 			}
-			FileOutputStream fos = new FileOutputStream(file);
-			Writer out = new OutputStreamWriter(fos, "UTF8"); 
-			th.processTemplate(template, out);
-			out.close();
+			return th.processTemplate(template);
 		} catch (AonException e) {
 			LOGGER.error( e.getMessage(), e);
 		}		
-		return file;
+		return null;
 	}
 	
 	public String getTemplate() throws IOException {
-		if ( this.favoritesTemplate == null ) {
-			this.favoritesTemplate = getTemplate(FAVORITES_TEMPLATE, OPTIONS_ATTRIBUTE, getFavorites());
+		if ( this.template == null ) {
+			this.template = getTemplate(FAVORITES_TEMPLATE, OPTIONS_ATTRIBUTE, getFavorites());
 		}
-		return this.favoritesTemplate.toURI().toURL().toString();
+		return this.template;
 	}
 
+	public String getMenuTemplate() throws IOException {
+		if ( this.menuTemplate == null ) {
+			this.menuTemplate = getTemplate(FAVORITES_MENU_TEMPLATE, OPTIONS_ATTRIBUTE, getFavorites());
+		}
+		return this.menuTemplate;
+	}
+	
 	public String getLastExecutedsTemplate() throws IOException {
 		List<ActionEntry> actions = getLastExecutedActions(10);
 		List<ApplicationOption> options = getLastExecuted(actions);
-		File file = getTemplate(RECENTS_TEMPLATE, OPTIONS_ATTRIBUTE, options, ACTIONS_ATTRIBUTE, actions );
-		return file.toURI().toURL().toString();
+		return getTemplate(RECENTS_TEMPLATE, OPTIONS_ATTRIBUTE, options, ACTIONS_ATTRIBUTE, actions );
 	}
 	
 }
