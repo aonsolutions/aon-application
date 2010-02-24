@@ -29,6 +29,56 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
           </archive>
         </configuration>
       </plugin>
+
+                       <plugin>
+
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                                <version>2.0.1</version>
+                                <extensions>true</extensions>
+
+				<executions>
+					<execution>
+					<phase>deploy</phase>
+					<goals>
+						<goal>rpm</goal>
+					</goals>
+					</execution>
+				</executions>
+
+                                <configuration>
+	                            <group>Applications/Aon</group>
+	                            <release>${env.BUILD_NUMBER}</release>
+				    <copyright>2009, esferalia Networks S.A</copyright>
+                                        <mappings>
+                                                <mapping>
+                                                        <!-- Incluimos úncamente el artifact principal (WAR) -->
+                                                        <artifact>
+                                                                <classifiers>
+                                                                        <classifier></classifier>
+                                                                </classifiers>
+                                                        </artifact>
+                                                        <filemode>755</filemode>
+                                                        <username>jboss</username>
+                                                        <groupname>jboss</groupname>
+                                                        <directory>/var/lib/jbossas/server/default/deploy</directory>
+                                                </mapping>
+                                        </mappings>
+					<requires>
+						<require></require>
+					</requires>
+					<!-- Este paquete sustituye al 'aon-*' correspondiente -->
+					<provides>
+						<provide>${project.build.finalName} ${project.parent.version}</provide>
+					</provides>
+					<conflicts>
+						<conflict>${project.build.finalName} < ${project.parent.version}</conflict>
+					</conflicts>              
+					
+                                </configuration>
+                        </plugin>
+
+
     </plugins>
   </build>
   <dependencies>
