@@ -5,19 +5,19 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>1.0.1</version>
+		<version>5.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.rich.components</artifactId>
-	<version>4.8.0</version>
+	<version>${aon-version}</version>
 	<description>AON RICH COMPONENTS</description>
 	<name>AON RICH COMPONENTS</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>4.4.0</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
