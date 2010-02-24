@@ -10,44 +10,34 @@
 
 <ui:composition>
 
-	<aon:form id="uploadFileForm">
-
-		<rich:modalPanel id="uploadFileModalPanel" height="120" width="400">
+		<rich:modalPanel id="uploadFileModalPanel" height="180" width="450">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
 					<aon:outputText value="#{richBundle.aon_file_upload}" />
 				</aon:div>
 			</f:facet>
 			<f:facet name="controls">
-				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-					immediate="true" reRender="aonStatus">
-					<rich:componentControl for="uploadFileModalPanel" operation="hide"
-						event="onclick" />
-				</aon:commandButton>
+				<aon:form>
+					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+						immediate="true" reRender="aonStatus">
+						<rich:componentControl for="uploadFileModalPanel" operation="hide"
+							event="onclick" />
+					</aon:commandButton>
+				</aon:form>
 			</f:facet>
 
-			<h:panelGrid 
-				width="100%" cellpadding="2" cellspacing="0" columns="2"
-				styleClass="aon-panelGrid-formatting">
-				<a4j:region>
-					<aon:fileUpload id="file_upload"
-						fileUploadListener="#{controller.fileUploaded}">							
-						<f:facet name="label">
-							<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-						</f:facet>
-						<a4j:support event="onuploadcomplete" oncomplete="Richfaces.hideModalPanel('uploadFileModalPanel');" />
-						<a4j:support event="onupload" oncomplete="showFileUploadProgress();" />
-						<a4j:support event="onclear" oncomplete="hideFileUploadProgress();" />
-					</aon:fileUpload>
-					<rich:jQuery name="showFileUploadProgress" timing="onJScall" 
-						selector="#file_upload .rich-fileupload-list-overflow" query="height(70);" />
-					<rich:jQuery name="hideFileUploadProgress" timing="onJScall"
-						selector="#file_upload .rich-fileupload-list-overflow" query="height(0);" />
-				</a4j:region>
-			</h:panelGrid>
+			<aon:form id="uploadFileForm">
+				<aon:fileUpload id="file_upload"
+					listHeight="140px"
+					fileUploadListener="#{fileManager.fileUploaded}">							
+					<f:facet name="label">
+						<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+					</f:facet>
+					<a4j:support event="onuploadcomplete" reRender="file_upload,fileManagerList"
+						oncomplete="Richfaces.hideModalPanel('uploadFileModalPanel');" />
+				</aon:fileUpload>
+			</aon:form>	
 		</rich:modalPanel>
-
-	</aon:form>
 
 </ui:composition>
 

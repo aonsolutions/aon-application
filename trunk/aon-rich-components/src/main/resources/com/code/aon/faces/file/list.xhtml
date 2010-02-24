@@ -24,7 +24,7 @@
 					<aon:commandButton id="uploadFile"
 						value="#{richBundle.aon_file_upload}"
 						reRender="createSubFolderGrid"
-						styleClass="aon-finding-toolbar-item aon-icon-new">		
+						styleClass="aon-finding-toolbar-item aon-icon-file-upload">		
 						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>						
 				</ui:define>
@@ -122,6 +122,7 @@
 		</aon:form>
 		
 		<ui:include src="/com/code/aon/faces/file/createFolder.xhtml" />
+		<ui:include src="/com/code/aon/faces/file/uploadFile.xhtml" />
 
 	</ui:define>
 

@@ -20,6 +20,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -359,6 +360,20 @@ public class FileManager {
 	}
 
 	public void fileUploaded(UploadEvent event) {
+		UploadItem item = event.getUploadItem();
+		File file = new File( getCurrentDirectory(), item.getFileName() );
+		try {
+			if ( item.isTempFile() ) {
+				FileUtils.copyFile( item.getFile(), file );
+			} else {
+				FileUtils.writeByteArrayToFile(file, item.getData());
+			}
+			loadModel( getCurrentDirectory() );
+		} catch (IOException e) {
+			LOGGER.error("file upload " + file, e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}	
 	
 }
