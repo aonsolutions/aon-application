@@ -5,37 +5,37 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>1.0.1</version>
+		<version>5.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.project</artifactId>
-	<version>4.0.5</version>
+	<version>${aon-version}</version>
 	<description>AON PROJECT</description>
 	<name>AON PROJECT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.6.1</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>4.2.3</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>4.3.1</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.groupware</artifactId>
-			<version>4.0.5</version>
+			<version>${aon-version}</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
