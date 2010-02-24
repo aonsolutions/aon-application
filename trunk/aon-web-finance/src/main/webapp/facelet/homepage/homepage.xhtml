@@ -2,18 +2,25 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div id="aon-scroll-area">
 		<aon:div>
 			<aon:div style="text-align:center;padding-top: 100px;">
+				<!-- 
 				<aon:graphicImage rendered="#{company.withLogo}" url="company.logo"/>
+				-->
+				<a4j:mediaOutput element="img" cacheable="false"
+					rendered="#{company.withLogo}" 
+					value="#{company.aonFile.key}"
+					createContent="#{company.createLogoContent}" />
 				<aon:div style="font-weight: bold;font-size:14px;padding:2em;">
 					<aon:outputText value="#{company.companyLabel}" />
 				</aon:div>
 			</aon:div>
 		</aon:div>
 	</aon:div>
-
 </ui:composition>
