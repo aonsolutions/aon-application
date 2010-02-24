@@ -42,7 +42,7 @@ public class ApplicationOptionController {
 	private static final String VALUE_ATTRIBUTE = "value";
 
 	private static final String ACTION_ATTRIBUTE = "action";
-
+	
 	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationOptionController.class);
@@ -136,7 +136,7 @@ public class ApplicationOptionController {
 
 	@SuppressWarnings("unchecked")
 	private void parseMenu( Document document ) {
-		List<Element> list = document.selectNodes("//aon:commandLink");
+		List<Element> list = document.selectNodes("//" + ApplicationOption.AON_COMMAND_LINK );
 		for ( Element element : list ) {
 			parseMainCommandLink(element);
         }		
@@ -169,7 +169,7 @@ public class ApplicationOptionController {
 
 	@SuppressWarnings("unchecked")
 	private void parseTemplate( Document document, String category ) {
-		List<Element> list = document.selectNodes("//aon:commandLink");
+		List<Element> list = document.selectNodes("//" + ApplicationOption.AON_COMMAND_LINK );
 		for ( Element element : list ) {
 			ApplicationOption option = getApplicationOption(element, category);
 			if ( option != null ) {
