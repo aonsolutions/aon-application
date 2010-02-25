@@ -9,10 +9,9 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<h:panelGrid styleClass="aon-width-all aon-height-all aon-margin-top aon-padding-right"
-		headerClass="aon-text-right aon-normal"
 		columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-vertical-align-top aon-width-auto" columns="2">
 		<f:facet name="header">
-			<aon:outputText value="#{aonConfiguration.currentDate}" />
+			<aon:outputText styleClass="aon-date-label" value="#{aonConfiguration.currentDate}" />
 		</f:facet>		
 		<c:if test="#{companyDisplay.show}">
 			<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" >
@@ -20,14 +19,53 @@
 			</ui:include>
 		</c:if>
 		<aon:form>	
-			<h:panelGrid styleClass="aon-width-all" columns="2"
+			<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 				columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto">
-				<aon:panelGroup>
-					<aon:dynamicInclude value="#{actionFavorite.template}" />
-				</aon:panelGroup>
-				<aon:panelGroup> 
-					<aon:dynamicInclude value="#{actionFavorite.lastExecutedsTemplate}" />
-				 </aon:panelGroup>
+
+				<h:panelGrid styleClass="aon-width-all" headerClass="aon-homepage-favorite">
+					<f:facet name="header">
+						<aon:panelGroup>
+							<aon:outputText value="#{auditBundle.audit_favorite_module}" />
+							<aon:commandLink id="favorite" immediate="true"
+								value="&#160;" title="#{bundle.aon_editing}"
+								action="actionFavorite" actionListener="#{actionFavorite.onInit}"
+								styleClass="aon-icon-expand" />
+						</aon:panelGroup>						
+					</f:facet>
+					<aon:div styleClass="aon-direct-access-list">
+						<aon:dynamicInclude value="#{actionFavorite.template}" />
+					</aon:div>
+				</h:panelGrid>
+				<aon:div>
+					<h:panelGrid styleClass="aon-width-all" headerClass="aon-homepage-lastExecuted">
+						<f:facet name="header">
+							<aon:panelGroup>
+								<aon:outputText value="#{auditBundle.audit_last_executed_module}" />
+								<aon:commandLink id="lastExecuted" immediate="true"
+									value="&#160;" title="#{bundle.aon_listing}"
+									action="actionLastExecuted" actionListener="#{actionLastExecuted.onSearch}"
+									styleClass="aon-icon-expand" />
+							</aon:panelGroup>						
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:dynamicInclude value="#{actionLastExecuted.template}" />
+						</aon:div>
+					</h:panelGrid>
+					<h:panelGrid styleClass="aon-width-all aon-margin-top" headerClass="aon-homepage-moreUsed">
+						<f:facet name="header">
+							<aon:panelGroup>
+								<aon:outputText value="#{auditBundle.audit_more_used_module}" />
+								<aon:commandLink id="moreUsed" immediate="true" 
+									value="&#160;" title="#{bundle.aon_listing}" 
+									action="moreUsed" actionListener="#{actionFavorite.onInit}"
+									styleClass="aon-icon-expand" />
+							</aon:panelGroup>						
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:dynamicInclude value="#{actionLastExecuted.template}" />
+						</aon:div>
+					</h:panelGrid>
+				</aon:div>
 			</h:panelGrid>		
 		</aon:form>			
 	</h:panelGrid>
