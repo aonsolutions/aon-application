@@ -1,5 +1,6 @@
 package com.code.aon.ui.audit.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.Application;
+import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.velocity.TemplateHelper;
+import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;
@@ -45,6 +49,8 @@ public class ApplicationOptionController {
 	
 	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
 	
+	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/audit/controller/";
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationOptionController.class);
 	
 	private ResourceResolver resolver;
@@ -54,6 +60,9 @@ public class ApplicationOptionController {
 	private List<ApplicationOption> options;
 	
 	private Application application;
+		
+	private VelocityHelper velocityHelper;
+
 	
 	/**
 	 * Instantiates a new application option controller.
@@ -189,6 +198,32 @@ public class ApplicationOptionController {
 				parseTemplate(document, category);
 			}
 		}
+	}
+
+	
+	private VelocityHelper getVelocityHelper() {
+		if ( this.velocityHelper == null ) {
+			this.velocityHelper = new VelocityHelper();
+			try {
+				this.velocityHelper.init( VM_PATH_DEFAULT );
+			} catch (Exception e) {
+				LOGGER.error( "Velocity engine could not be initialized", e );
+			}
+		}
+		return this.velocityHelper;
+	}
+	
+	public String getTemplate( String template, Object ... objects  ) throws IOException {
+		try {
+			TemplateHelper th = getVelocityHelper().getTemplateHelper();
+			for( int i = 0; i < objects.length; i++ ) {
+				th.putInContext( (String) objects[i++], objects[i]);
+			}
+			return th.processTemplate(template);
+		} catch (AonException e) {
+			LOGGER.error( e.getMessage(), e);
+		}		
+		return null;
 	}
 	
 }
