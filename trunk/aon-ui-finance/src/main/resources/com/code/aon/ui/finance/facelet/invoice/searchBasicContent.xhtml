@@ -89,8 +89,10 @@
 	<c:if test="#{!searchController.sales}">
 		<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
 		<aon:div>
-			<aon:outputLabel for="Invoice_series"
+			<aon:outputLabel for="Invoice_series" rendered="#{!searchController.undeductible}"
 				styleClass="aon-form-date-label aon-margin-right" value="R-" />
+			<aon:outputLabel for="Invoice_series" rendered="#{searchController.undeductible}"
+				styleClass="aon-form-date-label aon-margin-right" value="G-" />
 			<aon:inputText id="Invoice_series"
 				onblur="toUpperCase(this);"
 				valueChangeListener="#{controller.addExpression}"
