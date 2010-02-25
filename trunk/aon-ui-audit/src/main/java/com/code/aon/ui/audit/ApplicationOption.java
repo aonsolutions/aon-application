@@ -20,7 +20,7 @@ public class ApplicationOption {
 	
 	public static final String AON_MENU_ITEM = "aon:menuItem";
 
-	private static final DateFormat RECENT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yy - H:m");
+	private static final DateFormat RECENT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yy - HH:mm");
 		
 	private static final String ID_ATTRIBUTE_PATTERN = "id=\"" + ID_PATTERN + "\"";
 
@@ -126,7 +126,7 @@ public class ApplicationOption {
 	public String getRecentXml( Date date ) {
 		String newValue = this.description;
 		if ( date != null ) {
-			newValue = RECENT_DATE_FORMAT.format(date) + "  " + newValue;
+			newValue = RECENT_DATE_FORMAT.format(date) + "&#160;&#160;&#160;" + newValue;
 		}
 		String xmlWithoutId = StringUtils.remove(this.xml, ID_ATTRIBUTE_PATTERN);
 		return StringUtils.replace(xmlWithoutId, VALUE_PATTERN, newValue);
