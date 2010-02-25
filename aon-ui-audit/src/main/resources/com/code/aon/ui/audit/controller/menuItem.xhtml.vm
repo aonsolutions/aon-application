@@ -2,6 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 #foreach($option in ${options})
-		${option.getMenuItemXml('${preffix}')}
+		${option.getMenuItemXml(${preffix})}
 #end
 </ui:composition>

@@ -3,7 +3,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 #foreach($option in ${options})
 	<aon:div styleClass="aon-direct-access-list-element">
-		${option.getXml('${preffix}')}
+		${option.getXml(${preffix})}
 	</aon:div>
 #end
 </ui:composition>
