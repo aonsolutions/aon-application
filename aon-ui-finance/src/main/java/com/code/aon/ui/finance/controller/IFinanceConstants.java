@@ -48,4 +48,14 @@ public interface IFinanceConstants {
 	
 	String EXPENSE_INVOICE_SIGNER_CONTROLLER_NAME = "expenseInvoiceSigner";
 
+	String UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME = "undeductibleInvoice";
+	
+	String UNDEDUCTIBLE_INVOICE_ADDRESS_CONTROLLER_NAME = "undeductibleInvoiceAddress";
+	
+	String UNDEDUCTIBLE_INVOICE_DETAIL_CONTROLLER_NAME = "undeductibleInvoiceDetail";
+	
+	String UNDEDUCTIBLE_INVOICE_FINANCE_CONTROLLER_NAME = "undeductibleInvoiceFinance";
+	
+	String UNDEDUCTIBLE_INVOICE_SIGNER_CONTROLLER_NAME = "undeductibleInvoiceSigner";
+
 }
