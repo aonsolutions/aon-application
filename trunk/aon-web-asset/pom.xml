@@ -59,6 +59,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>${aon-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
 			<version>${aon-version}</version>
 			<scope>compile</scope>
@@ -68,12 +74,6 @@
 			<artifactId>jsp-api</artifactId>
 			<version>2.1</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.report</artifactId>
-			<version>4.2.0</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.facelets</groupId>
