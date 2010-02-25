@@ -34,6 +34,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
@@ -178,11 +179,17 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public double getToInvoiceTotalPrice() {
+		if (InvoiceType.UNDEDUCTIBLE == getInvoice().getType()) {
+			return getTaxableBase();
+		}
 		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), (ITaxInfo)getTo());
 	}
 	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice)this.getModel().getRowData();
+		if (InvoiceType.UNDEDUCTIBLE == invoice.getType()) {
+			return getPriceStrategy().getTaxableBase(invoice);
+		}
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
@@ -262,7 +269,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				Finance finance = (Finance)iter.next();
 				invoiceFinanceController.getManagerBean().remove(finance);
 			}
-			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
+			getFinanceGenerator().generateFinances(invoice, getToInvoiceTotalPrice());
 			invoiceFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			String msg = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.GENERATE_FINANCES_ERROR_KEY);
