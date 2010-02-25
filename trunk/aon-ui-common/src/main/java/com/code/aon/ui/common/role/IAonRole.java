@@ -8,10 +8,16 @@ package com.code.aon.ui.common.role;
  */
 public interface IAonRole {
 
+
 	/**
-	 * Role de Monitor de Tareas.
+	 * Role de Operador
 	 */
-	String TASK_MONITORING = "TaskMonitoring";
+	String USER = "User";
+
+	/**
+	 * Role de Invitado
+	 */
+	String GUEST = "Guest";
 
 	/**
 	 * Role de Administrador
@@ -19,10 +25,31 @@ public interface IAonRole {
 	String ADMIN = "Admin";
 
 	/**
-	 * Role de Operador
+	 * Role de Auditor
 	 */
-	String USER = "User";
+	String AUDITOR = "Auditor";
 
+	/**
+	 * Role de Acceso a la función de confidencialidad.
+	 */
+	String CONFIDENTIALITY = "Confidentiality";
+
+
+	/**
+	 * Role de Acceso a Ventas
+	 */
+	String SALE = "Sale";
+
+	/**
+	 * Role de Acceso a Compras
+	 */
+	String PURCHASE = "Purchase";
+	
+	/**
+	 * Role de Acceso a Almacén
+	 */
+	String WAREHOUSE = "Warehouse";
+	
 	/**
 	 * Role de Acceso a Contabilidad
 	 */
@@ -34,8 +61,12 @@ public interface IAonRole {
 	String INVOICING = "Invoicing";
 
 	/**
-	 * Role de Acceso a la función de confidencialidad.
+	 * Role de Acceso a Estadísticas
 	 */
-	String CONFIDENTIALITY = "Confidentiality";
-
+	String STATISTICS = "Statistics";
+	
+	/**
+	 * Role de Monitor de Tareas.
+	 */
+	String TASK_MONITORING = "TaskMonitoring";
 }
