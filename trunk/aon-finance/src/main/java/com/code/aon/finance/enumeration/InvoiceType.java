@@ -20,8 +20,8 @@ public enum InvoiceType implements IResourceable {
 	/** EXPENSES. */
 	EXPENSES,
 	
-	/** LEASING. */
-	LEASING;
+	/** UNDEDUCTIBLE. */
+	UNDEDUCTIBLE;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
