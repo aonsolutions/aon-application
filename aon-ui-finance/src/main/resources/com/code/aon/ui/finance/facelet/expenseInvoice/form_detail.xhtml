@@ -165,7 +165,7 @@
 							</f:facet>
 						</aon:column>
 	
-						<c:if test="#{expenseInvoice.to.withholding}">
+						<c:if test="#{invoiceController.to.withholding}">
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 								<f:facet name="header">
 									<aon:outputLabel value="#{bundle.aon_retention}" />
