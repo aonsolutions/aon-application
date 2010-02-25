@@ -17,6 +17,7 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
 import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
@@ -40,7 +41,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
-		if (detail.getItem() != null) {
+		if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
 			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.insert(detailVat);
@@ -78,7 +79,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
-		if (detail.getItem() != null) {
+		if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
 			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.insert(detailVat);
