@@ -6,14 +6,14 @@
 	<parent>
 		<artifactId>aon.web.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>1.0.7</version>
+		<version>5.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
-	<version>4.17.0</version>
+	<version>${aon-version}</version>
 	<description>AON WEB WEBMAIL</description>
 	<build>
 		<finalName>aon-webmail</finalName>
@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.21.0</version>
+			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
