@@ -22,19 +22,6 @@
 .aon-portlets-column{
 	vertical-align:top;
 	padding: 0 5px;
-	}
-	
-.aon-direct-access-list{
-	margin:0;
-	padding:0;
-	list-style-type:none;
-	display:block;
-	width:100%;
-}
-.aon-direct-access-list-element{
- 	background:transparent url(images/aon-ul-list.png) scroll left 6px no-repeat;
- 	padding:5px 0 5px 12px;
- 	border-bottom:#f2f2f2 1px solid;
 }
 
 .aon-panel-title {
