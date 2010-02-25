@@ -231,6 +231,43 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+	
+	<!-- ************ ACTION ENTRY ************** -->
+	<managed-bean>
+		<managed-bean-name>actionLastExecuted</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.audit.controller.ActionLastExecutedController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.audit.ActionEntry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>actionEntry</value> 
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ActionEntry_executionDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ActionEntry_session_application_id</key>
+                    <value>#{appOption.application.id}</value>
+				</map-entry>
+				<map-entry>
+					<key>ActionEntry_session_user_id</key>
+                    <value>#{userUtils.loggedUser.id}</value>
+				</map-entry>
+				<map-entry>
+					<key>ActionEntry_action_menu</key>
+                    <value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
 
 	<!-- =================== Action ================= -->	
 	<navigation-rule>
@@ -241,6 +278,10 @@
 		<navigation-case>
 			<from-outcome>actionDenied</from-outcome>
 			<to-view-id>/com/code/aon/ui/audit/facelet/action/denied.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actionLastExecuted</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/actionLastExecuted/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 
