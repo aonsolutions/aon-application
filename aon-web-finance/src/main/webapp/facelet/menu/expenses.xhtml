@@ -24,10 +24,30 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="expenseItem" 
+									action="expenseItem" 
+									value="#{productBundle.product_expense_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="creditor" 
 									action="creditor_search" actionListener="#{creditor.onEditSearch}"
 									value="#{financeBundle.finance_creditor_module}" >
 								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="expenseInvoiceManagement"
+									action="expenseInvoice_search" actionListener="#{expenseInvoice.onEditSearch}"
+									value="#{financeBundle.finance_expense_invoice_management_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="undeductibleInvoiceManagement"
+									action="undeductibleInvoice_search" actionListener="#{undeductibleInvoice.onEditSearch}"
+									value="#{financeBundle.finance_undeductible_invoice_management_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="aon_finance_payment"
+									action="finance_search"	actionListener="#{finance.onEditSearchPayment}"
+									value="#{financeBundle.finance_payment_module}" />
 							</aon:div>
 						</aon:div>
 					</aon:panel>

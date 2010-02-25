@@ -8,27 +8,29 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-
 	<aon:panel headerClass="aon-panel-title">
 		<f:facet name="header">
 			<aon:outputText value="#{appBundle.menu_general}" />
 		</f:facet>
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="productCategory" action="productCategory"
+				<aon:commandLink id="productCategory" 
+					action="productCategory"
 					value="#{productBundle.product_category_module}" />
 			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="geotreeParent" action="geotreeParent_list"
-					actionListener="#{geotreeParent.onSearch}"
+				<aon:commandLink id="geotreeParent" 
+					action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
 					value="#{geozoneBundle.geozone_module}" />
 			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="payMethod" action="payMethod"
+				<aon:commandLink id="payMethod" 
+					action="payMethod"
 					value="#{configBundle.config_paymethod_module}" />
 			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="bank" action="bank"
+				<aon:commandLink id="bank" 
+					action="bank"
 					value="#{configBundle.config_bank_module}" />
 			</aon:div>
 		</aon:div>
