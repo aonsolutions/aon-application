@@ -24,9 +24,9 @@
 						<ui:param name="showNote" value="false" />
 						<ui:param name="showDataScroller" value="false" />
 						<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
-						<ui:param name="skipRemoveButton" value="#{invoiceController.readOnly}" />
+						<ui:param name="skipRemoveButton" value="#{invoiceController.readOnly and controller.model.rowCount > 1}" />
 						<ui:param name="skipLineEdition" value="#{!financeController.modelToEditable}" />
-						<ui:param name="saveButtonReRender" value="Invoice_total" />
+						<ui:param name="removeButtonReRender" value="menuExt" />
 	
 						<ui:define name="columns">
 	
