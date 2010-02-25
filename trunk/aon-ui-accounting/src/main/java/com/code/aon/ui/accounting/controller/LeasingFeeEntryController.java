@@ -313,7 +313,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		invoice.setRegistryDocument(getHeader().getLeasing().getSupplierDocument());
 		invoice.setRegistryName(getHeader().getLeasing().getSupplierName());
 		invoice.setStatus(InvoiceStatus.SCORED);
-		invoice.setType(InvoiceType.LEASING);
+		invoice.setType(InvoiceType.EXPENSES);
 		invoice.setSecurityLevel(getHeader().getSecurityLevel());
 		return (Invoice)invoiceBean.insert(invoice);
 	}
