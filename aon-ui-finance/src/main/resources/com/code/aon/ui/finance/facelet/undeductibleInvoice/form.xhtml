@@ -25,7 +25,7 @@
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{undeductibleInvoice.generateFinances}"
-							rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and undeductibleInvoiceFinance.allPending}"
+							rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}" />
 						<aon:commandButton id="record"
