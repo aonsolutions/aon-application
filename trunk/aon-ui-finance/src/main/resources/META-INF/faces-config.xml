@@ -1089,21 +1089,6 @@
 		</managed-property>		
 	</managed-bean>
 	
-	<!-- ************ SALE INVOICE SIGNER ************** -->
-	<managed-bean>
-		<managed-bean-name>saleInvoiceSigner</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>signatureController</property-name>
-			<value>#{saleInvoice}</value>
-		</managed-property>
-		<managed-property>
-			<property-name>reportKey</property-name>
-			<value>saleInvoice</value>
-		</managed-property>
-	</managed-bean>	
-
 	<!-- ************* INVOICE RECORDER ***************** -->
 	<managed-bean>
 		<managed-bean-name>invoiceRecorder</managed-bean-name>
@@ -1365,6 +1350,10 @@
 					<value>invoice.id</value>
 				</map-entry>
 				<map-entry>
+					<key>type</key>
+					<value>invoice.type</value>
+				</map-entry>
+				<map-entry>
 					<key>surcharge</key>
 					<value>invoice.surcharge</value>
 				</map-entry>
@@ -1474,6 +1463,21 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ SALE INVOICE SIGNER ************** -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceSigner</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>signatureController</property-name>
+			<value>#{saleInvoice}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>reportKey</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+	</managed-bean>	
+
 	<!-- ************ PURCHASE INVOICE ************* -->
 	<managed-bean>
 		<managed-bean-name>purchaseInvoice</managed-bean-name>
@@ -1519,14 +1523,6 @@
 			<value>PURCHASE</value>
 		</managed-property>		
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>purchaseInvoiceAttachment</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.PurchaseInvoiceAttachmentListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceScopeListener</managed-bean-name>
@@ -1609,6 +1605,14 @@
 		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceAttachment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.PurchaseInvoiceAttachmentListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************ PURCHASE INVOICE ADDRESS ************* -->
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceAddress</managed-bean-name>
@@ -1685,6 +1689,10 @@
 				<map-entry>
 					<key>id</key>
 					<value>invoice.id</value>
+				</map-entry>
+				<map-entry>
+					<key>type</key>
+					<value>invoice.type</value>
 				</map-entry>
 				<map-entry>
 					<key>surcharge</key>
@@ -1848,14 +1856,6 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>expenseInvoiceAttachment</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.ExpenseInvoiceAttachmentListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-
-	<managed-bean>
 		<managed-bean-name>expenseInvoiceScopeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
@@ -1936,6 +1936,14 @@
 		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>expenseInvoiceAttachment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.ExpenseInvoiceAttachmentListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************ EXPENSE INVOICE ADDRESS ************* -->
 	<managed-bean>
 		<managed-bean-name>expenseInvoiceAddress</managed-bean-name>
@@ -2012,6 +2020,10 @@
 				<map-entry>
 					<key>id</key>
 					<value>invoice.id</value>
+				</map-entry>
+				<map-entry>
+					<key>type</key>
+					<value>invoice.type</value>
 				</map-entry>
 				<map-entry>
 					<key>surcharge</key>
@@ -2125,6 +2137,327 @@
 		<managed-property>
 			<property-name>reportKey</property-name>
 			<value>expenseInvoice</value>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************ UNDEDUCTIBLE INVOICE ************* -->
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoice</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.UndeductibleInvoiceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Invoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>undeductibleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{undeductibleInvoiceSearch}</value>
+				<value>#{undeductibleInvoiceScopeListener}</value>
+				<value>#{undeductibleInvoiceControllerListener}</value>
+				<value>#{undeductibleInvoiceAddressListener}</value>
+				<value>#{undeductibleInvoiceDetailListener}</value>
+				<value>#{undeductibleInvoiceFinanceListener}</value>
+				<value>#{undeductibleInvoiceAttachment}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.InvoiceSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>UNDEDUCTIBLE</value>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Invoice_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.UndeductibleInvoiceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceAddressListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>undeductibleInvoiceAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>InvoiceAddress_invoice_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceDetailListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>undeductibleInvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>InvoiceDetail_invoice_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceFinanceListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>undeductibleInvoiceFinance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Finance_invoice_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceAttachment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.UndeductibleInvoiceAttachmentListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ************ UNDEDUCTIBLE INVOICE ADDRESS ************* -->
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceAddress</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>undeductibleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{undeductibleInvoiceAddressControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceAddressControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.InvoiceAddressControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ UNDEDUCTIBLE INVOICE DETAIL ************* -->
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.UndeductibleInvoiceDetailController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>InvoiceDetail_line</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>undeductibleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+				<map-entry>
+					<key>type</key>
+					<value>invoice.type</value>
+				</map-entry>
+				<map-entry>
+					<key>surcharge</key>
+					<value>invoice.surcharge</value>
+				</map-entry>
+				<map-entry>
+					<key>taxFree</key>
+					<value>invoice.taxFree</value>
+				</map-entry>
+				<map-entry>
+					<key>withholding</key>
+					<value>invoice.withholding</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{undeductibleInvoiceDetailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{undeductibleInvoiceDetailOptionalListeners}</value>
+		</managed-property>				
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceDetailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.UndeductibleInvoiceDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **************** UNDEDUCTIBLE INVOICE FINANCE  *************** -->
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceFinance</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.InvoiceFinanceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>undeductibleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{undeductibleInvoiceFinanceControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceFinanceControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.InvoiceFinanceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ UNDEDUCTIBLE INVOICE SIGNER ************** -->
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceSigner</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>signatureController</property-name>
+			<value>#{undeductibleInvoice}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>reportKey</property-name>
+			<value>undeductibleInvoice</value>
 		</managed-property>
 	</managed-bean>	
 
@@ -2429,6 +2762,22 @@
 	    <navigation-case>
     	  	<from-outcome>expenseInvoice_form</from-outcome>
     		<to-view-id>/com/code/aon/ui/finance/facelet/expenseInvoice/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Undeductible Invoice Management========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>undeductibleInvoice_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/undeductibleInvoice/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>undeductibleInvoice_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/undeductibleInvoice/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>undeductibleInvoice_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/undeductibleInvoice/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
