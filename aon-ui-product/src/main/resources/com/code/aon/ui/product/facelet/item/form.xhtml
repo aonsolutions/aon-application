@@ -30,7 +30,7 @@
 					<ui:param name="controller" value="#{item}" />
 				</ui:include>
 
-				<c:if test="#{aonConfiguration.bean.product.showAccount}">
+				<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
 					<aon:panelGrid styleClass="aon-margin-top" columns="2"
 						style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-150,
