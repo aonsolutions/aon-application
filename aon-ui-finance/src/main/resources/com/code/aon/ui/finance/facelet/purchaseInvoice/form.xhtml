@@ -39,22 +39,24 @@
 							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}" />
-						<aon:commandButton id="record"
-							value="#{financeBundle.finance_record}"
-							actionListener="#{purchaseInvoice.onRecordInvoice}"
-							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and !purchaseInvoice.recorded}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-							reRender="purchaseInvoiceForm" 
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandButton id="unrecord"
-							value="#{financeBundle.finance_unrecord}"
-							actionListener="#{purchaseInvoice.onUnrecordInvoice}"
-							rendered="#{purchaseInvoice.recorded and !purchaseInvoice.accountSource}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-							reRender="purchaseInvoiceForm"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:commandButton id="record"
+								value="#{financeBundle.finance_record}"
+								actionListener="#{purchaseInvoice.onRecordInvoice}"
+								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and !purchaseInvoice.recorded}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+								reRender="purchaseInvoiceForm" 
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandButton id="unrecord"
+								value="#{financeBundle.finance_unrecord}"
+								actionListener="#{purchaseInvoice.onUnrecordInvoice}"
+								rendered="#{purchaseInvoice.recorded and !purchaseInvoice.accountSource}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+								reRender="purchaseInvoiceForm"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					     </c:if>
 						<aon:commandButton value="&#160;" id="email"
 							actionListener="#{purchaseInvoice.onSendInvoiceByEmail}"
 							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"

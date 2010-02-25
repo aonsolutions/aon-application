@@ -39,22 +39,24 @@
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}" />
-						<aon:commandButton id="record"
-							value="#{financeBundle.finance_record}"
-							actionListener="#{saleInvoice.onRecordInvoice}"
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.recorded}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-							reRender="saleInvoiceForm" 
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandButton id="unrecord"
-							value="#{financeBundle.finance_unrecord}"
-							actionListener="#{saleInvoice.onUnrecordInvoice}"
-							rendered="#{saleInvoice.recorded and !saleInvoice.accountSource}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-							reRender="saleInvoiceForm"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:commandButton id="record"
+								value="#{financeBundle.finance_record}"
+								actionListener="#{saleInvoice.onRecordInvoice}"
+								rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.recorded}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+								reRender="saleInvoiceForm" 
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandButton id="unrecord"
+								value="#{financeBundle.finance_unrecord}"
+								actionListener="#{saleInvoice.onUnrecordInvoice}"
+								rendered="#{saleInvoice.recorded and !saleInvoice.accountSource}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+								reRender="saleInvoiceForm"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</c:if>
 						<aon:commandButton value="&#160;" id="email"
 							actionListener="#{saleInvoice.onSendInvoiceByEmail}"
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
