@@ -55,14 +55,14 @@
 						<f:facet name="header">
 							<aon:panelGroup>
 								<aon:outputText value="#{auditBundle.audit_more_used_module}" />
-								<aon:commandLink id="moreUsed" immediate="true" 
+								<aon:commandLink id="actionMoreUsed" immediate="true" 
 									value="&#160;" title="#{bundle.aon_listing}" 
-									action="moreUsed" actionListener="#{actionFavorite.onInit}"
+									action="actionMoreUsed" actionListener="#{actionMoreUsed.onInit}"
 									styleClass="aon-icon-expand" />
 							</aon:panelGroup>						
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
-							<aon:dynamicInclude value="#{actionLastExecuted.template}" />
+							<aon:dynamicInclude value="#{actionMoreUsed.template}" />
 						</aon:div>
 					</h:panelGrid>
 				</aon:div>
