@@ -10,7 +10,7 @@
 
 	<h:panelGrid styleClass="aon-width-all aon-height-all aon-margin-top aon-padding-right"
 		headerClass="aon-text-right aon-normal"
-		columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-width-auto" columns="2">
+		columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-vertical-align-top aon-width-auto" columns="2">
 		<f:facet name="header">
 			<aon:outputText value="#{aonConfiguration.currentDate}" />
 		</f:facet>		
@@ -18,17 +18,18 @@
 			<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" >
 				<ui:param name="skipConnectedLabel" value="#{true}" />
 			</ui:include>
-		</c:if>	
-		<h:panelGrid columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto" styleClass="aon-width-all" columns="2">
-			<aon:form>
+		</c:if>
+		<aon:form>	
+			<h:panelGrid styleClass="aon-width-all" columns="2"
+				columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto">
 				<aon:panelGroup>
 					<aon:dynamicInclude value="#{actionFavorite.template}" />
 				</aon:panelGroup>
 				<aon:panelGroup> 
 					<aon:dynamicInclude value="#{actionFavorite.lastExecutedsTemplate}" />
 				 </aon:panelGroup>
-			</aon:form>	
-		</h:panelGrid>		
+			</h:panelGrid>		
+		</aon:form>			
 	</h:panelGrid>
 	<aon:div styleClass="aon-footer-box">						
 		 <aon:outputText value="#{bundle.aon_trademark}" />

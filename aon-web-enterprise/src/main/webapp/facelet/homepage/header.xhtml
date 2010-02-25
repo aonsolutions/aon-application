@@ -7,43 +7,25 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="aonHeader" styleClass="aon-header">
-		<aon:panelGrid columns="3" width="100%"
-			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
-			<aon:div>
-				<aon:outputConnectionStatus id="aonStatus"
-					styleClass="aon-outputConnectionStatus"
+		<aon:panelGrid columns="2" width="100%"
+			columnClasses="aon-header-name,aon-header-info">
+			<aon:div style="margin-top: 15px">
+				<aon:outputConnectionStatus id="aonStatus" layout="block"
 					startStyleClass="aon-outputConnectionStatus-start"
 					stopStyleClass="aon-outputConnectionStatus-stop"
 					onstart="resetStatusError();" />
-				<aon:div id="status_error" layout="inline"
-					styleClass="aon-outputConnectionStatus-failed"
-					style="display: none" />
-				<aon:outputText value="#{appBundle.aon_application_title}"
-					styleClass="aon-applicationName" />
-				<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
-					styleClass="aon-applicationName" style="font-size:0.9em;margin-top:0.3em;"
-					rendered="#{aonConfiguration.applicationVersion != null}" />
+				<aon:div id="status_error" style="display: none"
+					styleClass="aon-outputConnectionStatus-failed" />
+				<aon:outputText value=" / #{appBundle.aon_application_title}"
+					styleClass="aon-header-title" />
 			</aon:div>
 
-			<aon:div>
-				<aon:div
-					rendered="#{aonConfiguration.properties.middleHeader == null}">
-					<aon:outputText value="&#160;" />
-				</aon:div>
-				<aon:div
-					rendered="#{aonConfiguration.properties.middleHeader != null}">
-					<aon:outputText escape="false"
-						value="#{aonConfiguration.properties.middleHeader}" />
-				</aon:div>
-			</aon:div>
-
-			<aon:div styleClass="aon-nowrap">
-				<aon:div style="white-space:nowrap;">
-					<aon:outputText value="#{loggedUser.companyName}" />
-					<aon:outputText value=" / " />
-					<aon:outputText value="#{loggedUser.loggedUserName}"
-						styleClass="aon-bold" />
-				</aon:div>
+			<aon:div styleClass="aon-nowrap"
+				style="border-left:1px solid #ccc;color:#999;">
+				<aon:outputText value="#{loggedUser.companyName}" />
+				<aon:outputText value=" / " />
+				<aon:outputText value="#{loggedUser.loggedUserName}"
+					styleClass="aon-bold" />
 			</aon:div>
 		</aon:panelGrid>
 
@@ -63,7 +45,9 @@
 						</aon:div>
 					</aon:div>
 				</c:if>
-				<aon:outputText value="#{aonConfiguration.currentDate}" />
+				<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
+					styleClass="aon-applicationName" style="font-size:0.8em;margin-top:0.1em;"
+					rendered="#{aonConfiguration.applicationVersion != null}" />
 			</aon:div>
 		</aon:form>
 	</aon:div>
