@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -122,14 +121,6 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
 		invoiceDetail.setRetentionPercent(item.getProduct().getRetention() != null ? item.getProduct().getRetention().getPercentage() : 0);
 		invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
-	}
-
-	public void onLongDescription(ActionEvent event) {
-		setLongDescription(true);
-	}
-
-	public void onShortDescription(ActionEvent event) {
-		setLongDescription(false);
 	}
 
 	public void onTaxableBaseChanged(ValueChangeEvent event) {
