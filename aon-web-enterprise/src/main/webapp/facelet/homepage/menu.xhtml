@@ -41,9 +41,9 @@
 					action="menu_config" immediate="true"
 					styleClass="aon-top-menu-item" />
 										
-				<aon:div layout="none">
+				<aon:dropDownMenu value="#{auditBundle.audit_favorite_module}">
 					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
-				</aon:div>
+				</aon:dropDownMenu>
 	 		</aon:menuBar>
 		</aon:form>
 	</c:if>
