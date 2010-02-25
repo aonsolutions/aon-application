@@ -30,8 +30,6 @@ import com.code.aon.ui.util.AonUtil;
 public class ActionFavoriteController implements IAuditConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionFavoriteController.class);
-	
-	private static final int MORE_USED_COUNT = 5;
 
 	private List<ApplicationOption> options;
 	
