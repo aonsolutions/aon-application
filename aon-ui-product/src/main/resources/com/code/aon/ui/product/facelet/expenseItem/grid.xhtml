@@ -115,43 +115,45 @@
 								</f:facet>
 							</aon:column>
 	
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputLabel for="ExpenseItem_purchaseAccount" value="#{productBundle.product_expense_account}" />
-								</f:facet>
-								<aon:outputText value="#{to.product.purchaseAccount}"
-									rendered="#{formList}" />
-								<ui:include
-									src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-									<ui:param name="wizard" value="#{accountWizard}" />
-									<ui:param name="id" value="ExpenseItem_purchaseAccount" />
-									<ui:param name="required" value="#{false}" />
-									<ui:param name="size" value="12" />
-									<ui:param name="maxlength" value="12" />
-									<ui:param name="renderDescription" value="#{false}" />
-									<ui:param name="renderedAttr" value="#{formEdit}" />
-									<ui:param name="disabled" value="#{false}" />
-									<ui:param name="reRenderAttr" value="none" />
-									<ui:param name="entity" value="#{expenseItem.to.product.purchaseAccount}" />
-									<ui:param name="ELExpression" value="expenseItem.to.product.purchaseAccount" />
-								</ui:include>
-								<f:facet name="footer">
+							<c:if test="#{aonRole.accountingOperator}">
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputLabel for="ExpenseItem_purchaseAccount" value="#{productBundle.product_expense_account}" />
+									</f:facet>
+									<aon:outputText value="#{to.product.purchaseAccount}"
+										rendered="#{formList}" />
 									<ui:include
 										src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 										<ui:param name="wizard" value="#{accountWizard}" />
-										<ui:param name="id" value="ExpenseItem_purchaseAccount-New" />
+										<ui:param name="id" value="ExpenseItem_purchaseAccount" />
 										<ui:param name="required" value="#{false}" />
 										<ui:param name="size" value="12" />
 										<ui:param name="maxlength" value="12" />
 										<ui:param name="renderDescription" value="#{false}" />
-										<ui:param name="renderedAttr" value="#{formNew}" />
+										<ui:param name="renderedAttr" value="#{formEdit}" />
 										<ui:param name="disabled" value="#{false}" />
 										<ui:param name="reRenderAttr" value="none" />
 										<ui:param name="entity" value="#{expenseItem.to.product.purchaseAccount}" />
 										<ui:param name="ELExpression" value="expenseItem.to.product.purchaseAccount" />
 									</ui:include>
-								</f:facet>
- 							</aon:column>
+									<f:facet name="footer">
+										<ui:include
+											src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+											<ui:param name="wizard" value="#{accountWizard}" />
+											<ui:param name="id" value="ExpenseItem_purchaseAccount-New" />
+											<ui:param name="required" value="#{false}" />
+											<ui:param name="size" value="12" />
+											<ui:param name="maxlength" value="12" />
+											<ui:param name="renderDescription" value="#{false}" />
+											<ui:param name="renderedAttr" value="#{formNew}" />
+											<ui:param name="disabled" value="#{false}" />
+											<ui:param name="reRenderAttr" value="none" />
+											<ui:param name="entity" value="#{expenseItem.to.product.purchaseAccount}" />
+											<ui:param name="ELExpression" value="expenseItem.to.product.purchaseAccount" />
+										</ui:include>
+									</f:facet>
+	 							</aon:column>
+							</c:if>
  						</ui:define>
 					</ui:decorate>
 				</aon:div>

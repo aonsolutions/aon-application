@@ -38,7 +38,7 @@
 						columns="2" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 	
-						<c:if test="#{aonConfiguration.bean.creditor.showAccount and !creditor.new}">
+						<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.creditor.showAccount and !creditor.new}">
 							<aon:outputLabel for="Creditor_account" value="#{accountBundle.account_accounting}" />
 							<h:panelGrid columns="2" id="accountContainer">
 								<ui:include

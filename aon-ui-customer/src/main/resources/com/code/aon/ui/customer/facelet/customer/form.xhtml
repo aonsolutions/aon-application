@@ -78,7 +78,7 @@
 							</aon:selectOneRadio>
 						</c:if>
 	
-						<c:if test="#{aonConfiguration.bean.customer.showAccount and !customer.new}">
+						<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount and !customer.new}">
 							<aon:outputLabel for="Customer_account" value="#{accountBundle.account_accounting}" />
 							<h:panelGrid columns="2" id="accountContainer">
 								<ui:include
