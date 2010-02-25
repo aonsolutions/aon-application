@@ -18,7 +18,6 @@
 				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
 					columnClasses="aon-portlets-column,aon-portlets-column">
 
-					<aon:panelGroup>
 						<aon:panel headerClass="aon-panel-title">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.menu_product}"/>
@@ -30,11 +29,6 @@
 										value="#{productBundle.product_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="productCategory" 
-										action="productCategory" 
-										value="#{productBundle.product_category_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="brand" 
 										action="brand"
 										value="#{productBundle.product_brand_module}" />
@@ -42,33 +36,25 @@
 							</aon:div>
 						</aon:panel>
 	
-								<aon:panel headerClass="aon-panel-title">
-									<f:facet name="header">
-										<aon:outputText value="#{productBundle.product_price_module}"/>
-									</f:facet>					
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="tariff" 
-												action="tariff_list" actionListener="#{tariff.onSearch}"
-												value="#{productBundle.product_tariff_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="catalogue" 
-												action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
-												value="#{productBundle.product_catalogue_module}" />
-										</aon:div>
-									</aon:div>
-								</aon:panel>
-
-					</aon:panelGroup>
-
-					
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_price_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="tariff" 
+										action="tariff_list" actionListener="#{tariff.onSearch}"
+										value="#{productBundle.product_tariff_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="catalogue" 
+										action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
+										value="#{productBundle.product_catalogue_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
 				</aon:panelGrid>
-				
 			</aon:div>
-				
 		</aon:form>
-
 	</ui:define>
-
 </ui:composition>
