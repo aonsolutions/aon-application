@@ -677,7 +677,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	@Transient
 	public String getDocumentNumber() {
-		String documentNumber = (InvoiceType.SALES == getType()) ? "E" : "R";
+		String documentNumber = (InvoiceType.SALES == getType()) ? "E" : (InvoiceType.UNDEDUCTIBLE == getType()) ? "G" : "R";
 		if (!StringUtils.isEmpty(getSeries())) {
 			documentNumber += "-" + getSeries();
 		}
