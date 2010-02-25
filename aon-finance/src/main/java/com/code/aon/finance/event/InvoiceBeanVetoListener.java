@@ -44,11 +44,18 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
 			invoice.setReferenceCode(referenceCode);
-		} else {
+		} else if (invoice.getType() == InvoiceType.PURCHASE || invoice.getType() == InvoiceType.EXPENSES) {
 			invoice.setSeries(Integer.toString(CommonUtil.getYear(invoice.getIssueDate())));
 			if (invoice.getNumber() == 0) {
 				Criteria criteria = new Criteria();
 				criteria.addExpression(ExpressionUtilities.getNotEqualExpression("invoice.type", InvoiceType.SALES.ordinal()));
+				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
+			}
+		} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+			invoice.setSeries(Integer.toString(CommonUtil.getYear(invoice.getIssueDate())));
+			if (invoice.getNumber() == 0) {
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression("invoice.type", InvoiceType.UNDEDUCTIBLE.ordinal());
 				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
 		}
