@@ -24,16 +24,14 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="product" 
-									action="product_search"	actionListener="#{product.onEditSearch}"
-									value="#{productBundle.product_module}">
-								</aon:commandLink>
+								<aon:commandLink id="item" 
+									action="item_search" actionListener="#{item.onEditSearch}"
+									value="#{productBundle.product_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="supplier" 
 									action="supplier_search" actionListener="#{supplier.onEditSearch}"
-									value="#{supplierBundle.supplier_module}">
-								</aon:commandLink>
+									value="#{supplierBundle.supplier_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="aon_invoice_management"
