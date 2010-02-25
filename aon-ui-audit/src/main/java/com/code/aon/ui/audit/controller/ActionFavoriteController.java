@@ -12,16 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
-import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.ActionFavorite;
 import com.code.aon.audit.dao.IAuditAlias;
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.velocity.TemplateHelper;
-import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;
@@ -33,25 +29,13 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class ActionFavoriteController implements IAuditConstants {
 
-	private static final String OPTIONS_ATTRIBUTE = "options";
-	
-	private static final String ACTIONS_ATTRIBUTE = "actions";
-
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionFavoriteController.class);
 	
-	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/audit/controller/";
-	
-	private static final String FAVORITES_TEMPLATE = "favorites.xhtml.vm";
-	
-	private static final String FAVORITES_MENU_TEMPLATE = "favoritesMenu.xhtml.vm";
-	
-	private static final String RECENTS_TEMPLATE = "recents.xhtml.vm";
-	
+	private static final int MORE_USED_COUNT = 5;
+
 	private List<ApplicationOption> options;
 	
 	private List<ApplicationOption> favorites;
-	
-	private VelocityHelper velocityHelper;
 	
 	private String template;
 	
@@ -160,84 +144,22 @@ public class ActionFavoriteController implements IAuditConstants {
 		return list;		
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<ActionEntry> getLastExecutedActions( int count ) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ActionEntry.class);
-			Criteria criteria = new Criteria();
-			User user = UserUtils.getInstance().getLoggedUser();
-			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_ENTRY_SESSION_USER_ID), user.getId());
-			Integer appId = getOptionController().getApplication().getId();
-			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_ENTRY_SESSION_APPLICATION_ID), appId);			
-			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_ENTRY_ACTION_MENU), true);
-			criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_ENTRY_EXECUTION_DATE), false);
-			return (List) bean.getList(criteria, 0, count);
-		} catch (ManagerBeanException e) {
-			LOGGER.error( "Error loading favorites", e);
-		}
-		return null;		
-	}
-
-	private List<ApplicationOption> getLastExecuted( List<ActionEntry> actions ) {
-		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
-		if (! actions.isEmpty() ) {
-			Map<String,ApplicationOption> options = getOptionController().getOptionMap();
-			for( ITransferObject to : actions ) {
-				String action = ((ActionEntry) to).getAction().getName();
-				ApplicationOption option = options.get(action);
-				if ( option != null ) {
-					list.add(option);
-				} else {
-					LOGGER.warn( "Action {} not found in the menu", action );
-				}
-			}
-		}
-		return list;		
-	}
-	
-	private VelocityHelper getVelocityHelper() {
-		if ( this.velocityHelper == null ) {
-			this.velocityHelper = new VelocityHelper();
-			try {
-				this.velocityHelper.init( VM_PATH_DEFAULT );
-			} catch (Exception e) {
-				LOGGER.error( "Velocity engine could not be initialized", e );
-			}
-		}
-		return this.velocityHelper;
-	}
-	
-	private String getTemplate( String template, Object ... objects  ) throws IOException {
-		try {
-			TemplateHelper th = getVelocityHelper().getTemplateHelper();
-			for( int i = 0; i < objects.length; i++ ) {
-				th.putInContext( (String) objects[i++], objects[i]);
-			}
-			return th.processTemplate(template);
-		} catch (AonException e) {
-			LOGGER.error( e.getMessage(), e);
-		}		
-		return null;
-	}
-	
 	public String getTemplate() throws IOException {
 		if ( this.template == null ) {
-			this.template = getTemplate(FAVORITES_TEMPLATE, OPTIONS_ATTRIBUTE, getFavorites());
+			this.template = getOptionController().getTemplate(OPTIONS_TEMPLATE,
+					PREFFIX_VM, FAVORITE_PREFFIX,
+					OPTIONS_VM, getFavorites());
 		}
 		return this.template;
 	}
 
 	public String getMenuTemplate() throws IOException {
 		if ( this.menuTemplate == null ) {
-			this.menuTemplate = getTemplate(FAVORITES_MENU_TEMPLATE, OPTIONS_ATTRIBUTE, getFavorites());
+			this.menuTemplate = getOptionController().getTemplate(MENU_ITEM_TEMPLATE,
+					PREFFIX_VM, FAVORITE_PREFFIX,
+					OPTIONS_VM, getFavorites());
 		}
 		return this.menuTemplate;
-	}
-	
-	public String getLastExecutedsTemplate() throws IOException {
-		List<ActionEntry> actions = getLastExecutedActions(10);
-		List<ApplicationOption> options = getLastExecuted(actions);
-		return getTemplate(RECENTS_TEMPLATE, OPTIONS_ATTRIBUTE, options, ACTIONS_ATTRIBUTE, actions );
 	}
 	
 }
