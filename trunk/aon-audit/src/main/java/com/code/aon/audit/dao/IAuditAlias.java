@@ -70,6 +70,12 @@ public interface IAuditAlias {
 	*/
 	String  ACTION_DENIED_USER_ID = ACTION_DENIED_ENTRY.getAliasNames()[2];
 
+	/** 
+	* Alias value: ActionDenied_action_application_id
+	* Hibernate value: ActionDenied.action.application.id
+	*/
+	String  ACTION_DENIED_ACTION_APPLICATION_ID = ACTION_DENIED_ENTRY.getAliasNames()[3];
+
 
 
 	/** 
@@ -101,6 +107,24 @@ public interface IAuditAlias {
 	*/
 	String  ACTION_ENTRY_SESSION_ID = ACTION_ENTRY_ENTRY.getAliasNames()[3];
 
+	/** 
+	* Alias value: ActionEntry_action_menu
+	* Hibernate value: ActionEntry.action.menu
+	*/
+	String  ACTION_ENTRY_ACTION_MENU = ACTION_ENTRY_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ActionEntry_session_user_id
+	* Hibernate value: ActionEntry.session.user.id
+	*/
+	String  ACTION_ENTRY_SESSION_USER_ID = ACTION_ENTRY_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ActionEntry_session_application_id
+	* Hibernate value: ActionEntry.session.application.id
+	*/
+	String  ACTION_ENTRY_SESSION_APPLICATION_ID = ACTION_ENTRY_ENTRY.getAliasNames()[6];
+
 
 
 	/** 
@@ -131,6 +155,12 @@ public interface IAuditAlias {
 	* Hibernate value: ActionFavorite.user.id
 	*/
 	String  ACTION_FAVORITE_USER_ID = ACTION_FAVORITE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ActionFavorite_action_application_id
+	* Hibernate value: ActionFavorite.action.application.id
+	*/
+	String  ACTION_FAVORITE_ACTION_APPLICATION_ID = ACTION_FAVORITE_ENTRY.getAliasNames()[4];
 
 
 
