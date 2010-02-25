@@ -15,7 +15,7 @@
 
 	<customer:config version="1.0" xmlns:customer="http://www.esferalia.com/customer">
 		<customer:customer
-			showDeliveryDataData="false"
+			showDeliveryData="false"
 			showFinanceData="false" 
 			showProjectData="true"
 			showFinanceFeeData="false" 
