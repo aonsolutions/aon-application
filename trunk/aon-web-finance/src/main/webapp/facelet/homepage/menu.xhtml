@@ -7,15 +7,7 @@
 	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
 		<aon:form>
 			<aon:menuBar id="mainMenu">
-				<aon:commandLink id="product"
-					value="#{appBundle.menu_product}"
-					action="menu_product" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="commercial"
-					value="#{appBundle.menu_commercial}"
-					action="menu_commercial" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="sales"
+ 				<aon:commandLink id="sales"
 					value="#{appBundle.menu_sales}"
 					action="menu_sales" immediate="true"
 					styleClass="aon-top-menu-item" />
@@ -23,21 +15,19 @@
 					value="#{appBundle.menu_purchase}"
 					action="menu_purchase" immediate="true"
 					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="treasury"
-					value="#{financeBundle.finance_menu_group}"
-					action="menu_treasury" immediate="true"
+				<aon:commandLink id="expenses"
+					value="#{appBundle.menu_expenses}"
+					action="menu_expenses" immediate="true"
 					styleClass="aon-top-menu-item" />
-<!-- 
-				<aon:commandLink id="accounting"
-					value="#{accountingBundle.menu_accounting}"
-					action="menu_accounting" immediate="true"
-					styleClass="aon-top-menu-item" />
- -->
-				<aon:commandLink id="config"
+ 				<aon:commandLink id="config"
 					value="#{bundle.aon_configuration}"
 					action="menu_config" immediate="true"
 					styleClass="aon-top-menu-item" />
-					
+ 				<aon:commandLink id="utilities"
+					value="#{bundle.aon_utilities}"
+					action="menu_utilities" immediate="true"
+					styleClass="aon-top-menu-item" />
+ 					
 	 		</aon:menuBar>
 		</aon:form>
 	</c:if>

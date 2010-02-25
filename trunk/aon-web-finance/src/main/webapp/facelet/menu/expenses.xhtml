@@ -11,7 +11,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="salesMenu">
+		<aon:form id="expenseMenu">
 
 			<aon:div styleClass="aon-scroll-area">
 
@@ -20,31 +20,14 @@
 
 					<aon:panel headerClass="aon-panel-title">
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_sales}" />
+							<aon:outputText value="#{appBundle.menu_expenses}" />
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="product" action="product_search"
-									actionListener="#{product.onEditSearch}"
-									value="#{productBundle.product_module}">
+								<aon:commandLink id="creditor" 
+									action="creditor_search" actionListener="#{creditor.onEditSearch}"
+									value="#{financeBundle.finance_creditor_module}" >
 								</aon:commandLink>
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="customer" action="customer_search"
-									actionListener="#{customer.onEditSearch}"
-									value="#{customerBundle.customer_module}">
-								</aon:commandLink>
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="aon_invoice_management"
-									action="saleInvoice_search"
-									actionListener="#{saleInvoice.onEditSearch}"
-									value="#{financeBundle.finance_sale_invoice_management_module}" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="aon_finance_charge" action="finance_search"
-									actionListener="#{finance.onEditSearchCharge}"
-									value="#{financeBundle.finance_charge_module}" />
 							</aon:div>
 						</aon:div>
 					</aon:panel>

@@ -127,7 +127,7 @@
 			to be able to edit pages in a running application.
 		</description>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
-		<param-value>-1</param-value>
+		<param-value>0</param-value>
 	</context-param>
 
 	<context-param>
@@ -285,7 +285,7 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Invitado</role-name>
+			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -297,7 +297,15 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>Invitado</role-name></security-role>
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Auditor</role-name></security-role>
+	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Accounting</role-name></security-role>
+	<security-role><role-name>Invoicing</role-name></security-role>
+	<security-role><role-name>Statistics</role-name></security-role>
+	<security-role><role-name>TaskMonitoring</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonFinance</resource-env-ref-name>

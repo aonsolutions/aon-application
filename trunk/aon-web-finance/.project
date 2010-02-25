@@ -3,6 +3,8 @@
 	<name>aon-web-finance</name>
 	<comment></comment>
 	<projects>
+		<project>aon-ui-common</project>
+		<project>aon-ui-finance</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

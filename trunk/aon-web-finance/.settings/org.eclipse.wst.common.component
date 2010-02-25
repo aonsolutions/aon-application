@@ -3,6 +3,15 @@
     <wb-module deploy-name="aon-web-finance">
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-finance/aon-ui-finance">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-common/aon-ui-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="build/classes"/>
         <property name="context-root" value="aon-finance"/>
     </wb-module>
