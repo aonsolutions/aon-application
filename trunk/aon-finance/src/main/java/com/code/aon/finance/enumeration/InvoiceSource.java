@@ -14,7 +14,7 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum InvoiceSource implements IResourceable {
 
-	/** DIRECT_EXPENSE. */
+	/** DIRECT_EXPENSE. Facturas directas de gastos */
 	DIRECT_EXPENSE,
 
 	/** DIRECT PURCHASE. Facturas directas de compra que generan albaranes y pedidos */
