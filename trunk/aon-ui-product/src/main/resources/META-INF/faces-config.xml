@@ -65,7 +65,6 @@
 		</managed-property>
 	</managed-bean>
 	
-	
 	<!-- ****** PRODUCT CATEGORY ****** -->
 	<managed-bean>
 		<managed-bean-name>productCategory</managed-bean-name>
@@ -373,6 +372,64 @@
 		</managed-property>		
 	</managed-bean>
 
+	<!--  **** EXPENSE ITEM ****	-->
+	<managed-bean>
+		<managed-bean-name>expenseItem</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController 
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>expenseItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Item_product_type</key>
+					<value>4</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Item_product_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{expenseItemControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{expenseItemOptionalListeners}</value>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>expenseItemOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+
+	<managed-bean>
+		<managed-bean-name>expenseItemControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ExpenseItemControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ****** CATALOGUE ****** -->
 	<managed-bean>
 		<managed-bean-name>catalogue</managed-bean-name>
@@ -410,14 +467,12 @@
 		</managed-property>
 	</managed-bean>
 	
-	
 	<managed-bean>
 		<managed-bean-name>catalogueOptionalListeners</managed-bean-name>
 		<managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-		
 	<managed-bean>
 		<managed-bean-name>catalogueControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -710,6 +765,10 @@
 		  <from-outcome>item_search</from-outcome>
 		  <to-view-id>/com/code/aon/ui/product/facelet/item/search.xhtml</to-view-id>
 		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>expenseItem</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/expenseItem/grid.xhtml</to-view-id>
+	    </navigation-case>
 	    <navigation-case>
 	      <from-outcome>catalogue_form</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/catalogue/form.xhtml</to-view-id>
