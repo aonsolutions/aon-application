@@ -100,6 +100,28 @@
 		<nested-report report="invoiceListTaxBreakDown"/>
 	</report>
 
+	<!--  *********  Formulario de Facturas de Compras  ********* -->
+	<report id="purchaseInvoice" description="Purchase Invoice's Report">
+		<template path="/com/code/aon/ui/finance/report/purchaseInvoice.jasper"/>
+		<collection provider="#{purchaseInvoice}" forceRefresh="true"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+		</params>
+		<nested-report report="invoiceDetail"/>
+		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoiceFinances"/>
+	</report>
+
 	<!--  *********  Listado de Facturas de Compras  ********* -->
 	<report id="expenseInvoiceList" description="Expenses Invoice's List">
 		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
@@ -129,26 +151,33 @@
 		<nested-report report="invoiceListTaxBreakDown"/>
 	</report>
 
-	<!--  *********  Formulario de Facturas de Compras  ********* -->
-	<report id="purchaseInvoice" description="Purchase Invoice's Report">
-		<template path="/com/code/aon/ui/finance/report/purchaseInvoice.jasper"/>
-		<collection provider="#{purchaseInvoice}" forceRefresh="true"/>
-
+	<!--  *********  Listado de Facturas de Compras  ********* -->
+	<report id="undeductibleInvoiceList" description="Undeductible Expense's List">
+		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{undeductibleInvoice}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="PriceStrategy" value="#{undeductibleInvoice.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="phone" value="#{company.obtainPhone}" />
-			<param id="fax" value="#{company.obtainFax}" />
-			<param id="address" value="#{company.obtainAddress}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 		</params>
-		<nested-report report="invoiceDetail"/>
-		<nested-report report="invoiceTaxBreakDown"/>
-		<nested-report report="invoiceFinances"/>
+	</report>
+
+	<!--  *********  Listado Detallado Facturas de Compras  ********* -->
+	<report id="undeductibleInvoiceDetailledList" description="Listado Detallado de Gastos no Deducibles">
+		<template path="/com/code/aon/ui/finance/report/invoiceDetailledList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{undeductibleInvoice}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="PriceStrategy" value="#{undeductibleInvoice.getPriceStrategy}" />
+		</params>
+		<nested-report report="invoiceListDetail"/>
+		<nested-report report="invoiceListTaxBreakDown"/>
 	</report>
 
 	<!--  *****  Formulario de Facturas de Ventas desde la impresión de facturas ****** -->
