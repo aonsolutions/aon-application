@@ -677,11 +677,11 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	@Transient
 	public String getDocumentNumber() {
-		String documentNumber = (InvoiceType.SALES == getType()) ? "E" : (InvoiceType.UNDEDUCTIBLE == getType()) ? "G" : "R";
+		String documentNumber = ((InvoiceType.SALES == getType()) ? "E" : (InvoiceType.UNDEDUCTIBLE == getType()) ? "G" : "R") + "-";
 		if (!StringUtils.isEmpty(getSeries())) {
-			documentNumber += "-" + getSeries();
+			documentNumber += getSeries() + "/";
 		}
-		documentNumber += "-" + StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		documentNumber += StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
 		return documentNumber;
 	}
 
