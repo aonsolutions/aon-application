@@ -24,26 +24,25 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="product" action="product_search"
-									actionListener="#{product.onEditSearch}"
+								<aon:commandLink id="product" 
+									action="product_search"	actionListener="#{product.onEditSearch}"
 									value="#{productBundle.product_module}">
 								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="customer" action="customer_search"
-									actionListener="#{customer.onEditSearch}"
+								<aon:commandLink id="customer"
+									action="customer_search" actionListener="#{customer.onEditSearch}"
 									value="#{customerBundle.customer_module}">
 								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="aon_invoice_management"
-									action="saleInvoice_search"
-									actionListener="#{saleInvoice.onEditSearch}"
+									action="saleInvoice_search"	actionListener="#{saleInvoice.onEditSearch}"
 									value="#{financeBundle.finance_sale_invoice_management_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="aon_finance_charge" action="finance_search"
-									actionListener="#{finance.onEditSearchCharge}"
+								<aon:commandLink id="aon_finance_charge" 
+									action="finance_search"	actionListener="#{finance.onEditSearchCharge}"
 									value="#{financeBundle.finance_charge_module}" />
 							</aon:div>
 						</aon:div>
