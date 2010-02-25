@@ -117,8 +117,11 @@ public class AccountEntryInvoiceWriter {
 		} else if (invoice.getType() == InvoiceType.PURCHASE) {
 			accountEntryType = AccountEntryType.PURCHASE_INVOICE;
 			account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
-		} else {
+		} else if (invoice.getType() == InvoiceType.EXPENSES) {
 			accountEntryType = AccountEntryType.EXPENSE_INVOICE;
+			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
+		} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+			accountEntryType = AccountEntryType.EXPENSES;
 			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
 		}
 		entry.setType(accountEntryType);
@@ -326,11 +329,7 @@ public class AccountEntryInvoiceWriter {
 		}
 		if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 			entryDetail.setDebit(invoiceTotal);
-		}
-		if (entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)) {
-			entryDetail.setCredit(invoiceTotal);
-		}
-		if (entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)) {
+		} else {
 			entryDetail.setCredit(invoiceTotal);
 		}
 		entryDetail.setConcept(concept);
