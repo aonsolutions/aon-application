@@ -14,7 +14,10 @@ import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.ICompanyController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -64,6 +67,9 @@ public class CompanyAddressListener extends ControllerAdapter {
 				workPlace.setAddress( address );
 				workPlace.setActive( true );
 				workPlaceBean.insert(workPlace);
+
+				IController workPlaceController = (IController)FormUtil.getController(ICompanyConstants.WORK_PLACE_CONTROLLER_NAME);
+				workPlaceController.onSearch(null);
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error adding workPlace for rAddres with id= " + address.getId(), e);
 			}
