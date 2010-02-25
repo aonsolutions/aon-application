@@ -11,6 +11,7 @@ import com.code.aon.config.Tax;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.dao.IProductAlias;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
@@ -48,6 +49,7 @@ public class ItemControllerListener extends ControllerAdapter {
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
         }
+        item.setStatus(ProductStatus.ACTIVE);
         item.getProduct().setType(ProductType.COMMERCIAL_PRODUCT);
         item.getProduct().setInventoriable(false);
         item.getProduct().setComposition(false);
