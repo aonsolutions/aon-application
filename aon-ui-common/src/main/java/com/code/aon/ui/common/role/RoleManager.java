@@ -5,57 +5,109 @@ import javax.faces.context.FacesContext;
 
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.
+ * 
  * @author ecastellano
- *
+ * 
  */
 public class RoleManager {
 
 	/**
-	 * @return TRUE if user has IAonRole.TASK_MOPNITORING role, false otherwise.
+	 * @param role
+	 *            The Role
+	 * @return TRUE if user has role, false otherwise.
 	 */
-	public boolean isTaskMonitor() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		return ec.isUserInRole(IAonRole.TASK_MONITORING);
-	}
-
-	/**
-	 * @return TRUE if user has IAonRole.ADMIN role, false otherwise.
-	 */
-	public boolean isAdmin() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		return ec.isUserInRole(IAonRole.ADMIN);
+	public boolean isUserInRole(String role) {
+		ExternalContext ec = FacesContext.getCurrentInstance()
+				.getExternalContext();
+		return ec.isUserInRole(role);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.USER role, false otherwise.
 	 */
 	public boolean isUser() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		return ec.isUserInRole(IAonRole.USER);
+		return isUserInRole(IAonRole.USER);
 	}
 
 	/**
-	 * @return TRUE if user has IAonRole.ACCOUNTING role, false otherwise.
+	 * @return TRUE if user has IAonRole.GUEST role, false otherwise.
 	 */
-	public boolean isAccounting() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		return ec.isUserInRole(IAonRole.ACCOUNTING);
+	public boolean isGuest() {
+		return isUserInRole(IAonRole.GUEST);
 	}
-	
+
 	/**
-	 * @return TRUE if user has IAonRole.INVOICING role, false otherwise.
+	 * @return TRUE if user has IAonRole.ADMIN role, false otherwise.
 	 */
-	public boolean isInvoicing() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		return ec.isUserInRole(IAonRole.INVOICING);
+	public boolean isAdmin() {
+		return isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.AUDITOR role, false otherwise.
+	 */
+	public boolean isAuditor() {
+		return isUserInRole(IAonRole.AUDITOR) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.CONFIDENTIALITY role, false otherwise.
 	 */
 	public boolean isConfidentiality() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		return ec.isUserInRole(IAonRole.CONFIDENTIALITY);
+		return isUserInRole(IAonRole.CONFIDENTIALITY)
+				|| isUserInRole(IAonRole.ADMIN);
 	}
-	
+
+	/**
+	 * @return TRUE if user has IAonRole.SALE role, false otherwise.
+	 */
+	public boolean isSaleOperator() {
+		return isUserInRole(IAonRole.SALE) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.PURCHASE role, false otherwise.
+	 */
+	public boolean isPurchaseOperator() {
+		return isUserInRole(IAonRole.PURCHASE) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.WAREHOUSE role, false otherwise.
+	 */
+	public boolean isWarehouseOperator() {
+		return isUserInRole(IAonRole.WAREHOUSE) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.INVOICING role, false otherwise.
+	 */
+	public boolean isInvoicingOperator() {
+		return isUserInRole(IAonRole.INVOICING) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.ACCOUNTING role, false otherwise.
+	 */
+	public boolean isAccountingOperator() {
+		return isUserInRole(IAonRole.ACCOUNTING)
+				|| isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.STATISTICS role, false otherwise.
+	 */
+	public boolean isStatisticsOperator() {
+		return isUserInRole(IAonRole.STATISTICS)
+				|| isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.TASK_MOPNITORING role, false otherwise.
+	 */
+	public boolean isTaskMonitor() {
+		return isUserInRole(IAonRole.TASK_MONITORING)
+				|| isUserInRole(IAonRole.ADMIN);
+	}
+
 }
