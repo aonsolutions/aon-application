@@ -268,6 +268,15 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ ACTION MORE USED CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>actionMoreUsed</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ActionMoreUsedController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 
 	<!-- =================== Action ================= -->	
 	<navigation-rule>
