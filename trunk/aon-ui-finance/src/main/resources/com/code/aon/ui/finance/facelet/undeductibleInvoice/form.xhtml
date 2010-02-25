@@ -28,22 +28,24 @@
 							rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}" />
-						<aon:commandButton id="record"
-							value="#{financeBundle.finance_record}"
-							actionListener="#{undeductibleInvoice.onRecordInvoice}"
-							rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and !undeductibleInvoice.recorded}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-							reRender="undeductibleInvoiceForm" 
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandButton id="unrecord"
-							value="#{financeBundle.finance_unrecord}"
-							actionListener="#{undeductibleInvoice.onUnrecordInvoice}"
-							rendered="#{undeductibleInvoice.recorded and !undeductibleInvoice.accountSource}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-							reRender="undeductibleInvoiceForm"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:commandButton id="record"
+								value="#{financeBundle.finance_record}"
+								actionListener="#{undeductibleInvoice.onRecordInvoice}"
+								rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and !undeductibleInvoice.recorded}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+								reRender="undeductibleInvoiceForm" 
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandButton id="unrecord"
+								value="#{financeBundle.finance_unrecord}"
+								actionListener="#{undeductibleInvoice.onUnrecordInvoice}"
+								rendered="#{undeductibleInvoice.recorded and !undeductibleInvoice.accountSource}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+								reRender="undeductibleInvoiceForm"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</c:if>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{undeductibleInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{undeductibleInvoice.new or (!undeductibleInvoiceAttachment.attachmentAvailable) or undeductibleInvoice.to.signed or (!certificate.signable)}" />

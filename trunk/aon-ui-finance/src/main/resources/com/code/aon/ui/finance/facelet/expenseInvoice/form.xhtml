@@ -28,22 +28,24 @@
 							rendered="#{expenseInvoiceDetail.model.rowCount > 0 and (!expenseInvoice.recorded or expenseInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}" />
-						<aon:commandButton id="record"
-							value="#{financeBundle.finance_record}"
-							actionListener="#{expenseInvoice.onRecordInvoice}"
-							rendered="#{expenseInvoiceDetail.model.rowCount > 0 and !expenseInvoice.recorded}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-							reRender="expenseInvoiceForm" 
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandButton id="unrecord"
-							value="#{financeBundle.finance_unrecord}"
-							actionListener="#{expenseInvoice.onUnrecordInvoice}"
-							rendered="#{expenseInvoice.recorded and !expenseInvoice.accountSource}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-							reRender="expenseInvoiceForm"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:commandButton id="record"
+								value="#{financeBundle.finance_record}"
+								actionListener="#{expenseInvoice.onRecordInvoice}"
+								rendered="#{expenseInvoiceDetail.model.rowCount > 0 and !expenseInvoice.recorded}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+								reRender="expenseInvoiceForm" 
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandButton id="unrecord"
+								value="#{financeBundle.finance_unrecord}"
+								actionListener="#{expenseInvoice.onUnrecordInvoice}"
+								rendered="#{expenseInvoice.recorded and !expenseInvoice.accountSource}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+								reRender="expenseInvoiceForm"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</c:if>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{expenseInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{expenseInvoice.new or (!expenseInvoiceAttachment.attachmentAvailable) or expenseInvoice.to.signed or (!certificate.signable)}" />
