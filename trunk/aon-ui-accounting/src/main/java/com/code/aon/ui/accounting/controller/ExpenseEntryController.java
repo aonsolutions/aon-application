@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
@@ -265,6 +267,8 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 
 	@Override
 	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		verifySource(entry);
+
 		onReset(null);
 		setNew(false);
 		setAccountEntry(entry);
@@ -288,6 +292,17 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 	@Override
 	public String getNavigationKey() {
 		return "account_expense_entry";
+	}
+
+	private void verifySource(AccountEntry entry) throws ManagerBeanException {
+		IManagerBean accEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), entry.getId());
+		if (accEntryInvoiceBean.getCount(criteria) == 1) {
+			String msg = "Asiento generado automáticamente. No se puede modificar.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
 }
