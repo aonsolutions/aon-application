@@ -3,8 +3,6 @@
     <wb-module deploy-name="aon-web-ebackoffice">
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
         <property name="context-root" value="aon-web-ebackoffice"/>
         <property name="java-output-path"/>
     </wb-module>
