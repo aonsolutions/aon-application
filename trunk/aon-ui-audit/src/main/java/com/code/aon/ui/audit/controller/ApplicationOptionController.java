@@ -77,17 +77,16 @@ public class ApplicationOptionController {
 		return null;
 	}
 	
-	/**
-	 * Gets the option map.
-	 * 
-	 * @return the option map
-	 */
 	public Map<String, ApplicationOption> getOptionMap() {
 		return this.optionMap;
 	}
 
 	public List<ApplicationOption> getOptions() {
 		return this.options;
+	}
+	
+	public Application getApplication() {
+		return application;
 	}
 
 	public Action getAction( String name ) throws ManagerBeanException {

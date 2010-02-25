@@ -69,6 +69,8 @@ public class ActionFavoriteController implements IAuditConstants {
 		Criteria criteria = new Criteria();
 		User user = UserUtils.getInstance().getLoggedUser();
 		criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_USER_ID), user.getId());
+		Integer appId = getOptionController().getApplication().getId();
+		criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
 		criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_POSITION));
 		List<ITransferObject> list = bean.getList(criteria);
 		if ( list.size() > size ) {
@@ -136,6 +138,8 @@ public class ActionFavoriteController implements IAuditConstants {
 			Criteria criteria = new Criteria();
 			User user = UserUtils.getInstance().getLoggedUser();
 			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_USER_ID), user.getId());
+			Integer appId = getOptionController().getApplication().getId();
+			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
 			criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_POSITION));
 			List<ITransferObject> actionFavorites = bean.getList(criteria);
 			if (! actionFavorites.isEmpty() ) {
@@ -162,8 +166,10 @@ public class ActionFavoriteController implements IAuditConstants {
 			IManagerBean bean = BeanManager.getManagerBean(ActionEntry.class);
 			Criteria criteria = new Criteria();
 			User user = UserUtils.getInstance().getLoggedUser();
-			criteria.addEqualExpression("ActionEntry.session.user.id", user.getId());
-			criteria.addEqualExpression("ActionEntry.action.menu", true);
+			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_ENTRY_SESSION_USER_ID), user.getId());
+			Integer appId = getOptionController().getApplication().getId();
+			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_ENTRY_SESSION_APPLICATION_ID), appId);			
+			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_ENTRY_ACTION_MENU), true);
 			criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_ENTRY_EXECUTION_DATE), false);
 			return (List) bean.getList(criteria, 0, count);
 		} catch (ManagerBeanException e) {
