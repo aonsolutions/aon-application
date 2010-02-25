@@ -1,9 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-	<aon:dropDownMenu value="#{auditBundle.audit_favorite_module}">
 #foreach($option in ${options})
-		${option.getMenuItemXml('favorite_')}
+		${option.getMenuItemXml('${preffix}')}
 #end
-	</aon:dropDownMenu>
 </ui:composition>
