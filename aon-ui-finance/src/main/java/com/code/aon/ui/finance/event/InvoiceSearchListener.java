@@ -139,6 +139,14 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		return false;
 	}
 
+	public boolean isUndeductible() {
+		if (getDefaultType() != null) {
+			InvoiceType type = InvoiceType.valueOf(getDefaultType());
+			return InvoiceType.UNDEDUCTIBLE == type;
+		}
+		return false;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
