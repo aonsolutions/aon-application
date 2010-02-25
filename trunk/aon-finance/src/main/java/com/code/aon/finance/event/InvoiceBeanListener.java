@@ -11,6 +11,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 
 /**
@@ -29,16 +30,19 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	@SuppressWarnings("unchecked")
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-			if(!invoiceDetail.getSource().equals(InvoiceSource.DIRECT_EXPENSE) && !invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
-				invoiceDetailBean.update(invoiceDetail);
+		if (InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType()) {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+				if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
+					invoiceDetailBean.update(invoiceDetail);
+				}
 			}
 		}
+
 	}
 
 }
