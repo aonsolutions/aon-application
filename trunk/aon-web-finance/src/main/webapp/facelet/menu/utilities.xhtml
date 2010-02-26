@@ -1,4 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
@@ -13,57 +12,62 @@
 
 		<aon:form id="utilitiesMenu">
 		
-			<aon:div styleClass="aon-scroll-area">		
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">					
 		
-				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
-					columnClasses="aon-portlets-column aon-width-400,aon-portlets-column aon-width-400">
-
-					<aon:panel headerClass="aon-panel-title">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_utilities}"/>
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink
-										value="#{financeBundle.finance_sale_invoice_recording_module}"
-										actionListener="#{invoiceRecorder.onEditSearch}"
-										action="invoiceRecorder_search" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:outputLink value="#" style="text-decoration: line-through;">
-										<aon:outputText value="#{financeBundle.finance_purchase_invoice_recording_module}"/>
-									</aon:outputLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:outputLink value="#" style="text-decoration: line-through;">
-										<aon:outputText value="#{financeBundle.finance_expense_invoice_recording_module}"/>
-									</aon:outputLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:outputLink value="#" style="text-decoration: line-through;">
-										<aon:outputText value="#{financeBundle.finance_charge_recording_module}"/>
-									</aon:outputLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:outputLink value="#" style="text-decoration: line-through;">
-										<aon:outputText value="#{financeBundle.finance_payment_recording_module}"/>
-									</aon:outputLink>
-								</aon:div>
-						</aon:div>
-					</aon:panel>
-
-					<aon:panel headerClass="aon-panel-title">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_general}"/>
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="checks" action="util_checking"
-										value="#{financeBundle.finance_checking_module}" />
-								</aon:div>
-						</aon:div>
-					</aon:panel>
-				</aon:panelGrid>
+					<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
+						columnClasses="aon-portlets-column aon-width-400,aon-portlets-column aon-width-400">
+	
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_utilities}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink
+											value="#{financeBundle.finance_sale_invoice_recording_module}"
+											actionListener="#{invoiceRecorder.onEditSearch}"
+											action="invoiceRecorder_search" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:outputLink value="#" style="text-decoration: line-through;">
+											<aon:outputText value="#{financeBundle.finance_purchase_invoice_recording_module}"/>
+										</aon:outputLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:outputLink value="#" style="text-decoration: line-through;">
+											<aon:outputText value="#{financeBundle.finance_expense_invoice_recording_module}"/>
+										</aon:outputLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:outputLink value="#" style="text-decoration: line-through;">
+											<aon:outputText value="#{financeBundle.finance_charge_recording_module}"/>
+										</aon:outputLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:outputLink value="#" style="text-decoration: line-through;">
+											<aon:outputText value="#{financeBundle.finance_payment_recording_module}"/>
+										</aon:outputLink>
+									</aon:div>
+							</aon:div>
+						</aon:panel>
+	
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_general}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="checks" action="util_checking"
+											value="#{financeBundle.finance_checking_module}" />
+									</aon:div>
+							</aon:div>
+						</aon:panel>
+					</aon:panelGrid>
+				</aon:componentGroup>
 			</aon:div>
 		</aon:form>
 	</ui:define>
