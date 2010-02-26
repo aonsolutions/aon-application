@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.web.smb</artifactId>
+	<artifactId>aon-smb</artifactId>
 	<packaging>war</packaging>
 	<version>${aon-version}</version>
 	<description>AON WEB SMB</description>

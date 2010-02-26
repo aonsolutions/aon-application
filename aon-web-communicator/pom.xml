@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.web.communicator</artifactId>
+	<artifactId>aon-communicator</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMUNICATOR</name>
 	<version>${aon-version}</version>

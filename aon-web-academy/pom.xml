@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.web.academy</artifactId>
+	<artifactId>aon-academy</artifactId>
 	<packaging>war</packaging>
 	<version>2.10.4</version>
 	<description>APLICACION WEB DE ACADEMIAS</description>
