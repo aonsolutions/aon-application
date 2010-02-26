@@ -15,6 +15,7 @@
 			<xs:attribute name="showRegistryBank" type="xs:boolean" use="required"/>
 			<xs:attribute name="showCompanyOtherData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showPanelTabSet" type="xs:boolean" use="required"/>
+			<xs:attribute name="showEInvoice" type="xs:boolean" use="required"/>
 			<xs:attribute name="showDigitalCertificate" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>

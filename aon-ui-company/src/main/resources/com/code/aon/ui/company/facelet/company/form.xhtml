@@ -179,19 +179,21 @@
 												value="#{bundle.aon_retention}" />
 											<aon:selectBooleanCheckbox id="Company_withholding"
 												value="#{company.to.withholding}" />
-	
-											<aon:outputLabel for="Company_EInvoice"
-												value="#{companyBundle.company_eInvoice}" />
-											<aon:selectBooleanCheckbox id="Company_EInvoice"
-												reRender="companyOtherData" ajaxSingle="false"
-												value="#{company.to.EInvoice}" />
-	
-											<aon:outputLabel for="Company_smartCard"
-												rendered="#{company.to.EInvoice}"
-												value="#{companyBundle.company_smartCard}" />
-											<aon:selectBooleanCheckbox id="Company_smartCard"
-												rendered="#{company.to.EInvoice}"
-												value="#{company.smartCard}" />												
+
+											<c:if test="#{aonConfiguration.bean.company.showEInvoice}">
+												<aon:outputLabel for="Company_EInvoice"
+													value="#{companyBundle.company_eInvoice}" />
+												<aon:selectBooleanCheckbox id="Company_EInvoice"
+													reRender="companyOtherData" ajaxSingle="false"
+													value="#{company.to.EInvoice}" />
+		
+												<aon:outputLabel for="Company_smartCard"
+													rendered="#{company.to.EInvoice}"
+													value="#{companyBundle.company_smartCard}" />
+												<aon:selectBooleanCheckbox id="Company_smartCard"
+													rendered="#{company.to.EInvoice}"
+													value="#{company.smartCard}" />
+											</c:if>												
 
 											<aon:outputLabel for="Company_print_header"
 												value="#{companyBundle.company_print_header}" />
