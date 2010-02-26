@@ -213,7 +213,21 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-        <!-- Sessions Filter -->
+	<!-- Audit Filter -->
+	<filter>
+		<filter-name>AuditFilter</filter-name>
+		<filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuditFilter</filter-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</filter-mapping>
+	<!-- Listener, that enables Audit Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
+	</listener>
+
+	<!-- Sessions Filter -->
 	<filter>
 		<description>Enables and Registers session for concurrent sessions</description>
 	   <filter-name>SessionFilter</filter-name>
@@ -263,7 +277,7 @@
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
- 		<web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
