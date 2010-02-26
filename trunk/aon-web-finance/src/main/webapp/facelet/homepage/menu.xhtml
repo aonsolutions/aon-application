@@ -23,6 +23,12 @@
 					value="#{bundle.aon_configuration}"
 					action="menu_config" immediate="true"
 					styleClass="aon-top-menu-item" />
+				<c:if test="#{aonRole.accountingOperator}">
+ 					<aon:commandLink id="utilities"
+						value="#{appBundle.menu_utilities}"
+						action="menu_utilities" immediate="true"
+						styleClass="aon-top-menu-item" />
+				</c:if>
 	 		</aon:menuBar>
 		</aon:form>
 	</c:if>
