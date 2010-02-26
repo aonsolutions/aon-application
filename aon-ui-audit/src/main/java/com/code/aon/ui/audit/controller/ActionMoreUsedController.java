@@ -5,6 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -25,6 +29,27 @@ public class ActionMoreUsedController implements IAuditConstants {
 	
 	private static final int MORE_USED_COUNT = 5;
 	
+	private String beanName;
+	
+	private DataModel model;
+	
+	public void onSearch( ActionEvent event ) {
+		List<ActionMoreUsed> list = getMoreUsed(-1);
+		this.model = new ListDataModel( list );
+	}
+	
+	public String getBeanName() {
+		return beanName;
+	}
+
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+
+	public DataModel getModel() {
+		return model;
+	}
+
 	private ApplicationOptionController getOptionController() {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
@@ -82,18 +107,18 @@ public class ActionMoreUsedController implements IAuditConstants {
 					OPTIONS_VM, options);
 	}
 
-	private class ActionMoreUsed {
+	public class ActionMoreUsed {
 		
-		private int count;
+		private Integer count;
 		
 		private ApplicationOption option;
 
-		public ActionMoreUsed(int count, ApplicationOption option) {
+		public ActionMoreUsed(Integer count, ApplicationOption option) {
 			this.count = count;
 			this.option = option;
 		}
 
-		public int getCount() {
+		public Integer getCount() {
 			return count;
 		}
 
