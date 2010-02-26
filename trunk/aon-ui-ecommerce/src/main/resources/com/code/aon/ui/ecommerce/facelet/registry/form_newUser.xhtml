@@ -47,9 +47,15 @@
 						value="#{ecommerceBundle.aon_ecommerce_user_passwd_retype}" />
 					<aon:inputSecret id="ectarget_password_retype"
 						value="#{shoppingCart.newPasswd}" size="20" maxlength="32">
-						<a4j:support event="onblur" reRender="login-panel"
-							focus="ectarget_password"
-							actionListener="#{shoppingCart.checkUserPasswd}" />
+<!--  
+-->						
+<!--  
+						<a4j:support event="onblur" reRender="ectarget_password ectarget_password_retype"
+							
+							>
+							<aon:actionListener method="#{shoppingCart.checkUserPasswd}" />
+						</a4j:support>
+-->
 					</aon:inputSecret>
 				</aon:panelGrid>
 

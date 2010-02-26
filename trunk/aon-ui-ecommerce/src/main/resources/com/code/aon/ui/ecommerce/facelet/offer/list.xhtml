@@ -41,19 +41,29 @@
 					<f:facet name="header">
 						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_price}" />
 					</f:facet>
-					<aon:outputText value="#{to.item.price}" >
-						<f:convertNumber pattern="#,##0.00" />
-					</aon:outputText>
+					<aon:div>
+						<aon:outputText value="#{to.item.price}" >
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:outputText value="&#8364;" />
+					</aon:div>
 				</aon:column>
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_amount}" />
 					</f:facet>
-					<aon:outputText value="#{to.total}" />
+					<aon:div>
+						<aon:outputText value="#{to.total}" />
+						<aon:outputText value="&#8364;" />
+					</aon:div>
 					<f:facet name="footer">
-						<aon:outputText value="#{shoppingCart.cart.total} &#160; (#{ecommerceBundle.aon_ecommerce_vat_included})" >
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
+						<aon:div>
+							<aon:outputText value="#{shoppingCart.cart.total}" >
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+							<aon:outputText value="&#8364;&#160;" />
+							<aon:outputText value="#{ecommerceBundle.aon_ecommerce_vat_included}" />
+						</aon:div>
 					</f:facet>
 				</aon:column>
 			</aon:dataTable>
