@@ -2178,3 +2178,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-warehouse{
 	background:transparent url(images/aon-main-menu/aon-icon-warehouse.png) scroll left center no-repeat;
 }
+.aon-icon-expenses{
+	background:transparent url(images/aon-main-menu/aon-icon-expenses.png) scroll left center no-repeat;
+}
+.aon-icon-utilities{
+	background:transparent url(images/aon-main-menu/aon-icon-utilities.png) scroll left center no-repeat;
+}
