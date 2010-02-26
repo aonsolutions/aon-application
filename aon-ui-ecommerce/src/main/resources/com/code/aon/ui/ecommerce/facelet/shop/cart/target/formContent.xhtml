@@ -107,8 +107,12 @@
 		<aon:commandButton id="aonToolbar-accept" value="#{bundle.aon_accept}"
 			action="shop_form"
 			styleClass="aon-finding-toolbar-item aon-icon-accept"
-			accesskey="#{bundle.aon_key_accept}"
-			actionListener="#{shoppingCart.onAddTarget}" />
+			accesskey="#{bundle.aon_key_accept}" >
+<!--  
+			<aon:actionListener method="#{shoppingCart.checkUserPasswd}" />
+-->
+			<aon:actionListener method="#{shoppingCart.onAddTarget}" />
+		</aon:commandButton>
 	</aon:panelGrid>
 
 </ui:composition>

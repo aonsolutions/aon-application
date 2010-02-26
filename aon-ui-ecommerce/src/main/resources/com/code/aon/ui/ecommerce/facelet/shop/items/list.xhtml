@@ -8,12 +8,13 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
+	<h:outputText value="#{shopItems.selectionTitle}" styleClass="selection-title" />
+	
 	<rich:dataGrid id="productList" value="#{shopItems.model}" columns="#{ecConfig.activeConfig.rowItems}"
 		var="to" elements="12" style="width:100%"
 		columnClasses="aon-width-300,aon-width-300">
 
 		<h:panelGrid columns="2"
-			style="margin: 0px; padding: 0px; border:solid #EEE 1px; width:100%"
 			columnClasses="aon-width-100,aon-width-auto">
 
 			<aon:div style="width:70px; height: 70px; border:solid #DDD 1px;">
@@ -45,7 +46,7 @@
 					</aon:commandLink>
 				</aon:div>
 				<aon:div>
-					<aon:outputText escape="false" value="#{to.description}" style="color: #999;">
+					<aon:outputText escape="false" value="#{to.description}" >
 						<aon:abbreviateConverter maxWidth="100" />
 					</aon:outputText>
 				</aon:div>
