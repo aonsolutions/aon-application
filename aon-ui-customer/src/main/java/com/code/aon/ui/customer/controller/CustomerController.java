@@ -26,7 +26,7 @@ public class CustomerController extends RegistryController {
 		return bundle.getString(MSG_KEY_PREFIX);
 	}
 
-	public void onCustomerData(ActionEvent e){
+	public void onCustomerHistory(ActionEvent e){
 		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
