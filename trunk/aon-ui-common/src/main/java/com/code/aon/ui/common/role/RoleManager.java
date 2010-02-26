@@ -110,4 +110,11 @@ public class RoleManager {
 				|| isUserInRole(IAonRole.ADMIN);
 	}
 
+	/**
+	 * @return TRUE if user has IAonRole.INVOICE_SIGNER role, false otherwise.
+	 */
+	public boolean isInvoiceSigner() {
+		return isUserInRole(IAonRole.INVOICE_SIGNER)
+				|| isUserInRole(IAonRole.ADMIN);
+	}
 }

@@ -69,4 +69,9 @@ public interface IAonRole {
 	 * Role de Monitor de Tareas.
 	 */
 	String TASK_MONITORING = "TaskMonitoring";
+
+	/**
+	 * Role para dar capacidad de firmar facturas electrónicas.
+	 */
+	String INVOICE_SIGNER = "InvoiceSigner";
 }
