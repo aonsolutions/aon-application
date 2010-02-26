@@ -7,7 +7,9 @@
 		<aon:form>
 			<aon:menuBar id="mainMenu">
 				<ui:insert name="menuContent"/>
-				<aon:dropDownMenu value="#{auditBundle.audit_favorite_module}">
+				<aon:dropDownMenu 
+					style="padding-left: 18px" styleClass="aon-dropDownMenu aon-icon-favorites"
+					value="#{auditBundle.audit_favorite_module}">
 					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
 				</aon:dropDownMenu>
 	 		</aon:menuBar>
