@@ -1,50 +1,43 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
-	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
-		<aon:form>
-			<aon:menuBar id="mainMenu">
-				<aon:commandLink id="product"
-					value="#{appBundle.menu_product}"
-					action="menu_product" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="commercial"
-					value="#{appBundle.menu_commercial}"
-					action="menu_commercial" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="sales"
-					value="#{appBundle.menu_sales}"
-					action="menu_sales" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="purchase"
-					value="#{appBundle.menu_purchase}"
-					action="menu_purchase" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="warehouse"
-					value="#{warehouseBundle.warehouse_menu_group}"
-					action="menu_warehouse" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="treasury"
-					value="#{financeBundle.finance_menu_group}"
-					action="menu_treasury" immediate="true"
-					styleClass="aon-top-menu-item" />
+	<ui:define name="menuContent">
+		<aon:commandLink id="product"
+			value="#{appBundle.menu_product}"
+			action="menu_product" immediate="true"
+			styleClass="aon-top-menu-item" />
+		<aon:commandLink id="commercial"
+			value="#{appBundle.menu_commercial}"
+			action="menu_commercial" immediate="true"
+			styleClass="aon-top-menu-item" />
+		<aon:commandLink id="sales"
+			value="#{appBundle.menu_sales}"
+			action="menu_sales" immediate="true"
+			styleClass="aon-top-menu-item" />
+		<aon:commandLink id="purchase"
+			value="#{appBundle.menu_purchase}"
+			action="menu_purchase" immediate="true"
+			styleClass="aon-top-menu-item" />
+		<aon:commandLink id="warehouse"
+			value="#{warehouseBundle.warehouse_menu_group}"
+			action="menu_warehouse" immediate="true"
+			styleClass="aon-top-menu-item" />
+		<aon:commandLink id="treasury"
+			value="#{financeBundle.finance_menu_group}"
+			action="menu_treasury" immediate="true"
+			styleClass="aon-top-menu-item" />
 <!-- 
-				<aon:commandLink id="accounting"
-					value="#{accountingBundle.menu_accounting}"
-					action="menu_accounting" immediate="true"
-					styleClass="aon-top-menu-item" />
+		<aon:commandLink id="accounting"
+			value="#{accountingBundle.menu_accounting}"
+			action="menu_accounting" immediate="true"
+			styleClass="aon-top-menu-item" />
  -->
- 				<aon:commandLink id="config"
-					value="#{bundle.aon_configuration}"
-					action="menu_config" immediate="true"
-					styleClass="aon-top-menu-item" />
-										
-				<aon:dropDownMenu value="#{auditBundle.audit_favorite_module}">
-					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
-				</aon:dropDownMenu>
-	 		</aon:menuBar>
-		</aon:form>
-	</c:if>
+		<aon:commandLink id="config"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item" />									
+	</ui:define>
+	
  </ui:composition>
