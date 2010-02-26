@@ -275,8 +275,11 @@
 			com.code.aon.ui.audit.controller.ActionMoreUsedController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>actionMoreUsed</value> 
+		</managed-property>		
 	</managed-bean>	
-
 
 	<!-- =================== Action ================= -->	
 	<navigation-rule>
@@ -291,6 +294,10 @@
 		<navigation-case>
 			<from-outcome>actionLastExecuted</from-outcome>
 			<to-view-id>/com/code/aon/ui/audit/facelet/actionLastExecuted/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actionMoreUsed</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/actionMoreUsed/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 
