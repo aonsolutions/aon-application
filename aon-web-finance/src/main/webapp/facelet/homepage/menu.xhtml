@@ -1,35 +1,31 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
-	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
-		<aon:form>
-			<aon:menuBar id="mainMenu">
- 				<aon:commandLink id="sales"
-					value="#{appBundle.menu_sales}"
-					action="menu_sales" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="purchase"
-					value="#{appBundle.menu_purchase}"
-					action="menu_purchase" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="expenses"
-					value="#{appBundle.menu_expenses}"
-					action="menu_expenses" immediate="true"
-					styleClass="aon-top-menu-item" />
- 				<aon:commandLink id="config"
-					value="#{bundle.aon_configuration}"
-					action="menu_config" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<c:if test="#{aonRole.accountingOperator}">
- 					<aon:commandLink id="utilities"
-						value="#{appBundle.menu_utilities}"
-						action="menu_utilities" immediate="true"
-						styleClass="aon-top-menu-item" />
-				</c:if>
-	 		</aon:menuBar>
-		</aon:form>
-	</c:if>
+	<ui:define name="menuContent">
+		<aon:commandLink id="sales"
+			value="#{appBundle.menu_sales}"
+			action="menu_sales" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-sales" />
+		<aon:commandLink id="purchase"
+			value="#{appBundle.menu_purchase}"
+			action="menu_purchase" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-purchase" />
+		<aon:commandLink id="expenses"
+			value="#{appBundle.menu_expenses}"
+			action="menu_expenses" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-expenses" />
+		<aon:commandLink id="config"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />
+		<c:if test="#{aonRole.accountingOperator}">
+			<aon:commandLink id="utilities"
+				value="#{appBundle.menu_utilities}"
+				action="menu_utilities" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-utilities" />
+		</c:if>
+	</ui:define>
  </ui:composition>
