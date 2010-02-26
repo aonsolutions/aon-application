@@ -1,0 +1,16 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+		<aon:form>
+			<aon:menuBar id="mainMenu">
+				<ui:insert name="menuContent"/>
+				<aon:dropDownMenu value="#{auditBundle.audit_favorite_module}">
+					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
+				</aon:dropDownMenu>
+	 		</aon:menuBar>
+		</aon:form>
+	</c:if>
+ </ui:composition>
