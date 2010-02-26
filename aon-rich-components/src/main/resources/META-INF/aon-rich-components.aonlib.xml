@@ -178,14 +178,15 @@
 
 	<component localName="menuBar">
     	<attribute name="styleClass" value="aon-menuBar" />			
+    	<attribute name="contentClass" value="aon-menuBar-content" />
+    	<attribute name="itemSeparator" value="line" />
 	</component>
 	
 	<component localName="dropDownMenu">  
 		<attribute name="styleClass" value="aon-dropDownMenu" /> 			
     	<attribute name="itemClass" value="aon-dropDownMenu-item" />
     	<attribute name="selectItemClass" value="aon-dropDownMenu-selectItem" />
-    	<attribute name="disabledItemClass" value="aon-dropDownMenu-disabledItem" />
-    	<attribute name="iconClass" value="aon-iconClass" />    		
+    	<attribute name="disabledItemClass" value="aon-dropDownMenu-disabledItem" />   		
     	<attribute name="event" value="onclick" />
 	</component>
 	
