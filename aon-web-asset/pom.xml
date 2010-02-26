@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.web.asset</artifactId>
+	<artifactId>aon-asset</artifactId>
 	<packaging>war</packaging>
 	<version>${aon-version}</version>
 	<description>AON WEB ASSET</description>
