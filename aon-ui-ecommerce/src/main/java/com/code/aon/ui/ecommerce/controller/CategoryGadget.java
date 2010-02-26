@@ -84,6 +84,9 @@ public class CategoryGadget {
 			ShopItemsController shop = ECommerceUtil.getShopItems();
 			shop.resetCriteria(criteria);
 			shop.onSearch(null);
+			
+			// Establece como titulo la cagegoria seleccionada
+			shop.setSelectionTitle(" >> "+pc.getGroup().getName()+" >> "+pc.getName());
 		} catch (ManagerBeanException e) {
 			String msg = "La búsqueda falló";
 			AonUtil.addErrorMessage(msg);

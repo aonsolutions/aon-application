@@ -61,6 +61,8 @@ public class SearchGadget {
 		shop.resetCriteria(criteria);
 		shop.onSearch(null);
 		System.out.println();
+		// Establece como titulo la cagegoria seleccionada
+		shop.setSelectionTitle("Resultado de la busqueda personalizada");
 	}
 	
 	public void onTextInput(ActionEvent event){
