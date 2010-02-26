@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:panelGrid styleClass="aon-width-all aon-height-all aon-margin-top aon-padding-right"
+		columnClasses="#{companyDisplay.show?'aon-width-300,':''} aon-vertical-align-top aon-width-auto" columns="2">
+		<f:facet name="header">
+			<aon:outputText styleClass="aon-date-label" value="#{aonConfiguration.currentDate}" />
+		</f:facet>		
+		<c:if test="#{companyDisplay.show}">
+			<ui:include src="/com/code/aon/ui/company/facelet/companyDisplay/info.xhtml" >
+				<ui:param name="skipConnectedLabel" value="#{true}" />
+			</ui:include>
+		</c:if>
+		<aon:form>	
+			<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+				columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto">
+
+				<h:panelGrid styleClass="aon-width-all" headerClass="aon-homepage-favorite">
+					<f:facet name="header">
+						<aon:panelGroup>
+							<aon:outputText value="#{auditBundle.audit_favorite_module}" />
+							<aon:commandLink id="favorite" immediate="true"
+								value="&#160;" title="#{bundle.aon_editing}"
+								action="actionFavorite" actionListener="#{actionFavorite.onInit}"
+								styleClass="aon-icon-expand" />
+						</aon:panelGroup>						
+					</f:facet>
+					<aon:div styleClass="aon-direct-access-list">
+						<aon:dynamicInclude value="#{actionFavorite.template}" />
+					</aon:div>
+				</h:panelGrid>
+				<aon:div>
+					<h:panelGrid styleClass="aon-width-all" headerClass="aon-homepage-lastExecuted">
+						<f:facet name="header">
+							<aon:panelGroup>
+								<aon:outputText value="#{auditBundle.audit_last_executed_module}" />
+								<aon:commandLink id="lastExecuted" immediate="true"
+									value="&#160;" title="#{bundle.aon_listing}"
+									action="actionLastExecuted" actionListener="#{actionLastExecuted.onSearch}"
+									styleClass="aon-icon-expand" />
+							</aon:panelGroup>						
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:dynamicInclude value="#{actionLastExecuted.template}" />
+						</aon:div>
+					</h:panelGrid>
+					<h:panelGrid styleClass="aon-width-all aon-margin-top" headerClass="aon-homepage-moreUsed">
+						<f:facet name="header">
+							<aon:panelGroup>
+								<aon:outputText value="#{auditBundle.audit_more_used_module}" />
+								<aon:commandLink id="actionMoreUsed" immediate="true" 
+									value="&#160;" title="#{bundle.aon_listing}" 
+									action="actionMoreUsed" actionListener="#{actionMoreUsed.onSearch}"
+									styleClass="aon-icon-expand" />
+							</aon:panelGroup>						
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:dynamicInclude value="#{actionMoreUsed.template}" />
+						</aon:div>
+					</h:panelGrid>
+				</aon:div>
+			</h:panelGrid>		
+		</aon:form>			
+	</h:panelGrid>
+	<aon:div styleClass="aon-footer-box">						
+		 <aon:outputText value="#{bundle.aon_trademark}" />
+		 <aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
+		 	styleClass="aon-footer-company-label aon-margin-right"/>
+		 <aon:outputText value="#{bundle.aon_support_title}:  " />
+		 <aon:outputText value="#{bundle.aon_support_telephone_number}"
+		 	styleClass="aon-outputText aon-bold aon-margin-right" />
+		<aon:outputLink target="_blank"
+			value="mail:#{bundle.aon_support_send_email}">	
+			<aon:outputText value="#{bundle.aon_support_send_email}" />
+		</aon:outputLink> 	
+	</aon:div>	
+</ui:composition>
