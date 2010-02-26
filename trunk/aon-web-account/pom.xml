@@ -7,7 +7,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.web.account</artifactId>
+	<artifactId>aon-account</artifactId>
 	<packaging>war</packaging>
 	<version>${aon-version}</version>
 	<description>AON WEB ACCOUNT</description>
