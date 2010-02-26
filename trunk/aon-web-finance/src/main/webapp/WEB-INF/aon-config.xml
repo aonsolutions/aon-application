@@ -15,7 +15,8 @@
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
 			showPanelTabSet="true" 
-			showDigitalCertificate="true"
+			showEInvoice="false"
+			showDigitalCertificate="false"
 		/>
 	</company:config>
 
@@ -24,11 +25,11 @@
 			showDeliveryData="false" 
 			showFinanceData="true" 
 			showProjectData="false"
-			showFinanceFeeData="true" 
+			showFinanceFeeData="false" 
 			showTaxInfoData="true"
 			showAccount="true"
-			showTariff="true" 
-			showSegment="true"
+			showTariff="false" 
+			showSegment="false"
 			showNote="false"
 			showRelationship="false"
 			showRecordData="false"
@@ -42,7 +43,7 @@
 			showFinanceData="true" 
 			showTaxInfoData="true"
 			showAccount="true"
-			showSegment="true"
+			showSegment="false"
 			showAddInfo="true"
 		/>
 	</supplier:config>
@@ -52,7 +53,7 @@
 			showFinanceData="true" 
 			showTaxInfoData="true"
 			showAccount="true"
-			showSegment="true"
+			showSegment="false"
 			showAddInfo="true"
 		/>
 		<finance:invoice
@@ -78,22 +79,5 @@
  			showCategoryGroup="false"
  		/>
 	</product:config>
-
-	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
-		<commercial:offer
-			showInvoicing="true"
-			showSalesOrder="false"
-		/>
-		<commercial:target
-			showTaxInfoData="true"
-			showEcommerceTab="false"
-			showProfile="false"
-			showSearchOnlyCustomers="false"
-			showCommercialTracking="false"
-			showProduct="true"
-			showSeller="true"
-			showAddInfo="true"
-		/>
-	</commercial:config>
 
 </config>
