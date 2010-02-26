@@ -34,7 +34,7 @@ public class ItemController extends BasicController {
 		((Item)this.getTo()).setPrice(price);
 	}
 	
-	public void onProductData(ActionEvent e){
+	public void onProductHistory(ActionEvent e){
 		ProductStatEngineController controller =(ProductStatEngineController)AonUtil.getRegisteredBean("productStat");
 		controller.setItem((Item)this.getTo());
 		controller.getProductData();
