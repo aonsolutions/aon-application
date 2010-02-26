@@ -15,12 +15,14 @@
 				<ui:param name="toolbarTitle"
 					value="#{productBundle.product_module}" />
 				<ui:param name="controller" value="#{item}" />
-				<ui:define name="beforeSpinToolbarContent">
-				<aon:commandButton value="Informacion" id="ProductData" action="product_stats"
-					styleClass="aon-finding-toolbar-item aon-icon-info"
-					actionListener="#{item.onProductData}">
-				</aon:commandButton>				
-				</ui:define>
+				<c:if test="#{aonConfiguration.bean.product.showHistory and !item.new}">
+					<ui:define name="beforeSpinToolbarContent">
+						<aon:commandButton id="ProductHistory" 
+							action="product_stats" actionListener="#{item.onProductHistory}"
+							value="#{bundle.aon_history}" 
+							styleClass="aon-finding-toolbar-item aon-icon-info"	/>
+					</ui:define>
+				</c:if>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
