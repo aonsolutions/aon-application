@@ -283,6 +283,8 @@ public class ShoppingCartController extends EmailParentController{
 	}
 	
 	public void onAddTarget(ActionEvent event) {
+		checkUserPasswd(event);
+		
 		try {
 			addTarget();
 			CartOfferController offerController = (CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER);
@@ -323,9 +325,9 @@ public class ShoppingCartController extends EmailParentController{
 	
 	public void checkUserPasswd(ActionEvent event){
 		if(!getCartTarget().getEcTarget().getPassword().equals(this.getNewPasswd())){
-			String msg = "passwd check failed";
+			String msg = "Contraseña incorrecta.";
 			AonUtil.addErrorMessage(msg);
-			new AbortProcessingException(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	

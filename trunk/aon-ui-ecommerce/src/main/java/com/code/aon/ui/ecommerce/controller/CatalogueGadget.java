@@ -89,6 +89,9 @@ public class CatalogueGadget {
 		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
 		sc.setBackView( sc.getContentView() );
 		sc.setContentView( ViewEnum.ITEM_LIST );
+		// Establece como titulo la cagegoria seleccionada
+		Eccatalogue ecCat = (Eccatalogue) getModel().getRowData();
+		shop.setSelectionTitle(ecCat.getCatalogue().getName());
 	}
 
 	private Criteria buildItemCriteria() {

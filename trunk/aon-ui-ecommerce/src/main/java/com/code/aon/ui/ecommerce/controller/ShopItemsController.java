@@ -26,6 +26,19 @@ public class ShopItemsController {
 	private List<ShopItem> list;
 	private DataModel model;
 	private Criteria criteria;
+	private String selectionTitle;
+	
+	public String getSelectionTitle() {
+		if(selectionTitle==null){
+			selectionTitle="Todos los productos";
+		}
+		return selectionTitle;
+	}
+
+	public void setSelectionTitle(String selectionTitle) {
+		this.selectionTitle = selectionTitle;
+	}
+	
 
 	public DataModel getModel() {
 		if (model == null) {
@@ -139,4 +152,6 @@ public class ShopItemsController {
 			}
 		}
 	}
+
+	
 }

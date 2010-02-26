@@ -14,6 +14,7 @@ public interface IECommerceConstants {
 	static final String CONFIG_CONTROLLER = "ecConfig";
 	static final String PAYPAL_CONTROLLER = "paypal";
 	static final String CREDIT_CARD_CONTROLLER = "creditCard";
+	static final String OFFER_SIGNER_CONTROLLER = "offerSigner";
 	
 	/* ACTION */
 	static final String SHOP_ACTION = "shop_form";

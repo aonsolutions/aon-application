@@ -1,5 +1,7 @@
 package com.code.aon.ui.ecommerce.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
@@ -8,22 +10,24 @@ import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.WebmailUtil;
 
 public class EmailParentController {
 	
@@ -154,9 +158,14 @@ public class EmailParentController {
 //				AonFile xml = getInvoiceXml(invoice);
 				AonFile xml = null;
 //				if ( si != null ) {
+				SignerController sc = (SignerController) AonUtil.getRegisteredBean(IECommerceConstants.OFFER_SIGNER_CONTROLLER); 
+				CartOfferController coc = (CartOfferController) AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER); 
+				IAttachment attach = sc.getReport(coc.getOffer());
+				
+					getEmailSender(username).sendMessage(recipients, subject, bodyContent, MimeType.MIME_HTML, getOfferFile(attach));
 //					getEmailSender(username).sendMessage(recipients, subject, content, MimeType.MIME_HTML, si, file, xml );
 //				} else {
-					getEmailSender(username).sendMessage(recipients, subject, content, MimeType.MIME_HTML );
+//					getEmailSender(username).sendMessage(recipients, subject, content, MimeType.MIME_HTML );
 //				}
 //				file.getFile().delete();
 //				xml.getFile().delete();
@@ -170,25 +179,70 @@ public class EmailParentController {
 		}
 	}
 	
+	public AonFile getOfferFile( IAttachment attach ) throws IOException {
+		String fileName = "presupuesto";
+//		String fileName = attach.getDescription();
+//		if ( StringUtils.isEmpty(fileName) ) {
+////			InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+//			CartOfferController controller = (CartOfferController) AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER);
+//			fileName = controller.getOffer().getDescription( offer );
+//		}
+		File file = File.createTempFile( fileName, ".pdf" );
+		FileUtils.writeByteArrayToFile(file, attach.getData());
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);	
+		aonFile.setFileName( fileName + ".pdf" );
+		return aonFile;
+	}
+	
 //	public String getEmailSubject( Invoice invoice ) {
 //		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
 //		String message = AonUtil.getMessage(BUNDLE_KEY, key);
 //		return MessageFormat.format(message, invoice.getReferenceCode() );
 //	}
 	
-	public String getEmailBody( String content ) throws UnsupportedEncodingException {
+	public String getEmailBody( String text ) throws UnsupportedEncodingException {
+//		StringBuffer body = new StringBuffer();
+//		body.append( "<html><head>" );
+//		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
+//		body.append( "</head><body>" );
+//		body.append(AonUtil.getMessage(BUNDLE_KEY, ECOMMERCE_EMAIL_BODY_HEADER) );
+//		String bodyPart = AonUtil.getMessage(BUNDLE_KEY, ECOMMERCE_EMAIL_BODY); 
+////		body.append( MessageFormat.format(bodyPart, invoice.getReferenceCode(), invoice.getIssueDate()) );
+//		body.append( MessageFormat.format(bodyPart, content) );
+//		body.append(AonUtil.getMessage(BUNDLE_KEY, ECOMMERCE_EMAIL_BODY_FOOTER) );
+//		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+//		Company company = companyController.obtainCompany();
+//		body.append( company.getName() ).append( "<br/>" );
+//		RegistryMedia phone = companyController.getPhone();
+//		if ( phone != null ) {
+//			String phoneLabel = AonUtil.getMessage("registryBundle", "registry_phone");
+//			body.append( StringEscapeUtils.escapeHtml(phoneLabel));
+//			body.append( ": " ).append( phone.getValue()).append( "<br/>" );
+//		}
+//		RegistryMedia fax = companyController.getFax();
+//		if ( fax != null ) {
+//			String faxLabel = AonUtil.getMessage("registryBundle", "registry_fax");
+//			body.append(faxLabel).append( ": " ).append( fax.getValue() ).append( "<br/>" );
+//		}
+//		RegistryMedia web = companyController.getWeb();
+//		if ( web != null ) {
+//			body.append( "<a href=\"" ).append( web.getValue() ).append( "\">").append( web.getValue() ).append("</a>" );
+//		}
+////		body.append( "</body></html>" );
+//		return body.toString();
+		
 		StringBuffer body = new StringBuffer();
 		body.append( "<html><head>" );
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
-		body.append(AonUtil.getMessage(BUNDLE_KEY, ECOMMERCE_EMAIL_BODY_HEADER) );
-		String bodyPart = AonUtil.getMessage(BUNDLE_KEY, ECOMMERCE_EMAIL_BODY); 
-//		body.append( MessageFormat.format(bodyPart, invoice.getReferenceCode(), invoice.getIssueDate()) );
-		body.append( MessageFormat.format(bodyPart, content) );
-		body.append(AonUtil.getMessage(BUNDLE_KEY, ECOMMERCE_EMAIL_BODY_FOOTER) );
+		
+		body.append(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_EMAIL_BODY_HEADER) );
+		body.append( text );
+		body.append(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_EMAIL_BODY_FOOTER) );		
+
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		Company company = companyController.obtainCompany();
-		body.append( company.getName() ).append( "<br/>" );
+		body.append( getCompany().getName() ).append( "<br/>" );
 		RegistryMedia phone = companyController.getPhone();
 		if ( phone != null ) {
 			String phoneLabel = AonUtil.getMessage("registryBundle", "registry_phone");
@@ -204,8 +258,17 @@ public class EmailParentController {
 		if ( web != null ) {
 			body.append( "<a href=\"" ).append( web.getValue() ).append( "\">").append( web.getValue() ).append("</a>" );
 		}
-		body.append( "</body></html>" );
 		return body.toString();
+	}
+	
+	public Company getCompany() {
+//		if (company == null) {
+//			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+//			this.company = companyController.obtainCompany();
+//		}
+//		return company;
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		return companyController.obtainCompany();
 	}
 	
 	
