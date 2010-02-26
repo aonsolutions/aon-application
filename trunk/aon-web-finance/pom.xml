@@ -64,12 +64,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.commercial</artifactId>
-			<version>${aon-version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
 			<version>${aon-version}</version>
 			<scope>runtime</scope>
@@ -107,12 +101,6 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>${aon-version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.sales</artifactId>
 			<version>${aon-version}</version>
 			<scope>runtime</scope>
 		</dependency>
