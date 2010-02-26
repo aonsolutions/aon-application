@@ -52,6 +52,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.audit</artifactId>
+			<version>${aon-version}</version>
+			<scope>compile</scope>
+		</dependency>				
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
 			<version>${aon-version}</version>
 			<scope>runtime</scope>
