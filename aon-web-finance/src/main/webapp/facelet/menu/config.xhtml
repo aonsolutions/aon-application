@@ -36,6 +36,13 @@
 										action="workplace" 
 										value="#{companyBundle.company_workplace_module}" />
 								</aon:div>
+								<c:if test="#{aonRole.accountingOperator}">								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="actionDenied" 
+											action="actionDenied" actionListener="#{actionDenied.onInit}"
+											value="#{auditBundle.audit_option_denied_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panel>
 	
