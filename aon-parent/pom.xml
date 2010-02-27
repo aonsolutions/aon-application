@@ -114,7 +114,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <name>Inhouse Internal Snapshot Repository</name>
       <url>
       scp://dev.esferalia.com/var/www/maven2_repositories/inhouse_snapshot</url>
-	<uniqueVersion>true</uniqueVersion>
+	<uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
   <reporting>
