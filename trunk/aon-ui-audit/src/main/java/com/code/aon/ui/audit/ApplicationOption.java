@@ -117,10 +117,7 @@ public class ApplicationOption {
 	}
 
 	public String getMenuItemXml( String prefix ) {
-		String newId = prefix + this.id;
-		String newXml = StringUtils.replace(this.xml, VALUE_PATTERN, this.description);
-		newXml = StringUtils.replace(newXml, ID_PATTERN, newId);
-		return StringUtils.replace(newXml, AON_COMMAND_LINK, AON_MENU_ITEM);
+		return StringUtils.replace(getXml(prefix), AON_COMMAND_LINK, AON_MENU_ITEM);
 	}
 	
 	public String getRecentXml( Date date ) {
