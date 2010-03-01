@@ -47,7 +47,11 @@ public class ApplicationOptionController {
 
 	private static final String ACTION_ATTRIBUTE = "action";
 	
+	private static final String SRC_ATTRIBUTE = "src";
+	
 	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
+	
+	public static final String UI_INCLUDE = "ui:include";
 	
 	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/audit/controller/";
 	
@@ -150,6 +154,15 @@ public class ApplicationOptionController {
         }		
 	}
 	
+	private boolean isDuplicatedId( String id ) {
+		for( ApplicationOption option : this.options ) {
+			if ( StringUtils.equals(option.getId(), id) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private ApplicationOption getApplicationOption( Element element, String category ) {
 		ApplicationOption option = null;
 		String action = element.attributeValue(ACTION_ATTRIBUTE);
@@ -159,18 +172,22 @@ public class ApplicationOptionController {
 			String id = element.attributeValue(ID_ATTRIBUTE);
 			if (! StringUtils.isEmpty(id) ) {
 				option.setId(id);	
+				if ( isDuplicatedId(id) ) {
+					LOGGER.error( "Duplicated id {}", id );
+				}
+			} else {
+				LOGGER.warn( "Element without id {}", element );
 			}
 			option.setCategory(category);
 			option.setDescription( getStringValue(element.attributeValue(VALUE_ATTRIBUTE)) );
 			element.addAttribute(ID_ATTRIBUTE, ApplicationOption.ID_PATTERN);
 			element.addAttribute(VALUE_ATTRIBUTE, ApplicationOption.VALUE_PATTERN);
 			option.setXml( element.asXML() );
-			if ( StringUtils.isEmpty(option.getAction()) ) {
-				LOGGER.error( "Null action for {}", option );
-			}
 			if ( StringUtils.isEmpty(option.getDescription()) ) {
 				LOGGER.error( "Null description for {}", option );
 			}
+		} else {
+			LOGGER.error( "Null action for {}", option );
 		}
 		return option;
 	}
@@ -181,11 +198,22 @@ public class ApplicationOptionController {
 		for ( Element element : list ) {
 			ApplicationOption option = getApplicationOption(element, category);
 			if ( option != null ) {
-				LOGGER.debug( option.toString() );
-				options.add(option);
-				optionMap.put( option.getAction(), option );
+				if (! this.optionMap.containsKey(option.getAction()) ) {
+					options.add(option);
+					optionMap.put( option.getAction(), option );					
+				} else {
+					LOGGER.debug( "Duplicated action for option {}", option );
+				}
 			}
-        }		
+        }	
+		List<Element> includes = document.selectNodes("//" + UI_INCLUDE );
+		for ( Element include : includes ) {
+			String viewId = include.attributeValue(SRC_ATTRIBUTE);
+			Document template = getDocument(viewId);
+			if ( template != null ) {
+				parseTemplate(template, category);
+			}
+		}
 	}
 	
 	private void parseMainCommandLink( Element element ) {
