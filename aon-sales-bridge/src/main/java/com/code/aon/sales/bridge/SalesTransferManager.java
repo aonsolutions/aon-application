@@ -140,7 +140,7 @@ public class SalesTransferManager {
 		setSalesRowChecked(sales, rowChecked);
 
 		if (rowChecked) {
-			checkAllDetails(obtainSalesDetailList(sales));
+			checkAllDetails((sales.getId().equals(selectedSalesId)) ? detailList : obtainSalesDetailList(sales));
 		} else {
 			checkNoneDetails(obtainSalesDetailList(sales));
 		}
