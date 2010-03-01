@@ -140,7 +140,7 @@ public class PurchaseTransferManager {
 		setPurchaseRowChecked(purchase, rowChecked);
 
 		if (rowChecked) {
-			checkAllDetails(obtainPurchaseDetailList(purchase));
+			checkAllDetails((purchase.getId().equals(selectedPurchaseId)) ? detailList : obtainPurchaseDetailList(purchase));
 		} else {
 			checkNoneDetails(obtainPurchaseDetailList(purchase));
 		}
