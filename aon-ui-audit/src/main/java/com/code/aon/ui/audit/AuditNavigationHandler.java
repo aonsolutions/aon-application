@@ -47,14 +47,18 @@ public class AuditNavigationHandler extends NavigationHandler {
 	}
 	
 	@Override
-	public void handleNavigation(FacesContext fc, String actionMethodCurrent, String actionNameCurrent) {
-		if (! StringUtils.isEmpty(actionNameCurrent) ) {
+	public void handleNavigation(FacesContext fc, String fromAction, String outcome) {
+		if (! StringUtils.isEmpty(outcome) ) {
 	    	HttpSession httpSession = (HttpSession) fc.getExternalContext().getSession(false);
 	    	if ( httpSession != null ) {
-	    		insertActionEntry(httpSession, actionNameCurrent);	
+	    		insertActionEntry(httpSession, outcome);	
+	    		outcome = StringUtils.substringBefore(outcome, "-");
 	    	}	
 		}
-		_base.handleNavigation(fc, actionMethodCurrent, actionNameCurrent);
+		if (! StringUtils.isEmpty(fromAction) ) {
+			fromAction = StringUtils.substringBefore(fromAction, "-");
+		}
+		_base.handleNavigation(fc, fromAction, outcome);
 	}
 
 	
