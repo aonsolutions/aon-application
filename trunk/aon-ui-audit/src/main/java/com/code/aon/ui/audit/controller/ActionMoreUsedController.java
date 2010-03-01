@@ -54,6 +54,10 @@ public class ActionMoreUsedController implements IAuditConstants {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
 	
+	private ActionDeniedController getDeniedController() {
+		return (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+	}	
+	
 	private List<ActionMoreUsed> getMoreUsed( int maxResults ) {
 		List<ActionMoreUsed> list = new LinkedList<ActionMoreUsed>();
 		try {
@@ -78,16 +82,21 @@ public class ActionMoreUsedController implements IAuditConstants {
 	        List<?> actions = criteria.list();
 	        if (! actions.isEmpty() ) {
 	        	Map<String,ApplicationOption> options = getOptionController().getOptionMap();
+	        	Map<String,ApplicationOption> denied = getDeniedController().getDeniedActionsMap();
 		        for( Object o : actions ) {
 		        	Object[] array = (Object[]) o; 
 		        	String action = (String) array[1];
-					ApplicationOption option = options.get(action);
-					if ( option != null ) {
-						ActionMoreUsed ams = new ActionMoreUsed( (Integer) array[0], option );
-						list.add( ams );
+					if ( denied.containsKey(action) ) {
+						LOGGER.warn( "Action {} is denied", action );
 					} else {
-						LOGGER.warn( "Action {} not found in the menu", action );
-					}		        	
+						ApplicationOption option = options.get(action);
+						if ( option != null ) {
+							ActionMoreUsed ams = new ActionMoreUsed( (Integer) array[0], option );
+							list.add( ams );
+						} else {
+							LOGGER.warn( "Action {} not found in the menu", action );
+						}
+					}
 		        }	        	
 	        }
 		} catch ( Throwable th ) {

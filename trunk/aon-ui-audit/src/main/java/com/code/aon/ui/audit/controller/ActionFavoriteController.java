@@ -2,6 +2,7 @@ package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,10 @@ public class ActionFavoriteController implements IAuditConstants {
 	private ApplicationOptionController getOptionController() {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
+
+	private ActionDeniedController getDeniedController() {
+		return (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+	}
 	
 	private List<ITransferObject> getList( IManagerBean bean, int size ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
@@ -73,6 +78,8 @@ public class ActionFavoriteController implements IAuditConstants {
 	public void onInit( ActionEvent event ) {
 		this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions() );
 		this.options.removeAll(this.favorites);
+		Collection<ApplicationOption> deniedList = getDeniedController().getDeniedActionsMap().values();
+		this.options.removeAll(deniedList);
 	}
 	
 	public void accept( ActionEvent event ) {
@@ -126,13 +133,15 @@ public class ActionFavoriteController implements IAuditConstants {
 			List<ITransferObject> actionFavorites = bean.getList(criteria);
 			if (! actionFavorites.isEmpty() ) {
 				Map<String,ApplicationOption> options = getOptionController().getOptionMap();
+				Map<String,ApplicationOption> denied = getDeniedController().getDeniedActionsMap();
 				for( ITransferObject to : actionFavorites ) {
 					String action = ((ActionFavorite) to).getAction().getName();
 					ApplicationOption option = options.get(action);
-					if ( option != null ) {
+					if ( (option != null) && (!denied.containsKey(action)) ) {
 						list.add(option);
 					} else {
-						LOGGER.warn( "Action {} not found in the menu", action );
+						bean.remove(to);
+						LOGGER.warn( "{} favorite removed", action );
 					}
 				}
 			}

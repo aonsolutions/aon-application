@@ -57,6 +57,10 @@ public class ActionDeniedController implements IAuditConstants {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
 	
+	public Map<String, ApplicationOption> getDeniedActionsMap() {
+		return deniedActionsMap;
+	}
+
 	public void onInit( ActionEvent event ) {
 		reset();
 	}
@@ -137,7 +141,13 @@ public class ActionDeniedController implements IAuditConstants {
 				if ( option != null ) {
 					list.add(option);
 				} else {
-					LOGGER.warn( "Action {} not found in the menu", action );
+					try {
+						IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
+						bean.remove(to);
+						LOGGER.warn( "ActionDenied removed, action {} not found", action );
+					} catch (ManagerBeanException e) {
+						LOGGER.error( "Error removing action denied " + to, e);
+					}
 				}
 			}
 		}

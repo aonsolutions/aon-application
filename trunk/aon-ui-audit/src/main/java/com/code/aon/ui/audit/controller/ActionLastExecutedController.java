@@ -25,6 +25,10 @@ public class ActionLastExecutedController extends BasicController implements IAu
 	private ApplicationOptionController getOptionController() {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
+
+	private ActionDeniedController getDeniedController() {
+		return (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+	}
 	
 	@SuppressWarnings("unchecked")
 	private List<ActionEntry> getLastExecutedActions( int count ) {
@@ -41,13 +45,18 @@ public class ActionLastExecutedController extends BasicController implements IAu
 		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
 		if (! actions.isEmpty() ) {
 			Map<String,ApplicationOption> options = getOptionController().getOptionMap();
+			Map<String,ApplicationOption> denied = getDeniedController().getDeniedActionsMap();
 			for( ITransferObject to : actions ) {
 				String action = ((ActionEntry) to).getAction().getName();
-				ApplicationOption option = options.get(action);
-				if ( option != null ) {
-					list.add(option);
+				if ( denied.containsKey(action) ) {
+					LOGGER.warn( "Action {} is denied", action );
 				} else {
-					LOGGER.warn( "Action {} not found in the menu", action );
+					ApplicationOption option = options.get(action);
+					if ( option != null ) {
+						list.add(option);
+					} else {
+						LOGGER.warn( "Action {} not found in the menu", action );
+					}					
 				}
 			}
 		}
