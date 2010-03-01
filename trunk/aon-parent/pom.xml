@@ -69,6 +69,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
+          <encoding>ISO-8859-1</encoding>
         </configuration>
       </plugin>
       <plugin>
