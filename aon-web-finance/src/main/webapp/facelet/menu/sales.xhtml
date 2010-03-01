@@ -27,8 +27,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="item" 
-										action="item_search" actionListener="#{item.onEditSearch}"
+									<aon:commandLink id="salesItem" 
+										action="item_search-Sales" actionListener="#{item.onEditSearch}"
 										value="#{productBundle.product_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -37,13 +37,13 @@
 										value="#{customerBundle.customer_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_invoice_management"
-										action="saleInvoice_search"	actionListener="#{saleInvoice.onEditSearch}"
+									<aon:commandLink id="saleInvoiceManagement"
+										action="saleInvoice_search" actionListener="#{saleInvoice.onEditSearch}"
 										value="#{financeBundle.finance_sale_invoice_management_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="aon_finance_charge" 
-										action="finance_search"	actionListener="#{finance.onEditSearchCharge}"
+										action="finance_search-Charge" actionListener="#{finance.onEditSearchCharge}"
 										value="#{financeBundle.finance_charge_module}" />
 								</aon:div>
 							</aon:div>
