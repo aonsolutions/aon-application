@@ -22,9 +22,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <archive>
-            <manifestEntries>
-              <manifest_entry>true</manifest_entry>
-              <dbVersion>${project.dbVersion}</dbVersion>
+	    <manifest>
+	      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+	     </manifest>
+	    <manifestEntries>
+              <dbVersion>${dbVersion}</dbVersion>
             </manifestEntries>
           </archive>
         </configuration>
