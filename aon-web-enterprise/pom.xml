@@ -14,7 +14,7 @@
 	<description>AON WEB ENTERPRISE</description>
 	<name>AON WEB ENTERPRISE</name>
 	<properties>
-		<dbVersion>4.8.1</dbVersion>
+		<dbVersion>4.9.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-enterprise</finalName>
