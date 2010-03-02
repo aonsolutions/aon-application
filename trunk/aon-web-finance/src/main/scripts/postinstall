@@ -3,7 +3,7 @@
 
 APP=aon-finance
 
-if ! aondir_has_app $APP; then
+if ! aondir_has_app $APP;  then
 
         aondir-addapp $APP &>/dev/null
 
@@ -14,18 +14,12 @@ if ! aondir_has_app $APP; then
         aondir-addrole Accounting $APP &>/dev/null
         aondir-addrole Invoicing $APP &>/dev/null
         aondir-addrole Confidentiality $APP &>/dev/null
-        aondir-addrole Sale $APP &>/dev/null
-        aondir-addrole Purchase $APP &>/dev/null
-        aondir-addrole Warehouse $APP &>/dev/null
-        aondir-addrole Statistics $APP &>/dev/null
-        aondir-addrole InvoiceSigner $APP &>/dev/null
 
 
         aondir-addprofile Asesor $APP Admin User &>/dev/null
         aondir-addprofile Invitado $APP Guest User &>/dev/null
-        aondir-addprofile Operador $APP Confidentiality Invoicing Sale Purchase Warehouse Statistics InvoiceSigner User &>/dev/null
+        aondir-addprofile Operador $APP Confidentiality Invoicing User &>/dev/null
 
 fi
 
 
- 
