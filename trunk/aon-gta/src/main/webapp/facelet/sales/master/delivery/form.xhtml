@@ -400,12 +400,13 @@
 
 									<f:facet name="footer">
 										<t:div>
+<!-- 
 											<t:commandButton id="popupButton-New"
 												styleClass="aon-navigation-link"
 												rendered="#{deliveryDetail.new}"
 												value="#{purchaseBundle.aon_purchase}"
 												onclick="showPopup();return false;" />
-
+ -->
 											<h:panelGroup rendered="#{deliveryDetail.new}">
 												<t:inputHidden id="Item_id-New" forceId="#{true}"
 													value="#{deliveryDetail.to.item.id}"

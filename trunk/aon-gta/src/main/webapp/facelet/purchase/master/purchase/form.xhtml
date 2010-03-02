@@ -268,12 +268,13 @@
 
 									<f:facet name="footer">
 										<t:div>
+<!-- 
 											<t:commandButton id="popupButton-New"
 												styleClass="aon-navigation-link"
 												rendered="#{incomeDetail.new}"
 												actionListener="#{purchaseSales.openPopup}" immediate="true"
 												value="#{salesBundle.aon_sales}"/>
-										
+ -->										
 											<h:panelGroup rendered="#{incomeDetail.new}">
 												<t:inputHidden id="Item_id-New" forceId="#{true}"
 													value="#{incomeDetail.to.item.id}"
