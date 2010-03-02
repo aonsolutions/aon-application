@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="income" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -35,6 +38,7 @@
 	<field name="securityLevel" class="com.code.aon.common.enumeration.SecurityLevel"/>
 	<field name="status" class="com.code.aon.warehouse.enumeration.DeliveryStatus"/>
 	<field name="supplier" class="com.code.aon.supplier.Supplier"/>
+	<field name="referenceCode" class="java.lang.String"/>
 	<variable name="currentIncome" class="com.code.aon.warehouse.Income">
 		<variableExpression><![CDATA[(com.code.aon.warehouse.Income)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
@@ -82,7 +86,7 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="83" splitType="Stretch">
+		<band height="83" splitType="Prevent">
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-73" x="388" y="5" width="59" height="13"/>
 				<box>
@@ -120,7 +124,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{series} != null && !"".equals($F{series})?$F{series} + "/":"") + $F{number}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField-77" x="447" y="18" width="82" height="13"/>
