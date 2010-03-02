@@ -2109,35 +2109,25 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	padding-top:10px;		
 }
 
-.linea{
-	border-bottom:1px solid #f4f3f3;
+.aon-icon-optionFavorite{
+	background:transparent url(images/aon-icon/aon-icon-favorites.png) no-repeat scroll center left;
 }
 
-.aon-homepage-favorite{
-	border-bottom:1px solid #000000;
-	font-size:10px;
-	padding:8px 8px 8px 32px;
-	text-align:left;
-	text-transform:uppercase;	
-	background:#ebebef url(images/aon-icon/aon-icon-favorites.png) no-repeat scroll center left;
+.aon-icon-lastExecuted{
+	background:transparent url(images/aon-icon/aon-icon-lastExecuted.png) no-repeat scroll center left;
 }
 
-.aon-homepage-lastExecuted{
+.aon-icon-moreUsed{
+	background:transparent url(images/aon-icon/aon-icon-moreUsed.png) no-repeat scroll center left;
+}
+
+.aon-direct-access-panel{
 	border-bottom:1px solid #000000;
 	font-size:10px;
 	padding:8px 8px 8px 32px;
 	text-align:left;
 	text-transform:uppercase;
-	background:#ebebef url(images/aon-icon/aon-icon-lastExecuted.png) no-repeat scroll center left;
-}
-
-.aon-homepage-moreUsed{
-	border-bottom:1px solid #000000;
-	font-size:10px;
-	padding:8px 8px 8px 32px;
-	text-align:left;
-	text-transform:uppercase;	
-	background:#ebebef url(images/aon-icon/aon-icon-moreUsed.png) no-repeat scroll center left;
+	background-color:#ebebef !important;	
 }
 
 .aon-direct-access-list{
@@ -2155,32 +2145,35 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 
 .aon-icon-favorites{
-	background:transparent url(images/aon-main-menu/aon-icon-favorites.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-favorites.png) no-repeat scroll center left;
 }
 .aon-icon-commercial{
-	background:transparent url(images/aon-main-menu/aon-icon-commercial.gif) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-commercial.gif) no-repeat scroll center left;
 }
 .aon-icon-config{
-	background:transparent url(images/aon-main-menu/aon-icon-config.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-config.png) no-repeat scroll center left;
 }
 .aon-icon-product{
-	background:transparent url(images/aon-main-menu/aon-icon-product.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-product.png) no-repeat scroll center left;
 }
 .aon-icon-purchase{
-	background:transparent url(images/aon-main-menu/aon-icon-purchase.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-purchase.png) no-repeat scroll center left;
 }
 .aon-icon-sales{
-	background:transparent url(images/aon-main-menu/aon-icon-sales.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-sales.png) no-repeat scroll center left;
 }
 .aon-icon-treasury{
-	background:transparent url(images/aon-main-menu/aon-icon-treasury.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-treasury.png) no-repeat scroll center left;
 }
 .aon-icon-warehouse{
-	background:transparent url(images/aon-main-menu/aon-icon-warehouse.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-warehouse.png) no-repeat scroll center left;
 }
 .aon-icon-expenses{
-	background:transparent url(images/aon-main-menu/aon-icon-expenses.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-expenses.png) no-repeat scroll center left;
 }
 .aon-icon-utilities{
-	background:transparent url(images/aon-main-menu/aon-icon-utilities.png) scroll left center no-repeat;
+	background:transparent url(images/aon-main-menu/aon-icon-utilities.png) no-repeat scroll center left;
+}
+.aon-icon-general{
+	background:transparent url(images/aon-main-menu/aon-icon-general.png) no-repeat scroll center left;
 }
