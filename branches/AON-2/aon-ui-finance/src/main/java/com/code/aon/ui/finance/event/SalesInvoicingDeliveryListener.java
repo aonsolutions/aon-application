@@ -167,7 +167,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 		DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoice);
 		if(deliveryDetail != null){
 			salesInvoicingDetailController.setDelivery(deliveryDetail.getDelivery());
-			salesInvoicingDetailController.setSales(deliveryDetail.getSalesDetail().getSales());
+			//salesInvoicingDetailController.setSales(deliveryDetail.getSalesDetail().getSales());
 		}
 	}
 
@@ -283,7 +283,9 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 					IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 					deliveryBean.remove(deliveryDetail.getDelivery());
 				}
-				removeSalesDetails(deliveryDetail.getSalesDetail(), number == 1);
+				if (deliveryDetail.getSalesDetail() != null && deliveryDetail.getSalesDetail().getId() != null) {
+					removeSalesDetails(deliveryDetail.getSalesDetail(), number == 1);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "error removing deliverydetails for invoiceDetail with id= " + invoiceDetail.getId(), e);

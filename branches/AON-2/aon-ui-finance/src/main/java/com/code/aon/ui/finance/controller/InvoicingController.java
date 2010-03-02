@@ -381,7 +381,7 @@ public class InvoicingController extends BasicController {
 				invoiceDetail.setPrice(incomeDetail.getPrice());
 				invoiceDetail.setQuantity(incomeDetail.getQuantity());
 				invoiceDetail.setSource(InvoiceSource.INCOME);
-				invoiceDetail.setTaxes(incomeDetail.getPurchaseDetail().getTaxes());
+				invoiceDetail.setTaxes(incomeDetail.getTaxes());
 				invoiceDetail.setTaxableBase(obtainTaxableBase(invoiceDetail));
 				invoiceDetail.setWorkPlace(obtainWorkPlace());
 				invoiceDetailBean.insert(invoiceDetail);
@@ -513,6 +513,7 @@ public class InvoicingController extends BasicController {
 			while(iter.hasNext()){
 				IncomeDetail incomeDetail = (IncomeDetail)iter.next();
 				criteria = new Criteria();
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.PURCHASE);
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 				while(iterator.hasNext()){

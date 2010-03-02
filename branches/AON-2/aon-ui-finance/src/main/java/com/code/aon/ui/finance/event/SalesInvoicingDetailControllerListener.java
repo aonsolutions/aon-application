@@ -168,7 +168,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		deliveryDetail.setWarehouse(new Warehouse());
 		deliveryDetail.getWarehouse().setId(salesInvoicingController.getWarehouseId());
-		deliveryDetail.setSalesDetail(insertSalesDetail(invoiceDetail,salesInvoicingDetailController));
+		//deliveryDetail.setSalesDetail(insertSalesDetail(invoiceDetail,salesInvoicingDetailController));
 		if(salesInvoicingDetailController.getDelivery() == null){
 			deliveryDetail.setDelivery(insertDelivery(invoiceDetail.getInvoice(),salesInvoicingDetailController));
 		}else{
@@ -324,7 +324,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
                 deliveryDetail.setDescription(invoiceDetail.getDescription());
 				deliveryDetail.setPrice(invoiceDetail.getPrice());
 				deliveryDetail.setQuantity(invoiceDetail.getQuantity());
-				deliveryDetail.setSalesDetail(updateSalesDetail(deliveryDetail));
+				//deliveryDetail.setSalesDetail(updateSalesDetail(deliveryDetail));
 				deliveryDetailBean.update(deliveryDetail);
 			}
 		} catch (ManagerBeanException e) {
@@ -373,7 +373,9 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 				if(hasToRemoveHeaders){
 					removeDelivery(deliveryDetail.getDelivery());
 				}
-				removeSalesDetail(deliveryDetail.getSalesDetail(),hasToRemoveHeaders);
+				if (deliveryDetail.getSalesDetail() != null && deliveryDetail.getSalesDetail().getId() != null) {
+					removeSalesDetail(deliveryDetail.getSalesDetail(),hasToRemoveHeaders);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE,"Error removing deliveryDetail for invoiceDetail with id: " + invoiceDetail.getId(), e);

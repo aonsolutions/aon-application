@@ -82,13 +82,13 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 */
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		try {
+		/*try {
 			SalesInvoicingController salesInvoicingController = (SalesInvoicingController)event.getController();
 			Invoice invoice = (Invoice)salesInvoicingController.getTo();
 			updateSalesPos(invoice, salesInvoicingController.getPosId());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
-		}
+		}*/
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)event.getController();
 		salesInvoicingController.setWarehouseId(obtainWarehouseId((Invoice)salesInvoicingController.getTo()));
-		salesInvoicingController.setPosId(obtainPosId((Invoice)salesInvoicingController.getTo()));
+		//salesInvoicingController.setPosId(obtainPosId((Invoice)salesInvoicingController.getTo()));
 		Invoice invoice = (Invoice)salesInvoicingController.getTo();
 		if(invoice.getRegistryAddress() == null){
 			invoice.setRegistryAddress(new RegistryAddress());

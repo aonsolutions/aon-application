@@ -182,7 +182,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 		IncomeDetail incomeDetail = obtainIncomeDetail(invoice);
 		if(incomeDetail != null){
 			invoicingDetailController.setIncome(incomeDetail.getIncome());
-			invoicingDetailController.setPurchase(incomeDetail.getPurchaseDetail().getPurchase());
+			//invoicingDetailController.setPurchase(incomeDetail.getPurchaseDetail().getPurchase());
 		}
 	}
 	
@@ -301,7 +301,9 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 					IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 					incomeBean.remove(incomeDetail.getIncome());
 				}
-				removePurchaseDetails(incomeDetail.getPurchaseDetail(), number == 1);
+				if (incomeDetail.getPurchaseDetail() != null && incomeDetail.getPurchaseDetail().getId() != null) {
+					removePurchaseDetails(incomeDetail.getPurchaseDetail(), number == 1);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "error removing incomedetails for invoiceDetail with id= " + invoiceDetail.getId(), e);

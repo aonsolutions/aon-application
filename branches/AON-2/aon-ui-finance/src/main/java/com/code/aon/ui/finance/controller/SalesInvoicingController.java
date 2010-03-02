@@ -678,6 +678,7 @@ public class SalesInvoicingController extends BasicController {
 			while(iter.hasNext()){
 				DeliveryDetail deliveryDetail = (DeliveryDetail)iter.next();
 				criteria = new Criteria();
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.SALES);
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 				while(iterator.hasNext()){

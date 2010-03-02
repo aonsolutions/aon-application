@@ -161,7 +161,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 		InvoicingController invoicingController = (InvoicingController)AonUtil.getController(INVOICING_CONTROLLER_NAME);
 		incomeDetail.setWarehouse(new Warehouse());
 		incomeDetail.getWarehouse().setId(invoicingController.getWarehouseId());
-		incomeDetail.setPurchaseDetail(insertPurchaseDetail(invoiceDetail,invoicingDetailController));
+		//incomeDetail.setPurchaseDetail(insertPurchaseDetail(invoiceDetail,invoicingDetailController));
 		if(invoicingDetailController.getIncome() == null){
 			incomeDetail.setIncome(insertIncome(invoiceDetail.getInvoice(),invoicingDetailController));
 		}else{
@@ -301,7 +301,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
                 incomeDetail.setDescription(invoiceDetail.getDescription());
 				incomeDetail.setPrice(invoiceDetail.getPrice());
 				incomeDetail.setQuantity(invoiceDetail.getQuantity());
-				incomeDetail.setPurchaseDetail(updatePurchaseDetail(incomeDetail, invoiceDetail));
+				//incomeDetail.setPurchaseDetail(updatePurchaseDetail(incomeDetail, invoiceDetail));
 				incomeDetailBean.update(incomeDetail);
 			}
 		} catch (ManagerBeanException e) {
@@ -352,7 +352,9 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 				if(hasToRemoveHeaders){
 					removeIncome(incomeDetail.getIncome());
 				}
-				removePurchaseDetail(incomeDetail.getPurchaseDetail(),hasToRemoveHeaders);
+				if (incomeDetail.getPurchaseDetail() != null && incomeDetail.getPurchaseDetail().getId() != null) {
+					removePurchaseDetail(incomeDetail.getPurchaseDetail(),hasToRemoveHeaders);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE,"Error removing incomeDetail for invoiceDetail with id: " + invoiceDetail.getId(), e);
