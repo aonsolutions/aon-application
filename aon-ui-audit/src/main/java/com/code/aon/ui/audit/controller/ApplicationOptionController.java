@@ -172,9 +172,6 @@ public class ApplicationOptionController {
 			String id = element.attributeValue(ID_ATTRIBUTE);
 			if (! StringUtils.isEmpty(id) ) {
 				option.setId(id);	
-				if ( isDuplicatedId(id) ) {
-					LOGGER.error( "Duplicated id {}", id );
-				}
 			} else {
 				LOGGER.warn( "Element without id {}", element );
 			}
@@ -191,6 +188,19 @@ public class ApplicationOptionController {
 		}
 		return option;
 	}
+	
+	private void addOption( ApplicationOption option ) {
+		if (! this.optionMap.containsKey(option.getAction()) ) {
+			String id = option.getId();
+			if ( (! StringUtils.isEmpty(id)) && isDuplicatedId(id) ) {
+				LOGGER.error( "Duplicated id {}", id );
+			}			
+			options.add(option);
+			optionMap.put( option.getAction(), option );
+		} else {
+			LOGGER.debug( "Duplicated action for option {}", option );
+		}		
+	}
 
 	@SuppressWarnings("unchecked")
 	private void parseTemplate( Document document, String category ) {
@@ -198,12 +208,7 @@ public class ApplicationOptionController {
 		for ( Element element : list ) {
 			ApplicationOption option = getApplicationOption(element, category);
 			if ( option != null ) {
-				if (! this.optionMap.containsKey(option.getAction()) ) {
-					options.add(option);
-					optionMap.put( option.getAction(), option );					
-				} else {
-					LOGGER.debug( "Duplicated action for option {}", option );
-				}
+				addOption(option);
 			}
         }	
 		List<Element> includes = document.selectNodes("//" + UI_INCLUDE );
