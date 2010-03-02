@@ -282,14 +282,6 @@
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>account</web-resource-name>
-			<url-pattern>/_account/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
-		</web-resource-collection>
  		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
@@ -299,7 +291,7 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Invitado</role-name>
+			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -311,7 +303,18 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>Invitado</role-name></security-role>
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Auditor</role-name></security-role>
+	<security-role><role-name>Accounting</role-name></security-role>
+	<security-role><role-name>Invoicing</role-name></security-role>
+	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Sale</role-name></security-role>
+	<security-role><role-name>Purchase</role-name></security-role>
+	<security-role><role-name>Warehouse</role-name></security-role>
+	<security-role><role-name>Statistics</role-name></security-role>
+	<security-role><role-name>InvoiceSigner</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonEnterprise</resource-env-ref-name>
