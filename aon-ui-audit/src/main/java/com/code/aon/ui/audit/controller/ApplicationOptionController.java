@@ -184,7 +184,7 @@ public class ApplicationOptionController {
 				LOGGER.error( "Null description for {}", option );
 			}
 		} else {
-			LOGGER.error( "Null action for {}", option );
+			LOGGER.error( "Null action in {} for {} ", category, element );
 		}
 		return option;
 	}
