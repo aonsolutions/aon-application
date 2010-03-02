@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
@@ -174,10 +175,13 @@ public class ActionDeniedController implements IAuditConstants {
 	public void renderedCommand( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			UICommand command = (UICommand) component;
-			String action = command.getActionExpression().getExpressionString();
-			if ( this.deniedActionsMap.containsKey(action) ) {
-				parent.setRendered(false);
-				component.setRendered(false);
+			MethodExpression expression = command.getActionExpression();
+			if ( expression != null ) {
+				String action = expression.getExpressionString();
+				if ( this.deniedActionsMap.containsKey(action) ) {
+					parent.setRendered(false);
+					component.setRendered(false);
+				}				
 			}
 		}
 	}
