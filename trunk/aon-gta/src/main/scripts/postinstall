@@ -1,0 +1,97 @@
+#!/bin/bash
+
+. aondir-functions
+
+function aondir_datasource
+{
+	ldapsearch -D "$ROOTDN" -x -w $ROOTPW -H $URL -b "cn=$1,ou=applications,$2" \
+	"ObjectClass=aonDomainApplication" dataSource -LLL  2>/dev/null | \
+	while read result; do 
+		if [[ $result == dataSource:* ]]; then 
+			echo -n ${result#dataSource:};
+			read result && echo $result || return;
+		fi
+	done
+}
+
+function aondir_dbuser
+{
+        ldapsearch -D "$ROOTDN" -x -w $ROOTPW -H $URL -b $1  \
+        "ObjectClass=aonDBConnection" uid -LLL  2>/dev/null | \
+        while read result; do
+                if [[ $result == uid:* ]]; then
+                        echo -n ${result#uid:};
+                        read result && echo $result || return;
+                fi
+        done
+
+}
+
+function aondir_dbpasswd
+{
+        ldapsearch -D "$ROOTDN" -x -w $ROOTPW -H $URL -b $1  \
+        "ObjectClass=aonDBConnection" userPassword -LLL  2>/dev/null | \
+        while read result; do
+                if [[ $result == userPassword:* ]]; then
+                        PASSWD=${result#userPassword:: };
+                        read result && PASSWD=$PASSWD$result || return;
+			echo -n $PASSWD | base64 --decode 
+                fi
+        done
+
+}
+
+
+function aondir_dbconnection
+{
+        ldapsearch -D "$ROOTDN" -x -w $ROOTPW -H $URL -b $1  \
+        "ObjectClass=aonDBConnection" labeledURI -LLL  2>/dev/null | \
+        while read result; do
+                if [[ $result == labeledURI:* ]]; then
+                        echo -n ${result#labeledURI:};
+                        read result && echo $result || return;
+                fi
+        done
+	
+}
+
+
+
+
+function dbconnection_host
+{
+	perl -e 'if ( "'$1'" =~ /jdbc:mysql:\/\/(.*):/ ) { print "$1" }'
+}
+
+function dbconnection_port
+{
+	perl -e 'if ( "'$1'" =~ /jdbc:mysql:\/\/.*:(.*)\// ) { print "$1" }'
+}
+
+function dbconnection_dbname
+{
+	perl -e 'if ( "'$1'" =~ /jdbc:mysql:\/\/.*:.*\/(.*)\?/ ) { print "$1" }'
+}
+
+
+if ! aondir_has_app aon-gta; then
+        aondir-addapp aon-gta &>/dev/null
+        aondir-addrole Manager aon-gta &>/dev/null
+        aondir-addprofile AonAdmin aon-gta &>/dev/null
+fi
+
+
+
+for DOMAIN in $(aondir_domains); do 
+	if aondir_domain_has_app $DOMAIN aon-gta; then 
+		DATASOURCE=`aondir_datasource aon-gta  $DOMAIN`
+		DBCONNECTION=`aondir_dbconnection $DATASOURCE`		
+		mysql \
+-u `aondir_dbuser $DATASOURCE` \
+-h `dbconnection_host  $DBCONNECTION` \
+-P  `dbconnection_port  $DBCONNECTION` \
+--password=`aondir_dbpasswd $DATASOURCE` \
+`dbconnection_dbname  $DBCONNECTION` \
+-e 'BEGIN; UPDATE delivery SET status = 1 WHERE status = 2; UPDATE income SET status = 1 WHERE status = 2; COMMIT;';
+	fi  
+done
