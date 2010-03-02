@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="reportsMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:componentGroup family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">
+
+					<aon:panelGrid columns="1" styleClass="aon-panelGrid-formatting"
+						columnClasses="aon-portlets-column aon-width-400">
+
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_configuration}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="company" action="company"
+										actionListener="#{company.onLoad}"
+										value="#{companyBundle.company_data_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accPeriod" action="accPeriod"
+										actionListener="#{accPeriod.onSearch}"
+										value="#{accountingBundle.accounting_period_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="defaultParams" action="defaultParams"
+										actionListener="#{accAppParams.onLoad}"
+										value="#{accountingBundle.accounting_default_params_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="series" action="series"
+										value="#{configBundle.config_series_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="tax" action="tax"
+										value="#{configBundle.config_tax_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_utilities}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accountChange" action="accountChange_form"
+										actionListener="#{accountChange.onReset}"
+										value="#{accountingBundle.accounting_change_account}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="regenerateAccount"
+										action="regenerateAccount"
+										value="#{accountingBundle.accounting_regenerate_account_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accountCheck" action="check_form"
+										actionListener="#{accountCheck.onInitialize}"
+										value="#{accountingBundle.accounting_check_balance_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account_exporter"
+										action="account_exporter"
+										value="#{accountBundle.account_exporter_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account_importer"
+										action="account_importer"
+										actionListener="#{accountImporter.onInitialize}"
+										value="#{accountBundle.account_importer_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mbase_form" action="mbase_form"
+										actionListener="#{mbase.onInitialize}"
+										value="IMPORTACION DESDE MBASESOR" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+
+						<c:if test="#{aonRole.admin}">
+							<aon:panel headerClass="aon-panel-title">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_configuration}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="actionDenied" action="actionDenied"
+											actionListener="#{actionDenied.onInit}"
+											value="#{auditBundle.audit_option_denied_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panel>
+						</c:if>
+					</aon:panelGrid>
+				</aon:componentGroup>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

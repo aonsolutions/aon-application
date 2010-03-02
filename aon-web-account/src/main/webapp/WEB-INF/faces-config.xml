@@ -9,7 +9,8 @@
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
-		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
+		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
+		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
 		<resource-bundle>
 			<base-name>com.code.aon.ui.web.account.i18n.messages</base-name>
 			<var>appBundle</var>
@@ -23,13 +24,15 @@
 			com.code.aon.ui.resources.bean.ResourceResolver
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+<!-- 		
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
 			<value>aon-desktop</value>
-		</managed-property>		
+		</managed-property>
+-->		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/4.4.0</value>
+			<value>/aonResource/5.0.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -47,30 +50,57 @@
 				<value>#{aonResource.resolveLocal['/css/aon-account.css']}</value>
 			</list-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>properties</property-name>
-			<map-entries>
-				<map-entry>
-					<key>hideHeaderLinks</key>
-					<value>#{true}</value>
-				</map-entry>
-				<map-entry>
-					<key>hideMenuBar</key>
-					<value>#{true}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>			
 	</managed-bean>
 
-   	<!-- ************* EXTERNAL NAVIGATION RULES (RELOCATE) ***************** -->
+	<!-- *************************************** -->
+	<!-- ************ NAVIGATION *************** -->
+	<!-- *************************************** -->
+
 	<navigation-rule>
-      <navigation-case>
-         <from-outcome>logout</from-outcome>
-         <to-view-id>/home.jsf</to-view-id>
-         <redirect/>
-      </navigation-case>
-   </navigation-rule>
-	
+		<navigation-case>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/home.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>menu_masters</from-outcome>
+			<to-view-id>/facelet/menu/masters.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_pred_entries</from-outcome>
+			<to-view-id>/facelet/menu/pred_entries.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_reports</from-outcome>
+			<to-view-id>/facelet/menu/reports.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_balance</from-outcome>
+			<to-view-id>/facelet/menu/balance.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_fixed_assets</from-outcome>
+			<to-view-id>/facelet/menu/fixed_assets.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_budget</from-outcome>
+			<to-view-id>/facelet/menu/budget.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_finance</from-outcome>
+			<to-view-id>/facelet/menu/finance.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_configuration</from-outcome>
+			<to-view-id>/facelet/menu/configuration.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>
+		
    	<!-- ************************************************** -->
    	<!-- ************* OPTIONAL LISTENERS ***************** -->
    	<!-- ************************************************** -->

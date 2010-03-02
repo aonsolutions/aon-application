@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="reportsMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">
+		
+					<aon:panelGrid columns="1" styleClass="aon-panelGrid-formatting"
+						columnClasses="aon-portlets-column aon-width-400">
+	
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.account_reports}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account_statement" 
+										action="account_statement_search" actionListener="#{trialBalance.onReset}"
+										value="#{accountingBundle.accounting_statement_module}" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="journal" 
+										action="journal_search" actionListener="#{journalReport.onEditSearch}"
+										value="#{accountingBundle.accounting_journal_module}" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="ledger" 
+										action="ledger_search" actionListener="#{ledgerReport.onEditSearch}"
+										value="#{accountingBundle.accounting_ledger_module}" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="trialBalance" 
+										action="trialBalance_search" actionListener="#{trialBalance.onReset}"
+										value="#{accountingBundle.accounting_trial_balance_module}" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="profitAndLossReport" 
+										action="profit_and_loss_search" actionListener="#{profitAndLossReport.onEditSearch}"
+										value="#{accountingBundle.accounting_profit_and_loss_module}" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="vat_report" 
+										action="vat_report_search" actionListener="#{vatReport.onReset}"
+										value="#{financeBundle.finance_vat_report_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+
+						<c:if test="#{aonRole.admin}">								
+							<aon:panel headerClass="aon-panel-title">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_configuration}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="actionDenied" 
+												action="actionDenied" actionListener="#{actionDenied.onInit}"
+												value="#{auditBundle.audit_option_denied_module}" />
+										</aon:div>
+								</aon:div>
+							</aon:panel>
+						</c:if>
+					</aon:panelGrid>
+				</aon:componentGroup>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

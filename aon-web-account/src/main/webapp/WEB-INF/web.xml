@@ -127,7 +127,7 @@
 			to be able to edit pages in a running application.
 		</description>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
-		<param-value>-1</param-value>
+		<param-value>0</param-value>
 	</context-param>
 
 	<context-param>
@@ -168,7 +168,7 @@
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
-	 
+
 	<context-param>
 		<description>
 			Is a comma-separated list of custom ViewHandler instances
@@ -193,12 +193,12 @@
 		<param-name>org.richfaces.LoadScriptStrategy</param-name>
 		<param-value>ALL</param-value>
     </context-param>
-
+<!-- 
 	<context-param>
-		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
 	</context-param>
-
+-->
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -213,7 +213,21 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-        <!-- Sessions Filter -->
+	<!-- Audit Filter -->
+	<filter>
+		<filter-name>AuditFilter</filter-name>
+		<filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuditFilter</filter-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</filter-mapping>
+	<!-- Listener, that enables Audit Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
+	</listener>
+
+	<!-- Sessions Filter -->
 	<filter>
 		<description>Enables and Registers session for concurrent sessions</description>
 	   <filter-name>SessionFilter</filter-name>
@@ -253,11 +267,6 @@
 		</listener-class>
 	</listener>
 	    
-    <context-param>
-       <param-name>config-file</param-name>
-       <param-value>/WEB-INF/conf/bean_config.xml</param-value>
-    </context-param> 
-
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
@@ -268,7 +277,7 @@
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
- 		<web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
