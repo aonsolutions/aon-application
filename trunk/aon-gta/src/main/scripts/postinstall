@@ -70,7 +70,7 @@ function dbconnection_port
 
 function dbconnection_dbname
 {
-	perl -e 'if ( "'$1'" =~ /jdbc:mysql:\/\/.*:.*\/(.*)\?/ ) { print "$1" }'
+	perl -e 'if ( "'$1'" =~ /jdbc:mysql:\/\/.*:.*\/([^?]*)/ ) { print "$1" }'
 }
 
 
