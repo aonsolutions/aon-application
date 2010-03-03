@@ -14,11 +14,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.DropEvent;
 import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.Ordering;
-import org.richfaces.model.SequenceDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.MessageDataModel;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.WebmailException;
@@ -53,7 +53,6 @@ public class FolderController implements IMessageContainer, WebMailConstants {
 	private Ordering dateOrder = Ordering.DESCENDING;
 	
 	public FolderController() {
-		this.model = new ModifiableModel(new SequenceDataModel(), "to");
 	}
 
 	public int getCurrentPage() {
@@ -78,7 +77,7 @@ public class FolderController implements IMessageContainer, WebMailConstants {
 	}
 
 	public void updateModel() {
-		this.model.setWrappedData(folder.getMessageList());		
+		this.model = new MessageDataModel(folder.getMessageList()); 
 	}
 	
 	/**

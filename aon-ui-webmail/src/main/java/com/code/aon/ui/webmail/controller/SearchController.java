@@ -9,9 +9,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.Ordering;
-import org.richfaces.model.SequenceDataModel;
 
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.MessageDataModel;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
@@ -97,7 +97,6 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 	}
 
 	public void init(ActionEvent event){
-		this.model = new ModifiableModel(new SequenceDataModel(), "to");
 		bodyText = null;
 		address_cc = null;
 		address_from = null;
@@ -130,7 +129,7 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 			}
 			AonMessage[] list = as.search();
 			setMessagesFound(! ArrayUtils.isEmpty(list) );
-			this.model.setWrappedData( list );
+			this.model = new MessageDataModel(list);
 			setShowResults(true);
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
