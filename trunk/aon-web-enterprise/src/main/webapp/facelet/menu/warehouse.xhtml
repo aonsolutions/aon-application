@@ -18,10 +18,11 @@
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">				
 		
-					<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
-						columnClasses="aon-portlets-column,aon-portlets-column">
-		
-						<aon:panel headerClass="aon-panel-title">
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+	
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-warehouse aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{warehouseBundle.warehouse_menu_group}"/>
 							</f:facet>
@@ -37,9 +38,10 @@
 										value="#{warehouseBundle.warehouse_stock_module}" />
 								</aon:div>
 							</aon:div>
-						</aon:panel>
+						</h:panelGrid>
 	
-						<aon:panel headerClass="aon-panel-title">
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_reports}"/>
 							</f:facet>
@@ -61,9 +63,9 @@
 									</h:commandLink>
 								</aon:div>
 							</aon:div>
-						</aon:panel>
+						</h:panelGrid>
 						
-					</aon:panelGrid>
+					</h:panelGrid>
 
 				</aon:componentGroup>
 				
