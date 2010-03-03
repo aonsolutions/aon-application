@@ -271,6 +271,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 		income.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Income"));
 		income.setSecurityLevel(invoice.getSecurityLevel());
 		income.setIncomeStatus(IncomeStatus.CLOSED);
+		income.setWorkPlace(obtainWorkPlace());
 		try {
 			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 			income = (Income)incomeBean.insert(income);

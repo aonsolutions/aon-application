@@ -294,6 +294,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 		delivery.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Delivery"));
 		delivery.setSecurityLevel(invoice.getSecurityLevel());
 		delivery.setStatus(DeliveryStatus.CLOSED);
+		delivery.setWorkPlace(obtainWorkPlace());
 		try {
 			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 			delivery = (Delivery)deliveryBean.insert(delivery);
