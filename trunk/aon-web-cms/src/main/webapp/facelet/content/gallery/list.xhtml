@@ -24,22 +24,19 @@
 			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div id="aonHeader" styleClass="aon-header">
-					<aon:panelGrid columns="1" width="100%"
-						columnClasses="aon-header-name">
-						<aon:div>
-							<aon:outputText value="#{appBundle.aon_cms_current_path}: " styleClass="aon-applicationName"/>
-							<aon:outputText value="#{gallery.currentRelativePath}" styleClass="aon-applicationName"/>
-							<aon:confirmButton id="removeFolder"
-								value="#{appBundle.aon_cms_remove_folder}"
-								immediate="true" style="margin-left:2em;"
-								confirmTitle="#{bundle.aon_confirm_title}"
-								confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{gallery.deleteFolder}"
-								accesskey="#{bundle.aon_key_remove}" />								  						
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
+				<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head">
+					<aon:div>
+						<aon:outputText value="#{appBundle.aon_cms_current_path}: " styleClass="aon-panel-title"/>
+						<aon:outputText value="#{gallery.currentRelativePath}" styleClass="aon-panel-title"/>
+						<aon:confirmButton id="removeFolder"
+							value="#{appBundle.aon_cms_remove_folder}"
+							immediate="true" style="margin-left:2em;"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{gallery.deleteFolder}"
+							accesskey="#{bundle.aon_key_remove}" />								  						
+					</aon:div>
+				</aon:panelGrid>
 
 				<aon:panelGrid columns="2" style="width:100%" columnClasses="aon-border, aon-border"> 
 					<aon:div styleClass="aon-padding">

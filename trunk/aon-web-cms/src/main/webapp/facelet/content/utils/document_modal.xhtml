@@ -45,14 +45,10 @@
 					        </rich:recursiveTreeNodesAdaptor>
 					    </rich:tree>
 					</aon:div>
-					<aon:div> 
-						<aon:div styleClass="aon-header">
-							<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
-								<aon:div>
-									<aon:outputLabel value="#{document.currentRelativePath}" styleClass="aon-applicationName"/>
-								</aon:div>
-							</aon:panelGrid>
-						</aon:div>
+					<aon:div>
+						<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head"> 
+							<aon:outputLabel value="#{document.currentRelativePath}" styleClass="aon-panel-title"/>
+						</aon:panelGrid>
 						<aon:div style="height:582;overflow:auto;">
 							<rich:dataGrid var="item" value="#{document.model}" columns="1">
 								<aon:div>

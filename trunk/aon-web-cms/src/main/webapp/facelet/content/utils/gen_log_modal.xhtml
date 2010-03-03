@@ -17,7 +17,7 @@
 			minHeight="550" height="550" minWidth="1000" width="1000">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
-					<aon:outputText value="Generator" />
+					<aon:outputText value="#{menuBundle.cms_generate_pages}" />
 				</aon:div>
 			</f:facet>
 	        <f:facet name="controls">
@@ -29,22 +29,20 @@
 				</aon:commandButton>
 	        </f:facet>
 			<rich:panel id="grid">
-         		<aon:div styleClass="aon-header">
-					<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
-						<aon:div>
-							<aon:outputLabel value="Logs" styleClass="aon-applicationName"/>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
+				<aon:panelGrid columns="1" width="100%" columnClasses="aon-panel-head">
+					<aon:div>
+						<aon:outputLabel value="Logs" styleClass="aon-panel-title"/>
+					</aon:div>
+				</aon:panelGrid>
 				<rich:panel bodyClass="generator-log-panel">
 			        <rich:dataList id="dataList_Log" var="msg" value="#{generator_status.status}">
 						<aon:outputText value="#{msg}"/>
 					</rich:dataList>
 				</rich:panel>
-         		<aon:div styleClass="aon-header aon-margin-top">
-					<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
+         		<aon:div styleClass="aon-margin-top">
+					<aon:panelGrid columns="1" width="100%" columnClasses="aon-panel-head">
 						<aon:div>
-							<aon:outputLabel value="Errores" styleClass="aon-applicationName"/>
+							<aon:outputLabel value="Errores" styleClass="aon-panel-title"/>
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>
