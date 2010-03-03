@@ -139,9 +139,16 @@
 
 					<aon:outputLabel for="Amortization_saleAmount"
 						value="#{accountingBundle.accounting_sale_amount}" />
-					<aon:inputText id="Amortization_saleAmount"
-						value="#{amortization.to.saleAmount}" size="15" />
+					<aon:div>
+						<aon:inputText id="Amortization_saleAmount"
+							value="#{amortization.to.saleAmount}" size="15" />
 
+						<aon:commandButton 
+							style="margin-left: 100px;"
+							reRender="AmortizationDetailsList"
+							value="Mostrar totales">
+						</aon:commandButton>
+					</aon:div>
 				</aon:panelGrid>
 
 				<aon:panelGrid columns="2" style="width: 100%;margin-top:2px;"
