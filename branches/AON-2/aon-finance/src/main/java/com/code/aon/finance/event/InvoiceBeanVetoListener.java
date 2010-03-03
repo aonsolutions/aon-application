@@ -3,6 +3,8 @@ package com.code.aon.finance.event;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -18,7 +20,11 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice)evt.getTo();
 		if(invoice.getType() == InvoiceType.SALES){
-			invoice.setReferenceCode(((invoice.getSeries()!=null&&!invoice.getSeries().equals(""))?invoice.getSeries()+"/":"") + invoice.getNumber());
+	    	String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+			if (!StringUtils.isEmpty(invoice.getSeries())) {
+				referenceCode = invoice.getSeries() + "/" + referenceCode;
+			}
+			invoice.setReferenceCode(referenceCode);
 		} else {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(invoice.getIssueDate());
