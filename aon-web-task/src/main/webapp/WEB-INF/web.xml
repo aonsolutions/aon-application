@@ -140,7 +140,7 @@
 			screen when an error occurs during the rendering process.
 		</description>
 		<param-name>facelets.DEVELOPMENT</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 
 	<context-param>
@@ -195,10 +195,10 @@
     </context-param>
  
 	<context-param>
-      <param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-      <param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
-   </context-param>
-  
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
+	</context-param>
+
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -253,12 +253,6 @@
 		</listener-class>
 	</listener>
 	    
-    <context-param>
-       <param-name>config-file</param-name>
-       <param-value>/WEB-INF/conf/bean_config.xml</param-value>
-    </context-param> 
-
-
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
@@ -278,7 +272,6 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Admin</role-name>
 			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
@@ -291,15 +284,12 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role>
-		<role-name>Admin</role-name>
-	</security-role>
-	<security-role>
-		<role-name>TaskMonitoring</role-name>
-	</security-role>
-	<security-role>
-		<role-name>User</role-name>
-	</security-role>
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>TaskMonitoring</role-name></security-role>
+	
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonTask</resource-env-ref-name>

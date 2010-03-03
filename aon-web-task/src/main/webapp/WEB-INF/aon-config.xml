@@ -9,6 +9,7 @@
 			showRegistryBank="false" 
 			showCompanyOtherData="true"
 			showPanelTabSet="false" 
+			showEInvoice="false"
 			showDigitalCertificate="false"
 		/>
 	</company:config>
@@ -28,6 +29,7 @@
 			showTaxInfoData="false"
 			showAddInfo="false"
 			showDirStaff="false"
+			showHistory="false"
 		/>
 	</customer:config>
 
