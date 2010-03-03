@@ -67,6 +67,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
                                                         <directory>/var/lib/jbossas/server/default/deploy</directory>
                                                 </mapping>
 					</mappings>
+					<requires>
+						<require>aon-directory-client &gt; 5.0.0-4</require>
+					</requires>
                                        <postinstallScriptlet>
                                                 <scriptFile>src/main/scripts/postinstall</scriptFile>
                                                 <fileEncoding>utf-8</fileEncoding>
