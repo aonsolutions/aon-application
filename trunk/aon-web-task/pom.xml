@@ -14,7 +14,7 @@
 	<description>AON TASK</description>
 	<name>AON TASK</name>
 	<properties>
-		<dbVersion>4.8.1</dbVersion>
+		<dbVersion>4.9.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-task</finalName>
