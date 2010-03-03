@@ -1580,7 +1580,7 @@ CREATE TABLE `sport_season` (
 #
 
 INSERT INTO `db_version` (`version_number`) VALUES 
-  ('2.0.3');
+  ('2.0.4');
 
 COMMIT;
 
