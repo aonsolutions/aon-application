@@ -66,6 +66,11 @@
 					rendered="#{cms.roleEditor}"
 					value="#{menuBundle.cms_document_gallery}"
 					action="document_list"/>
+				<aon:menuItem id="fileManager" 
+					rendered="#{cms.fileManager}"
+					value="#{richBundle.rich_fileManager}"
+					actionListener="#{fileManager.onInit}"
+					action="fileManager_list"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="content"
 				value="#{menuBundle.cms_content}"
