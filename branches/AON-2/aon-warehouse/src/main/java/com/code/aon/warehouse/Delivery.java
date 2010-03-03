@@ -25,6 +25,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -88,6 +89,8 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	 */
 	private DeliveryStatus status;
 	
+	private WorkPlace workPlace;
+
 	/**
 	 * All the lines of this delivery
 	 */
@@ -241,6 +244,15 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	 */
 	public void setStatus(DeliveryStatus status) {
 		this.status = status;
+	}
+
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn( name="workplace",nullable=false )
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
 	}
 	
 	/**

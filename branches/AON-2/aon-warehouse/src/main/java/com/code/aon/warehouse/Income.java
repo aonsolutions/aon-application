@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,6 +25,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
@@ -87,6 +89,17 @@ public class Income implements ITransferObject, ICalculableContainer, IHeaderObj
 	 * Current status of this income
 	 */
 	private IncomeStatus incomeStatus;
+	
+	private WorkPlace workPlace;
+
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn( name="workplace",nullable=false )
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
 	
 	/**
 	 * All the lines of the income
