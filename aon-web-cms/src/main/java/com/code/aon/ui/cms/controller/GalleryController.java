@@ -12,6 +12,7 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -147,9 +148,8 @@ public abstract class GalleryController extends BasicController implements IGall
 	}
 
 	public boolean isEmptyDir(){
-		if (currentPath.listFiles().length==0)
-			return true;
-		return false;
+		String[] list = currentPath.list();
+		return ArrayUtils.isEmpty(list);
 	}
 	
 	public String getPreviewCurrentUrl() {
