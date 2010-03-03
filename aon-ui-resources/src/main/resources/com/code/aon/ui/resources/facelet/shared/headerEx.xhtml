@@ -43,10 +43,11 @@
 				</aon:div>
 			</c:if>
 			<aon:outputFormat value="#{bundle.aon_version}"
-				styleClass="aon-applicationName" style="font-size:0.9em;margin-top:0.1em;"
+				styleClass="aon-version-label"
 				rendered="#{aonConfiguration.applicationVersion != null}" >
 				<f:param value="#{aonConfiguration.applicationVersion}" />
 			</aon:outputFormat>
+			<ui:insert name="afterVersionContent" />
 		</aon:div>
 	</aon:div>
 </ui:composition>
