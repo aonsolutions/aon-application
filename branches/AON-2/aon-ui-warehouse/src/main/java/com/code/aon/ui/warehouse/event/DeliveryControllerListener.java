@@ -1,12 +1,15 @@
 package com.code.aon.ui.warehouse.event;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -87,6 +90,7 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		((Delivery) ((DeliveryController) event.getController()).getTo()).setStatus(DeliveryStatus.PENDING);
 		((Delivery) ((DeliveryController) event.getController()).getTo()).setRaddress(obtainRegistryAddress(((Delivery) ((DeliveryController) event.getController()).getTo()).getCustomer().getRegistry().getId()));
+		((Delivery) ((DeliveryController) event.getController()).getTo()).setWorkPlace(obtainWorkPlace());
 		super.beforeBeanAdded(event);
 	}
 
@@ -246,6 +250,21 @@ public class DeliveryControllerListener extends LinesControllerListener {
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining pos with id= " + posId, e);
+		}
+		return null;
+	}
+
+	private WorkPlace obtainWorkPlace() {
+		try {
+			IManagerBean wpBean = BeanManager.getManagerBean(WorkPlace.class);
+			List<ITransferObject> wpLst = wpBean.getList(null);
+			if (wpLst.size() > 0) {
+				WorkPlace wp = (WorkPlace)wpLst.get(0);
+				return wp;
+			}
+		}
+		catch (ManagerBeanException mbe) {
+			mbe.printStackTrace();
 		}
 		return null;
 	}
