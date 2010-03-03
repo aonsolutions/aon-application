@@ -68,7 +68,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
                                                 </mapping>
 					</mappings>
 					<requires>
-						<require>aon-directory-client &gt; 5.0.0-4</require>
+						<require>aon-directory-client &gt; 5.0.0</require>
 					</requires>
                                        <postinstallScriptlet>
                                                 <scriptFile>src/main/scripts/postinstall</scriptFile>
