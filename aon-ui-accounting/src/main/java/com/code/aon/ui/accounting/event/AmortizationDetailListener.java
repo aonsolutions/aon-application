@@ -9,8 +9,12 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class AmortizationDetailListener extends ControllerAdapter {
 
 	@Override
-	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		AmortizationDetail detail = (AmortizationDetail) event.getController().getTo();
-		detail.setCoefficient(CommonUtil.round(detail.getAllocation() * 100 / detail.getAmortization().getAmount()));
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		AmortizationDetail detail = (AmortizationDetail) event.getController()
+				.getTo();
+		detail.setCoefficient(CommonUtil.round(detail.getAllocation() * 100
+				/ detail.getAmortization().getAmount()));
 	}
+
 }

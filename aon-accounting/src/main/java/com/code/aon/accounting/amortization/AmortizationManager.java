@@ -90,7 +90,7 @@ public class AmortizationManager {
 			detail.setAmortization(a);
 			detail.setPending(pending);
 			detail.setStatus(AmortizationDetailStatus.PENDING);
-			detail.setFiscalAllocation(0.0);
+			detail.setFiscalAllocation(allocation);
 			detail.setFiscalAccumulated(0.0);
 
 			bean.insert(detail);

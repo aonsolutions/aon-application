@@ -1,6 +1,5 @@
 package com.code.aon.ui.accounting.controller;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -23,14 +22,9 @@ public class AmortizationDetailController extends LinesController {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
-	private List<AmortizationDetail> amortizationList;
-	
+	@SuppressWarnings("unchecked")
 	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
 		return (List<AmortizationDetail>) getCalculatedModel().getWrappedData();
-	}
-
-	public void setAmortizationList(LinkedList<AmortizationDetail> amortizationList) {
-		this.amortizationList = amortizationList;
 	}
 
 	public DataModel getCalculatedModel() throws ManagerBeanException {
@@ -41,7 +35,7 @@ public class AmortizationDetailController extends LinesController {
 
 		double fiscalAccumulated = 0.0;
 		double fiscalPending = 0.0;
-
+		
 		for (int i = 0; i < model.getRowCount(); i++) {
 			model.setRowIndex(i);
 			AmortizationDetail detail = (AmortizationDetail) model.getRowData();
@@ -72,10 +66,8 @@ public class AmortizationDetailController extends LinesController {
 	}
 
 	public boolean hasScoredOrBlockedDetails() throws ManagerBeanException {
-		DataModel model = super.getModel();
-		for (int i = 0; i < model.getRowCount(); i++) {
-			model.setRowIndex(i);
-			AmortizationDetail detail = (AmortizationDetail) model.getRowData();
+		List<AmortizationDetail> list = getAmortizationList();
+		for (AmortizationDetail detail : list) {
 			if (detail.getStatus() == AmortizationDetailStatus.BLOCKED ||
 				detail.getStatus() == AmortizationDetailStatus.SCORED  ) {
 				return false;
