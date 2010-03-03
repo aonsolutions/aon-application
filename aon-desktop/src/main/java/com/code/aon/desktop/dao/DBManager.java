@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class DBManager {
 	
 	private static final String CREATE_SQL_PREFIX = "create.database.";
 	
-	private static final String CREATE_SQL = CREATE_SQL_PREFIX + "4.8.1.sql";
+	private static final String CREATE_SQL = CREATE_SQL_PREFIX + "4.9.0.sql";
 	
 	private static final String INSERT_SQL = "default-insert.database.sql";
 	

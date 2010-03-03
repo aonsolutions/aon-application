@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 4.8.1
+# Version: 4.9.0
 # Created by: girazu
-# Creation Date: 15/01/2010 11:08
+# Creation Date: 24/02/2010 19:33
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -585,6 +585,116 @@ CREATE TABLE `account_summary` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acumulado de Cuentas Contables';
 
 #
+# Structure for the `application` table : 
+#
+
+CREATE TABLE `application` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `audit_level` tinyint(2) NOT NULL default '0' COMMENT 'Nivel de auditoria',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Aplicacion',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
+
+#
+# Structure for the `action` table : 
+#
+
+CREATE TABLE `action` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `menu` tinyint(1) NOT NULL default '0' COMMENT 'Indica si la Accion esta o no dentro del menu',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Accion',
+  `application_id` int(4) NOT NULL COMMENT 'Aplicacion a la que pertenece la Accion',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ACTION_NAME` (`name`),
+  KEY `IDX_ACTION` (`name`,`application_id`),
+  KEY `IDX_ACTION_APPLICATION` (`application_id`),
+  CONSTRAINT `FK_ACTION_APPLICATION` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de una Applicacion';
+
+#
+# Structure for the `user` table : 
+#
+
+CREATE TABLE `user` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Usuario',
+  `login` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Login del Usuario',
+  `available` tinyint(1) NOT NULL COMMENT 'Indica si el Usuario esta disponible o no',
+  `validate` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Usuario requiere validacion o no de la clave hardware',
+  `aon_key` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Campo alfanumerico donde se guarda la ultima clave hardware generada',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Usuario con respecto a su primera validacion de la clave hardware',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Usuarios';
+
+#
+# Structure for the `action_denied` table : 
+#
+
+CREATE TABLE `action_denied` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `action_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Accion',
+  `user_id` int(4) NOT NULL default '0' COMMENT 'Identificador del Usuario',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ACTION_DENIED_USER_ID` (`user_id`),
+  KEY `IDX_ACTION_DENIED_ACTION_ID` (`action_id`),
+  CONSTRAINT `FK_ACTION_DENIED_ACTION_ID` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
+  CONSTRAINT `FK_ACTION_DENIED_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion no permitida para el Usuario';
+
+#
+# Structure for the `session` table : 
+#
+
+CREATE TABLE `session` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `endDate` datetime default NULL COMMENT 'Fecha de finalizacion',
+  `remote_address` varchar(15) collate latin1_spanish_ci NOT NULL default '' COMMENT 'IP remota',
+  `remote_host` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Equipo remoto',
+  `session_id` varchar(32) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Identificador web de la sesion',
+  `startDate` datetime NOT NULL COMMENT 'Fecha de inicio',
+  `application_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Aplicacion',
+  `user_id` int(4) NOT NULL default '0' COMMENT 'Identificador del Usuario',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_SESSION_USER_ID` (`user_id`),
+  KEY `IDX_SESSION_APPLICATION_ID` (`application_id`),
+  CONSTRAINT `FK_SESSION_APPLICATION_ID` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`),
+  CONSTRAINT `FK_SESSION_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Sesion web';
+
+#
+# Structure for the `action_entry` table : 
+#
+
+CREATE TABLE `action_entry` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `executionDate` datetime NOT NULL COMMENT 'Fecha de ejecucion',
+  `action_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Accion',
+  `session_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Sesion',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ACTION_ENTRY_SESSION_ID` (`session_id`),
+  KEY `IDX_ACTION_ENTRY_ACTION_ID` (`action_id`),
+  CONSTRAINT `FK_ACTION_ENTRY_ACTION_ID` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
+  CONSTRAINT `FK_ACTION_ENTRY_SESSION_ID` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Entrada de la ejecucion de una Accion';
+
+#
+# Structure for the `action_favorite` table : 
+#
+
+CREATE TABLE `action_favorite` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `position` int(4) NOT NULL COMMENT 'Posicion dentro de las Acciones Favoritas',
+  `action_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Accion',
+  `user_id` int(4) NOT NULL default '0' COMMENT 'Identificador del Usuario',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ACTION_FAVORITE_USER_ID` (`user_id`),
+  KEY `IDX_ACTION_FAVORITE_ACTION_ID` (`action_id`),
+  CONSTRAINT `FK_ACTION_FAVORITE_ACTION_ID` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
+  CONSTRAINT `FK_ACTION_FAVORITE_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion Favorita del Usuario';
+
+#
 # Structure for the `workgroup` table : 
 #
 
@@ -710,21 +820,6 @@ CREATE TABLE `process_detail` (
   CONSTRAINT `process_detail_fk_2` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
   CONSTRAINT `process_detail_ibfk_1` FOREIGN KEY (`process`) REFERENCES `process` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Procesos';
-
-#
-# Structure for the `user` table : 
-#
-
-CREATE TABLE `user` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Usuario',
-  `login` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Login del Usuario',
-  `available` tinyint(1) NOT NULL COMMENT 'Indica si el Usuario esta disponible o no',
-  `validate` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Usuario requiere validacion o no de la clave hardware',
-  `aon_key` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Campo alfanumerico donde se guarda la ultima clave hardware generada',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Usuario con respecto a su primera validacion de la clave hardware',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Usuarios';
 
 #
 # Structure for the `task` table : 
@@ -3946,9 +4041,10 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('4.8.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('4.9.0');
 
 COMMIT;
 
 
 SET FOREIGN_KEY_CHECKS=1;
+
