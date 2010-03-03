@@ -10,16 +10,23 @@ public class CmsController {
     private static final String PUBLISHER_ROLE = "Publisher";
     	
 	private boolean adminProfile;
+	
+	private boolean fileManager;
 
-	public void assignAdminProfile(){
-		adminProfile = true;
+	public void assignAdminProfile( boolean fileManager ) {
+		this.adminProfile = true;
+		this.fileManager = fileManager;
 	}
 	
     public boolean isAdministrator() {
 		return adminProfile;
     }
     
-    public boolean isRoleDesigner() {
+    public boolean isFileManager() {
+		return fileManager;
+	}
+
+	public boolean isRoleDesigner() {
 		if (adminProfile) return true;
     	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(DESIGNER_ROLE);
     }

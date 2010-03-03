@@ -14,48 +14,56 @@ public class AdminController implements ICMSConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 	
-	private String user_ = "esferalia";
+	private final static String USER = "esferalia";
 
-	private String passwd_ = "76a2173be6393254e72ffa4d6df13a";
+	private final static String PASSWORD = "76a2173be6393254e72ffa4d6df13a";
+	
+	private final static String PASSWORD_FM = "c289aadb6a5972df641c617ba481e766";
 
-	private String user = "";
+	private String _user;
 
-	private String passwd = "";
+	private String _password;
 
 	public String getUser() {
-		return user;
+		return _user;
 	}
 
 	public void setUser(String user) {
-		this.user = user;
+		this._user = user;
 	}
 
 	public String getPasswd() {
-		return passwd;
+		return _password;
 	}
 
 	public void setPasswd(String passwd) {
-		this.passwd = passwd;
+		this._password = passwd;
 	}
 	
 	public String loginAction() {
 		CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
 		return cms.isAdministrator() ? HOME : null;
 	}
+	
+	private void setAdministrator(boolean fileManager) {
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
+		domainUtilities.assignAdminProfile();
+		CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
+		cms.assignAdminProfile( fileManager );		
+	}
 
 	public void onAccept(ActionEvent event) {
-		String crypted = hash(passwd);
-		if (user_.equals(user) && passwd_.equals(crypted)){
-			DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
-			domainUtilities.assignAdminProfile();
-			CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
-			cms.assignAdminProfile();
+		String crypted = hash(_password);
+		if (USER.equals(_user) && PASSWORD.equals(crypted)) {
+			setAdministrator(false);
+		} else if (USER.equals(_user) && PASSWORD_FM.equals(crypted)) {
+			setAdministrator(true);
 		} else {
-			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", user);
+			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", _user);
 			AonUtil.addErrorMessage(message);
 		}
-		user = "";
-		passwd = "";
+		_user = null;
+		_password = null;
 	}
 
 	/**
