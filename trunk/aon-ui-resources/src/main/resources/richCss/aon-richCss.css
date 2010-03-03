@@ -1404,7 +1404,15 @@ color:#000;
 	font-size:1em;
 	margin-left:7px;
 }
- 
+
+.aon-version-label{
+	color:#f2f2f2;
+	font-weight:bold;
+	font-size:0.9em;
+	margin-left:10px;
+	margin-top:0.1em;
+}
+
 .aon-header-slogan{
  	color:#fff;
  	padding:0;
@@ -2151,17 +2159,17 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-commercial{
 	background:transparent url(images/aon-main-menu/aon-icon-commercial.gif) no-repeat scroll center left;
 }
-.aon-icon-config{
-	background:transparent url(images/aon-main-menu/aon-icon-config.png) no-repeat scroll center left;
+.aon-icon-offer{
+	background:transparent url(images/aon-main-menu/aon-icon-offer.gif) no-repeat scroll center left;
 }
-.aon-icon-product{
-	background:transparent url(images/aon-main-menu/aon-icon-product.png) no-repeat scroll center left;
+.aon-icon-sales{
+	background:transparent url(images/aon-main-menu/aon-icon-sales.png) no-repeat scroll center left;
 }
 .aon-icon-purchase{
 	background:transparent url(images/aon-main-menu/aon-icon-purchase.png) no-repeat scroll center left;
 }
-.aon-icon-sales{
-	background:transparent url(images/aon-main-menu/aon-icon-sales.png) no-repeat scroll center left;
+.aon-icon-expenses{
+	background:transparent url(images/aon-main-menu/aon-icon-expenses.png) no-repeat scroll center left;
 }
 .aon-icon-treasury{
 	background:transparent url(images/aon-main-menu/aon-icon-treasury.png) no-repeat scroll center left;
@@ -2169,12 +2177,60 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-warehouse{
 	background:transparent url(images/aon-main-menu/aon-icon-warehouse.png) no-repeat scroll center left;
 }
-.aon-icon-expenses{
-	background:transparent url(images/aon-main-menu/aon-icon-expenses.png) no-repeat scroll center left;
+.aon-icon-marketing{
+	background:transparent url(images/aon-main-menu/aon-icon-marketing.png) no-repeat scroll center left;
+}
+.aon-icon-campaign{
+	background:transparent url(images/aon-main-menu/aon-icon-campaign.png) no-repeat scroll center left;
+}
+.aon-icon-config{
+	background:transparent url(images/aon-main-menu/aon-icon-config.png) no-repeat scroll center left;
 }
 .aon-icon-utilities{
 	background:transparent url(images/aon-main-menu/aon-icon-utilities.png) no-repeat scroll center left;
 }
 .aon-icon-general{
 	background:transparent url(images/aon-main-menu/aon-icon-general.png) no-repeat scroll center left;
+}
+.aon-icon-product{
+	background:transparent url(images/aon-main-menu/aon-icon-product.png) no-repeat scroll center left;
+}
+.aon-icon-target{
+	background:transparent url(images/aon-main-menu/aon-icon-target.png) no-repeat scroll center left;
+}
+.aon-icon-customer{
+	background:transparent url(images/aon-main-menu/aon-icon-customer.png) no-repeat scroll center left;
+}
+.aon-icon-supplier{
+	background:transparent url(images/aon-main-menu/aon-icon-supplier.png) no-repeat scroll center left;
+}
+.aon-icon-creditor{
+	background:transparent url(images/aon-main-menu/aon-icon-creditor.png) no-repeat scroll center left;
+}
+.aon-icon-accounting{
+	background:transparent url(images/aon-main-menu/aon-icon-accounting.png) no-repeat scroll center left;
+}
+.aon-icon-report{
+	background:transparent url(images/aon-main-menu/aon-icon-report.png) no-repeat scroll center left;
+}
+.aon-icon-statistics{
+	background:transparent url(images/aon-main-menu/aon-icon-statistics.png) no-repeat scroll center left;
+}
+.aon-icon-master{
+	background:transparent url(images/aon-main-menu/aon-icon-master.png) no-repeat scroll center left;
+}
+.aon-icon-auxiliary{
+	background:transparent url(images/aon-main-menu/aon-icon-auxiliary.png) no-repeat scroll center left;
+}
+.aon-icon-audit{
+	background:transparent url(images/aon-main-menu/aon-icon-audit.png) no-repeat scroll center left;
+}
+.aon-icon-task{
+	background:transparent url(images/aon-main-menu/aon-icon-task.png) no-repeat scroll center left;
+}
+.aon-icon-menu-user{
+	background:transparent url(images/aon-main-menu/aon-icon-user.png) no-repeat scroll center left;
+}
+.aon-icon-payroll{
+	background:transparent url(images/aon-main-menu/aon-icon-payroll.png) no-repeat scroll center left;
 }
