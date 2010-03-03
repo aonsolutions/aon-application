@@ -189,6 +189,7 @@ public class InvoicingController extends BasicController {
 			}
 		}
 		generateFinances(null);
+
 		incomeController.clearCheckList();
 		InvoicingDetailController invoicingDetailController = (InvoicingDetailController) AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
 		invoicingDetailController.onSearch(null);
@@ -349,7 +350,9 @@ public class InvoicingController extends BasicController {
 		IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 		income.setIncomeStatus(IncomeStatus.PENDING);
 		incomeBean.update(income);
+
 		generateFinances(null);
+
 		InvoicingDetailController invoicingDetailController = (InvoicingDetailController) AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
 		invoicingDetailController.onSearch(null);
 		incomeController.clearCheckList();
@@ -479,7 +482,10 @@ public class InvoicingController extends BasicController {
 				financeBean.remove(finance);
 			}
 			Company company = obtainCompany();
-			getFinanceGenerator().generateFinances(invoice, company, getPriceStrategy().getTotalPrice(invoice, invoice));
+			double totalInvoice = getPriceStrategy().getTotalPrice(invoice, invoice);
+			if (totalInvoice != 0) {
+				getFinanceGenerator().generateFinances(invoice, company, totalInvoice);
+			}
 			purchaseFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error generating finances for invoice with id= " + invoice.getId(),e);
