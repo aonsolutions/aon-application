@@ -16,55 +16,54 @@
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">
 		
-					<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
-						columnClasses="aon-portlets-column,aon-portlets-column">
-	
-						<aon:panelGroup>
-							<aon:panel headerClass="aon-panel-title">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_configuration}"/>
-								</f:facet>					
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="company" 
-											action="company" actionListener="#{company.onLoad}"
-											value="#{companyBundle.company_data_module}">
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="workplace" 
-											action="workplace" 
-											value="#{companyBundle.company_workplace_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="series" 
-											action="series" 
-											value="#{configBundle.config_series_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="warehouse" 
-											action="warehouse"
-											value="#{warehouseBundle.warehouse_warehouse_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="tax" 
-											action="tax_list" 
-											value="#{configBundle.config_tax_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="segment" 
-											action="segment_form" 
-											value="#{registryBundle.registry_segment_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="geotreeParent" 
-											action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
-											value="#{geozoneBundle.geozone_module}" />
-									</aon:div>
+					<h:panelGrid styleClass="aon-width-all" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300">
+		
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-sales aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_configuration}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="company" 
+										action="company" actionListener="#{company.onLoad}"
+										value="#{companyBundle.company_data_module}">
+									</aon:commandLink>
 								</aon:div>
-							</aon:panel>
-						</aon:panelGroup>
-					</aon:panelGrid>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="workplace" 
+										action="workplace" 
+										value="#{companyBundle.company_workplace_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="series" 
+										action="series" 
+										value="#{configBundle.config_series_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="warehouse" 
+										action="warehouse"
+										value="#{warehouseBundle.warehouse_warehouse_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="tax" 
+										action="tax_list" 
+										value="#{configBundle.config_tax_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="segment" 
+										action="segment_form" 
+										value="#{registryBundle.registry_segment_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geotreeParent" 
+										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
+										value="#{geozoneBundle.geozone_module}" />
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>
+					</h:panelGrid>
 				</aon:componentGroup>
 			</aon:div>
 		</aon:form>
