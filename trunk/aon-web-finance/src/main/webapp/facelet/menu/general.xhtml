@@ -7,7 +7,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:panel headerClass="aon-panel-title">
+	<h:panelGrid styleClass="aon-width-all"
+		headerClass="aon-direct-access-panel aon-icon-general">
 		<f:facet name="header">
 			<aon:outputText value="#{appBundle.menu_general}" />
 		</f:facet>
@@ -33,6 +34,6 @@
 					value="#{configBundle.config_bank_module}" />
 			</aon:div>
 		</aon:div>
-	</aon:panel>
+	</h:panelGrid>
 
 </ui:composition>

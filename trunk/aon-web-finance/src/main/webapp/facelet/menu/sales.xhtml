@@ -18,10 +18,11 @@
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">			
 
-					<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
-						columnClasses="aon-portlets-column aon-width-400,aon-portlets-column aon-width-400">
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
-						<aon:panel headerClass="aon-panel-title">
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-sales aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.menu_sales}" />
 							</f:facet>
@@ -47,11 +48,11 @@
 										value="#{financeBundle.finance_charge_module}" />
 								</aon:div>
 							</aon:div>
-						</aon:panel>
+						</h:panelGrid>
 	
 						<ui:include src="/facelet/menu/general.xhtml" />
 	
-					</aon:panelGrid>
+					</h:panelGrid>
 				</aon:componentGroup>
 			</aon:div>
 		</aon:form>
