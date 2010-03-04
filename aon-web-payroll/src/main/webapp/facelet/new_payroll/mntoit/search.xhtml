@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="mntoitSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_newpayroll_it}" />
+				<ui:param name="controller" value="#{itWizard}" />
+				
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+			
+			<ui:include 
+				src="./navigation/toolbar.xhtml">
+				<ui:param name="flowPosition" value="search" />
+				<!--  
+				<ui:param name="controller" value="#{parteconf}" />
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_newpayroll_it}" />
+				<ui:param name="controller" value="#{persona}" />
+				
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+				-->
+			</ui:include>
+			
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+				
+				
+					<aon:methodParam name="searchActionListener"
+						value="#{itWizard.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="mntoit_list" />
+
+
+					<aon:outputLabel for="Persona_numdoc"
+						value="#{appBundle.aon_payroll_pricipales_personas_tip_doc}" />
+					<aon:inputText id="Persona_numdoc" size="10" maxlength="10"
+						valueChangeListener="#{itWizard.addExpression}">
+					</aon:inputText>
+<!--  
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Documento_cdg"
+							lookup="#{documentoLookup}" reRender="Documento_description"
+							value="#{trabajador.persona.tipdoc.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Documento_lookup"
+							windowTitle="#{appBundle.aon_payroll_pricipales_personas_tip_doc}"
+							selectReRender="Documento_cdg,Documento_description"
+							lookup="#{documentoLookup}" minHeight="440"
+							property="#{trabajador.persona.tipdoc}">
+						</aon:lookupButton>
+						<aon:inputText id="Documento_description"
+							value="#{(trabajador.persona.tipdoc.description!=null)?(trabajador.persona.tipdoc.description):('')}"
+							size="55" disabled="true" />
+					</aon:div>
+-->					
+
+					<aon:outputLabel for="Persona_numss"
+						value="#{appBundle.aon_payroll_pricipales_personas_numss}" />
+					<aon:inputText id="Persona_numss" size="15" maxlength="12"
+						valueChangeListener="#{itWizard.addExpression}" />
+
+					<aon:outputLabel for="Persona_nombre"
+						value="#{appBundle.aon_payroll_pricipales_personas_nombre}" />
+					<aon:inputText id="Persona_nombre" size="20" maxlength="25"
+						valueChangeListener="#{itWizard.addExpression}" />
+
+					<aon:outputLabel for="Persona_descripcion"
+						value="#{appBundle.aon_payroll_pricipales_personas_apellido1}" />
+					<aon:inputText id="Persona_descripcion" size="20" maxlength="35"
+						valueChangeListener="#{itWizard.addExpression}" />
+
+					<aon:outputLabel for="Persona_apellido2"
+						value="#{appBundle.aon_payroll_pricipales_personas_apellido2}" />
+					<aon:inputText id="Persona_apellido2" size="20" maxlength="25"
+						valueChangeListener="#{itWizard.addExpression}" />
+
+
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+<!--  
+		<aon:lookupButtonPopup lookup="#{documentoLookup}" />
+-->
+
+	</ui:define>
+</ui:composition>

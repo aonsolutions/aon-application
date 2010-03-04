@@ -7394,6 +7394,34 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	
+	
+	<!-- ****************************** -->
+	<!-- NEW PAYROLL -->
+	<!-- ****************************** -->
+	<managed-bean>
+		<managed-bean-name>itWizard</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.wizard.ItWizardController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.principales.personas.Persona
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itWizard</value>
+		</managed-property>
+	</managed-bean>
+	
 
 
 </faces-config>
