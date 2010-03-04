@@ -136,7 +136,7 @@ public class AccountingCollectionsController {
 	private List<SelectItem> getAllAccountPeriods(boolean pojo) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
+		return getPeriods(criteria, pojo);
 	}
 
 	public List<SelectItem> getAllAccountPeriods() throws ManagerBeanException {

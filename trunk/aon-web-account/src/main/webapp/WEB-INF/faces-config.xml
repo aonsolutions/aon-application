@@ -24,12 +24,10 @@
 			com.code.aon.ui.resources.bean.ResourceResolver
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-<!-- 		
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
 			<value>aon-desktop</value>
 		</managed-property>
--->		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
 			<value>/aonResource/5.0.0</value>

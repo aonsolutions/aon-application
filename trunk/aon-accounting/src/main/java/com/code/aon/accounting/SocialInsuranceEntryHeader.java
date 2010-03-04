@@ -23,6 +23,7 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 	private SecurityLevel securityLevel;
 	private boolean paymentAdjustable;
 	private Month month;
+	private String year;
 	private AccountEntryLink adjustEntryLink;
 
 	public Period getPeriod() {
@@ -101,6 +102,13 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 		this.month = month;
 	}
 	
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
+
 	public AccountEntryLink getAdjustEntryLink() {
 		return adjustEntryLink;
 	}
