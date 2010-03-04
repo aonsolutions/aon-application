@@ -92,6 +92,11 @@ for DOMAIN in $(aondir_domains); do
 -P  `dbconnection_port  $DBCONNECTION` \
 --password=`aondir_dbpasswd $DATASOURCE` \
 `dbconnection_dbname  $DBCONNECTION` \
--e 'BEGIN; UPDATE delivery SET status = 1 WHERE status = 2; UPDATE income SET status = 1 WHERE status = 2; COMMIT;';
+-e 'BEGIN; \
+UPDATE delivery SET status = 1 WHERE status = 2; \
+UPDATE income SET status = 1 WHERE status = 2; \
+UPDATE income SET workplace = (SELECT MIN(id) FROM workplace) WHERE workplace is NULL;\
+UPDATE delivery SET workplace = (SELECT MIN(id) FROM workplace) WHERE workplace is NULL;\
+COMMIT;';
 	fi  
 done
