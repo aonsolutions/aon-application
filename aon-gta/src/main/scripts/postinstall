@@ -60,7 +60,7 @@ function aondir_dbconnection
 
 function dbconnection_host
 {
-	perl -e 'if ( "'$1'" =~ /jdbc:mysql:\/\/(.*)[:|\/]/ ) { print "$1" }'
+	perl -e 'if ( "'$1'" =~ /jdbc:mysql:\/\/([^:|^\/]*)/ ) { print "$1" }'
 }
 
 function dbconnection_port
