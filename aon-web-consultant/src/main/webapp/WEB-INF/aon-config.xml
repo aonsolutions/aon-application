@@ -4,11 +4,18 @@
 	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
 	xmlns="http://www.esferalia.com/config" >
 
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+		
 	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
 			showPanelTabSet="true" 
+			showEInvoice="true"			
 			showDigitalCertificate="true"
 		/>
 	</company:config>
@@ -19,21 +26,18 @@
 			showFinanceData="true" 
 			showProjectData="true"
 			showFinanceFeeData="true" 
+			showTaxInfoData="true"
 			showAccount="true"
 			showTariff="true" 
 			showSegment="true"
 			showNote="true" 
 			showRelationship="true" 
 			showRecordData="true" 
-			showTaxInfoData="true"
 			showAddInfo="true"
 			showDirStaff="true"
+			showHistory="true"
 		/>
 	</customer:config>
-
-	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
-		<registry:rmedia showSendEmail="true" />
-	</registry:config>
 
 	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
 		<supplier:supplier
@@ -48,10 +52,10 @@
 	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
 		<finance:creditor
 			showFinanceData="true" 
-			showAccount="true"
 			showTaxInfoData="true"
-			showAddInfo="false"
+			showAccount="true"
 			showSegment="false"
+			showAddInfo="false"
 		/>
 		<finance:invoice
 			showWarehouseData="false" 
@@ -71,6 +75,7 @@
 			showAccount="true"
 			showAttachment="false"
 			showEcommerceData="false"
+			showHistory="true"
 		/>
  		<product:productCategory
  			showCategoryGroup="false"
