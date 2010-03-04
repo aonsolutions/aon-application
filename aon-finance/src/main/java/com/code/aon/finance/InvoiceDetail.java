@@ -31,6 +31,8 @@ import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.IncomeDetail;
 
 /**
  * Transfer Object that represents an InvoiceDetail.
@@ -407,6 +409,21 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 
 	public void setRetentionQuota(double retentionQuota) {
 		this.retentionQuota = retentionQuota;
+	}
+
+	@Transient
+	public ITransferObject getSourceTo() throws ManagerBeanException {
+		if (getSourceId() != null) {
+			if (InvoiceSource.DIRECT_SALES == getSource() || InvoiceSource.DELIVERY == getSource()) {
+				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+				return (DeliveryDetail)deliveryDetailBean.get(getSourceId());
+			}
+			if (InvoiceSource.DIRECT_PURCHASE == getSource() || InvoiceSource.INCOME == getSource()) {
+				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+				return (IncomeDetail)incomeDetailBean.get(getSourceId());
+			}
+		}
+		return null;
 	}
 
 	@Override
