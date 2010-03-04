@@ -15,7 +15,7 @@
 		<c:if test="#{company.model.rowCount == 0}" > 
 			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{true}" />
 			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{true}" />
-			<aon:set var="#{company.showPanelTabSet}" value="#{false}" />
+			<aon:set var="#{aonConfiguration.bean.company.showPanelTabSet}" value="#{false}" />
 			<aon:outputText value="#{company.onNew}" style="display: none;" />
 			<a4j:include id="aonContent" ajaxRendered="false"
 				viewId="/com/code/aon/ui/company/facelet/company/form.xhtml" />

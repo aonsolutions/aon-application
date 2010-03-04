@@ -176,6 +176,14 @@
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
 		<mapping class="com.code.aon.supplier.ItemSupplier"/>
+
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>				
 		
 	</session-factory>
 
