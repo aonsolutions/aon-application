@@ -33,13 +33,19 @@ public class TrabajadorControllerListener extends ControllerAdapter implements
 	@Override
 	public void beforeBeanReset(ControllerEvent event)
 			throws ControllerListenerException {
-		((Trabajador)this.getController().getTo()).setDomicilio(null);
+		if(this.getController().getTo()!=null){
+			((Trabajador)this.getController().getTo()).setDomicilio(null);
+		}
 	}
 	
 	@Override
 	public void afterBeanReset(ControllerEvent event)
 			throws ControllerListenerException {
-		((Trabajador)this.getController().getTo()).setDomicilio(null);
+		if(this.getController().getTo()!=null){
+			((Trabajador)this.getController().getTo()).setDomicilio(null);
+		}
+		
+		
 	}
 
 	@Override
