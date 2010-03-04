@@ -13,7 +13,10 @@ public enum Tipoit implements IResourceable, IStringEnum {
 
 	ENFERMEDAD("E"),
 	ACCIDENTE("A"),
-	MATERNIDAD("M");
+	EMBARAZO("B"),
+	MATERNIDAD("M"),
+	PATERNIDAD("P"),
+	LACTANCIA("L");
 	
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
 
