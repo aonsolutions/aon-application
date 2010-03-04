@@ -144,7 +144,7 @@
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="Account_paymentAdjustable"
-							reRender="Account_month,StatementContainer" ajaxSingle="true"
+							reRender="Account_month,Account_year,StatementContainer" ajaxSingle="true"
 							disabled="#{!socialInsuranceEntry.new and socialInsuranceEntry.header.adjustEntryLink != null}"
 							value="#{socialInsuranceEntry.header.paymentAdjustable}" />
 						<aon:outputLabel for="Account_paymentAdjustable"
@@ -153,14 +153,24 @@
 
 					<aon:outputLabel for="Account_month"
 						value="#{accountingBundle.accounting_payment_adjust_month}" />
-					<aon:selectOneMenu id="Account_month"
-						disabled="#{!socialInsuranceEntry.header.paymentAdjustable}"
-						valueChangeListener="#{socialInsuranceEntry.onChangeMonth}"
-						reRender="StatementContainer" ajaxSingle="true"
-						value="#{socialInsuranceEntry.header.month}">
-						<f:selectItems value="#{commonCollections.months}" />
-					</aon:selectOneMenu>
-
+					<aon:div>
+						<aon:selectOneMenu id="Account_month"
+							disabled="#{!socialInsuranceEntry.header.paymentAdjustable}"
+							valueChangeListener="#{socialInsuranceEntry.onChangeMonth}"
+							reRender="StatementContainer" ajaxSingle="true"
+							value="#{socialInsuranceEntry.header.month}">
+							<f:selectItems value="#{commonCollections.months}" />
+						</aon:selectOneMenu>
+						<aon:selectOneMenu id="Account_year"
+							style="margin-left: 20px;"
+							disabled="#{!socialInsuranceEntry.header.paymentAdjustable}"
+							valueChangeListener="#{socialInsuranceEntry.onChangePeriod}"
+							reRender="StatementContainer" ajaxSingle="true"
+							value="#{socialInsuranceEntry.header.year}">
+							<f:selectItems value="#{accountingCollections.allAccountPeriodKeys}" />
+						</aon:selectOneMenu>
+					</aon:div>
+					
 					<aon:outputText value="&#160;" />
 					<aon:div id="StatementContainer">
 						<c:if test="#{!socialInsuranceEntry.paymentAdjustDisabled}">

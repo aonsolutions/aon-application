@@ -124,6 +124,8 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		header.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
 		header.setDate(new Date());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
+		header.setMonth(null);
+		header.setYear(AccountingPeriodUtil.getDefaultPeriod()==null?null:AccountingPeriodUtil.getDefaultPeriod().getId());
 		setSocialInsuranceBalance(null);
 		setSocialInsuranceDetail(null);
 		return header;
@@ -306,7 +308,8 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 			adjustEntry.setEntryDate(getSocialInsuranceBalance().getToDate()); 
 			adjustEntry.setType(AccountEntryType.SOCIAL_INSURANCE_ADJUST);
 			adjustEntry.setSecurityLevel(entry.getSecurityLevel() );
-			adjustEntry.setAccountPeriod(entry.getAccountPeriod());
+			//adjustEntry.setAccountPeriod(entry.getAccountPeriod());
+			adjustEntry.setAccountPeriod(getHeader().getYear());
 			adjustEntry = (AccountEntry) entryBean.insert(adjustEntry);
 			String concept = StringUtils.abbreviate("AJUSTE " + getHeader().getConcept(),32);
 			
@@ -433,6 +436,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 			Date date = adjustEntryLink.getEntryTo().getEntryDate();
 			Month month = Month.getMonthByValue(CommonUtil.getMonth(date));
 			header.setMonth(month);
+			header.setYear(adjustEntryLink.getEntryTo().getAccountPeriod());
 			header.setPaymentAdjustable(true);
 			header.setAdjustEntryLink(adjustEntryLink);
 		}
@@ -469,11 +473,15 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		setSocialInsuranceBalance(null);
 		setSocialInsuranceDetail(null);
 	}
+	public void onChangePeriod(ValueChangeEvent event) {
+		setSocialInsuranceBalance(null);
+		setSocialInsuranceDetail(null);
+	}
 	
 	public Balance getSocialInsuranceBalance() {
 		try {
 			if (socialInsuranceBalance == null) {
-				int year = Integer.parseInt( getHeader().getPeriod().getId() );
+				int year = Integer.parseInt( getHeader().getYear() );
 				Date fromDate = CommonUtil.getDate(year, getHeader().getMonth().getValue(), 1);
 				int days = CommonUtil.daysInMonth(fromDate);
 				Date toDate = CommonUtil.getDate(year, getHeader().getMonth().getValue(), days);
@@ -486,7 +494,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 				String accountAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
 				String accountEntryFromAlias = linkBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_LINK_ENTRY_FROM_ID);
 				Criteria c = new Criteria();
-				c.addEqualExpression(periodAlias, getHeader().getPeriod().getId() );
+				//c.addEqualExpression(periodAlias, getHeader().getPeriod().getId() );
 				c.addBetweenExpression(dateAlias, fromDate,toDate);
 				c.addEqualExpression(accountAlias, getSocialInsuranceAccount().getId() );
 				//c.addExpression(ExpressionUtilities.getNotEqualExpression(typeAlias, AccountEntryType.SOCIAL_INSURANCE_ADJUST));

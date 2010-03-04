@@ -2,6 +2,8 @@ package com.code.aon.accounting.event;
 
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -44,7 +46,9 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
             Period period = (Period)periodBean.getList(criteria).get(0);
         	pFrom = period.getInitiationDate();
     		pTo = period.getDeadline();
-            if(toDate.before(pFrom) || toDate.after(pTo)) {
+    		if (!DateUtils.isSameDay(toDate, pFrom) && !DateUtils.isSameDay(toDate, pTo)
+    				&& (toDate.before(pFrom) || toDate.after(pTo))
+   				) {
             	throw new ManagerBeanVetoListenerException("La Fecha del Asiento no está dentro del Periodo "+period.getId());
             }
             if (period.getStatus() == AccountPeriodStatus.INACTIVE) {
