@@ -155,6 +155,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 				String value = attrs.getValue("Implementation-Version");
 				if (! StringUtils.isEmpty(value)) {
 					this.version = StringUtils.trim(value);
+					String buildNumber = attrs.getValue("buildNumber");
+					if (! StringUtils.isEmpty(buildNumber)) {
+						this.version += " [" + StringUtils.trim(value) + "]";	
+					}
 					LOGGER.info(version);
 				} else {
 					LOGGER.warn("Imposible determinar la versión");
