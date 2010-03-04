@@ -157,7 +157,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 					this.version = StringUtils.trim(value);
 					String buildNumber = attrs.getValue("buildNumber");
 					if (! StringUtils.isEmpty(buildNumber)) {
-						this.version += " [" + StringUtils.trim(value) + "]";	
+						this.version += " [" + StringUtils.trim(buildNumber) + "]";	
 					}
 					LOGGER.info(version);
 				} else {
