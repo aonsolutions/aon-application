@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:ctsql://192.168.2.30:1101/empre055;DBPATH=/home/DATABASES;RTRIMCHAR=true</property>		
+		<property name="connection.url">jdbc:ctsql://192.168.2.40:1101/empre055;DBPATH=/home/DATABASES;RTRIMCHAR=true</property>		
 		<property name="dialect">com.transtools.ctsql.hibernate.dialect.CtsqlDialect</property>
 		<property name="connection.driver_class">com.transtools.jdbc.CtsqlJdbcDriver</property>		
 		<property name="connection.username">ctl</property>		
@@ -156,8 +156,7 @@
         <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lcomunica"/>       
         <!--CALENDAR -->			
         <mapping class="com.code.aon.payroll.auxiliares.convenios.calendar.Calendario"/>
-       
-       
+		
 	</session-factory>
 
 </hibernate-configuration>
