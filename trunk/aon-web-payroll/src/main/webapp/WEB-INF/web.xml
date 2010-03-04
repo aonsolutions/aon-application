@@ -39,8 +39,15 @@
 	</context-param>
 
 	<context-param>
+		<description>
+			When a page is requested, what interval in seconds should 
+			the compiler check for changes. If you don't want the compiler 
+			to check for changes once the page is compiled, then use a 
+			value of -1. Setting a low refresh period helps during development 
+			to be able to edit pages in a running application.
+		</description>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
-		<param-value>-1</param-value>
+		<param-value>0</param-value>
 	</context-param>
  
 	<context-param>

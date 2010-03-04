@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="mntoitForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_newpayroll_it}" />
+				<ui:param name="controller" value="#{itWizard}" />
+
+				<aon:methodParam name="saveAction" value="mntoit_form" />
+				<aon:methodParam name="searchAction" value="mntoit_search" />
+				<aon:methodParam name="backAction" value="mntoit_list" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipCancelButton" value="true" />
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+				<ui:param name="skipSpin" value="true" />
+<!--  
+				<aon:methodParam name="saveActionListener" default="#{parteconf.onAccept}" />
+-->				
+			</ui:include>
+			
+			<ui:include 
+				src="./navigation/toolbar.xhtml">
+				<ui:param name="flowPosition" value="form" />
+			</ui:include>
+
+			<!--	FIN HEADER & TOOLBAR	-->
+
+			<aon:div id="mntoitFormData" styleClass="aon-scroll-area">
+			
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_dat}" />
+				</f:facet>
+				<aon:panelGrid columns="6" dir="true" width="100%">
+
+					<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
+					<aon:outputText value="#{itWizard.to.numdoc}" />
+
+					<aon:outputLabel value="#{bundle.aon_name}" />
+					<aon:outputText value="#{itWizard.to.descripcion} #{itWizard.to.apellido2}, #{itWizard.to.nombre}" />
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_pricipales_personas_numss}" />
+					<aon:outputText value="#{itWizard.to.numss}" />
+
+
+				</aon:panelGrid>
+			</aon:panel>
+			
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_principales_trabajador_datos_trab}" />
+				</f:facet>
+				<aon:dataTable id="trabajadorData" value="#{itWizard.trabajadores}"
+					var="to" rows="20"
+					columnClasses="
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-dateColumn, aon-editDataTable-dateColumn">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_trabajador_empresa}" />
+						</f:facet>
+						<aon:outputText value="#{to.empresa.descripcion}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_trabajador_activ}" />
+						</f:facet>
+						<aon:outputText value="#{to.actividad.descripcion}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />
+						</f:facet>
+						<aon:outputText value="#{to.fecalt}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
+						</f:facet>
+						<aon:outputText value="#{to.fecbaj}" />
+					</aon:column>
+
+				</aon:dataTable>
+			
+			</aon:panel>
+			
+			
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2" dir="true" width="auto">
+
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_newpayroll_status_change}" />
+					<aon:selectOneMenu id="estado"
+						value="#{itWizard.parteRen.status}">
+						<f:selectItems value="#{itWizard.listaItStatus}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_fecha}" />
+					<aon:selectInputDate id="fecha" 
+						value="#{itWizard.parteRen.fecconf}" inputSize="10"
+						renderAsPopup="true" enableManualInput="true"
+						required="true"
+						popupDateFormat="#{appBundle.aon_date_pattern}" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
+					<aon:inputText id="colegiado"
+						required="true"
+						value="#{itWizard.parteRen.numcol}" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
+					<aon:inputText id="cias"
+						required="true"
+						value="#{itWizard.parteRen.cias}" />
+
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_inciit_tipoit}" />
+					<aon:selectOneMenu id="tipoit"
+						value="#{itWizard.parteRen.parteit.tipoit}">
+						<f:selectItems value="#{itWizard.listaTipoIt}" />
+					</aon:selectOneMenu>
+
+				</aon:panelGrid>
+				
+				
+				<aon:commandButton id="parteconf-save"
+					value="#{bundle.aon_save}" 
+					rendered="#{!itWizard.saved}"
+					actionListener="#{itWizard.onSave}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					accesskey="#{bundle.aon_key_save}" />
+
+				<aon:commandButton id="parteconf-remove"
+					value="#{bundle.aon_remove}" 
+					rendered="#{itWizard.saved}"
+					actionListener="#{itWizard.onRestore}"
+					styleClass="aon-finding-toolbar-item aon-icon-delete"
+					confirmTitle="#{bundle.aon_confirm_title}"
+					confirmMessage="#{bundle.aon_remove_confirm}"
+					confirmActionListener="#{itWizard.onRestore}"
+					confirmAction="mntoit_form"
+					accesskey="#{bundle.aon_key_remove}" />
+				
+				<aon:commandButton id="parteconf-new"
+					value="#{bundle.aon_reset}" 
+					rendered="#{itWizard.saved}"
+					actionListener="#{itWizard.onReset}"
+					action="mntoit_search"
+					styleClass="aon-finding-toolbar-item aon-icon-new"
+					accesskey="#{bundle.aon_key_reset}" />
+			</aon:div>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+</body>
+</html>

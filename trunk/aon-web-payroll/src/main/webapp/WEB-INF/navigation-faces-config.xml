@@ -48,6 +48,10 @@
 			<from-outcome>auxiliares</from-outcome>
 			<to-view-id>/facelet/menu/auxiliares.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>new_payroll</from-outcome>
+			<to-view-id>/facelet/menu/new_payroll.xhtml</to-view-id> 
+		</navigation-case>
 	</navigation-rule>
 
 	
@@ -1594,6 +1598,33 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
+	
+	
+<!-- ================================================ -->	
+<!-- =================== NewPayroll ================= -->	
+<!-- ================================================ -->	
+
+<!-- =================== Mantenimiento IT ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mntoit_form</from-outcome>
+			<to-view-id>
+				/facelet/new_payroll/mntoit/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mntoit_search</from-outcome>
+			<to-view-id>
+				/facelet/new_payroll/mntoit/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mntoit_list</from-outcome>
+			<to-view-id>
+				/facelet/new_payroll/mntoit/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	
 </faces-config>

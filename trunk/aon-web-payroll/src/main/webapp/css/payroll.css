@@ -196,10 +196,19 @@ table#homepage\3A cnaeForm\3A listaOcupaciones, table#homepage\3A cnaeForm\3A li
 	
 	
 .aon-calendar-button tr td {
-	
 	width: 15px;
-
-
 }
 
+	/* ---------- TOOLBAR FLUJO DE PROCESO --------- */
+.flow-toolbar{
+		
+}
+
+.flow-button{
+		
+}
+	
+.flow-button-disabled{
+		
+}
 	
