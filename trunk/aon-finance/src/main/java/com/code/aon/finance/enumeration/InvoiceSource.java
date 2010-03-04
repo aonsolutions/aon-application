@@ -17,10 +17,10 @@ public enum InvoiceSource implements IResourceable {
 	/** DIRECT_EXPENSE. Facturas directas de gastos */
 	DIRECT_EXPENSE,
 
-	/** DIRECT PURCHASE. Facturas directas de compra que generan albaranes y pedidos */
+	/** DIRECT PURCHASE. Facturas directas de compra que generan albaranes */
 	DIRECT_PURCHASE,
 	
-	/** DIRECT SALES. Facturas directas de venta que generan albaranes y pedidos */
+	/** DIRECT SALES. Facturas directas de venta que generan albaranes */
 	DIRECT_SALES,
 
     /** DELIVERY. Facturacion de un albaran de venta */
