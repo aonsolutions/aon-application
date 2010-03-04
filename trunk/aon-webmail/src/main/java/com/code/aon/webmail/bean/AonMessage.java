@@ -29,6 +29,7 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.search.SearchTerm;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -497,7 +498,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 		try {
 			return getRecipientsCc(message);
 		} catch (MessagingException e) {
-			LOGGER.error("Error getting message recepients ", e);
+			LOGGER.error("Error getting message Cc recepients ", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -513,7 +514,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 		try {
 			return getRecipientAddress(message, MimeMessage.RecipientType.CC);
 		} catch (MessagingException e) {
-			LOGGER.error("Error getting message recepients ", e);
+			LOGGER.error("Error getting message Cc recepients ", e);
 			throw new WebmailException(e);
 		}
 	}	
@@ -533,11 +534,26 @@ public class AonMessage implements IMimeType, BundleConstants {
 		try {
 			return getRecipient(message, MimeMessage.RecipientType.BCC);
 		} catch (MessagingException e) {
-			LOGGER.error("Error getting message recepients ", e);
+			LOGGER.error("Error getting message Bcc recepients ", e);
 			throw new WebmailException(e);
 		}
 	}
 
+	/**
+	 * Gets the recipients specifiedy by the "BCC" header.
+	 * 
+	 * @return Address[] representing all the addresses that make up the "BCC"
+	 *         header
+	 * @throws WebmailException 
+	 */
+	public Address[] getRecipientsBccAddress() throws WebmailException {
+		try {
+			return getRecipientAddress(message, MimeMessage.RecipientType.BCC);
+		} catch (MessagingException e) {
+			LOGGER.error("Error getting message Bcc recepients ", e);
+			throw new WebmailException(e);
+		}
+	}	
 	/**
 	 * Utility method getting message recipient.
 	 * 
@@ -804,6 +820,25 @@ public class AonMessage implements IMimeType, BundleConstants {
 		return addr;
 	}
 	
+	public static String getEditAddress(Address a) {
+		String address = null;
+		if ( a instanceof InternetAddress ) {
+			InternetAddress ia = (InternetAddress) a;
+			String per = ia.getPersonal();
+			if ( (! StringUtils.isEmpty(per)) && StringUtils.contains(per, "\"") ) {
+				try {
+					ia.setPersonal( StringUtils.remove(per, '"') );
+				} catch (UnsupportedEncodingException e) {
+					LOGGER.error( "Error cleaning personal in " + a, e);
+				}
+			}
+			address = ia.toUnicodeString();
+		} else {
+			address = ObjectUtils.toString(a);
+		}
+		return address;
+	}	
+	
 	public static String getDisplayAddressFull(Address a) {
 		String pers = null;
 		String addr = null;
@@ -825,13 +860,6 @@ public class AonMessage implements IMimeType, BundleConstants {
 			addr = a.toString();
 		}
 		return addr;
-	}
-
-	public static String parseDisplayAddress(String address){
-		String addressParsed;
-		addressParsed = address.replaceAll("&lt;","<");
-		addressParsed = addressParsed.replaceAll("&gt;",">");
-		return addressParsed;
 	}
 
 	public boolean isSelected() {
