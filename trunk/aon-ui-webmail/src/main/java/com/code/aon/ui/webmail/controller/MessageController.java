@@ -193,9 +193,9 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		this.draftMessageUID = uid;
 		try {
 			copyAttachmentsToFileList( message );			
-			recipientsTo = AonMessage.parseDisplayAddress(message.getRecipientsTo());
-			recipientsCc = AonMessage.parseDisplayAddress(message.getRecipientsCc());
-			recipientsBcc = AonMessage.parseDisplayAddress(message.getRecipientsBcc());
+			recipientsTo = toString(message.getRecipientsToAddress());
+			recipientsCc = toString(message.getRecipientsCcAddress());
+			recipientsBcc = toString(message.getRecipientsBccAddress());;
 	       	subject = message.getSubject();
 	       	content = getMessageContent( message );
 		} catch (WebmailException e) {
@@ -208,7 +208,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		initNewMessage();
 		parentMessage = message;
 		try {
-			recipientsTo = AonMessage.parseDisplayAddress(message.getSender());
+			recipientsTo = getReplyToRecipients(message, false); 
 	       	subject = "Reply: "+message.getSubject();
 	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
 	       	content += messageBody;
@@ -221,37 +221,45 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		}
 	}
 	
-	private String getReplyToAllRecipients( AonMessage message ) throws WebmailException {
+	private String getReplyToRecipients( AonMessage message, boolean onlySender ) throws WebmailException {
 		List<Address> addresses = new LinkedList<Address>();
 		addresses.add(message.getSenderAddress());
-		Address[] to = message.getRecipientsToAddress();
-		if (! ArrayUtils.isEmpty(to) ) {
-			addresses.addAll(Arrays.asList(to));
-		}
-		Address[] cc = message.getRecipientsCcAddress();
-		if (! ArrayUtils.isEmpty(cc) ) {
-			addresses.addAll(Arrays.asList(cc));
-		}
-		for( int i = addresses.size()-1; i >= 0; i-- ) {
-			String email = AonMessage.getDisplayEmail(addresses.get(i));
-			if ( StringUtils.equalsIgnoreCase(sender, email) ) {
-				addresses.remove(i);
+		if (! onlySender ) {
+			Address[] to = message.getRecipientsToAddress();
+			if (! ArrayUtils.isEmpty(to) ) {
+				addresses.addAll(Arrays.asList(to));
+			}
+			Address[] cc = message.getRecipientsCcAddress();
+			if (! ArrayUtils.isEmpty(cc) ) {
+				addresses.addAll(Arrays.asList(cc));
+			}
+			for( int i = addresses.size()-1; i >= 0; i-- ) {
+				String email = AonMessage.getDisplayEmail(addresses.get(i));
+				if ( StringUtils.equalsIgnoreCase(sender, email) ) {
+					addresses.remove(i);
+				}
 			}
 		}
-		StringBuffer recipients = new StringBuffer();
-		for ( Address address : addresses ) {
-			String email = AonMessage.getDisplayAddressFull(address);
-			recipients.append(email).append(AonMessageUtils.EMAIL_SEPARATOR);
-		}
-		return recipients.substring(0, recipients.length() - 1).toString();		
+		return toString( addresses.toArray(new Address[addresses.size()]) );
 	}
 
+	private String toString( Address[] addresses ) throws WebmailException {
+		StringBuffer recipients = new StringBuffer();
+		if (! ArrayUtils.isEmpty(addresses) ) {
+			for ( Address address : addresses ) {
+				String email = AonMessage.getEditAddress(address);
+				recipients.append(email).append(AonMessageUtils.EMAIL_SEPARATOR);
+			}
+		}
+		return recipients.toString();		
+	}
+	
+	
 	public void onReplyAllMessage(ActionEvent event) {
 		initNewMessage();
 		parentMessage = message;
 		try{
-	       	String dest = getReplyToAllRecipients(message);
-			recipientsTo = AonMessage.parseDisplayAddress(dest);
+			recipientsTo = getReplyToRecipients(message, false);
 	       	subject = "ReplyALL: "+message.getSubject();
 	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
 	       	content += messageBody;
