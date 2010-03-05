@@ -38,9 +38,9 @@
 			<!--  aon-region-body -->
 			<aon:div id="fileManagerList" styleClass="aon-scroll-area">
 
-				<aon:div styleClass="aon-header aon-margin-bottom">
+				<aon:div styleClass="aon-panel-head aon-margin-bottom">
 					<aon:panelGrid width="100%" columns="2"
-						columnClasses="aon-editDataTable-buttonsColumn,aon-header-name">
+						columnClasses="aon-editDataTable-buttonsColumn,none">
 						<aon:panelGroup>
 							<aon:commandButton id="goRoot"
 								value="/" immediate="true"
@@ -50,8 +50,8 @@
 								actionListener="#{fileManager.onGoParent}" />
 						</aon:panelGroup>				
 						<aon:panelGroup>
-							<aon:outputText value="#{richBundle.aon_current_folder}: " styleClass="aon-applicationName"/>
-							<aon:outputText value="#{fileManager.currentDirectory}" styleClass="aon-applicationName"/>
+							<aon:outputText value="#{richBundle.aon_current_folder}: " styleClass="aon-panel-title"/>
+							<aon:outputText value="#{fileManager.currentDirectory}" styleClass="aon-panel-title"/>
 						</aon:panelGroup>
 					</aon:panelGrid>
 				</aon:div>
