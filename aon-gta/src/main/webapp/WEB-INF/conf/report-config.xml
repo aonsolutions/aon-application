@@ -300,6 +300,9 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailPrinter.getInstance}" />
+			<param id="invoiceAddress" value="#{salesInvoicing.getAddress}" />
+			<param id="invoiceCity" value="#{salesInvoicing.getCity}" />
+			<param id="invoiceGeoZone" value="#{salesInvoicing.getGeoZone}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="taxBreakDown"/>
@@ -351,7 +354,7 @@
 	<report id="invoiceList" description="Purchase Invoice's List">
 		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
 		<bean key="com.code.aon.finance.Invoice" />
-		<criteria provider="#{purchaseDirectInvoicing}"/>
+		<criteria provider="#{invoicing}"/>
 
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
