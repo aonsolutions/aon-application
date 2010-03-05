@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.enumeration.Templates;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.ICMSConstants;
@@ -33,6 +34,8 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	private IGeneratorLogger logger;
 	
 	private VelocityContext context;
+	
+	private TidyUtil tidyUtil;
 	
 	public void setTemplatePath(File templatePath) {
 		this.templatePath = templatePath;
@@ -65,6 +68,7 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
         this.setProperty(Velocity.RUNTIME_LOG, templatePath.getAbsolutePath() + "/" + VELOCITY_LOG_FILE);
         try {
         	this.init();
+        	this.tidyUtil = TidyUtil.isEnabled() ? new TidyUtil(this.logger) : null;
         } catch (Throwable th) {
         	LOGGER.error(th.getMessage(), th);
         }
@@ -104,6 +108,12 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	        IOUtils.closeQuietly(writer);
 	        IOUtils.closeQuietly(fw);
 	    }
+		if ( (! error) && (tidyUtil != null) ) {
+			boolean isHtml = pageShortName.endsWith(MimeType.MIME_HTML.getExtension());
+			if ( isHtml ) {
+				tidyUtil.parse(page);	
+			}
+		}		
 	    return error;
     }
 	
