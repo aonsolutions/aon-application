@@ -90,7 +90,9 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		((Delivery) ((DeliveryController) event.getController()).getTo()).setStatus(DeliveryStatus.PENDING);
 		((Delivery) ((DeliveryController) event.getController()).getTo()).setRaddress(obtainRegistryAddress(((Delivery) ((DeliveryController) event.getController()).getTo()).getCustomer().getRegistry().getId()));
-		//((Delivery) ((DeliveryController) event.getController()).getTo()).setWorkPlace(obtainWorkPlace());
+		if (((Delivery) ((DeliveryController) event.getController()).getTo()).getWorkPlace() == null || ((Delivery) ((DeliveryController) event.getController()).getTo()).getWorkPlace().getId() == null) {
+			((Delivery) ((DeliveryController) event.getController()).getTo()).setWorkPlace(obtainWorkPlace());
+		}
 		super.beforeBeanAdded(event);
 	}
 
