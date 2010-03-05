@@ -13,8 +13,9 @@
 
 	<scm>
 		<connection>
-			scm:cvs:pserver:${user.name}:ec040674@192.168.2.4:/home/CVS-REPOSITORIES/aon-application:${module.name}
+			scm:svn:http://dev.esferalia.com/repos/aon-application/trunk
 		</connection>
+		<url>http://dev.esferalia.com/websvn/wsvn</url>
 	</scm>
 
 	<organization>
@@ -168,21 +169,16 @@
 		</plugins>
 	</build>
 
-
 	<distributionManagement>
 		<repository>
 			<id>inhouse</id>
 			<name>Inhouse Internal Release Repository</name>
-			<url>
-				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse
-			</url>
+			<url>scp://dev.esferalia.com/var/www/maven2_repositories/inhouse</url>
 		</repository>
 		<snapshotRepository>
 			<id>inhouse_snapshot</id>
 			<name>Inhouse Internal Snapshot Repository</name>
-			<url>
-				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse_snapshot
-			</url>
+			<url>scp://dev.esferalia.com/var/www/maven2_repositories/inhouse_snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
 
