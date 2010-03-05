@@ -1,6 +1,10 @@
 package com.code.aon.ui.cms.controller;
 
+import java.io.File;
+
 import javax.faces.context.FacesContext;
+
+import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class CmsController {
 
@@ -45,5 +49,8 @@ public class CmsController {
 		if (adminProfile) return true;
     	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(PUBLISHER_ROLE);
     }
-    
+ 
+	public File getCurrentTemplatePath() {
+		return ControllerUtil.getCurrentTemplatePath();
+	}	
 }
