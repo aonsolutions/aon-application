@@ -276,12 +276,12 @@
 								rendered="#{!salesInvoicing.new and salesInvoicingAddress.to.id != null}"
 								value="#{salesInvoicing.address}"
 								disabled="#{true}"
-								styleClass="aon-form-input-text" size="33" />
+								styleClass="aon-form-input-text" size="32" />
 							<t:inputText id="Invoice_registryAddress_city" forceId="#{true}"
 								rendered="#{!salesInvoicing.new and salesInvoicingAddress.to.id != null}"
 								value="#{salesInvoicing.city}"
 								disabled="#{true}"
-								styleClass="aon-form-input-text" size="16" />
+								styleClass="aon-form-input-text" size="20" />
 							<t:commandButton id="popupButton"
 								rendered="#{!salesInvoicing.new and !salesInvoicing.recorded}"
 								styleClass="aon-navigation-link"
