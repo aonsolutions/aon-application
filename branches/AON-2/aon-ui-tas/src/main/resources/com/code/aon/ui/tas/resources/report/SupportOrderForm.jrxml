@@ -658,7 +658,7 @@
 						mode="Opaque"
 						x="368"
 						y="77"
-						width="87"
+						width="110"
 						height="13"
 						key="textField-59"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
