@@ -45,6 +45,7 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.FinanceGenerator;
 import com.code.aon.finance.invoicing.InvoicePriceStrategy;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -240,24 +241,41 @@ public class SalesInvoicingController extends BasicController {
 
 	public String getAddress() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
-		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
+		String address1 = (rAddress!=null&&rAddress.getAddress()!=null)?rAddress.getAddress()+" ":"";
+		String address2 = (rAddress!=null&&rAddress.getAddress2()!=null)?rAddress.getAddress2()+" ":"";
+		String address3 = (rAddress!=null&&rAddress.getAddress3()!=null)?rAddress.getAddress3():"";
 		BasicController addressController = (BasicController)AonUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
-			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
+			address1 = (invoiceAddress.getAddress()!=null)?invoiceAddress.getAddress()+" ":"";
+			address2 = (invoiceAddress.getAddress2()!=null)?invoiceAddress.getAddress2():"";
+			address3 = "";
 		}
-		return address;
+		return (address1+address2+address3);
 	}
 
 	public String getCity() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
-		String city = (rAddress!=null)?rAddress.getCity():"";
+		String zip = (rAddress!=null&&rAddress.getZip()!=null)?rAddress.getZip()+" ":"";
+		String city = (rAddress!=null&&rAddress.getCity()!=null)?rAddress.getCity():"";
 		BasicController addressController = (BasicController)AonUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
-			city = invoiceAddress.getCity();
+			zip = (rAddress!=null&&invoiceAddress.getZip()!=null)?invoiceAddress.getZip()+" ":"";
+			city = (rAddress!=null&&invoiceAddress.getCity()!=null)?invoiceAddress.getCity():"";
 		}
-		return city;
+		return (zip+city);
+	}
+
+	public GeoZone getGeoZone() throws ManagerBeanException {
+		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
+		GeoZone geoZone = (rAddress!=null)?rAddress.getGeozone():null;
+		BasicController addressController = (BasicController)AonUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
+		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
+			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
+			geoZone = invoiceAddress.getGeozone();
+		}
+		return geoZone;
 	}
 
 	/**
