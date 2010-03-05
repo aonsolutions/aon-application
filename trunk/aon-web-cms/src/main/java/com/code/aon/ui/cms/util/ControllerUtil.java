@@ -42,23 +42,18 @@ public class ControllerUtil implements Constants, ICMSConstants {
 	public static File getDomainPath() {
 		return new File( DOMAINS_PATH, getCurrentConfig().getDomain() );
 	}
+
+	private static File getApplicationResourcePath() {
+		File resourcePath = new File( getDomainPath(), RESOURCE_PATH );
+		return new File( resourcePath, APLICATION_NAME );
+	}	
 	
-	public static String getTemporalPath() {
-		String path = null;
-		path = getDomainPath() + 
-					File.separator + RESOURCE_PATH + 
-					File.separator + APLICATION_NAME + 
-					File.separator + TEMPORAL_PATH;
-		return path;
+	public static File getTemporalPath() {
+		return new File( getApplicationResourcePath(), TEMPORAL_PATH );
 	}	
 
-	public static String getTemplatePath() {
-		String path = null;
-		path = getDomainPath() + 
-					File.separator + RESOURCE_PATH + 
-					File.separator + APLICATION_NAME + 
-					File.separator + TEMPLATE_PATH;
-		return path;
+	public static File getTemplatePath() {
+		return new File( getApplicationResourcePath(), TEMPLATE_PATH );
 	}	
 
 	public static File getCurrentTemplatePath() {
