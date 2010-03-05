@@ -75,9 +75,8 @@ public class TemplateController extends BasicController implements Constants {
 
 	private ArrayList<TemplateObject> getTemplateList() throws ManagerBeanException {
 		TemplateFileFilter tff = new TemplateFileFilter();
-		ArrayList<TemplateObject> list = new ArrayList<TemplateObject>();
-		String template_path = ControllerUtil.getTemplatePath(); 
-		File dir = new File(template_path);
+		ArrayList<TemplateObject> list = new ArrayList<TemplateObject>(); 
+		File dir = ControllerUtil.getTemplatePath();
 		if (!dir.exists()) dir.mkdirs();
 		File[] dirs = dir.listFiles();
 		int count = 0;
@@ -195,11 +194,10 @@ public class TemplateController extends BasicController implements Constants {
 		checkList= new ArrayList<TemplateObject>();
 	}
 	
-	public String getUploadDirectory() {
-		String temporal_path = ControllerUtil.getTemporalPath();
-		File dir = new File(temporal_path);
+	public File getUploadDirectory() {
+		File dir = ControllerUtil.getTemporalPath();
 		if (!dir.exists()) dir.mkdirs();
-		return temporal_path;
+		return dir;
 	}
 	
 	public int getPercent() {
@@ -231,14 +229,14 @@ public class TemplateController extends BasicController implements Constants {
 		if (upload_name.lastIndexOf(separator) < 0) separator = "\\";
 		if (upload_name.lastIndexOf('/')!=-1)
 			upload_name = upload_name.substring(upload_name.lastIndexOf(separator));
-		File file = new File( getUploadDirectory()+File.separator+upload_name);
+		File file = new File( getUploadDirectory(),upload_name);
 		FileOutputStream outputStream = null;
 		try{
 			byte[] data = item.getData();
 	        outputStream = new FileOutputStream(file);
 	        outputStream.write(data);
 			if (item.getContentType().indexOf("zip") >= 0) {
-				ZipUtil.uncompressZipFile(file.getAbsolutePath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
+				ZipUtil.uncompressZipFile(file, ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
 				FileUtils.deleteQuietly(file);
 			}
 			this.onInit(null);

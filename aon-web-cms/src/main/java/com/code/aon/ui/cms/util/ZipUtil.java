@@ -29,14 +29,14 @@ public class ZipUtil {
 
 	static final int GEN_WARN = 3;
 
-	public static boolean uncompressZipFile(String source_zip_file, String destination_folder, String file_content) {
-		File szf = new File(source_zip_file); 
-		File df = new File(destination_folder);
+	public static boolean uncompressZipFile(File sourceZipFile, File destinationFolder, String file_content) {
 		boolean found = false;
-		if (!df.exists()) df.mkdirs();
-		if (szf.exists()) {
+		if (!destinationFolder.exists()) {
+			destinationFolder.mkdirs();
+		}
+		if (sourceZipFile.exists()) {
 			try {
-				InputStream is = new FileInputStream(szf);
+				InputStream is = new FileInputStream(sourceZipFile);
 				BufferedOutputStream dest = null;
 				ZipInputStream zis = new ZipInputStream(is);
 				ZipEntry entry;
@@ -45,7 +45,7 @@ public class ZipUtil {
 						addMessage(" - Extracting " + entry.getName() + ".", GEN_INFO);
 						int count;
 						byte data[] = new byte[BUFFER];
-						File newfile = new File(df.getAbsolutePath() + "/" +  entry.getName());
+						File newfile = new File(destinationFolder.getAbsolutePath(), entry.getName());
 						if (file_content != null && newfile.getName().equals(file_content)) found = true;
 						if (!newfile.getParentFile().exists()) newfile.getParentFile().mkdirs();
 						FileOutputStream fos = new FileOutputStream(newfile.getAbsolutePath());
@@ -59,7 +59,7 @@ public class ZipUtil {
 				}
 				zis.close();
 				addMessage(" ", GEN_INFO);
-				addMessage("<STRONG> Plantilla '" + szf.getName() + "' instalada con exito. </STRONG>", GEN_INFO);
+				addMessage("<STRONG> Plantilla '" + sourceZipFile.getName() + "' instalada con exito. </STRONG>", GEN_INFO);
 				if (file_content != null) {
 					if (found) addMessage("<STRONG> Archivo '" + file_content + "' encontrado.</STRONG>", GEN_INFO);
 					else addMessage("<STRONG> Archivo '" + file_content + "' no encontrado.</STRONG>", GEN_ERROR);
