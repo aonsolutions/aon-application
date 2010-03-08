@@ -13,6 +13,7 @@ public enum Tipoit implements IResourceable, IStringEnum {
 
 	ENFERMEDAD("E"),
 	ACCIDENTE("A"),
+	NOLABORAL("N"),
 	EMBARAZO("B"),
 	MATERNIDAD("M"),
 	PATERNIDAD("P"),
