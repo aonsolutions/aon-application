@@ -42,7 +42,7 @@ public class Session implements ITransferObject {
 	@Column(nullable = false)
     private Integer id;
 
-	@Column(name = "session_id", nullable = false, length = 32)
+	@Column(name = "session_id", nullable = false, length = 128)
     private String sessionId;
 
 	@Column(name = "remote_address", nullable = false, length = 15)
