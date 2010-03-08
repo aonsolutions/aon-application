@@ -32,6 +32,7 @@
 							actionListener="#{admin.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
+							<aon:actionHotKey key="return" />
 						</aon:commandButton>					
 						<aon:commandButton id="home"
 							value="#{bundle.aon_home}"
@@ -66,6 +67,8 @@
 				</aon:div>
 		
 			</aon:div>
+			
+			<rich:jQuery timing="onload" selector="#user" query="focus()" />
 			
 		</aon:form>
 
