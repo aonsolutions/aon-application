@@ -44,7 +44,7 @@
 			
 			<aon:panel>
 				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_dat}" />
+					<aon:outputText value="#{appBundle.aon_payroll_newpayroll_it_employee_data}" />
 				</f:facet>
 				<aon:panelGrid columns="6" dir="true" width="100%">
 
@@ -63,7 +63,7 @@
 			
 			<aon:panel>
 				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_principales_trabajador_datos_trab}" />
+					<aon:outputText value="#{appBundle.aon_payroll_newpayroll_it_contract_data}" />
 				</f:facet>
 				<aon:dataTable id="trabajadorData" value="#{itWizard.trabajadores}"
 					var="to" rows="20"
@@ -104,48 +104,113 @@
 			</aon:panel>
 			
 			
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" id="parteit_form">
 
 				<aon:panelGrid columns="2" dir="true" width="auto">
 
 
 					<aon:outputLabel
 						value="#{appBundle.aon_payroll_newpayroll_status_change}" />
-					<aon:selectOneMenu id="estado"
-						value="#{itWizard.parteRen.status}">
-						<f:selectItems value="#{itWizard.listaItStatus}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:outputText 
+							rendered="#{itWizard.finished}"
+							value="#{itWizard.parteRen.status}"/>
+						<aon:selectOneMenu id="estado"
+							rendered="#{!itWizard.finished}"
+							value="#{itWizard.parteRen.status}">
+							<f:selectItems value="#{itWizard.listaItStatus}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel
+							rendered="#{(itWizard.numParteRenovacion==null)?(false):(true)}"
+							value="#{appBundle.aon_payroll_newpayroll_it_ren_number}" />
+						<aon:outputText 
+							rendered="#{(itWizard.numParteRenovacion==null)?(false):(true)}"
+							value="#{itWizard.numParteRenovacion}"/>
+					</aon:div>
 					
 					<aon:outputLabel
 						value="#{appBundle.aon_payroll_principales_mntoit_fecha}" />
-					<aon:selectInputDate id="fecha" 
-						value="#{itWizard.parteRen.fecconf}" inputSize="10"
-						renderAsPopup="true" enableManualInput="true"
-						required="true"
-						popupDateFormat="#{appBundle.aon_date_pattern}" />
+					<aon:div>
+						<aon:outputText 
+							rendered="#{itWizard.finished}"
+							value="#{itWizard.parteRen.fecconf}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:selectInputDate id="fecha" 
+							value="#{itWizard.parteRen.fecconf}" inputSize="10"
+							renderAsPopup="true" enableManualInput="true"
+							rendered="#{!itWizard.finished}"
+							required="true"
+							popupDateFormat="#{appBundle.aon_date_pattern}" />
+					</aon:div>
 
 					<aon:outputLabel
 						value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
-					<aon:inputText id="colegiado"
-						required="true"
-						value="#{itWizard.parteRen.numcol}" />
+					<aon:div>
+						<aon:outputText 
+							rendered="#{itWizard.finished}"
+							value="#{itWizard.parteRen.numcol}"/>
+						<aon:inputText id="colegiado"
+							rendered="#{!itWizard.finished}"
+							value="#{itWizard.parteRen.numcol}" />
+					</aon:div>
 
 					<aon:outputLabel
 						value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
-					<aon:inputText id="cias"
-						required="true"
-						value="#{itWizard.parteRen.cias}" />
-
+					<aon:div>
+						<aon:outputText 
+							rendered="#{itWizard.finished}"
+							value="#{itWizard.parteRen.cias}"/>
+						<aon:inputText id="cias"
+							rendered="#{!itWizard.finished}"
+							value="#{itWizard.parteRen.cias}" >
+							<a4j:support event="onblur">
+								<aon:actionListener method="#{itWizard.onCheckCias}" />
+							</a4j:support>
+						</aon:inputText>
+					</aon:div>
 
 					<aon:outputLabel
 						value="#{appBundle.aon_payroll_principales_inciit_tipoit}" />
-					<aon:selectOneMenu id="tipoit"
-						value="#{itWizard.parteRen.parteit.tipoit}">
-						<f:selectItems value="#{itWizard.listaTipoIt}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:outputText 
+							rendered="#{itWizard.finished}"
+							value="#{itWizard.parteRen.parteit.tipoit}"/>
+						<aon:selectOneMenu id="tipoit"
+							rendered="#{!itWizard.finished}"
+							value="#{itWizard.parteRen.parteit.tipoit}">
+							<f:selectItems value="#{itWizard.listaTipoIt}" />
+						</aon:selectOneMenu>
+					</aon:div>	
+					
+					<aon:outputLabel
+						rendered="#{itWizard.recaida}" 
+						value="#{appBundle.aon_payroll_principales_integralTra_recaida_ant_it}" />
+					<aon:selectBooleanCheckbox
+						rendered="#{itWizard.recaida}" 
+						disabled="#{itWizard.finished}"
+						value="#{itWizard.parteRen.parteit.recaida}"/>
 
 				</aon:panelGrid>
 				
+				<aon:commandButton id="parteconf-finalize"
+					value="FINALIZAR" 
+					rendered="#{!itWizard.finished}"
+					actionListener="#{itWizard.onFinalize}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					accesskey="#{bundle.aon_key_save}" />
+
+				<aon:commandButton id="parteconf-save"
+					value="CONFIRMAR Y NUEVO IT" 
+					rendered="#{itWizard.finished}"
+					action="mntoit_search"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					accesskey="#{bundle.aon_key_save}" >
+					<aon:actionListener method="#{itWizard.onSave}"/>
+					<aon:actionListener method="#{itWizard.onReset}"/>
+				</aon:commandButton>
+<!--  
 				
 				<aon:commandButton id="parteconf-save"
 					value="#{bundle.aon_save}" 
@@ -164,6 +229,17 @@
 					confirmActionListener="#{itWizard.onRestore}"
 					confirmAction="mntoit_form"
 					accesskey="#{bundle.aon_key_remove}" />
+
+				<aon:commandButton id="parteconf-update"
+					value="#{bundle.aon_update}" 
+					rendered="#{itWizard.saved}"
+					actionListener="#{itWizard.onUpdate}"
+					styleClass="aon-finding-toolbar-item aon-icon-refresh"
+					confirmTitle="#{bundle.aon_confirm_title}"
+					confirmMessage="#{bundle.aon_remove_confirm}"
+					confirmActionListener="#{itWizard.onUpdate}"
+					confirmAction="mntoit_form"
+					accesskey="#{bundle.aon_key_update}" />
 				
 				<aon:commandButton id="parteconf-new"
 					value="#{bundle.aon_reset}" 
@@ -172,6 +248,7 @@
 					action="mntoit_search"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_reset}" />
+-->					
 			</aon:div>
 
 			</aon:div>

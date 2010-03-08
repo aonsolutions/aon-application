@@ -4,7 +4,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:div styleClass="flow-toolbar">
+	<aon:div id="flow-toolbar" styleClass="flow-toolbar">
 <!--  
 			actionListener="#{parteconf.onAccept}"
 -->
@@ -12,7 +12,7 @@
 		<aon:outputLabel 
 			value="1.- Busqueda" />
 -->			
-		<aon:commandButton 
+		<aon:commandButton  
 			value="1.- Busqueda" 
 			action="mntoit_search"
 			styleClass="flow-button"
@@ -39,6 +39,7 @@
 			value="3.- Grabacion"
 			action="mntoit_form" 
 			rendered="#{itWizard.parteRen!=null}"
+			actionListener="#{itWizard.onUnFinalize}"
 			styleClass="flow-button"
 			accesskey="#{bundle.aon_key_save}" />
 		
@@ -46,10 +47,10 @@
 		
 		<aon:outputLabel 
 			value="4.- Validacion" 
-			rendered="#{!itWizard.saved}" />
+			rendered="#{!itWizard.finished}" />
 		<aon:commandButton 
 			value="4.- Validacion" 
-			rendered="#{itWizard.saved}"
+			rendered="#{itWizard.finished}"
 			styleClass="flow-button"
 			accesskey="#{bundle.aon_key_save}" />
 	</aon:div>
