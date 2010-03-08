@@ -12,5 +12,12 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.core</artifactId>
 	<version>${aon-version}</version>
-	
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.common</artifactId>
+			<version>${aon-version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 </project>

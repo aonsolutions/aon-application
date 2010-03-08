@@ -1,4 +1,4 @@
-package com.esferalia.aon.payroll.core;
+package com.esferalia.aon.core;
 
 public interface IRegistry {
 	

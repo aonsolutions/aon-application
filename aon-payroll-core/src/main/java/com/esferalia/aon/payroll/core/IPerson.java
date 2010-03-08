@@ -1,7 +1,11 @@
 package com.esferalia.aon.payroll.core;
 
+import java.io.Serializable;
 
-public interface IPerson {
+import com.esferalia.aon.core.IRegistry;
+
+
+public interface IPerson extends Serializable{
 
 	IRegistry getRegistry();
 	void setRegistry(IRegistry registry);
