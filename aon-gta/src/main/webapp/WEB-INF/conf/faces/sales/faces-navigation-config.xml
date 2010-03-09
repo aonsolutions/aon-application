@@ -92,8 +92,8 @@
       <to-view-id>/facelet/sales/master/invoicing/form.faces</to-view-id>
    </navigation-case>
    <navigation-case>
-      <from-outcome>pos</from-outcome>
-      <to-view-id>/facelet/sales/auxiliary/pos/form.faces</to-view-id>
+      <from-outcome>workplace</from-outcome>
+      <to-view-id>/facelet/sales/auxiliary/workplace/form.faces</to-view-id>
    </navigation-case>
    <navigation-case>
       <from-outcome>customerSegment</from-outcome>
