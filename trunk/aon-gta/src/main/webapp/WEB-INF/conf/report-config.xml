@@ -21,6 +21,18 @@
 		</params>
 	</report>
 
+	<!--  *********  SupplierList  ********* -->
+	<report id="supplierList" description="Suppliers List">
+		<template path="/com/code/aon/ui/supplier/report/supplier.jasper"/>
+		<bean key="com.code.aon.supplier.Supplier" />
+		<criteria provider="#{supplier}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.supplier.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+
 	<report id="TASMake" description="Make report">
 		<template path="/com/code/aon/ui/tas/resources/report/Make.jasper" />
 		<bean key="com.code.aon.tas.Make" />
