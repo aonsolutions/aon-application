@@ -152,6 +152,17 @@
 							styleClass="aon-form-input-text"
 							valueChangeListener="#{delivery.addTargetExpression}" />
 
+						<t:outputLabel for="Delivery_workPlace_id"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
+						<h:selectOneMenu id="Delivery_workPlace_id" 
+							styleClass="aon-form-selectOneMenu-field"
+							valueChangeListener="#{delivery.addExpression}"
+							converter="IntegerEmptyConverter">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+							<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
+						</h:selectOneMenu>
+							
 						<t:outputLabel for="Delivery_status"
 							styleClass="aon-form-selectOneMenu-label"
 							value="#{warehouseBundle.aon_status}" />

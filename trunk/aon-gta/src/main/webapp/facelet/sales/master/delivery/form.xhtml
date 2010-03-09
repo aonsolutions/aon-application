@@ -306,13 +306,13 @@
 								value="#{delivery.to.customer.registry.name} #{delivery.to.customer.registry.surname==null?' ':(delivery.to.customer.registry.surname)}" />
 						</t:div>
 
-						<t:outputLabel for="POS_id"
+						<t:outputLabel for="DeliveryDetail_workPlace_id"
 							styleClass="aon-form-selectOneMenu-label"
-							value="#{warehouseBundle.aon_pos}" />
-						<h:selectOneMenu id="POS_id"
+							value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
+						<h:selectOneMenu id="DeliveryDetail_workPlace_id"
 							styleClass="aon-form-selectOneMenu-field"
-							value="#{delivery.posId}" disabled="#{!delivery.editable}">
-							<f:selectItems value="#{salesCollections.pointsOfSale}" />
+							value="#{delivery.to.workPlace.id}" disabled="#{!delivery.editable}">
+							<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
 						</h:selectOneMenu>
 
 						<h:outputLabel for="SupportOrder_description"

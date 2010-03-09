@@ -173,21 +173,6 @@
 								styleClass="aon-form-input-text" required="true" size="7" />
 						</t:div>
 
-						<t:outputLabel for="SupportOrder_target_id"
-							styleClass="aon-form-input-text-label"
-							value="#{commercialBundle.aon_customer}" />
-						<h:panelGroup>
-							<t:inputText id="SupportOrder_target_id" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text"
-								disabledOnClientSide="true"
-								valueChangeListener="#{offer.targetChanged}"
-								value="#{offer.to.target.id}" />
-							<t:inputText id="SupportOrder_target_name" forceId="#{true}"
-								styleClass="aon-form-input-text-disabled"
-								disabled="true" size="50"
-								value="#{offer.to.target.registry.name} #{offer.to.target.registry.surname}" />
-						</h:panelGroup>
-
 						<h:outputLabel for="Offer_issueDate"
 							styleClass="aon-form-input-text-label"
 							value="#{commercialBundle.aon_date}" />
@@ -208,6 +193,21 @@
 							</script>
 						</t:div>
 
+						<t:outputLabel for="SupportOrder_target_id"
+							styleClass="aon-form-input-text-label"
+							value="#{commercialBundle.aon_customer}" />
+						<h:panelGroup>
+							<t:inputText id="SupportOrder_target_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								disabledOnClientSide="true"
+								valueChangeListener="#{offer.targetChanged}"
+								value="#{offer.to.target.id}" />
+							<t:inputText id="SupportOrder_target_name" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="50"
+								value="#{offer.to.target.registry.name} #{offer.to.target.registry.surname}" />
+						</h:panelGroup>
+
 						<h:outputLabel for="SupportOrder_target_document"
 							styleClass="aon-form-input-text-label"
 							value="#{commercialBundle.aon_customer_document}" />
@@ -217,6 +217,17 @@
 								value="#{offer.to.target.registry.document}" size="10"
 								disabledOnClientSide="true" />
 						</h:panelGroup>
+
+						<t:outputLabel for="SupportOrder_workPlace_id"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
+						<t:panelGroup colspan="3">
+							<h:selectOneMenu id="SupportOrder_workPlace_id" forceId="#{true}"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{offer.to.workPlace.id}" disabled="#{!offer.editable}">
+								<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
+							</h:selectOneMenu>
+						</t:panelGroup>
 
 						<h:outputLabel for="SupportOrder_description"
 							value="#{tasBundle.supportOrder_description}"

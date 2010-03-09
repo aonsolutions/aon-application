@@ -164,25 +164,6 @@
 											styleClass="aon-form-input-text" required="true" size="7" tabIndex="2" />
 									</t:div>							
 		
-									<h:outputLabel for="SupportOrder_counterti"
-										value="#{tasBundle.supportOrder_counter}"
-										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
-									<t:div>
-										<t:inputText styleClass="aon-form-input-text"
-											id="SupportOrder_counterti" forceId="#{true}"
-											value="#{SupportOrder.to.counterti}" size="10" maxlength="10"
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}">
-											<f:convertNumber integerOnly="true" />
-										</t:inputText>	
-										<h:outputLabel for="SupportOrder_levelti"
-											value="#{tasBundle.supportOrder_level}"
-											styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
-										<t:inputText styleClass="aon-form-input-text"
-											id="SupportOrder_levelti" forceId="#{true}"
-											value="#{SupportOrder.to.levelti}" size="8" maxlength="8"
-											disabled="#{!SupportOrder.pending  and !SupportOrder.new}"/>
-									</t:div>
-									
 									<h:outputLabel for="SupportOrder_startDate"
 										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 										value="#{tasBundle.supportOrder_currentDate}" />
@@ -205,6 +186,35 @@
 										</script>
 									</t:div>
 		
+									<h:outputLabel for="SupportOrder_counterti"
+										value="#{tasBundle.supportOrder_counter}"
+										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
+									<t:inputText styleClass="aon-form-input-text"
+										id="SupportOrder_counterti" forceId="#{true}"
+										value="#{SupportOrder.to.counterti}" size="10" maxlength="10"
+										disabled="#{!SupportOrder.pending and !SupportOrder.new}">
+										<f:convertNumber integerOnly="true" />
+									</t:inputText>	
+
+									<h:outputLabel for="SupportOrder_levelti"
+										value="#{tasBundle.supportOrder_level}"
+										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
+									<t:inputText styleClass="aon-form-input-text"
+										id="SupportOrder_levelti" forceId="#{true}"
+										value="#{SupportOrder.to.levelti}" size="8" maxlength="8"
+										disabled="#{!SupportOrder.pending  and !SupportOrder.new}"/>
+									
+									<h:outputLabel for="SupportOrder_operation"
+										value="#{tasBundle.supportOrder_operation}"
+										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
+									<h:selectOneMenu id="SupportOrder_operation"
+										styleClass="aon-form-selectOneMenu-field"
+										disabled="#{!SupportOrder.pending and !SupportOrder.new}"
+										value="#{SupportOrder.to.operation}">
+										<f:selectItems
+											value="#{TASCollections.supportOrderOperations}" />
+									</h:selectOneMenu>
+
 									<h:outputLabel for="SupportOrder_status"
 										value="#{tasBundle.supportOrder_status}"
 										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
@@ -224,15 +234,13 @@
 										</t:inputText>
 									</t:div>
 							
-									<h:outputLabel for="SupportOrder_operation"
-										value="#{tasBundle.supportOrder_operation}"
-										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
-									<h:selectOneMenu id="SupportOrder_operation"
+									<t:outputLabel for="SupportOrder_workPlace_id"
+										styleClass="aon-form-selectOneMenu-label"
+										value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
+									<h:selectOneMenu id="SupportOrder_workPlace_id"
 										styleClass="aon-form-selectOneMenu-field"
-										disabled="#{!SupportOrder.pending and !SupportOrder.new}"
-										value="#{SupportOrder.to.operation}">
-										<f:selectItems
-											value="#{TASCollections.supportOrderOperations}" />
+										value="#{SupportOrder.to.workPlace.id}" disabled="#{!SupportOrder.pending and !SupportOrder.new}">
+										<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
 									</h:selectOneMenu>
 
 									<h:outputLabel for="SupportOrder_employee"

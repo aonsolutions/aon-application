@@ -447,7 +447,7 @@
 								rowIndexVar="rowIndex" rowOnMouseOut="unselectRow( this )"
 								rowOnClick="sendRow( this )" rendered="#{!salesInvoicing.new}"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-buttons">
 
 								<h:column>
 									<f:facet name="header">
@@ -624,6 +624,28 @@
 										</t:div>
 									</f:facet>
 								</t:column>
+
+								<h:column rendered="#{companyCollections.workPlacesCount > 1}">
+									<f:facet name="header">
+										<t:outputText value="#{financeBundle.aon_invoice_workplace_abrv}" />
+									</f:facet>
+									<t:outputText value="#{to.workPlace.description}" forceId="#{true}"
+										rendered="#{to!=salesInvoicingDetail.to}" />
+									<h:selectOneMenu id="InvoiceDetail_workPlace_id-Edit"
+										styleClass="aon-form-selectOneMenu-field"
+										rendered="#{to==salesInvoicingDetail.to}"
+										value="#{salesInvoicingDetail.to.workPlace.id}">
+										<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
+									</h:selectOneMenu>
+									<f:facet name="footer">
+										<h:selectOneMenu id="InvoiceDetail_workPlace_id-New"
+											styleClass="aon-form-selectOneMenu-field"
+											rendered="#{salesInvoicingDetail.new}"
+											value="#{salesInvoicingDetail.to.workPlace.id}">
+											<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
+										</h:selectOneMenu>
+									</f:facet>
+								</h:column>
 
 								<t:column width="60">
 									<f:facet name="header">
