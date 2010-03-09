@@ -165,18 +165,17 @@ public class LinesController extends BasicController {
 	 */
 	@SuppressWarnings("unchecked")
 	public void saveModel(ITransferObject masterTO) throws ManagerBeanException {
-		if (this.masterController == null) {
-			throw new AbortProcessingException("Unable to locate Master Controller!");
+		if ( this.model != null ) {
+			List list = (List) this.model.getWrappedData();
+			Iterator i = list.iterator();
+			while (i.hasNext()) {
+				ITransferObject object = (ITransferObject) i.next();
+				updateJoinProperties(masterTO, object);
+				getManagerBean().restoreNullSubPOJOs(object);
+				getManagerBean().insertOrUpdate(object);
+			}
+			this.model = null;
 		}
-		List list = (List) this.model.getWrappedData();
-		Iterator i = list.iterator();
-		while (i.hasNext()) {
-			ITransferObject object = (ITransferObject) i.next();
-			updateJoinProperties(masterTO, object);
-			getManagerBean().restoreNullSubPOJOs(object);
-			getManagerBean().insertOrUpdate(object);
-		}
-		this.model = null;
 		initializeModel();
 	}
 
