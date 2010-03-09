@@ -749,7 +749,7 @@
 					<reportElement
 						x="21"
 						y="5"
-						width="160"
+						width="177"
 						height="16"
 						key="textField-66"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -760,7 +760,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="181"
+						x="198"
 						y="5"
 						width="115"
 						height="16"
@@ -773,7 +773,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="296"
+						x="313"
 						y="5"
 						width="46"
 						height="16"
@@ -786,7 +786,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="342"
+						x="359"
 						y="5"
 						width="113"
 						height="16"
