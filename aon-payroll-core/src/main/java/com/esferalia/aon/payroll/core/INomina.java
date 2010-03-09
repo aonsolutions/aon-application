@@ -22,6 +22,10 @@ public interface INomina extends Serializable{
 	TipoNomina getTipo();
 	void setTipo(TipoNomina salaryType);
 	
+	//Dias nomina.
+	Integer getDiasNomina();
+	void setDiasNomina(Integer diasNomina);
+
 	// Base Contingencias Generales
 	Double getBaseContingenciasGenerales();
 	void setBaseContingenciasGenerales(Double baseContingenciasGenerales);
@@ -30,6 +34,10 @@ public interface INomina extends Serializable{
 	Double getBaseAccidentesTrabajo();
 	void setBaseAccidentesTrabajo(Double baseAccidentes);
 
+	// Accidentes Trabajo sin Horas Extras
+	Double getBaseAccidentesTrabajoSinHorasExtras();
+	void setBaseAccidentesTrabajoSinHorasExtras(Double baseAccidentesTrabajoSinHorasExtras);
+	
 	//Horas Estras Estructurales
 	Double getBaseHorasExtrasEstructurales();
 	void setBaseHorasExtrasEstrcturales(Double baseHorasExtrasEstrcturales);
@@ -57,7 +65,7 @@ Self.nummat             =     0;    // SMALLINT     DEFAULT 0 LABEL "Numero de M
 Self.fecant             =     today;// DATE         NOT NULL LABEL "Fecha de Antiguedad",
 Self.fecini             =     today;// DATE         NOT NULL LABEL "Inicio Periodo Nomina",
 Self.fecfin             =     today;// DATE         NOT NULL LABEL "Fin Periodo Nomina",
-Self.diasnomina         =     0;    // SMALLINT     NOT NULL DEFAULT 0 LABEL "Numero de Dias Periodo Nomina",
+** Self.diasnomina         =     0;    // SMALLINT     NOT NULL DEFAULT 0 LABEL "Numero de Dias Periodo Nomina",
 Self.total_devengos     =     0;    // MONEY(11,2)  NOT NULL DEFAULT 0 LABEL "Total Devengos",
 Self.total_devengos_e   =     0;    // MONEY(11,2)  NOT NULL DEFAULT 0 LABEL "Total Devengos Especie",
 Self.total_deducir      =     0;    // MONEY(11,2)  NOT NULL DEFAULT 0 LABEL "Total a Deducir",
@@ -122,7 +130,7 @@ Self.procot             =     0;    // CHAR(1)      DEFAULT "M" UPSHIFT LABEL "P
 Self.codcon             =     0;    // CHAR(2)      LABEL "Codigo Convenio",
 Self.codpct             =     0;    // CHAR(8)      LABEL "Asimilado a % Cotizacion",
 Self.feccobreal         =     today;// DATE         LABEL "Fecha Cobro Real"
-Self.base_acc_sin_hex   =     0;    // MONEY(11,2)  DEFAULT 0 LABEL "Accidentes Trabajo sin Horas Extras"
+** Self.base_acc_sin_hex   =     0;    // MONEY(11,2)  DEFAULT 0 LABEL "Accidentes Trabajo sin Horas Extras"
 Self.base_irpf_ant      =     0;    // MONEY(11,2)  DEFAULT 0 LABEL "Base IRPF Ejercicios Anteriores"
 Self.importe_irpf_ant   =     0;    // MONEY(11,2)  DEFAULT 0 LABEL "Importe IRPF Ejercicios Anteriores"
 Self.importe_cuotas_ant =     0;    // MONEY(11,2)  DEFAULT 0 LABEL "Importe cuotas (S.S.) Ejercicios Anteriores"
