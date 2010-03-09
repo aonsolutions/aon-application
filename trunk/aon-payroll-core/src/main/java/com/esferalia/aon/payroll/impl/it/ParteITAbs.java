@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.impl.it;
 import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.core.util.DateUtils;
+import com.esferalia.aon.payroll.core.calc.CalculatorException;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
@@ -76,7 +77,7 @@ public abstract class ParteITAbs implements IParteIT {
 		return 0;
 	}
 	
-	public void calculate() {
+	public void calculate() throws CalculatorException {
 		ParteITCalculatorFactory factory = ParteITCalculatorFactory.getInstance();
 		IParteITCalculator calculator = factory.getParteITCalculator( this );
 		setBaseRetribucionPeriodoAnterior( calculator.calculateBaseRetribucionPeriodoAnterior(this) );
