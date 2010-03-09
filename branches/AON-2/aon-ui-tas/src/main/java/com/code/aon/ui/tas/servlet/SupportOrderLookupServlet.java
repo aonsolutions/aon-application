@@ -28,6 +28,10 @@ public class SupportOrderLookupServlet extends LookupServlet {
 	 * Alias for the document of the target in support order
      */
     private static final String SUPPORT_ORDER_TARGET_DOCUMENT = "SupportOrder_target_document";
+    /**
+	 * Alias for the document of the target in support order
+     */
+    private static final String SUPPORT_ORDER_WORKPLACE_ID = "SupportOrder_workPlace_id";
 
 	/**
 	 * Method used to add entries in the map which can't be added in the method <code>getLookups()</code>
@@ -40,6 +44,7 @@ public class SupportOrderLookupServlet extends LookupServlet {
     protected void customizeLookupMap(ILookupObject ito, Map<String,Object> map) {
     	map.put(SUPPORT_ORDER_TARGET_NAME, ((SupportOrder)ito).getTarget().getRegistry().getName());
     	map.put(SUPPORT_ORDER_TARGET_SURNAME, ((SupportOrder)ito).getTarget().getRegistry().getSurname());
-    	map.put(SUPPORT_ORDER_TARGET_DOCUMENT, ((SupportOrder)ito).getTarget().getRegistry().getDocument());
+       	map.put(SUPPORT_ORDER_TARGET_DOCUMENT, ((SupportOrder)ito).getTarget().getRegistry().getDocument());
+       	map.put(SUPPORT_ORDER_WORKPLACE_ID, ((SupportOrder)ito).getWorkPlace().getId());
     }
 }

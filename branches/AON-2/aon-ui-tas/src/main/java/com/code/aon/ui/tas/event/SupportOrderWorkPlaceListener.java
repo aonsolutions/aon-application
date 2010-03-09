@@ -16,7 +16,9 @@ public class SupportOrderWorkPlaceListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)throws ControllerListenerException {
-		((SupportOrder)event.getController().getTo()).setWorkPlace(obtainWorkPlace());
+		if (((SupportOrder)event.getController().getTo()).getWorkPlace() == null || ((SupportOrder)event.getController().getTo()).getWorkPlace().getId() == null) {
+			((SupportOrder)event.getController().getTo()).setWorkPlace(obtainWorkPlace());
+		}
 	}
 	
 	private WorkPlace obtainWorkPlace() {

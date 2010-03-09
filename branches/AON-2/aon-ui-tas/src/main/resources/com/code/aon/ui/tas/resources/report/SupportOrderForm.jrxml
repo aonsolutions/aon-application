@@ -245,7 +245,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tasItem}.getPublicCode()]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="108"
 						y="64"
