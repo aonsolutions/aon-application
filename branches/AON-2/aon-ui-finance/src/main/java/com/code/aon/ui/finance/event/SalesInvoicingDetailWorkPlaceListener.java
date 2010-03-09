@@ -16,7 +16,9 @@ public class SalesInvoicingDetailWorkPlaceListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)throws ControllerListenerException {
-		((InvoiceDetail)event.getController().getTo()).setWorkPlace(obtainWorkPlace());
+		if (((InvoiceDetail)event.getController().getTo()).getWorkPlace() == null || ((InvoiceDetail)event.getController().getTo()).getWorkPlace().getId() == null) {
+			((InvoiceDetail)event.getController().getTo()).setWorkPlace(obtainWorkPlace());
+		}
 	}
 	
 	private WorkPlace obtainWorkPlace() {

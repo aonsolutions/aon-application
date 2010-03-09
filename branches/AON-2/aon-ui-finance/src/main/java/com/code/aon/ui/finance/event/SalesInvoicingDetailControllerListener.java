@@ -88,6 +88,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		obtainTaxableBase(invoiceDetail);
 		updateDeliveryDetail(invoiceDetail);
+		invoiceDetail.setWorkPlace(obtainWorkPlace(invoiceDetail.getWorkPlace().getId()));
 	}
 	
 	/**
@@ -263,6 +264,17 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 				WorkPlace wp = (WorkPlace)wpLst.get(0);
 				return wp;
 			}
+		}
+		catch (ManagerBeanException mbe) {
+			mbe.printStackTrace();
+		}
+		return null;
+	}
+
+	private WorkPlace obtainWorkPlace(Integer id) {
+		try {
+			IManagerBean wpBean = BeanManager.getManagerBean(WorkPlace.class);
+			return (WorkPlace)wpBean.get(id);
 		}
 		catch (ManagerBeanException mbe) {
 			mbe.printStackTrace();

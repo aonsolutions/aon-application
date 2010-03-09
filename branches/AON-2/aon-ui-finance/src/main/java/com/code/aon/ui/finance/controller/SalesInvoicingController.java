@@ -598,7 +598,7 @@ public class SalesInvoicingController extends BasicController {
 				invoiceDetail.setQuantity(deliveryDetail.getQuantity());
 				invoiceDetail.setSource(InvoiceSource.DELIVERY);
 				invoiceDetail.setTaxableBase(obtainTaxableBase(invoiceDetail));
-				invoiceDetail.setWorkPlace(obtainWorkPlace());
+				invoiceDetail.setWorkPlace(delivery.getWorkPlace());
 				invoiceDetailBean.insert(invoiceDetail);
 			}
 		} catch (ManagerBeanException e) {

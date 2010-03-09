@@ -116,6 +116,11 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 		}
 	}
 	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		event.getController().initializeModel();
+	}
+
 	/**
 	 * When an Invoice is selected load a correct environment;
 	 * Recovers pending deliveries and add to closed,
