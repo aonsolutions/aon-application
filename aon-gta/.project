@@ -3,11 +3,6 @@
 	<name>aon-gta</name>
 	<comment></comment>
 	<projects>
-		<project>aon-warehouse</project>
-		<project>aon-warehouse-AON2</project>
-		<project>aon-ui-warehouse-AON2</project>
-		<project>aon-ui-finance-AON2</project>
-		<project>aon-finance-AON2</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
