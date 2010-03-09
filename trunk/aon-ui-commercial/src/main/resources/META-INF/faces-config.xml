@@ -144,6 +144,7 @@
 				</value-class>
 				<value>#{targetControllerListener}</value>
 				<value>#{targetSearch}</value>
+				<value>#{targetForm}</value>
 				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
 				<value>#{targetSegmentListener}</value>
@@ -580,14 +581,14 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{targetSearch}</value>
-				<value>#{targetLookupListener}</value>
+				<value>#{targetForm}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>targetLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
+		<managed-bean-name>targetForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
