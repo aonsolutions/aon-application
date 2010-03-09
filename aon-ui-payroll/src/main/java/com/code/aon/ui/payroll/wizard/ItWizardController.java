@@ -37,7 +37,7 @@ public class ItWizardController extends BasicController{
 	
 //	private final static Logger LOGGER = LoggerFactory.getLogger(SummaryProvider.class);
 
-	private List<ITransferObject> trabajadores;
+	private List<ITransferObject> contratos;
 	private IManagerBean trabajadorBean;
 	private IManagerBean parteitBean;
 	private IManagerBean parteconfBean;
@@ -63,6 +63,13 @@ public class ItWizardController extends BasicController{
 
 	public void setTrabajadorStatus(ItStatus trabajadorStatus) {
 		this.trabajadorStatus = trabajadorStatus;
+	}
+	
+	public Boolean getRenovacionStatus(){
+		if(getTrabajadorStatus()==null){
+			return false;
+		}
+		return getTrabajadorStatus().equals(ItStatus.RENOVACION);
 	}
 	
 	public Boolean getFinished() {
@@ -116,11 +123,23 @@ public class ItWizardController extends BasicController{
 		return parteitBean;
 	}
 
-	public List<ITransferObject> getTrabajadores() throws ManagerBeanException {
-		if(trabajadores==null){
-			initializeTrabajadores();
+	public List<ITransferObject> getContratos() throws ManagerBeanException {
+		if(contratos==null){
+			initializeContratos();
 		}
-		return trabajadores;
+		return contratos;
+	}
+	
+	public void setContratos(List<ITransferObject> list) {
+		this.contratos = list;
+	}
+	
+	private void initializeContratos() throws ManagerBeanException {
+		Persona persona = ((Trabajador)getTo()).getPersona();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getTrabajadorBean().getFieldName(IPayrollAlias.TRABAJADOR_PERSONA_CDG), persona.getCdg());
+		criteria.addNullExpression(getTrabajadorBean().getFieldName(IPayrollAlias.TRABAJADOR_FECBAJ));
+		setContratos(getTrabajadorBean().getList(criteria));
 	}
 	
 	public void buildItStatus() {
@@ -169,20 +188,8 @@ public class ItWizardController extends BasicController{
 		return tipoit;
 	}
 
-	private void initializeTrabajadores() throws ManagerBeanException {
-		Persona persona = (Persona)getTo();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getTrabajadorBean().getFieldName(IPayrollAlias.TRABAJADOR_PERSONA_CDG), persona.getCdg());
-		criteria.addNullExpression(getTrabajadorBean().getFieldName(IPayrollAlias.TRABAJADOR_FECBAJ));
-		setTrabajadores(getTrabajadorBean().getList(criteria));
-	}
-
-	public void setTrabajadores(List<ITransferObject> list) {
-		this.trabajadores = list;
-	}
-
 	private void reset() {
-		setTrabajadores(null);
+		setContratos(null);
 		initializeParteRen();
 		setFinished(false);
 		setRecaida(false);
@@ -200,7 +207,7 @@ public class ItWizardController extends BasicController{
 	
 	private void searchSuggestData() throws ManagerBeanException {
 		Criteria allParteitCriteria = new Criteria();
-		allParteitCriteria.addEqualExpression(getParteitBean().getFieldName(IPayrollAlias.PARTEIT_EMPRPER_CDG), ((Trabajador)getTrabajadores().get(0)).getCdg());
+		allParteitCriteria.addEqualExpression(getParteitBean().getFieldName(IPayrollAlias.PARTEIT_EMPRPER_CDG), ((Trabajador)getTo()).getCdg());
 		List<ITransferObject> pit = getParteitBean().getList(allParteitCriteria);
 		if(pit.size()>0){
 			String ciasalt = ((Parteit)pit.get(pit.size()-1)).getCiasalt();
@@ -240,14 +247,14 @@ public class ItWizardController extends BasicController{
 			if(pit.size()>0 && getTrabajadorStatus().equals(ItStatus.ALTA)){
 				searchRecaida((Parteit)pit.get(0));
 			}
-			
-			
+		} else {
+			trabajadorStatus = ItStatus.ALTA;
 		}
 	}
 	
 	private void searchNumRenovacion() throws ManagerBeanException {
-		String numero = Utils.maxCode("Parteconf", "id.numero","cdg="+((Trabajador)getTrabajadores().get(0)).getCdg());
-		((Trabajador)getTrabajadores().get(0)).getCdg();
+		String numero = Utils.maxCode("Parteconf", "id.numero","cdg="+((Trabajador)getContratos().get(0)).getCdg());
+		((Trabajador)getContratos().get(0)).getCdg();
 		
 		setNumParteRenovacion(numero);
 	}
@@ -272,6 +279,19 @@ public class ItWizardController extends BasicController{
 	public void onSelect(ActionEvent arg0) {
 		super.onSelect(arg0);
 		reset();
+	}
+	
+	@Override
+	public void onSearch(ActionEvent arg0) {
+		try {
+			getCriteria().addNullExpression(getFieldName(IPayrollAlias.TRABAJADOR_FECBAJ));
+			getCriteria().addNotNullExpression(getFieldName(IPayrollAlias.TRABAJADOR_EMPRESA_CDG));
+			super.onSearch(arg0);
+			clearCriteria();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void onFinalize(ActionEvent event) {
@@ -324,7 +344,7 @@ public class ItWizardController extends BasicController{
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			HibernateUtil.startSession(sessionName);
-			for(ITransferObject to: getTrabajadores()){
+			for(ITransferObject to: getContratos()){
 				Trabajador t = (Trabajador)to;
 				if (getParteRen().getStatus() == ItStatus.BAJA) {
 					insertBaja(t);
