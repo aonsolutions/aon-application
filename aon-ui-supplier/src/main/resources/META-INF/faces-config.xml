@@ -115,6 +115,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{supplierSearch}</value>
+				<value>#{supplierForm}</value>
 				<value>#{supplierScopeListener}</value>
 				<value>#{supplierAddressListener}</value>
 				<value>#{supplierMediaListener}</value>
@@ -520,15 +521,15 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{supplierSearch}</value>
-				<value>#{supplierLookupListener}</value>
+				<value>#{supplierForm}</value>
 				<value>#{supplierScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>supplierLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodLookupListener</managed-bean-class>
+		<managed-bean-name>supplierForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
