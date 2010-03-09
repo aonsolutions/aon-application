@@ -44,6 +44,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerSearch}</value>
+				<value>#{customerForm}</value>
 				<value>#{customerAddressListener}</value>
 				<value>#{customerMediaListener}</value>
 				<value>#{customerScopeListener}</value>				
@@ -750,15 +751,15 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerSearch}</value>
-				<value>#{customerLookupListener}</value>
+				<value>#{customerForm}</value>
 				<value>#{customerScopeListener}</value>				
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>customerLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodLookupListener</managed-bean-class>
+		<managed-bean-name>customerForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>registryPayMethodType</property-name>
