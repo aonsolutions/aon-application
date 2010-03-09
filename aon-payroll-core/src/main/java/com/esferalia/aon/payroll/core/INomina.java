@@ -3,32 +3,32 @@ package com.esferalia.aon.payroll.core;
 import java.io.Serializable;
 
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.payroll.core.enumeration.SalaryType;
+import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 
-public interface ISalary extends Serializable{
+public interface INomina extends Serializable{
 
-	IEmployee getEmployee();
-	void setEmployee(IEmployee employee);
+	IEmpleado getEmpleado();
+	void setEmpleado(IEmpleado empleado);
 	
-	// Mes de la nómina
-	Month getMonth();
-	void setMonth(Month month);
+	// Mes de la nomina
+	Month getMes();
+	void setMes(Month mes);
 	
-	// Año de la nómina
+	// Año de la nomina
 	Integer getYear();
 	void setYear(Integer year);
 	
-	//Tipo de nómina.
-	SalaryType getTipo();
-	void setTipo(SalaryType salaryType);
+	//Tipo de nomina.
+	TipoNomina getTipo();
+	void setTipo(TipoNomina salaryType);
 	
 	// Base Contingencias Generales
 	Double getBaseContingenciasGenerales();
 	void setBaseContingenciasGenerales(Double baseContingenciasGenerales);
 
 	// Accidentes Trabajo - Enfermedad Profesional
-	Double getBaseAccidentes();
-	void setBaseAccidentes(Double baseAccidentes);
+	Double getBaseAccidentesTrabajo();
+	void setBaseAccidentesTrabajo(Double baseAccidentes);
 
 	//Horas Estras Estructurales
 	Double getBaseHorasExtrasEstructurales();

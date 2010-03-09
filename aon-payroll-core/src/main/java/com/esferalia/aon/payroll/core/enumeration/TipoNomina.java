@@ -1,12 +1,12 @@
 package com.esferalia.aon.payroll.core.enumeration;
 
-public enum SalaryType {
+public enum TipoNomina {
 	
 	// Tipo normal
-	STANDARD,
+	NORMAL,
 
 	// Atrasos
-	ARREARS;
+	ATRASO;
 
 }
 	

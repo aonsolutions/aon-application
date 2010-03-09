@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.core.IRegistry;
 
 
-public interface IPerson extends Serializable{
+public interface IPersona extends Serializable{
 
 	IRegistry getRegistry();
 	void setRegistry(IRegistry registry);

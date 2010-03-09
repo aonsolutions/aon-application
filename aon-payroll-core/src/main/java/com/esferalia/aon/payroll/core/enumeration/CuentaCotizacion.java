@@ -1,15 +1,15 @@
 package com.esferalia.aon.payroll.core.enumeration;
 
-public enum ContributionAccount {
+public enum CuentaCotizacion {
 	
 	//Principal
 	PRINCIPAL,
 	//Altos Cargos
-	EXECUTIVE,
+	ALTTO_CARGO,
 	//Aprendices
-	APPRENTICE,
+	APRENDIZ,
 	//Asimilados Reg.Gral.
-	ASSIMILATE;
+	ASIMILADO;
 	
 }
 	
