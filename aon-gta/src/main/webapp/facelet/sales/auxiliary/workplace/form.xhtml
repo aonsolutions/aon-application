@@ -45,13 +45,6 @@
 						rendered="#{workplace.to!=null and !workplace.new}"
 						onclick="return (confirm('#{bundle.aon_remove_confirm}'));" 
 						accesskey="#{bundle.aon_key_remove}"/>
-					<h:commandButton id="reset" value="#{bundle.aon_reset}"
-						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
-						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
-						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
-						actionListener="#{workplace.onReset}"
-						rendered="#{!workplace.new}" 
-						accesskey="#{bundle.aon_key_new}"/>
 				</t:div>
 				</t:div>
 			</t:div>
@@ -83,19 +76,10 @@
 									value="#{workplace.to.description}" required="#{true}" />
 								<f:verbatim>&#160;</f:verbatim>
 								<f:facet name="footer">
-									<t:div>
-										<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
-											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-											actionListener="#{workplace.onReset}"
-											value=""
-											rendered="#{!workplace.new}"
-											accesskey="#{bundle.aon_key_new_line}">
-										</t:commandButton>
-										<h:inputText rendered="#{workplace.new}" 
-											styleClass="aon-form-input-text"
-											value="#{workplace.to.description}"
-											required="#{true}" size="40"/>
-									</t:div>
+									<h:inputText rendered="#{workplace.new}" 
+										styleClass="aon-form-input-text"
+										value="#{workplace.to.description}"
+										required="#{true}" size="40"/>
 								</f:facet>
 							</h:column>
 

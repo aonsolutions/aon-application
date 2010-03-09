@@ -179,6 +179,17 @@
 							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
 							valueChangeListener="#{SupportOrder.addExpression}" />
 							
+						<t:outputLabel for="SupportOrder_workPlace_id"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
+						<h:selectOneMenu id="SupportOrder_workPlace_id" 
+							styleClass="aon-form-selectOneMenu-field"
+							valueChangeListener="#{SupportOrder.addExpression}"
+							converter="IntegerEmptyConverter">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+							<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
+						</h:selectOneMenu>
+							
 						<h:outputLabel for="SupportOrder_status"
 							value="#{tasBundle.supportOrder_status}"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
