@@ -44,9 +44,9 @@
 					<aon:methodParam name="searchAction" value="mntoit_list" />
 
 
-					<aon:outputLabel for="Persona_numdoc"
+					<aon:outputLabel for="Trabajador_persona_numdoc"
 						value="#{appBundle.aon_payroll_pricipales_personas_tip_doc}" />
-					<aon:inputText id="Persona_numdoc" size="10" maxlength="10"
+					<aon:inputText id="Trabajador_persona_numdoc" size="10" maxlength="10"
 						valueChangeListener="#{itWizard.addExpression}">
 					</aon:inputText>
 <!--  
@@ -67,34 +67,48 @@
 					</aon:div>
 -->					
 
-					<aon:outputLabel for="Persona_numss"
+					<aon:outputLabel for="Trabajador_persona_numss"
 						value="#{appBundle.aon_payroll_pricipales_personas_numss}" />
-					<aon:inputText id="Persona_numss" size="15" maxlength="12"
+					<aon:inputText id="Trabajador_persona_numss" size="15" maxlength="12"
 						valueChangeListener="#{itWizard.addExpression}" />
 
-					<aon:outputLabel for="Persona_nombre"
+					<aon:outputLabel for="Trabajador_persona_nombre"
 						value="#{appBundle.aon_payroll_pricipales_personas_nombre}" />
-					<aon:inputText id="Persona_nombre" size="20" maxlength="25"
+					<aon:inputText id="Trabajador_persona_nombre" size="20" maxlength="25"
 						valueChangeListener="#{itWizard.addExpression}" />
 
-					<aon:outputLabel for="Persona_descripcion"
+					<aon:outputLabel for="Trabajador_persona_descripcion"
 						value="#{appBundle.aon_payroll_pricipales_personas_apellido1}" />
-					<aon:inputText id="Persona_descripcion" size="20" maxlength="35"
+					<aon:inputText id="Trabajador_persona_descripcion" size="20" maxlength="35"
 						valueChangeListener="#{itWizard.addExpression}" />
 
-					<aon:outputLabel for="Persona_apellido2"
+					<aon:outputLabel for="Trabajador_persona_apellido2"
 						value="#{appBundle.aon_payroll_pricipales_personas_apellido2}" />
-					<aon:inputText id="Persona_apellido2" size="20" maxlength="25"
+					<aon:inputText id="Trabajador_persona_apellido2" size="20" maxlength="25"
 						valueChangeListener="#{itWizard.addExpression}" />
-
-
+						
+					<aon:outputLabel for="Empresa_lookup"
+						value="#{appBundle.aon_payroll_principales_trabajador_empresa}" />
+					<aon:div id="Empresa_lookup" styleClass="aon-lookup">
+						<aon:lookupInputText id="Empresa_cdg" lookup="#{empresaLookup}"
+							reRender="Empresa_description" value="#{itWizardSearch.empresa.cdg}"
+							size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton 
+							windowTitle="#{appBundle.aon_payroll_resultados_tc2_emp}"
+							selectReRender="Empresa_cdg,Empresa_description"
+							lookup="#{empresaLookup}" minHeight="440"
+							property="#{itWizardSearch.empresa}">
+						</aon:lookupButton>
+						<aon:inputText id="Empresa_description"
+							value="#{(itWizardSearch.empresa.descripcion!=null)?(itWizardSearch.empresa.descripcion):('')}"
+							size="60" disabled="true" />
+					</aon:div>
+					
 				</ui:define>
 			</ui:decorate>
 
 		</aon:form>
-<!--  
-		<aon:lookupButtonPopup lookup="#{documentoLookup}" />
--->
-
+		<aon:lookupButtonPopup lookup="#{empresaLookup}" />
 	</ui:define>
 </ui:composition>
