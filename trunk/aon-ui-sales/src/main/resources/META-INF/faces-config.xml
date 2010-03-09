@@ -45,6 +45,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{sellerSearch}</value>
+				<value>#{sellerForm}</value>
 				<value>#{sellerAddressListener}</value>
 				<value>#{sellerMediaListener}</value>
 			</list-entries>
@@ -209,14 +210,15 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{sellerLookupListener}</value>
+				<value>#{sellerSearch}</value>
+				<value>#{sellerForm}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>sellerLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
+		<managed-bean-name>sellerForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
