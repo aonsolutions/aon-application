@@ -53,6 +53,7 @@
 					columnClasses="
 					aon-editDataTable-textColumn, 
 					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn, 
 					aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="mntoit_form"
@@ -62,21 +63,28 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
 						</f:facet>
-						<aon:outputText value="#{to.numdoc}" />
+						<aon:outputText value="#{to.persona.numdoc}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.descripcion} #{to.apellido2}, #{to.nombre}" />
+						<aon:outputText value="#{to.persona.descripcion} #{to.persona.apellido2}, #{to.persona.nombre}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.aon_payroll_pricipales_personas_numss}" />
 						</f:facet>
-						<aon:outputText value="#{to.numss}" />
+						<aon:outputText value="#{to.persona.numss}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_trabajador_empresa}" />
+						</f:facet>
+						<aon:outputText value="#{to.empresa.descripcion}" />
 					</aon:column>
 
 <!--  

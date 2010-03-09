@@ -16,6 +16,7 @@
 			value="1.- Busqueda" 
 			action="mntoit_search"
 			styleClass="flow-button"
+			inmediate="#{true}"
 			accesskey="#{bundle.aon_key_save}" />
 	
 		<aon:outputText value=" >> " />
@@ -28,6 +29,7 @@
 			action="mntoit_list" 
 			rendered="#{itWizard.model.rowCount!=0}"
 			styleClass="flow-button"
+			inmediate="#{true}"
 			accesskey="#{bundle.aon_key_save}" />
 		
 		<aon:outputText value=" >> " />
@@ -41,6 +43,7 @@
 			rendered="#{itWizard.parteRen!=null}"
 			actionListener="#{itWizard.onUnFinalize}"
 			styleClass="flow-button"
+			inmediate="#{true}"
 			accesskey="#{bundle.aon_key_save}" />
 		
 		<aon:outputText value=" >> " />
@@ -52,6 +55,7 @@
 			value="4.- Validacion" 
 			rendered="#{itWizard.finished}"
 			styleClass="flow-button"
+			inmediate="#{true}"
 			accesskey="#{bundle.aon_key_save}" />
 	</aon:div>
 

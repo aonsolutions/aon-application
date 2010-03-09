@@ -49,13 +49,13 @@
 				<aon:panelGrid columns="6" dir="true" width="100%">
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
-					<aon:outputText value="#{itWizard.to.numdoc}" />
+					<aon:outputText value="#{itWizard.to.persona.numdoc}" />
 
 					<aon:outputLabel value="#{bundle.aon_name}" />
-					<aon:outputText value="#{itWizard.to.descripcion} #{itWizard.to.apellido2}, #{itWizard.to.nombre}" />
+					<aon:outputText value="#{itWizard.to.persona.descripcion} #{itWizard.to.persona.apellido2}, #{itWizard.to.persona.nombre}" />
 					
 					<aon:outputLabel value="#{appBundle.aon_payroll_pricipales_personas_numss}" />
-					<aon:outputText value="#{itWizard.to.numss}" />
+					<aon:outputText value="#{itWizard.to.persona.numss}" />
 
 
 				</aon:panelGrid>
@@ -65,7 +65,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_newpayroll_it_contract_data}" />
 				</f:facet>
-				<aon:dataTable id="trabajadorData" value="#{itWizard.trabajadores}"
+				<aon:dataTable id="contratosData" value="#{itWizard.contratos}"
 					var="to" rows="20"
 					columnClasses="
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
@@ -111,7 +111,7 @@
 
 					<aon:outputLabel
 						value="#{appBundle.aon_payroll_newpayroll_status_change}" />
-					<aon:div>
+					<aon:div id="trabajadorStatus">
 						<aon:outputText 
 							rendered="#{itWizard.finished}"
 							value="#{itWizard.parteRen.status}"/>
@@ -119,12 +119,13 @@
 							rendered="#{!itWizard.finished}"
 							value="#{itWizard.parteRen.status}">
 							<f:selectItems value="#{itWizard.listaItStatus}" />
+							<a4j:support event="onchange" reRender="trabajadorStatus"/>
 						</aon:selectOneMenu>
 						<aon:outputLabel
-							rendered="#{(itWizard.numParteRenovacion==null)?(false):(true)}"
+							rendered="#{(itWizard.numParteRenovacion==null)}"
 							value="#{appBundle.aon_payroll_newpayroll_it_ren_number}" />
 						<aon:outputText 
-							rendered="#{(itWizard.numParteRenovacion==null)?(false):(true)}"
+							rendered="#{(itWizard.numParteRenovacion==null)}"
 							value="#{itWizard.numParteRenovacion}"/>
 					</aon:div>
 					
