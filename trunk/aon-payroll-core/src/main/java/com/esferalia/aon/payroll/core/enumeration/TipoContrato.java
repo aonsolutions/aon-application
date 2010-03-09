@@ -1,14 +1,14 @@
 package com.esferalia.aon.payroll.core.enumeration;
 
-public enum ContractType {
+public enum TipoContrato {
 
 	// Tipo general
-	GENERAL_TYPE,
+	GENERAL,
 
 	// Tiempo Parcial Horas
-	TEMPORARY_HOURS,
+	TEMPORAL_HORAS,
 	
 	// Tiempo Parcial Dias
-	TEMPORARY_DAYS;
+	TEMPORAL_DIAS;
 	
 }

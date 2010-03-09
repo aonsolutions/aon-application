@@ -1,9 +1,9 @@
 package com.esferalia.aon.payroll.core.enumeration;
 
-public enum Period {
+public enum Periodicidad {
 	
-	DAILY,
-	MONTHLY;
+	DIARIO,
+	MENSUAL;
 	
 }
 	

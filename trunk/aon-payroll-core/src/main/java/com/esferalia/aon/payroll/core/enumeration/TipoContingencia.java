@@ -1,21 +1,21 @@
 package com.esferalia.aon.payroll.core.enumeration;
 
-public enum ContingencyType {
+public enum TipoContingencia {
 	
 	// Enfermedad común
-	COMMON_DISEASE,
+	ENFERMEDAD_COMUN,
 
 	// Accidente laboral
-	INDUSTRIAL_ACCIDENT,
+	ACCIDENTE_LABORAL,
 
 	// Accidente no laboral
-	COMMON_ACCIDENT,
+	ACCIDENTE_NO_LABORAL,
 
 	// Maternidad
-	MATERNITY;
+	MATERNIDAD;
 
 	public boolean isAccident() {
-		return (this == INDUSTRIAL_ACCIDENT || this == COMMON_ACCIDENT);
+		return (this == ACCIDENTE_LABORAL || this == ACCIDENTE_NO_LABORAL);
 	}
 }
 	

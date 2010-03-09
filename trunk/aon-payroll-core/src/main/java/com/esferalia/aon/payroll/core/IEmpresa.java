@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.core.IRegistry;
 
-public interface ICompany extends Serializable{
+public interface IEmpresa extends Serializable{
 
 	IRegistry getRegistry();
 	void setRegistry(IRegistry registry);
