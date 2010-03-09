@@ -16,14 +16,14 @@
 		<ui:include	src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml" />
 
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{creditorLookupListener}"/>
+			<ui:param name="controllerLookupListener" value="#{creditorForm}"/>
 		</ui:include>
 
 	</aon:panelGrid>
 
 	<c:if test="#{aonConfiguration.bean.creditor.showFinanceData}">
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
-			<ui:param name="controllerLookupListener" value="#{creditorLookupListener}"/>
+			<ui:param name="controllerLookupListener" value="#{creditorForm}"/>
 		</ui:include>
 	</c:if>
 
