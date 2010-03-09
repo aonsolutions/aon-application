@@ -297,6 +297,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{creditorSearch}</value>
+				<value>#{creditorForm}</value>
 				<value>#{creditorScopeListener}</value>
 				<value>#{creditorAddressListener}</value>
 				<value>#{creditorMediaListener}</value>
@@ -2517,15 +2518,15 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{creditorSearch}</value>
-				<value>#{creditorLookupListener}</value>
+				<value>#{creditorForm}</value>
 				<value>#{creditorScopeListener}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>creditorLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodLookupListener</managed-bean-class>
+		<managed-bean-name>creditorForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
