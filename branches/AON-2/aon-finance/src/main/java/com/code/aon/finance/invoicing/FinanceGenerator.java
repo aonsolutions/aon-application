@@ -48,7 +48,7 @@ public class FinanceGenerator {
 		}
 		return financeList;
 	}
-	
+
 	public List<Finance> generateFinances(Invoice invoice, Registry registry, double totalPrice) throws ManagerBeanException{
 		return generateFinances(invoice, registry, totalPrice, true);
 	}
