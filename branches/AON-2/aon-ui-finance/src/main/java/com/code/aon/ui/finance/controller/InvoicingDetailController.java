@@ -9,12 +9,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.invoicing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
@@ -124,7 +124,7 @@ public class InvoicingDetailController extends LinesController {
 	 */
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+			priceStrategy = new InvoicePriceStrategy();
 		}
 		return priceStrategy;
 	}

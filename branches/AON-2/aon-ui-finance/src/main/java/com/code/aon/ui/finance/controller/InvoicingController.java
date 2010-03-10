@@ -481,10 +481,10 @@ public class InvoicingController extends BasicController {
 				Finance finance = (Finance)iter.next();
 				financeBean.remove(finance);
 			}
-			Company company = obtainCompany();
+			//Company company = obtainCompany();
 			double totalInvoice = getPriceStrategy().getTotalPrice(invoice, invoice);
 			if (totalInvoice != 0) {
-				getFinanceGenerator().generateFinances(invoice, company, totalInvoice);
+				getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), totalInvoice);
 			}
 			purchaseFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
