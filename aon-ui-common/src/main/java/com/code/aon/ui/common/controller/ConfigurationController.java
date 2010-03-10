@@ -61,7 +61,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private List<String> styleSheets;
 
 	/** The properties. */
-	private Map<String, String> properties;
+	private Map<String, Object> properties;
 	
 	private Map<String,Map<String,Object>> bean;	
 	
@@ -73,7 +73,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	 * The Constructor.
 	 */
 	public ConfigurationController() {
-		this.properties = new HashMap<String, String>();
+		this.properties = new HashMap<String, Object>();
 		this.styleSheets = new ArrayList<String>();
 		Document document = getConfigDocument();
 		if ( document != null ) {
@@ -86,7 +86,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	 * 
 	 * @return the properties
 	 */
-	public Map<String, String> getProperties() {
+	public Map<String, Object> getProperties() {
 		return properties;
 	}
 
@@ -95,7 +95,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	 * 
 	 * @param properties the properties map
 	 */
-	public void setProperties(Map<String, String> properties) {
+	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
 
@@ -116,7 +116,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	 * 
 	 * @return the property linked with 'key' in the map
 	 */
-	public String getProperty(String key) {
+	public Object getProperty(String key) {
 		return properties.get(key);
 	}
 
