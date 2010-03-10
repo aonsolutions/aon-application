@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
@@ -42,12 +44,10 @@ public class CompanyDisplay {
 	
 	private byte[] companyLogo;
 	
-	private boolean show;
-	
 	private boolean bigLogo;
 	
 	public CompanyDisplay() {
-		show = init();
+		init();
 	}
 
 	public String getCompanyLabel() {
@@ -75,11 +75,7 @@ public class CompanyDisplay {
 	}
 
 	public boolean isShow() {
-		return show;
-	}
-
-	public void setShow(boolean show) {
-		this.show = show;
+		return !( StringUtils.isEmpty(this.companyLabel) && ArrayUtils.isEmpty(this.companyLogo) );
 	}
 	
 	public boolean isBigLogo() {
@@ -123,8 +119,22 @@ public class CompanyDisplay {
 		return true;
 	}
 	
+	public void update( Company company, RegistryAttachment logo ) {
+		this.companyLabel = company.getName();
+		if ( logo != null ) {
+			this.companyLogo = logo.getData();
+			this.bigLogo = calculateBigLog();
+			this.logoKey = logo.getId().toString();			
+		}
+	}
+	
+	public void update( ActionEvent event ) {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		update( (Company) controller.getTo(), controller.getAttach());
+	}
+	
 	@SuppressWarnings({ "unchecked"})
-	private boolean init() {
+	private void init() {
 		try {
 			Configuration configuration = getConfiguration();
 			SessionFactory factory =  configuration.buildSessionFactory();
@@ -140,19 +150,13 @@ public class CompanyDisplay {
 				logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
 				logoCriteria.add(Restrictions.isNotNull("data"));
 				List logoList = logoCriteria.list();
-				if (! logoList.isEmpty() ) {
-					RegistryAttachment logo = (RegistryAttachment) logoList.get(0);
-					this.companyLogo = logo.getData();
-					this.bigLogo = calculateBigLog();
-					this.logoKey = logo.getId().toString();
-				}
+				RegistryAttachment logo = logoList.isEmpty() ? null : (RegistryAttachment) logoList.get(0);
+				update(company, logo);
 			}
 			session.close();
-			return true;
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting company name and logo", th );
 		}
-		return false;
 	}
 	
 }
