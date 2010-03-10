@@ -27,9 +27,12 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the company maintenance.
@@ -41,7 +44,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	public static final String PRINT_RECORD_DATA_PARAM = "APP_PRINT_RECORD_DATA_PARAM";
 	
 	public static final String SMART_CARD_PARAM = "APP_SMART_CARD_PARAM";
-
+	
 	/** The attach. */
 	private RegistryAttachment attach;
 	
@@ -616,13 +619,21 @@ public class CompanyParentController extends BasicController implements ICompany
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
-	public String getOnNew() {
-		if(this.getTo() == null) {
-			this.onLoad();
-		}
-		return "";
+	private void setHideHeaderContent( boolean value ) {
+		ConfigurationController cc = AonUtil.getConfigurationController();
+		cc.getProperties().put( ICommonConstants.HIDE_HEADER_LINKS, value );
+		cc.getProperties().put( ICommonConstants.HIDE_MENU_BAR, value );
+		cc.getBean().get(ICompanyConstants.COMPANY_CONTROLLER_NAME).put("showPanelTabSet", !value);
 	}
 
+	public boolean isHideHeaderContent() {
+		if ( getTo() == null ) {
+			this.onLoad();
+		}
+		setHideHeaderContent(isNew());
+		return isNew();
+	}	
+	
 	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
 	public static final String COMPANY_ADDRESS_CONTROLLER_NAME = "companyAddress";
 

@@ -24,6 +24,7 @@
 							action="home" actionListener="#{company.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" >
+							<aon:actionListener method="#{companyDisplay.update}" />
 						</aon:commandButton>
 					</c:if>
 					<c:if test="#{!company.new}" >
@@ -31,7 +32,9 @@
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{company.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" />
+							accesskey="#{bundle.aon_key_save}" >
+							<aon:actionListener method="#{companyDisplay.update}" />
+						</aon:commandButton>
 					</c:if>
 				</ui:define>				
 			</ui:decorate>
