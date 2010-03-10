@@ -73,8 +73,7 @@ public class Lot {
 		Iterator<Orderer> iter = this.getOrderersIterator();
 		int total = 0;
 		while (iter.hasNext()){
-			iter.next();
-			total++;
+            total += iter.next().getNumIndividuals();
 		}
 		return total;
 	}
