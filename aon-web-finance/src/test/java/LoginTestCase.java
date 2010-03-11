@@ -14,6 +14,7 @@ public class LoginTestCase extends SeleneseTestCase {
 		selenium.type("j_password", "GGhh%123");
 		selenium.click("login_btn");
 		selenium.waitForPageToLoad("30000");
+		selenium.open("/aon-finance/");
 		selenium.click("//a[@id='j_id21:j_id24']/span");
 		selenium.waitForPageToLoad("30000");
 	}
