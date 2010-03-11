@@ -16,11 +16,11 @@
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">
 		
-					<h:panelGrid styleClass="aon-width-all" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300">
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 		
 						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-sales aon-direct-access-panel">
+							headerClass="aon-icon-config aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_configuration}"/>
 							</f:facet>					
@@ -63,6 +63,23 @@
 								</aon:div>
 							</aon:div>
 						</h:panelGrid>
+						
+						<c:if test="#{aonRole.admin}">
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-icon-menu-user aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_security}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="actionDenied" action="actionDenied"
+											actionListener="#{actionDenied.onInit}"
+											value="#{auditBundle.audit_option_denied_module}" />
+									</aon:div>
+								</aon:div>
+							</h:panelGrid>
+						</c:if>
+						
 					</h:panelGrid>
 				</aon:componentGroup>
 			</aon:div>
