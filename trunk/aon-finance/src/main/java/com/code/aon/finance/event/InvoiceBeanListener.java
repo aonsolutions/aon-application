@@ -7,6 +7,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -43,6 +44,15 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 			}
 		}
 
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+		Iterator iter = financeBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			Finance finance = (Finance)iter.next();
+			finance.setRegistry(invoice.getRegistry());
+			financeBean.update(finance);
+		}
 	}
 
 }
