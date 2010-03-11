@@ -19,7 +19,7 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
-					<h:commandButton id="execute" value="#{accountingBundle.amortizationType_import}"
+					<h:commandButton id="execute" value="#{accountingBundle.accounting_amortization_import}"
 						rendered="#{amortizationTypeImporter.aonFile.size > 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{amortizationTypeImporter.onImport}" />
