@@ -154,6 +154,13 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{task.activities}" />
 					</aon:selectOneMenu>
+
+					<aon:outputText value=""/>
+					<aon:div>
+						<h:selectBooleanCheckbox id="Task_source" value="#{task.processTask}" />
+						<aon:outputLabel for="Task_source"
+								value="#{projectBundle.task_source}" />
+					</aon:div>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
