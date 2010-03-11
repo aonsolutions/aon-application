@@ -541,10 +541,17 @@ color:#000;
  }
 .aon-icon-expand{
 	float: right;
-	width: 16px;	
+	width: 18px;
+	height: 18px;
 	background:transparent url(images/aon-icon/aon-icon-expand.png) scroll left center no-repeat;	
  }
-
+.aon-icon-edit{
+	float: right;
+	width: 18px;	
+	height: 18px;
+	background:transparent url(images/aon-icon/aon-icon-edit.png) scroll left center no-repeat;	
+ }
+ 
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
