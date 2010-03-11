@@ -3,17 +3,23 @@ package com.esferalia.aon.payroll.core.it;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.core.IDocument;
+import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.IEmpresa;
+import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 
-public interface IParteIT extends Serializable{
+public interface IParteIT
+	<E extends IEmpleado<IEmpresa<IRegistry<IDocument>>,IPersona<IRegistry<IDocument>>>,
+	P extends IParteIT<E,P>> extends Serializable{
 
-	IEmpleado getEmpleado();
-	void getEmpleado(IEmpleado Empleado);
+	E getEmpleado();
+	void setEmpleado(E empleado);
 	
 	Date getFechaBaja();
-	void getFechaBaja(Date fechaBaja);
+	void setFechaBaja(Date fechaBaja);
 	
 	String getNumeroColegiadoBaja();
 	void setNumeroColegiadoBaja(String numeroColegiadoAlta);
@@ -45,8 +51,8 @@ public interface IParteIT extends Serializable{
 	boolean isRecaida();
 	void setRecaida(boolean recaida);
 	
-	IParteIT getParteITRecaida();
-	void setParteITRecaida(IParteIT ParteITRecaida);
+	P getParteITRecaida();
+	void setParteITRecaida(P ParteITRecaida);
 
 	Periodicidad getProrrateoCotizacion();
 	void setProrrateoCotizacion(Periodicidad period);
