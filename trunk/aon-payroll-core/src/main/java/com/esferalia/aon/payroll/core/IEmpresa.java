@@ -2,12 +2,13 @@ package com.esferalia.aon.payroll.core;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.core.IDocument;
 import com.esferalia.aon.core.IRegistry;
 
-public interface IEmpresa extends Serializable{
+public interface IEmpresa<R extends IRegistry<IDocument>> extends Serializable{
 
-	IRegistry getRegistry();
-	void setRegistry(IRegistry registry);
+	R getRegistry();
+	void setRegistry(R registry);
 	
 	String getName();
 	void setName(String name);
