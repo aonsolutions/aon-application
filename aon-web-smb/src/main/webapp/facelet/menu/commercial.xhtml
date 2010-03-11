@@ -14,11 +14,15 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<aon:panelGrid columns="1" styleClass="aon-panelGrid-formatting"
-					columnClasses="aon-portlets-column">
-
-					<aon:panelGroup>
-						<aon:panel headerClass="aon-panel-title">
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">
+					
+					<h:panelGrid styleClass="aon-width-all" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300">
+		
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-sales aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.menu_commercial}"/>
 							</f:facet>						
@@ -39,11 +43,11 @@
 										value="#{salesBundle.sales_seller_module}" />
 								</aon:div>
 							</aon:div>
-						</aon:panel>
+						</h:panelGrid>
 						
-					</aon:panelGroup>
+					</h:panelGrid>
 					
-				</aon:panelGrid>
+				</aon:componentGroup>
 
 			</aon:div>
 				
