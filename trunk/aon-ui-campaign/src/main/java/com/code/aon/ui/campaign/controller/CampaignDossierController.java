@@ -46,6 +46,7 @@ public class CampaignDossierController extends LinesController {
 	private ArrayList<CampaignDossierExtended> checks = new ArrayList<CampaignDossierExtended>();
 	private CampaignTaskManager campaignTaskManager;
 	private List<SelectItem> processDetailList;
+
 	private Integer processCount;
 	
 	private CampaignTaskManager getCampaignTaskManager() {
@@ -167,7 +168,7 @@ public class CampaignDossierController extends LinesController {
 			c.addEqualExpression(b.getFieldName(ICampaignAlias.PROCESS_DETAIL_PROCESS_ID), campaign
 					.getProcess().getId());
 			c.addEqualExpression(b.getFieldName(ICampaignAlias.PROCESS_DETAIL_STATUS), ProcessDetailStatus.ACTIVE );
-			processCount = b.getCount(c);
+			setProcessCount( b.getCount(c) );
 			DataModel model = super.getModel();
 			List<CampaignDossierExtended> newList = new LinkedList<CampaignDossierExtended>();
 			List<ITransferObject> list = (List<ITransferObject>) model.getWrappedData();
@@ -195,7 +196,7 @@ public class CampaignDossierController extends LinesController {
 				}
 				pos++;
 			}
-			d = CommonUtil.round((pos * 100) / processCount);
+			d = CommonUtil.round((pos * 100) / getProcessCount());
 		}
 		cde.setProcessDetail(processDetail);
 		Task task = getCampaignTaskManager().getCurrentTask(cd);
@@ -244,6 +245,16 @@ public class CampaignDossierController extends LinesController {
     	}
         return processDetailList;
     }
+	public void setProcessDetailList(List<SelectItem> processDetailList) {
+		this.processDetailList = processDetailList;
+	}
+
+	public Integer getProcessCount() {
+		return processCount;
+	}
+	public void setProcessCount(Integer processCount) {
+		this.processCount = processCount;
+	}
 
     public void onChangeProcessDetail(ActionEvent event) {
         try {

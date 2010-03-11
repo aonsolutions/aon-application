@@ -29,6 +29,8 @@ public class CampaignDossierControllerListener extends ControllerAdapter {
             criteria.addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_DOSSIER_NUMBER));
             controller.setCriteria(criteria);
             controller.setExtendedModel(null);
+            controller.setProcessDetailList(null);
+            controller.setProcessCount(null);
         } catch (ManagerBeanException e) {
             LOGGER.error("Error obtaining criteria for CampaignDossier model.", e);
         }
