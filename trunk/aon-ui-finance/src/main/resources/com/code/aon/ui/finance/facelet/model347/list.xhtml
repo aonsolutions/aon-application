@@ -26,6 +26,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}" />			
 					<h:commandLink value="&#160;" target="_blank"
+						disabled="true"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="model347List" />
@@ -51,7 +52,7 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:div>
-							<aon:selectOneMenu id="Model_347_format" 
+							<aon:selectOneMenu id="Model_347_format"
 								value="#{model347Report.format}">
 								<f:selectItems value="#{model347Report.mod347Formats}" />
 							</aon:selectOneMenu>
