@@ -79,10 +79,15 @@
 				<aon:panelGrid columns="2" dir="true" style="width: 90%;">
 					<aon:outputLabel for="Task_descripcion"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="Task_descripcion" required="true" size="60"
-						maxlength="128" value="#{task.to.description}"
-						disabled="#{!task.monitor and !task.new}" />
-
+					<aon:div>
+						<aon:inputText id="Task_descripcion" required="true" size="60"
+							maxlength="128" value="#{task.to.description}"
+							disabled="#{!task.monitor and !task.new}" />
+						<aon:outputText value="#{task.to.source}"
+							style="margin-left: 50px;" 
+							/>		
+					</aon:div>
+					
 					<aon:outputLabel for="Task_startDate"
 						value="#{projectBundle.aon_initial_date}" />
 					<aon:selectInputDate id="Task_startDate"

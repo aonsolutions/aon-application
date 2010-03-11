@@ -19,6 +19,7 @@ import com.code.aon.project.JobType;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
 import com.code.aon.project.enumeration.TaskPeriod;
+import com.code.aon.project.enumeration.TaskSource;
 import com.code.aon.project.enumeration.TaskStatus;
 import com.code.aon.ql.Criteria;
 
@@ -125,6 +126,17 @@ public class ProjectCollectionsController {
         return taskStatusList;
     }
     
+    public List<SelectItem> getTaskSources() {
+        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        LinkedList<SelectItem> taskSourcesList = new LinkedList<SelectItem>();
+        for (TaskSource taskSource: TaskSource.values()) {
+            String name = taskSource.getName(locale);
+            SelectItem item = new SelectItem(taskSource, name);
+            taskSourcesList.add(item);
+        }
+        return taskSourcesList;
+    }
+
     public List<SelectItem> getTaskPeriods() {
         Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         LinkedList<SelectItem> taskPeriodList = new LinkedList<SelectItem>();

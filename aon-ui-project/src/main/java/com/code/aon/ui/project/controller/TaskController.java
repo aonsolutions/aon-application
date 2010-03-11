@@ -78,6 +78,7 @@ public class TaskController extends BasicController implements ITaskController {
 	public static String STATUS_ALIAS = null;
 	public static String PRIORITY_ALIAS = null;
 	public static String PERCENT_ALIAS = null;
+	public static String SOURCE_ALIAS = null;
 
 	static {
 		try {
@@ -97,6 +98,7 @@ public class TaskController extends BasicController implements ITaskController {
 			STATUS_ALIAS = taskBean.getFieldName(IProjectAlias.TASK_STATUS);
 			PRIORITY_ALIAS = taskBean.getFieldName(IProjectAlias.TASK_PRIORITY);
 			PERCENT_ALIAS = taskBean.getFieldName(IProjectAlias.TASK_PERCENT);
+			SOURCE_ALIAS = taskBean.getFieldName(IProjectAlias.TASK_SOURCE);
 		} catch (Exception e) {
 			LOGGER.error("Error obtining field alias", e);
 		}
@@ -118,6 +120,7 @@ public class TaskController extends BasicController implements ITaskController {
 	private boolean statusInProgress = true;
 	private boolean statusFinished = false;
 	private boolean statusDeleted = false;
+	private boolean processTask = false;
 
 	private User loggedUser;
 
@@ -335,6 +338,7 @@ public class TaskController extends BasicController implements ITaskController {
 		setUsers(null);
 		setDossiers(null);
 		setActivities(null);
+		setProcessTask(false);
 		super.onEditSearch(event);
 	}
 
@@ -980,6 +984,9 @@ public class TaskController extends BasicController implements ITaskController {
 				}
 				getCriteria().addExpression(expToAdd);
 			}
+			if (isProcessTask()) {
+				getCriteria().addEqualExpression( SOURCE_ALIAS, TaskSource.PROCESS );
+			}
 			addOrder();
 		} catch (ManagerBeanException e) {
 			String msg = "Error adding custom expression" + e.getMessage();
@@ -1140,6 +1147,14 @@ public class TaskController extends BasicController implements ITaskController {
 
 	public void setStatusDeleted(boolean statusDeleted) {
 		this.statusDeleted = statusDeleted;
+	}
+
+	public boolean isProcessTask() {
+		return processTask;
+	}
+
+	public void setProcessTask(boolean processTask) {
+		this.processTask = processTask;
 	}
 
 	// -------------------------------------------------
