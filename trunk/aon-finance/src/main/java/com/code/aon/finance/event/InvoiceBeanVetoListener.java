@@ -1,5 +1,6 @@
 package com.code.aon.finance.event;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +39,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
+		checkInvoice(invoice);
 		if (invoice.getType() == InvoiceType.SALES) {
 	    	String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
 			if (!StringUtils.isEmpty(invoice.getSeries())) {
@@ -76,6 +78,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
+		checkInvoice(invoice);
 		if (InvoiceType.SALES == invoice.getType()) {
 			invoice.setTaxDate(invoice.getIssueDate());
 		}
@@ -100,6 +103,14 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+	}
+
+	private void checkInvoice(Invoice invoice) throws ManagerBeanVetoListenerException {
+		int thisYear = CommonUtil.getYear(new Date());
+		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
+		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
+			throw new ManagerBeanVetoListenerException("La fecha de la factura no esta dentro del rango válido");
 		}
 	}
 
