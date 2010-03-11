@@ -21,6 +21,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -68,8 +69,14 @@ public class CampaignTaskManager {
 					.getDateReference(), processDetail.getDays()));
 			task.setStatus(TaskStatus.PENDING);
 			task.setPercent(0);
-			task.setWorkGroup(processDetail.getWorkgroup() != null ? processDetail.getWorkgroup()
-					: activity.getWorkgroup());
+			WorkGroup wg = processDetail.getWorkgroup(); 
+			if (wg == null && activity != null) {
+				wg = activity.getWorkgroup();
+			}
+			if (wg == null) {
+				wg = campaignDossier.getCampaign().getWorkGroup(); 
+			}
+			task.setWorkGroup(wg);
 			task.setSource(TaskSource.PROCESS);
 			task.setDossier(campaignDossier.getDossier());
 			task.setActivity(activity);
