@@ -48,6 +48,9 @@ else
         aondir-addprofile Invitado $APP Guest User &>/dev/null
         aondir-addprofile Operador $APP User &>/dev/null
 
+        aondir-chprofile $APP AonAdmin Administrador
+        aondir-chprofile $APP AonUsuario Invitado
+
 fi
 
 
