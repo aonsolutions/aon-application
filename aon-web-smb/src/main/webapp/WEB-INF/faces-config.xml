@@ -10,6 +10,7 @@
 			<supported-locale>en</supported-locale>
 		</locale-config>
 		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
+		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
 		<resource-bundle>
 			<base-name>com.code.aon.ui.smb.i18n.messages</base-name>
 			<var>appBundle</var>
@@ -26,10 +27,10 @@
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
 			<value>aon-desktop</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/4.4.0</value>
+			<value>/aonResource/5.0.0</value>
 		</managed-property>		
 	</managed-bean>
 
