@@ -98,6 +98,7 @@ UPDATE delivery SET status = 1 WHERE status = 2; \
 UPDATE income SET status = 1 WHERE status = 2; \
 UPDATE income SET workplace = (SELECT MIN(id) FROM workplace) WHERE workplace is NULL;\
 UPDATE delivery SET workplace = (SELECT MIN(id) FROM workplace) WHERE workplace is NULL;\
+UPDATE finance SET registry = (SELECT registry FROM invoice WHERE invoice.id = finance.invoice) WHERE registry <> (SELECT registry FROM invoice WHERE invoice.id = finance.invoice);\
 COMMIT;';
 	[[ $? -eq 0 ]] && echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR\\033[0;39m";
 	fi  
