@@ -2,84 +2,88 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:form id="chooseForm">
 		<aon:div id="chooseContainer">
-			<rich:modalPanel id="choosePanel" top="100" left="100"
-				rendered="#{task.finishPanelVisible}" showWhenRendered="true"
-				minHeight="100" minWidth="100" height="300" width="600"
-				zindex="1000">
-				<f:facet name="header">
-					<aon:div styleClass="aon-popupWindow-title">
-						<h:outputText value="#{projectBundle.task_finish}" />
-					</aon:div>
-				</f:facet>
-				<f:facet name="controls">
-					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-						reRender="chooseContainer" immediate="true">
-						<f:setPropertyActionListener value="#{false}"
-							target="#{task.finishPanelVisible}" />
-					</aon:commandButton>
-				</f:facet>
-				<aon:div styleClass="aon-scroll-area" style="width: 90%;">
-					<aon:div styleClass="aon-finding-title-toolbar">
-						<aon:panelGrid columns="1" dir="true"
-							columnClasses="aon-finding-toolbar">
+			<c:if test="#{task.finishPanelVisible}">
+				<rich:modalPanel id="choosePanel" top="100" left="100"
+					showWhenRendered="true" minHeight="100" minWidth="100" height="300"
+					width="600" zindex="1000">
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<h:outputText value="#{projectBundle.task_finish}" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close" reRender="chooseContainer"
+							immediate="true">
+							<f:setPropertyActionListener value="#{false}"
+								target="#{task.finishPanelVisible}" />
+						</aon:commandButton>
+					</f:facet>
+					<aon:div styleClass="aon-scroll-area" style="width: 90%;">
+						<aon:div styleClass="aon-finding-title-toolbar">
+							<aon:panelGrid columns="1" dir="true"
+								columnClasses="aon-finding-toolbar">
 
-							<aon:div styleClass="aon-finding-toolbar-item-group">
-								<h:commandLink value="#{projectBundle.task_finish}"
-									styleClass="aon-finding-toolbar-item aon-icon-accept"
-									actionListener="#{task.onFinishTransitionTask}"
-									action="task_list" />
-							</aon:div>
-						</aon:panelGrid>
-					</aon:div>
-
-					<aon:selectBooleanCheckbox id="transitionCorrect"
-						value="#{task.transitionCorrect}">
-						<a4j:support event="onclick"
-							reRender="import,transitionsTableContainer" ajaxSingle="true" />
-					</aon:selectBooleanCheckbox>
-					<aon:outputLabel for="transitionCorrect"
-						value="#{projectBundle.aon_correct} #{task.transitionSelected}" />
-
-					<aon:div id="transitionsTableContainer" style="margin-top: 10px;">
-						<aon:dataTable id="transitionsTable"
-							rendered="#{!task.transitionCorrect}"
-							value="#{task.transitionModel}" var="pdt">
-							<aon:rowSelector reRender="import,transitionsTableContainer"
-								actionListener="#{task.selectTransition}" />
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<aon:div
-									styleClass="#{pdt == task.transitionSelected?'aon-icon-checked':'aon-icon-check'}">
-									<aon:outputText value="&#160;" />
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<h:commandLink value="#{projectBundle.task_finish}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										actionListener="#{task.onFinishTransitionTask}"
+										action="task_list" />
 								</aon:div>
-							</aon:column>
+							</aon:panelGrid>
+						</aon:div>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_transition_type}" />
-								</f:facet>
-								<aon:outputText value="#{pdt.processTransitionType.description}" />
-							</aon:column>
+						<aon:selectBooleanCheckbox id="transitionCorrect"
+							value="#{task.transitionCorrect}">
+							<a4j:support event="onclick"
+								reRender="import,transitionsTableContainer" ajaxSingle="true" />
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="transitionCorrect"
+							value="#{projectBundle.aon_correct} #{task.transitionSelected}" />
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_next_process}" />
-								</f:facet>
-								<aon:outputText value="#{pdt.nextProcessDetail.description}" />
-							</aon:column>
-						</aon:dataTable>
+						<aon:div id="transitionsTableContainer" style="margin-top: 10px;">
+							<aon:dataTable id="transitionsTable"
+								rendered="#{!task.transitionCorrect}"
+								value="#{task.transitionModel}" var="pdt">
+								<aon:rowSelector reRender="import,transitionsTableContainer"
+									actionListener="#{task.selectTransition}" />
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:div
+										styleClass="#{pdt == task.transitionSelected?'aon-icon-checked':'aon-icon-check'}">
+										<aon:outputText value="&#160;" />
+									</aon:div>
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_transition_type}" />
+									</f:facet>
+									<aon:outputText
+										value="#{pdt.processTransitionType.description}" />
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_next_process}" />
+									</f:facet>
+									<aon:outputText value="#{pdt.nextProcessDetail.description}" />
+								</aon:column>
+							</aon:dataTable>
+						</aon:div>
 					</aon:div>
-				</aon:div>
-			</rich:modalPanel>
+				</rich:modalPanel>
+			</c:if>
 		</aon:div>
 	</aon:form>
 </ui:composition>

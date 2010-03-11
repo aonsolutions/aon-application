@@ -167,6 +167,7 @@
 						value="#{projectBundle.dossier_dossier}" />
 					<aon:selectOneMenu id="Task_dossier"
 						value="#{task.to.dossier}" ajaxSingle="true"
+						required="true"
 						valueChangeListener="#{task.dossierChange}"
 						rendered="#{task.monitor or task.new}"
 						reRender="customerIdContainer,Task_activity,Task_dossier">
