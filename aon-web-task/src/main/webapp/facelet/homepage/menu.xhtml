@@ -48,7 +48,9 @@
 					<aon:menuSeparator />
 					<rich:menuItem value="#{appBundle.aon_process_monitor}"
 						icon="/css/images/icons/aon-process-monitor.gif"
-						action="campaign_list" rendered="#{aonRole.taskMonitor}" />
+						actionListener="#{campaign.onEditSearch}"
+						action="campaign_search" 
+						rendered="#{aonRole.taskMonitor}" />
 				</aon:dropDownMenu>
 
 				<aon:dropDownMenu id="timeManagement"
