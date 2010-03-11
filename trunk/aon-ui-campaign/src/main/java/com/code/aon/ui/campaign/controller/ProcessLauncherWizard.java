@@ -521,7 +521,7 @@ public class ProcessLauncherWizard implements Serializable {
 							pd.getDays());
 					task.setDueDate(dueDate);
 					task.setPercent(0);
-					task.setPriority(Priority.NORMAL);
+					task.setPriority( pd.getPriority()==null?Priority.NORMAL:pd.getPriority());
 					task.setRepeatPeriod(TaskPeriod.NONE);
 					task.setSource(TaskSource.PROCESS);
 					task.setStartDate(new Date());
