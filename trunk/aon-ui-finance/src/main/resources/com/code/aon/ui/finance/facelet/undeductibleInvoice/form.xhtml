@@ -114,14 +114,14 @@
 						<a4j:region>
 							<aon:lookupInputText id="Creditor_id"
 								value="#{undeductibleInvoice.to.registry.id}"
-								disabled="#{undeductibleInvoice.readOnly}" size="5"
+								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
 								reRender="Creditor_full_name,Creditor_registry_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{financeBundle.finance_creditor_selection}"
-								disabled="#{undeductibleInvoice.readOnly}" minHeight="460" minWidth="650" 
+								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{undeductibleInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
 								selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document,InvoiceAddress"
@@ -129,7 +129,7 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{financeBundle.finance_creditor_new}"
-								disabled="#{undeductibleInvoice.readOnly}" minWidth="650" minHeight="600"
+								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" minWidth="650" minHeight="600"
 								property="#{undeductibleInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
 								selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document,InvoiceAddress"
