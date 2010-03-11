@@ -1,12 +1,11 @@
 package com.code.aon.ui.accounting.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -15,6 +14,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.richfaces.model.Ordering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +50,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.accounting.IAccountingMessages;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.SortOrderMap;
 import com.code.aon.ui.util.AonUtil;
 
 public class FinanceEntryController implements ISpecialAccountEntry{
@@ -72,11 +73,16 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private String concept;
 	private DataModel lines;
 	private DataModel finances;
-	private ArrayList<Finance> lineChecks = new ArrayList<Finance>();
-	private ArrayList<Finance> financeChecks = new ArrayList<Finance>();
+	private List<Finance> lineChecks;
+	private List<Finance> financeChecks;
 	private String onGenerateKey;
+	private SortOrderMap order;
 
-		
+	public FinanceEntryController() {
+		this.lineChecks = new ArrayList<Finance>();
+		this.financeChecks = new ArrayList<Finance>();
+	}
+
 	private AccountBridgeUtil getAccountBridgeUtil() {
 		if (accountBridgeUtil == null) {
 			accountBridgeUtil = new AccountBridgeUtil();
@@ -212,6 +218,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		setFinances(new ListDataModel(new LinkedList<Finance>()));
 	}
 
+	private void resetOrder(){
+		this.order = new SortOrderMap();
+		this.order.put(IFinanceAlias.FINANCE_DUE_DATE, Ordering.ASCENDING);
+		this.order.put(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE, Ordering.ASCENDING);
+	}
+	
 	private void initializeHeader() throws ManagerBeanException {
 		payment = null;
 		concept = null;
@@ -264,8 +276,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
                 criteria.addExpression(obtainExistingLinesIds(financeBean));
             }
             criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-            criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
-            criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
+            criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
+            resetOrder();
             this.finances = new ListDataModel(financeBean.getList(criteria));
         } catch (ManagerBeanException e) {
             LOGGER.error("Error loading Finance model", e);
@@ -285,27 +297,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	}
 
 	@SuppressWarnings("unchecked")
-	private List orderFinanceList(List financeList) {
-		class FinanceComparator implements Comparator {
-			public int compare(Object o1, Object o2) {
-				if (o1 instanceof Finance && o2 instanceof Finance) {
-					Finance finance1 = (Finance)o1;
-					Date date1 = finance1.getDueDate();
-					String referenceCode1 = finance1.getInvoice().getReferenceCode();
-					Finance finance2 = (Finance)o2;
-					Date date2 = finance2.getDueDate();
-					String referenceCode2 = finance2.getInvoice().getReferenceCode();
-					return (date1.compareTo(date2) == 0) ? referenceCode1.compareTo(referenceCode2) : date1.compareTo(date2);
-				}
-				return 0;
-			}
-		}
-
-		Collections.sort(financeList, new FinanceComparator());
-		return financeList;
-	}
-
-	@SuppressWarnings("unchecked")
 	public void onAddSelected(ActionEvent event) {
         Iterator iterator = getCheckedFinances().iterator();
         while (iterator.hasNext()) {
@@ -313,8 +304,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			((List)lines.getWrappedData()).add(finance);
 			((List)finances.getWrappedData()).remove(finance);
         }
-        orderFinanceList((List)lines.getWrappedData());
-
         clearCheckedLines();
         clearCheckedFinances();
 	}
@@ -327,8 +316,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			((List)lines.getWrappedData()).remove(finance);
 			((List)finances.getWrappedData()).add(finance);
         }
-        orderFinanceList((List)finances.getWrappedData());
-
         clearCheckedLines();
         clearCheckedFinances();
 	}
@@ -577,7 +564,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		}
 	}
 	
-	public ArrayList<Finance> getCheckedFinances() {
+	public List<Finance> getCheckedFinances() {
 		return financeChecks;
 	}
 	
@@ -629,7 +616,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		}
 	}
 	
-	public ArrayList<Finance> getCheckedLines() {
+	public List<Finance> getCheckedLines() {
 		return lineChecks;
 	}
 	
@@ -711,6 +698,10 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	public String generate() {
 		return onGenerateKey;
+	}
+
+	public Map<String, Ordering> getOrder() {
+		return order;
 	}
 	
 }
