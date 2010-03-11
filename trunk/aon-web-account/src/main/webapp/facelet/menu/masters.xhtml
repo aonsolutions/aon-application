@@ -18,10 +18,11 @@
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">
 		
-					<aon:panelGrid columns="1" styleClass="aon-panelGrid-formatting"
-						columnClasses="aon-portlets-column aon-width-400">
-	
-						<aon:panel headerClass="aon-panel-title">
+					<aon:panelGrid columns="1" styleClass="aon-width-all"
+						columnClasses="aon-vertical-align-top aon-width-300">
+
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-sales aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.account_masters}"/>
 							</f:facet>
@@ -78,22 +79,7 @@
 										value="#{accountingBundle.accounting_loan_module}"  />
 								</aon:div>
 							</aon:div>
-						</aon:panel>
-
-						<c:if test="#{aonRole.admin}">								
-							<aon:panel headerClass="aon-panel-title">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_configuration}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="actionDenied" 
-												action="actionDenied" actionListener="#{actionDenied.onInit}"
-												value="#{auditBundle.audit_option_denied_module}" />
-										</aon:div>
-								</aon:div>
-							</aon:panel>
-						</c:if>
+						</h:panelGrid>
 					</aon:panelGrid>
 				</aon:componentGroup>
 			</aon:div>
