@@ -115,13 +115,13 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{registryLookupListener}</value>
+				<value>#{registryFormListener}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>registryLookupListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
+		<managed-bean-name>registryFormListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
