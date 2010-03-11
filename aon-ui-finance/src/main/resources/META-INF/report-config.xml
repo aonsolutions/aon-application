@@ -425,7 +425,7 @@
 		<!--  *********  Modelo 347 ********* -->
 	<report id="model347List" description="Model 347List">
 		<template path="/com/code/aon/ui/finance/report/model347.jasper"/>
-		<collection provider="#{model347Report.summary}" />
+		<collection provider="#{model347Report.summaryActive}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="totalA" value="#{model347Report.getTotalKeyA}" />
