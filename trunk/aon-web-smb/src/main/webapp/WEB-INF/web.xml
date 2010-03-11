@@ -245,6 +245,20 @@
            com.code.aon.ui.common.listener.BeanRegisterContextListener
        </listener-class>
     </listener>
+    
+	<!-- Audit Filter -->
+	<filter>
+		<filter-name>AuditFilter</filter-name>
+		<filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuditFilter</filter-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</filter-mapping>
+	<!-- Listener, that enables Audit Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
+	</listener>    
 
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
