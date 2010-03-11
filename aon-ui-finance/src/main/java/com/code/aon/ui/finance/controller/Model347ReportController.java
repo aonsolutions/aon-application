@@ -47,7 +47,25 @@ public class Model347ReportController implements ICollectionProvider, IFinanceMe
 	private Double totalKeyA;
 	private Double totalKeyB;
 	private FileOutput fileOutput;
-
+	private List<Model347> summaryActive;
+	
+	
+	public List<Model347> getSummaryActive() {
+		setSummaryActive(null);
+		if (summaryActive == null) {
+			summaryActive = new LinkedList<Model347>();
+			for (Model347 mod:summary) {
+				if (!mod.isDisabled()){
+					summaryActive.add(mod);
+				}
+			}
+		}
+		return summaryActive;
+	}
+	public void setSummaryActive(List<Model347> summaryActive) {
+		this.summaryActive = summaryActive;
+	}
+	
 	public List<Model347> getSummary() {
 		return summary;
 	}
