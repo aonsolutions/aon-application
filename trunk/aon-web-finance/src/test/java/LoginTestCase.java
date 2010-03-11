@@ -8,7 +8,6 @@ public class LoginTestCase extends SeleneseTestCase {
 	}
 
 	public void testProductsTestCase() throws Exception {
-		selenium.setSpeed("1000");
 		selenium.open("/aon-finance/");
 		selenium.type("j_username_view", "aon-user");
 		selenium.type("j_password", "GGhh%123");
