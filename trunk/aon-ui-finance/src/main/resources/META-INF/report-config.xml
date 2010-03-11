@@ -422,4 +422,20 @@
 		</params>
 	</report>
 	
+		<!--  *********  Modelo 347 ********* -->
+	<report id="model347List" description="Model 347List">
+		<template path="/com/code/aon/ui/finance/report/model347.jasper"/>
+		<collection provider="#{model347Report.summary}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="totalA" value="#{model347Report.getTotalKeyA}" />
+			<param id="totalB" value="#{model347Report.getTotalKeyB}" />
+			<param id="format" value="#{model347Report.getFormat}" />
+			<param id="params" value="#{model347Report.getParams}" />
+			<param id="year" value="#{model347Report.getYear}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	
 </report-config>
