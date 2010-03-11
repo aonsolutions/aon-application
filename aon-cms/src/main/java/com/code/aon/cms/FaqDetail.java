@@ -6,14 +6,24 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "faq_i18n")
 public class FaqDetail implements ITransferObject {
+
+	private static final long serialVersionUID = -943382832412062818L;
 
 	private Integer id;
 
@@ -65,6 +75,8 @@ public class FaqDetail implements ITransferObject {
 		this.question = question;
 	}
 
+	@Lob
+	@Type(type="stringClob")   
 	@Column(name = "answer", nullable = false)
 	public String getAnswer() {
 		return answer;
@@ -74,4 +86,43 @@ public class FaqDetail implements ITransferObject {
 		this.answer = answer;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final FaqDetail o = (FaqDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.answer, o.answer)
+				.append(this.faq, o.faq)
+				.append(this.language, o.language)
+				.append(this.question, o.question)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(answer)
+			.append(faq)
+			.append(id)	
+			.append(language)
+			.append(question)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("answer", StringUtils.abbreviate(answer, 32)).
+			append("faq", faq.getId()).
+			append("id", id).
+			append("language", language.getId()).
+			append("question", question).
+			toString();
+	}	
+	
 }
