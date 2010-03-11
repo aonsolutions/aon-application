@@ -607,7 +607,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * @return the child bean
 	 */
 	public String getChildBean() {
-		return COMPANY_ADDRESS_CONTROLLER_NAME;
+		return ICompanyConstants.COMPANY_ADDRESS_CONTROLLER_NAME;
 	}
 
 	/**
@@ -619,11 +619,11 @@ public class CompanyParentController extends BasicController implements ICompany
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
-	private void setHideHeaderContent( boolean value ) {
+	public void setHideHeaderContent( boolean value ) {
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		cc.getProperties().put( ICommonConstants.HIDE_HEADER_LINKS, value );
 		cc.getProperties().put( ICommonConstants.HIDE_MENU_BAR, value );
-		cc.getBean().get(ICompanyConstants.COMPANY_CONTROLLER_NAME).put("showPanelTabSet", !value);
+		cc.getBean().get(ICompanyConstants.COMPANY_CONTROLLER_NAME).put(ICompanyConstants.SHOW_PANEL_TAB_SET, !value);
 	}
 
 	public boolean isHideHeaderContent() {
@@ -633,9 +633,6 @@ public class CompanyParentController extends BasicController implements ICompany
 		setHideHeaderContent(isNew());
 		return isNew();
 	}	
-	
-	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
-	public static final String COMPANY_ADDRESS_CONTROLLER_NAME = "companyAddress";
 
 	public boolean obtainPrintHeader() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_HEADER_PARAM);

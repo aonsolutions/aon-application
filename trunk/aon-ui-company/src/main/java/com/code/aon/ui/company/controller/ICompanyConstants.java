@@ -45,5 +45,10 @@ public interface ICompanyConstants {
 	String COMPANY_RPAY_METHOD_CONTROLLER_NAME = "companyRPayMethod";
 	
 	String COMPANY_IMAGES_CONTROLLER_NAME = "companyImages";	
+
+	// ************************************************************
+	// CONFIGURATION
+	// ************************************************************
+	String SHOW_PANEL_TAB_SET = "showPanelTabSet";
 	
 }
