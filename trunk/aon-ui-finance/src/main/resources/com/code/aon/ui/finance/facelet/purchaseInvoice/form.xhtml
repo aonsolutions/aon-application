@@ -63,8 +63,8 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 							reRender="showNewMessageWindow">
 						</aon:commandButton>						
-						<h:commandLink id="purchaseInvoice" value="#{financeBundle.finance_invoice}"
-							target="_new" rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
+						<h:commandLink id="purchaseInvoice" value="#{financeBundle.finance_invoice}" target="_new" 
+							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null and !purchaseInvoice.accountSource}"
 							action="#{purchaseInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
@@ -143,14 +143,14 @@
 						<a4j:region>
 							<aon:lookupInputText id="Supplier_id"
 								value="#{purchaseInvoice.to.registry.id}"
-								disabled="#{purchaseInvoice.readOnly}" size="5"
+								disabled="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{supplierLookup}"
 								lookupChangeListener="#{purchaseInvoice.supplierData}"
 								reRender="Supplier_full_name,Supplier_registry_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{supplierBundle.supplier_selection}"
-								disabled="#{purchaseInvoice.readOnly}" minHeight="460" minWidth="650" 
+								disabled="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{purchaseInvoice.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 								lookupChangeListener="#{purchaseInvoice.supplierData}"
 								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,InvoiceAddress"
@@ -158,7 +158,7 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{supplierBundle.supplier_new}"
-								disabled="#{purchaseInvoice.readOnly}" minWidth="650" minHeight="600"
+								disabled="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" minWidth="650" minHeight="600"
 								property="#{purchaseInvoice.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 								lookupChangeListener="#{purchaseInvoice.supplierData}"
 								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,InvoiceAddress"

@@ -63,8 +63,8 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 							reRender="showNewMessageWindow">
 						</aon:commandButton>						
-						<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}"
-							target="_new" rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+						<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}" target="_new" 
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.accountSource}"
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
@@ -152,14 +152,14 @@
 						<a4j:region>
 							<aon:lookupInputText id="Customer_id"
 								value="#{saleInvoice.to.registry.id}"
-								disabled="#{saleInvoice.readOnly}" size="5"
+								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
 								reRender="Customer_full_name,Customer_registry_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
-								disabled="#{saleInvoice.readOnly}" minHeight="460" minWidth="650" 
+								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
@@ -167,7 +167,7 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{customerBundle.customer_new}"
-								disabled="#{saleInvoice.readOnly}" minWidth="650" minHeight="600"
+								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" minWidth="650" minHeight="600"
 								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
