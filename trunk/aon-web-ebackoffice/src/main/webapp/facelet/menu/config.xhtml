@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="productMenu">
+		
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">
+					
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+	
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-config aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_config}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="company" 
+										action="company" actionListener="#{company.onLoad}"
+										value="#{companyBundle.company_data_module}" />
+								</aon:div>
+
+								<aon:div rendered="#{ecconfig.ecParam}"
+									styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="paymethod" action="pmethod_list"
+										actionListener="#{company.onLoad}"
+										value="#{ebackofficeBundle.aon_ebackoffice_paymethod}">
+										<aon:actionListener method="#{pmethod.onEditSearch}" />
+										<aon:actionListener method="#{pmethod.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								
+								<aon:div rendered="#{ecconfig.ecParam}" styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="series" 
+										action="series"  value="#{configBundle.config_series_module}"
+										 />
+								</aon:div>
+
+								<aon:div rendered="#{ecconfig.ecParam}"
+									styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="ecconfig" action="ecconfig_form"
+										value="#{ebackofficeBundle.aon_ebackoffice_design}">
+										<aon:actionListener method="#{ecconfig.onEditSearch}" />
+										<aon:actionListener method="#{ecconfig.onSearch}" />
+										<aon:actionListener method="#{ecconfig.onSelectFirst}" />
+										<aon:actionListener method="#{eccatalogue.onEditSearch}" />
+										<aon:actionListener method="#{eccatalogue.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>
+				</h:panelGrid>
+				</aon:componentGroup>
+				
+			</aon:div>
+				
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
