@@ -418,10 +418,10 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				return (DeliveryDetail)deliveryDetailBean.get(getSourceId());
 			}
-			if (InvoiceSource.DIRECT_PURCHASE == getSource() || InvoiceSource.INCOME == getSource()) {
+			/*if (InvoiceSource.DIRECT_PURCHASE == getSource() || InvoiceSource.INCOME == getSource()) {
 				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 				return (IncomeDetail)incomeDetailBean.get(getSourceId());
-			}
+			}*/
 		}
 		return null;
 	}
