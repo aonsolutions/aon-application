@@ -22,6 +22,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.account.bridge</artifactId>
+			<version>${aon-version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
 			<version>${aon-version}</version>
 			<scope>compile</scope>
