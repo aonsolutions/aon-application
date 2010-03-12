@@ -14,7 +14,7 @@
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
-		<dbVersion>4.9.1</dbVersion>
+		<dbVersion>5.0.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-consultant</finalName>
