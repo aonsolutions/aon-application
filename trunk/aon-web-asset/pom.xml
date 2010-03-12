@@ -17,7 +17,7 @@
 		<finalName>aon-asset</finalName>
 	</build>
 	<properties>
-		<dbVersion>4.8.1</dbVersion>
+		<dbVersion>5.0.0</dbVersion>
 	</properties>
 	<dependencies>
 
