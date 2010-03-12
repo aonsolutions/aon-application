@@ -502,7 +502,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.marketing.Action</value>
+			<value>com.code.aon.marketing.MarketingAction</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -564,7 +564,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.marketing.Action</value>
+			<value>com.code.aon.marketing.MarketingAction</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultExpressions</property-name>
