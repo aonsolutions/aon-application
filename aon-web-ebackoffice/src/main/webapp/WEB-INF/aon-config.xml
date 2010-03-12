@@ -15,6 +15,7 @@
 			showAccount="false"
 			showAttachment="true"
 			showEcommerceData="true"
+			showHistory="false"
 		/>
 		<product:productCategory
 			showCategoryGroup="true"
