@@ -16,7 +16,7 @@
 	<version>${aon-version}</version>
 	<description>AON WEB COMMERCIAL</description>
 	<properties>
-		<dbVersion>4.8.1</dbVersion>
+		<dbVersion>5.0.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-commercial</finalName>
@@ -51,21 +51,13 @@
 			<artifactId>aon.ui.resources</artifactId>
 			<version>${aon-version}</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>velocity</artifactId>
-					<groupId>velocity</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>velocity-tools</artifactId>
-					<groupId>velocity-tools</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jmimemagic</artifactId>
-					<groupId>jmimemagic</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.audit</artifactId>
+			<version>${aon-version}</version>
+			<scope>compile</scope>
+		</dependency>				
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
