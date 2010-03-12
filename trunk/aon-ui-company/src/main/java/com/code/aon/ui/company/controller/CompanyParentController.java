@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -623,7 +624,10 @@ public class CompanyParentController extends BasicController implements ICompany
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		cc.getProperties().put( ICommonConstants.HIDE_HEADER_LINKS, value );
 		cc.getProperties().put( ICommonConstants.HIDE_MENU_BAR, value );
-		cc.getBean().get(ICompanyConstants.COMPANY_CONTROLLER_NAME).put(ICompanyConstants.SHOW_PANEL_TAB_SET, !value);
+		Map<String,Object> map = cc.getBean().get(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		if ( map != null ) {
+			map.put(ICompanyConstants.SHOW_PANEL_TAB_SET, !value);	
+		}
 	}
 
 	public boolean isHideHeaderContent() {
