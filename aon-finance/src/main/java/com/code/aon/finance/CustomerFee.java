@@ -42,253 +42,33 @@ import com.code.aon.product.util.DiscountExpression;
 @Table(name="customer_fee")
 public class CustomerFee implements ITransferObject, ICalculable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 113912434021805866L;
 
-	/** The id. */
     private Integer id;
-
-    /** The Customer. */
     private Customer customer;
-
-    /** The Item. */
+    private int line;
     private Item item;
-
-    /** The Description. */
     private String description;
-
-    /** The Quantity. */
     private double quantity;
-
-    /** The Price of the item. */
     private double price;
-
-    /** Aritmethical expression representing the discounts to be applied. */
     private DiscountExpression discountExpression;
-
-    /** The Initial date. */
     private Date initialDate;
-
-    /** The Final date. */
     private Date finalDate;
-
-    /** The Billing date. */
     private Date billingDate;
-
-    /** The Billing period. */
     private BillingPeriod period;
-    
-    /** The Security level. */
     private SecurityLevel securityLevel;
-    
     private WorkPlace workPlace;
     
-    /**
-     * Gets the id.
-     * 
-     * @return Returns the id
-     */
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
     public Integer getId() {
         return id;
     }
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id The id
-	 */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets the billing date.
-     * 
-     * @return the billing date
-     */
-	@Column(name="billing_date")
-	@Temporal(TemporalType.DATE)
-    public Date getBillingDate() {
-        return billingDate;
-    }
-
-    /**
-     * Sets the billing date.
-     * 
-     * @param billingDate the billing date
-     */
-    public void setBillingDate(Date billingDate) {
-        this.billingDate = billingDate;
-    }
-
-    /**
-     * Gets the description.
-     * 
-     * @return the description
-     */
-    @Column(length=64)
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     * 
-     * @param description the description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-	/**
-	 * Gets the discount expression.
-	 * 
-	 * @return the discount expression
-	 */
-	@Column(name="discount_expr", length = 32)
-	@Type(type="com.code.aon.product.util.DiscountExpressionUserType")
-    public DiscountExpression getDiscountExpression() {
-        return discountExpression;
-    }
-
-    /**
-     * Sets the discount expression.
-     * 
-     * @param discountExpression the discount expression
-     */
-    public void setDiscountExpression(DiscountExpression discountExpression) {
-        this.discountExpression = discountExpression;
-    }
-
-    /**
-     * Gets the final date.
-     * 
-     * @return the final date
-     */
-    @Column(name="final_date")
-    @Temporal(TemporalType.DATE)
-    public Date getFinalDate() {
-        return finalDate;
-    }
-
-    /**
-     * Sets the final date.
-     * 
-     * @param finalDate the final date
-     */
-    public void setFinalDate(Date finalDate) {
-        this.finalDate = finalDate;
-    }
-
-    /**
-     * Gets the initial date.
-     * 
-     * @return the initial date
-     */
-    @Column(name="initial_date")
-    @Temporal(TemporalType.DATE)
-    public Date getInitialDate() {
-        return initialDate;
-    }
-
-    /**
-     * Sets the initial date.
-     * 
-     * @param initialDate the initial date
-     */
-    public void setInitialDate(Date initialDate) {
-        this.initialDate = initialDate;
-    }
-
-	/**
-	 * Gets the item.
-	 * 
-	 * @return the item
-	 */
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="item" )
-	@ForeignKey(name="FK_CUSTOMER_FEE_ITEM")
-	@Index(name="IDX_CUSTOMER_FEE_ITEM")	
-    public Item getItem() {
-        return item;
-    }
-
-    /**
-     * Sets the item.
-     * 
-     * @param item the item
-     */
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-	/**
-	 * Gets the period.
-	 * 
-	 * @return the period
-	 */
-	@Column(nullable=true)
-    public BillingPeriod getPeriod() {
-        return period;
-    }
-
-    /**
-     * Sets the period.
-     * 
-     * @param period the period
-     */
-    public void setPeriod(BillingPeriod period) {
-        this.period = period;
-    }
-
-    /**
-     * Gets the price.
-     * 
-     * @return the price
-     */
-    @Column(precision=15, scale=3)
-    public double getPrice() {
-        return price;
-    }
-
-    /**
-     * Sets the price.
-     * 
-     * @param price the price
-     */
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    /**
-     * Gets the quantity.
-     * 
-     * @return the quantity
-     */
-    @Column(precision=15, scale=3)    
-    public double getQuantity() {
-        return quantity;
-    }
-
-    /**
-     * Sets the quantity.
-     * 
-     * @param quantity the quantity
-     */
-    public void setQuantity(double quantity) {
-        this.quantity = quantity;
-    }
-
-	/**
-	 * Gets the customer.
-	 * 
-	 * @return the customer
-	 */
 	@ManyToOne
 	@JoinColumn( name="customer", nullable = true, updatable = false )
 	@ForeignKey(name="FK_CUSTOMER_FEE_CUSTOMER")
@@ -296,31 +76,101 @@ public class CustomerFee implements ITransferObject, ICalculable {
     public Customer getCustomer() {
         return customer;
     }
-
-    /**
-     * Sets the customer.
-     * 
-     * @param customer the customer
-     */
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
     
-	/**
-	 * Gets the security level.
-	 * 
-	 * @return the security level
-	 */
+    @Column(nullable=true)
+    public int getLine() {
+        return line;
+    }
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn( name="item" )
+	@ForeignKey(name="FK_CUSTOMER_FEE_ITEM")
+	@Index(name="IDX_CUSTOMER_FEE_ITEM")	
+    public Item getItem() {
+        return item;
+    }
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    @Column(length=1024)
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Column(precision=15, scale=3)    
+    public double getQuantity() {
+        return quantity;
+    }
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
+    @Column(precision=15, scale=3)
+    public double getPrice() {
+        return price;
+    }
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+	@Column(name="discount_expr", length = 32)
+	@Type(type="com.code.aon.product.util.DiscountExpressionUserType")
+    public DiscountExpression getDiscountExpression() {
+        return discountExpression;
+    }
+    public void setDiscountExpression(DiscountExpression discountExpression) {
+        this.discountExpression = discountExpression;
+    }
+
+    @Column(name="initial_date")
+    @Temporal(TemporalType.DATE)
+    public Date getInitialDate() {
+        return initialDate;
+    }
+    public void setInitialDate(Date initialDate) {
+        this.initialDate = initialDate;
+    }
+
+    @Column(name="final_date")
+    @Temporal(TemporalType.DATE)
+    public Date getFinalDate() {
+        return finalDate;
+    }
+    public void setFinalDate(Date finalDate) {
+        this.finalDate = finalDate;
+    }
+
+    @Column(name="billing_date")
+	@Temporal(TemporalType.DATE)
+    public Date getBillingDate() {
+        return billingDate;
+    }
+    public void setBillingDate(Date billingDate) {
+        this.billingDate = billingDate;
+    }
+
+	@Column(nullable=true)
+    public BillingPeriod getPeriod() {
+        return period;
+    }
+    public void setPeriod(BillingPeriod period) {
+        this.period = period;
+    }
+
 	@Column(name = "security_level")
     public SecurityLevel getSecurityLevel() {
         return securityLevel;
     }
-
-    /**
-     * Sets the security level.
-     * 
-     * @param securityLevel the security level
-     */
     public void setSecurityLevel(SecurityLevel securityLevel) {
         this.securityLevel = securityLevel;
     }
@@ -332,16 +182,11 @@ public class CustomerFee implements ITransferObject, ICalculable {
     public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
-
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
 	}
 
-	/**
-     * Gets the billing date month.
-     * 
-     * @return the billing date month
-     */
+
     @Transient
 	public Month getBillingDateMonth() {
     	if(billingDate != null){
@@ -352,11 +197,6 @@ public class CustomerFee implements ITransferObject, ICalculable {
     	return Month.JANUARY;
 	}
 
-	/**
-	 * Sets the billing date month.
-	 * 
-	 * @param billingdateMonth the billing date month
-	 */
 	@Transient
 	public void setBillingDateMonth(Month month) {
 		Calendar calendar = new GregorianCalendar();
@@ -364,27 +204,17 @@ public class CustomerFee implements ITransferObject, ICalculable {
 		setBillingDate(calendar.getTime());
 	}
 
-	/**
-	 * Gets the billing date year.
-	 * 
-	 * @return the billing date year
-	 */
 	@Transient
 	public int getBillingDateYear() {
 		Calendar calendar = new GregorianCalendar();
-		if(billingDate != null){
+		if (billingDate != null) {
 	    	calendar.setTime(billingDate);
-		}else{
+		} else {
 			calendar.setTime(new Date());
 		}
 		return calendar.get(Calendar.YEAR);
 	}
 
-	/**
-	 * Sets the billing date year.
-	 * 
-	 * @param billingdateYear the billing date year
-	 */
 	@Transient
 	public void setBillingDateYear(int billingDateYear) {
 		Calendar calendar = new GregorianCalendar();
