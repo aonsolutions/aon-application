@@ -12,6 +12,7 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.payroll.core</artifactId>
 	<version>${aon-version}</version>
+        <name>AON PAYROLL CORE</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -33,3 +34,4 @@
 		</dependency>
 </dependencies>
 </project>
+
