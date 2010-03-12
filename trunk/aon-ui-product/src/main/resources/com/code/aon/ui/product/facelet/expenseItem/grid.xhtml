@@ -121,7 +121,7 @@
 									<f:facet name="header">
 										<aon:outputLabel for="ExpenseItem_purchaseAccount" value="#{productBundle.product_expense_account}" />
 									</f:facet>
-									<aon:outputText value="#{to.product.purchaseAccount}"
+									<aon:outputText value="#{expenseItem.account}"
 										rendered="#{formList}" />
 									<ui:include
 										src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
