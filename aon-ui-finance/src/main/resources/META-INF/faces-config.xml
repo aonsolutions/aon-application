@@ -109,6 +109,10 @@
 			<value>fbatch</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FinanceBatchDetail_finance_dueDate </value>
+		</managed-property>	
+		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
