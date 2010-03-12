@@ -31,6 +31,9 @@ public class OfferTerm implements ITransferObject {
 
 	/** The id. */
 	private Integer id;
+	
+	/** The number of the line. */
+    private int line;
 
 	/** The offer. */
 	private Offer offer;
@@ -64,6 +67,25 @@ public class OfferTerm implements ITransferObject {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	/**
+     * Gets the line.
+     * 
+     * @return the line
+     */
+    @Column(nullable=true)
+    public int getLine() {
+        return line;
+    }
+
+    /**
+     * Sets the line.
+     * 
+     * @param line the line
+     */
+    public void setLine(int line) {
+        this.line = line;
+    }
 
 	/**
 	 * Gets the offer.
