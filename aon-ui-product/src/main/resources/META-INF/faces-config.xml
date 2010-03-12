@@ -375,7 +375,7 @@
 	<!--  **** EXPENSE ITEM ****	-->
 	<managed-bean>
 		<managed-bean-name>expenseItem</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController 
+		<managed-bean-class>com.code.aon.ui.product.controller.ExpenseItemController 
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -421,7 +421,6 @@
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
 
 	<managed-bean>
 		<managed-bean-name>expenseItemControllerListener</managed-bean-name>
