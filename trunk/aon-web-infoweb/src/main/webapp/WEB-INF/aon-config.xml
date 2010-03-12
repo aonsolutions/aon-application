@@ -10,6 +10,7 @@
 			showCompanyOtherData="false"
 			showPanelTabSet="false" 
 			showDigitalCertificate="false"
+			showEInvoice="false"
 		/>
 	</company:config>
 
