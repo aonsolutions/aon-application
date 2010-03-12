@@ -59,7 +59,7 @@
 		<mapping class="com.code.aon.commercial.TargetSeller"/>		
 		
 		<!-- AON-MARKETING Mapping files -->
-		<mapping class="com.code.aon.marketing.Action"/>
+		<mapping class="com.code.aon.marketing.MarketingAction"/>
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
 		<mapping class="com.code.aon.marketing.Campaign"/>
 		<mapping class="com.code.aon.marketing.Question"/>
@@ -120,6 +120,14 @@
 		<!-- AON-MESSAGING Mapping files -->
 		<mapping class="com.code.aon.messaging.Message"/>
 		<mapping class="com.code.aon.messaging.MessageContent"/>
+						
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>		
 				
 	</session-factory>
 
