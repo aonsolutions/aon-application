@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receiptFinance" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -219,7 +222,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-23" mode="Opaque" x="325" y="82" width="70" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+					<reportElement key="textField-23" mode="Opaque" x="325" y="82" width="58" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -245,7 +248,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_amount}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-25" mode="Opaque" x="395" y="82" width="70" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+					<reportElement key="textField-25" mode="Opaque" x="383" y="82" width="82" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -284,7 +287,7 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-28" x="325" y="97" width="70" height="14"/>
+					<reportElement key="textField-28" x="325" y="97" width="58" height="14"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -323,7 +326,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistry().getName()+ " "+ $F{invoice}.getRegistry().getSurname()]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
-					<reportElement key="textField-31" x="395" y="97" width="70" height="14"/>
+					<reportElement key="textField-31" x="383" y="97" width="82" height="14"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
