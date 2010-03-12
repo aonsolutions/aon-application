@@ -7,8 +7,26 @@
 	<c:if test="#{offer.selectedTab == controller.beanName}">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="skipResetButton" value="#{offer.readOnly}" />
-			<ui:param name="skipLineEdition" value="#{offer.readOnly}" />	
+			<ui:param name="skipLineEdition" value="#{offer.readOnly}" />
+			<ui:param name="newSaveButtonReRender" value="menuExt,Invoice_total,financeContainer" />
+			<ui:param name="saveButtonReRender" value="offerForm" />
+			<ui:param name="removeButtonReRender" value="offerForm" />	
 			<ui:define name="columns">
+			
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel value="#{commercialBundle.commercial_offer_term_line}" /> 
+					</f:facet>
+					<aon:outputText value="#{to.line}" rendered="#{formList}" />
+					<aon:inputText id="OfferTerm_line"
+						value="#{controller.to.line}" rendered="#{formEdit}"
+						required="true" size="1" maxlength="3" />
+					<f:facet name="footer">
+						<aon:inputText id="OfferTerm_line-New"
+							value="#{controller.to.line}" rendered="#{formNew}"
+							required="true" size="1" maxlength="3" />
+					</f:facet>
+				</aon:column>
 	
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-300">
 					<f:facet name="header">
