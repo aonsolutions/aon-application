@@ -19,6 +19,13 @@
 	        <listener>com.code.aon.commercial.event.OfferDetailBeanListener</listener>
 		</listeners>
 	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.commercial.OfferTerm</pojo>
+		<listeners>
+	        <listener>com.code.aon.commercial.event.OfferTermBeanListener</listener>
+		</listeners>
+	</bean>
 
 	<bean description="">
 		<pojo>com.code.aon.customer.Customer</pojo>
