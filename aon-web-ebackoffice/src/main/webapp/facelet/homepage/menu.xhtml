@@ -1,3 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		
+		<aon:commandLink id="commercial"
+			value="#{appBundle.menu_commercial}"
+			action="menu_commercial" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-offer" />
+		<aon:commandLink id="product"
+			value="#{appBundle.menu_product}"
+			action="menu_product" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-product" />
+		<aon:commandLink id="config"
+			value="#{appBundle.menu_config}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />
+			
+		<aon:outputLink target="_blank" style="padding-right:20px"
+				styleClass="aon-finding-toolbar-item aon-icon-advanced-search"
+				value="#{ecconfig.url}">
+				<aon:outputText value="PREVIEW" />
+			</aon:outputLink>
+			
+	</ui:define>
+	
+ </ui:composition>
+
+
+
+
+
+
+<!--  
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -74,7 +112,7 @@
 					<aon:actionListener method="#{ecconfig.onSelectFirst}" />
 					<aon:actionListener method="#{eccatalogue.onEditSearch}" />
 					<aon:actionListener method="#{eccatalogue.onSearch}" />
-					<!-- <aon:actionListener method="#{ecconfig.setPayMethodTab}" /> -->
+					///<aon:actionListener method="#{ecconfig.setPayMethodTab}" /> 
 				</aon:menuItem>
 			</aon:dropDownMenu>
 
@@ -88,4 +126,4 @@
 		</aon:menuBar>
 	</aon:form>
 
-</ui:composition>
+</ui:composition>-->
