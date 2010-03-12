@@ -910,7 +910,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>OfferTerm_id</value>
+			<value>OfferTerm_line</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>general</property-name>
@@ -969,7 +969,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>OfferTerm_id</value>
+			<value>OfferTerm_line</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
