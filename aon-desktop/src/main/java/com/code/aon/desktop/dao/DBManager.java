@@ -37,7 +37,7 @@ public class DBManager {
 	
 	private static final String CREATE_SQL_PREFIX = "create.database.";
 	
-	private static final String CREATE_SQL = CREATE_SQL_PREFIX + "4.9.0.sql";
+	private static final String CREATE_SQL = CREATE_SQL_PREFIX + "5.0.0.sql";
 	
 	private static final String INSERT_SQL = "default-insert.database.sql";
 	
