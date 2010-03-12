@@ -77,7 +77,7 @@ public class SurveyResponse implements ITransferObject {
     @JoinColumn( name="campaign_action" )	
 	@ForeignKey(name = "FK_MK_ACTION_TARGET_MK_ACTION")
 	@Index(name = "IDX_MK_ACTION_TARGET_MK_ACTION")
-	private Action action;
+	private MarketingAction action;
 	
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REMOVE }, mappedBy = "surveyResponse")
@@ -214,7 +214,7 @@ public class SurveyResponse implements ITransferObject {
 	 * 
 	 * @return the action
 	 */
-	public Action getAction() {
+	public MarketingAction getAction() {
 		return action;
 	}
 
@@ -223,7 +223,7 @@ public class SurveyResponse implements ITransferObject {
 	 * 
 	 * @param action the new action
 	 */
-	public void setAction(Action action) {
+	public void setAction(MarketingAction action) {
 		this.action = action;
 	}
 	

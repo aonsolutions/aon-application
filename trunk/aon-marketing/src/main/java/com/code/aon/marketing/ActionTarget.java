@@ -46,7 +46,7 @@ public class ActionTarget implements ITransferObject, IRegistry {
     @JoinColumn( name="action", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_MK_ACTION_TARGET_MK_ACTION")
 	@Index(name = "IDX_MK_ACTION_TARGET_MK_ACTION")
-	private Action action;
+	private MarketingAction action;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="target", nullable = false, updatable = false )	
@@ -119,7 +119,7 @@ public class ActionTarget implements ITransferObject, IRegistry {
 	 * 
 	 * @return the action
 	 */
-	public Action getAction() {
+	public MarketingAction getAction() {
 		return action;
 	}
 
@@ -128,7 +128,7 @@ public class ActionTarget implements ITransferObject, IRegistry {
 	 * 
 	 * @param action the new action
 	 */
-	public void setAction(Action action) {
+	public void setAction(MarketingAction action) {
 		this.action = action;
 	}
 	

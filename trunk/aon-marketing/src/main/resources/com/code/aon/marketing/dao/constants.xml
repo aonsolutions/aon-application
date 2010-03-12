@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
-	<bean class="com.code.aon.marketing.Action" sqlName="mk_action">
+	<bean class="com.code.aon.marketing.MarketingAction" sqlName="mk_action">
 		<alias names="campaign_id,endDate,id,mediaType,startDate,survey_id,campaign_active"/>
 		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active"/>
 	</bean>
