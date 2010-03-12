@@ -24,7 +24,8 @@
 				</a4j:support>
 
 				<a4j:support eventsQueue="#{id}OnChange"
-					onsubmit="validateOnChange(this)" ajaxSingle="true" 
+					onsubmit="validateOnChange(this)" 
+					limitToList="true" ajaxSingle="true" 
 					actionListener="#{wizard.onLookup}" ignoreDupResponses="true"
 					requestDelay="100" event="onchange"
 					reRender="#{id}Name,#{reRenderAttr}">
@@ -43,7 +44,7 @@
 			<rich:suggestionbox for="#{id}"
 				suggestionAction="#{wizard.autocompleteId}" var="result"
 				onsubmit="if (!activateSuggestionBox(this)) return false;"
-				immediate="true" ajaxSingle="true"
+				immediate="true" limitToList="true" ajaxSingle="true"
 				eventsQueue="#{id}Sug" ignoreDupResponses="true"
 				requestDelay="100" width="500" height="200"
 				nothingLabel="#{bundle.aon_search_no_results}">
@@ -53,7 +54,7 @@
 				<aon:column>
 					<aon:outputText value="#{result.description}" />
 				</aon:column>
-				<a4j:support event="onselect" reRender="#{id}Container" oncomplete="searchFieldForFocus('#{id}')">
+				<a4j:support event="onselect" limitToList="true" reRender="#{id}Container" oncomplete="searchFieldForFocus('#{id}')">
 					<f:setPropertyActionListener target="#{entity}" value="#{result}" />
 				</a4j:support>
 			</rich:suggestionbox>
@@ -61,7 +62,7 @@
 		<a4j:commandButton styleClass="aon-lookupButton" value=""
 			disabled="#{disabled}" actionListener="#{wizard.onShow}"
 			immediate="true" oncomplete="searchFieldForFocus('#{id}searchName')"
-			reRender="#{id}Container" />
+			limitToList="true" reRender="#{id}Container" />
 		<aon:div id="#{id}Name" style="display:inline" rendered="#{renderDescription}">
 			<aon:outputText rendered="#{entity.description != null}"
 				value="#{entity.description}">
@@ -80,7 +81,7 @@
 					onsubmit="if(event.keyCode != 27) return false;"
 					eventsQueue="#{id}EscKeyUp" ignoreDupResponses="true"
 					requestDelay="100" actionListener="#{wizard.onClose}"
-					immediate="true" reRender="#{id}Container"
+					immediate="true" limitToList="true" reRender="#{id}Container"
 					oncomplete="searchFieldForFocus('#{id}')">
 				</a4j:support>
 
@@ -92,7 +93,7 @@
 				<f:facet name="controls">
 					<a4j:commandButton type="button" styleClass="aon-popupWindow-close"
 						actionListener="#{wizard.onClose}" immediate="true"
-						reRender="#{id}Container"
+						limitToList="true" reRender="#{id}Container"
 						oncomplete="searchFieldForFocus('#{id}')">
 					</a4j:commandButton>
 				</f:facet>
@@ -106,14 +107,14 @@
 						<aon:panelGrid columns="2" style="width:100%;">
 							<aon:outputText value="#{bundle.aon_description}" />
 							<aon:inputText id="#{id}searchName" value="#{wizard.description}" size="40">
-								<a4j:support event="onchange" ajaxSingle="true"
+								<a4j:support event="onchange" limitToList="true" ajaxSingle="true"
 									eventsQueue="#{id}nm" ignoreDupResponses="true"
 									requestDelay="100" actionListener="#{wizard.inputChanged}" />
 							</aon:inputText>
 
 							<aon:outputText value="#{bundle.aon_alias}" />
 							<aon:inputText value="#{wizard.alias}" size="20">
-								<a4j:support event="onchange" ajaxSingle="true"
+								<a4j:support event="onchange" limitToList="true" ajaxSingle="true"
 									eventsQueue="#{id}ac" ignoreDupResponses="true"
 									requestDelay="100" actionListener="#{wizard.inputChanged}" />
 							</aon:inputText>
@@ -121,7 +122,7 @@
 							<aon:outputText value="#{accountBundle.account_account}" />
 							<aon:div>
 								<aon:inputText value="#{wizard.id}" size="15">
-									<a4j:support event="onchange" ajaxSingle="true"
+									<a4j:support event="onchange" limitToList="true" ajaxSingle="true"
 										eventsQueue="#{id}ic" ignoreDupResponses="true"
 										requestDelay="100" actionListener="#{wizard.inputChanged}" />
 								</aon:inputText>
@@ -129,12 +130,11 @@
 									style="margin-left: 5px;" actionListener="#{wizard.onSearch}"
 									accesskey="#{bundle.aon_key_search}"
 									eventsQueue="#{id}SearchQueue" ignoreDupResponses="true"
-									requestDelay="100" reRender="#{id}tableContainer"
+									requestDelay="100" limitToList="true" reRender="#{id}tableContainer"
 									oncomplete="selectFirstRow('#{id}table')">
 								</a4j:commandButton>
 								<a4j:commandButton value="#{bundle.aon_reset}"
-									reRender="#{id}modalPanel"
-									limitToList="true"
+									limitToList="true" reRender="#{id}modalPanel"
 									style="margin-left: 5px;" actionListener="#{wizard.onAccept}"
 									accesskey="#{bundle.aon_key_new}"
 									eventsQueue="#{id}NewQueue" ignoreDupResponses="true"
@@ -163,7 +163,7 @@
 							<aon:commandButton id="#{id}RowSelector"
 								styleClass="aon-editDataTable-button aon-icon-rowSelector"
 								immediate="true"
-								ajaxSingle="true" eventsQueue="#{id}SelectQueue"
+								limitToList="true" ajaxSingle="true" eventsQueue="#{id}SelectQueue"
 								requestDelay="100" ignoreDupResponses="true"
 								onkeyup="tableKeyUp(event.keyCode)"
 								oncomplete="searchFieldForFocus('#{id}')"
