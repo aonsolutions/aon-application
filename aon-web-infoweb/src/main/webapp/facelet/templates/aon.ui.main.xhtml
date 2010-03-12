@@ -7,7 +7,8 @@
 	<ui:define name="title">#{appBundle.aon_application_title}</ui:define>
 
 	<ui:define name="mainHeader">
-		<ui:include src="/facelet/homepage/header.xhtml" />
+		<c:if test="#{company.hideHeaderContent}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/header.xhtml" />
 	</ui:define>
 
 </ui:composition>
