@@ -16,7 +16,8 @@
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
-			showPanelTabSet="true" 
+			showPanelTabSet="true"
+			showEInvoice="true" 
 			showDigitalCertificate="true"
 		/>
 	</company:config>
@@ -36,6 +37,7 @@
 			showRecordData="false"
 			showAddInfo="true"
 			showDirStaff="false"
+			showHistory="false"
 		/>
 	</customer:config>
 
@@ -52,6 +54,7 @@
 			showAccount="false"
 			showAttachment="true"
 			showEcommerceData="false"
+			showHistory="false"
 		/>
  		<product:productCategory
  			showCategoryGroup="false"
