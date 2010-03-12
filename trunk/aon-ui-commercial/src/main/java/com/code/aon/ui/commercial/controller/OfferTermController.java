@@ -26,6 +26,7 @@ public class OfferTermController extends LinesController {
 	private IControllerListener lookupListener;
 	private CommercialTerm commercialTerm;
 	
+	
 	public CommercialTerm getCommercialTerm() {
 		return commercialTerm;
 	}
