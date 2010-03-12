@@ -493,16 +493,22 @@ public interface ICommercialAlias {
 	String  OFFER_TERM_ID = OFFER_TERM_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: OfferTerm_line
+	* Hibernate value: OfferTerm.line
+	*/
+	String  OFFER_TERM_LINE = OFFER_TERM_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: OfferTerm_name
 	* Hibernate value: OfferTerm.name
 	*/
-	String  OFFER_TERM_NAME = OFFER_TERM_ENTRY.getAliasNames()[3];
+	String  OFFER_TERM_NAME = OFFER_TERM_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: OfferTerm_offer_id
 	* Hibernate value: OfferTerm.offer.id
 	*/
-	String  OFFER_TERM_OFFER_ID = OFFER_TERM_ENTRY.getAliasNames()[4];
+	String  OFFER_TERM_OFFER_ID = OFFER_TERM_ENTRY.getAliasNames()[5];
 
 
 
