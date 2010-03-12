@@ -30,7 +30,7 @@ public class CommercialAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
+		File file = new File("/AON-TRUNK/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
 		String[] classes = new String[] { 
 				CommercialActivity.class.getName(),
 				CommercialTracking.class.getName(),
