@@ -2260,3 +2260,15 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-telephone{
 	background:transparent url(images/aon-main-menu/aon-icon-telephone.png) no-repeat scroll center left;
 }
+.aon-icon-account-entry{
+	background:transparent url(images/aon-main-menu/aon-icon-account-entry.png) no-repeat scroll center left;
+}
+.aon-icon-balance{
+	background:transparent url(images/aon-main-menu/aon-icon-balance.png) no-repeat scroll center left;
+}
+.aon-icon-fixed-asset{
+	background:transparent url(images/aon-main-menu/aon-icon-fixed-asset.png) no-repeat scroll center left;
+}
+.aon-icon-account-reports{
+	background:transparent url(images/aon-main-menu/aon-icon-account-reports.png) no-repeat scroll center left;
+}
