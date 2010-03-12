@@ -9,7 +9,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.Action;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
@@ -31,9 +31,9 @@ public class CampaignActionTargetController extends LinesController {
 		return getManagerBean().getList(projectList, criteria);
 	}
 	
-	private Action getAction() {
+	private MarketingAction getAction() {
 		IController actionController = FormUtil.getController(IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME);
-		return (Action) actionController.getTo();
+		return (MarketingAction) actionController.getTo();
 	}
 	
 	public void onAcceptTargets( ActionEvent event ) throws ManagerBeanException {
@@ -43,7 +43,7 @@ public class CampaignActionTargetController extends LinesController {
 		String filedId = targetController.getFieldName(ICommercialAlias.TARGET_ID);
 		ProjectionList projectList = new ProjectionList(Projection.property(filedId));
 		List<Integer> targets = targetController.getManagerBean().getList(projectList, criteria);
-		Action action = getAction();
+		MarketingAction action = getAction();
 		for( Integer targetId : targets ) {
 			if (! currentTargets.contains(targetId) ) {
 				ActionTarget at = new ActionTarget();

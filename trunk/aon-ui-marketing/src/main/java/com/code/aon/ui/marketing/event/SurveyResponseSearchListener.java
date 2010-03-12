@@ -2,7 +2,7 @@ package com.code.aon.ui.marketing.event;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.Action;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
@@ -15,7 +15,7 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 	
 	private Target target;
 	
-	private Action action;
+	private MarketingAction action;
 
 	public Survey getSurvey() {
 		return survey;
@@ -25,11 +25,11 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 		this.survey = survey;
 	}
 
-	public Action getAction() {
+	public MarketingAction getAction() {
 		return action;
 	}
 
-	public void setAction(Action action) {
+	public void setAction(MarketingAction action) {
 		this.action = action;
 	}
 
@@ -43,7 +43,7 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		setAction(new Action());
+		setAction(new MarketingAction());
 		setSurvey(new Survey());
 		setTarget(new Target());
 	}

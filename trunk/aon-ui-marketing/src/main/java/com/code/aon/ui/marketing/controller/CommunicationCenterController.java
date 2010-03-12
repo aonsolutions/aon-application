@@ -18,7 +18,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
-import com.code.aon.marketing.Action;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.Question;
 import com.code.aon.marketing.QuestionValue;
@@ -49,7 +49,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private Date date;
 	
-	private Action action;
+	private MarketingAction action;
 	
 	private Survey survey;
 	
@@ -102,12 +102,12 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.date = date;
 	}
 
-	public Action getAction() {
+	public MarketingAction getAction() {
 		return action;
 	}
 
-	public void setAction(Action action) {
-		this.action = ( action != null ) ? action : new Action();
+	public void setAction(MarketingAction action) {
+		this.action = ( action != null ) ? action : new MarketingAction();
 		this.actionSelected = (this.action.getId() != null);
 	}
 
@@ -467,7 +467,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	public void onActionLookupChange(LookupChangeEvent event) {
 		this.actionSelected = (event.getNewValue() != null);	
 		if (this.actionSelected) {
-			Action action = (Action) event.getNewValue();
+			MarketingAction action = (MarketingAction) event.getNewValue();
 			setAction(action);
 			try {				
 				Survey survey = null;
