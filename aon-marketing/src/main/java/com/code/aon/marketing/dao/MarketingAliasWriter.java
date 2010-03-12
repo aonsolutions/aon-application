@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
-import com.code.aon.marketing.Action;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.Campaign;
 import com.code.aon.marketing.Question;
@@ -29,7 +30,7 @@ public class MarketingAliasWriter {
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-marketing/src/main/java/com/code/aon/marketing/dao/IMarketingAlias.java");
 		String[] classes = new String[] { 
-				Action.class.getName(),
+				MarketingAction.class.getName(),
 				ActionTarget.class.getName(),
 				Campaign.class.getName(),
 				Question.class.getName(),
@@ -40,6 +41,7 @@ public class MarketingAliasWriter {
 				SurveyResponseDetail.class.getName(),
 				SurveyWorkflow.class.getName(),
 				TargetProfile.class.getName()};
+		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.marketing.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

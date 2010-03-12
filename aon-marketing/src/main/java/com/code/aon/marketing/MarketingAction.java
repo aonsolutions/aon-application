@@ -33,7 +33,7 @@ import com.code.aon.marketing.enumeration.ActionMediaType;
  */
 @Entity
 @Table(name = "mk_action")
-public class Action implements ITransferObject {
+public class MarketingAction implements ITransferObject {
 
 	private static final long serialVersionUID = 4581317654783219721L;
 
@@ -68,7 +68,7 @@ public class Action implements ITransferObject {
     /**
      * The empty constructor.
      */
-    public Action() {
+    public MarketingAction() {
     }
 
     /**
@@ -76,7 +76,7 @@ public class Action implements ITransferObject {
      * 
      * @param id the id
      */
-    public Action(Integer id) {
+    public MarketingAction(Integer id) {
     	this();
         this.id = id;
     }
@@ -194,7 +194,7 @@ public class Action implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final Action o = (Action) obj;
+		final MarketingAction o = (MarketingAction) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.campaign, o.campaign)

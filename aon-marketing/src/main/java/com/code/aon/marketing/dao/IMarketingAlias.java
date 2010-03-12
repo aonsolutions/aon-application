@@ -2,7 +2,7 @@ package com.code.aon.marketing.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
-import com.code.aon.marketing.Action;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.Campaign;
 import com.code.aon.marketing.Question;
@@ -22,51 +22,51 @@ public interface IMarketingAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Action entity.
+	* DAOConstantsEntry for MarketingAction entity.
 	*/ 
-	DAOConstantsEntry ACTION_ENTRY = DAOConstants.getDAOConstant(Action.class);
+	DAOConstantsEntry MARKETING_ACTION_ENTRY = DAOConstants.getDAOConstant(MarketingAction.class);
 
 	/** 
-	* Alias value: Action_campaign_id
-	* Hibernate value: Action.campaign.id
+	* Alias value: MarketingAction_campaign_id
+	* Hibernate value: MarketingAction.campaign.id
 	*/
-	String  ACTION_CAMPAIGN_ID = ACTION_ENTRY.getAliasNames()[0];
+	String  MARKETING_ACTION_CAMPAIGN_ID = MARKETING_ACTION_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Action_endDate
-	* Hibernate value: Action.endDate
+	* Alias value: MarketingAction_endDate
+	* Hibernate value: MarketingAction.endDate
 	*/
-	String  ACTION_END_DATE = ACTION_ENTRY.getAliasNames()[1];
+	String  MARKETING_ACTION_END_DATE = MARKETING_ACTION_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Action_id
-	* Hibernate value: Action.id
+	* Alias value: MarketingAction_id
+	* Hibernate value: MarketingAction.id
 	*/
-	String  ACTION_ID = ACTION_ENTRY.getAliasNames()[2];
+	String  MARKETING_ACTION_ID = MARKETING_ACTION_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Action_mediaType
-	* Hibernate value: Action.mediaType
+	* Alias value: MarketingAction_mediaType
+	* Hibernate value: MarketingAction.mediaType
 	*/
-	String  ACTION_MEDIA_TYPE = ACTION_ENTRY.getAliasNames()[3];
+	String  MARKETING_ACTION_MEDIA_TYPE = MARKETING_ACTION_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Action_startDate
-	* Hibernate value: Action.startDate
+	* Alias value: MarketingAction_startDate
+	* Hibernate value: MarketingAction.startDate
 	*/
-	String  ACTION_START_DATE = ACTION_ENTRY.getAliasNames()[4];
+	String  MARKETING_ACTION_START_DATE = MARKETING_ACTION_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Action_survey_id
-	* Hibernate value: Action.survey.id
+	* Alias value: MarketingAction_survey_id
+	* Hibernate value: MarketingAction.survey.id
 	*/
-	String  ACTION_SURVEY_ID = ACTION_ENTRY.getAliasNames()[5];
+	String  MARKETING_ACTION_SURVEY_ID = MARKETING_ACTION_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Action_campaign_active
-	* Hibernate value: Action.campaign.active
+	* Alias value: MarketingAction_campaign_active
+	* Hibernate value: MarketingAction.campaign.active
 	*/
-	String  ACTION_CAMPAIGN_ACTIVE = ACTION_ENTRY.getAliasNames()[6];
+	String  MARKETING_ACTION_CAMPAIGN_ACTIVE = MARKETING_ACTION_ENTRY.getAliasNames()[6];
 
 
 

@@ -48,7 +48,7 @@ public class Campaign implements ITransferObject {
 	@org.hibernate.annotations.Cascade( {
 			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
 			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-	private List<Action> actions = new LinkedList<Action>();	
+	private List<MarketingAction> actions = new LinkedList<MarketingAction>();	
 	
     /**
      * The empty constructor.
@@ -126,7 +126,7 @@ public class Campaign implements ITransferObject {
 	 * 
 	 * @return the actions
 	 */
-	public List<Action> getActions() {
+	public List<MarketingAction> getActions() {
 		return actions;
 	}
 
@@ -135,7 +135,7 @@ public class Campaign implements ITransferObject {
 	 * 
 	 * @param actions the new actions
 	 */
-	public void setActions(List<Action> actions) {
+	public void setActions(List<MarketingAction> actions) {
 		this.actions = actions;
 	}
 	
