@@ -309,9 +309,7 @@
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="0" y="0" width="61" height="16">
-					<printWhenExpression><![CDATA[new Boolean(!$F{disabled}.booleanValue())]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-34" x="0" y="0" width="61" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -324,9 +322,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{type}.getName( $P{REPORT_LOCALE} )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="61" y="0" width="46" height="16">
-					<printWhenExpression><![CDATA[new Boolean(!$F{disabled}.booleanValue())]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-34" x="61" y="0" width="46" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -339,9 +335,7 @@
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="107" y="0" width="71" height="16">
-					<printWhenExpression><![CDATA[new Boolean(!$F{disabled}.booleanValue())]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-34" x="107" y="0" width="71" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -354,9 +348,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{document}.getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="178" y="0" width="162" height="16">
-					<printWhenExpression><![CDATA[new Boolean(!$F{disabled}.booleanValue())]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-34" x="178" y="0" width="162" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -369,9 +361,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="340" y="0" width="82" height="16">
-					<printWhenExpression><![CDATA[new Boolean(!$F{disabled}.booleanValue())]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-34" x="340" y="0" width="82" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -384,9 +374,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{geozoneName}+" ("+$F{geozone}+")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="422" y="0" width="81" height="16">
-					<printWhenExpression><![CDATA[new Boolean(!$F{disabled}.booleanValue())]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-34" x="422" y="0" width="81" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -399,9 +387,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{countryName}+" ("+$F{country}+")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="505" y="0" width="50" height="16">
-					<printWhenExpression><![CDATA[new Boolean(!$F{disabled}.booleanValue())]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-34" x="505" y="0" width="50" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
