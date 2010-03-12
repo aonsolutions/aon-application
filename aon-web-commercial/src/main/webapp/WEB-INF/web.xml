@@ -144,6 +144,19 @@
 			com.code.aon.bridge.session.ConcurrentSessionListener
 		</listener-class>
 	</listener>
+	<!-- Audit Filter -->
+	<filter>
+		<filter-name>AuditFilter</filter-name>
+		<filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuditFilter</filter-name>
+		<url-pattern>/index.jsp</url-pattern>
+	</filter-mapping>
+	<!-- Listener, that enables Audit Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
+	</listener>		
 	<!-- Faces Servlet -->
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>

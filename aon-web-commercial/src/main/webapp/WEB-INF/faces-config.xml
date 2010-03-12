@@ -10,6 +10,8 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
+		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
+		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>		
 		<resource-bundle>
 			<base-name>com.code.aon.ui.commercial.i18n.application</base-name>
 			<var>appBundle</var>
@@ -26,10 +28,10 @@
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
 			<value>aon-desktop</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/4.3.0</value>
+			<value>/aonResource/5.0.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -70,5 +72,30 @@
 			<redirect/>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>menu_auxiliary</from-outcome>
+			<to-view-id>/facelet/menu/auxiliary.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_master</from-outcome>
+			<to-view-id>/facelet/menu/master.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_commercial</from-outcome>
+			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_marketing</from-outcome>
+			<to-view-id>/facelet/menu/marketing.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_config</from-outcome>
+			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>	
    
 </faces-config>
