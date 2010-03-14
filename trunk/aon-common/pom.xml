@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ql</artifactId>
-			<version>${aon-version}</version>
+			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
