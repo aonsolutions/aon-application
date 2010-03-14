@@ -28,7 +28,7 @@
 	<module>aon-parent</module>
 	<module>aon-ql</module>
 	<module>aon-common</module>
-	<!--module>aon-account-bridge</module>
+	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
 	<module>aon-account</module>
 	<module>aon-asset</module>
@@ -123,7 +123,7 @@
 	<module>aon-webmail</module>
 	<module>aon-web-smb</module>
 	<module>aon-web-task</module>
-	<module>aon-web-webmail</module-->
+	<module>aon-web-webmail</module>
   </modules>
 
   <build>
