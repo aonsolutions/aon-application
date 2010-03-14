@@ -27,7 +27,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   </scm>
 
   <modules>
-	<module>aon-parent</module>
 	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
 	<module>aon-account</module>
