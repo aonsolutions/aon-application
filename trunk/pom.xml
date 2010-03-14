@@ -36,7 +36,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<module>aon-cms</module>
 	<module>aon-commercial</module>
 	<module>aon-common-ldap</module>
-	<!--module>aon-common</module-->
+	<module>aon-common</module>
 	<module>aon-company</module>
 	<module>aon-config</module>
 	<module>aon-core</module>
