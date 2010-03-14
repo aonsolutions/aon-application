@@ -135,11 +135,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	        <artifactId>maven-release-plugin</artifactId>
         	<version>2.0</version>
 	        <configuration>
-			<releaseVersion>${project.version}</releaseVersion>
-			<developmentVersion>${project.version}</developmentVersion>
+			<releaseVersion>5.0.0</releaseVersion>
+			<developmentVersion>5.0.1-SNAPSHOT</developmentVersion>
 			<autoVersionSubmodules>true</autoVersionSubmodules>
 
-			<tag>${project.version}</tag>
+			<tag>5.0.0</tag>
         	  	<tagBase>https://dev.esferalia.com/repos/aon-application/releases</tagBase>
 	        </configuration>
 	</plugin>
