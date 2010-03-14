@@ -57,7 +57,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<module>aon-ldap</module>
 	<module>aon-marketing</module>
 	<module>aon-messaging</module>
-	<module>aon-parent</module>
 	<module>aon-payroll-core</module>
 	<module>aon-payroll-nominasta</module>
 	<module>aon-product</module>
