@@ -27,7 +27,10 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   </scm>
 
   <modules>
-	<module>aon-account-bridge</module>
+	<module>aon-parent</module>
+	<module>aon-ql</module>
+	<module>aon-common</module>
+	<!--module>aon-account-bridge</module>
 	<module>aon-accounting</module>
 	<module>aon-account</module>
 	<module>aon-asset</module>
@@ -36,7 +39,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<module>aon-cms</module>
 	<module>aon-commercial</module>
 	<module>aon-common-ldap</module>
-	<module>aon-common</module>
 	<module>aon-company</module>
 	<module>aon-config</module>
 	<module>aon-core</module>
@@ -63,7 +65,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<module>aon-project</module>
 	<module>aon-purchase-bridge</module>
 	<module>aon-purchase</module>
-	<module>aon-ql</module>
 	<module>aon-registry</module>
 	<module>aon-report</module>
 	<module>aon-rich-components</module>
@@ -124,7 +125,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<module>aon-webmail</module>
 	<module>aon-web-smb</module>
 	<module>aon-web-task</module>
-	<module>aon-web-webmail</module>
+	<module>aon-web-webmail</module-->
   </modules>
 
   <build>
