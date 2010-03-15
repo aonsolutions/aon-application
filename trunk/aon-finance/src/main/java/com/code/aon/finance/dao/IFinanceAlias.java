@@ -362,10 +362,16 @@ public interface IFinanceAlias {
 	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
+	* Alias value: FinanceBatchDetail_finance_invoice_referenceCode
+	* Hibernate value: FinanceBatchDetail.finance.invoice.referenceCode
+	*/
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_REFERENCE_CODE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: FinanceBatchDetail_finance_dueDate
 	* Hibernate value: FinanceBatchDetail.finance.dueDate
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[8];
+	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[9];
 
 
 
