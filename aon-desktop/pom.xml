@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-desktop</artifactId>
 	<packaging>war</packaging>
-	<version>5.0.0</version>
+	<version>${aon-version}</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>

@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.supplier</artifactId>
-	<version>5.0.0</version>
+	<version>${aon-version}</version>
 	<description>AON UI SUPPLIER</description>
 	<name>AON UI SUPPLIER</name>
 	<dependencies>

@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-ecommerce</artifactId>
 	<packaging>war</packaging>
-	<version>5.0.0</version>
+	<version>${aon-version}</version>
 	<description>AON WEB ECOMMERCE</description>
 	<name>AON WEB ECOMMERCE</name>
 	<properties>
