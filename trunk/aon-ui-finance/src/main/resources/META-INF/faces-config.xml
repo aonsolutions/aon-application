@@ -110,7 +110,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>FinanceBatchDetail_finance_dueDate </value>
+			<value>FinanceBatchDetail_finance_invoice_number </value>
 		</managed-property>	
 		<managed-property>
 			<property-name>propertyMap</property-name>
