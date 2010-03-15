@@ -16,7 +16,7 @@
   <name>aon Solutions</name>
 
   <modules>
-	<module>aon-parent</module>
+	<!--module>aon-parent</module-->
 	<module>aon-ql</module>
 	<module>aon-common</module>
 	<module>aon-account-bridge</module>
