@@ -239,7 +239,7 @@ a,a:hover,a:visited {
 	vertical-align: top;
 	width:75%;
 	border-left:none;
-
+	padding:5px;
 	
 
 }
@@ -3598,7 +3598,6 @@ margin-left:20px;
 	
 td.aon-panelGrid-even .aon-outputText{
 
-	display:block;
 	text-align:justify;
 	padding-left:20px;
 	}
@@ -3714,10 +3713,11 @@ width:25px;}
 	background:#565656;
 	font-size:10px;
 	text-transform:none;
-	border-right:1px solid #fff;}
+	border-right:1px solid #fff;
+	text-align:center;}
 	.aon-footer-additionalInfo .aon-outputText{
 		background:#565656;
-	
+	text-align:center;
 		color:#ccc}
 			.aon-footer-additionalInfo{
 				margin-top:20px;
@@ -3733,7 +3733,8 @@ width:25px;}
 		background:#565656;
 			text-transform:none;
 		color:#565656;
-		padding-bottom:20px;}
+		padding-bottom:20px;
+		text-align:center;}
 		 .aon-outputLabel{
 	/*		 width:150px;*/}
 		
@@ -3871,3 +3872,60 @@ margin:20px;
 	font-style:italic;
 	background-color:#33A49A;
 	}
+	.rich-table-cell{
+		background:#fff;
+		border:none;
+		border-right:none;
+		font-family:lucida Grande,Trebuchet MS,Arial,sans-serif;
+		font-size:11px;
+		padding:4px;
+}
+.rich-table{	border:#fff; }
+.aon-icon-remove{
+		border-bottom:medium none;
+		border-left:medium none;
+		border-top:medium none;
+		margin-left:130px;
+		margin-top:10px;
+		padding-left:20px;
+		padding-right:5px;
+}
+.aon-panelGrid .itemDetailGallery-header  .aon-outputText{	text-transform:uppercase;  }		
+.aon-form{ margin-left:20px;}
+#aonContent { margin-left:20px;}
+#aonContent:paymethodForm { margin-left:20px;}
+.registryColumn { padding-left:150px;}
+.selection-title { 
+font-size:14px;
+text-transform:uppercase;
+color:#33A49A;
+font-weight:bold;
+padding:10px;
+margin-left:15px;
+}
+.rich-pmenu-item {
+/*border-top:1px solid;*/
+cursor:pointer;
+margin-top:1px;
+padding:2px 1px 1px;
+}
+.rich-dtascroller-table{}
+.aon-icon-footer-note a{
+padding-left:5px;
+	padding-right:5px;
+	border-right:#000000 1px solid;
+		color:#000000;
+}
+.aon-footer {
+	color:#000000;
+	padding-left:5px;
+	padding-right:5px;
+	border-right:#000000 1px solid;
+	text-align:center;
+}
+#aonFooter a{
+	color:#000000;
+	padding-left:5px;
+	padding-right:5px;
+	border-right:#000000 1px solid;
+}

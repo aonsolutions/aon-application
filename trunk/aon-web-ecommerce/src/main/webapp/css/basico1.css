@@ -115,6 +115,7 @@ padding-left:5px;
 	vertical-align: top;
 	width:75%;
 	border-left:none;
+	padding:5px;
 }
 .aon-vertical-align-middle {	vertical-align: middle; }
 .aon-vertical-align-bottom {	vertical-align: bottom; }
