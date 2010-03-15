@@ -62,4 +62,11 @@
 		</vetoListeners>
 	</bean>
 	
+	<bean description="">
+		<pojo>com.code.aon.finance.CustomerFee</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.CustomerFeeBeanListener</listener>
+		</listeners>
+	</bean>
+	
 </bean-config>

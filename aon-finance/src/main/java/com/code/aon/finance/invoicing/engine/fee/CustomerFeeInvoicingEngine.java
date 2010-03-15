@@ -83,7 +83,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
-		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID));
+		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
 		return criteria;
 	}
 
@@ -209,10 +209,25 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 					CustomerFee fee1 = (CustomerFee)o1;
 					String surname1 = (fee1.getCustomer().getRegistry().getSurname() != null) ? fee1.getCustomer().getRegistry().getSurname() : "";
 					String name1 = (fee1.getCustomer().getRegistry().getName() != null) ? fee1.getCustomer().getRegistry().getName() : "";
+					int line1 = fee1.getLine();
 					CustomerFee fee2 = (CustomerFee)o2;
 					String surname2 = (fee2.getCustomer().getRegistry().getSurname() != null) ? fee2.getCustomer().getRegistry().getSurname() : "";
 					String name2 = (fee2.getCustomer().getRegistry().getName() != null) ? fee2.getCustomer().getRegistry().getName() : "";
-					return (surname1.compareTo(surname2) == 0) ? name1.compareTo(name2) : surname1.compareTo(surname2);
+					int line2 = fee2.getLine();
+
+					if (surname1.compareTo(surname2) == 0) {
+						if (name1.compareTo(name2) == 0) {
+							if (line1 > line2) {
+								return 1;
+							} else if (line1 < line2) {
+								return -1;
+							}
+						} else {
+							return name1.compareTo(name2);
+						}
+					} else {
+						return surname1.compareTo(surname2);
+					}
 				}
 				return 0;
 			}

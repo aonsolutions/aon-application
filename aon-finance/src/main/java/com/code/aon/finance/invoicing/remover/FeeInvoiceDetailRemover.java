@@ -9,9 +9,12 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.InvoicingException;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.registry.Registry;
 
 public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
@@ -23,10 +26,14 @@ public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
 
 	@Override
 	public void removeDetail(InvoiceDetail invoiceDetail) throws InvoicingException {
-		Date feeDate = obtainFeeDate(invoiceDetail);
 		try {
+			Customer customer = obtainCustomer(invoiceDetail.getInvoice().getRegistry());
+			Date feeDate = obtainFeeDate(invoiceDetail);
+			int line = obtainMaxLine(customer);
+
 			CustomerFee customerFee = new CustomerFee();
-			customerFee.setCustomer(obtainCustomer(invoiceDetail.getInvoice().getRegistry()));
+			customerFee.setCustomer(customer);
+			customerFee.setLine(++line);
 			customerFee.setItem(invoiceDetail.getItem());
 			customerFee.setDescription(invoiceDetail.getDescription());
 			customerFee.setQuantity(invoiceDetail.getQuantity());
@@ -59,6 +66,15 @@ public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
 			return CommonUtil.getDate(year, (month-1), 1);
 		}
 		return invoiceDetail.getInvoice().getIssueDate();
+	}
+
+	private	int obtainMaxLine(Customer customer) throws ManagerBeanException {
+		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), customer.getId());
+		Projection projection = Projection.max(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
+		Object value = customerFeeBean.getUniqueResult(projection, criteria);
+		return (value != null) ? ((Integer)value).intValue() : 0;
 	}
 
 }

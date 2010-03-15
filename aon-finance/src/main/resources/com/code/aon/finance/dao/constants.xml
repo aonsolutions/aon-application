@@ -46,7 +46,7 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.FinanceBatchDetail" sqlName="fbatch_detail">
-		<alias names="amount,financeBatch_id,finance_id,id,status,financeBatch_issueDate,finance_invoice_series,finance_invoice_number,finance_dueDate" />
-		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,finance.invoice.series,finance.invoice.number,finance.dueDate" />
+		<alias names="amount,financeBatch_id,finance_id,id,status,financeBatch_issueDate,finance_invoice_series,finance_invoice_number,finance_invoice_referenceCode,finance_dueDate" />
+		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,finance.invoice.series,finance.invoice.number,finance.invoice.referenceCode,finance.dueDate" />
 	</bean>
 </dao>
