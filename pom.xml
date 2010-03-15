@@ -99,6 +99,22 @@
           </execution>
         </executions>
       </plugin>
+
+        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.0</version>
+                <configuration>
+                        <preparationGoals>clean</preparationGoals>
+                        <releaseVersion>5.0.0</releaseVersion>
+                        <developmentVersion>5.1.0-SNAPSHOT</developmentVersion>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+
+                        <tag>5.0.0</tag>
+                        <tagBase>https://dev.esferalia.com/repos/aon-application/releases</tagBase>
+                </configuration>
+        </plugin>
+
     </plugins>
   </build>
   <distributionManagement>
