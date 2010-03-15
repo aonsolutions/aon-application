@@ -14,6 +14,10 @@
   <description>POM padre de los proyectos WEB de AON</description>
   <name>AON WEB ENTITY PARENT</name>
 
+  <properties>
+    <maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
+  </properties>
+
   <scm>
 	<developerConnection>${project.scm.connection}</developerConnection>
   </scm>
@@ -50,7 +54,7 @@
 	     </manifest>
 	    <manifestEntries>
               <dbVersion>${dbVersion}</dbVersion>
-              <buildNumber>${buildNumber}</buildNumber>	   
+              <buildNumber>${maven.build.timestamp}</buildNumber>	   
             </manifestEntries>
           </archive>
         </configuration>
