@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+  <parent>
+                <groupId>com.code.aon</groupId>
+                <artifactId>aon.parent</artifactId>
+                <version>5.0.0</version>
+  </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.solutions</artifactId>
@@ -8,21 +14,6 @@
   <packaging>pom</packaging>
   <description>POM de aon Solutions (para sacar versions...)</description>
   <name>aon Solutions</name>
-
-  <properties>
-    <aon-version>5.0.0-SNAPSHOT</aon-version>
-  </properties>
-
-  <organization>
-    <name>esferalia Networks S.A.</name>
-    <url>http://www.esferalia.com</url>
-  </organization>
-
-  <scm>
-    <connection>
-    scm:svn:http://dev.esferalia.com/repos/aon-application/trunk</connection>
-    <url>http://dev.esferalia.com/websvn/wsvn</url>
-  </scm>
 
   <modules>
 	<module>aon-parent</module>
@@ -125,24 +116,5 @@
 	<module>aon-web-task</module>
 	<module>aon-web-webmail</module>
   </modules>
-
-  <build>
-    <plugins>
-	<plugin>
-        	<groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-release-plugin</artifactId>
-        	<version>2.0</version>
-	        <configuration>
-			<preparationGoals>clean</preparationGoals>
-			<releaseVersion>5.0.0</releaseVersion>
-			<developmentVersion>5.1.0-SNAPSHOT</developmentVersion>
-			<autoVersionSubmodules>true</autoVersionSubmodules>
-
-			<tag>5.0.0</tag>
-        	  	<tagBase>https://dev.esferalia.com/repos/aon-application/releases</tagBase>
-	        </configuration>
-	</plugin>
-    </plugins>
-  </build>
 
 </project>
