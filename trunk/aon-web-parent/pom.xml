@@ -13,8 +13,31 @@
   <packaging>pom</packaging>
   <description>POM padre de los proyectos WEB de AON</description>
   <name>AON WEB ENTITY PARENT</name>
+
+  <scm>
+	<developerConnection>${project.scm.connection}</developerConnection>
+  </scm>
   <build>
     <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.0-beta-4</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>true</doCheck>
+          <doUpdate>true</doUpdate>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -26,7 +49,7 @@
 	     </manifest>
 	    <manifestEntries>
               <dbVersion>${dbVersion}</dbVersion>
-              <buildNumber>${env.BUILD_NUMBER}</buildNumber>	   
+              <buildNumber>${buildNumber}</buildNumber>	   
             </manifestEntries>
           </archive>
         </configuration>
@@ -165,6 +188,7 @@
 
   <build>
     <plugins>
+
 			<!-- Para construir el RPM -->
                        <plugin>
 
@@ -184,7 +208,7 @@
 
                                 <configuration>
 	                            <group>Applications/Aon</group>
-	                            <release>${env.BUILD_NUMBER}</release>
+	                            <release>${buildNumber}</release>
 				    <copyright>2009, esferalia Networks S.A</copyright>
 					<requires>
 						<require>aon-directory-client &gt;= 5.0.0-4</require>
@@ -231,7 +255,8 @@
           <executable>ssh</executable>
           <arguments>
             <argument>root@dev.esferalia.com</argument>
-            <argument>rpm -Uvh --root /mnt/alice ${env.JOB_URL}/ws/${env.JOB_NAME}/target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.0.0-${env.BUILD_NUMBER}.noarch.rpm</argument>
+            <argument>rpm -Uvh --root /mnt/alice 
+${env.JOB_URL}/ws/${env.JOB_NAME}/target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.0.0-${buildNumber}.noarch.rpm</argument>
           </arguments>
         </configuration>
       </plugin>
