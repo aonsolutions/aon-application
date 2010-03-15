@@ -10,7 +10,7 @@
 	<artifactId>aon-communicator</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMUNICATOR</name>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>AON WEB COMMUNICATOR</description>
 	<properties>
 		<dbVersion>4.8.0</dbVersion>

@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.common</artifactId>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>AON UI COMMON</description>
 	<name>AON UI COMMON</name>
 	<dependencies>
