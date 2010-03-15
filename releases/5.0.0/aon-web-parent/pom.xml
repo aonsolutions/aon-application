@@ -138,10 +138,9 @@
     <profile>
       <id>rpm-release</id>
      <activation>
-        <property>
-          <name>rpm.release</name>
-          <value>true</value>
-        </property>
+        <file>
+          <exists>src</exists>
+        </file>	
       </activation>
 
 <repositories>                            
