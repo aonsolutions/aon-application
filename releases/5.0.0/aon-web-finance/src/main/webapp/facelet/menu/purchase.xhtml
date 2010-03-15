@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="purchaseMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">			
+
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+	
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-sales aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_purchase}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="purchaseItem" 
+										action="item_search-Purchase" actionListener="#{item.onEditSearch}"
+										value="#{productBundle.product_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="supplier" 
+										action="supplier_search" actionListener="#{supplier.onEditSearch}"
+										value="#{supplierBundle.supplier_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="purchaseInvoiceManagement"
+										action="purchaseInvoice_search"	actionListener="#{purchaseInvoice.onEditSearch}"
+										value="#{financeBundle.finance_purchase_invoice_management_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_finance_payment"
+										action="finance_search-Payment" actionListener="#{finance.onEditSearchPayment}"
+										value="#{financeBundle.finance_payment_module}" />
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>
+	
+						<ui:include src="/facelet/menu/general.xhtml" />
+	
+					</h:panelGrid>
+				</aon:componentGroup>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

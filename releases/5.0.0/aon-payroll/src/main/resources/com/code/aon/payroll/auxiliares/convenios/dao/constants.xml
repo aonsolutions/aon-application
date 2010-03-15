@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	
+	<bean class="com.code.aon.payroll.auxiliares.convenios.Percniv" sqlName="percniv">
+		<alias names="calculo,complemento1_cdg,complemento_cdg,convenio_cdg,convenio_description,desabr,descom,dinesp,fecmod,fecnew,fijovar,garilt,hormod,hornew,id_cdg,id_codcom,id_nivel,importe,impuni,indcom,mes,nivel_id_cdg,nivel_id_codcon,redext,tipcom,tipcot,unidades" />
+		<hibernate names="calculo,complemento1.cdg,complemento.cdg,convenio.cdg,convenio.description,desabr,descom,dinesp,fecmod,fecnew,fijovar,garilt,hormod,hornew,id.cdg,id.codcom,id.nivel,importe,impuni,indcom,mes,nivel.id.cdg,nivel.id.codcon,redext,tipcom,tipcot,unidades" />
+	</bean>
+		
+</dao>
+
+ 
+

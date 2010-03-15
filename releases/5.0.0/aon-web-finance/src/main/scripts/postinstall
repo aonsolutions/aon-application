@@ -1,0 +1,25 @@
+#!/bin/sh
+. aondir-functions
+
+APP=aon-finance
+
+if ! aondir_has_app $APP;  then
+
+        aondir-addapp $APP &>/dev/null
+
+        aondir-addrole User $APP &>/dev/null
+        aondir-addrole Guest $APP &>/dev/null
+        aondir-addrole Admin $APP &>/dev/null
+        aondir-addrole Auditor $APP &>/dev/null
+        aondir-addrole Accounting $APP &>/dev/null
+        aondir-addrole Invoicing $APP &>/dev/null
+        aondir-addrole Confidentiality $APP &>/dev/null
+
+
+        aondir-addprofile Asesor $APP Admin User &>/dev/null
+        aondir-addprofile Invitado $APP Guest User &>/dev/null
+        aondir-addprofile Operador $APP Confidentiality Invoicing User &>/dev/null
+
+fi
+
+

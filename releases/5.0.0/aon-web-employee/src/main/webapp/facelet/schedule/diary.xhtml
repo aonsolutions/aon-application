@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition >
+
+	<t:div styleClass="aon-form-group" >
+		<t:div styleClass="aon-form-group-body">
+
+			<t:dataTable id="plannerData" var="to"
+				value="#{incidences.model}" 
+				styleClass="aon-edit-table" headerClass="aon-edit-table-header" footerClass="aon-edit-table-footer" 
+				rows="20"
+				rowClasses="aon-edit-table-row-odd, aon-edit-table-row-even"
+				rowOnMouseOver="selectRow( this )" rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+				cellpadding="0" cellspacing="0"
+				columnClasses="aon-table-body aon-table-body-string,
+							   aon-table-body aon-table-body-string,
+							   aon-table-body aon-table-body-string,
+							   aon-table-body aon-table-body-string,
+							   aon-table-body aon-table-body-string,
+							   aon-table-body aon-table-body-number">
+	
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{plannerBundle.aon_planner_subject_label}" />
+					</f:facet>
+					<h:outputText value="#{to.title}" />
+					<t:commandLink id="select_event" forceId="#{true}" immediate="#{true}" 
+						styleClass="aon-table-row-selected"
+						action="#{planner.eventOutcome}" actionListener="#{incidences.onSelect}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{plannerBundle.aon_planner_event_category}" />
+					</f:facet>
+					<h:outputText value="#{to.category}" />
+				</h:column>
+	
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.aon_start_date}" />
+					</f:facet>
+					<t:outputText value="#{to.startTime}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+					</t:outputText>
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.aon_end_date}" />
+					</f:facet>
+					<t:outputText value="#{to.endTime}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+					</t:outputText>
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.aon_gap}" />
+					</f:facet>
+					<t:outputText value="#{to.startTime}" >
+						<f:convertDateTime pattern="#{appBundle.aon_time_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+					</t:outputText>
+					<f:verbatim>&#160;-&#160;</f:verbatim>
+					<t:outputText value="#{to.endTime}" >
+						<f:convertDateTime pattern="#{appBundle.aon_time_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+					</t:outputText>
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.aon_length}" />
+					</f:facet>
+					<t:outputText value="#{to.dur}" />
+				</h:column>
+			</t:dataTable>
+			<t:commandButton id="reset_incidence" forceId="#{true}" value="#{bundle.aon_reset}"
+				styleClass="aon-form-button"
+				action="#{planner.eventOutcome}" actionListener="#{incidences.onReset}" />
+		</t:div>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>
+ 

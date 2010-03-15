@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon_tbl_data">
+		<t:dataTable id="addressDataList" var="to" 
+			value="#{itemPos.model}"
+			rendered="#{itemPos.model.rowCount>0}"
+			rows="20" styleClass="aon-edit-table"
+			headerClass="aon-table-header" footerClass="aon-edit-table-footer"
+			columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string"
+			rowOnMouseOver="selectRow( this )"
+			rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+			rowClasses="aon-table-row-odd,aon-table-row-even"
+			cellpadding="0" cellspacing="0">
+
+		<h:column>
+			<f:facet name="header">
+				<f:verbatim>&#160;</f:verbatim>
+			</f:facet>
+			<t:commandLink immediate="#{true}"
+				styleClass="aon-table-row-selected"
+				actionListener="#{itemPos.onSelect}" 
+				action="itemPos_form" />
+			<f:verbatim rendered="#{itemPos.model.rowCount != 0}">&#160;</f:verbatim>
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="#{productBundle.itempos_plu}" />
+			</f:facet>
+			<h:outputText value="#{to.plu}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="#{productBundle.itempos_barcode}" />
+			</f:facet>
+			<h:outputText value="#{to.barcode}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="#{productBundle.itempos_shortDescription}" />
+			</f:facet>
+			<h:outputText value="#{to.shortDescription}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="#{productBundle.itempos_pluProductType}" />
+			</f:facet>
+			<h:outputText value="#{to.pluProductType}" >
+			</h:outputText>
+		</h:column>
+
+	</t:dataTable>
+	</t:div>
+	<t:div styleClass="aon_collapsible_buttons">
+		<h:commandButton id="itemPos_reset"  styleClass="aon_button_new_line" style="padding-left:16px;width:60px;"  value="#{bundle.aon_reset}"  actionListener="#{itemPos.onReset}" action="itemPos_form" rendered="#{itemPos.model.rowCount == 0}"/>
+	</t:div>
+
+
+</ui:composition>
+
+</body>
+</html>	

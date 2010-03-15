@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="sessionList">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{auditBundle.audit_sessions_module}" />
+				<ui:param name="controller" value="#{auditSession}" />
+				<ui:param name="skipResetButton" value="true" />				
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{auditSession}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-width-80 aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_start_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>							
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_end_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>							
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{auditBundle.audit_application}" />
+							</f:facet>
+							<aon:outputText value="#{to.application.name}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_login_user}" />
+							</f:facet>
+							<aon:outputText value="#{to.user.login}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{auditBundle.audit_session_remoteAddress}" />
+							</f:facet>
+							<aon:outputText value="#{to.remoteAddress}"/>
+						</aon:column>
+					</ui:define>
+				
+				</ui:decorate>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

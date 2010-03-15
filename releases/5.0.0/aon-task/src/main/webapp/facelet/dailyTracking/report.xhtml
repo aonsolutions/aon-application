@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="dailyTrackingForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText
+							value="#{projectBundle.aon_daily_tracking_report_search}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_editing}" />
+					</aon:div>
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+
+						<h:commandLink actionListener="#{dailyTrackingReport.onResetReportSearch}"
+							value="#{bundle.aon_clear}" 
+							onclick="return confirm('#{bundle.aon_clear}&#160;#{bundle.aon_search_header}?');"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber">
+						</h:commandLink>
+
+						<h:commandLink action="#{dailyTrackingReport.onReport}"
+							value="#{bundle.aon_report}" target="_blank"
+							styleClass="aon-finding-toolbar-item aon-icon-printer">
+						</h:commandLink>
+
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="workgroup"
+						value="#{projectBundle.aon_daily_tracking_workgroup}" />
+					<aon:selectOneMenu id="workgroup"
+						valueChangeListener="#{dailyTrackingReport.workgroupChanged}"
+						reRender="user"
+						value="#{dailyTrackingReport.workgroupId}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{configCollections.workgroups}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="user"
+						value="#{projectBundle.aon_daily_tracking_user}" />
+					<aon:selectOneMenu id="user"
+						value="#{dailyTrackingReport.userId}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{dailyTrackingReport.users}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="dossier_type"
+						value="#{projectBundle.aon_daily_tracking_dossier_type}"/>
+					<aon:selectOneMenu id="dossier_type"
+						disabled="#{dailyTrackingReport.dossierTypeDisabled}"
+						value="#{dailyTrackingReport.dossierTypeId}"
+						valueChangeListener="#{dailyTrackingReport.dossierTypeChanged}"
+						reRender="activity_type,dossier">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{dailyTrackingReport.dossierTypes}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="activity_type"
+						value="#{projectBundle.aon_daily_tracking_activity_type}"/>
+					<aon:selectOneMenu id="activity_type"
+						value="#{dailyTrackingReport.activityTypeId}"
+						disabled="#{dailyTrackingReport.activityTypeDisabled}"
+						valueChangeListener="#{dailyTrackingReport.activityTypeChanged}"
+						reRender="activity_type,dossier_type,dossier,activity">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{dailyTrackingReport.activityTypes}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="dossier"
+						value="#{projectBundle.aon_daily_tracking_dossier}"/>
+					<aon:selectOneMenu id="dossier"
+						valueChangeListener="#{dailyTrackingReport.dossierChange}"
+						reRender="customerIdContainer,activity,dossier,dossier_type,activity_type"
+						value="#{dailyTrackingReport.dossierId}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{dailyTrackingReport.availableDossiers}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="#{projectBundle.aon_customer}" />
+					<ui:include src="/facelet/shared/customer/customerIdInput.xhtml">
+						<ui:param name="customer_id" value="customerId" />
+						<ui:param name="renderedAttr" value="#{true}" />
+						<ui:param name="disabled" value="false" />
+						<ui:param name="reRenderAttr"
+							value="dossier,activity" />
+						<ui:param name="required" value="#{false}" />
+						<ui:param name="customerEntity"
+							value="#{dailyTrackingReport.customer}" />
+						<ui:param name="customerELExpression"
+							value="dailyTrackingReport.customer" />
+						<ui:param name="valueChangeListener"
+							value="dailyTrackingReport.reloadDossiers" />
+					</ui:include>
+
+					<aon:outputLabel for="activity"
+						value="#{projectBundle.aon_daily_tracking_activity}"/>
+					<aon:selectOneMenu id="activity"
+						value="#{dailyTrackingReport.activityId}"
+						valueChangeListener="#{dailyTrackingReport.activityChanged}"
+						reRender="activity_type">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{dailyTrackingReport.activities}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{projectBundle.aon_date}"/>
+					<aon:panelGrid columns="4">
+						<aon:outputLabel for="dateFrom"
+							value="#{projectBundle.aon_date_from}"/>
+
+						<aon:selectInputDate id="dateFrom"
+							value="#{dailyTrackingReport.fromDate}" renderAsPopup="true"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+
+						<aon:outputLabel for="dateTo"
+							value="#{projectBundle.aon_date_to}"/>
+						<aon:selectInputDate id="dateTo"
+							value="#{dailyTrackingReport.toDate}" renderAsPopup="true"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:panelGrid>
+
+					<aon:outputLabel for="jobType"
+						value="#{projectBundle.aon_daily_tracking_job_type}"/>
+					<aon:selectOneMenu id="jobType"
+						value="#{dailyTrackingReport.jobTypeId}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{projectCollections.jobTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="reportKey" value="#{bundle.aon_listing}"/>
+					<aon:div>
+						<aon:selectOneMenu id="reportKey"
+							value="#{dailyTrackingReport.reportKey}">
+							<f:selectItem itemValue="dailyTrackingByDate"
+								itemLabel="#{projectBundle.daily_tracking_by_date}" />
+							<f:selectItem itemValue="dailyTrackingByCustomer"
+								itemLabel="#{projectBundle.daily_tracking_by_customer}" />
+							<f:selectItem itemValue="dailyTrackingByUser"
+								itemLabel="#{projectBundle.daily_tracking_by_user}" />
+							<f:selectItem itemValue="dailyTrackingByDossier"
+								itemLabel="#{projectBundle.daily_tracking_by_dossier}" />
+							<f:selectItem itemValue="dailyTrackingByDossierType"
+								itemLabel="#{projectBundle.daily_tracking_by_dossier_type}" />
+							<f:selectItem itemValue="dailyTrackingByJobType"
+								itemLabel="#{projectBundle.daily_tracking_by_job_type}" />
+<!-- 
+							<f:selectItem itemValue="dailyTrackingGraphic"
+								itemLabel="#{projectBundle.daily_tracking_graphic}" />
+ -->
+							<f:selectItem itemValue="dailyTrackingGraphicByCustomer"
+								itemLabel="#{projectBundle.daily_tracking_graphic_by_customer}" />
+							<f:selectItem itemValue="dailyTrackingGraphicByUser"
+								itemLabel="#{projectBundle.daily_tracking_graphic_by_user}" />
+							<f:selectItem itemValue="dailyTrackingGraphicByDossier"
+								itemLabel="#{projectBundle.daily_tracking_graphic_by_dossier}" />
+							<f:selectItem itemValue="dailyTrackingGraphicByJobType"
+								itemLabel="#{projectBundle.daily_tracking_graphic_by_job_type}" />
+							<f:selectItem itemValue="dailyTrackingExcel"
+								itemLabel="#{projectBundle.daily_tracking} (MS Excel)" />
+						</aon:selectOneMenu>
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

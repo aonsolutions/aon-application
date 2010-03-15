@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:outputLabel for="Trabajador_cdg"
+		value="#{appBundle.aon_payroll_pricipales_personas_cdg}" />
+	<aon:inputText id="Trabajador_cdg" size="10" maxlength="8"
+		valueChangeListener="#{trabajadorLookup.addExpression}" />
+
+	<aon:outputLabel
+		value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
+	<aon:inputText id="Trabajador_persona_numdoc"
+		valueChangeListener="#{trabajadorLookup.addExpression}" />
+
+	<aon:outputLabel
+		value="#{appBundle.aon_payroll_pricipales_personas_apellido1}" />
+	<aon:inputText id="Trabajador_persona_descripcion"
+		valueChangeListener="#{trabajadorLookup.addExpression}" />
+
+	<aon:outputLabel
+		value="#{appBundle.aon_payroll_pricipales_personas_apellido2}" />
+	<aon:inputText id="Trabajador_persona_apellido2"
+		valueChangeListener="#{trabajadorLookup.addExpression}" />
+
+	<aon:outputLabel
+		value="#{appBundle.aon_payroll_pricipales_personas_nombre}" />
+	<aon:inputText id="Trabajador_persona_nombre"
+		valueChangeListener="#{trabajadorLookup.addExpression}" />
+</ui:composition>
+
+</body>
+</html>

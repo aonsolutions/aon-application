@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		<aon:commandLink id="master"
+			value="#{bundle.aon_masters}"
+			action="menu_master" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-master" />
+		<aon:commandLink id="auxiliary"
+			value="#{bundle.aon_auxiliaries}"
+			action="menu_auxiliary" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-auxiliary" />
+		<aon:commandLink id="commercial"
+			value="#{commercialBundle.commercial_module_group}"
+			action="menu_commercial" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-commercial" />
+		<aon:commandLink id="marketing"
+			value="#{marketingBundle.marketing_marketing}"
+			action="menu_marketing" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-marketing" />
+		<aon:commandLink id="config"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />
+		<aon:commandLink id="communicationCenter"
+			value="#{commercialBundle.commercial_communication_center_module}"
+			styleClass="aon-top-menu-item aon-icon-telephone" immediate="true" 
+			action="communicationCenter" actionListener="#{communicationCenter.onInit}" />
+	</ui:define>
+
+</ui:composition>

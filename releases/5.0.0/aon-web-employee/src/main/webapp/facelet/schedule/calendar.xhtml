@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<!-- toolbar navigation -->
+	<t:div id="aon-content-toolbar" forceId="#{true}" styleClass="aon-content-toolbar" >
+		<t:div styleClass="aon-content-toolbar-internal">
+			<t:div styleClass="aon-content-toolbar-item-group">
+				<t:commandButton id="search_event" forceId="#{true}" 
+					value="#{bundle.aon_search} #{plannerBundle.aon_planner_event_label}s"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+					actionListener="#{eventFinder.init}" action="find_events" 
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" />
+			</t:div>
+		</t:div>
+	</t:div>
+
+	<!--  Calendar day selector -->
+   	<t:div style="padding:0.8em 1em 0 0;width:150px;float:left;" >
+	    <h:panelGrid columns="1" cellspacing="0" cellpadding="0" >
+		   	<t:div id="plannerNavigator" forceId="#{true}" style="border:#CCC 1px solid;padding:1em" >
+		        <t:inputCalendar
+		            monthYearRowClass="yearMonthHeader"
+		            weekRowClass="weekHeader"
+		            currentDayCellClass="currentDayCell"
+		            value="#{planner.date}"
+		            valueChangeListener="#{planner.calendarValueChanged}"
+		            binding="#{planner.dateInput}"/>
+			</t:div>
+
+	    </h:panelGrid>
+	</t:div>
+	
+	<!-- scheduler -->
+	<t:div style="margin-left:160px;_width:100%;">
+		<t:div id="aon-scroll-area" forceId="#{true}" >
+			<t:div styleClass="aon-scroll-area-internal" >
+				<!-- start of bag panel -->
+				<!-- start of flow layout -->
+
+				<t:div style="white-space:nowrap;padding-bottom:5px;">
+					<t:commandLink styleClass="aon-datascroller-buttons aon-datascroller-button-previous" style="width:16px;text-decoration:none;"
+							disabled="true">
+						<f:verbatim >&#160;&#160;</f:verbatim>
+					</t:commandLink>
+					<h:outputText value="#{planner.date}" styleClass="aon-datascroller-text" style="padding:0 0.5em;" >
+						<f:convertDateTime type="date" pattern="EEE, d MMM yyyy" timeZone="ETC/GMT-2" />
+					</h:outputText>
+					<t:commandLink styleClass="aon-datascroller-buttons aon-datascroller-button-next" style="width:16px;text-decoration:none;"
+								disabled="true">
+						<f:verbatim>&#160;&#160;</f:verbatim>
+					</t:commandLink>
+			    </t:div>
+
+		    	<t:div id="aon-content-calendar-tabs" forceId="#{true}" >
+				    <h:panelGrid columns="1" cellpadding="0" cellspacing="0" >
+					    
+						<t:div styleClass="aon-tabpanel" style="text-align:right;margin:0;">
+							<t:panelGrid columns="6" cellpadding="0" cellspacing="0" border="0">
+								<t:panelGroup>
+									<t:div styleClass="#{planner.mode == 0 ? 'aon-tabpanel-active': 'aon-tabpanel-inactive'}" >
+										<t:commandButton id="day_0" forceId="#{true}" 
+													styleClass="aon-content-toolbar-item aon-content-toolbar-item-save" 
+													style="#{planner.mode == 0 ? 'border:0;background-image:none;padding:0 2em;': 'display:block;padding:0 2em;'}"
+													value="#{plannerBundle.aon_planner_day_label}"
+													actionListener="#{planner.calendarView}" 
+													onchange="this.form.submit();" />
+									</t:div>
+								</t:panelGroup>	
+								<t:panelGroup>
+									<t:div styleClass="#{planner.mode == 1 ? 'aon-tabpanel-active': 'aon-tabpanel-inactive'}" >
+									<t:commandButton id="weekwork_1" forceId="#{true}" 
+												styleClass="aon-content-toolbar-item aon-content-toolbar-item-save" 
+												style="#{planner.mode == 1 ? 'border:0;background-image:none;': 'display:block'}"
+												value="#{plannerBundle.aon_planner_weekwork_label}"
+												actionListener="#{planner.calendarView}" 
+												onchange="this.form.submit();" />
+									</t:div>
+								</t:panelGroup>	
+								<t:panelGroup>
+									<t:div styleClass="#{planner.mode == 2 ? 'aon-tabpanel-active': 'aon-tabpanel-inactive'}" >
+									<t:commandButton id="week_2" forceId="#{true}" 
+												styleClass="aon-content-toolbar-item aon-content-toolbar-item-save" 
+												style="#{planner.mode == 2 ? 'border:0;background-image:none;': 'display:block'}"
+												value="#{plannerBundle.aon_planner_week_label}"
+												actionListener="#{planner.calendarView}" 
+												onchange="this.form.submit();" />
+									</t:div>
+								</t:panelGroup>	
+								<t:panelGroup>
+									<t:div styleClass="#{planner.mode == 3 ? 'aon-tabpanel-active': 'aon-tabpanel-inactive'}" >
+										<t:commandButton id="month_3" forceId="#{true}" 
+													styleClass="aon-content-toolbar-item aon-content-toolbar-item-save" 
+													style="#{planner.mode == 3 ? 'border:0;background-image:none;padding:0 2em;': 'display:block;padding:0 2em;'}"
+													value="#{plannerBundle.aon_planner_month_label}"
+													actionListener="#{planner.calendarView}" 
+													onchange="this.form.submit();" />
+									</t:div>
+								</t:panelGroup>	
+								<t:panelGroup style="#{planner.spreadable ? 'display:none': 'display:block'}" >
+									<t:div styleClass="#{planner.mode == 4 ? 'aon-tabpanel-active': 'aon-tabpanel-inactive'}" >
+										<t:commandButton id="diary_4" forceId="#{true}" 
+													styleClass="aon-content-toolbar-item aon-content-toolbar-item-save" 
+													style="#{planner.mode == 4 ? 'border:0;background-image:none;': 'display:block'}"
+													value="#{plannerBundle.aon_planner_incidence_label}s"
+													actionListener="#{planner.viewIncidences}" 
+													onchange="this.form.submit();" />
+									</t:div>
+								</t:panelGroup>
+								<t:panelGroup>
+									<t:div styleClass="#{planner.mode == 5 ? 'aon-tabpanel-active': 'aon-tabpanel-inactive'}" >
+										<t:commandButton id="workingtime_5" forceId="#{true}" 
+													styleClass="aon-content-toolbar-item aon-content-toolbar-item-save" 
+													style="#{planner.mode == 5 ? 'border:0;background-image:none;': 'display:block'}"
+													value="#{plannerBundle.aon_planner_event_label}s"
+													actionListener="#{planner.loadEvents}" 
+													onchange="this.form.submit();" />
+									</t:div>
+								</t:panelGroup>	
+							</t:panelGrid>
+						</t:div>
+				    </h:panelGrid>
+			    
+					<t:div rendered="#{planner.mode != 4 and planner.mode != 5}" >
+				        <t:schedule id="schedule1" value="#{planner.scheduleModel}"
+				        	action="#{planner.eventOutcome}" 
+				        	mouseListener="#{planner.scheduleClicked}"
+					        rendered="true" 
+							tooltip="#{planner.tooltip}" theme="#{planner.theme}" 
+							readonly="#{planner.readonly}" submitOnClick="#{true}"
+							expandToFitEntries="#{true}"
+							headerDateFormat="EEE, d MMM yyyy"
+							detailedRowHeight="#{planner.detailedRowHeight}"
+							entryRenderer="#{plannerEntryRenderer}"
+							visibleStartHour="#{planner.startHour}" workingStartHour="#{planner.startHour}"
+							visibleEndHour="#{planner.endHour}" workingEndHour="#{planner.endHour}" />
+					</t:div>
+
+					<t:div rendered="#{planner.mode == 4}" >
+						<ui:include src="/facelet/schedule/diary.xhtml" />
+					</t:div>
+
+					<t:div rendered="#{planner.mode == 5}" >
+						<ui:include src="/facelet/schedule/workingtime.xhtml" />
+					</t:div>
+				</t:div>
+
+			</t:div>
+		</t:div>
+	</t:div>
+
+
+</ui:composition>
+
+</body>
+</html>

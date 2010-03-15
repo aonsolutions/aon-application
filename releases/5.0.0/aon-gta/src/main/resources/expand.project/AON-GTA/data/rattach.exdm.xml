@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="rattach">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" name="category" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="mimeType" sqlType="tinyint" type="string"/>
+        <column label="" length="64" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" length="65535" name="data"
+            sqlType="longvarbinary" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="rattach_ibfk_1" foreignPath="data/category.exdm.xml">
+            <sourceColumns>
+                <column name="category"/>
+            </sourceColumns>
+        </join>
+        <join description="rattach_ibfk_2" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

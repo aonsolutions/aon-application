@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+		<f:loadBundle basename="#{facesContext.application.messageBundle}"
+			var="bundle" />
+	<t:div styleClass="aon-header" id="aon-header-container" forceId="#{true}" >	
+	
+		<h:panelGrid columns="2" styleClass="aon-table-default"
+			columnClasses="aon-header-leftGroup,aon-header-rightGroup" dir="true">
+			<h:panelGroup>
+				<t:div styleClass="aon-logo">
+					<h:graphicImage
+						url="#{aonConfiguration.applicationLogoContextRelativePath}"
+						alt="#{hyperviewBundle.aon_application_title}" 
+						/>
+				</t:div>
+				<t:div styleClass="aon-applicationName">
+					<h:outputText value="#{runnableTree.hyperViewLabel}" />
+				</t:div>
+				
+			</h:panelGroup>
+			<h:panelGroup>
+				<t:div styleClass="aon-header-middle-right-internal">
+					<f:verbatim>&#160;</f:verbatim>						
+				</t:div>
+			</h:panelGroup>
+			</h:panelGrid>
+			<t:div styleClass="aon-header-bottom">
+				<f:verbatim>&#160;</f:verbatim>
+			</t:div>
+		</t:div>
+	
+
+</ui:composition>
+</body>
+</html>
+
+
+

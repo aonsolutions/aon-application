@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="tas_offer">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="support_order" sqlType="integer" type="integer"/>
+        <column label="" name="offer" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="tas_offer_ibfk_1" foreignPath="data/support_order.exdm.xml">
+            <sourceColumns>
+                <column name="support_order"/>
+            </sourceColumns>
+        </join>
+        <join description="tas_offer_ibfk_2" foreignPath="data/offer.exdm.xml">
+            <sourceColumns>
+                <column name="offer"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

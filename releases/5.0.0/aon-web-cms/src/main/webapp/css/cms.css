@@ -1,0 +1,13 @@
+.aon-input-required {
+	color:#2152A5;
+	font-weight: bold !important;
+}
+
+.aon-outputLabel {
+	font-weight: normal;
+}
+.generator-log-panel {
+	width:920px;
+    height:178px;
+    overflow:auto;
+}

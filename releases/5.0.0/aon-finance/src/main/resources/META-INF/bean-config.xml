@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="">
+		<pojo>com.code.aon.finance.Invoice</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.InvoiceBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.InvoiceBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.InvoiceDetailBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.InvoiceDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.Finance</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.FinanceBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.FinanceBatchDetail</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.FinanceBatchDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="Evita que se borre un cliente con facturas">
+		<pojo>com.code.aon.customer.Customer</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Evita que se borre un proveedor con facturas">
+		<pojo>com.code.aon.supplier.Supplier</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Evita que se borre un acreedor con facturas">
+		<pojo>com.code.aon.finance.Creditor</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.CreditorBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.CustomerFee</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.CustomerFeeBeanListener</listener>
+		</listeners>
+	</bean>
+	
+</bean-config>

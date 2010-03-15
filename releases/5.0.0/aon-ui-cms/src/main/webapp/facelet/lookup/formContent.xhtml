@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition>
+
+	<!-- start toolbar navigation -->
+
+	<!-- end toolbar navigation -->
+	<aon:div styleClass="aon-content-toolbar">
+		<aon:div styleClass="aon-content-toolbar-internal">
+
+				<aon:commandButton id="save" value="#{bundle.aon_save}"
+					actionListener="#{lookup.accept}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+					accesskey="#{bundle.aon_key_save}" />
+				<aon:commandButton id="cancelPanelPopup" value="#{bundle.aon_cancel}"
+					actionListener="#{lookup.onCloseWindow}" rendered="#{lookup.new}" partialSubmit="true"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+					accesskey="#{bundle.aon_key_cancel}" />
+				<aon:commandButton id="close" value="#{bundle.aon_close}"
+					rendered="#{!lookup.new}" partialSubmit="true"
+					actionListener="#{lookup.onFormSelect}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-close"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-close'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-close'"
+					accesskey="#{bundle.aon_key_close}"/>
+			</aon:div>
+		</aon:div>
+
+	<aon:div styleClass="aon-content-subtitle">
+		<aon:div styleClass="aon-content-subtitle-internal">
+			<aon:outputText
+				value="#{lookup.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+		</aon:div>
+	</aon:div>
+
+	<aon:div styleClass="aon-popup-scroll-Body">
+		<aon:div styleClass="aon-popup-scroll-Body-internal">
+			<aon:div style="width:100%;">
+				<ui:include src="#{lookup.newPagePath}" />
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	
+</ui:composition>
+
+</body>
+</html>

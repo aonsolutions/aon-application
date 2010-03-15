@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include
+		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+
+	<aon:outputLabel for="Customer_scope_id" value="#{bundle.aon_scope}" />
+	<aon:selectOneMenu id="Customer_scope_id" value="#{controller.to.scope}">
+		<f:selectItems value="#{configCollections.currentUserScopes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
+	<aon:selectOneRadio id="Customer_status" value="#{controller.to.status}">
+		<f:selectItems value="#{customerCollections.customerStatuses}" />
+	</aon:selectOneRadio>
+
+	<c:if test="#{aonConfiguration.bean.customer.showTaxInfoData}">
+		<aon:outputText value="#{customerBundle.customer_taxes}" />
+		<aon:div>
+			<aon:selectBooleanCheckbox id="Customer_surcharge" styleClass="aon-margin-left"
+				value="#{controller.to.surcharge}" />
+			<aon:outputLabel for="Customer_surcharge" styleClass="aon-italic"
+				value="#{bundle.aon_surcharge}" />
+			<aon:selectBooleanCheckbox id="Customer_withholding" styleClass="aon-margin-left"
+				value="#{controller.to.withholding}" />
+			<aon:outputLabel for="Customer_withholding" styleClass="aon-italic"
+				value="#{bundle.aon_retention}" />
+		</aon:div>
+
+		<aon:outputLabel for="Customer_transaction" value="#{customerBundle.customer_transaction_type}" />
+		<aon:selectOneRadio id="Customer_transaction" value="#{controller.to.transaction}">
+			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
+		</aon:selectOneRadio>
+	</c:if>
+</ui:composition>

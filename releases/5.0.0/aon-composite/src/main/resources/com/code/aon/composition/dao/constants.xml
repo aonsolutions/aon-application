@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.composition.Composition" sqlName="composition">
+		<alias names="id,type,description,item,quantity,price,expenses_percent,expenses_fixed,price_in_details,item_product_name,item_product_code,item_product_category,item_product_composition" />
+		<sql names="id,type,description,item,quantity,price,expenses_percent,expenses_fixed,price_in_details,item.product.name,item.product.code,item.product.category.name,item.product.composition" />
+		<hibernate names="id,type,description,item.id,quantity,price,expensesPercent,expensesFixed,priceInDetails,item.product.name,item.product.code,item.product.category.name,item.product.composition" />
+	</bean>
+</dao>

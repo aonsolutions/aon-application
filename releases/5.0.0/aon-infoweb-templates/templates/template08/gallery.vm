@@ -1,0 +1,12 @@
+<div id="container">
+	<div class="album">
+		#foreach($image in $gallery)
+			<div class="objeto">
+				<a href="$image.getLink()">
+					<img style="width:134px; height:100px;" src="images/tn_$image.getName()" class="img-border" alt="$image.getDescription()" border="0" />		 
+				</a>
+				<p><a href="$image.getLink()">$image.getDescription()</a></p>
+			</div>
+		#end
+	</div>	
+</div>

@@ -1,0 +1,120 @@
+#dhtmlgoodies_colorPicker{
+	position:absolute;
+	width:198px;
+	padding-bottom:1px;
+	background-color:#FFF;
+	border:1px solid #317082;
+}
+
+#dhtmlgoodies_colorPicker .colorPicker_topRow{
+	height:16px;
+	padding-bottom:1px;
+	border-bottom:3px double #317082;
+	background-color:#E2EBED;
+	padding-left:2px;
+
+	width: 196px;	/* IE 5.x */
+	width/* */:/**/196px;	/* Other browsers */
+	width: /**/196px;
+	
+	height: 20px;	/* IE 5.x */
+	height/* */:/**/16px;	/* Other browsers */
+	height: /**/16px;
+	
+	
+		
+}
+
+#dhtmlgoodies_colorPicker .colorPicker_statusBar{
+	height:13px;
+	padding-bottom:2px;
+	
+	border-top:3px double #317082;	
+	background-color:#E2EBED;
+	padding-left:2px;
+	clear:both;
+	
+	width: 196px;	/* IE 5.x */
+	width/* */:/**/196px;	/* Other browsers */
+	width: /**/196px;	
+	
+	height: 18px;	/* IE 5.x */
+	height/* */:/**/13px;	/* Other browsers */
+	height: /**/13px;		
+}
+
+#dhtmlgoodies_colorPicker .colorSquare{
+	width:10px;
+	height:10px;
+	margin-left:1px;
+	margin-bottom:1px;
+	float:left;
+	border:1px solid #000;
+	cursor:pointer;
+	
+	width: 12px;	/* IE 5.x */
+	width/* */:/**/10px;	/* Other browsers */
+	width: /**/10px;			
+}
+
+.colorPickerTab_inactive,.colorPickerTab_active{
+
+	height:17px;
+	padding-left:4px;
+	cursor:pointer;	
+	
+	
+}
+.colorPickerTab_inactive span{
+	background-image:url('images/tab_left_inactive.gif');
+}
+
+.colorPickerTab_active span{
+	background-image:url('images/tab_left_active.gif');
+
+}
+.colorPickerTab_inactive span, .colorPickerTab_active span{
+	line-height:16px;
+	font-weight:bold;
+	font-family:arial;
+	font-size:11px;
+	padding-top:1px;
+	vertical-align:middle;
+	background-position:top left;
+	background-repeat: no-repeat;	
+	float:left;
+	padding-left:6px;
+	-moz-user-select:no;
+}	
+.colorPickerTab_inactive img,.colorPickerTab_active img{
+	float:left;
+}
+.colorPickerCloseButton{
+	text-align:center;
+	line-height:11px;
+	border:1px solid #317082;
+	position:absolute;
+	right:1px;
+	font-size:12px;
+	font-weight:bold;
+	top:1px;
+	padding:1px;
+	cursor:pointer;	
+	
+	width: 13px;	/* IE 5.x */
+	width/* */:/**/11px;	/* Other browsers */
+	width: /**/11px;
+	
+	height: 13px;	/* IE 5.x */
+	height/* */:/**/11px;	/* Other browsers */
+	height: /**/11px;	
+			
+	
+}
+#colorPicker_statusBarTxt{
+	font-size:11px;
+	font-family:arial;
+	vertical-align:top;
+	line-height:13px;
+
+}

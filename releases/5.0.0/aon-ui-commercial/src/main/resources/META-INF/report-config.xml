@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+
+	<!--  **********************************************************
+						TARGET
+		  **********************************************************-->
+		  
+	<report id="targetList" description="Targets List">
+		<template path="/com/code/aon/ui/commercial/report/target.jasper"/>
+		<bean key="com.code.aon.commercial.Target" />
+		<criteria provider="#{target}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<!--  **********************************************************
+						OFFER 
+		  **********************************************************-->
+		  
+	<report id="offer" description="Offers's Report">
+		<template path="/com/code/aon/ui/commercial/report/offer.jasper"/>
+		<collection provider="#{offer}" forceRefresh="true"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="TotalPrice" value="#{offer.getTotalPrice}" />
+			<param id="PriceStrategy" value="#{offerDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="targetPhone" value="#{offer.getTargetPhone}" />
+			<param id="targetCellular" value="#{offer.getTargetCellularPhone}" />
+			<param id="targetEmail" value="#{offer.getTargetEmail}" />
+			<param id="targetFax" value="#{offer.getTargetFax}" />
+			<param id="targetPayMethod" value="#{offer.getTargetPayMethod}" />
+			<param id="defaultPayMethod" value="#{offer.getDefaultPayMethod}" />			
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+		
+		<nested-report report="offerDetail"/>
+		<nested-report report="offerVatBreakDown"/>
+		<nested-report report="offerGeneralTerms"/>
+		<nested-report report="offerParticularTerms"/>
+	</report>
+	
+	<report id="offerExtended" description="Offers's Report">
+		<template path="/com/code/aon/ui/commercial/report/offerExtended.jasper"/>
+		<collection provider="#{offer}" forceRefresh="true"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="TotalPrice" value="#{offer.getTotalPrice}" />
+			<param id="PriceStrategy" value="#{offerDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="targetPhone" value="#{offer.getTargetPhone}" />
+			<param id="targetCellular" value="#{offer.getTargetCellularPhone}" />
+			<param id="targetEmail" value="#{offer.getTargetEmail}" />
+			<param id="targetFax" value="#{offer.getTargetFax}" />
+			<param id="targetPayMethod" value="#{offer.getTargetPayMethod}" />
+			<param id="defaultPayMethod" value="#{offer.getDefaultPayMethod}" />			
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+		
+		<nested-report report="offerDetail"/>
+		<nested-report report="offerVatBreakDown"/>
+		<nested-report report="offerGeneralTerms"/>
+		<nested-report report="offerParticularTerms"/>
+	</report>
+		
+	<report id="offerDetail" description="OfferDetail' Subreport">
+		<template path="/com/code/aon/ui/commercial/report/offerDetail.jasper" />	
+	</report>
+	
+	<report id="offerVatBreakDown" description="VatBreakDown's Subreport">
+		<template path="/com/code/aon/ui/commercial/report/offerVatBreakDown.jasper"/>
+	</report>
+	
+	<report id="offerGeneralTerms" description="Terms's Subreport">
+		<template path="/com/code/aon/ui/commercial/report/offerGeneralTerms.jasper"/>
+	</report>
+	
+	<report id="offerParticularTerms" description="Terms's Subreport">
+		<template path="/com/code/aon/ui/commercial/report/offerParticularTerms.jasper"/>
+	</report>
+	
+
+	<!--
+		********************************************************** 
+								EXPENSE ACCOUNT
+		**********************************************************
+	-->
+
+
+	<report id="expenseAccountForm" description="ExpenseAccount's Report">
+		<template path="/com/code/aon/ui/commercial/report/expense.jasper" />
+		<bean key="com.code.aon.commercial.ExpenseAccount" />
+		<criteria provider="#{expenseAccount}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="TotalPrice" value="#{offer.getTotalPrice}" />
+			<param id="PriceStrategy" value="#{offerDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+
+		<nested-report report="expenseAccountDetail" />
+
+	</report>
+
+	<report id="expenseAccountDetail" description="ExpenseAccountDetail' Subreport">
+		<template path="/com/code/aon/ui/commercial/report/expenseDetail.jasper" />
+	</report>
+
+	<report id="expenseAccountList" description="ExpenseAccount's Report">
+		<template path="/com/code/aon/ui/commercial/report/expenseList.jasper" />
+		<bean key="com.code.aon.commercial.ExpenseAccount" />
+		<criteria provider="#{expenseAccount}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="totalPrice" value="#{expenseAccount.getExpenseTotalAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>		
+	
+</report-config>

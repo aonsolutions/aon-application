@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+<ui:composition>
+	<aon:form>
+		<aon:div styleClass="aon-toolbar">
+			<h:panelGroup>
+				<h:commandButton id="ECMindex"
+						rendered="#{manager.administrator || manager.contentManagement}"
+						title="#{menuBundle.aon_repository}"
+						action="admin_repository"
+						actionListener="#{manager.folders.reset}"
+						styleClass="aon-finding-toolbar-item aon-icon-index"
+						value="#{menuBundle.aon_repository}" />
+				<h:commandButton id="ECMcategory"
+						rendered="#{manager.administrator}"
+						title="#{menuBundle.aon_category}"
+						action="admin_category"
+						styleClass="aon-finding-toolbar-item aon-icon-category"
+						value="#{menuBundle.aon_category}" />
+				<h:commandButton id="ECMuser"
+						rendered="#{manager.administrator}"
+						title="#{menuBundle.aon_users}"
+						action="user_list"
+						styleClass="aon-finding-toolbar-item aon-icon-user"
+						value="#{menuBundle.aon_users}" />
+				<h:commandButton id="ECMSearch"
+						title="#{menuBundle.aon_search_bycontent}"
+						action="search_by_content"
+						actionListener="#{search.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						value="#{menuBundle.aon_search_bycontent}" />
+				<h:commandButton id="ECMAdvanceSearch"
+						title="#{menuBundle.aon_search_advanced}"
+						action="advanced_search"
+						actionListener="#{search.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-advanced-search"
+						value="#{menuBundle.aon_search_advanced}" />
+			</h:panelGroup>
+		</aon:div>
+	</aon:form>
+</ui:composition>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+<ui:composition>
+
+	<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+		styleClass="aon-form-table" style="width:100%;"
+		columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+		<t:outputLabel for="Employee_registry_name"
+			styleClass="aon-form-input-text-label"
+			value="#{rBundle.aon_name}" />
+		<t:inputText id="Employee_registry_name" forceId="#{true}"
+			styleClass="aon-form-input-text" 
+			value="#{employee.to.registry.name}" size="45">
+			<f:validateLength minimum="1" maximum="45" />
+		</t:inputText>
+
+		<t:outputLabel for="Employee_registry_surname"
+			styleClass="aon-form-input-text-label"
+			value="#{rBundle.aon_surname}" />
+		<t:inputText id="Employee_registry_surname" forceId="#{true}"
+			styleClass="aon-form-input-text" 
+			value="#{employee.to.registry.surname}" size="45">
+			<f:validateLength minimum="1" maximum="45" />
+		</t:inputText>
+		
+		<t:outputLabel for="Employee_registry_document"
+			styleClass="aon-form-input-text-label"
+			value="#{rBundle.aon_cif}" />
+		<t:inputText id="Employee_registry_document" forceId="#{true}"
+			styleClass="aon-form-input-text"
+			value="#{employee.to.registry.document}" size="16" onblur="toUpperCase(this);">
+			<f:validateLength minimum="1" maximum="16" />
+		</t:inputText>
+		
+		<t:outputLabel for="Employee_socialSecurityNumber"
+			styleClass="aon-form-input-text-label"
+			value="#{rBundle.aon_social_security_number}" />
+		<t:inputText id="Employee_socialSecurityNumber" forceId="#{true}"
+			styleClass="aon-form-input-text"
+			value="#{employee.to.socialSecurityNumber}" size="25" onblur="toUpperCase(this);">
+			<f:validateLength minimum="1" maximum="16" />
+		</t:inputText>
+
+		<t:outputLabel for="Employee_registry_alias"
+			styleClass="aon-form-input-text-label"
+			value="#{appBundle.aon_employee_alias}" />
+		<t:inputText id="Employee_registry_alias" forceId="#{true}"
+			styleClass="aon-form-input-text" 
+			value="#{employee.to.registry.alias}" size="45">
+			<f:validateLength minimum="1" maximum="45" />
+		</t:inputText>
+
+		<t:outputLabel for="Employee_agreementTime"
+			styleClass="aon-form-input-text-label"
+			value="#{appBundle.aon_agreement_time}" />
+		<t:inputText id="Employee_agreementTime" forceId="#{true}"
+			styleClass="aon-form-input-text"
+			value="#{employee.to.agreementTime}" size="3" onblur="toUpperCase(this);">
+			<f:validateLength minimum="1" maximum="4" />
+		</t:inputText>
+<!--
+		<h:outputLabel for="Employee_active" 
+			rendered="#{!employee.new}"
+			styleClass="aon-form-input-text-label" 
+			value="#{appBundle.aon_active}" />
+		<t:selectBooleanCheckbox id="Employee_active" forceId="#{true}"
+			rendered="#{!employee.new}"
+			displayValueOnly="#{true}"
+			displayValueOnlyStyleClass="#{true}"
+			styleClass="aon-form-input-text"
+			onclick="security_div = document.getElementById('Employee_security_data');if ( this.checked == true ) security_div.style.display='block'; else security_div.style.display ='none';"
+			value="#{employee.to.active}" />
+-->
+		<t:outputLabel for="Employee_workPlace"
+			styleClass="aon-form-input-text-label"
+			value="#{appBundle.aon_workplace}" />
+		<t:selectOneMenu id="Employee_workPlace" forceId="#{true}"
+						styleClass="aon-form-selectOneMenu-field"
+						disabled="#{!employee.resourceAllowed}"
+						value="#{employee.resource.workPlace.id}" 
+						valueChangeListener="#{employee.workingPlaceChanged}" 
+						onchange="this.form.submit();" >
+			<f:selectItems value="#{workplace.all}" />
+		</t:selectOneMenu>	
+
+		<t:outputLabel for="Employee_workActivity"
+			styleClass="aon-form-input-text-label"
+			value="#{appBundle.aon_workactivity}" />
+		<t:selectOneMenu id="Employee_workActivity" forceId="#{true}"
+						styleClass="aon-form-selectOneMenu-field"
+						disabled="#{!employee.resourceAllowed}"
+						value="#{employee.activityId}"
+						valueChangeListener="#{employee.workingActivityChanged}" >
+			<f:selectItems value="#{employee.workActivities}" />
+		</t:selectOneMenu>	
+<!--
+		<h:outputLabel for="Employee_security_check" 
+			styleClass="aon-form-input-text-label" 
+			value="Habilitar Usuario" />
+		<t:div id="Employee_security_check" forceId="#{true}" style="display:block;">
+			<t:selectBooleanCheckbox id="Employee_active" forceId="#{true}"
+				rendered="#{user.to.login == null}"
+				styleClass="aon-form-input-text"
+				onclick="security_div = document.getElementById('Employee_security_data');if ( this.checked == true ) security_div.style.display='block'; else security_div.style.display ='none';"
+				value="#{employee.userEnabled}" />
+			<t:div id="Employee_security_data" forceId="#{true}" style="display:none;">
+				<h:inputText id="Employee_security" size="16" maxlength="16"
+					styleClass="aon-form-input-text"
+					rendered="#{!employee.new and !user.new}"
+					disabled="#{true}"
+					value="#{user.userManager.user.id}" />
+				<h:panelGrid columns="6" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table" width="100%"
+						rendered="#{employee.new or user.new}"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even
+										,aon-form-table-column-odd,aon-form-table-column-even
+										,aon-form-table-column-odd,aon-form-table-column-even">
+					<h:outputLabel for="User_login" 
+						styleClass="aon-form-input-text-label" 
+						value="#{securityBundle.aon_security_user}" />
+					<h:panelGroup>
+						<t:inputText id="User_login" forceId="#{true}"
+							size="16" maxlength="16"
+							styleClass="aon-form-input-text"
+							value="#{user.to.login}" />
+						<h:commandButton styleClass="aon-form-lookup-button"
+							id="findUser" value="" immediate="true"
+							rendered="#{employee.new}"
+							onclick="selectWindow(this, 'placeList', '#{userSearch.encodedPagePath}');return false;" />	
+					</h:panelGroup>
+					<h:outputLabel for="User_password"
+						styleClass="aon-form-input-text-label"
+						value="#{securityBundle.aon_security_new_password}" />
+					<t:inputSecret id="User_password" 
+						size="16" maxlength="16"
+						styleClass="aon-form-input-text"
+						value="#{user.userManager.password}" />
+					<h:outputLabel for="User_confirm_password"
+						styleClass="aon-form-input-text-label"
+						value="#{securityBundle.aon_security_confirm_password}" />
+					<t:inputSecret id="User_confirm_password" 
+						size="16" maxlength="16"
+						styleClass="aon-form-input-text"
+						onblur="new_password = document.getElementById(this.form.name+':User_password');if (this.value != new_password.value) {alert('#{securityBundle.aon_security_new_passwd_error}');new_password.value = '';this.value = '';new_password.focus();}"
+						value="#{user.userManager.confirmPassword}" />
+				</h:panelGrid>
+				<h:panelGrid cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table" width="100%">
+					<h:outputLabel for="userData" value="#{securityBundle.aon_security_profiles}"
+								styleClass="aon-form-input-text-label" />
+		            <t:selectManyCheckbox id="userData" value="#{user.userManager.relations}" 
+		            					layout="pageDirection" layoutWidth="5"
+		            					styleClass="selectManyCheckbox">
+		                <f:selectItems value="#{user.userManager.profiles}" />
+		            </t:selectManyCheckbox>
+				</h:panelGrid>
+			</t:div>
+		</t:div>
+-->
+	</h:panelGrid>
+	
+	<t:div styleClass="aon-form-collapsiblePanel" rendered="#{!employee.new}">
+		<t:collapsiblePanel value="false"
+			styleClass="aon-form-collapsiblePanel-title"
+			title="#{rBundle.aon_addresses}"
+			rendered="#{!employee.new}">
+			<t:div styleClass="aon-form-collapsiblePanel-body"
+				rendered="#{!employee.new}">
+				<ui:include
+					src="/facelet/employee/address/list.xhtml" />
+			</t:div>
+		</t:collapsiblePanel>
+	</t:div>
+
+	<t:div styleClass="aon-form-collapsiblePanel" rendered="#{!employee.new}">
+		<t:collapsiblePanel value="false"
+			styleClass="aon-form-collapsiblePanel-title"
+			title="#{rBundle.aon_media}"
+			rendered="#{!employee.new}">
+			<t:div styleClass="aon-form-collapsiblePanel-body"
+				rendered="#{!employee.new}">
+				<ui:include
+					src="/facelet/employee/media/list.xhtml" />
+			</t:div>
+		</t:collapsiblePanel>
+	</t:div>
+<!--
+	<script>
+		security_div = document.getElementById('Employee_security_data');
+		if ( document.getElementById('Employee_active').checked == true ) 
+			security_div.style.display='block'; 
+		else 
+			security_div.style.display ='none';
+	</script>
+-->
+</ui:composition>
+</body>
+</html>
+
+	

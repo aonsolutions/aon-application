@@ -1,0 +1,140 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.registry.i18n.messages</base-name>
+			<var>registryBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ************ COLLECTION **************** -->
+	<managed-bean>
+		<managed-bean-name>registryCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ CATEGORY ************** -->
+	<managed-bean>
+		<managed-bean-name>category</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Category</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>category</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ RELATIONSHIP ************** -->
+	<managed-bean>
+		<managed-bean-name>relationship</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Relationship</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>relationship</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ SEGMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>segment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Segment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>segment</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUPS ========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ REGISTRY LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>registryLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>registryLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.registry.Registry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/form.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryFormListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>registryFormListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ======================= NAVIGATION ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>relationship_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/relationship/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>segment_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/segment/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+</faces-config>

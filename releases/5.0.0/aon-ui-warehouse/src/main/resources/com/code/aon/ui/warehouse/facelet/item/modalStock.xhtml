@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="itemStockContainer">
+		<c:if test="#{itemStock.panelVisible}">
+			<rich:modalPanel id="stockInfoModalPanel" minHeight="420"
+				minWidth="620" rendered="#{itemStock.panelVisible}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{warehouseBundle.warehouse_item_stock_module}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+							actionListener="#{itemStock.onHidePanel}"
+							reRender="itemStockContainer" immediate="true">
+							<f:setPropertyActionListener 
+								target="#{itemStock.alternativesModel}"
+								value="#{null}" />
+							<f:setPropertyActionListener 
+								target="#{itemStock.stockModel}"
+								value="#{null}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="stockInfoForm">
+					<aon:div styleClass="aon-scroll-area">
+		
+						<aon:panelTabSet id="itemStockTabSet">
+							<aon:panelTab id="itemStockPanelTab" label="#{warehouseBundle.warehouse_item_stock_module}">
+		
+								<aon:outputText value="#{bundle.aon_search_no_results}"
+									style="aon-bold aon-margin-top"
+									rendered="#{empty itemStock.stockList}" />
+
+								<aon:dataTable id="itemStockData" value="#{itemStock.stockModel}"
+									var="to" rows="20" rendered="#{!empty itemStock.stockList}"
+									columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+
+									<aon:column>
+										<f:facet name="header">
+											<h:outputText value="#{warehouseBundle.warehouse_warehouse}" />
+										</f:facet>
+										<aon:outputText value="#{to.warehouse.name}" />
+									</aon:column>
+		
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_quantity}" />
+										</f:facet>
+										<aon:outputText value="#{to.quantity + ((to.warehouse == itemStock.warehouse) ? itemStock.rowStock : 0)}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+									</aon:column>
+								</aon:dataTable>
+		
+							</aon:panelTab>
+		
+							<c:if test="#{itemStock.alternativesVisible}">
+								<aon:panelTab id="itemAlternativePanelTab" label="#{productBundle.product_alternative_items}">
+			
+									<aon:outputText value="#{bundle.aon_search_no_results}"
+										style="aon-bold aon-margin-top"
+										rendered="#{empty itemStock.alternativesList}" />
+
+									<aon:dataTable id="itemAlternativeData" value="#{itemStock.alternativesModel}"
+										var="to" rows="20" rendered="#{!empty itemStock.alternativesList}">
+
+										<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:commandButton 
+												title="#{bundle.aon_check}" 
+												actionListener="#{itemStock.onSelectAlternative}"
+												styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+											<f:facet name="header">
+												<h:outputText value="#{bundle.aon_id}" />
+											</f:facet>
+											<aon:outputText value="#{to.alternativeItem.product.code}" />
+										</aon:column>
+			
+										<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_description}" />
+											</f:facet>
+											<aon:outputText value="#{to.alternativeItem.product.name}" />
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_quantity}" />
+											</f:facet>
+											<aon:outputText value="#{itemStock.alternativeStock}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+										</aon:column>
+									</aon:dataTable>
+
+								</aon:panelTab>
+							</c:if>
+						</aon:panelTabSet>
+		
+					</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

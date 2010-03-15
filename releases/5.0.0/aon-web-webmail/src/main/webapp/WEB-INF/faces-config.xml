@@ -1,0 +1,54 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<message-bundle>
+			com.code.aon.ui.common.i18n.messages
+		</message-bundle>
+		<locale-config>
+			<default-locale>es</default-locale>
+		</locale-config>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.webmail.i18n.application</base-name>
+			<var>appBundle</var>
+		</resource-bundle>		
+	</application>
+
+	<!-- *************** RESOURCE RESOLVER ***************** --> 
+	<managed-bean>
+		<managed-bean-name>aonResource</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.resources.bean.ResourceResolver
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>resourceContextPath</property-name>
+			<value>aon-desktop</value>
+		</managed-property>
+		<managed-property>
+			<property-name>resourceURIPreffix</property-name>
+			<value>/aonResource/5.0.0</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!--  *************** 
+		AON CONFIGURATION
+		***************** -->
+	<managed-bean>
+		<managed-bean-name>aonConfiguration</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ConfigurationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>styleSheets</property-name>
+			<list-entries>
+				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/webmail.css']}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+</faces-config>

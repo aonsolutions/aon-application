@@ -1,0 +1,140 @@
+/*****************/
+/* POPUP PANEL*/
+/*****************/
+/* USED FOR:CONFIRM BOX AND LOOKUP */
+/*****************/
+
+/* Position the popup panel */
+.aon-popup-panel{
+	padding:0;
+	background-color:#fff;
+	margin:0 auto;
+	text-align:center;
+		}
+
+/* position the confirm box. This style is used in combination with the on-popup-panel style */
+.aon-confirm-box{
+	position:absolute;
+	top:190px;
+	left:30%;
+	}
+.aon-popup-lookup{
+	position:absolute;
+	top:150px;
+	left:30%;
+	}
+/* Prefix of the popup panel and sets the window width */
+/* the popup width is set in the xhtml file because you should use diferent sizes form each window type */
+.aon-popup-{
+	}
+
+/**************************/
+/* ICE PANEL POP UP HEADER*/
+/**************************/
+
+/* popup header. Includes the title and the close button*/
+.aon-popup-Header {
+    background-color: #535353;
+    border: 1px solid #000;
+    border-bottom: 1px solid #fff;
+    margin:30px 30px 0 30px;  
+   
+}
+.aon-popup-Hdr{
+	background-color:#304055;
+	border: 1px solid #000;
+  border-bottom: 1px solid #fff;
+  line-height:18px; 
+  background-image:none !important;
+	}
+/* Pop up title cell */
+.aon-popup-title{
+	color:#fff;
+	text-align:left;
+	font-weight:bold;	
+	padding:3px 0 3px 1em;
+	}
+.aon-popup-title-span{
+	border:0px !important;
+	font-size:1em !important;
+	padding:0 !important;
+	margin: 0 !important;
+	}
+/* Close button column. The button must be an grahpic image object. It can not be set with an image background */
+.aon-popup-title-closeButton{
+	text-align:right;
+	background-color:#304055;
+	
+	}
+/* Close button image*/
+.aon-popup-button-close{
+
+	}
+/**************************/
+/* ICE PANEL POP UP HEADER*/
+/**************************/
+/* Popup body. Contains the title, the toolbar and the content */
+.aon-popup-Body {
+  background-color:#f2f2f2;
+  border: 1px solid #000;
+  margin:0px 30px 30px 30px;
+
+}
+/* Pop up window Content. It shows a scroll if the content height goes beyond the height specified here */
+.aon-popup-scroll-Body{
+	overflow:auto;
+	height:170px;
+	width:100%;
+}
+/* content padding */
+.aon-popup-scroll-Body-internal{
+	padding:10px;
+	}
+
+/* Used only in confirmation box. Wraps the confirmation question */
+.aon-popup-question{
+	font-size:1.3em;
+	font-weight:bold;
+	padding:1em 0 0.7em 40px;
+	background:transparent url("images/popup/teclado.gif") left top no-repeat; 
+	margin:1em;
+	}
+	
+/* Confirmation box buttons */	
+.aon-popup-buttons{
+	padding:0.5em 1em;
+	text-align:center;
+	margin:0 auto;
+	}
+	
+/* Each confirmation box button */
+.aon-popup-button{
+	background-color:#eeeeee;
+	border:#999999 1px solid;
+	padding:3px 15px;
+	font-weight:bold;
+	cursor:pointer;
+	}
+
+
+.icePanelPopupFooter {
+    float: right;
+    height: auto;
+    background-color: #DDDDDD;
+}
+
+.popupTitle span {
+   
+}
+.popupModalBody input {
+
+	}
+
+.panelPopupHeader .iceOuputtext, .icePanelPopupHeader {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    padding: 4px;
+    color: #FFFFFF;
+    font-size: 1.10em;
+}

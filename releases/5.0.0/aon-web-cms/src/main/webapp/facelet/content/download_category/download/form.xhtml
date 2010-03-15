@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+	
+		<aon:form id="downloadForm">
+		
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.download}" />
+				<ui:param name="controller" value="#{download}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor or controller.used}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="categories"
+						value="#{appBundle.download_category}"
+						action="download_category_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{download_category.onInit}" />
+						<aon:actionListener method="#{download_category.onSearch}" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="Download_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="Download_alias"
+						required="true" size="32" maxlength="32"
+						value="#{download.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+
+					<aon:outputLabel for="DownloadDetail_title"
+						value="#{appBundle.download_title}" />
+					<aon:inputText id="DownloadDetail_title"
+						required="true" size="60" maxlength="128"
+						value="#{download.toI18n.title}" />
+
+					<aon:outputLabel for="Download_category"
+						value="#{appBundle.download_category}"/>
+					<aon:selectOneMenu id="Download_category"  
+						required="true"
+						value="#{download.to.downloadCategory.id}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.downloadCategoryList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Download_publishDate"
+						value="#{appBundle.download_publish_date}" />
+					<aon:selectInputDate id="Download_publishDate" 
+						 enableManualInput="true"
+						 style="z-index:2001;margin:0;vertical-align:middle;"
+						 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+						 value="#{download.to.publishDate}" renderAsPopup="true"
+						 popupDateFormat="#{bundle.aon_date_pattern}">
+						 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:selectInputDate>	
+
+					<aon:outputLabel 
+						value="#{appBundle.download_file}" />
+					<aon:panelGroup id="thumbnail_preview_detail">
+						<aon:outputText value="#{download.toI18n.file}"
+							style="margin-right:0.7em;" />
+							
+		               <aon:commandLink ajaxSingle="true" rendered="#{download.toI18n.file != null}"
+							immediate="true" reRender="thumbnail_preview_detail"
+							actionListener="#{download.onDelDocument}">
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+			       		</aon:commandLink>							
+						<aon:commandLink style="padding-left:0.4em;" immediate="true"
+							reRender="showDocumentPanelGroup" ajaxSingle="true">
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/select.png']}" alt="#{appBundle.document_modal_open}"/>
+							<f:setPropertyActionListener target="#{download.showWindow}" value="#{true}" />						
+						</aon:commandLink>						
+		        	</aon:panelGroup>
+     	
+					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+						<ui:param name="labelValue" value="#{bundle.aon_description}" />
+						<ui:param name="inputTextId" value="DownloadDetail_description" />
+						<ui:param name="inputTextValue" value="#{download.toI18n.description}" />
+						<ui:param name="richTextEnabled" value="#{download.richTextEnabled}" />
+					</ui:include>																	
+
+					<aon:outputLabel for="Download_position"
+						value="#{appBundle.download_position}"/>
+					<aon:inputText id="Download_position"
+						required="true" size="10" maxlength="8"
+						value="#{download.to.position}" />
+					
+					<aon:outputLabel for="Download_active"
+						value="#{appBundle.download_active}"/>
+					<aon:selectBooleanCheckbox id="Download_active" 
+						value="#{download.to.active}" />
+					
+				</aon:panelGrid>
+			</aon:div>
+		
+			<ui:include src="/facelet/content/utils/document_modal.xhtml" />
+		
+		</aon:form>
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

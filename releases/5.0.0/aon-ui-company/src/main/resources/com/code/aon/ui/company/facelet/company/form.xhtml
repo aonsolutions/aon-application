@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="companyForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle"
+					value="#{companyBundle.company_data_module}" />
+				<ui:param name="toolbarDescription"
+					value="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:define name="toolbarContent">
+					<c:if test="#{company.new}" >
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
+							action="home" actionListener="#{company.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" >
+							<aon:actionListener method="#{companyDisplay.update}" />
+						</aon:commandButton>
+					</c:if>
+					<c:if test="#{!company.new}" >
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}"
+							action="company_form" actionListener="#{company.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" >
+							<aon:actionListener method="#{companyDisplay.update}" />
+						</aon:commandButton>
+					</c:if>
+				</ui:define>				
+			</ui:decorate>
+	
+			<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" styleClass="aon-panelGrid-formatting"
+			columnClasses="aon-width-50percent,aon-width-50percent aon-vertical-align-top">
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{companyBundle.company_data_module}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<aon:panelGrid columns="2" style="width:100%">
+								<aon:outputLabel for="Company_name" value="#{bundle.aon_name}" />
+								<aon:inputText id="Company_name" value="#{company.to.name}"
+									required="true" maxlength="64" size="64" >
+									<f:validateLength minimum="1" maximum="64" />
+								</aon:inputText>
+				
+								<aon:outputLabel for="Company_alias"
+									value="#{bundle.aon_company_alias}" />
+								<aon:inputText id="Company_alias" value="#{company.to.alias}"
+									size="32" maxlength="32" >
+									<f:validateLength minimum="1" maximum="32" />
+								</aon:inputText>
+	
+								<aon:outputLabel for="Company_document"
+									value="#{bundle.aon_company_document}" />
+								<aon:inputText id="Company_document" value="#{company.to.document}"
+									required="true" maxlength="16" size="16" >
+									<f:validateLength minimum="1" maximum="16" />
+								</aon:inputText>
+				
+								<aon:outputLabel for="Company_address"
+									value="#{registryBundle.registry_address}" />
+								<aon:div>
+									<aon:inputText id="Company_address" required="true"
+										style="display:block" value="#{company.mainAddress.address}"
+										valueChangeListener="#{company.addressChanged}" maxlength="128" size="45" />
+									<aon:inputText id="Company_address2"
+										value="#{company.mainAddress.address2}" style="display:block"
+										valueChangeListener="#{company.addressChanged}" maxlength="128" size="45" />
+									<aon:inputText id="Company_address3"
+										value="#{company.mainAddress.address3}" style="display:block"
+										valueChangeListener="#{company.addressChanged}" maxlength="128" size="45" />
+								</aon:div>
+				
+								<aon:outputLabel for="Company_address_city"
+									value="#{registryBundle.registry_city}" />
+								<aon:inputText id="Company_address_city"
+									value="#{company.mainAddress.city}" maxlength="64"
+									valueChangeListener="#{company.addressChanged}" size="30" />
+				
+								<aon:outputLabel for="Company_address_zip"
+									value="#{registryBundle.registry_zip}" />
+								<aon:inputText id="Company_address_zip"
+									value="#{company.mainAddress.zip}" maxlength="16"
+									valueChangeListener="#{company.addressChanged}" size="16" />
+				
+								<aon:outputLabel for="Company_address_geozone"
+									value="#{registryBundle.registry_geozone}" />
+								<aon:selectOneMenu id="Company_address_geozone"
+									value="#{company.mainAddress.geozone}"
+									styleClass="aon-form-selectOneMenu-field"
+									valueChangeListener="#{company.addressChanged}">
+									<f:selectItems value="#{geozoneCollections.geoTrees}" />
+								</aon:selectOneMenu>
+				
+								<aon:outputLabel for="Company_telephone"
+									value="#{registryBundle.registry_phone}" />
+								<aon:inputText id="Company_telephone" value="#{company.phone.value}"
+									valueChangeListener="#{company.phoneChanged}" maxlength="64" size="15" />
+				
+								<aon:outputLabel for="Company_fax"
+									value="#{registryBundle.registry_fax}" />
+								<aon:inputText id="Company_fax" value="#{company.fax.value}"
+									valueChangeListener="#{company.faxChanged}" maxlength="64" size="15" />
+				
+								<aon:outputLabel for="Company_email"
+									value="#{registryBundle.registry_email}" />
+								<aon:inputText id="Company_email" value="#{company.email.value}"
+									onblur="toLowerCase(this);" maxlength="64"
+									valueChangeListener="#{company.emailChanged}" size="45" />
+				
+								<aon:outputLabel for="Company_web"
+									value="#{registryBundle.registry_web}" />
+								<aon:inputText id="Company_web" value="#{company.web.value}"
+									onblur="toLowerCase(this);" maxlength="64"
+									valueChangeListener="#{company.webChanged}" size="45" />
+							</aon:panelGrid>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				<aon:div>
+					<aon:div styleClass="aon-group">
+						<aon:div styleClass="aon-group-title">
+							<aon:outputText value="#{companyBundle.company_logo}"/>
+						</aon:div>
+						<aon:div styleClass="aon-group-body"> 
+							<aon:div styleClass="aon-group-body-internal">
+								<aon:panelGrid columns="2" style="width:100%">
+									<aon:outputLabel for="attach_file"
+										value="#{companyBundle.company_logo}" />
+									<a4j:region>
+										<h:panelGrid id="attachGrid" columns="2">
+											<a4j:mediaOutput element="img" cacheable="false"
+												style="width: 100px;" value="#{company.aonFile.key}"
+												rendered="#{company.aonFile.size > 0}"
+												createContent="#{company.createCurrentLogoContent}">
+											</a4j:mediaOutput>
+											<aon:fileUpload id="attach_file"
+												addControlLabel="#{bundle.aon_fileUpload_add}"
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												fileUploadListener="#{company.fileUploaded}"
+												immediateUpload="true" autoclear="true" listWidth="0px"
+												listHeight="0px">
+												<f:facet name="label">
+													<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+												</f:facet>
+												<a4j:support event="onuploadcomplete" reRender="attachGrid" />
+											</aon:fileUpload>
+										</h:panelGrid>
+									</a4j:region>
+								</aon:panelGrid>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+					<c:if test="#{aonConfiguration.bean.company.showCompanyOtherData}">
+						<aon:div styleClass="aon-group">
+							<aon:div styleClass="aon-group-title">
+								<aon:outputText value="#{companyBundle.company_other_data}"/>
+							</aon:div>
+							<aon:div styleClass="aon-group-body"> 	
+								<aon:div styleClass="aon-group-body-internal">
+									<a4j:region>
+										<aon:panelGrid id="companyOtherData" columns="2" style="width:100%">
+											<aon:outputLabel for="Company_surcharge"
+												value="#{bundle.aon_surcharge}" />
+											<aon:selectBooleanCheckbox id="Company_surcharge"
+												value="#{company.to.surcharge}" />
+						
+											<aon:outputLabel for="Company_withholding"
+												value="#{bundle.aon_retention}" />
+											<aon:selectBooleanCheckbox id="Company_withholding"
+												value="#{company.to.withholding}" />
+
+											<c:if test="#{aonConfiguration.bean.company.showEInvoice}">
+												<aon:outputLabel for="Company_EInvoice"
+													value="#{companyBundle.company_eInvoice}" />
+												<aon:selectBooleanCheckbox id="Company_EInvoice"
+													reRender="companyOtherData" ajaxSingle="false"
+													value="#{company.to.EInvoice}" />
+		
+												<aon:outputLabel for="Company_smartCard"
+													rendered="#{company.to.EInvoice}"
+													value="#{companyBundle.company_smartCard}" />
+												<aon:selectBooleanCheckbox id="Company_smartCard"
+													rendered="#{company.to.EInvoice}"
+													value="#{company.smartCard}" />
+											</c:if>												
+
+											<aon:outputLabel for="Company_print_header"
+												value="#{companyBundle.company_print_header}" />
+											<aon:selectBooleanCheckbox id="Company_print_header"
+												value="#{company.printHeader}" />
+							
+											<aon:outputLabel for="Company_print_record_data"
+												value="#{companyBundle.company_print_record_data}" />
+											<aon:selectBooleanCheckbox id="Company_print_record_data"
+												value="#{company.printRecordData}" />
+										</aon:panelGrid>
+									</a4j:region>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</c:if>
+				</aon:div>
+			</aon:panelGrid>
+	 
+	 		<c:if test="#{aonConfiguration.bean.company.showPanelTabSet}">
+				<aon:div styleClass="aon-scroll-area">
+					<aon:panelTabSet>
+	
+						<aon:panelTab label="#{registryBundle.registry_addresses}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+								<ui:param name="skipTypeColumn" value="true" />
+								<ui:param name="controller" value="#{companyAddress}" />
+							</ui:include>
+						</aon:panelTab>
+						<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
+							<aon:panelTab label="#{registryBundle.registry_banks_module}">
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText
+											value="#{registryBundle.registry_banks_module}" />
+									</f:facet>
+									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+										<ui:param name="controller" value="#{companyRbank}" />
+										<ui:param name="showSuffix" value="#{true}" />
+									</ui:include>
+								</aon:panel>
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+									</f:facet>
+									<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
+										<ui:param name="controller" value="#{companyRPayMethod}" />
+									</ui:include>
+								</aon:panel>
+							</aon:panelTab>
+						</c:if>				
+						<aon:panelTab label="#{registryBundle.registry_rd_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
+								<ui:param name="controller" value="#{companyRecordData}" />
+							</ui:include>
+						</aon:panelTab>				
+						<c:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
+							<aon:panelTab label="#{registryBundle.registry_digital_certificates}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyCertificate}" />
+									<ui:param name="skipCategoryColumn" value="#{true}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+					</aon:panelTabSet>
+				</aon:div>
+			</c:if>
+		</aon:form>
+		<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>

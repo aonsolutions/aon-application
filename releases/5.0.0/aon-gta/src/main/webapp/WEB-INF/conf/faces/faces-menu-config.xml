@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<managed-bean>
+		<managed-bean-name>menuManager</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuModels</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.menu.jsf.IMenuModel</value-class>
+				<value>#{gtaMenuModel}</value>
+				<value>#{accountMenuModel}</value>
+				<value>#{financeMenuModel}</value>
+				<value>#{reportMenuModel}</value>
+				<value>#{configMenuModel}</value>
+			</list-entries>
+		</managed-property>		
+    </managed-bean> 
+
+	<managed-bean>
+		<managed-bean-name>gtaMenuModel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuModel</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>xml</property-name>
+			<value>/WEB-INF/conf/aon-gta-menu.xml</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>security</property-name>
+			<value>false</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.gta.i18n.menu</value>
+		</managed-property>		
+    </managed-bean>
+    
+	<managed-bean>
+		<managed-bean-name>accountMenuModel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuModel</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>xml</property-name>
+			<value>/WEB-INF/conf/aon-account-menu.xml</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.ui.account.i18n.menu</value>
+		</managed-property>		
+    </managed-bean>    
+    
+    <managed-bean>
+		<managed-bean-name>financeMenuModel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuModel</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>xml</property-name>
+			<value>/WEB-INF/conf/aon-finance-menu.xml</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.ui.finance.i18n.menu</value>
+		</managed-property>		
+    </managed-bean>
+    
+    <managed-bean>
+		<managed-bean-name>reportMenuModel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuModel</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>xml</property-name>
+			<value>/WEB-INF/conf/aon-report-menu.xml</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.gta.i18n.menu</value>
+		</managed-property>		
+    </managed-bean>
+    
+    <managed-bean>
+		<managed-bean-name>configMenuModel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuModel</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>xml</property-name>
+			<value>/WEB-INF/conf/aon-config-menu.xml</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.gta.i18n.menu</value>
+		</managed-property>		
+    </managed-bean>
+    
+    <managed-bean>
+		<managed-bean-name>treeMenu</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.TreeMenu</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuManager</property-name>
+			<value>#{menuManager}</value>
+		</managed-property>		
+    </managed-bean> 
+
+    <managed-bean>
+		<managed-bean-name>contentMenu</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.ContentMenu</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuManager</property-name>
+			<value>#{menuManager}</value>
+		</managed-property>		
+    </managed-bean> 
+	
+    <managed-bean>
+		<managed-bean-name>breadCrumbList</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.BreadCrumbList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuManager</property-name>
+			<value>#{menuManager}</value>
+		</managed-property>		
+    </managed-bean> 	
+    
+
+</faces-config>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<ui:define name="content">
+		<aon:form id="records">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="Historial" />
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="customer_form"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+					<aon:outputLabel value="#{statBundle.registry_stat_code}" />
+					<aon:inputText value="#{registryStat.registry.id}" size="30"
+						disabled="true" />
+
+					<aon:outputLabel value="#{statBundle.registry_stat_customer}" />
+					<aon:inputText value="#{registryStat.registry.name}" size="70"
+						disabled="true" />
+				</aon:panelGrid>
+
+				<aon:panelTabSet switchType="client">
+					<aon:panelTab id="tab1"
+						label="#{statBundle.registry_stat_pending_invoices}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/pendingInvoicesList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab2"
+						label="#{statBundle.registry_stat_payed_invoices}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/scoredInvoicesList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab3"
+						label="#{statBundle.registry_stat_products}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/boughtProductsList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab4"
+						label="#{statBundle.registry_stat_delivery}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/pendingDeliveriesList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab5" label="#{statBundle.registry_stat_purhase}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/pendingSalesList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab6" label="#{statBundle.registry_stat_offer}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/pendingOfferList.xhtml" />
+					</aon:panelTab>
+				</aon:panelTabSet>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

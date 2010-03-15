@@ -1,0 +1,40 @@
+<div id="body-content">
+			<table cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td style="text-align: left;" width="30%">
+		<p><strong>$!company.getName() </strong></p>
+	
+$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName()
+
+
+		<p>Tel: $!phone</p>
+
+	 #if ($fax && !$fax.toString().trim().equals(""))
+		<p>Fax: $!fax</p>
+	 #end
+		<div class="h1">
+			$!title
+		</div>
+	
+			$!text
+
+
+		
+#if ($schedule && !$schedule.toString().trim().equals(""))
+		<div class="h1">
+			Horario
+		</div>
+		
+			$!schedule
+		
+#end
+
+
+	</td>
+		<td>
+	<h1> $!slogan</h1>
+	$!description
+	</td>
+</tr>
+</table>
+			</div>

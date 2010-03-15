@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<div>
+		<form action="#{creditCard.qbUrl}" method="post">
+<!--  
+			<input type="hidden" name="order" value="COMPRA"/> 
+			<input type="hidden" name="store" value="PI00012936"/>
+			<f:param name="locale" value="es" /> 
+-->
+			<input type="hidden" name="order" value="#{creditCard.purchaseRef}"/> 
+			<input type="hidden" name="store" value="#{creditCard.commerceKey}"/> 
+			<input type="submit" value="Acceder a la pasarela de pago."/>
+		</form>
+	</div>
+		
+<!--  
+	<div>	
+		<form action="https://tpv2.4b.es/simulador/teargral.exe" method="post">
+			<input type="hidden" value="COMPRA"/> 
+			<input type="hidden" value="PI00012936"/> 
+			<input type="hidden" value="es"/> 
+			
+			<input type="submit" value="SUBMIT"/>
+			
+		</form>
+	</div>
+-->
+
+</ui:composition>

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+	
+		<aon:form id="linkForm">
+		
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.link}" />
+				<ui:param name="controller" value="#{link}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="categories"
+						value="#{appBundle.link_category}"
+						action="link_category_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{link_category.onInit}" />
+						<aon:actionListener method="#{link_category.onSearch}" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="Link_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="Link_alias"
+						required="true" size="32" maxlength="32"
+						value="#{link.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+					
+					<aon:outputLabel for="Link_url" style="width:100px"
+						value="#{appBundle.link_url}" />
+					<aon:inputText id="Link_url"
+						required="true" size="80" maxlength="255"
+						value="#{link.to.url}" />
+
+					<aon:outputLabel for="Link_category"
+						value="#{appBundle.link_category}"/>
+					<aon:selectOneMenu id="Link_category"  
+						required="true"
+						value="#{link.to.linkCategory.id}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.linkCategoryList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="LinkDetail_label"
+						value="#{appBundle.link_label}" />
+					<aon:inputTextarea id="LinkDetail_label"
+						required="true" rows="3" style="width:98%" 
+						value="#{link.toI18n.label}" >
+						<f:validateLength maximum="255" />
+					</aon:inputTextarea>						
+
+					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+						<ui:param name="labelValue" value="#{bundle.aon_description}" />
+						<ui:param name="inputTextId" value="Link_description" />
+						<ui:param name="inputTextValue" value="#{link.toI18n.description}" />
+						<ui:param name="richTextEnabled" value="#{link.richTextEnabled}" />
+					</ui:include>
+
+					<aon:outputLabel for="Link_position"
+						value="#{appBundle.link_position}"/>
+					<aon:inputText id="Link_position"
+						required="true" size="10" maxlength="8"
+						value="#{link.to.position}" />
+					
+					<aon:outputLabel for="Link_active"
+						value="#{appBundle.link_active}"/>
+					<aon:selectBooleanCheckbox id="Link_active" 
+						value="#{link.to.active}" />
+
+				</aon:panelGrid>
+			</aon:div>
+		
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

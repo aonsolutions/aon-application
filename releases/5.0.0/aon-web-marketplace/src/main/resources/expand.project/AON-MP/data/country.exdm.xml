@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="country">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="2" name="code" sqlType="char" type="string"/>
+        <column label="" length="32" name="name" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="campaignForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{campaignBundle.aon_process_monitor_module}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{campaign.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
+							actionListener="#{campaign.accept}"
+							onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							actionListener="#{campaign.onCancel}" action="campaign_list"
+							immediate="#{true}"
+							onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+							actionListener="#{campaign.onRemoveCampaign}"
+							action="campaign_list" rendered="#{!campaign.new}"
+							disabled="#{campaign.deleted or campaign.finished}"
+							onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							actionListener="#{campaign.onEditSearch}"
+							action="campaign_search" accesskey="#{bundle.aon_key_search}" />
+						<h:commandLink target="_blank" value="#{bundle.aon_report}"
+							styleClass="aon-finding-toolbar-item aon-icon-printer"
+							action="#{report.onExecute}">
+							<f:param name="reportKey" value="campaignMonitorReport" />
+							<f:param name="outputFormat" value="PDF" />
+						</h:commandLink>
+						<aon:commandButton
+							title="#{campaignBundle.campaign_exclude_dossier}"
+							styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+							value="#{campaignBundle.campaign_exclude_dossier}"
+							actionListener="#{campaignDossier.onRemoveCampaignDossier}"
+							rendered="#{campaign.inProgress}" />
+						<aon:commandButton title="#{campaignBundle.campaign_add_dossier}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							rendered="#{campaign.inProgress}"
+							value="#{campaignBundle.campaign_add_dossier}"
+							actionListener="#{addCampaignDossier.showAddPanel}"
+							reRender="addPanelContainer"/>
+						<aon:commandButton id="finishCampaign"
+							value="#{campaignBundle.campaign_finish}"
+							onclick="if(confirm('#{campaignBundle.campaign_finish_confirm}')){Richfaces.showModalPanel('waitProccess');}else{ return false; }"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')"
+							styleClass="aon-finding-toolbar-item aon-icon-process-stop"
+							actionListener="#{campaign.onFinishCampaign}"
+							action="campaign_list"
+							rendered="#{!campaign.new and campaign.inProgress}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" width="100%" columns="4"
+					columnClasses="aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-auto
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel for="Campaign_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Campaign_description"
+						value="#{campaign.to.description}" required="#{true}" size="60"
+						disabled="#{!campaign.pending and !campaign.inProgress}" />
+
+					<aon:outputLabel for="Campaign_status" value="#{bundle.aon_status}"/>
+					<aon:selectOneMenu id="Campaign_status"
+						value="#{campaign.to.status}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{campaignCollections.campaignStatus}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="#{campaignBundle.process_process}" />
+					<aon:selectOneMenu value="#{campaign.to.process}"
+						rendered="#{campaign.pending}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{campaignCollections.processes}" />
+					</aon:selectOneMenu>
+					<aon:inputText size="50" disabled="true"
+						rendered="#{!campaign.pending}"
+						value="#{campaign.to.process.description}" />
+
+					<aon:outputLabel for="Campaign_startDate"
+						value="#{campaignBundle.aon_initial_date}" />
+					<aon:selectInputDate id="Campaign_startDate"
+						value="#{campaign.to.startDate}" required="#{true}"
+						disabled="#{!campaign.pending}" renderAsPopup="true"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="Campaign_workGroup"
+						value="#{campaignBundle.campaign_supervisor}" />
+					<aon:selectOneMenu id="Campaign_workGroup"
+						value="#{campaign.to.workGroup}"
+						disabled="#{!campaign.pending and !campaign.inProgress}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.workgroups}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Campaign_endDate"
+						value="#{campaignBundle.aon_final_date}" />
+					<aon:selectInputDate id="Campaign_endDate"
+						value="#{campaign.to.endDate}" required="#{true}"
+						disabled="#{!campaign.pending and !campaign.inProgress}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+				</aon:panelGrid>
+
+				<aon:div style="width: 100%;">
+					<h:panelGrid columns="7" styleClass="aon-text-center"
+						style="width: 100%;"
+						columnClasses="aon-width-auto,aon-width-100,aon-width-100,aon-width-100,aon-width-100,aon-width-100,aon-width-100,">
+						<aon:div />
+
+
+						<aon:div
+							style="border: solid 1px black;width: 100%;background-color: #DD4545;color: white;">
+							<aon:outputText value="0% - 19% " />
+						</aon:div>
+						<aon:div
+							style="border: solid 1px black;width: 100%;background-color: #DD8B45;color: black;">
+							<aon:outputText value="20% - 39% " />
+						</aon:div>
+						<aon:div
+							style="border: solid 1px black;width: 100%;background-color: #D8B645;color: black;">
+							<aon:outputText value="40% - 59% " />
+						</aon:div>
+						<aon:div
+							style="border: solid 1px black;width: 100%;background-color: #D6D845;color: black;">
+							<aon:outputText value="60% - 79% " />
+						</aon:div>
+						<aon:div
+							style="border: solid 1px black;width: 100%;background-color: #ACD845;color: black;">
+							<aon:outputText value="80% - 99% " />
+						</aon:div>
+						<aon:div
+							style="border: solid 1px black;width: 100%;background-color: #70D845;color: black;">
+							<aon:outputText value="100% " />
+						</aon:div>
+					</h:panelGrid>
+				</aon:div>
+
+				<aon:div id="CampaignDossierDataListContainer" style="width: 100%;">
+				<aon:dataTable id="CampaignDossierDataList" var="to"
+					value="#{campaignDossier.extendedModel}"
+					rendered="#{!campaign.pending}">
+
+					<aon:column styleClass="aon-width-30">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandButton immediate="true"
+							styleClass="aon-icon-commandButton aon-icon-rowSelector"
+							action="campaign_view_task"
+							actionListener="#{activityProcess.onSearchTasks}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-width-30">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:selectBooleanCheckbox value="#{campaignDossier.rowChecked}"
+							rendered="#{to.processDetail != null}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-width-auto">
+						<f:facet name="header">
+							<aon:commandLink actionListener="#{campaignDossier.sort}">
+								<aon:outputText value="#{customerBundle.customer_customer}" />
+								<aon:set value="CampaignDossier_customer_name"
+									var="#{campaignDossier.sortColumn}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:outputText value="#{to.customerDossier}">
+							<aon:abbreviateConverter maxWidth="50" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="C" />
+						</f:facet>
+						<aon:div style="display:inline;cursor:pointer;"
+							rendered="#{to.task != null and to.task.comments != null and to.task.comments!=''	}">
+							<aon:graphicImage url="/css/images/icons/aon-task-comment.gif" />
+							<rich:toolTip value="#{to.task.comments}" showEvent="onclick"
+								style="width: 300px;" hideDelay="2000">
+								<f:facet name="defaultContent">
+									<aon:outputText value="#{bundle.aon_in_progress}" />
+								</f:facet>
+							</rich:toolTip>
+						</aon:div>
+					</aon:column>
+
+					<aon:column styleClass="aon-width-200"
+						rendered="#{campaign.inProgress}">
+						<f:facet name="header">
+							<aon:outputText value="#{campaignBundle.campaign_current_action}" />
+						</f:facet>
+						<rich:inplaceSelect value="#{to.processDetail}"
+							styleClass="aon-inplace-select" showControls="true"
+							defaultLabel="........." layout="block" selectWidth="165"
+							listWidth="165" id="inplaceSelect">
+							<f:facet name="controls">
+								<aon:div>
+									<aon:commandButton style="margin-left: 5px;"
+										alt="#{campaignBundle.campaign_change_current_action}"
+										title="#{campaignBundle.campaign_change_current_action}"
+										onmousedown="#{rich:component('inplaceSelect')}.save();"
+										onclick="return false"
+										styleClass="aon-icon-commandButton aon-icon-accept" />
+									<aon:commandButton alt="#{bundle.aon_cancel}"
+										title="#{bundle.aon_cancel}"
+										onmousedown="#{rich:component('inplaceSelect')}.cancel();"
+										onclick="return false"
+										styleClass="aon-icon-commandButton aon-icon-cancel" />
+								</aon:div>
+							</f:facet>
+							<f:selectItems value="#{campaignDossier.processDetailList}" />
+							<a4j:support event="onviewactivated"
+								actionListener="#{campaignDossier.onChangeProcessDetail}"
+								reRender="CampaignDossierDataList" />
+						</rich:inplaceSelect>
+					</aon:column>
+
+					<aon:column styleClass="aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="Usr - Grp" />
+						</f:facet>
+						<aon:outputText value="#{to.assigned}">
+							<aon:abbreviateConverter maxWidth="50" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:outputText value="#{projectBundle.aon_initial_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.task.startDate}"
+							style="#{to.task.expired?'color:red;':''}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:outputText value="#{projectBundle.aon_due_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.task.dueDate}"
+							style="#{to.task.expired?'color:red;':''}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-width-150">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_percentage}" />
+						</f:facet>
+						<aon:div styleClass="aon-nowrap"
+							style="border:solid black 1px; background-color: rgb(#{to.color.red},#{to.color.green},#{to.color.blue}); width: #{to.processDetailPercent}%">
+							<aon:div styleClass="aon-nowrap aon-bold"
+								style="margin-left: 5px;color: #{to.processDetailPercent==0?'red':'black'};">
+								<aon:outputText value="#{to.processDetailPercent}">
+									<f:convertNumber pattern="##0" />
+								</aon:outputText>
+								<aon:outputText value="%" />
+							</aon:div>
+						</aon:div>
+					</aon:column>
+
+				</aon:dataTable>
+				<aon:dataScroller2 for="CampaignDossierDataList" showNote="false" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+
+		<aon:div id="addPanelContainer">
+			<c:if test="#{addCampaignDossier.addPanelVisible}">
+				<ui:include
+					src="/com/code/aon/ui/campaign/facelet/campaign/addDossier.xhtml" />
+			</c:if>
+		</aon:div>
+	</ui:define>
+</ui:composition>

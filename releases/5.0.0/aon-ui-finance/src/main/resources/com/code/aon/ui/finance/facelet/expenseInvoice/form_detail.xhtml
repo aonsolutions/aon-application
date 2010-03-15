@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<c:if test="#{!invoiceController.new}">
+		<aon:div styleClass="aon-padding-top">
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice_lines}" />
+				</f:facet>
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					<ui:param name="dataTableId" value="invoiceDetails" />
+					<ui:param name="controller" value="#{detailController}" />
+					<ui:param name="rows" value="0" />
+					<ui:param name="showNote" value="false" />
+					<ui:param name="showDataScroller" value="false" />
+					<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
+					<ui:param name="skipLineEdition" value="#{invoiceController.readOnly or !detailController.editable}" />
+					<ui:param name="rowSelectorReRender" value="menuExt" />
+					<ui:param name="resetButtonReRender" value="menuExt" />
+					<ui:param name="newCancelButtonReRender" value="menuExt" />
+					<ui:param name="cancelButtonReRender" value="menuExt" />
+					<ui:param name="newSaveButtonReRender" value="menuExt,Invoice_total,financeContainer" />
+					<ui:param name="saveButtonReRender" value="menuExt,Invoice_total,financeContainer" />
+					<ui:param name="removeButtonReRender" value="menuExt,Invoice_total,financeContainer" />
+					<ui:param name="focusOnAdd" value="InvoiceDetail_item-New" />
+					<ui:param name="focusOnSelect" value="InvoiceDetail_item" />
+	
+					<ui:define name="columns">
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputLabel value="#{financeBundle.finance_invoice_detail_line}" />
+							</f:facet>
+							<aon:outputText value="#{to.line}"
+								rendered="#{formList}" />
+							<aon:inputText id="InvoiceDetail_line" 
+								value="#{controller.to.line}" rendered="#{formEdit}"
+								required="true" size="1" maxlength="3" />
+							<f:facet name="footer">
+								<aon:inputText id="InvoiceDetail_line-New" 
+									value="#{controller.to.line}" rendered="#{formNew}"
+									required="true" size="1" maxlength="3" />
+							</f:facet>
+						</aon:column>
+		
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_concept}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" 
+								rendered="#{formList}">
+								<aon:abbreviateConverter maxWidth="64" />
+							</aon:outputText>
+							<aon:div id="invoiceDetailItemEdit" rendered="#{formEdit}">
+								<aon:selectOneMenu id="InvoiceDetail_item" style="width: 300px;"
+									value="#{controller.to.item}" rendered="#{formEdit}"
+									valueChangeListener="#{controller.onItemChanged}"
+									reRender="#{dataTableId}"
+									focus="InvoiceDetail_taxableBase">
+									<f:selectItems value="#{controller.expenseItems}" />
+								</aon:selectOneMenu>
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+									actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_description"
+									rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+									actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_description"
+									rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
+							</aon:div>
+							<aon:inputText id="InvoiceDetail_description"
+								value="#{controller.to.description}" rendered="#{formEdit and controller.longDescription}"
+								required="true" size="45" />
+							<f:facet name="footer">
+								<aon:div id="invoiceDetailItemNew" rendered="#{formNew}">
+									<aon:selectOneMenu id="InvoiceDetail_item-New" style="width: 300px;"
+										value="#{controller.to.item}" rendered="#{formNew}"
+										valueChangeListener="#{controller.onItemChanged}"
+										reRender="#{dataTableId}"
+										focus="InvoiceDetail_taxableBase-New">
+										<f:selectItems value="#{controller.expenseItems}" />
+									</aon:selectOneMenu>
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+										actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_description-New"
+										rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+										actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_description-New"
+										rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
+									<aon:div>
+										<aon:inputText id="InvoiceDetail_description-New"
+											value="#{controller.to.description}" rendered="#{formNew and controller.longDescription}"
+											required="true" size="45" />
+									</aon:div>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_taxable_base}" />
+							</f:facet>
+							<aon:outputText value="#{to.taxableBase}"
+								rendered="#{formList}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:inputText id="InvoiceDetail_taxableBase"
+								value="#{controller.to.taxableBase}" rendered="#{formEdit}"
+								valueChangeListener="#{controller.onTaxableBaseChanged}"
+								reRender="InvoiceDetail_vatQuota,InvoiceDetail_retentionQuota,InvoiceDetail_total" 
+								required="true" size="5" focus="InvoiceDetail_vatQuota" />
+							<f:facet name="footer">
+								<aon:inputText id="InvoiceDetail_taxableBase-New"
+									value="#{controller.to.taxableBase}" rendered="#{formNew}"
+									valueChangeListener="#{controller.onTaxableBaseChanged}"
+									reRender="InvoiceDetail_vatQuota-New,InvoiceDetail_retentionQuota-New,InvoiceDetail_total-New" 
+									required="true" size="5" focus="InvoiceDetail_vatQuota-New" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_vat}" />
+							</f:facet>
+							<aon:outputText value="#{to.vatPercent}"
+								rendered="#{formList}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:outputText id="InvoiceDetail_vatPercent"
+								value="#{controller.to.vatPercent}" rendered="#{formEdit}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:outputText id="InvoiceDetail_vatPercent-New"
+									value="#{controller.to.vatPercent}" rendered="#{formNew}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_vat_quota}" />
+							</f:facet>
+							<aon:outputText value="#{to.vatQuota}"
+								rendered="#{formList}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:inputText id="InvoiceDetail_vatQuota"
+								value="#{controller.to.vatQuota}" rendered="#{formEdit}"
+								valueChangeListener="#{controller.onVatQuotaChanged}"
+								reRender="InvoiceDetail_vatPercent,InvoiceDetail_total"
+								required="true" size="5" focus="InvoiceDetail_total" />
+							<f:facet name="footer">
+								<aon:inputText id="InvoiceDetail_vatQuota-New"
+									value="#{controller.to.vatQuota}" rendered="#{formNew}"
+									valueChangeListener="#{controller.onVatQuotaChanged}"
+									reRender="InvoiceDetail_vatPercent-New,InvoiceDetail_total-New"
+									required="true" size="5" focus="InvoiceDetail_total-New" />
+							</f:facet>
+						</aon:column>
+	
+						<c:if test="#{invoiceController.to.withholding}">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+								<f:facet name="header">
+									<aon:outputLabel value="#{bundle.aon_retention}" />
+								</f:facet>
+								<aon:outputText value="#{to.retentionPercent}"
+									rendered="#{formList}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+								<aon:outputText id="InvoiceDetail_retentionPercent"
+									value="#{controller.to.retentionPercent}" rendered="#{formEdit}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+								<f:facet name="footer">
+									<aon:outputText id="InvoiceDetail_retentionPercent-New"
+										value="#{controller.to.retentionPercent}" rendered="#{formNew}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</f:facet>
+							</aon:column>
+		
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+								<f:facet name="header">
+									<aon:outputLabel value="#{bundle.aon_retention_quota}" />
+								</f:facet>
+								<aon:outputText value="#{to.retentionQuota}"
+									rendered="#{formList}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+								<aon:inputText id="InvoiceDetail_retentionQuota"
+									value="#{controller.to.retentionQuota}" rendered="#{formEdit}"
+									valueChangeListener="#{controller.onRetentionQuotaChanged}"
+									reRender="InvoiceDetail_retentionPercent,InvoiceDetail_total"
+									required="true" size="5" focus="InvoiceDetail_total" />
+								<f:facet name="footer">
+									<aon:inputText id="InvoiceDetail_retentionQuota-New"
+										value="#{controller.to.retentionQuota}" rendered="#{formNew}"
+										valueChangeListener="#{controller.onRetentionQuotaChanged}"
+										reRender="InvoiceDetail_retentionPercent-New,InvoiceDetail_total-New"
+										required="true" size="5" focus="InvoiceDetail_total-New" />
+								</f:facet>
+							</aon:column>
+						</c:if>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{controller.invoiceDetailTotal}"
+								rendered="#{formList}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:inputText id="InvoiceDetail_total"
+								value="#{controller.toInvoiceDetailTotal}" rendered="#{formEdit}"
+								valueChangeListener="#{controller.onTotalChanged}"
+								reRender="InvoiceDetail_taxableBase,InvoiceDetail_vatQuota,InvoiceDetail_retentionQuota" 
+								required="true" size="5" />
+							<f:facet name="footer">
+								<aon:div style="text-align:right;">
+									<aon:inputText id="InvoiceDetail_total-New"
+										value="#{controller.toInvoiceDetailTotal}" rendered="#{formNew}"
+										valueChangeListener="#{controller.onTotalChanged}"
+										reRender="InvoiceDetail_taxableBase-New,InvoiceDetail_vatQuota-New,InvoiceDetail_retentionQuota-New" 
+										required="true" size="5" />
+									<aon:outputText id="Invoice_taxableBase" 
+										value="#{invoiceController.toInvoiceTotalPrice}" rendered="#{!formNew}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<c:if test="#{companyCollections.workPlacesCount > 1}">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputLabel value="#{companyBundle.company_workplace}" />
+								</f:facet>
+								<aon:outputText
+									rendered="#{formList}"
+									value="#{to.workPlace.description}">
+									<aon:abbreviateConverter maxWidth="32" />
+								</aon:outputText>
+								<aon:selectOneMenu id="InvoiceDetail_workPlace"
+									value="#{controller.to.workPlace}"
+									rendered="#{formEdit}">
+									<f:selectItems value="#{companyCollections.workPlaces}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="InvoiceDetail_workPlace-New"
+										value="#{controller.to.workPlace}"
+										rendered="#{formNew}">
+										<f:selectItems value="#{companyCollections.workPlaces}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+						</c:if>
+	
+					</ui:define>
+				</ui:decorate>
+			</aon:panel>
+		</aon:div>
+	</c:if>
+</ui:composition>

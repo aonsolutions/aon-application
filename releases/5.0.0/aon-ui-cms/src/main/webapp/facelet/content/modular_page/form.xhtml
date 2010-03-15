@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="modular_pageForm" partialSubmit="true">
+
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.modular_page}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" rendered="#{modular_page.to!=null or modular_page.new}"
+							actionListener="#{modular_page.onAccept}" action="modular_page_list"
+							styleClass="aon-content-toolbar-item aon-icon-accept"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_save}"/>
+						<aon:commandButton id="cancel"
+							value="#{bundle.aon_cancel}" rendered="#{modular_page.to!=null or modular_page.new}" immediate="#{true}"
+							actionListener="#{modular_page.onCancel}" action="modular_page_list"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_cancel}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!modular_page.new}" immediate="true"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{modular_page.onRemove}" confirmAction="modular_page_list"
+							styleClass="aon-content-toolbar-item aon-icon-delete"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							actionListener="#{modular_page.onReset}" rendered="#{!modular_page.new}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:div>
+			</aon:panelGrid>
+
+			<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<aon:div styleClass="aon-content-subtitle-internal">
+					<aon:outputText
+						value="#{modular_page.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</aon:div>
+			</aon:div>
+			<aon:div id="aon-scroll-area" forceId="#{true}">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<aon:panelGrid columns="2">
+						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table" style="width:100%"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<aon:outputLabel for="Modular_page_alias"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.modular_page_alias}" />
+							<aon:inputText id="Modular_page_alias"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="32" maxlength="32"
+								value="#{modular_page.to.alias}" />
+
+							<aon:outputLabel for="Modular_page_label"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.modular_page_alias}" />
+							<aon:inputText id="Modular_page_label"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="32" maxlength="32"
+								value="#{modular_page.toI18n.label}" />
+
+							<aon:outputLabel for="Modular_page_section"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.section}"/>
+							<aon:selectOneMenu id="Modular_page_section"  
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{modular_page.to.section.id}">
+								<f:selectItem itemLabel="-" itemValue="-1" />
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+											
+						</aon:panelGrid>
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="mastersMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">
+		
+					<aon:panelGrid columns="1" styleClass="aon-width-all"
+						columnClasses="aon-vertical-align-top aon-width-300">
+
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-master aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.account_masters}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accountEntry" 
+										action="accountEntry_search" actionListener="#{accountEntry.onEditSearch}"
+										value="#{accountingBundle.accounting_entry_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account" 
+										action="account_list"
+										value="#{accountBundle.account_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="autConcept" 
+										action="autConcept"
+										value="#{accountingBundle.accounting_aut_concept_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="customer" 
+										action="customer_search" actionListener="#{customer.onEditSearch}"
+										value="#{customerBundle.customer_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="supplier" 
+										action="supplier_search" actionListener="#{supplier.onEditSearch}"
+										value="#{supplierBundle.supplier_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="creditor" 
+										action="creditor_search" actionListener="#{creditor.onEditSearch}"
+										value="#{financeBundle.finance_creditor_module}"/>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geotreeParent" 
+										action="geotreeParent_list" 
+										value="#{geozoneBundle.geozone_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="payMethod" 
+										action="payMethod"
+										value="#{configBundle.config_pay_methods}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bank" 
+										action="bank_search"
+										value="#{configBundle.config_bank_module}"/>
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="loan" 
+										action="loan_search" actionListener="#{loan.onEditSearch}"
+										value="#{accountingBundle.accounting_loan_module}"  />
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>
+					</aon:panelGrid>
+				</aon:componentGroup>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="organismosAdmonSearch">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_organismos_entidades__admon}" />
+				<ui:param name="controller" value="#{admon}" />
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="admon_form"/>
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{admon.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="admon_form" />				
+				
+					<aon:outputLabel for="Admon_cdg"
+						value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText id="Admon_cdg" size="5" maxlength="5"
+						valueChangeListener="#{admon.addExpression}" />
+
+					<aon:outputLabel for="Admon_description"
+						value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="Admon_description" size="35" maxlength="35"
+						valueChangeListener="#{admon.addExpression}" />
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+	</ui:define>
+		
+</ui:composition>

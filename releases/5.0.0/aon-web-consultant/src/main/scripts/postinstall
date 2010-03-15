@@ -1,0 +1,58 @@
+#!/bin/sh
+. aondir-functions
+
+APP=aon-consultant
+
+if ! aondir_has_app $APP; then
+
+        aondir-addapp $APP &>/dev/null
+
+        aondir-addrole User $APP &>/dev/null
+        aondir-addrole Guest $APP &>/dev/null
+        aondir-addrole Admin $APP &>/dev/null
+        aondir-addrole Auditor $APP &>/dev/null
+        aondir-addrole Accounting $APP &>/dev/null
+        aondir-addrole Invoicing $APP &>/dev/null
+        aondir-addrole Confidentiality $APP &>/dev/null
+        aondir-addrole Statistics $APP &>/dev/null
+        aondir-addrole InvoiceSigner $APP &>/dev/null
+        aondir-addrole TaskMonitoring $APP &>/dev/null
+
+
+        aondir-addprofile Administrador $APP Admin User &>/dev/null
+        aondir-addprofile Contable $APP Accounting Confidentiality User &>/dev/null
+        aondir-addprofile Financiero $APP Invoicing Confidentiality User &>/dev/null
+        aondir-addprofile MonitorTareas $APP TaskMonitoring User &>/dev/null
+        aondir-addprofile Invitado $APP Guest User &>/dev/null
+        aondir-addprofile Operador $APP User &>/dev/null
+else
+
+        aondir-delrole $APP &>/dev/null
+        aondir-delprofile $APP &>/dev/null
+
+        aondir-addrole User $APP &>/dev/null
+        aondir-addrole Admin $APP &>/dev/null
+        aondir-addrole Auditor $APP &>/dev/null
+        aondir-addrole Accounting $APP &>/dev/null
+        aondir-addrole Invoicing $APP &>/dev/null
+        aondir-addrole TaskMonitoring $APP &>/dev/null
+        aondir-addrole Guest $APP &>/dev/null
+        aondir-addrole Confidentiality $APP &>/dev/null
+        aondir-addrole Statistics $APP &>/dev/null
+        aondir-addrole InvoiceSigner $APP &>/dev/null
+
+        aondir-addprofile Administrador $APP Admin User &>/dev/null
+        aondir-addprofile Contable $APP Accounting Confidentiality User &>/dev/null
+        aondir-addprofile Financiero $APP Invoicing Confidentiality User &>/dev/null
+        aondir-addprofile MonitorTareas $APP TaskMonitoring User &>/dev/null
+        aondir-addprofile Invitado $APP Guest User &>/dev/null
+        aondir-addprofile Operador $APP User &>/dev/null
+
+        aondir-chprofile $APP AonAdmin Administrador
+        aondir-chprofile $APP AonUsuario Invitado
+
+fi
+
+
+
+

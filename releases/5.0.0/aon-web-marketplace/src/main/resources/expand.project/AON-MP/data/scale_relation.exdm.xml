@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="scale_relation">
+    <columns>
+        <column
+            label="Identificador unico de la Relacion entre tablas de Balanzas y Aon"
+            name="id" sqlType="integer" type="integer"/>
+        <column label="Identificador de la tabla en Aon" name="aon_id"
+            sqlType="integer" type="integer"/>
+        <column label="Primer identificador de la tabla en la Balanza"
+            length="10" name="scale_id1" sqlType="varchar" type="string"/>
+        <column label="Segundo identificador de la tabla en la Balanza"
+            length="10" name="scale_id2" sqlType="varchar" type="string"/>
+        <column label="Indica el tipo de tabla que se esta relacionando"
+            length="1" name="type" sqlType="char" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

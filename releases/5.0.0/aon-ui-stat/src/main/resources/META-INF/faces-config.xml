@@ -1,0 +1,253 @@
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.stat.i18n.messages</base-name>
+			<var>statBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!-- *************STAT***************** -->
+	<managed-bean>
+		<managed-bean-name>stat</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.stat.controller.StatEngineController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>registryStat</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.stat.controller.RegistryStatEngineController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>productStat</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.stat.controller.ProductStatEngineController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- *************Invoice Accumulate Stats***************** -->
+	<navigation-rule>
+
+		<navigation-case>
+			<from-outcome>sales_stats_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAccumulate/yearStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>sales_stats_month</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAccumulate/monthStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>sales_stats_day</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAccumulate/dayStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>customer_stat_list_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsYear.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_stat_list_month</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsMonth.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_stat_list_day</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAccumulate/customerStatsDay.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>sales_accumulate_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAccumulate/search.xhtml</to-view-id>
+		</navigation-case>
+
+	</navigation-rule>
+
+	<!-- *************Invocie Category Sales Stats***************** -->
+	<navigation-rule>
+
+		<navigation-case>
+			<from-outcome>category_product_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/productStats.xhtml</to-view-id>
+		</navigation-case>
+
+
+		<navigation-case>
+			<from-outcome>category_stats_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/yearStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>category_stats_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/search.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>category_customer_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceCategoryProduct/customerList.xhtml</to-view-id>
+		</navigation-case>
+
+
+
+	</navigation-rule>
+
+
+	<navigation-rule>
+
+		<!-- *************ABC Category***************** -->
+
+
+		<navigation-case>
+			<from-outcome>abc_stats_searchCategory</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcCategory/searchCategory.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>abc_category_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcCategory/abcCategoryStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>product_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcCategory/productStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>month_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/abcCategory/monthStats.xhtml</to-view-id>
+		</navigation-case>
+
+
+
+
+		<!-- *************ABC Product***************** -->
+
+		<navigation-case>
+			<from-outcome>abc_stats_searchProduct</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcProduct/searchProduct.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>abc_product_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcProduct/abcProductStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>abc_product_month_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcProduct/monthStats.xhtml</to-view-id>
+		</navigation-case>
+
+
+		<!-- *************ABC Customer***************** -->
+
+
+		<navigation-case>
+			<from-outcome>abc_stats_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/search.xhtml</to-view-id>
+		</navigation-case>
+
+
+		<navigation-case>
+			<from-outcome>abc_customer_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/abcCustomerStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>product_statistics</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceAbcRegistry/productStats.xhtml</to-view-id>
+		</navigation-case>
+
+
+
+	</navigation-rule>
+
+
+	<!-- *************invoice Summary 12 + 1 Stats***************** -->
+	<navigation-rule>
+
+		<navigation-case>
+			<from-outcome>summary_stats_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceSummary/yearStats.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>summary_stats_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/invoiceSummary/search.xhtml</to-view-id>
+		</navigation-case>
+
+	</navigation-rule>
+
+	<!-- *************Invoice Stats***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>invoice_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/stat/facelet/generic/invoiceList.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_stat_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/stat/facelet/generic/customerList.xhtml</to-view-id>
+		</navigation-case>
+
+	</navigation-rule>
+
+	<!-- *************Registry Stats***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>registry_search_stat</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/registryStat/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>registry_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/registryStat/registryStat.xhtml</to-view-id>
+		</navigation-case>
+
+	</navigation-rule>
+	
+		<!-- *************Product Stats***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>product_search_stat</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/productStat/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>product_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/productStat/productStat.xhtml</to-view-id>
+		</navigation-case>
+
+	</navigation-rule>
+
+
+</faces-config>

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="invoicingGroupList">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoicing_group_module}" />
+				<ui:param name="controller" value="#{invoicingGroup}" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+					
+				<aon:dataTable id="invoicingGroupData" value="#{invoicingGroup.model}"
+					var="to" rows="20" rendered="#{invoicingGroup.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn
+						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+
+					<aon:rowSelector action="invoicingGroup_form" actionListener="#{invoicingGroup.onSelect}" />
+	
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_invoicing_group}" />
+						</f:facet>
+						<aon:outputText value="#{to.parent.fullName}" />
+					</aon:column>
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="invoicingGroupData" showNote="true" />
+
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
+	
+</ui:composition>

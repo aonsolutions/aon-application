@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="courseAlumnAbsenceList">
+		
+			<t:div id="aon-content-menu" styleClass="aon-content-menu-aux"
+				forceId="#{true}" >
+				<h:outputText
+					value="#{appBundle.course_code} #{course.to.code}, #{course.to.courseSubject.description} #{course.to.courseLevel.description} #{course.to.academicYear.description}" />
+			</t:div>
+			
+			<t:div styleClass="aon-content-menu" rendered="#{!customer.new}" id="aon-content-menu" forceId="#{true}">
+				<t:panelGrid columns="7" cellpadding="0" cellspacing="0" border="0">
+					<t:panelGroup>						
+						<t:commandLink id="course_data" value="#{appBundle.course_course}" 
+							action="course_form" styleClass="aon-content-menu-item"	visibleOnUserRole="GruposGrupo"/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="academicSkill_data" value="#{appBundle.academicSkill_academicSkills}" 
+							actionListener="#{courseAcademicSkill.onSearch}"
+							action="course_academicSkill_data" visibleOnUserRole="GruposHabilidades"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_data" value="#{appBundle.aon_alumns}" 
+							action="course_alumn_data" visibleOnUserRole="GruposAlumnos"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_absence_data" value="#{appBundle.absence_absences}" 
+							styleClass="aon-content-menu-item-active" visibleOnUserRole="GruposAusencias"/>
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="evaluation_data" 
+							value="#{appBundle.course_evaluation}" 
+							action="course_evaluation_data" visibleOnUserRole="GruposVCalidad"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="course_mark_data" 
+							value="#{appBundle.aon_mark_data}" 
+							action="course_mark_data" visibleOnUserRole="GruposCalificaciones"
+							actionListener="#{courseMark.onSearch}" 
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_mark_data" value="#{appBundle.mark_print}" 
+							actionListener="#{courseAlumnMark.onSearch}" 
+							action="course_alumn_mark_data" visibleOnUserRole="GruposObservaciones"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+				</t:panelGrid>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<t:div styleClass="aon-form-note">
+						<t:div styleClass="aon-form-note-internal">
+							<t:panelGrid columns="1" width="95%">
+								<t:div styleClass="aon-text-outstanding">
+								
+									<t:outputText rendered="#{courseAlumnAbsence.to != null}" style="font-style:italic;padding-right:1em;font-weight:normal;"
+										value="#{courseAlumnAbsence.to.customer.registry.name} #{courseAlumnAbsence.to.customer.registry.surname}" />
+									<h:outputText value="#{appBundle.mark_evaluation}: " />
+									<t:outputText value="#{absence_coursealumn.evaluation}" />
+								</t:div>
+								<t:div>
+									<t:inputText value="#{absence_coursealumn.evaluation}" 
+										styleClass="aon-form-input-text" 
+										size="4" maxlength="2"
+										required="#{true}">
+										<f:validateLongRange minimum="0" maximum="12"/>
+									</t:inputText>
+									<t:commandButton id="evalcahnge" 
+										value="#{appBundle.evaluation_change}"
+										actionListener="#{absence_coursealumn.onSearchAbsences}"
+										styleClass="aon-form-button" />
+								</t:div>
+							</t:panelGrid>
+						</t:div>
+					</t:div>
+
+					
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5"
+						style="width:100%">
+
+						<t:div>
+																		
+							<t:dataTable id="courseAlumnAbsenceDataTable"
+								value="#{courseAlumnAbsence.model}" var="to"
+								rowOnClick="sendRow( this )"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" 
+								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer" rows="20" rowIndexVar="rowIndex"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body aon-edit-table-body-string">
+				
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{appBundle.course_alumn}" />
+									</f:facet>
+									<t:commandLink immediate="#{true}"
+										styleClass="aon-table-row-selected"
+										actionListener="#{courseAlumnAbsence.onSelect}">
+									</t:commandLink>
+									<t:outputText value="#{to.customer.registry.name} #{to.customer.registry.surname}" />
+								</h:column>
+				
+							</t:dataTable>
+	
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="courseAlumnAbsenceDataTable" />
+								<ui:param name="model" value="#{courseAlumnAbsence.model}" />
+								<ui:param name="showNote" value="#{false}" />
+							</ui:include>
+					
+						</t:div>
+
+						<t:div>
+							<t:div rendered="#{courseAlumnAbsence.to != null}"
+								styleClass="aon-form-note">
+								<t:div styleClass="aon-form-note-internal">
+									<t:panelGrid columns="1" width="95%">
+										<t:div styleClass="aon-text-outstanding">
+											<t:outputText value="#{appBundle.date_parser}" />
+										</t:div>
+										<t:div>
+											<t:outputText value="#{appBundle.aon_year}" />
+											<t:inputText 
+												id="Year"
+												value="#{absence_coursealumn.year}" 
+												styleClass="aon-form-input-text" 
+												size="6" maxlength="4" >
+											</t:inputText>
+											<t:outputText value="#{appBundle.aon_month}" />
+											<t:inputText 
+												id="Month"
+												value="#{absence_coursealumn.month}" 
+												styleClass="aon-form-input-text" 
+												size="4" maxlength="2">
+											</t:inputText>
+											<t:outputText value="#{appBundle.aon_date}" />
+											<t:inputText 
+												id="Days"
+												value="#{absence_coursealumn.days}" 
+												styleClass="aon-form-input-text" 
+												size="30" />
+											<t:commandButton id="parseDays" 
+												value="#{appBundle.parse_date}"
+												actionListener="#{absence_coursealumn.onParseAbsences}"
+												styleClass="aon-form-button" />
+										</t:div>
+									</t:panelGrid>
+								</t:div>
+							</t:div>
+						
+							<t:dataTable id="absenceDataList" value="#{absence_coursealumn.model}" 
+								var="to_absence" rowIndexVar="rowIndex"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" 
+								rowOnClick="sendRow( this )"
+								rows="20" 
+								rendered="#{courseAlumnAbsence.to != null}"
+								styleClass="aon-edit-table" 
+								headerClass="aon-edit-table-header" 
+								footerClass="aon-edit-table-footer"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-buttons">
+	
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<f:verbatim>&#160;</f:verbatim>
+									<t:commandLink immediate="#{true}"
+										rendered="#{to_absence!=absence_coursealumn.to}"
+										styleClass="aon-table-row-selected"
+										actionListener="#{absence_coursealumn.onSelect}">
+									</t:commandLink>
+									<f:facet name="footer">
+										<t:div>
+											<t:commandButton id="reset"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+												value="" immediate="#{true}" rendered="#{!absence_coursealumn.new}"
+												actionListener="#{absence_coursealumn.onReset}"
+												accesskey="#{bundle.aon_key_new_line}">
+											</t:commandButton>
+										</t:div>
+									</f:facet>
+								</h:column>
+	
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{appBundle.absence_date}" />
+									</f:facet>
+									<t:outputText value="#{to_absence.absenceDate}"
+										rendered="#{to_absence!=absence_coursealumn.to}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:outputText>
+									<t:div>
+										<t:inputCalendar size="10" required="true"
+											id="Absence_labsenceDate-Edit"
+											rendered="#{to_absence==absence_coursealumn.to}"
+											value="#{absence_coursealumn.to.absenceDate}" 
+											forceId="#{true}"
+											monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+											currentDayCellClass="currentDayCell" renderAsPopup="true"
+											styleClass="aon-form-input-text"
+											popupButtonStyleClass="aon-form-calendar-button"
+											popupTodayString="#{bundle.aon_popup_today}"
+											popupWeekString="#{bundle.aon_popup_week}" />
+									</t:div>
+									<f:facet name="footer">
+										<t:div>
+											<t:inputCalendar size="10" required="true"
+												id="Absence_labsenceDate-New"
+												rendered="#{absence_coursealumn.new}"
+												value="#{absence_coursealumn.to.absenceDate}" 
+												forceId="#{true}"
+												monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+												currentDayCellClass="currentDayCell" renderAsPopup="true"
+												styleClass="aon-form-input-text"
+												popupButtonStyleClass="aon-form-calendar-button"
+												popupTodayString="#{bundle.aon_popup_today}"
+												popupWeekString="#{bundle.aon_popup_week}" />
+											</t:div>
+									</f:facet>
+								</t:column>
+	
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{appBundle.absence_comments}" />
+									</f:facet>
+									<t:outputText value="#{to_absence.comments}"
+										rendered="#{to_absence!=absence_coursealumn.to}" />
+									<t:div>
+										<h:inputText rendered="#{to_absence==absence_coursealumn.to}" 
+											styleClass="aon-form-input-text" size="40"
+											value="#{absence_coursealumn.to.comments}" />
+									</t:div>
+									<f:facet name="footer">
+										<t:div>
+											<h:inputText rendered="#{absence_coursealumn.new}" 
+												styleClass="aon-form-input-text" size="40"
+												value="#{absence_coursealumn.to.comments}"/>
+										</t:div>
+									</f:facet>
+								</t:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+				
+									<t:commandButton title="#{bundle.aon_accept}" 
+										actionListener="#{absence_coursealumn.onAccept}"
+										onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+										value=""
+										rendered="#{to_absence==absence_coursealumn.to}"
+										accesskey="#{bundle.aon_key_save_line}"/>
+									<t:commandButton title="#{bundle.aon_cancel}" 
+										actionListener="#{absence_coursealumn.onCancel}"
+										immediate="#{true}" 
+										onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+										value="" accesskey="#{bundle.aon_key_cancel_line}"
+										rendered="#{to_absence==absence_coursealumn.to}"/>
+									<t:commandButton title="#{bundle.aon_remove}" 
+										actionListener="#{absence_coursealumn.onRemove}" 
+										onclick="return (confirm('#{bundle.aon_remove_confirm}'));" 
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+										value="" accesskey="#{bundle.aon_key_remove_line}"
+										rendered="#{to_absence.id==absence_coursealumn.to.id}"/>
+									<f:verbatim rendered="#{to_absence!=absence_coursealumn.to}">&#160;</f:verbatim>
+									<f:facet name="footer">
+										<t:div>
+											<f:verbatim rendered="#{!absence_coursealumn.new}">&#160;</f:verbatim>
+											<t:commandButton title="#{bundle.aon_accept}" 
+												actionListener="#{absence_coursealumn.onAccept}"
+												onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+												value="" accesskey="#{bundle.aon_key_save_line}"
+												rendered="#{absence_coursealumn.new}"/>
+											<t:commandButton title="#{bundle.aon_cancel}" 
+												actionListener="#{absence_coursealumn.onCancel}"
+												immediate="#{true}" 
+												onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+												value="" accesskey="#{bundle.aon_key_cancel_line}"
+												rendered="#{absence_coursealumn.new}"/>
+										</t:div>
+									</f:facet>		
+								</h:column>
+							</t:dataTable>
+							
+							<t:div rendered="#{courseAlumnAbsence.to != null}">
+								<ui:include src="/facelet/shared/dataScroller.xhtml">
+									<ui:param name="dataTable" value="absenceDataList" />
+									<ui:param name="model" value="#{absence_coursealumn.model}" />
+									<ui:param name="showNote" value="#{false}" />
+								</ui:include>
+							</t:div>
+
+						</t:div>
+					</h:panelGrid>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

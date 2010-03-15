@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="customerList">
+			
+				<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fee_no_fee_customer_module}" />
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:define name="additionalToolbarContent">					
+					<h:commandLink id="customerReportXls" value="#{bundle.aon_listing}"
+						target="_new" 
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="noFeeCustomersReport" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>					
+					<h:commandLink id="customerReportPdf" value="#{bundle.aon_listing}"
+						target="_new" 
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="noFeeCustomersReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>					
+				</ui:define>
+			</ui:decorate> 
+			<aon:div styleClass="aon-scroll-area">
+				<aon:editDataTable id="yearsStats"
+					value="#{customerFee.noFeeCustomersModel}" rows="20"
+					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn"
+					var="to">
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}" />
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_document}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.document}" />
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.fullName}" />
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.alias}" />
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" />
+					</aon:column>
+				</aon:editDataTable>
+				<aon:dataScroller2 for="yearsStats" showNote="true" />
+				</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

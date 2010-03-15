@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition>
+
+	<aon:form id="generatorForm">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid columns="2" dir="true"
+				columnClasses="aon-finding-title,aon-finding-toolbar">
+
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText value="#{appBundle.aon_web_info}" />
+				</aon:div>
+	
+				<aon:div styleClass="aon-finding-toolbar-item-group" ajaxRendered="true">
+					<aon:commandButton id="generate"
+						value="#{appBundle.aon_web_info_generate}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{generator.onGenerate}"/>
+					<h:outputLink id="web" value="#{generator.webPage}" target="_new"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						rendered="#{generator.generate}">
+						<aon:outputText value="#{appBundle.aon_web_info_view}"/>
+					</h:outputLink>
+				</aon:div>
+			</aon:panelGrid>
+		</aon:div>
+	</aon:form>
+
+		<aon:div styleClass="aon-scroll-area">
+
+			<aon:div style="width:99%;">
+
+				<aon:panelTabSet id="menuTabSet">
+					<aon:panelTab id="general" label="#{registryBundle.aon_main_data}">
+						<ui:include src="/facelet/registry/company/tabs/general.xhtml" />
+					</aon:panelTab>
+
+					<aon:panelTab rendered="#{!company.new}" id="webInfo"
+						label="#{appBundle.aon_web_info_data}">
+						<ui:include src="/facelet/registry/company/tabs/web-info.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab rendered="#{!company.new}" id="images"
+						label="#{registryBundle.aon_company_images}">
+						<ui:include src="/facelet/registry/company/tabs/images.xhtml" />
+					</aon:panelTab>
+
+					<aon:panelTab rendered="#{!company.new}" id="webPages"
+						label="#{appBundle.aon_web_info_pages}">
+						<ui:include src="/facelet/registry/company/tabs/pages.xhtml" />
+					</aon:panelTab>
+
+					<aon:panelTab rendered="#{!company.new}" id="webStyle"
+						label="#{appBundle.aon_web_info_template}">
+						<ui:include src="/facelet/registry/company/tabs/templates.xhtml" />
+					</aon:panelTab>
+
+				</aon:panelTabSet>
+			</aon:div>
+		</aon:div>
+
+</ui:composition>
+
+</body>
+</html>

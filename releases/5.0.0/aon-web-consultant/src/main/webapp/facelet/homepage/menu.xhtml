@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		<aon:commandLink value="#{appBundle.menu_dossiers}"
+			actionListener="#{customer.onEditSearch}"
+			styleClass="aon-top-menu-item aon-icon-customer"
+			style="text-transform: uppercase;" 
+			action="customer_consultant_search">
+		</aon:commandLink>
+		<aon:commandLink id="task"
+			value="#{projectBundle.aon_task_management_module}"
+			action="menu_task" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-task" />
+		<aon:commandLink id="sales"
+			value="#{appBundle.menu_sales}"
+			rendered="#{aonRole.invoicingOperator}"
+			action="menu_sales" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-sales" />
+		<aon:commandLink id="purchase"
+			value="#{appBundle.menu_purchase}"
+			action="menu_purchase" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-purchase" />
+		<aon:commandLink id="treasury"
+			value="#{financeBundle.finance_menu_group}"
+			action="menu_treasury" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-treasury" />
+		<aon:commandLink id="config"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />
+		<aon:commandLink id="menu_home"
+			value="#{bundle.aon_home}"
+			action="aon_home" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-master" />
+	</ui:define>
+</ui:composition>

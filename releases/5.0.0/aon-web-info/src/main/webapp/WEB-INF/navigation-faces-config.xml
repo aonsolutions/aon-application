@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+  
+  <!-- =================== Application Menu Navigation Rules ================= -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>company</from-outcome>
+		<to-view-id>/facelet/company/form.jsf</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+  
+   <navigation-rule>
+      <navigation-case>
+         <from-outcome>logout</from-outcome>
+         <to-view-id>/home.jsf</to-view-id> 
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+
+</faces-config>
