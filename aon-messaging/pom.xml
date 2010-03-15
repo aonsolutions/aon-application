@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.messaging</artifactId>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>AON MESSAGING</description>
 	<dependencies>
 		<dependency>
@@ -47,8 +47,8 @@
 							<!--  <packageName>com.mycompany.app</packageName> -->
 							<!-- options
 								<addClasspath>true</addClasspath>
-								<addExtensions/>
-								<classpathPrefix/>
+								<addExtensions />
+								<classpathPrefix />
 							-->
 						</manifest>
 						<!-- 

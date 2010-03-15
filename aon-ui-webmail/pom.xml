@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.webmail</artifactId>
 	<name>AON UI WEBMAIL</name>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>AON UI WEBMAIL</description>
 	<dependencies>
 		<dependency>

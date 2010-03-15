@@ -19,7 +19,9 @@
   </properties>
 
   <scm>
-	<developerConnection>${project.scm.connection}</developerConnection>
+	<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.0.0/trunk/aon.web.parent</developerConnection>
+    <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.0.0/trunk/aon.web.parent</connection>
+    <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.0.0/wsvn/aon.web.parent</url>
   </scm>
   <build>
     <plugins>
