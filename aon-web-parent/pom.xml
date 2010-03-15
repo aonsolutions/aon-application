@@ -139,7 +139,7 @@
       <id>rpm-release</id>
      <activation>
         <file>
-          <exists>src</exists>
+          <exists>${project.artifactId}/src</exists>
         </file>	
       </activation>
 
