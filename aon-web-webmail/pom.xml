@@ -10,7 +10,7 @@
 	<artifactId>aon-webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
-	<version>5.0.0</version>
+	<version>${aon-version}</version>
 	<description>AON WEB WEBMAIL</description>
 	<build>
 		<finalName>aon-webmail</finalName>
