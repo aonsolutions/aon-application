@@ -138,9 +138,10 @@
     <profile>
       <id>rpm-release</id>
      <activation>
-        <file>
-          <exists>${project.artifactId}/src</exists>
-        </file>	
+	<property>
+		<name>rpm.release</name>
+		<value>true</value>
+	</property>
       </activation>
 
 <repositories>                            
