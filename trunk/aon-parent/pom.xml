@@ -111,7 +111,7 @@
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
                         <tag>5.0.0</tag>
-                        <tagBase>https://dev.esferalia.com/repos/aon-application/releases</tagBase>
+                        <tagBase>http://dev.esferalia.com/repos/aon-application/releases</tagBase>
                 </configuration>
         </plugin>
 
