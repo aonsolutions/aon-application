@@ -250,7 +250,7 @@
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="delivery">
+				<subreportParameter name="sales">
 					<subreportParameterExpression><![CDATA[$V{currentSales}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentSales},$V{currentSales}.getCustomer()))]]></dataSourceExpression>
