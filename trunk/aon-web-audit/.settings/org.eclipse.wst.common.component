@@ -4,13 +4,20 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-audit/aon-audit">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-audit/aon-ui-audit">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="aon-audit"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-resources/aon-ui-resources">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-rich-components/aon-rich-components">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="build/classes"/>
+		<property name="context-root" value="aon-audit"/>
     </wb-module>
 </project-modules>
