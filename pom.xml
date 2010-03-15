@@ -9,7 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
-  <artifactId>aon.solutions</artifactId>
+  <artifactId>aon.application</artifactId>
   <version>5.0.0</version>
   <packaging>pom</packaging>
   <description>POM de aon Solutions (para sacar versions...)</description>
