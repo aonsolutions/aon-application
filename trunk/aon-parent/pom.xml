@@ -13,8 +13,8 @@
   </properties>
   <scm>
     <connection>
-    scm:svn:http://dev.esferalia.com/repos/aon-application/trunk</connection>
-    <url>http://dev.esferalia.com/websvn/wsvn</url>
+    scm:svn:https://dev.esferalia.com/repos/aon-application/releases/5.0.0/aon-application/trunk</connection>
+    <url>scm:svn:https://dev.esferalia.com/repos/aon-application/releases/5.0.0/websvn/wsvn</url>
   </scm>
   <organization>
     <name>esferalia Networks S.A.</name>

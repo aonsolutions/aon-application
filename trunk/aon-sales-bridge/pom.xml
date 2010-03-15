@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.sales.bridge</artifactId>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>AON SALES BRIDGE</description>
 	<name>AON SALES BRIDGE</name>
 	<dependencies>

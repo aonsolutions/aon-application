@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-infoweb</artifactId>
 	<packaging>war</packaging>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>AON WEB INFOWEB</description>
 	<name>AON WEB INFOWEB</name>
 	<properties>
