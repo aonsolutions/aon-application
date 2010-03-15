@@ -10,7 +10,7 @@
 	<artifactId>aon-commercial</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMERCIAL</name>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>AON WEB COMMERCIAL</description>
 	<properties>
 		<dbVersion>5.0.0</dbVersion>
