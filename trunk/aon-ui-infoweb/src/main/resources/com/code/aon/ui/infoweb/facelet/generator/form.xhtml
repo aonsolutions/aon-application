@@ -27,16 +27,21 @@
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{generator.onGenerate}" immediate="true"
 							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />								
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+						<h:outputLink id="preview" value="#{generator.previewPage}" target="_blank"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+							rendered="#{generator.generated}" > 
+							<aon:outputText value="#{infowebBundle.infoweb_preview}"/>
+						</h:outputLink>				     									
 						<aon:commandButton id="publish"
 							value="#{infowebBundle.infoweb_publish}"
 							rendered="#{generator.generated}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							styleClass="aon-finding-toolbar-item aon-icon-file-upload"
 							actionListener="#{generator.onPublish}" immediate="true"
 							onclick="Richfaces.showModalPanel('waitProccess')" 
 				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />								
-						<h:outputLink id="web" value="#{generator.webPage}" target="_new"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
+						<h:outputLink id="web" value="#{generator.webPage}" target="_blank"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							rendered="#{generator.published}">
 							<aon:outputText value="#{infowebBundle.infoweb_view}"/>
 						</h:outputLink>

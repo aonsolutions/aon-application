@@ -77,6 +77,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private boolean published;
 	
+	private String previewPage;
+	
 	private String webPage;
 	
 	private int homepage;
@@ -95,6 +97,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 				LOGGER.error(e.getMessage(), e );
 			}
 		}
+		this.previewPage = "http://preview." + getDomain() + "/";
+		this.webPage = "http://www." + getDomain() + "/";
 	}
 	
 	public Properties getProperties() {
@@ -155,7 +159,6 @@ public class GeneratorController extends BasicController implements VelocityCons
 	public void onInit(ActionEvent event) {
 		this.generated = false;
 		this.published = false;
-		this.webPage = null;
 	}	
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
@@ -247,13 +250,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
 		this.published = false;
-		this.webPage = null;
 		try {
 			File previewDirectory = PathUtil.getPreviewPath(getDomain());
 			String destination = "/" + getDomain() + "/WEBSITES/www." + getDomain();
 			FTPUtil.uploadFTP(previewDirectory, destination, properties);
 			this.published = true;
-			this.webPage = "http://www." + getDomain() + "/";
 			AonUtil.addInfoMessage("OK: La web ha sido publicada." );
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
@@ -490,6 +491,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 	public String getWebPage() {
 		return webPage;
+	}
+	
+	public String getPreviewPage() {
+		return previewPage;
 	}
 
 	private String getDomain( String value ) {
