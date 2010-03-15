@@ -16,7 +16,6 @@
   <name>aon Solutions</name>
 
   <modules>
-	<module>aon-parent</module>
 	<module>aon-ql</module>
 	<module>aon-common</module>
 	<module>aon-account-bridge</module>
@@ -99,7 +98,6 @@
 	<module>aon-ui-webmail</module>
 	<module>aon-warehouse-bridge</module>
 	<module>aon-warehouse</module>
-	<module>aon-web-parent</module>
 	<module>aon-web-account</module>
 	<module>aon-web-asset</module>
 	<module>aon-web-cms</module>
