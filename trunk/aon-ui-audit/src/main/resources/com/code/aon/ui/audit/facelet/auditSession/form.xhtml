@@ -43,11 +43,6 @@
 						<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-
-					<aon:outputLabel for="Session_user_domain_name"
-						value="#{auditBundle.audit_domain}" />
-					<aon:outputText id="Session_user_domain_name"
-						value="#{auditSession.to.user.domain.name}"/>
 					
 					<aon:outputLabel for="Session_application_name"
 						value="#{auditBundle.audit_application}" />
@@ -74,12 +69,11 @@
 				<aon:div styleClass="aon-form-group" rendered="#{!seller.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="actionExecutionData" value="#{auditBundle.audit_actions}" />
+							<aon:outputLabel for="actionEntryData" value="#{auditBundle.audit_actions}" />
 						</aon:div>
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/audit/facelet/actionEntry/list.xhtml"/>
 				</aon:div>
-				
 				
 			</aon:div>
 		</aon:form>
