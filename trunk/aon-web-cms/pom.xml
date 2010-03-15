@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-cms</artifactId>
 	<packaging>war</packaging>
-	<version>${aon-version}</version>
+	<version>5.0.0</version>
 	<description>WEB CMS</description>
 	<name>WEB CMS</name>
 	<build>
