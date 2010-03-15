@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-ebackoffice</artifactId>
 	<packaging>war</packaging>
-	<version>5.0.0</version>
+	<version>${aon-version}</version>
 	<description>AON WEB EBACKOFFICE</description>
 	<name>AON WEB EBACKOFFICE</name>
 	<build>
