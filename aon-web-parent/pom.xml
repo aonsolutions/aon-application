@@ -261,7 +261,7 @@
           <executable>ssh</executable>
           <arguments>
             <argument>root@dev.esferalia.com</argument>
-            <argument>rpm -Uvh --root /mnt/alice ${env.JOB_URL}/ws/${env.JOB_NAME}/target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.0.0-${buildNumber}.noarch.rpm</argument>
+            <argument>rpm -Uvh --root /mnt/alice ${env.JOB_URL}/ws/5.0.0/${project.artifactId}/target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.0.0-${buildNumber}.noarch.rpm</argument>
           </arguments>
         </configuration>
       </plugin>
