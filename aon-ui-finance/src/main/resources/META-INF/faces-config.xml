@@ -110,7 +110,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>FinanceBatchDetail_finance_invoice_number </value>
+			<value>FinanceBatchDetail_finance_dueDate,FinanceBatchDetail_finance_invoice_referenceCode</value>
 		</managed-property>	
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -926,6 +926,10 @@
 			<value>customerFee</value>
 		</managed-property>		
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CustomerFee_line</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -1004,13 +1008,13 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>feePrint</value>
-		</managed-property>				
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.CustomerFee</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>feePrint</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>CustomerFee_customer_registry_surname,CustomerFee_customer_registry_name,CustomerFee_customer_registry_id</value>
@@ -1287,6 +1291,10 @@
 			<value>com.code.aon.finance.InvoiceAddress</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>saleInvoiceAddress</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>saleInvoice</value>
 		</managed-property>
@@ -1334,6 +1342,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>saleInvoiceDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1433,6 +1445,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>saleInvoiceFinance</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
@@ -1628,6 +1644,10 @@
 			<value>com.code.aon.finance.InvoiceAddress</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>purchaseInvoiceAddress</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>purchaseInvoice</value>
 		</managed-property>
@@ -1675,6 +1695,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>purchaseInvoiceDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1764,6 +1788,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>purchaseInvoiceFinance</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
@@ -1959,6 +1987,10 @@
 			<value>com.code.aon.finance.InvoiceAddress</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>expenseInvoiceAddress</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>expenseInvoice</value>
 		</managed-property>
@@ -2006,6 +2038,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>expenseInvoiceDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -2095,6 +2131,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>expenseInvoiceFinance</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
@@ -2290,6 +2330,10 @@
 			<value>com.code.aon.finance.InvoiceAddress</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>undeductibleInvoiceAddress</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>undeductibleInvoice</value>
 		</managed-property>
@@ -2337,6 +2381,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>undeductibleInvoiceDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -2416,6 +2464,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>undeductibleInvoiceFinance</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
