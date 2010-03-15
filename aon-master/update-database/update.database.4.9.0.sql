@@ -20,6 +20,20 @@ UPDATE `product` SET `type` = 2 WHERE `type` IS NULL;
 
 UPDATE `finance` SET `registry` = (SELECT `registry` FROM `invoice` WHERE `invoice`.`id` = `finance`.`invoice`) WHERE `registry` <> (SELECT `registry` FROM `invoice` WHERE `invoice`.`id` = `finance`.`invoice`);
 
+CREATE FUNCTION `calculaLineaCuota`(customer INT, id INT)
+    RETURNS int
+    NOT DETERMINISTIC
+    SQL SECURITY DEFINER
+    COMMENT ''
+RETURN (SELECT IF (MAX(line) IS NULL, 1, MAX(line)+1)
+       FROM customer_fee
+       WHERE customer_fee.customer = customer
+       AND customer_fee.id < id);
+
+UPDATE `customer_fee` SET `line` = calculaLineaCuota(`customer_fee`.`customer`, `customer_fee`.`id`);
+
+DROP FUNCTION `calculaLineaCuota`;
+
 
 UPDATE `db_version` SET `version_number` = '5.0.0';
 
