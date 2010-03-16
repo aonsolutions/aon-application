@@ -2272,3 +2272,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-account-reports{
 	background:transparent url(images/aon-main-menu/aon-icon-account-reports.png) no-repeat scroll center left;
 }
+.aon-icon-query{
+	background:transparent url(images/aon-main-menu/aon-icon-query.png) no-repeat scroll center left;
+}
+.aon-icon-reservation{
+	background:transparent url(images/aon-main-menu/aon-icon-reservation.png) no-repeat scroll center left;
+}
+.aon-icon-asset{
+	background:transparent url(images/aon-main-menu/aon-icon-asset.png) no-repeat scroll center left;
+}
