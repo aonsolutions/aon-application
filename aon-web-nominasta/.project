@@ -3,9 +3,9 @@
 	<name>aon-web-nominasta</name>
 	<comment></comment>
 	<projects>
-		<project>aon-payroll</project>
-		<project>aon-ui-payroll</project>
 		<project>aon-ldap</project>
+		<project>aon-nominasta</project>
+		<project>aon-ui-nominasta</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -30,10 +30,10 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.iam.jdt.core.mavenNature</nature>
 		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
+		<nature>org.eclipse.iam.jdt.core.mavenNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
 </projectDescription>
