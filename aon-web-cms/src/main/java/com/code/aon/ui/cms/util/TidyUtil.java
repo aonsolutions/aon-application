@@ -33,13 +33,7 @@ public class TidyUtil implements TidyMessageListener {
 	
 	private String relativePath;
 	
-	private Tidy tidy;
-	
 	public TidyUtil( IGeneratorLogger logger ) {
-		this.tidy = new Tidy();
-		this.tidy.setConfigurationFromFile(getConfigurationFile().getAbsolutePath());
-		this.tidy.setMessageListener(this);		
-		this.tidy.setErrout(new PrintWriter(NullWriter.NULL_WRITER));
 		this.logger = logger;
 	}
 
@@ -75,6 +69,14 @@ public class TidyUtil implements TidyMessageListener {
 		}
 	}
 	
+	private Tidy getTidy() {
+		Tidy tidy = new Tidy();
+		tidy.setConfigurationFromFile(getConfigurationFile().getAbsolutePath());
+		tidy.setMessageListener(this);		
+		tidy.setErrout(new PrintWriter(NullWriter.NULL_WRITER));
+		return tidy;
+	}
+	
 	public void parse( File file ) {
 		this.relativePath = ControllerUtil.getRelativePath( ControllerUtil.getPreviewPath(), file);
 		String name = FilenameUtils.getBaseName(file.getName()) + "_tidy";
@@ -82,6 +84,7 @@ public class TidyUtil implements TidyMessageListener {
 		File outFile = null;
 		Writer out = null;
 		Reader in = null;
+		Tidy tidy = getTidy();
 		try {
 			outFile = File.createTempFile(name, extension, ControllerUtil.getTemporalPath());
 			out = new FileWriter(outFile);
