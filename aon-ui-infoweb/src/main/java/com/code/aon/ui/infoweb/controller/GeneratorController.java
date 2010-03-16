@@ -69,7 +69,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private static final int MAX_PAGE_COUNT = 8;
 	
-	private static final FileFilter CVS_FILTER = new CVSFilter();
+	private static final FileFilter WEB_INFO_FILTER = new WebinfoFilter();
 	
 	private VelocityUtil vu;
 	
@@ -281,7 +281,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if ( srcDir.exists() ) {
 				LOGGER.info( "Copy directory: {} -> {}", srcDir, destDir );
 				File realDestDir = new File(destDir, srcDir.getName());
-				FileUtils.copyDirectory(srcDir, realDestDir, CVS_FILTER );
+				FileUtils.copyDirectory(srcDir, realDestDir, WEB_INFO_FILTER );
 			} else {
 				LOGGER.warn( "Directory doesn't exists: {}", srcDir );
 			}
@@ -758,12 +758,15 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return this.homepage == 0;
 	}
 	
-	private static class CVSFilter implements FileFilter {
+	private static class WebinfoFilter implements FileFilter {
 
 		@Override
 		public boolean accept(File pathname) {
-			if ( pathname.isDirectory() && pathname.getName().equalsIgnoreCase("CVS") ) {
-				return false;
+			if ( pathname.isDirectory() ) {
+				String name = pathname.getName();
+				if ( name.equalsIgnoreCase("CVS") || name.equalsIgnoreCase(".svn") ) {
+					return false;
+				}
 			}
 			return true;
 		}
