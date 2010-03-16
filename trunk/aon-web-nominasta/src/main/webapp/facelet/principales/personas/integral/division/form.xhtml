@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<body>
+
+		<ui:composition
+			template="/facelet/templates/aon.ui.content.xhtml">
+
+			<ui:define name="content">
+
+				<aon:form id="prcdivtrabForm">
+
+					<!-- 
+						<ui:include
+						src="/facelet/templates/formPrintToolbar.xhtml">
+					-->
+					<ui:include
+						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+						<ui:param name="toolbarTitle"
+							value="#{appBundle.aon_payroll_principales_division_mnto}" />
+						<ui:param name="controller" value="#{prcdivtrab}" />
+
+						<aon:methodParam name="backAction"
+							value="integralTrab_form" />
+						<aon:methodParam name="cancelAction"
+							value="integralTrab_form" />
+
+					</ui:include>
+
+					<!--	FIN HEADER & TOOLBAR	-->
+
+					<aon:div id="prcdivtrabData"
+						styleClass="aon-scroll-area">
+
+						<aon:panelGrid columns="2" dir="true"
+							width="100%">
+
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_division_cdg}" />
+							<aon:inputText value="#{prcdivtrab.to.id.cdg}" readonly="#{!bonifica.new}" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_integralTra_fecini}" />
+							<aon:selectInputDate renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{prcdivtrab.to.id.fecini}" enableManualInput="true" />
+					
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_integralTra_fecfin}" />
+							<aon:selectInputDate renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{prcdivtrab.to.fecfin}" enableManualInput="true" />
+					
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_integralTra_orden}" />
+							<aon:inputText value="#{prcdivtrab.to.id.orden}" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_integralTra_porcentaje}" />
+							<aon:inputText value="#{prcdivtrab.to.prc}" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_integralTra_texto}" />
+							<aon:inputText value="#{prcdivtrab.to.texto}" />
+
+
+
+
+
+
+
+						</aon:panelGrid>
+
+					</aon:div>
+				</aon:form>
+				
+
+			</ui:define>
+		</ui:composition>
+	</body>
+</html>
