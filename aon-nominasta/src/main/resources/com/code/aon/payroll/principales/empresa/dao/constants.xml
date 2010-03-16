@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	
+	<bean class="com.code.aon.payroll.principales.empresa.Empresa" sqlName="emprnif">
+		<alias names="admon_cdg,alias,cargo,cdg,cecon,cliente_cdg,cliente_fecfin,cliente_fecini,datreg,descripcion,divisa_cdg,envioss,feccon,fecfin,fecini,fecmod,fecnac,fecnew,hormod,hornew,indcal,indcoste,indirpf,indnom,modimpuesto,nrodocrep,numdoc,obsnif,pais1_cdg,pais_cdg,representante,sexo,tipdoc1_cdg,tipdoc_cdg,tipempr_cdg" />
+		<hibernate names="admon.cdg,alias,cargo,cdg,cecon,cliente.cdg,cliente.fecfin,cliente.fecini,datreg,descripcion,divisa.cdg,envioss,feccon,fecfin,fecini,fecmod,fecnac,fecnew,hormod,hornew,indcal,indcoste,indirpf,indnom,modimpuesto,nrodocrep,numdoc,obsnif,pais1.cdg,pais.cdg,representante,sexo,tipdoc1.cdg,tipdoc.cdg,tipempr.cdg" />
+	</bean>
+	
+</dao>
+
+ 
+
+
+
