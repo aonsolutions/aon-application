@@ -3,26 +3,22 @@ package com.esferalia.aon.payroll.core;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.core.IDocument;
-import com.esferalia.aon.core.IRegistry;
-import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
+import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
 
-public interface IEmpleado
-		<E extends IEmpresa<IRegistry<IDocument>>,
-		 P extends IPersona<IRegistry<IDocument>>> extends Serializable{
+public interface IEmpleado extends Serializable{
 
-	E getEmpresa();
-	void setEmpresa(E empresa);
+	IEmpresa getEmpresa();
+	void setEmpresa(IEmpresa empresa);
 	
-	P getPersona();
-	void setPersona(P persona);
+	IPersona getPersona();
+	void setPersona(IPersona persona);
 	
 	Date getFechaInicio();
-	void setFechaInicio();
+	void setFechaInicio(Date fechaInicio);
 
 	Date getFechaFin();
-	void setFechaFin();
+	void setFechaFin(Date fechaFin);
 	
 	CuentaCotizacion getCuentaCotizacion();
 	void setCuentaCotizacion(CuentaCotizacion CuentaCotizacion);

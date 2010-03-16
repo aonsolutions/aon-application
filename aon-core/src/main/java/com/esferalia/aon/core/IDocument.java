@@ -1,6 +1,8 @@
 package com.esferalia.aon.core;
 
-public interface IDocument {
+import java.io.Serializable;
+
+public interface IDocument extends Serializable{
 
 	String getValue();
 	void setValue(String value);

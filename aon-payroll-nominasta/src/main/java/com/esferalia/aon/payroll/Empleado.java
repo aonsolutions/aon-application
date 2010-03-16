@@ -9,12 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.core.IDocument;
-import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.IPersona;
@@ -26,14 +26,14 @@ import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
  */
 @Entity
 @Table(name = "emprper")
-public class Empleado<E extends IEmpresa<IRegistry<IDocument>>,P extends IPersona<IRegistry<IDocument>>> implements ITransferObject,IEmpleado<E, P> {
+public class Empleado implements ITransferObject,IEmpleado {
 
 	private static final long serialVersionUID = 5020902333687926636L;
 	
 	private Integer cdg;
 //	private String codnsz;
-//	private Date fecalt;
-//	private Date fecbaj;
+	private Date fechaInicio;
+	private Date fechaFin;
 //	private Date fecnew;
 //	private Date hornew;
 //	private Date fecmod;
@@ -48,8 +48,8 @@ public class Empleado<E extends IEmpresa<IRegistry<IDocument>>,P extends IPerson
 //	private Domicilio domicilio;	
 //	private Emprccc emprccc;
 //	private Emprccos emprccos;	
-	private E empresa;
-	private P persona;
+	private IEmpresa empresa;
+	private IPersona persona;
 	
 	public Empleado() {
 	}
@@ -76,33 +76,25 @@ public class Empleado<E extends IEmpresa<IRegistry<IDocument>>,P extends IPerson
 //		this.codnsz = codnsz;
 //	}
 //
-//	/**
-//	 * Devuelve la Fecha de Alta
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "fecalt", nullable = false)
-//	public Date getFecalt() {
-//		return this.fecalt;
-//	}
-//
-//	public void setFecalt(Date fecalt) {
-//		this.fecalt = fecalt;
-//	}
-//
-//	/**
-//	 * Devuelve la Fecha de Baja
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "fecbaj")
-//	public Date getFecbaj() {
-//		return this.fecbaj;
-//	}
-//
-//	public void setFecbaj(Date fecbaj) {
-//		this.fecbaj = fecbaj;
-//	}
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fecalt", nullable = false)
+	public Date getFechaInicio() {
+		return this.fechaInicio;
+	}
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fecbaj")
+	public Date getFechaFin() {
+		return this.fechaFin;
+	}
+
+	public void setFechaFin(Date fechaFin) {
+		this.fechaFin = fechaFin;
+	}
 //
 //	/**
 //	 * Devuelve la Fecha Creacion Fila
@@ -205,7 +197,7 @@ public class Empleado<E extends IEmpresa<IRegistry<IDocument>>,P extends IPerson
 //	 * Devuelve el Tipo Contrato Agrario 
 //	 * @return
 //	 */
-//	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndiceAgrario")} )
+//	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.esferalia.aon.payroll.enumeration.IndiceAgrario")} )
 //	@Column(name = "indagrario", length = 1)
 //	public IndiceAgrario getIndagrario() {
 //		return this.indagrario;
@@ -219,7 +211,7 @@ public class Empleado<E extends IEmpresa<IRegistry<IDocument>>,P extends IPerson
 //	 * Devuelve el Artista 
 //	 * @return
 //	 */
-//	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndiceGrupo")} )
+//	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.esferalia.aon.payroll.enumeration.IndiceGrupo")} )
 //	@Column(name = "indgrupo", length = 1)
 //	public IndiceGrupo getIndgrupo() {
 //		return this.indgrupo;
@@ -290,23 +282,23 @@ public class Empleado<E extends IEmpresa<IRegistry<IDocument>>,P extends IPerson
 //	}
 //
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(targetEntity = Empresa.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "codemp", referencedColumnName = "cdg", nullable = false)
-	public E getEmpresa() {
+	public IEmpresa getEmpresa() {
 		return this.empresa;
 	}
 
-	public void setEmpresa(E emprnif) {
+	public void setEmpresa(IEmpresa emprnif) {
 		this.empresa = emprnif;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(targetEntity = Persona.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "codper", nullable = false)
-	public P getPersona() {
+	public IPersona getPersona() {
 		return this.persona;
 	}
 
-	public void setPersona(P persona) {
+	public void setPersona(IPersona persona) {
 		this.persona = persona;
 	}
 	
@@ -325,31 +317,6 @@ public class Empleado<E extends IEmpresa<IRegistry<IDocument>>,P extends IPerson
 		
 	}
 
-	
-	@Override
-	public Date getFechaFin() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void setFechaFin() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Date getFechaInicio() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void setFechaInicio() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-	
 	@Override
 	public TipoContrato getTipoContrato() {
 		// TODO Auto-generated method stub

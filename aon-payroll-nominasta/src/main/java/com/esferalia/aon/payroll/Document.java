@@ -4,6 +4,8 @@ import com.esferalia.aon.core.IDocument;
 
 public class Document implements IDocument {
 
+	private static final long serialVersionUID = 8951268005779548912L;
+	
 	String value;
 	
 	@Override

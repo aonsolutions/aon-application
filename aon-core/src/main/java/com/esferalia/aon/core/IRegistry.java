@@ -1,9 +1,11 @@
 package com.esferalia.aon.core;
 
-public interface IRegistry<D extends IDocument> {
+import java.io.Serializable;
+
+public interface IRegistry extends Serializable {
 	
-	D getDocument();
-	void setDocument(D document);
+	IDocument getDocument();
+	void setDocument(IDocument document);
 	
 	String getFullName();
 	void setFullName(String Name);
