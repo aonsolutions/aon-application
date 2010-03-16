@@ -8,6 +8,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,10 +25,11 @@ import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.enumeration.Prorrateo;
 import com.esferalia.aon.payroll.enumeration.TipoIT;
+import com.esferalia.aon.payroll.impl.it.ParteITAbs;
 
 @Entity
 @Table(name = "parteit")
-public class ParteIT implements ITransferObject, IParteIT {
+public class ParteIT extends ParteITAbs implements ITransferObject  {
 
 	private static final long serialVersionUID = -2204224372352983127L;
 	
@@ -159,6 +161,7 @@ public class ParteIT implements ITransferObject, IParteIT {
 	}
 	
 	@Override
+	@Transient
 	public TipoContingencia getTipoContingencia() {
 		if (getTipoIT() == TipoIT.ACCIDENTE) {
 			return TipoContingencia.ACCIDENTE_LABORAL;
@@ -203,23 +206,26 @@ public class ParteIT implements ITransferObject, IParteIT {
 	@Type(type = "siNoType")
 	@Column(name = "recaida", length = 1)
 	@Override
-	public boolean isRecaida() {
-		return this.recaida;
+	public Boolean isRecaida() {
+		return (recaida != null)?recaida:Boolean.FALSE;
 	}
 	@Override
-	public void setRecaida(boolean recaida) {
-		this.recaida = recaida;
+	public void setRecaida(Boolean recaida) {
+		this.recaida = (recaida != null)?recaida:Boolean.FALSE;
 	}
-/*
-	@ManyToOne(targetEntity = ParteIT.class,fetch = FetchType.EAGER)
-	@JoinColumns( {
-			@JoinColumn(name = "cdg", referencedColumnName = "cdg", nullable = false),
-			@JoinColumn(name = "feciniori", referencedColumnName = "fecini", nullable = false) })
+
+	//@ManyToOne(targetEntity = ParteIT.class,fetch = FetchType.EAGER)
+	//@JoinColumns( {
+	//		@JoinColumn(name = "cdg", referencedColumnName = "cdg", nullable = false, insertable=false, updatable=false),
+	//		@JoinColumn(name = "feciniori", referencedColumnName = "fecini", nullable = false, insertable=false, updatable=false) })
+	// 	@TODO la columna esta marcada como insertable False, lo cual es un error
+	// Es necesario decir aHibernate que cdg no es modificable pero la fecha si.
 	@Override
+	@Transient
 	public IParteIT getParteITRecaida() {
 		return parteITRecaida;
 	}
-*/
+
 	@Override
 	public void setParteITRecaida(IParteIT parteITRecaida) {
 		this.parteITRecaida = parteITRecaida;
@@ -351,7 +357,7 @@ public class ParteIT implements ITransferObject, IParteIT {
 		this.riesgo = riesgo;
 	}
 
-	@ManyToOne(targetEntity = Empleado.class,fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Empleado.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "cdg", insertable = false, updatable = false)
 	@Override
 	public IEmpleado getEmpleado() {
@@ -361,10 +367,6 @@ public class ParteIT implements ITransferObject, IParteIT {
 	@Override
 	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
-	}
-	@Override
-	public IParteIT getParteITRecaida() {
-		return null;
 	}
 
 }

@@ -1,0 +1,360 @@
+package com.esferalia.aon.payroll.dao;
+
+import com.code.aon.common.dao.DAOConstants;
+import com.code.aon.common.dao.DAOConstantsEntry;
+import com.esferalia.aon.payroll.Empleado;
+import com.esferalia.aon.payroll.Empresa;
+import com.esferalia.aon.payroll.Nomina;
+import com.esferalia.aon.payroll.Persona;
+import com.esferalia.aon.payroll.ParteIT;
+import com.esferalia.aon.payroll.Trabajo;
+
+/** 
+* Interface for holding entity properties constants.
+*/ 
+public interface IPayrollAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Empleado entity.
+	*/ 
+	DAOConstantsEntry EMPLEADO_ENTRY = DAOConstants.getDAOConstant(Empleado.class);
+
+	/** 
+	* Alias value: Empleado_empresa_cdg
+	* Hibernate value: Empleado.empresa.cdg
+	*/
+	String  EMPLEADO_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Empleado_fechaFin
+	* Hibernate value: Empleado.fechaFin
+	*/
+	String  EMPLEADO_FECHA_FIN = EMPLEADO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Empleado_fechaInicio
+	* Hibernate value: Empleado.fechaInicio
+	*/
+	String  EMPLEADO_FECHA_INICIO = EMPLEADO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Empleado_id
+	* Hibernate value: Empleado.id
+	*/
+	String  EMPLEADO_ID = EMPLEADO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Empleado_mayor65
+	* Hibernate value: Empleado.mayor65
+	*/
+	String  EMPLEADO_MAYOR65 = EMPLEADO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Empleado_persona_cdg
+	* Hibernate value: Empleado.persona.cdg
+	*/
+	String  EMPLEADO_PERSONA_CDG = EMPLEADO_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Empresa entity.
+	*/ 
+	DAOConstantsEntry EMPRESA_ENTRY = DAOConstants.getDAOConstant(Empresa.class);
+
+	/** 
+	* Alias value: Empresa_cdg
+	* Hibernate value: Empresa.cdg
+	*/
+	String  EMPRESA_CDG = EMPRESA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Empresa_name
+	* Hibernate value: Empresa.name
+	*/
+	String  EMPRESA_NAME = EMPRESA_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Nomina entity.
+	*/ 
+	DAOConstantsEntry NOMINA_ENTRY = DAOConstants.getDAOConstant(Nomina.class);
+
+	/** 
+	* Alias value: Nomina_baseAccidentesTrabajo
+	* Hibernate value: Nomina.baseAccidentesTrabajo
+	*/
+	String  NOMINA_BASE_ACCIDENTES_TRABAJO = NOMINA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Nomina_baseAccidentesTrabajoSinHorasExtras
+	* Hibernate value: Nomina.baseAccidentesTrabajoSinHorasExtras
+	*/
+	String  NOMINA_BASE_ACCIDENTES_TRABAJO_SIN_HORAS_EXTRAS = NOMINA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Nomina_baseContingenciasGenerales
+	* Hibernate value: Nomina.baseContingenciasGenerales
+	*/
+	String  NOMINA_BASE_CONTINGENCIAS_GENERALES = NOMINA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Nomina_baseHorasExtrasEstructurales
+	* Hibernate value: Nomina.baseHorasExtrasEstructurales
+	*/
+	String  NOMINA_BASE_HORAS_EXTRAS_ESTRUCTURALES = NOMINA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Nomina_baseHorasExtrasNoEstructurales
+	* Hibernate value: Nomina.baseHorasExtrasNoEstructurales
+	*/
+	String  NOMINA_BASE_HORAS_EXTRAS_NO_ESTRUCTURALES = NOMINA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Nomina_cdg
+	* Hibernate value: Nomina.cdg
+	*/
+	String  NOMINA_CDG = NOMINA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Nomina_diasNomina
+	* Hibernate value: Nomina.diasNomina
+	*/
+	String  NOMINA_DIAS_NOMINA = NOMINA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Nomina_empleado_id
+	* Hibernate value: Nomina.empleado.id
+	*/
+	String  NOMINA_EMPLEADO_ID = NOMINA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Nomina_mes
+	* Hibernate value: Nomina.mes
+	*/
+	String  NOMINA_MES = NOMINA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Nomina_tipoNomina
+	* Hibernate value: Nomina.tipoNomina
+	*/
+	String  NOMINA_TIPO_NOMINA = NOMINA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Nomina_year
+	* Hibernate value: Nomina.year
+	*/
+	String  NOMINA_YEAR = NOMINA_ENTRY.getAliasNames()[10];
+
+
+
+	/** 
+	* DAOConstantsEntry for Persona entity.
+	*/ 
+	DAOConstantsEntry PERSONA_ENTRY = DAOConstants.getDAOConstant(Persona.class);
+
+	/** 
+	* Alias value: Persona_cdg
+	* Hibernate value: Persona.cdg
+	*/
+	String  PERSONA_CDG = PERSONA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Persona_lastName
+	* Hibernate value: Persona.lastName
+	*/
+	String  PERSONA_LAST_NAME = PERSONA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Persona_name
+	* Hibernate value: Persona.name
+	*/
+	String  PERSONA_NAME = PERSONA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Persona_surname
+	* Hibernate value: Persona.surname
+	*/
+	String  PERSONA_SURNAME = PERSONA_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ParteIT entity.
+	*/ 
+	DAOConstantsEntry PARTE_IT_ENTRY = DAOConstants.getDAOConstant(ParteIT.class);
+
+	/** 
+	* Alias value: ParteIT_altaProcesada
+	* Hibernate value: ParteIT.altaProcesada
+	*/
+	String  PARTE_IT_ALTA_PROCESADA = PARTE_IT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ParteIT_bajaProcesada
+	* Hibernate value: ParteIT.bajaProcesada
+	*/
+	String  PARTE_IT_BAJA_PROCESADA = PARTE_IT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ParteIT_baseDiariaAccidentesTrabajo
+	* Hibernate value: ParteIT.baseDiariaAccidentesTrabajo
+	*/
+	String  PARTE_IT_BASE_DIARIA_ACCIDENTES_TRABAJO = PARTE_IT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ParteIT_baseDiariaContingenciasComunes
+	* Hibernate value: ParteIT.baseDiariaContingenciasComunes
+	*/
+	String  PARTE_IT_BASE_DIARIA_CONTINGENCIAS_COMUNES = PARTE_IT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ParteIT_baseReguladoraDiaria
+	* Hibernate value: ParteIT.baseReguladoraDiaria
+	*/
+	String  PARTE_IT_BASE_REGULADORA_DIARIA = PARTE_IT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ParteIT_baseRetribucionPeriodoAnterior
+	* Hibernate value: ParteIT.baseRetribucionPeriodoAnterior
+	*/
+	String  PARTE_IT_BASE_RETRIBUCION_PERIODO_ANTERIOR = PARTE_IT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ParteIT_ciasAlta
+	* Hibernate value: ParteIT.ciasAlta
+	*/
+	String  PARTE_IT_CIAS_ALTA = PARTE_IT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ParteIT_ciasBaja
+	* Hibernate value: ParteIT.ciasBaja
+	*/
+	String  PARTE_IT_CIAS_BAJA = PARTE_IT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ParteIT_diasPeriodoAnterior
+	* Hibernate value: ParteIT.diasPeriodoAnterior
+	*/
+	String  PARTE_IT_DIAS_PERIODO_ANTERIOR = PARTE_IT_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: ParteIT_empleado_id
+	* Hibernate value: ParteIT.empleado.id
+	*/
+	String  PARTE_IT_EMPLEADO_ID = PARTE_IT_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: ParteIT_fechaAlta
+	* Hibernate value: ParteIT.fechaAlta
+	*/
+	String  PARTE_IT_FECHA_ALTA = PARTE_IT_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: ParteIT_id_cdg
+	* Hibernate value: ParteIT.id.cdg
+	*/
+	String  PARTE_IT_ID_CDG = PARTE_IT_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: ParteIT_id_fechaBaja
+	* Hibernate value: ParteIT.id.fechaBaja
+	*/
+	String  PARTE_IT_ID_FECHA_BAJA = PARTE_IT_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: ParteIT_numeroColegiadoAlta
+	* Hibernate value: ParteIT.numeroColegiadoAlta
+	*/
+	String  PARTE_IT_NUMERO_COLEGIADO_ALTA = PARTE_IT_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: ParteIT_numeroColegiadoBaja
+	* Hibernate value: ParteIT.numeroColegiadoBaja
+	*/
+	String  PARTE_IT_NUMERO_COLEGIADO_BAJA = PARTE_IT_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: ParteIT_prestacionDiaria60
+	* Hibernate value: ParteIT.prestacionDiaria60
+	*/
+	String  PARTE_IT_PRESTACION_DIARIA60 = PARTE_IT_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: ParteIT_prestacionDiaria75
+	* Hibernate value: ParteIT.prestacionDiaria75
+	*/
+	String  PARTE_IT_PRESTACION_DIARIA75 = PARTE_IT_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: ParteIT_procesada
+	* Hibernate value: ParteIT.procesada
+	*/
+	String  PARTE_IT_PROCESADA = PARTE_IT_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: ParteIT_prorrateo
+	* Hibernate value: ParteIT.prorrateo
+	*/
+	String  PARTE_IT_PRORRATEO = PARTE_IT_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: ParteIT_recaida
+	* Hibernate value: ParteIT.recaida
+	*/
+	String  PARTE_IT_RECAIDA = PARTE_IT_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: ParteIT_riesgo
+	* Hibernate value: ParteIT.riesgo
+	*/
+	String  PARTE_IT_RIESGO = PARTE_IT_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: ParteIT_tipoIT
+	* Hibernate value: ParteIT.tipoIT
+	*/
+	String  PARTE_IT_TIPO_IT = PARTE_IT_ENTRY.getAliasNames()[21];
+
+
+
+	/** 
+	* DAOConstantsEntry for Trabajo entity.
+	*/ 
+	DAOConstantsEntry TRABAJO_ENTRY = DAOConstants.getDAOConstant(Trabajo.class);
+
+	/** 
+	* Alias value: Trabajo_empleado_id
+	* Hibernate value: Trabajo.empleado.id
+	*/
+	String  TRABAJO_EMPLEADO_ID = TRABAJO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Trabajo_fechaFin
+	* Hibernate value: Trabajo.fechaFin
+	*/
+	String  TRABAJO_FECHA_FIN = TRABAJO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Trabajo_id_cdg
+	* Hibernate value: Trabajo.id.cdg
+	*/
+	String  TRABAJO_ID_CDG = TRABAJO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Trabajo_id_fecini
+	* Hibernate value: Trabajo.id.fecini
+	*/
+	String  TRABAJO_ID_FECINI = TRABAJO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Trabajo_indtp
+	* Hibernate value: Trabajo.indtp
+	*/
+	String  TRABAJO_INDTP = TRABAJO_ENTRY.getAliasNames()[4];
+
+
+}

@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
-import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
 
 public interface IEmpleado extends Serializable{
+
+	Integer getId();
+	void setId(Integer  id);
 
 	IEmpresa getEmpresa();
 	void setEmpresa(IEmpresa empresa);
@@ -25,8 +27,5 @@ public interface IEmpleado extends Serializable{
 	
 	boolean isMayor65();
 	void setMayor65(boolean mayor65);
-	
-	TipoContrato getTipoContrato();
-	void setTipoContrato(TipoContrato tipoContrato);
 	
 }

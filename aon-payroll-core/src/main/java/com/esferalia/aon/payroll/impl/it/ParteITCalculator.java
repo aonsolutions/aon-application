@@ -1,8 +1,8 @@
 package com.esferalia.aon.payroll.impl.it;
 
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.core.util.DateUtils;
+import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.INomina;
 import com.esferalia.aon.payroll.core.calc.CalculatorException;
 import com.esferalia.aon.payroll.core.calc.INominaDAO;
@@ -14,58 +14,65 @@ import com.esferalia.aon.payroll.impl.calc.NominaParams;
 public class ParteITCalculator {
 
 	protected INomina getNominaAnterior(IParteIT it) throws CalculatorException {
-		Month itMonth = DateUtils.getMonth(it.getFechaBaja());
-		int year = DateUtils.getYear(it.getFechaBaja());
-		int monthValue = itMonth.getValue();
-		if (monthValue == 0) {
-			monthValue = 11;
-			year--;
-		}
-		itMonth = Month.values()[monthValue];
-
-		NominaParams params = new NominaParams();
-		params.setEmpleado(it.getEmpleado());
-		params.setMes(itMonth);
-		params.setYear(year);
-		params.setTipo(TipoNomina.NORMAL);
-		INominaDAO nominaDAO = NominaDAOFactory.getInstance().getNominaDAO();
-		INomina nomina = nominaDAO.getNomina(params);
-		if (nomina == null) {
-			throw new CalculatorException(
-					"El trabajador no tiene calculada la nómina anterior");
-		}
-		return nomina;
-	}
-
-	protected INomina[] getNominasAnteriores(IParteIT it, int count) throws CalculatorException {
-		Month itMonth = DateUtils.getMonth(it.getFechaBaja());
-		int year = DateUtils.getYear(it.getFechaBaja());
-		INomina[] nominas = new INomina[12];
-		int monthValue = itMonth.getValue();
-		for (int i = 0; i < count; ++i) {
-			if (monthValue == 0) {
-				monthValue = 11;
+		try {
+			int month = DateUtils.getMonth(it.getFechaBaja());
+			int year = DateUtils.getYear(it.getFechaBaja());
+			if (month == 0) {
+				month = 11;
 				year--;
 			}
-			itMonth = Month.values()[monthValue];
-
 			NominaParams params = new NominaParams();
 			params.setEmpleado(it.getEmpleado());
-			params.setMes(itMonth);
+			params.setMes(month);
 			params.setYear(year);
 			params.setTipo(TipoNomina.NORMAL);
-			INominaDAO nominaDAO = NominaDAOFactory.getInstance().getNominaDAO();
+			NominaDAOFactory f = NominaDAOFactory.getInstance();
+			INominaDAO nominaDAO = NominaDAOFactory.getInstance()
+					.getNominaDAO();
 			INomina nomina = nominaDAO.getNomina(params);
-			if (nomina != null) {
-				nominas[i] = nomina;
+			if (nomina == null) {
+				throw new CalculatorException(
+						"El trabajador no tiene calculada la nómina anterior");
 			}
-			monthValue--;
+			return nomina;
+		} catch (PayrollException e) {
+			throw new CalculatorException(e);
 		}
-		return nominas;
+	}
+
+	protected INomina[] getNominasAnteriores(IParteIT it, int count)
+			throws CalculatorException {
+		try {
+			int year = DateUtils.getYear(it.getFechaBaja());
+			INomina[] nominas = new INomina[12];
+			int month = DateUtils.getMonth(it.getFechaBaja());
+			for (int i = 0; i < count; ++i) {
+				if (month == 0) {
+					month = 11;
+					year--;
+				}
+				NominaParams params = new NominaParams();
+				params.setEmpleado(it.getEmpleado());
+				params.setMes(month);
+				params.setYear(year);
+				params.setTipo(TipoNomina.NORMAL);
+				INominaDAO nominaDAO = NominaDAOFactory.getInstance()
+						.getNominaDAO();
+				INomina nomina = nominaDAO.getNomina(params);
+				if (nomina != null) {
+					nominas[i] = nomina;
+				}
+				month--;
+			}
+			return nominas;
+		} catch (PayrollException e) {
+			throw new CalculatorException(e);
+		}
 	}
 
 	public Double getBaseReguladoraDiaria(IParteIT it) {
-		return (it.getBaseRetribucionPeriodoAnterior() /  it.getDiasPeriodoAnterior());
+		return (it.getBaseRetribucionPeriodoAnterior() / it
+				.getDiasPeriodoAnterior());
 	}
 
 	public Double getPrestacionDiaria60(IParteIT it) {

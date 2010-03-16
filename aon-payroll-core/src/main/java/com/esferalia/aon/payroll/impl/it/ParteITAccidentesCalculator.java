@@ -3,21 +3,27 @@ package com.esferalia.aon.payroll.impl.it;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.core.INomina;
+import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.calc.CalculatorException;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITCalculator;
+import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
 
 public class ParteITAccidentesCalculator extends ParteITCalculator implements IParteITCalculator {
 
+	static {
+		ParteITCalculatorFactory.register( new ParteITAccidentesCalculator());
+	}
+	
 	@Override
-	public boolean accept(IParteIT td) {
+	public boolean accept(IParteIT td,ITrabajo trabajo) {
 		return (td.getTipoContingencia() == TipoContingencia.ACCIDENTE_LABORAL);
 	}
 
 	@Override
-	public Double calculateBaseRetribucionPeriodoAnterior(IParteIT it)
+	public Double getBaseRetribucionPeriodoAnterior(IParteIT it)
 			throws CalculatorException {
 		INomina nomina = getNominaAnterior(it);
 		Double baseAccidentesTrabajoSinHorasExtras = nomina.getBaseAccidentesTrabajoSinHorasExtras();

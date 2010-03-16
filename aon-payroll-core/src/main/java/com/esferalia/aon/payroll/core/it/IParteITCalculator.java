@@ -1,14 +1,15 @@
 package com.esferalia.aon.payroll.core.it;
 
+import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.calc.CalculatorException;
 
 
 
 public interface IParteITCalculator {
 
-	boolean accept(IParteIT it);
+	boolean accept(IParteIT it,ITrabajo trabajo);
 	
-	Double calculateBaseRetribucionPeriodoAnterior(IParteIT it) throws CalculatorException;
+	Double getBaseRetribucionPeriodoAnterior(IParteIT it) throws CalculatorException;
 
 	Integer getDiasPeriodoAnterior(IParteIT it) throws CalculatorException;
 

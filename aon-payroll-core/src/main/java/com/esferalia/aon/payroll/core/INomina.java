@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll.core;
 
 import java.io.Serializable;
 
-import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 
 public interface INomina extends Serializable{
@@ -11,8 +10,8 @@ public interface INomina extends Serializable{
 	void setEmpleado(IEmpleado empleado);
 	
 	// Mes de la nomina
-	Month getMes();
-	void setMes(Month mes);
+	Integer getMes();
+	void setMes(Integer mes);
 	
 	// Año de la nomina
 	Integer getYear();
@@ -40,11 +39,11 @@ public interface INomina extends Serializable{
 	
 	//Horas Estras Estructurales
 	Double getBaseHorasExtrasEstructurales();
-	void setBaseHorasExtrasEstrcturales(Double baseHorasExtrasEstrcturales);
+	void setBaseHorasExtrasEstructurales(Double baseHorasExtrasEstrcturales);
 
 	//Horas Estras No Estructurales
 	Double getBaseHorasExtrasNoEstructurales();
-	void setBaseHorasExtrasNoEstrcturales(Double baseHorasExtrasNoEstrcturales);
+	void setBaseHorasExtrasNoEstructurales(Double baseHorasExtrasNoEstrcturales);
 	
 	
 	/*

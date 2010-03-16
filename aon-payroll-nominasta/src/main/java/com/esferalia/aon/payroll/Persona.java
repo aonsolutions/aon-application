@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.core.IRegistry;
@@ -20,9 +21,9 @@ public class Persona implements ITransferObject, IPersona  {
 	
 	private Integer cdg;
 //     private String numdoc;
-//     private String descripcion;
-//     private String apellido2;
-//     private String nombre;
+     private String name;
+     private String surname;
+     private String lastName;
 //     private String alias;
 //     private String aliastc2;
 //     private String nomvia;
@@ -67,54 +68,46 @@ public class Persona implements ITransferObject, IPersona  {
         this.cdg = cdg;
     }
 
-	@Override
-	public String getLastName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+    @Override
+    @Transient
 	public IRegistry getRegistry() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public String getSurname() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setLastName(String lastName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setSurname(String surname) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public void setRegistry(IRegistry registry) {
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	@Column(name="descripcion", nullable=false, length=35)
+	public String getName() {
+		return name;
+	}
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	@Column(name="nombre", length=25)
+	public String getSurname() {
+		return surname;
+	}
+	@Override
+	public void setSurname(String surname) {
+		this.surname = surname;
 		
 	}
-    
+
+	@Override
+	@Column(name="apellido2", length=25)
+	public String getLastName() {
+		return lastName;
+	}
+	@Override
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
 
 //    @Column(name="numdoc", nullable=false, length=10)
 //    public String getNumdoc() {
@@ -126,7 +119,6 @@ public class Persona implements ITransferObject, IPersona  {
 //    }
 //    
 //
-//    @Column(name="descripcion", nullable=false, length=35)
 //    public String getDescripcion() {
 //        return this.descripcion;
 //    }
@@ -134,27 +126,6 @@ public class Persona implements ITransferObject, IPersona  {
 //    public void setDescripcion(String descripcion) {
 //        this.descripcion = descripcion;
 //    }
-//    
-//
-//    @Column(name="apellido2", length=25)
-//    public String getApellido2() {
-//        return this.apellido2;
-//    }
-//    
-//    public void setApellido2(String apellido2) {
-//        this.apellido2 = apellido2;
-//    }
-//    
-//
-//    @Column(name="nombre", length=25)
-//    public String getNombre() {
-//        return this.nombre;
-//    }
-//    
-//    public void setNombre(String nombre) {
-//        this.nombre = nombre;
-//    }
-//    
 //
 //    @Column(name="alias", length=25)
 //    public String getAlias() {

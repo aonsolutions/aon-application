@@ -9,10 +9,10 @@ import com.code.aon.common.util.CommonUtil;
 
 public class DateUtils {
 
-	public static Month getMonth(Date date) {
+	public static int getMonth(Date date) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
-		return Month.getMonthByValue( c.get(Calendar.MONTH) );
+		return c.get(Calendar.MONTH);
 	}
 	
 	public static int getYear(Date date) {
@@ -28,10 +28,10 @@ public class DateUtils {
 		return c.getTime();
 	}
 	
-	public static int getMonthDays(Month month, int year) {
+	public static int getMonthDays(int month, int year) {
 		GregorianCalendar c = new GregorianCalendar();
 		c.set(Calendar.DAY_OF_MONTH,1);
-		c.set(Calendar.MONTH,month.getValue());
+		c.set(Calendar.MONTH,month-1);
 		c.set(Calendar.YEAR,year);
 		return c.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
@@ -49,10 +49,10 @@ public class DateUtils {
         if (stopEdge != null && start.after(stopEdge)) {
         	return 3; // start fuera de rango por arriba.
         }
-        if (startEdge != null && stop.before(startEdge)) {
+        if (stop != null && startEdge != null && stop.before(startEdge)) {
         	return 4; // stop fuera de rango por abajo.
         }
-        if (stopEdge != null && stop.after(stopEdge)) {
+        if (stop != null &&  stopEdge != null && stop.after(stopEdge)) {
         	return 4; // stop fuera de rango por arriba.
         }
 		return 0;
