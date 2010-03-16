@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.impl.it;
 import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.core.util.DateUtils;
+import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.calc.CalculatorException;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
@@ -31,7 +32,7 @@ public abstract class ParteITAbs implements IParteIT {
 		}
 
 		// La fecha de la baja es un dato requerido.
-		if (getFechaBaja() != null) {
+		if (getFechaBaja() == null) {
 			return 4;
 		}
 
@@ -77,10 +78,10 @@ public abstract class ParteITAbs implements IParteIT {
 		return 0;
 	}
 	
-	public void calculate() throws CalculatorException {
+	public void calculate(ITrabajo trabajo) throws CalculatorException {
 		ParteITCalculatorFactory factory = ParteITCalculatorFactory.getInstance();
-		IParteITCalculator calculator = factory.getParteITCalculator( this );
-		setBaseRetribucionPeriodoAnterior( calculator.calculateBaseRetribucionPeriodoAnterior(this) );
+		IParteITCalculator calculator = factory.getParteITCalculator( this, trabajo );
+		setBaseRetribucionPeriodoAnterior( calculator.getBaseRetribucionPeriodoAnterior(this) );
 		setDiasPeriodoAnterior(calculator.getDiasPeriodoAnterior(this) );
 		setBaseReguladoraDiaria( calculator.getBaseReguladoraDiaria(this) );
 		setBaseDiariaContingenciasComunes(calculator.getBaseDiariaContingenciasComunes(this));

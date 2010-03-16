@@ -19,7 +19,7 @@ public class Empresa implements ITransferObject, IEmpresa {
 	private Integer cdg;
 //	private Date fecini;
 //	private Date fecfin;
-//	private String descripcion;
+	private String name;
 //	private String alias;
 //	private String numdoc;
 //	private String representante;
@@ -59,14 +59,17 @@ public class Empresa implements ITransferObject, IEmpresa {
 		this.cdg = cdg;
 	}
 	@Override
+	@Column(name = "descripcion", nullable = false, length = 60)
 	public String getName() {
-		return null;
+		return name;
 	}
 	@Override
 	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
+	@Transient
 	public IRegistry getRegistry() {
 		return null;
 	}
@@ -117,14 +120,6 @@ public class Empresa implements ITransferObject, IEmpresa {
 //	 * 
 //	 * @return
 //	 */
-//	@Column(name = "descripcion", nullable = false, length = 60)
-//	public String getDescripcion() {
-//		return this.descripcion;
-//	}
-//
-//	public void setDescripcion(String descripcion) {
-//		this.descripcion = descripcion;
-//	}
 //
 //	/**
 //	 * Devuelve el Alias Breve Empresa

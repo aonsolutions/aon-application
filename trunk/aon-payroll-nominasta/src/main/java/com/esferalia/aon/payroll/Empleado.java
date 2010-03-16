@@ -11,7 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -19,7 +21,6 @@ import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
-import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
 
 /**
  * Trabajador
@@ -30,7 +31,7 @@ public class Empleado implements ITransferObject,IEmpleado {
 
 	private static final long serialVersionUID = 5020902333687926636L;
 	
-	private Integer cdg;
+	private Integer id;
 //	private String codnsz;
 	private Date fechaInicio;
 	private Date fechaFin;
@@ -56,11 +57,11 @@ public class Empleado implements ITransferObject,IEmpleado {
 	
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 4)
-	public Integer getCdg() {
-		return this.cdg;
+	public Integer getId() {
+		return this.id;
 	}
-	public void setCdg(Integer cdg) {
-		this.cdg = cdg;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 //	/**
@@ -287,9 +288,8 @@ public class Empleado implements ITransferObject,IEmpleado {
 	public IEmpresa getEmpresa() {
 		return this.empresa;
 	}
-
-	public void setEmpresa(IEmpresa emprnif) {
-		this.empresa = emprnif;
+	public void setEmpresa(IEmpresa empresa) {
+		this.empresa = empresa;
 	}
 
 	@ManyToOne(targetEntity = Persona.class,fetch = FetchType.EAGER)
@@ -307,6 +307,7 @@ public class Empleado implements ITransferObject,IEmpleado {
 	//*********************************************
 
 	@Override
+	@Transient
 	public CuentaCotizacion getCuentaCotizacion() {
 		// TODO Auto-generated method stub
 		return null;
@@ -316,15 +317,9 @@ public class Empleado implements ITransferObject,IEmpleado {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public TipoContrato getTipoContrato() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void setTipoContrato(TipoContrato tipoContrato) {
-		// TODO Auto-generated method stub
-		
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

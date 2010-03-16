@@ -42,8 +42,8 @@ public interface IParteIT extends Serializable{
 	TipoContingencia getTipoContingencia();
 	void setTipoContingencia(TipoContingencia tipoContingencia);
 	
-	boolean isRecaida();
-	void setRecaida(boolean recaida);
+	Boolean isRecaida();
+	void setRecaida(Boolean recaida);
 	
 	IParteIT getParteITRecaida();
 	void setParteITRecaida(IParteIT parteITRecaida);

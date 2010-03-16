@@ -1,11 +1,16 @@
 package com.esferalia.aon.payroll.core.calc;
 
+
 public class NominaDAOFactory {
 
 	private static NominaDAOFactory instance;
-	
+	private static INominaDAO nominaDAO;
+
+	public static void setNominaDAO(INominaDAO nominaDAO) {
+		NominaDAOFactory.nominaDAO = nominaDAO;
+	}
+
 	private NominaDAOFactory() {
-		
 	}
 	
 	public static NominaDAOFactory getInstance() {
@@ -16,7 +21,7 @@ public class NominaDAOFactory {
 	}
 	
 	public INominaDAO getNominaDAO() {
-		return null;
+		return nominaDAO;
 	}
 	
 	
