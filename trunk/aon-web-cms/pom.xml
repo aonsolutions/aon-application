@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>jtidy</groupId>
 			<artifactId>jtidy</artifactId>
-			<version>r938</version>
+			<version>r938.mod</version>
     		<scope>compile</scope>
 		</dependency>
 	</dependencies>
