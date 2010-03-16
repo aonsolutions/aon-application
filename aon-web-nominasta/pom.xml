@@ -7,18 +7,18 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
-	<artifactId>aon.web.payroll</artifactId>
+	<artifactId>aon.web.nominasta</artifactId>
 	<packaging>war</packaging>
-	<name>AON WEB PAYROLL</name>
+	<name>AON WEB NOMINASTA</name>
 	<version>1.1.0</version>
-	<description>AON WEB PAYROLL</description>
+	<description>AON WEB NOMINASTA</description>
 	<build>
 		<finalName>aon-payroll</finalName>
 	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.payroll</artifactId>
+			<artifactId>aon.ui.nominasta</artifactId>
 			<version>1.1.0</version>
 			<scope>compile</scope>
 		</dependency>
