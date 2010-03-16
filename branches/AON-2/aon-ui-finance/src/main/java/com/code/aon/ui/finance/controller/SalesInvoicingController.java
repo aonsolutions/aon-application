@@ -239,6 +239,20 @@ public class SalesInvoicingController extends BasicController {
 		this.addresses = addresses;
 	}
 
+	@SuppressWarnings("unchecked")
+	public void addressData(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ID), event.getNewValue());
+			Iterator iter = rAddressBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				RegistryAddress rAddress = (RegistryAddress)iter.next();
+				((Invoice)this.getTo()).setRegistryAddress(rAddress);
+			}
+		}
+	}
+
 	public String getAddress() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String address1 = (rAddress!=null&&rAddress.getAddress()!=null)?rAddress.getAddress()+" ":"";
