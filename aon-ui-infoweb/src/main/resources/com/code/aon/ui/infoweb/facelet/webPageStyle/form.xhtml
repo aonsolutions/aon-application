@@ -13,36 +13,34 @@
 
 		<aon:form id="templatesForm">
 	
-		<aon:div>
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{infowebBundle.infoweb_template}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 			</ui:include>
 			
 			<rich:panel styleClass="aon-content-home">
-				<aon:div style="text-align:center;">
-					<aon:div style="text-align:right;width:50%;float:left;padding:5px"> 
-						<aon:panelGrid columns="2" dir="true">
-							<aon:outputText value="#{infowebBundle.infoweb_sytle_template} "/>
-							<aon:selectOneMenu value="#{webPageStyle.template}" style="width:200px">
-								<f:selectItems value="#{webPageStyle.templates}" />
-								<a4j:support actionListener="#{webPageStyle.onChangeTemplate}" event="onchange" reRender="variables, preview"/> 
-							</aon:selectOneMenu>
-							<aon:outputText value="#{infowebBundle.infoweb_homepage} "/>
-							<aon:selectOneMenu value="#{webPageStyle.homepage}" style="width:200px">
-								<f:selectItems value="#{webPageStyle.pages}" />
-								<a4j:support actionListener="#{webPageStyle.onChangeHomepage}" event="onchange"/> 
-							</aon:selectOneMenu>
-						</aon:panelGrid>
-					</aon:div>
-					<aon:div id="preview" style="text-align:left;float:left;padding:5px">
+				<h:panelGrid columns="2"
+					columnClasses="aon-vertical-align-top,aon-text-center aon-width-all">
+					<aon:panelGrid columns="2" dir="true">
+						<aon:outputText value="#{infowebBundle.infoweb_sytle_template} "/>
+						<aon:selectOneMenu value="#{webPageStyle.template}" style="width:200px">
+							<f:selectItems value="#{webPageStyle.templates}" />
+							<a4j:support actionListener="#{webPageStyle.onChangeTemplate}" event="onchange" reRender="variables, preview"/> 
+						</aon:selectOneMenu>
+						<aon:outputText value="#{infowebBundle.infoweb_homepage} "/>
+						<aon:selectOneMenu value="#{webPageStyle.homepage}" style="width:200px">
+							<f:selectItems value="#{webPageStyle.pages}" />
+							<a4j:support actionListener="#{webPageStyle.onChangeHomepage}" event="onchange"/> 
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+					<aon:div id="preview">
 						<aon:commandLink actionListener="#{webPageStyle.onShowPreview}" reRender="showPreviewModalPanel">
 							<aon:graphicImage value="preview.template?tpl=#{webPageStyle.template}" style="border:1px #CCC solid;"/>
 						</aon:commandLink>
 					</aon:div>
-				</aon:div>
+				</h:panelGrid>
 		
-				<aon:div id="variables" style="margin-top:20px">
+				<aon:div id="variables" styleClass="aon-margin-top">
 					<aon:div layout="none" rendered="#{webPageStyle.templateSelected}">
 					
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
@@ -112,7 +110,7 @@
 				</aon:div>
 
 			</rich:panel>
-		</aon:div>	
+	
 		</aon:form>
 
 		<ui:include src="/com/code/aon/ui/infoweb/facelet/webPageStyle/previewModalPanel.xhtml" />	
