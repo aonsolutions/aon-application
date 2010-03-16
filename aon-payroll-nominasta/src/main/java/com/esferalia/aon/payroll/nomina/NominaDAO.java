@@ -53,10 +53,10 @@ public class NominaDAO implements INominaDAO {
 				c.addEqualExpression(YEAR_ALIAS, params.getYear());
 			}
 			if (params.getTipo() == TipoNomina.NORMAL) {
-				c.addEqualExpression(TIPO_ALIAS, "0");	
+				c.addEqualExpression(TIPO_ALIAS, "N");	
 			}
 			if (params.getTipo() == TipoNomina.ATRASO) {
-				c.addEqualExpression(TIPO_ALIAS, "1");	
+				c.addEqualExpression(TIPO_ALIAS, "A");	
 			}
 
 			System.out.println( "**********************" );
