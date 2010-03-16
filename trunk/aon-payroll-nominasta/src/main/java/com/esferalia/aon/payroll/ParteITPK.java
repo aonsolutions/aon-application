@@ -13,15 +13,15 @@ public class ParteITPK implements Serializable {
 
 	private static final long serialVersionUID = -775104683033314551L;
 	
-	private int id;
+	private int cdg;
 	private Date fechaBaja;
 
 	@Column(name = "cdg", nullable = false, length = 4)
-	public int getId() {
-		return this.id;
+	public int getCdg() {
+		return this.cdg;
 	}
-	public void setCdg(int id) {
-		this.id = id;
+	public void setCdg(int cdg) {
+		this.cdg = cdg;
 	}
 
 	@Temporal(TemporalType.DATE)

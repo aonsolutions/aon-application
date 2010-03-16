@@ -4,15 +4,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.core.IDocument;
 import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IEmpresa;
 
 @Entity
 @Table(name = "emprnif")
-public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject, IEmpresa<R> {
+public class Empresa implements ITransferObject, IEmpresa {
 
 	private static final long serialVersionUID = -3266513951564213596L;
 	
@@ -67,18 +67,19 @@ public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject,
 	}
 
 	@Override
-	public R getRegistry() {
+	public IRegistry getRegistry() {
 		return null;
 	}
 	@Override
-	public void setRegistry(R registry) {
+	public void setRegistry(IRegistry registry) {
 		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
+	@Transient
 	public boolean isActive() {
-		return false;
+		return true;
 	}
 //
 //	/**
@@ -215,7 +216,7 @@ public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject,
 //	 * 
 //	 * @return
 //	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Sexo") })
+//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.Sexo") })
 //	@Column(name = "sexo", length = 1)
 //	public Sexo getSexo() {
 //		return this.sexo;
@@ -333,7 +334,7 @@ public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject,
 //	 * 
 //	 * @return
 //	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.IndicadorIrpf") })
+//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.IndicadorIrpf") })
 //	@Column(name = "indirpf", length = 1)
 //	public IndicadorIrpf getIndirpf() {
 //		return this.indirpf;
@@ -393,7 +394,7 @@ public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject,
 //	 * 
 //	 * @return
 //	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.EnvioSS") })
+//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.EnvioSS") })
 //	@Column(name = "envioss", length = 1)
 //	public EnvioSS getEnvioss() {
 //		return this.envioss;
@@ -408,7 +409,7 @@ public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject,
 //	 * 
 //	 * @return
 //	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.ConciertoEconomico") })
+//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.ConciertoEconomico") })
 //	@Column(name = "cecon", nullable = false, length = 1)
 //	public ConciertoEconomico getCecon() {
 //		return this.cecon;
@@ -423,7 +424,7 @@ public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject,
 //	 * 
 //	 * @return
 //	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.PagoImpuestos") })
+//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.PagoImpuestos") })
 //	@Column(name = "modimpuesto", length = 1)
 //	public PagoImpuestos getModimpuesto() {
 //		return this.modimpuesto;

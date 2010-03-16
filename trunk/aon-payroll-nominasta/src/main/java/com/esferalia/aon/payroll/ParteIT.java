@@ -3,14 +3,11 @@ package com.esferalia.aon.payroll;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,11 +18,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.core.IDocument;
-import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IEmpresa;
-import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
@@ -34,10 +27,7 @@ import com.esferalia.aon.payroll.enumeration.TipoIT;
 
 @Entity
 @Table(name = "parteit")
-public class ParteIT<E extends IEmpleado<IEmpresa<IRegistry<IDocument>>, IPersona<IRegistry<IDocument>>>,
-P extends IParteIT<E, P>> 
-implements ITransferObject, 
-	IParteIT<E,P> {
+public class ParteIT implements ITransferObject, IParteIT {
 
 	private static final long serialVersionUID = -2204224372352983127L;
 	
@@ -51,6 +41,7 @@ implements ITransferObject,
 	private Boolean altaProcesada;
 	private TipoIT tipoIT;
 	private Boolean recaida;
+	private IParteIT parteITRecaida;
 	private Prorrateo prorrateo;
 	private Double baseRetribucionPeriodoAnterior;
 	private Integer diasPeriodoAnterior;
@@ -61,16 +52,12 @@ implements ITransferObject,
 	private Double prestacionDiaria75;
 	private Boolean procesada;
 	private Boolean riesgo;
-	private E empleado;
+	private IEmpleado empleado;
 
 	@EmbeddedId
-	@AttributeOverrides( {
-			@AttributeOverride(name = "cdg", column = @Column(name = "cdg", nullable = false, length = 4)),
-			@AttributeOverride(name = "fecini", column = @Column(name = "fecini", nullable = false, length = 10)) })
 	public ParteITPK getId() {
 		return this.id;
 	}
-
 	public void setId(ParteITPK id) {
 		this.id = id;
 	}
@@ -161,7 +148,7 @@ implements ITransferObject,
 		this.altaProcesada = altaProcesada;
 	}
 
-	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Tipoit") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.TipoIT") })
 	@Column(name = "tipoit", nullable = false, length = 1)
 	public TipoIT getTipoIT() {
 		return this.tipoIT;
@@ -223,21 +210,22 @@ implements ITransferObject,
 	public void setRecaida(boolean recaida) {
 		this.recaida = recaida;
 	}
-
-	@ManyToOne(fetch = FetchType.EAGER)
+/*
+	@ManyToOne(targetEntity = ParteIT.class,fetch = FetchType.EAGER)
 	@JoinColumns( {
 			@JoinColumn(name = "cdg", referencedColumnName = "cdg", nullable = false),
-			@JoinColumn(name = "fecini", referencedColumnName = "feciniori", nullable = false) })
+			@JoinColumn(name = "feciniori", referencedColumnName = "fecini", nullable = false) })
 	@Override
-	public P getParteITRecaida() {
-		return null;
+	public IParteIT getParteITRecaida() {
+		return parteITRecaida;
 	}
+*/
 	@Override
-	public void setParteITRecaida(P ParteITRecaida) {
-		
+	public void setParteITRecaida(IParteIT parteITRecaida) {
+		this.parteITRecaida = parteITRecaida;
 	}
 
-	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Prorrateo") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.Prorrateo") })
 	@Column(name = "proret", nullable = false, length = 1)
 	public Prorrateo getProrrateo() {
 		return this.prorrateo;
@@ -363,16 +351,20 @@ implements ITransferObject,
 		this.riesgo = riesgo;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Empleado.class,fetch = FetchType.LAZY)
 	@JoinColumn(name = "cdg", insertable = false, updatable = false)
 	@Override
-	public E getEmpleado() {
+	public IEmpleado getEmpleado() {
 		return this.empleado;
 	}
 
 	@Override
-	public void setEmpleado(E empleado) {
+	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
+	}
+	@Override
+	public IParteIT getParteITRecaida() {
+		return null;
 	}
 
 }

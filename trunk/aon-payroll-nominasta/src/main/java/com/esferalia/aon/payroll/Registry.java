@@ -3,19 +3,21 @@ package com.esferalia.aon.payroll;
 import com.esferalia.aon.core.IDocument;
 import com.esferalia.aon.core.IRegistry;
 
-public class Registry<D extends IDocument> implements IRegistry<D> {
+public class Registry implements IRegistry {
 
-	private D document;
+	private static final long serialVersionUID = -3882685468345124531L;
+	
+	private IDocument document;
 	private String fullName;
 	
 	
 	@Override
-	public D getDocument() {
+	public IDocument getDocument() {
 		return document;
 	}
 	
 	@Override
-	public void setDocument(D document) {
+	public void setDocument(IDocument document) {
 		this.document = document;
 	}
 

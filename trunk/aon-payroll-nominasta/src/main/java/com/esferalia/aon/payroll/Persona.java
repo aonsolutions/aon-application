@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.core.IDocument;
 import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IPersona;
 
@@ -15,7 +14,7 @@ import com.esferalia.aon.payroll.core.IPersona;
 
 @Entity
 @Table(name="persona")
-public class Persona<R extends IRegistry<IDocument>> implements ITransferObject, IPersona<R>  {
+public class Persona implements ITransferObject, IPersona  {
 
 	private static final long serialVersionUID = 492566375940771381L;
 	
@@ -81,7 +80,7 @@ public class Persona<R extends IRegistry<IDocument>> implements ITransferObject,
 	}
 
 	@Override
-	public R getRegistry() {
+	public IRegistry getRegistry() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -111,7 +110,7 @@ public class Persona<R extends IRegistry<IDocument>> implements ITransferObject,
 	}
 
 	@Override
-	public void setRegistry(R registry) {
+	public void setRegistry(IRegistry registry) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -305,7 +304,7 @@ public class Persona<R extends IRegistry<IDocument>> implements ITransferObject,
 //        this.numss = numss;
 //    }
 //    
-//    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.EstadoCivil")} )
+//    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.esferalia.aon.payroll.enumeration.EstadoCivil")} )
 //    @Column(name="estciv", length=1)
 //    public EstadoCivil getEstciv() {
 //        return this.estciv;
@@ -369,7 +368,7 @@ public class Persona<R extends IRegistry<IDocument>> implements ITransferObject,
 //        this.hormod = hormod;
 //    }
 //    
-//    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Sexo")} )
+//    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.esferalia.aon.payroll.enumeration.Sexo")} )
 //    @Column(name="sexo", length=1)
 //    public Sexo getSexo() {
 //        return this.sexo;
