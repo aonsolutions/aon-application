@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="aon-web-payroll">
+    <wb-module deploy-name="aon-web-nominasta">
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-payroll/aon-ui-payroll">
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-nominasta/aon-nominasta">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-payroll/aon-payroll">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-nominasta/aon-ui-nominasta">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="aon-payroll"/>
+        <property name="context-root" value="aon-nominasta"/>
         <property name="java-output-path" value="build/classes"/>
     </wb-module>
 </project-modules>
