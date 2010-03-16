@@ -50,7 +50,7 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{delivery}.getSeries()!=null && !$F{delivery}.getSeries().equals("")?$F{delivery}.getSeries()+"/":"") + $F{delivery}.getNumber()) + " de "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{delivery}.getSeries()!=null && !$F{delivery}.getSeries().equals("")?$F{delivery}.getSeries()+"/":"") + $F{delivery}.getNumber()) + "     de "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
