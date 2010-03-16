@@ -8,9 +8,6 @@
   <packaging>pom</packaging>
   <description>POM padre de los proyectos AON</description>
   <name>AON PARENT</name>
-  <properties>
-    <aon-version>5.0.0-SNAPSHOT</aon-version>
-  </properties>
   <scm>
     <connection>
     scm:svn:http://dev.esferalia.com/repos/aon-application/trunk</connection>
