@@ -39,6 +39,7 @@
 	<field name="workPlace" class="com.code.aon.company.WorkPlace"/>
 	<field name="securityLevel" class="com.code.aon.common.enumeration.SecurityLevel"/>
 	<field name="status" class="com.code.aon.warehouse.enumeration.DeliveryStatus"/>
+	<field name="referenceCode" class="java.lang.String"/>
 	<variable name="currentDelivery" class="com.code.aon.warehouse.Delivery">
 		<variableExpression><![CDATA[(com.code.aon.warehouse.Delivery)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
