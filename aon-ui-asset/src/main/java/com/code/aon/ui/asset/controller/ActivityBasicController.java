@@ -30,13 +30,8 @@ public class ActivityBasicController extends BasicController{
 	private String toTimeHours;
 	private String toTimeMins;
 	
-//	private Date date;
-//	private Date fromTime;
-//	private Date toTime;
 	private String who;
-//	private String why;
 	private Asset asset;
-//	private ActivityStatus status;
 	
 	public String getFromTimeHours() {
 		return fromTimeHours;
@@ -70,30 +65,6 @@ public class ActivityBasicController extends BasicController{
 		this.toTimeMins = toTimeMins;
 	}
 	
-//	public Date getDate() {
-//		return date;
-//	}
-//
-//	public void setDate(Date date) {
-//		this.date = date;
-//	}
-//
-//	public Date getFromTime() {
-//		return fromTime;
-//	}
-//
-//	public void setFromTime(Date fromTime) {
-//		this.fromTime = fromTime;
-//	}
-//
-//	public Date getToTime() {
-//		return toTime;
-//	}
-//
-//	public void setToTime(Date toTime) {
-//		this.toTime = toTime;
-//	}
-//
 	public String getWho() {
 		return who;
 	}
@@ -101,15 +72,7 @@ public class ActivityBasicController extends BasicController{
 	public void setWho(String who) {
 		this.who = who;
 	}
-//
-//	public String getWhy() {
-//		return why;
-//	}
-//
-//	public void setWhy(String why) {
-//		this.why = why;
-//	}
-//
+
 	public Asset getAsset() {
 		return asset;
 	}
@@ -117,14 +80,6 @@ public class ActivityBasicController extends BasicController{
 	public void setAsset(Asset asset) {
 		this.asset = asset;
 	}
-//
-//	public ActivityStatus getStatus() {
-//		return status;
-//	}
-//
-//	public void setStatus(ActivityStatus status) {
-//		this.status = status;
-//	}
 	
 	public void buildFromTime() {
 		Calendar cal = Calendar.getInstance();
@@ -156,6 +111,7 @@ public class ActivityBasicController extends BasicController{
 	
 	public void initializePendingList(ActionEvent event){
 		try {
+			((ActivityDialogController)AonUtil.getRegisteredBean(("activityDialog"))).setRequest(false);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(this.getFieldName(IAssetAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.PENDING);
 			this.setCriteria(criteria);
