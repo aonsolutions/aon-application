@@ -23,6 +23,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
@@ -40,7 +41,7 @@ import com.code.aon.product.util.DiscountExpression;
  */
 @Entity
 @Table(name="customer_fee")
-public class CustomerFee implements ITransferObject, ICalculable {
+public class CustomerFee implements ITransferObject, ICalculable, IConfidentialable {
 
 	private static final long serialVersionUID = 113912434021805866L;
 
@@ -226,6 +227,16 @@ public class CustomerFee implements ITransferObject, ICalculable {
 	@Transient
 	public double getTaxes() throws ManagerBeanException {
 		return 0;
+	}
+
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
 	public boolean equals(Object obj) {
