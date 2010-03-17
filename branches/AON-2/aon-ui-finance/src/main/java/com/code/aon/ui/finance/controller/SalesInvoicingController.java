@@ -14,6 +14,8 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
@@ -314,8 +316,10 @@ public class SalesInvoicingController extends BasicController {
 				Iterator iterator = tasDeliveryBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					TasDelivery tasDelivery = (TasDelivery)iterator.next();
-					String comments = ((Invoice)this.getTo()).getComments();
-					((Invoice)this.getTo()).setComments(comments + "\r\n" + tasDelivery.getSupportOrder().getDescription());
+					String comments =  ((Invoice)this.getTo()).getComments();
+					comments = (!StringUtils.isEmpty(comments)) ? (comments + "\r\n"): ""; 
+					((Invoice)this.getTo()).setComments(comments + tasDelivery.getSupportOrder().getDescription());
+					this.accept(null);
 				}
 
 				IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
@@ -500,20 +504,11 @@ public class SalesInvoicingController extends BasicController {
 		((Invoice)this.getTo()).setStatus(InvoiceStatus.PENDING);
 		((Invoice)this.getTo()).setType(InvoiceType.SALES);
 		((Invoice)this.getTo()).setRegistryAddress(obtainRegistryAddress(delivery.getCustomer().getRegistry()));
-
-		IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(tasDeliveryBean.getFieldName(ITasDeliveryAlias.TAS_DELIVERY_DELIVERY_ID), delivery.getId());
-		Iterator iterator = tasDeliveryBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			TasDelivery tasDelivery = (TasDelivery)iterator.next();
-			((Invoice)this.getTo()).setComments(tasDelivery.getSupportOrder().getDescription());
-		}
-
 		this.accept(null);
 		if(((Invoice)this.getTo()).getRegistryAddress() == null){
 			((Invoice)this.getTo()).setRegistryAddress(new RegistryAddress());
 		}
+
 		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
 		while(iter.hasNext()){
 			Delivery del = (Delivery)iter.next();
