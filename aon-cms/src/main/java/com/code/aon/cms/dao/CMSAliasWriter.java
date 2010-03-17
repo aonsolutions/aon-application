@@ -97,7 +97,6 @@ import com.code.aon.cms.SportPosition;
 import com.code.aon.cms.SportPositionDetail;
 import com.code.aon.cms.SportSeason;
 import com.code.aon.common.dao.AliasWriter;
-import com.code.aon.common.dao.DAOConstantsWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 public class CMSAliasWriter {

@@ -45,6 +45,8 @@ public class Company implements ITransferObject {
 	
 	private String logo; 	
 	
+	private String coordinates;
+	
 	private Set<CompanyActivity> companyActivities;
 	
 	@Id
@@ -146,6 +148,15 @@ public class Company implements ITransferObject {
 	public void setLogo(String logo) {
 		this.logo = logo;
 	}
+	
+	@Column(length=255)
+	public String getCoordinates() {
+		return coordinates;
+	}
+
+	public void setCoordinates(String coordinates) {
+		this.coordinates = coordinates;
+	}	
 
 	@OneToMany(mappedBy = "company", cascade={CascadeType.REMOVE})
     public Set<CompanyActivity> getCompanyActivities() {
@@ -165,6 +176,7 @@ public class Company implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.address, o.address)
+				.append(this.coordinates, o.coordinates)				
 				.append(this.email, o.email)				
 				.append(this.fax, o.fax)
 				.append(this.locality, o.locality)				
@@ -184,6 +196,7 @@ public class Company implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(address)
+			.append(coordinates)			
 			.append(email)
 			.append(fax)
 			.append(id)	

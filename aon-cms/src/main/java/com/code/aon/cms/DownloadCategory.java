@@ -30,17 +30,23 @@ public class DownloadCategory implements IActivableObject, IPositionObject {
 	
 	private String alias;
 	
-	private boolean active = true;
+	private boolean active;
 	
-	private Integer position = new Integer(0);
+	private Integer position;
 	
 	private String image;
 	
 	private Section section;
 	
-	private int itemsPerPage;
+	private Integer itemsPerPage;
 	
 	private Set<DownloadCategoryDetail> details;
+	
+	public DownloadCategory() {
+		this.active = true;
+		this.position = 0;
+		this.itemsPerPage = 20;
+	}
 
 	@Id
 	@GeneratedValue
@@ -109,11 +115,11 @@ public class DownloadCategory implements IActivableObject, IPositionObject {
 	}
 
 	@Column(name="items_per_page")
-	public int getItemsPerPage() {
+	public Integer getItemsPerPage() {
 		return itemsPerPage;
 	}
 
-	public void setItemsPerPage(int itemsPerPage) {
+	public void setItemsPerPage(Integer itemsPerPage) {
 		this.itemsPerPage = itemsPerPage;
 	}
 

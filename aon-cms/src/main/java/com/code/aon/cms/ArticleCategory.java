@@ -24,23 +24,31 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 @Table(name = "article_category")
 public class ArticleCategory implements IActivableObject, IPositionObject {
 
-	private static final long serialVersionUID = -2266381230541904502L;
+	private static final long serialVersionUID = -40372895261872024L;
 
 	private Integer id;
 
 	private String alias;
 
-	private boolean active = true;
+	private boolean active;
 
-	private Integer position = new Integer(0);
+	private Integer position;
 	
 	private Section section;
 	
 	private Section elementSection;
 	
+	private Integer itemsPerPage;
+	
 	private Set<ArticleCategoryDetail> details;
 
 	private Set<Article> articles;
+	
+	public ArticleCategory() {
+		this.active = true;
+		this.position = 0;
+		this.itemsPerPage = 20;
+	}
 
 	@Id
 	@GeneratedValue
@@ -117,6 +125,15 @@ public class ArticleCategory implements IActivableObject, IPositionObject {
 	public void setElementSection(Section elementSection) {
 		this.elementSection = elementSection;
 	}
+	
+	@Column(name="items_per_page")
+	public Integer getItemsPerPage() {
+		return itemsPerPage;
+	}
+
+	public void setItemsPerPage(Integer itemsPerPage) {
+		this.itemsPerPage = itemsPerPage;
+	}	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -129,6 +146,7 @@ public class ArticleCategory implements IActivableObject, IPositionObject {
 				.append(this.active, o.active)
 				.append(this.alias, o.alias)
 				.append(this.elementSection, o.elementSection)
+				.append(this.itemsPerPage, o.itemsPerPage)
 				.append(this.position, o.position)
 				.append(this.section, o.section)				
 				.isEquals();
@@ -143,6 +161,7 @@ public class ArticleCategory implements IActivableObject, IPositionObject {
 			.append(alias)
 			.append(elementSection)
 			.append(id)	
+			.append(itemsPerPage)
 			.append(position)
 			.append(section)
 			.toHashCode();

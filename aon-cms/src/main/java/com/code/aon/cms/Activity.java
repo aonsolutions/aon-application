@@ -24,7 +24,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 @Table(name="activity")
 public class Activity implements ITransferObject {
 
-	private static final long serialVersionUID = -1306482179289895727L;
+	private static final long serialVersionUID = 8194468639508521439L;
 
 	private Integer id;
 	
@@ -32,10 +32,16 @@ public class Activity implements ITransferObject {
 	
 	private Section section;
 	
+	private Integer itemsPerPage;
+	
 	private Set<ActivityDetail> details;
 	
 	private Set<CompanyActivity> companyActivities;
 	
+	public Activity() {
+		this.itemsPerPage = 20;
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -66,6 +72,15 @@ public class Activity implements ITransferObject {
 		this.section = section;
 	}	
 
+	@Column(name="items_per_page")
+	public Integer getItemsPerPage() {
+		return itemsPerPage;
+	}
+
+	public void setItemsPerPage(Integer itemsPerPage) {
+		this.itemsPerPage = itemsPerPage;
+	}
+	
 	@OneToMany(mappedBy = "activity", cascade={CascadeType.REMOVE})
 	public Set<ActivityDetail> getDetails() {
 		return details;
@@ -94,6 +109,7 @@ public class Activity implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.alias, o.alias)
 				.append(this.section, o.section)
+				.append(this.itemsPerPage, o.itemsPerPage)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -104,6 +120,7 @@ public class Activity implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(alias)
 			.append(id)	
+			.append(itemsPerPage)
 			.append(section)
 			.toHashCode();
 	}
