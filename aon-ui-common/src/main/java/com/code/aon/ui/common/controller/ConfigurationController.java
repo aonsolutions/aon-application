@@ -25,6 +25,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -36,6 +38,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -68,6 +71,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private boolean versionChecked;
 	
 	private String version;
+
+	private boolean dbVersionChecked;
+	
+	private String dbVersion;
 	
 	/**
 	 * The Constructor.
@@ -169,6 +176,29 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		}
 		return version;
 	}
+	
+	/**
+	 * Calculate application version.
+	 * 
+	 * @return the application version number
+	 */
+	public String getDataBaseVersion() {
+		if (! dbVersionChecked ) {
+			this.dbVersionChecked = true;
+			try {
+		    	String name = HibernateUtil.getSessionFactoryName();
+		        Session session = HibernateUtil.getSession(name);
+		        SQLQuery query = session.createSQLQuery("SELECT version_number FROM db_version");
+		        List<?> list = query.list();
+		        if (! list.isEmpty() ) {
+		        	dbVersion = (String) list.get(0);
+		        }
+			} catch (Throwable e) {
+				LOGGER.warn("Imposible determinar la versión");
+			}
+		}
+		return dbVersion;
+	}	
 	
     /**
      * Gets the current date.
