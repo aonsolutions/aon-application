@@ -25,22 +25,26 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.customer.controller.CustomerController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 
 public class CustomerFeeController extends LinesController {
 
-	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
-	/** Message file base path. */
    private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.report";
-   /** Message key prefix. */
    private static final String MSG_KEY_PREFIX = "aon_no_fee_customer_report";
 
+	private boolean longDescription;
 	private IPriceStrategy priceStrategy;
 	private DataModel noFeeCustomersModel;
 	private List<Customer> noFeeCustomersList;
 	
+	public boolean isLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(boolean longDescription) {
+		this.longDescription = longDescription;
+	}
+
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
@@ -67,6 +71,22 @@ public class CustomerFeeController extends LinesController {
 		this.noFeeCustomersList = noFeeCustomersList;
 	}
 
+	public void onLongDescription(ActionEvent event) {
+		setLongDescription(true);
+
+		CustomerFee customerFee = (CustomerFee)getTo();
+		if (StringUtils.equals(customerFee.getItem().getProduct().getName().trim(), customerFee.getDescription().trim())) {
+			String longDescription = customerFee.getItem().getDescription();
+			if (!StringUtils.isEmpty(longDescription)) {
+				customerFee.setDescription(customerFee.getDescription() + "\r\n" + longDescription);
+			}
+		}
+	}
+
+	public void onShortDescription(ActionEvent event) {
+		setLongDescription(false);
+	}
+
 	public void onItemChanged(LookupChangeEvent event) {
 		CustomerFee fee = (CustomerFee)getTo();
 		double price = 0;
@@ -80,8 +100,7 @@ public class CustomerFeeController extends LinesController {
 			fee.setDescription( description );
 
 			Date date = fee.getInitialDate();
-			CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
-			Customer customer = (Customer)customerController.getTo();
+			Customer customer = (Customer)getMasterController().getTo();
 			Tariff tariff = customer.getTariff();
 			price = getPriceStrategy().getUnitPrice(fee, date, tariff);
 		}
@@ -96,15 +115,14 @@ public class CustomerFeeController extends LinesController {
 				fee.setQuantity((Double)event.getNewValue());
 	
 				Date date = fee.getInitialDate();
-				CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
-				Customer customer = (Customer)customerController.getTo();
+				Customer customer = (Customer)getMasterController().getTo();
 				Tariff tariff = customer.getTariff();
 				price = getPriceStrategy().getUnitPrice(fee, date, tariff);
 			}
 			fee.setPrice(price);
 		}
 	}
-	
+
 	public String getReportTitle(){
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 

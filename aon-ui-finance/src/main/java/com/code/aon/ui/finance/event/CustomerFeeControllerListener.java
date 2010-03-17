@@ -1,12 +1,13 @@
 package com.code.aon.ui.finance.event;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
@@ -27,9 +28,10 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CustomerFeeController controller = (CustomerFeeController)event.getController();
 		CustomerFee customerFee = (CustomerFee)controller.getTo();
-		customerFee.setSecurityLevel(SecurityLevel.OFFICIAL);
 		customerFee.setQuantity(1.0);
+		customerFee.setInitialDate(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), 1));
 
+		controller.setLongDescription(false);
 		try {
 			customerFee.setLine(calculateNextLine((Customer)controller.getMasterController().getTo()));
 
@@ -42,6 +44,14 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		CustomerFeeController controller = (CustomerFeeController)event.getController();
+		CustomerFee customerFee = (CustomerFee)controller.getTo();
+
+		controller.setLongDescription((customerFee.getDescription().length() > 64) ? true : false);
 	}
 
 	@Override
