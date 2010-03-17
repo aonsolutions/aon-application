@@ -22,28 +22,28 @@ public interface IPayrollAlias {
 	DAOConstantsEntry EMPLEADO_ENTRY = DAOConstants.getDAOConstant(Empleado.class);
 
 	/** 
-	* Alias value: Empleado_empresa_cdg
-	* Hibernate value: Empleado.empresa.cdg
+	* Alias value: Empleado_id
+	* Hibernate value: Empleado.id
 	*/
-	String  EMPLEADO_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[0];
+	String  EMPLEADO_ID = EMPLEADO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Empleado_codccc
+	* Hibernate value: Empleado.codccc
+	*/
+	String  EMPLEADO_CODCCC = EMPLEADO_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Empleado_fechaFin
 	* Hibernate value: Empleado.fechaFin
 	*/
-	String  EMPLEADO_FECHA_FIN = EMPLEADO_ENTRY.getAliasNames()[1];
+	String  EMPLEADO_FECHA_FIN = EMPLEADO_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Empleado_fechaInicio
 	* Hibernate value: Empleado.fechaInicio
 	*/
-	String  EMPLEADO_FECHA_INICIO = EMPLEADO_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Empleado_id
-	* Hibernate value: Empleado.id
-	*/
-	String  EMPLEADO_ID = EMPLEADO_ENTRY.getAliasNames()[3];
+	String  EMPLEADO_FECHA_INICIO = EMPLEADO_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Empleado_mayor65
@@ -52,10 +52,52 @@ public interface IPayrollAlias {
 	String  EMPLEADO_MAYOR65 = EMPLEADO_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: Empleado_empresa_cdg
+	* Hibernate value: Empleado.empresa.cdg
+	*/
+	String  EMPLEADO_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Empleado_empresa_name
+	* Hibernate value: Empleado.empresa.name
+	*/
+	String  EMPLEADO_EMPRESA_NAME = EMPLEADO_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: Empleado_persona_cdg
 	* Hibernate value: Empleado.persona.cdg
 	*/
-	String  EMPLEADO_PERSONA_CDG = EMPLEADO_ENTRY.getAliasNames()[5];
+	String  EMPLEADO_PERSONA_CDG = EMPLEADO_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Empleado_persona_lastName
+	* Hibernate value: Empleado.persona.lastName
+	*/
+	String  EMPLEADO_PERSONA_LAST_NAME = EMPLEADO_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Empleado_persona_name
+	* Hibernate value: Empleado.persona.name
+	*/
+	String  EMPLEADO_PERSONA_NAME = EMPLEADO_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Empleado_persona_numSS
+	* Hibernate value: Empleado.persona.numSS
+	*/
+	String  EMPLEADO_PERSONA_NUM_SS = EMPLEADO_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Empleado_persona_registry_document
+	* Hibernate value: Empleado.persona.registry.document
+	*/
+	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT = EMPLEADO_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Empleado_persona_surname
+	* Hibernate value: Empleado.persona.surname
+	*/
+	String  EMPLEADO_PERSONA_SURNAME = EMPLEADO_ENTRY.getAliasNames()[12];
 
 
 
@@ -175,10 +217,22 @@ public interface IPayrollAlias {
 	String  PERSONA_NAME = PERSONA_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: Persona_numSS
+	* Hibernate value: Persona.numSS
+	*/
+	String  PERSONA_NUM_SS = PERSONA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Persona_registry_document
+	* Hibernate value: Persona.registry.document
+	*/
+	String  PERSONA_REGISTRY_DOCUMENT = PERSONA_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Persona_surname
 	* Hibernate value: Persona.surname
 	*/
-	String  PERSONA_SURNAME = PERSONA_ENTRY.getAliasNames()[3];
+	String  PERSONA_SURNAME = PERSONA_ENTRY.getAliasNames()[5];
 
 
 

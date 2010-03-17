@@ -12,7 +12,7 @@ import com.esferalia.aon.payroll.Nomina;
 
 public class NominaTest extends TestCase{
 
-	public void testLoad() throws Exception {
+	public void testNomina() throws Exception {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Nomina.class);
 			List<ITransferObject> list = bean.getList( null,0,10 );
