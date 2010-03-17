@@ -44,9 +44,12 @@
 			</c:if>
 			<aon:outputFormat value="#{bundle.aon_version}"
 				styleClass="aon-version-label"
+				title="DB: #{aonConfiguration.dataBaseVersion}"
 				rendered="#{aonConfiguration.applicationVersion != null}" >
 				<f:param value="#{aonConfiguration.applicationVersion}" />
 			</aon:outputFormat>
+			<aon:outputText style="display: none"
+				 value="DB: #{aonConfiguration.dataBaseVersion}" />			
 			<ui:insert name="afterVersionContent" />
 		</aon:div>
 	</aon:div>
