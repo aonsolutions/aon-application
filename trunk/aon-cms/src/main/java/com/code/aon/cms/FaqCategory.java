@@ -24,19 +24,27 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 @Table(name = "faq_category")
 public class FaqCategory implements IActivableObject, IPositionObject {
 
-	private static final long serialVersionUID = -8855781409579441488L;
+	private static final long serialVersionUID = -4760306310318441476L;
 
 	private Integer id;
 
 	private String alias;
 
-	private boolean active = true;
+	private boolean active;
 
-	private Integer position = new Integer(0);
+	private Integer position;
 
 	private Section section;
 	
+	private Integer itemsPerPage;
+	
 	private Set<FaqCategoryDetail> details;
+	
+	public FaqCategory() {
+		this.active = true;
+		this.position = 0;
+		this.itemsPerPage = 20;
+	}
 
 	@Id
 	@GeneratedValue
@@ -94,6 +102,15 @@ public class FaqCategory implements IActivableObject, IPositionObject {
 	public void setSection(Section section) {
 		this.section = section;
 	}
+	
+	@Column(name="items_per_page")
+	public Integer getItemsPerPage() {
+		return itemsPerPage;
+	}
+
+	public void setItemsPerPage(Integer itemsPerPage) {
+		this.itemsPerPage = itemsPerPage;
+	}	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -105,6 +122,7 @@ public class FaqCategory implements IActivableObject, IPositionObject {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
 				.append(this.alias, o.alias)
+				.append(this.itemsPerPage, o.itemsPerPage)
 				.append(this.position, o.position)
 				.append(this.section, o.section)				
 				.isEquals();
@@ -118,6 +136,7 @@ public class FaqCategory implements IActivableObject, IPositionObject {
 			.append(active)
 			.append(alias)
 			.append(id)	
+			.append(itemsPerPage)
 			.append(position)
 			.append(section)
 			.toHashCode();
