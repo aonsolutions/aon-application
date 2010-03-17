@@ -72,16 +72,5 @@
 			</h:panelGrid>		
 		</aon:form>			
 	</h:panelGrid>
-	<aon:div styleClass="aon-footer-box">						
-		 <aon:outputText value="#{bundle.aon_trademark}" />
-		 <aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
-		 	styleClass="aon-footer-company-label aon-margin-right"/>
-		 <aon:outputText value="#{bundle.aon_support_title}:  " />
-		 <aon:outputText value="#{bundle.aon_support_telephone_number}"
-		 	styleClass="aon-outputText aon-bold aon-margin-right" />
-		<aon:outputLink target="_blank"
-			value="mail:#{bundle.aon_support_send_email}">	
-			<aon:outputText value="#{bundle.aon_support_send_email}" />
-		</aon:outputLink> 	
-	</aon:div>	
+	<ui:include src="/com/code/aon/ui/resources/facelet/shared/footer.xhtml" />
 </ui:composition>
