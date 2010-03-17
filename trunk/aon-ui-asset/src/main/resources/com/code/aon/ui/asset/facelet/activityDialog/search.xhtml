@@ -38,8 +38,8 @@
 				<aon:methodParam name="searchActionListener" value="#{activityBasic.onSearch}" type="actionListener" />
 				<aon:methodParam name="skipSearchButton" value="#{true}" />				
 -->				
-				<aon:methodParam name="searchAction" value="activityDialog_grid" />				
 				<ui:define name="searchContent">
+					<aon:methodParam name="searchAction" value="activityDialog_grid" />	
 				
 					<aon:outputLabel for="AssetActivity_asset" value="#{assetBundle.asset_asset}" />
 					<aon:div styleClass="aon-lookup" id="AssetActivity_asset">
