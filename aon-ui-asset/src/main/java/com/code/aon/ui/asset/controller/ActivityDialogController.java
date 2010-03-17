@@ -330,7 +330,6 @@ public class ActivityDialogController extends EmailParentController{
 		if (isValidDate() && isValidTime()) {
 			try{
 				email();
-//				super.email(subject, from, to, content.toString());
 			} catch (Exception e) {
 				AonUtil.addErrorMessage("Error en el servidor de correo.");
 				throw new AbortProcessingException(e.getMessage(),e);
@@ -340,87 +339,6 @@ public class ActivityDialogController extends EmailParentController{
 	
 	private void email(){
 		setNew(false);
-//		LoggedUser logged = (LoggedUser)AonUtil.getRegisteredBean("loggedUser");
-//		AuthPrincipal user = Utils.getAuthPrincipal();
-//		//AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-//		String domain = user.getDomain();
-//		String login = user.getShortName();
-//		String login = logged.getLoggedUserName();
-//		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean("loggedUser");
-//		String username = loggedUser.getLoggedUserName();
-//		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean("company");
-//		RegistryMedia companyEmail = null;
-////		companyEmail = companyController.getEmail();
-//		companyEmail = companyController.obtainEmail();
-////		try {
-////			companyEmail = companyController.obtainCompany().getEmail();
-////		} catch (ManagerBeanException e1) {
-////			// TODO Auto-generated catch block
-////			e1.printStackTrace();
-////		}
-//		if ( companyEmail == null ) {
-//			AonUtil.addErrorMessage( "En los Datos de la Empresa no esta indicado el email" );
-//			return;
-//		}
-////		RegistryMedia companyEmail = companyController.getEmail();
-//		Calendar cal = new GregorianCalendar();
-//		Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
-//		String to = companyEmail.getValue();
-//		String subject = "SOLICITUD DE RESERVA";
-//		StringBuffer content = new StringBuffer();
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_asset") ).append( ": ");
-//		content.append( getAsset().getName() ).append(SystemUtils.LINE_SEPARATOR);
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_startDate") ).append( ": ");
-//		cal.setTime(getFromDate());
-//		content.append( DateFormatUtils.format(cal, AonUtil.getMessage("bundle", "aon_date_pattern"), locale) ).append(SystemUtils.LINE_SEPARATOR);
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_endDate") ).append( ": ");
-//		cal.setTime(getToDate());
-//		content.append( DateFormatUtils.format(cal, AonUtil.getMessage("bundle", "aon_date_pattern"), locale) ).append(SystemUtils.LINE_SEPARATOR);
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_fromTime") ).append( ": ");
-//		content.append( getFromTimeHours() ).append( ":").append( getFromTimeMins() ).append(SystemUtils.LINE_SEPARATOR);
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_toTime") ).append( ": ");
-//		content.append( getToTimeHours() ).append( ":").append( getToTimeMins() ).append(SystemUtils.LINE_SEPARATOR);
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_days") ).append( ": ");
-//		for(WeekDay d:WeekDay.values()){
-//			if(getWeekDays().get(d.ordinal())){
-//				content.append( d.getName(locale) ).append( " ");;
-//			}
-//		}
-//		content.append(SystemUtils.LINE_SEPARATOR);
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_who") ).append( ": ");
-//		content.append( getWho() ).append(SystemUtils.LINE_SEPARATOR);
-//		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_why") ).append( ": ");
-//		content.append( getWhy() ).append(SystemUtils.LINE_SEPARATOR);				
-		
-//		MailAccount mailAccount;
-//		try {
-//			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
-//		} catch (ManagerBeanException e) {
-//			AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
-//			throw new AbortProcessingException( e.getMessage(), e);
-//		}
-//		
-//		try {
-//			AonServer server = new AonServer(mailAccount);
-//			server.connect();
-//			String from = mailAccount.getEmail();
-//			AonMessage aonMessage = server.createAonMessage(from, username);
-//			InternetAddress iafrom = new InternetAddress(from, username);
-//			aonMessage.setSender(iafrom);
-//			aonMessage.setRecipientsTo(to.concat(", ").concat(from));
-//			aonMessage.setSubject(subject);
-//			aonMessage.setContent(content.toString());
-//			server.sendMessage(aonMessage);
-//			server.disconnect();
-//		} catch (Throwable e) {
-//			LOGGER.error(e.getMessage(), e);
-//			AonUtil.addErrorMessage( e.getMessage() );
-//			throw new AbortProcessingException( e.getMessage(), e);
-//		}
-		
-		
-		
-		
 		
 //		from field
 		AuthPrincipal user = Utils.getAuthPrincipal();
@@ -433,10 +351,7 @@ public class ActivityDialogController extends EmailParentController{
 			AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
 			throw new AbortProcessingException( e.getMessage(), e);
 		}
-//		AonServer server = new AonServer(mailAccount);
-//		server.connect();
 		String from = mailAccount.getEmail();
-		
 			
 //		to field
 		RegistryMedia companyEmail = null;
@@ -446,8 +361,7 @@ public class ActivityDialogController extends EmailParentController{
 			AonUtil.addErrorMessage( "En los Datos de la Empresa no esta indicado el email" );
 			return;
 		}
-//		String to = companyEmail.getValue();
-		String to = "eagirrezabal@esferalia.com";
+		String to = companyEmail.getValue();
 		
 //		subject & content field
 		String subject = "SOLICITUD DE RESERVA";
@@ -477,7 +391,6 @@ public class ActivityDialogController extends EmailParentController{
 		content.append( getWho() ).append(SystemUtils.LINE_SEPARATOR);
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_why") ).append( ": ");
 		content.append( getWhy() ).append(SystemUtils.LINE_SEPARATOR);	
-		
 		
 		super.email(subject, from, to, content.toString());
 	}
@@ -579,15 +492,9 @@ public class ActivityDialogController extends EmailParentController{
 
 
 	private void onSearchInserted(ActionEvent event) throws ManagerBeanException {
-//		Criteria criteria = new Criteria();
 		IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
-//		criteria.addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
-//		criteria.addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
-//		criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
-//		criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
 		ActivityBasicController controller = (ActivityBasicController) FormUtil.getController(IAssetConstants.ACTIVITY_BASIC_CONTROLLER_NAME);
 		controller.setWho(getWho());
-//		controller.setCriteria(criteria);
 		controller.clearCriteria();
 		controller.getCriteria().addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
 		controller.getCriteria().addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
