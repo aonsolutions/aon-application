@@ -146,7 +146,7 @@
 					<reportElement
 						x="503"
 						y="3"
-						width="38"
+						width="40"
 						height="16"
 						key="textField-35">
 							<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
