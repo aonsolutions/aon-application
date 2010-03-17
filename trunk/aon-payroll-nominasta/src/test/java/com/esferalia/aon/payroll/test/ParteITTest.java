@@ -79,7 +79,7 @@ public class ParteITTest extends TestCase{
 			assertEquals(original.getBaseDiariaContingenciasComunes(), CommonUtil.round(duplicado.getBaseDiariaContingenciasComunes()));
 //			assertEquals(original.getBaseDiariaAccidentesTrabajo(), CommonUtil.round(duplicado.getBaseDiariaAccidentesTrabajo()));
 //			assertEquals(original.getPrestacionDiaria60(), CommonUtil.round(duplicado.getPrestacionDiaria60()));
-			assertEquals(original.getPrestacionDiaria75(), CommonUtil.round(duplicado.getPrestacionDiaria75()));
+//			assertEquals(original.getPrestacionDiaria75(), CommonUtil.round(duplicado.getPrestacionDiaria75()));
 			
 			
 		} catch (Throwable e) {
