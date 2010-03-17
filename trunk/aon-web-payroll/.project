@@ -3,6 +3,10 @@
 	<name>aon-web-payroll</name>
 	<comment></comment>
 	<projects>
+		<project>aon-ui-payroll</project>
+		<project>aon-payroll-nominasta</project>
+		<project>aon-core</project>
+		<project>aon-payroll-core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
