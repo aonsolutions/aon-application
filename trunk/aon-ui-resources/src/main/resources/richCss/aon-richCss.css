@@ -2116,6 +2116,11 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	vertical-align:middle;	
 }
 
+.aon-logo-only{
+	height:350px;	
+	vertical-align:middle;	
+}
+
 .aon-date-label{
 	float:right;
 	font-size:11px;
