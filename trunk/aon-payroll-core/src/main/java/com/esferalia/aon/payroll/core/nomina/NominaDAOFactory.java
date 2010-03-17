@@ -1,13 +1,13 @@
-package com.esferalia.aon.payroll.core.calc;
+package com.esferalia.aon.payroll.core.nomina;
 
 
 public class NominaDAOFactory {
 
 	private static NominaDAOFactory instance;
-	private static INominaDAO nominaDAO;
+	private INominaDAO nominaDAO;
 
-	public static void setNominaDAO(INominaDAO nominaDAO) {
-		NominaDAOFactory.nominaDAO = nominaDAO;
+	public static void register(INominaDAO nominaDAO) {
+		NominaDAOFactory.getInstance().nominaDAO = nominaDAO;
 	}
 
 	private NominaDAOFactory() {

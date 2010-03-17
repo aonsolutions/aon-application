@@ -1,7 +1,8 @@
-package com.esferalia.aon.payroll.impl.calc;
+package com.esferalia.aon.payroll.impl.nomina;
 
 import com.esferalia.aon.payroll.core.INomina;
-import com.esferalia.aon.payroll.core.calc.INominaCalculator;
+import com.esferalia.aon.payroll.core.nomina.INominaCalculator;
+import com.esferalia.aon.payroll.core.nomina.NominaParams;
 
 public abstract class NominaCalculatorAbs implements INominaCalculator {
 

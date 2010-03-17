@@ -1,7 +1,7 @@
 package com.esferalia.aon.payroll.core.it;
 
 import com.esferalia.aon.payroll.core.ITrabajo;
-import com.esferalia.aon.payroll.core.calc.CalculatorException;
+import com.esferalia.aon.payroll.core.nomina.CalculatorException;
 
 
 

@@ -19,4 +19,7 @@ public interface IPersona extends Serializable{
 	String getLastName();
 	void setLastName(String lastName);
 	
+	String getNumSS();
+	void setNumSS(String numSS);
+	
 }
