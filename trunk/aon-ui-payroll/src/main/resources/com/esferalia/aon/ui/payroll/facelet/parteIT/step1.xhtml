@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="parteITWizard">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+
+					<aon:methodParam name="searchActionListener"
+						value="#{parteITWizard.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="parteITWizard_step2" />
+
+
+					<aon:outputLabel for="documento"
+						value="#{payrollBundle.payroll_documento}" />
+					<aon:inputText id="documento" size="10" maxlength="10"
+						value="#{parteITWizard.params.documento}">
+					</aon:inputText>
+
+					<aon:outputLabel for="numss" value="#{payrollBundle.payroll_numss}" />
+					<aon:inputText id="numss" size="15" maxlength="12"
+						value="#{parteITWizard.params.numSS}" />
+
+					<aon:outputLabel for="nombre"
+						value="#{payrollBundle.payroll_nombre}" />
+					<aon:inputText id="nombre" size="20" maxlength="25"
+						value="#{parteITWizard.params.nombre}" />
+
+					<aon:outputLabel for="apellido"
+						value="#{payrollBundle.payroll_apellido}" />
+					<aon:inputText id="apellido" size="20" maxlength="35"
+						value="#{parteITWizard.params.apellido}" />
+
+					<aon:outputLabel for="apellido2"
+						value="#{payrollBundle.payroll_apellido2}" />
+					<aon:inputText id="apellido2" size="20" maxlength="25"
+						value="#{parteITWizard.params.apellido2}" />
+
+					<aon:outputLabel for="empresa"
+						value="#{payrollBundle.payroll_empresa}" />
+					<aon:inputText id="empresa" size="20" maxlength="25"
+						value="#{parteITWizard.params.empresa}" />
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>
