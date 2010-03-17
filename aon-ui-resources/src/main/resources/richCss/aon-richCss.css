@@ -551,7 +551,25 @@ color:#000;
 	height: 18px;
 	background:transparent url(images/aon-icon/aon-icon-edit.png) scroll left center no-repeat;	
  }
- 
+.aon-icon-edit-add{
+	background:transparent url(images/aon-icon/aon-icon-edit-add.png) scroll left center no-repeat;
+	border: 0;
+	padding-left: 5px;
+	padding-top: 7px;
+	margin-left: 5px;
+	vertical-align:top;	
+	cursor: pointer;
+}
+.aon-icon-edit-end{
+	background:transparent url(images/aon-icon/aon-icon-edit-end.png) scroll left center no-repeat;
+	border: 0;
+	padding-left: 5px;
+	padding-top: 7px;
+	margin-left: 5px;
+	vertical-align:top;	
+	cursor: pointer;
+}
+
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
