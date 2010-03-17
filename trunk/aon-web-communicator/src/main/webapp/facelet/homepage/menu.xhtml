@@ -10,7 +10,9 @@
 		<aon:form id="commercialMenu">
 		
 			<aon:menuBar> 
-				<aon:dropDownMenu value="#{bundle.aon_masters}">
+				<aon:dropDownMenu value="#{bundle.aon_masters}"
+					styleClass="aon-dropDownMenu aon-icon-master"
+					style="padding-left: 18px">
 					<aon:menuItem id="target"
 						value="#{appBundle.commercial_target_module}" 
 						iconClass="aon-target-iconClass"
@@ -21,7 +23,9 @@
 						action="campaign_list" actionListener="#{campaign.onSearch}" >
 					</aon:menuItem>
 				</aon:dropDownMenu>
-				<aon:dropDownMenu value="#{bundle.aon_configuration}">
+				<aon:dropDownMenu value="#{bundle.aon_configuration}"
+					styleClass="aon-dropDownMenu aon-icon-config"
+					style="padding-left: 18px">				
 					<aon:menuItem id="segment"
 						value="#{registryBundle.registry_segment_module}" 
 						iconClass="aon-commercial-segment-iconClass"
@@ -35,9 +39,8 @@
 				</aon:dropDownMenu>
 				<aon:commandLink id="communicationCenter"
 					value="#{commercialBundle.commercial_communication_center_module}"
-					styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
-					action="communicationCenter" actionListener="#{communicationCenter.onInit}" >
-				</aon:commandLink>
+					styleClass="aon-top-menu-item aon-icon-telephone" immediate="true" 
+					action="communicationCenter" actionListener="#{communicationCenter.onInit}" />
 			</aon:menuBar>
 				
 		 </aon:form>
