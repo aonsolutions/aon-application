@@ -1,4 +1,4 @@
-package com.esferalia.aon.payroll.impl.calc;
+package com.esferalia.aon.payroll.core.nomina;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 

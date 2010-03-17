@@ -1,4 +1,4 @@
-package com.esferalia.aon.payroll.core.calc;
+package com.esferalia.aon.payroll.core.nomina;
 
 public class CalculatorException extends Exception {
 

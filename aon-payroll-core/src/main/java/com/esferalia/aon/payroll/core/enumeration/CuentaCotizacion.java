@@ -5,7 +5,7 @@ public enum CuentaCotizacion {
 	//Principal
 	PRINCIPAL,
 	//Altos Cargos
-	ALTTO_CARGO,
+	ALTO_CARGO,
 	//Aprendices
 	APRENDIZ,
 	//Asimilados Reg.Gral.

@@ -4,12 +4,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.core.ITrabajo;
-import com.esferalia.aon.payroll.core.calc.CalculatorException;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITCalculator;
 import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
+import com.esferalia.aon.payroll.core.nomina.CalculatorException;
 
 public abstract class ParteITAbs implements IParteIT {
 
@@ -61,7 +61,7 @@ public abstract class ParteITAbs implements IParteIT {
 		
 		
 		//No se genera parte de I.T. por tratarse de un Alto Cargo.
-		if (getEmpleado().getCuentaCotizacion() == CuentaCotizacion.ALTTO_CARGO) {
+		if (getEmpleado().getCuentaCotizacion() == CuentaCotizacion.ALTO_CARGO) {
 			return 10;
 		}
 		

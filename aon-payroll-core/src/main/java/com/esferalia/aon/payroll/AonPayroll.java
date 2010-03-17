@@ -1,23 +1,47 @@
 package com.esferalia.aon.payroll;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.util.Classpath;
+
 public class AonPayroll {
-	
-	public static void configure() throws PayrollException{
+
+	private static final String PAYROLL_CONFIG_FILE = "aon-payroll.properties";
+
+	private static final String PAYROLL_PARTEIT_CALCULATORS = "aon.payroll.parteIT.class";
+	private static final String PAYROLL_NOMINA_DAO = "aon.payroll.nominadao.class";
+	private static final String PAYROLL_EMPLEADO_DAO = "aon.payroll.empleadodao.class";
+
+	public static void configure() throws PayrollException {
 		try {
-			Properties props = new Properties();
-			props.load( AonPayroll.class.getResourceAsStream("/aon-payroll.properties"));
-			String classes = props.getProperty("aon.payroll.parteIT.class");
-			String[] array =  StringUtils.split(classes,",");
-			for (String c: array) {
-				Class.forName(c);	
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+			URL[] urls = Classpath.search(cl, "META-INF/", PAYROLL_CONFIG_FILE);
+			if (!ArrayUtils.isEmpty(urls)) {
+				Properties props = new Properties();
+				for (URL url : urls) {
+					props.load(url.openStream());
+				}
+				String classes = props.getProperty(PAYROLL_PARTEIT_CALCULATORS);
+				if (classes != null) {
+					String[] array = StringUtils.split(classes, ",");
+					for (String c : array) {
+						Class.forName(c);
+					}
+				}
+				String clazz = props.getProperty(PAYROLL_NOMINA_DAO);
+				if (clazz != null ) {
+					Class.forName(clazz);	
+				}
+				clazz = props.getProperty(PAYROLL_EMPLEADO_DAO);
+				if (clazz != null ) {
+					Class.forName(clazz);
+				}
 			}
-			String clazz  = props.getProperty("aon.payroll.nominadao.class");
-			Class.forName(clazz);
 		} catch (IOException e) {
 			throw new PayrollException(e);
 		} catch (ClassNotFoundException e) {
