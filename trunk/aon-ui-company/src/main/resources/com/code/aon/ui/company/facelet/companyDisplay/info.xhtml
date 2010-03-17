@@ -10,7 +10,8 @@
 		<c:if test="#{!skipConnectedLabel}" >
 			<aon:outputText value="#{companyBundle.company_connected_to}" />
 		</c:if>
-		<h:panelGrid columnClasses="aon-logo-left" styleClass="aon-width-all">	
+		<h:panelGrid columnClasses="#{skipRightBorder?'aon-logo-only':'aon-logo-left'}"
+			styleClass="aon-width-all">	
 			<a4j:mediaOutput element="img"
 				rendered="#{companyDisplay.companyLogo != null}" 
 				value="#{companyDisplay.logoKey}"
