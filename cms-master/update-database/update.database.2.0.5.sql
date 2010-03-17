@@ -15,7 +15,7 @@ ALTER TABLE `direct_access` DROP FOREIGN KEY `direct_access_fk`;
 
 ALTER TABLE `direct_access` ADD CONSTRAINT `direct_access_fk` FOREIGN KEY (`direct_access_group`) REFERENCES `direct_access_group` (`id`);
 
-ALTER TABLE `bulletin_emails` ADD `active` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'Indicador de email activa.';
+ALTER TABLE `bulletin_emails` ADD `active` TINYINT(1) NOT NULL DEFAULT '1' COMMENT 'Indicador de email activa';
 
 ALTER TABLE `company` ADD `coordinates` VARCHAR(255) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Coordinadas GPS de la Empresa';
 
