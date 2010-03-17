@@ -1,0 +1,38 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.esferalia.aon.ui.payroll.i18n.messages</base-name>
+			<var>payrollBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!-- ************ Parte IT Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>parteITWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.ParteITWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- =================== Undeductible Invoice Management========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step3.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+</faces-config>
