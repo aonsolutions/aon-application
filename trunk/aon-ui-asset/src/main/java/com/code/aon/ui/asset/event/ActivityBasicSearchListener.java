@@ -70,7 +70,6 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 		String name = user.getShortName();
 		
 		setAsset(((ActivityBasicController)getController()).getAsset());
-//		((ActivityBasicController)getController()).set
 		criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO), name);
 		ActivityStatus[] defaultActivityStatus = {ActivityStatus.PENDING};
 		setActivityStatuses(defaultActivityStatus);
@@ -78,7 +77,6 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		//getController().setCriteria(new Criteria());
 		Criteria criteria = getController().getCriteria();
 		
 		if (getAsset() != null && getAsset().getId() != null) {
@@ -103,10 +101,5 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 			
 		}
 	}
-
-
-
-
-	
 
 }
