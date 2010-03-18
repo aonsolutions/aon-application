@@ -20,7 +20,7 @@
 	<!-- The context-root element specifies the context root of a web
 	application. It may be given here for standalone wars.
 	-->
-	<context-root>/aon-payroll</context-root>
+	<context-root>/aon-nominasta</context-root>
 	
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonPayroll</resource-env-ref-name>
