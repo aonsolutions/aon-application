@@ -29,9 +29,10 @@ public class ItWizardSearchListener extends ControllerSearchListener{
 			ExpressionException {
 		
 		Criteria criteria = getController().getCriteria();
-//		criteria.addEqualExpression(getController().getFieldName(IPayrollAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
 		if ((getEmpresa() != null) && (getEmpresa().getCdg() != null)) {
 			criteria.addEqualExpression(getController().getFieldName(IPayrollAlias.TRABAJADOR_EMPRESA_CDG), getEmpresa().getCdg());			
 		}
 	}	
+	
+	
 }
