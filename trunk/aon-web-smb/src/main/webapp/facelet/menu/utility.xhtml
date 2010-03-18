@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<h:panelGrid styleClass="aon-width-all"
+		headerClass="aon-icon-utilities aon-direct-access-panel">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_utilities}" />
+		</f:facet>
+		<aon:div styleClass="aon-direct-access-list">
+			<c:if test="#{company.EInvoice and (certificate.certificateCount>0)}">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="invoiceSigner"
+						value="#{financeBundle.finance_invoice_signing_module}"
+						actionListener="#{invoiceSigner.onEditSearch}"
+						action="invoiceSigner_search" />
+				</aon:div>
+			</c:if>
+			<aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink id="invoiceRecorder"
+					value="#{financeBundle.finance_invoice_recording_module}"
+					actionListener="#{invoiceRecorder.onEditSearch}"
+					action="invoiceRecorder_search" />
+			</aon:div>
+			<ui:insert name="afterContent"/>
+		</aon:div>
+	</h:panelGrid>
+
+</ui:composition>
