@@ -11,6 +11,7 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum Model347ReportOrder implements IResourceable {
 
+	INVOICE_TOTAL_AMOUNT,
 	INVOICE_REGISTRY_ID,
 	INVOICE_REGISTRY_NAME,
 	INVOICE_REGISTRY_DOCUMENT;
