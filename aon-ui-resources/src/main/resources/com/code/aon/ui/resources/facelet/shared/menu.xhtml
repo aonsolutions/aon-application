@@ -1,0 +1,28 @@
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+		<aon:form>
+			<aon:menuBar id="mainMenu">
+				<ui:insert name="beforeMenuContent"/>
+				<ui:insert name="menuContent"/>		
+				<ui:insert name="afterMenuContent"/>		
+				<rich:toolBarGroup location="right" itemSeparator="line">
+					<h:outputLink target="_top"
+						title="#{bundle.aon_home}"
+						styleClass="aon-top-menu-item aon-icon-home"
+						value="${facesContext.externalContext.requestContextPath}">
+						<h:outputText value="&#160;" />
+					</h:outputLink>				
+					<aon:commandLink value="&#160;" immediate="true"
+						title="#{bundle.aon_help}" 
+						styleClass="aon-top-menu-item aon-icon-help" />
+				</rich:toolBarGroup>	 		
+	 		</aon:menuBar>
+		</aon:form>
+	</c:if>
+ </ui:composition>
