@@ -30,10 +30,6 @@
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-header-menu-item">
 						<aon:form>					
-							<h:outputLink target="_top"
-								value="${facesContext.externalContext.requestContextPath}">
-								<h:outputText value="#{bundle.aon_home}" />
-							</h:outputLink>
 							<aon:commandLink style="border-right:0;" action="logout"
 								actionListener="#{aonConfiguration.logout}">
 								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />

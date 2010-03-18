@@ -569,7 +569,7 @@ color:#000;
 	vertical-align:top;	
 	cursor: pointer;
 }
-
+ 
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
@@ -2196,6 +2196,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	border-bottom:#f4f3f3 1px solid;
 }
 
+.aon-icon-help{
+	background:transparent url(images/aon-main-menu/aon-icon-help.png) no-repeat scroll center left;
+}
+.aon-icon-home{
+	background:transparent url(images/aon-main-menu/aon-icon-home.png) no-repeat scroll center left;
+}
 .aon-icon-favorites{
 	background:transparent url(images/aon-main-menu/aon-icon-favorites.png) no-repeat scroll center left;
 }
