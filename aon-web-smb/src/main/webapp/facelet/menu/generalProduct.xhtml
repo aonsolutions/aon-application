@@ -1,0 +1,20 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<ui:decorate template="/facelet/menu/general.xhtml" >
+		<ui:define name="beforeContent">
+			<aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink id="item" 
+					action="item_search" actionListener="#{item.onEditSearch}"
+					value="#{productBundle.product_module}" />
+			</aon:div>		
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>
