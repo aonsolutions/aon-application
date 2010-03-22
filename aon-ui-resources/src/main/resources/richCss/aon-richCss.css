@@ -767,6 +767,13 @@ color:#000;
 	background:transparent url(images/aon-icon/aon-icon-tree-root.png) scroll left center no-repeat;
 	}
 
+.aon-icon-next{
+	background:transparent url(images/aon-icon/aon-icon-next.gif) scroll left center no-repeat;
+	}
+.aon-icon-previous{
+	background:transparent url(images/aon-icon/aon-icon-previous.gif) scroll left center no-repeat;
+	}
+
 /*  report icon  */
 .aon-icon-pdf{
 	background:transparent url(images/aon-icon/aon-icon-pdf-file.png) scroll left center no-repeat;
