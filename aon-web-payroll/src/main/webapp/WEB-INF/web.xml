@@ -231,6 +231,13 @@
        </listener-class>
     </listener>
 
+	<!-- Payroll Configuration Listener -->
+    <listener>
+       <listener-class>
+           com.esferalia.aon.web.payroll.event.PayrollConfigurationListener
+       </listener-class>
+    </listener>
+
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
