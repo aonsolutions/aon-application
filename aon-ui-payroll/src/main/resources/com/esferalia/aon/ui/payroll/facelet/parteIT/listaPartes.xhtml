@@ -12,12 +12,13 @@
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_datos_ant_parteIT}" />
 		</f:facet>
-		<aon:editDataTable id="parteitList" var="to" rows="55" width="auto"
+		<aon:dataTable id="parteitList" var="to" rows="55" width="auto"
 			value="#{parteITWizard.partesModel}"
-			columnClasses="aon-editDataTable-dateColumn, aon-editDataTable-dateColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-buttonsColumn">
+			columnClasses="aon-editDataTable-textColumn aon-width-150, 
+						aon-editDataTable-textColumn aon-width-150,
+						aon-editDataTable-textColumn aon-width-auto, 
+						aon-editDataTable-iconColumn, 
+						aon-editDataTable-iconColumn">
 
 			<aon:column>
 				<f:facet name="header">
@@ -50,22 +51,22 @@
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_recaida}" />
 				</f:facet>
-				<aon:outputText value="&#160;" styleClass="aon-icon-check"
-					rendered="#{!to.recaida}" />
-				<aon:outputText value="&#160;" styleClass="aon-icon-checked"
-					rendered="#{to.recaida}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-check" rendered="#{!to.recaida}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-checked" rendered="#{to.recaida}" />
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_procesado}" />
 				</f:facet>
-				<aon:outputText value="&#160;" styleClass="aon-icon-check"
-					rendered="#{!to.procesada}" />
-				<aon:outputText value="&#160;" styleClass="aon-icon-checked"
-					rendered="#{to.procesada}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-check" rendered="#{!to.procesada}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-checked" rendered="#{to.procesada}" />
 			</aon:column>
-		</aon:editDataTable>
+		</aon:dataTable>
 	</aon:panel>
 
 </ui:composition>
