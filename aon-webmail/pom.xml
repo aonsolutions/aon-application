@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.0.0</version>
+		<version>5.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.webmail</artifactId>
 	<packaging>jar</packaging>
 	<name>AON WEBMAIL</name>
-	<version>5.0.0</version>
+	<version>5.0.1</version>
 	<description>AON WEBMAIL</description>
 	<repositories>
 		<repository>
