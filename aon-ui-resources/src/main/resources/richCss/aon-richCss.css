@@ -1519,6 +1519,10 @@ color:#000;
 	padding-left: 2px;
 	padding-right: 2px;
 	}
+.aon-menuBar-content:hover{
+  	background-color:#fff;
+ 	display:block;
+}		
 /* cada uno de los links de la barra de menus que lanzan el desplegable*/
 .aon-dropDownMenu{
 	font-family:arial,verdana, "sans-serif";
@@ -1529,7 +1533,10 @@ color:#000;
  	font-weight:bold;
  	display:block;
 	height: 16px;
-	}
+	border:0;
+	padding-left: 2px;
+	padding-right: 2px;
+}
 /* cada una de los opciones del desplegable, siempre que de ellas no dependa otro desplegable*/
 .aon-dropDownMenu-item{
 	cursor:pointer;
@@ -1538,6 +1545,7 @@ color:#000;
   }
  .aon-menuItem-styleClass{
  	font-size:1em;
+ 	padding-right: 8px;
  }
  /* estado hover de cada una de los opciones del desplegable, siempre que de ellas si dependa otro desplegable */
 .aon-dropDownMenu-selectItem{	
