@@ -1,11 +1,11 @@
 package com.esferalia.aon.payroll.core;
 
-import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 
-public interface IEmpleado extends Serializable{
+public interface IEmpleado extends ITransferObject{
 
 	Integer getId();
 	void setId(Integer  id);

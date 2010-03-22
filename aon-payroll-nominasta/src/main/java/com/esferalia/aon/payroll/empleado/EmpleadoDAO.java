@@ -2,13 +2,25 @@ package com.esferalia.aon.payroll.empleado;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.CriteriaUtilities;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
@@ -16,6 +28,7 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class EmpleadoDAO implements IEmpleadoDAO {
 
+	private static String PER_ALIAS = null;
 	private static String DOC_ALIAS = null;
 	private static String NSS_ALIAS = null;
 	private static String NOMBRE_ALIAS = null;
@@ -28,48 +41,60 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
-			DOC_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT);
-			NSS_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NUM_SS);
-			NOMBRE_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME);
-			APEL_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME);
-			APEL2_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME);
+			PER_ALIAS = bean
+			.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_ID);
+			DOC_ALIAS = bean
+			.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT);
+			NSS_ALIAS = bean
+					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NUM_SS);
+			NOMBRE_ALIAS = bean
+					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME);
+			APEL_ALIAS = bean
+					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME);
+			APEL2_ALIAS = bean
+					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME);
 			EMPR_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_EMPRESA_NAME);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<?> getEmpleados(EmpleadoParams params) throws PayrollException {
+	public List<IEmpleado> getEmpleados(EmpleadoParams params) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
-			return bean.getList(getCriteria(params));
+			List<?> list = bean.getList(getCriteria(params));
+			return (List<IEmpleado>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
-
 	}
 
 	@Override
 	public Criteria getCriteria(EmpleadoParams params) throws PayrollException {
 		try {
 			Criteria c = new Criteria();
-			if (params.getDocumento() != null) {
+
+			if (!StringUtils.isBlank(params.getPersonaId())) {
+				c.addExpression(PER_ALIAS, params.getPersonaId());
+			}
+			if (!StringUtils.isBlank(params.getDocumento())) {
 				c.addExpression(DOC_ALIAS, params.getDocumento());
 			}
-			if (params.getNumSS() != null) {
+			if (!StringUtils.isBlank(params.getNumSS())) {
 				c.addExpression(NSS_ALIAS, params.getNumSS());
 			}
-			if (params.getNombre() != null) {
+			if (!StringUtils.isBlank(params.getNombre())) {
 				c.addExpression(NOMBRE_ALIAS, params.getNombre());
 			}
-			if (params.getApellido() != null) {
+			if (!StringUtils.isBlank(params.getApellido())) {
 				c.addExpression(APEL_ALIAS, params.getApellido());
 			}
-			if (params.getApellido2() != null) {
+			if (!StringUtils.isBlank(params.getApellido2())) {
 				c.addExpression(APEL2_ALIAS, params.getApellido2());
 			}
-			if (params.getEmpresa() != null) {
+			if (!StringUtils.isBlank(params.getEmpresa())) {
 				c.addExpression(EMPR_ALIAS, params.getEmpresa());
 			}
 			return c;
@@ -78,4 +103,72 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 		}
 	}
 
+	@Override
+	public int getCount(EmpleadoParams params) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
+			return bean.getCount(getCriteria(params));
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IEmpleado> getEmpleados(EmpleadoParams params, int start, int count)
+			throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
+			List<?> list = bean.getList(getCriteria(params), start, count);
+			return (List<IEmpleado>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<IPersona> getDistinctEmpleados(EmpleadoParams params, int start, int count)
+			throws PayrollException {
+		List<IPersona> list = null;
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
+		try {
+			if (HibernateUtil.mustBeginTransaction()) {
+				session.beginTransaction();	
+			}
+			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
+					.toHibernateCriteria(getCriteria(params), session, IPayrollAlias.EMPLEADO_ENTRY );
+
+			ProjectionList pl = Projections.projectionList()
+				.add(Projections.property("persona"), "persona");
+			Projection p = 	Projections.distinct( pl );		
+			hibernateCriteria.setProjection( p);
+
+			if (start != -1) {
+				hibernateCriteria.setFirstResult(start);
+			}
+			if (count != -1) {
+				hibernateCriteria.setMaxResults(count);
+			}
+			list = (List<IPersona>) hibernateCriteria.list();				
+			if (HibernateUtil.mustBeginTransaction()) {
+				session.getTransaction().commit();
+			}
+		} catch (HibernateException he) {
+			if (HibernateUtil.mustBeginTransaction()) {
+				session.getTransaction().rollback();
+			}
+			if (he.getCause() != null) {
+				throw new PayrollException(he.getCause().getMessage(), he.getCause());
+			}
+			throw new PayrollException(he);
+		} catch (DAOException e) {
+			throw new PayrollException(e);
+		} finally {
+			if (HibernateUtil.mustCloseSession()) {
+                HibernateUtil.closeSession(sessionFactoryName);
+			}
+		}
+		return list;
+	}
 }

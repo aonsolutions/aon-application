@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.esferalia.aon.payroll.Empleado" sqlName="empreper">
-		<alias names="id,codccc,fechaFin,fechaInicio,mayor65,empresa_cdg,empresa_name,persona_cdg,persona_lastName,persona_name,persona_numSS,persona_registry_document,persona_surname" />
-		<hibernate names="id,codccc,fechaFin,fechaInicio,mayor65,empresa.cdg,empresa.name,persona.cdg,persona.lastName,persona.name,persona.numSS,persona.registry.document,persona.surname" />
+		<alias names="id,codccc,fechaFin,fechaInicio,mayor65,empresa_cdg,empresa_name,persona_id,persona_lastName,persona_name,persona_numSS,persona_registry_document,persona_surname" />
+		<hibernate names="id,codccc,fechaFin,fechaInicio,mayor65,empresa.cdg,empresa.name,persona.id,persona.lastName,persona.name,persona.numSS,persona.registry.document,persona.surname" />
 	</bean>
 </dao>
 
