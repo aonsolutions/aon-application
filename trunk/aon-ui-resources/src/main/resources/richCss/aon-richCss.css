@@ -543,15 +543,15 @@ color:#000;
 	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
  }
 .aon-icon-expand{
-	float: right;
-	width: 18px;
-	height: 18px;
+	padding-left: 14px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 	background:transparent url(images/aon-icon/aon-icon-expand.png) scroll left center no-repeat;	
  }
 .aon-icon-edit{
-	float: right;
-	width: 18px;	
-	height: 18px;
+	padding-left: 14px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 	background:transparent url(images/aon-icon/aon-icon-edit.png) scroll left center no-repeat;	
  }
 .aon-icon-edit-add{
@@ -1380,10 +1380,10 @@ color:#000;
 	-moz-background-clip:border;
 	-moz-background-inline-policy:continuous;
 	-moz-background-origin:padding;
-	height:40px;
+	height:37px;
 	left:25px;
 	position:absolute;
-	top:-1px;
+	top:5px;
 	width:114px;
 	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-start.gif) no-repeat scroll left top;
 }
@@ -1391,10 +1391,10 @@ color:#000;
 	-moz-background-clip:border;
 	-moz-background-inline-policy:continuous;
 	-moz-background-origin:padding;
-	height:40px;
+	height:37px;
 	left:25px;
 	position:absolute;
-	top:-1px;
+	top:5px;
 	width:114px;
 	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-stop.png) no-repeat scroll left top;
 }
@@ -1402,10 +1402,10 @@ color:#000;
 	-moz-background-clip:border;
 	-moz-background-inline-policy:continuous;
 	-moz-background-origin:padding;
-	height:40px;
+	height:37px;
 	left:25px;
 	position:absolute;
-	top:-1px;
+	top:5px;
 	width:114px;
 	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-failed.png) no-repeat scroll left top;
 }
@@ -1483,8 +1483,7 @@ color:#000;
 .aon-header-additionalInfo a, .aon-header-additionalInfo a:visited, .aon-header-additionalInfo a:hover{
 	color:#fff;
 	cursor:pointer;
-	padding:0 0.5em;
-	border-right:#fff 1px solid;
+	padding-left: 14px;
 }
 
 .aon-header-title{
@@ -1503,6 +1502,10 @@ color:#000;
 	padding-left:88px;
 	padding-top:66px;
 	text-align:center;
+}
+
+.aon-logout{
+	background:transparent url(images/aon-header/aon-logout.png) no-repeat scroll center left;
 }
 
 /********************************/
@@ -1534,8 +1537,7 @@ color:#000;
  	display:block;
 	height: 16px;
 	border:0;
-	padding-left: 2px;
-	padding-right: 2px;
+	padding: 2px 2px 0 2px;
 }
 /* cada una de los opciones del desplegable, siempre que de ellas no dependa otro desplegable*/
 .aon-dropDownMenu-item{
