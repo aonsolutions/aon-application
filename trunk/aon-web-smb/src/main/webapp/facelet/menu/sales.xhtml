@@ -124,7 +124,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="salesAccumulate"
-											action="sales_accumulate_search" 
+											action="sales_accumulate_search-Sales" 
 											value="#{statBundle.stat_menu_acumulado}">
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -133,7 +133,7 @@
 								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleCategoryStats"
-											action="category_stats_search" 
+											action="category_stats_search-Sales" 
 											value="#{statBundle.stat_menu_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -142,7 +142,7 @@
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleSummaryStats"
-											action="summary_stats_search" 
+											action="summary_stats_search-Sales" 
 											value="#{statBundle.stat_menu_summary}"  >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -151,7 +151,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStats"
-											action="abc_stats_search" 
+											action="abc_stats_search-Sales" 
 											value="#{statBundle.stat_abc_customer}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -160,7 +160,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStatsProduct"
-											action="abc_stats_searchProduct" 
+											action="abc_stats_searchProduct-Sales" 
 											value="#{statBundle.stat_abc_product}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -169,7 +169,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStatsCategory"
-											action="abc_stats_searchCategory" 
+											action="abc_stats_searchCategory-Sales" 
 											value="#{statBundle.stat_abc_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
