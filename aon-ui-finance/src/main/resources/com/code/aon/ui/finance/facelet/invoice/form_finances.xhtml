@@ -32,8 +32,7 @@
 	
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 								<f:facet name="header">
-									<aon:outputLabel for="Finance_DueDate"
-										value="#{financeBundle.finance_finance_date}" />
+									<aon:outputLabel for="Finance_DueDate" value="#{financeBundle.finance_finance_date}" />
 								</f:facet>
 								<aon:outputText rendered="#{formList}" value="#{to.dueDate}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -53,8 +52,7 @@
 	
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 								<f:facet name="header">
-									<aon:outputLabel for="Finance_PayMethod"
-										value="#{configBundle.config_pay_method}" />
+									<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}" />
 								</f:facet>
 								<aon:outputText value="#{to.payMethod.name}"
 									rendered="#{formList}" />
@@ -79,8 +77,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
 									<aon:div>
-										<aon:outputLabel for="RegistryBank_code"
-											value="#{configBundle.config_bank}" />
+										<aon:outputLabel for="RegistryBank_code" value="#{configBundle.config_bank}" />
 										<aon:outputText value=" - #{configBundle.config_bank_account}" />
 									</aon:div>
 								</f:facet>
@@ -219,8 +216,7 @@
 	
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 								<f:facet name="header">
-									<aon:outputLabel for="Finance_amount"
-										value="#{bundle.aon_amount}" />
+									<aon:outputLabel for="Finance_amount" value="#{bundle.aon_amount}" />
 								</f:facet>
 								<aon:outputText value="#{to.amount}" rendered="#{formList or invoiceController.recorded}">
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
