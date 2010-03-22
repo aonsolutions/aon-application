@@ -256,24 +256,26 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
-				<f:facet name="header">
-					<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
-						styleClass="aon-icon-lock" style="padding-left:10px" />
-				</f:facet>
-				<aon:outputText value="&#160;"
-					rendered="#{formList and to.confidential}"
-					styleClass="aon-icon-checked" style="padding-left:16px" />
-				<aon:outputText value="&#160;"
-					rendered="#{formList and !to.confidential}"
-					styleClass="aon-icon-check" style="padding-left:16px" />
-				<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
-					value="#{controller.to.confidential}" rendered="#{formEdit}" />
-				<f:facet name="footer">
-					<aon:selectBooleanCheckbox id="CustomerFee_securityLevel-New"
-						value="#{controller.to.confidential}" rendered="#{formNew}" />
-				</f:facet>
-			</aon:column>
+			<c:if test="#{aonRole.confidentiality}">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+							styleClass="aon-icon-confidential" style="padding-left:10px" />
+					</f:facet>
+					<aon:outputText value="&#160;"
+						rendered="#{formList and to.confidential}"
+						styleClass="aon-icon-checked" style="padding-left:16px" />
+					<aon:outputText value="&#160;"
+						rendered="#{formList and !to.confidential}"
+						styleClass="aon-icon-check" style="padding-left:16px" />
+					<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
+						value="#{controller.to.confidential}" rendered="#{formEdit}" />
+					<f:facet name="footer">
+						<aon:selectBooleanCheckbox id="CustomerFee_securityLevel-New"
+							value="#{controller.to.confidential}" rendered="#{formNew}" />
+					</f:facet>
+				</aon:column>
+			</c:if>
 
 			<c:if test="#{companyCollections.workPlacesCount > 1}">
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
