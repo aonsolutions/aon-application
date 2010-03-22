@@ -280,6 +280,15 @@
 			<value>actionMoreUsed</value> 
 		</managed-property>		
 	</managed-bean>	
+	
+	<!-- ************ WEB MAP CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>webMap</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.WebMapController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<!-- =================== Action ================= -->	
 	<navigation-rule>
@@ -298,6 +307,10 @@
 		<navigation-case>
 			<from-outcome>actionMoreUsed</from-outcome>
 			<to-view-id>/com/code/aon/ui/audit/facelet/actionMoreUsed/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>webMap</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/shared/webMap.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 

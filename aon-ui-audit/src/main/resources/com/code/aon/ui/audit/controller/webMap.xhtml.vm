@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+#foreach($category in ${categories})
+	<h:panelGrid styleClass="aon-width-all"
+		headerClass="aon-direct-access-panel ${category.iconClass}">		
+		<f:facet name="header">
+			<aon:outputText value="${category.name}"/>
+		</f:facet>					
+		<aon:div styleClass="aon-direct-access-list">
+			#foreach($option in $categoryMap.get($category.name))		
+			<aon:div styleClass="aon-direct-access-list-element">
+				${option.getXml("")}
+			</aon:div>
+			#end
+		</aon:div>
+	</h:panelGrid>
+#end
+</ui:composition>

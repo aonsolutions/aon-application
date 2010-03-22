@@ -1,0 +1,36 @@
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+		<aon:form>
+			<aon:menuBar id="mainMenu">
+				<ui:insert name="beforeMenuContent"/>
+				<ui:insert name="menuContent"/>		
+				<ui:insert name="afterMenuContent"/>		
+				<rich:toolBarGroup location="right" itemSeparator="line">
+					<h:outputLink target="_top"
+						title="#{bundle.aon_home}"
+						style="padding-left: 8px;"
+						styleClass="aon-top-menu-item aon-icon-home"
+						value="${facesContext.externalContext.requestContextPath}">
+						<h:outputText value="&#160;" />
+					</h:outputLink>			
+					<aon:dropDownMenu style="padding-left: 8px;"
+						styleClass="aon-dropDownMenu aon-icon-help"
+						value="&#160;&#160;&#160;&#160;&#160;">
+						<c:if test="#{webMap != null}">
+							<aon:menuItem id="webMap" action="webMap"
+								value="#{bundle.aon_web_map}" />
+						</c:if>
+						<aon:menuItem id="about"
+							value="#{bundle.aon_about}" />
+					</aon:dropDownMenu>						
+				</rich:toolBarGroup>	 		
+	 		</aon:menuBar>
+		</aon:form>
+	</c:if>
+ </ui:composition>

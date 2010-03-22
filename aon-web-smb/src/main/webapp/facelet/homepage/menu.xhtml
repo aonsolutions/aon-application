@@ -5,10 +5,6 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
-		<aon:commandLink id="product"
-			value="#{appBundle.menu_product}"
-			action="menu_product" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-product" />
 		<aon:commandLink id="commercial"
 			value="#{appBundle.menu_commercial}"
 			action="menu_commercial" immediate="true"
@@ -21,16 +17,14 @@
 			value="#{appBundle.menu_purchase}"
 			action="menu_purchase" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-purchase" />
+		<aon:commandLink id="expenses"
+			value="#{productBundle.product_expense_module}"
+			action="menu_expenses" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-expenses" />
 		<aon:commandLink id="treasury"
 			value="#{financeBundle.finance_menu_group}"
 			action="menu_treasury" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-treasury" />
-<!-- 
-		<aon:commandLink id="accounting"
-			value="#{accountingBundle.menu_accounting}"
-			action="menu_accounting" immediate="true"
-			styleClass="aon-top-menu-item" />
- -->
 		<aon:commandLink id="config"
 			value="#{bundle.aon_configuration}"
 			action="menu_config" immediate="true"
