@@ -27,6 +27,7 @@ public class OfferTermBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
 		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
 		criteria.addGreaterThanOrEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), term.getLine());
 		criteria.addOrder(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));
@@ -51,11 +52,13 @@ public class OfferTermBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
 			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
 			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), term.getLine());
 			if (offerTermBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+				criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
 				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
 				criteria.addOrder(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));
 				List<ITransferObject> list = offerTermBean.getList(criteria);
@@ -81,6 +84,7 @@ public class OfferTermBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
 		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
 		criteria.addGreaterThanOrEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), term.getLine());
 		criteria.addOrder(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));

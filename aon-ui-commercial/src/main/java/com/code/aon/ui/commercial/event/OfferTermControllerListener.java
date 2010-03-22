@@ -22,7 +22,7 @@ public class OfferTermControllerListener extends ControllerAdapter {
 		OfferTerm offerTerm = (OfferTerm) controller.getTo();
 		offerTerm.setGeneral( controller.isGeneral() );
 		try {
-			offerTerm.setLine(calculateNextLine((Offer)controller.getMasterController().getTo()));
+			offerTerm.setLine(calculateNextLine((Offer)controller.getMasterController().getTo(), controller.isGeneral()));
 			
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -48,10 +48,11 @@ public class OfferTermControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	private	Integer calculateNextLine(Offer offer) throws ManagerBeanException {
+	private	Integer calculateNextLine(Offer offer, boolean general) throws ManagerBeanException {
 		IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID),offer.getId());
+		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), general);
 		Projection projection = Projection.max(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));
 		Object value = offerTermBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
