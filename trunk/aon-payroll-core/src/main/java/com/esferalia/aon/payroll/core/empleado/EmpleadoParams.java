@@ -6,6 +6,7 @@ public class EmpleadoParams implements Serializable {
 
 	private static final long serialVersionUID = -8655656513255427338L;
 	
+	private String personaId;
 	private String documento;
 	private String numSS;
 	private String nombre;
@@ -13,6 +14,13 @@ public class EmpleadoParams implements Serializable {
 	private String apellido2;
 	private String empresa;
 	
+	public String getPersonaId() {
+		return personaId;
+	}
+	public void setPersonaId(String personaId) {
+		this.personaId = personaId;
+	}
+
 	public String getDocumento() {
 		return documento;
 	}

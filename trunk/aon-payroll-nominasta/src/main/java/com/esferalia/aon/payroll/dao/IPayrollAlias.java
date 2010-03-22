@@ -64,10 +64,10 @@ public interface IPayrollAlias {
 	String  EMPLEADO_EMPRESA_NAME = EMPLEADO_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Empleado_persona_cdg
-	* Hibernate value: Empleado.persona.cdg
+	* Alias value: Empleado_persona_id
+	* Hibernate value: Empleado.persona.id
 	*/
-	String  EMPLEADO_PERSONA_CDG = EMPLEADO_ENTRY.getAliasNames()[7];
+	String  EMPLEADO_PERSONA_ID = EMPLEADO_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Empleado_persona_lastName
@@ -199,10 +199,10 @@ public interface IPayrollAlias {
 	DAOConstantsEntry PERSONA_ENTRY = DAOConstants.getDAOConstant(Persona.class);
 
 	/** 
-	* Alias value: Persona_cdg
-	* Hibernate value: Persona.cdg
+	* Alias value: Persona_id
+	* Hibernate value: Persona.id
 	*/
-	String  PERSONA_CDG = PERSONA_ENTRY.getAliasNames()[0];
+	String  PERSONA_ID = PERSONA_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: Persona_lastName

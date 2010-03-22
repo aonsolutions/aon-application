@@ -22,16 +22,16 @@
 	<!-- =================== Undeductible Invoice Management========================== -->
 	<navigation-rule>
 	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
     	  	<from-outcome>parteITWizard_step1</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step1.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
     	  	<from-outcome>parteITWizard_step2</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step2.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>parteITWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step3.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	

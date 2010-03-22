@@ -7,56 +7,64 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/parteIT/step_template.xhtml">
 
-	<ui:define name="content">
-		<aon:form id="trabajadorList">
-			<aon:div styleClass="aon-scroll-area">
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.parteIT_step2}" />
+	</ui:define>
 
-				<aon:dataTable id="trabajadorData" value="#{parteITWizard.model}"
-					var="to" rows="20" rendered="#{parteITWizard.model.rowCount > 0}"
-					columnClasses="
-					aon-editDataTable-textColumn, 
-					aon-editDataTable-textColumn, 
-					aon-editDataTable-textColumn, 
-					aon-editDataTable-textColumn">
+	<ui:define name="step_content">
 
-					<aon:rowSelector action="parteITWizard_step3"
-						actionListener="#{parteITWizard.onSelect}" />
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_datos_empleado}" />
+			</f:facet>
+			<aon:panelGrid columns="6" dir="true" width="100%">
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_documento}" />
-						</f:facet>
-						<aon:outputText value="#{to.persona.numdoc}" />
-					</aon:column>
+				<aon:outputText value="#{payrollBundle.payroll_documento}" />
+				<aon:outputText
+					value="#{parteITWizard.persona.registry.document.value}" />
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_nombre}" />
-						</f:facet>
-						<aon:outputText value="#{to.persona.descripcion} #{to.persona.apellido2}, #{to.persona.nombre}" />
-					</aon:column>
+				<aon:outputText value="#{payrollBundle.payroll_nombre}" />
+				<aon:outputText value="#{parteITWizard.persona.fullName}" />
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_numss}" />
-						</f:facet>
-						<aon:outputText value="#{to.persona.numss}" />
-					</aon:column>
+				<aon:outputText value="#{payrollBundle.payroll_numss}" />
+				<aon:outputText value="#{parteITWizard.persona.numSS}" />
+			</aon:panelGrid>
+		</aon:panel>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_empresa}" />
-						</f:facet>
-						<aon:outputText value="#{to.empresa.descripcion}" />
-					</aon:column>
-				</aon:dataTable>
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_datos_contrato}" />
+			</f:facet>
+			<aon:dataTable id="contratosData"
+				value="#{parteITWizard.empleosModel}" var="to" rows="20"
+				columnClasses="
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-dateColumn, aon-editDataTable-dateColumn">
 
-				<aon:dataScroller2 for="trabajadorData" showNote="true" />
-			</aon:div>
-		</aon:form>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+					</f:facet>
+					<aon:outputText value="#{to.empresa.name}" />
+				</aon:column>
 
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_fecha_inicio}" />
+					</f:facet>
+					<aon:outputText value="#{to.fechaInicio}" />
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_fecha_fin}" />
+					</f:facet>
+					<aon:outputText value="#{to.fechaFin}" />
+				</aon:column>
+			</aon:dataTable>
+		</aon:panel>
 	</ui:define>
 
 </ui:composition>

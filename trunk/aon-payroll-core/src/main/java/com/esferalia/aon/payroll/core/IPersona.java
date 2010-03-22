@@ -1,12 +1,14 @@
 package com.esferalia.aon.payroll.core;
 
-import java.io.Serializable;
-
+import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.core.IRegistry;
 
 
-public interface IPersona extends Serializable{
+public interface IPersona extends ITransferObject{
 
+	Integer getId();
+	void setId(Integer id);
+	
 	IRegistry getRegistry();
 	void setRegistry(IRegistry registry);
 
@@ -22,4 +24,5 @@ public interface IPersona extends Serializable{
 	String getNumSS();
 	void setNumSS(String numSS);
 	
+	String getFullName();
 }

@@ -13,6 +13,12 @@
 	<version>5.1.0-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.payroll.core</artifactId>
 			<version>${pom.version}</version>
@@ -23,6 +29,43 @@
 			<artifactId>jsf-api</artifactId>
 			<version>1.2_14</version>
 			<scope>provided</scope>
+		</dependency>
+		<!-- TEST DEPENDENCIES -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jcl</artifactId>
+			<version>1.5.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.transtools</groupId>
+			<artifactId>ctsql-jdbc</artifactId>
+			<version>2.0.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.transtools</groupId>
+			<artifactId>ctsql-hibernate-dialect</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.payroll.nominasta</artifactId>
+			<version>${pom.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
