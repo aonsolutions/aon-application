@@ -27,6 +27,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.config.util.UserUtils;
@@ -47,11 +48,17 @@ public class ApplicationOptionController {
 
 	private static final String ACTION_ATTRIBUTE = "action";
 	
+	private static final String STYLE_CLASS_ATTRIBUTE = "styleClass";
+	
 	private static final String SRC_ATTRIBUTE = "src";
+	
+	private static final String TEMPLATE_ATTRIBUTE = "template";
 	
 	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
 	
 	public static final String UI_INCLUDE = "ui:include";
+	
+	public static final String UI_DECORATE = "ui:decorate";
 	
 	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/audit/controller/";
 	
@@ -62,6 +69,8 @@ public class ApplicationOptionController {
 	private Map<String,ApplicationOption> optionMap;
 	
 	private List<ApplicationOption> options;
+	
+	private List<ApplicationCategory> categories;
 	
 	private Application application;
 		
@@ -97,7 +106,11 @@ public class ApplicationOptionController {
 	public List<ApplicationOption> getOptions() {
 		return this.options;
 	}
-	
+
+	public List<ApplicationCategory> getCategories() {
+		return categories;
+	}
+
 	public Application getApplication() {
 		return application;
 	}
@@ -122,6 +135,7 @@ public class ApplicationOptionController {
 	private void init() {
 		this.options = new ArrayList<ApplicationOption>();
 		this.optionMap = new HashMap<String, ApplicationOption>();
+		this.categories = new ArrayList<ApplicationCategory>();
 		Document document = getDocument(MENU_TEMPLATE_PATH);
 		if ( document != null ) {
 			parseMenu( document );
@@ -163,7 +177,7 @@ public class ApplicationOptionController {
 		return false;
 	}
 	
-	private ApplicationOption getApplicationOption( Element element, String category ) {
+	private ApplicationOption getApplicationOption( Element element, ApplicationCategory category ) {
 		ApplicationOption option = null;
 		String action = element.attributeValue(ACTION_ATTRIBUTE);
 		if (! StringUtils.isEmpty(action) ) {
@@ -203,7 +217,7 @@ public class ApplicationOptionController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void parseTemplate( Document document, String category ) {
+	private void parseTemplate( Document document, ApplicationCategory category ) {
 		List<Element> list = document.selectNodes("//" + ApplicationOption.AON_COMMAND_LINK );
 		for ( Element element : list ) {
 			ApplicationOption option = getApplicationOption(element, category);
@@ -219,12 +233,26 @@ public class ApplicationOptionController {
 				parseTemplate(template, category);
 			}
 		}
+		List<Element> decorates = document.selectNodes("//" + UI_DECORATE);
+		for ( Element decorate : decorates ) {
+			String viewId = decorate.attributeValue(TEMPLATE_ATTRIBUTE);
+			Document template = getDocument(viewId);
+			if ( template != null ) {
+				parseTemplate(template, category);
+			}
+		}
 	}
 	
 	private void parseMainCommandLink( Element element ) {
 		String action = element.attributeValue(ACTION_ATTRIBUTE);
 		if ( StringUtils.startsWith(action, "menu") ) {
-			String category = getStringValue(element.attributeValue(VALUE_ATTRIBUTE));
+			String categoryName = getStringValue(element.attributeValue(VALUE_ATTRIBUTE));
+			ApplicationCategory category = new ApplicationCategory(categoryName);
+			String styleClass = element.attributeValue(STYLE_CLASS_ATTRIBUTE);
+			if (! StringUtils.isEmpty(styleClass) ) {
+				category.setStyleClass(styleClass);	
+			}
+			this.categories.add(category);
 			String viewId = getPath(action);
 			Document document = getDocument(viewId);
 			if ( document != null ) {

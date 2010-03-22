@@ -21,50 +21,47 @@
 					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-config aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_configuration}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="company" 
-										action="company" actionListener="#{company.onLoad}"
-										value="#{companyBundle.company_data_module}">
-									</aon:commandLink>
+						<aon:panelGroup>
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-icon-config aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{companyBundle.company_menu_group}"/>
+								</f:facet>					
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="company" 
+											action="company" actionListener="#{company.onLoad}"
+											value="#{companyBundle.company_data_module}">
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="workplace" 
+											action="workplace" 
+											value="#{companyBundle.company_workplace_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="workplace" 
-										action="workplace" 
-										value="#{companyBundle.company_workplace_module}" />
+							</h:panelGrid>
+							
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_general}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="series" 
+											action="series" 
+											value="#{configBundle.config_series_module}" />
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tax" 
+											action="tax" 
+											value="#{configBundle.config_tax_module}" />
+									</aon:div>								
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="series" 
-										action="series" 
-										value="#{configBundle.config_series_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="tax" 
-										action="tax" 
-										value="#{configBundle.config_tax_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="payMethod" 
-										action="payMethod" 
-										value="#{configBundle.config_paymethod_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="segment" 
-										action="segment_form" 
-										value="#{registryBundle.registry_segment_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="geotreeParent" 
-										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
-										value="#{geozoneBundle.geozone_module}" />
-								</aon:div>
-							</aon:div>
-						</h:panelGrid>
+							</h:panelGrid>
+							
+						</aon:panelGroup>
 						
 						<c:if test="#{aonRole.admin}">
 							<h:panelGrid styleClass="aon-width-all"

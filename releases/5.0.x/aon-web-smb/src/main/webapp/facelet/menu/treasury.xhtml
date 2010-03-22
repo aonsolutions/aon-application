@@ -43,6 +43,14 @@
 										actionListener="#{fbatch.onEditSearch}"
 										value="#{financeBundle.finance_fbatch_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="payMethod" action="payMethod"
+										value="#{configBundle.config_paymethod_module}" />
+								</aon:div>								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bank" action="bank"
+										value="#{configBundle.config_bank_module}" />
+								</aon:div>								
 							</aon:div>
 						</h:panelGrid>
 
@@ -55,14 +63,6 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="checks" action="util_checking"
 										value="#{financeBundle.finance_checking_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bank" action="bank"
-										value="#{configBundle.config_bank_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="payMethod" action="payMethod"
-										value="#{configBundle.config_paymethod_module}" />
 								</aon:div>
 							</aon:div>
 						</h:panelGrid>
