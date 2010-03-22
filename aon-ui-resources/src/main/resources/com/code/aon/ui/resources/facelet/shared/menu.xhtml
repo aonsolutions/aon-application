@@ -14,13 +14,21 @@
 				<rich:toolBarGroup location="right" itemSeparator="line">
 					<h:outputLink target="_top"
 						title="#{bundle.aon_home}"
+						style="padding-left: 8px;"
 						styleClass="aon-top-menu-item aon-icon-home"
 						value="${facesContext.externalContext.requestContextPath}">
 						<h:outputText value="&#160;" />
-					</h:outputLink>				
-					<aon:commandLink value="&#160;" immediate="true"
-						title="#{bundle.aon_help}" 
-						styleClass="aon-top-menu-item aon-icon-help" />
+					</h:outputLink>			
+					<aon:dropDownMenu style="padding-left: 8px;"
+						styleClass="aon-dropDownMenu aon-icon-help"
+						value="&#160;&#160;&#160;&#160;&#160;">
+						<c:if test="#{webMap != null}">
+							<aon:menuItem id="webMap" action="webMap"
+								value="#{bundle.aon_web_map}" />
+						</c:if>
+						<aon:menuItem id="about"
+							value="#{bundle.aon_about}" />
+					</aon:dropDownMenu>						
 				</rich:toolBarGroup>	 		
 	 		</aon:menuBar>
 		</aon:form>
