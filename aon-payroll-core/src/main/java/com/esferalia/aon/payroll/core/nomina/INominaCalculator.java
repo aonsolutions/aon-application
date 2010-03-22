@@ -6,7 +6,7 @@ import com.esferalia.aon.payroll.core.INomina;
 
 public interface INominaCalculator extends Serializable{
 	
-	INominaDAO getSalaryDAO();
+	INominaDAO getNominaDAO();
 	INomina calculateNomina(NominaParams params);
 	
 

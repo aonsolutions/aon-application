@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_datos_ant_parteIT}" />
+		</f:facet>
+		<aon:editDataTable id="parteitList" var="to" rows="55" width="auto"
+			value="#{parteITWizard.partesModel}"
+			columnClasses="aon-editDataTable-dateColumn, aon-editDataTable-dateColumn, 
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+						aon-editDataTable-buttonsColumn">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
+				</f:facet>
+				<aon:outputText value="#{to.fechaBaja}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha_alta}" />
+				</f:facet>
+				<aon:outputText value="#{to.fechaAlta}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_tipo_it}" />
+				</f:facet>
+				<aon:outputText value="#{to.tipoIT}" />
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_payroll_recaida}" />
+				</f:facet>
+				<aon:outputText value="&#160;" styleClass="aon-icon-check"
+					rendered="#{!to.recaida}" />
+				<aon:outputText value="&#160;" styleClass="aon-icon-checked"
+					rendered="#{to.recaida}" />
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_procesado}" />
+				</f:facet>
+				<aon:outputText value="&#160;" styleClass="aon-icon-check"
+					rendered="#{!to.procesada}" />
+				<aon:outputText value="&#160;" styleClass="aon-icon-checked"
+					rendered="#{to.procesada}" />
+			</aon:column>
+		</aon:editDataTable>
+	</aon:panel>
+
+</ui:composition>

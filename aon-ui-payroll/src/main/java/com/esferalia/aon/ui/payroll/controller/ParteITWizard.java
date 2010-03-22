@@ -21,17 +21,23 @@ import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
+import com.esferalia.aon.payroll.core.it.IParteIT;
+import com.esferalia.aon.payroll.core.it.IParteITDAO;
+import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class ParteITWizard implements Serializable, IDataModelDataProvider,ICriteriaProvider {
 	
 	private static final long serialVersionUID = -6091663393601321263L;
 	
 	private IEmpleadoDAO empleadoDAO;
+	private IParteITDAO parteITDAO;
 	private EmpleadoParams params;
 	private DataModel empleadoModel;
 	private IPersona persona;
+	private IEmpleado empleado;
 	private DataModel empleosModel; 
-
+	private DataModel partesModel; 
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0","parteITWizard_step1","parteITWizard_step2","parteITWizard_step3" };
 	
@@ -41,10 +47,17 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		}
 		return empleadoDAO;
 	}
+	public IParteITDAO getParteITDAO() {
+		if (parteITDAO == null) {
+			parteITDAO = ParteITDAOFactory.getInstance().getParteITDAO();
+		}
+		return parteITDAO;
+	}
 
 	public EmpleadoParams getParams() {
 		if (params == null) {
 			params = new EmpleadoParams();
+			params.setFinalizados(true);
 		}
 		return params;
 	}
@@ -66,12 +79,24 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		this.persona = persona;
 	}
 	
+	public IEmpleado getEmpleado() {
+		return empleado;
+	}
+	public void setEmpleado(IEmpleado empleado) {
+		this.empleado = empleado;
+	}
+
 	public DataModel getEmpleosModel() {
 		try {
 			if (empleosModel == null) {
 				EmpleadoParams ep = new EmpleadoParams();
+				ep.setFinalizados(false);
 				ep.setPersonaId( Integer.toString( getPersona().getId()));
 				List<IEmpleado> list = getEmpleadoDAO().getEmpleados(ep);
+				if (list.size()>0) {
+					setEmpleado(list.get(0));
+					onChangeEmpleado();
+				}
 				empleosModel = new ListDataModel(list); 
 			}
 			return empleosModel;
@@ -92,9 +117,27 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		this.empleadoModel = empleadoModel;
 	}
 
+	public DataModel getPartesModel() {
+		try {
+			if (partesModel == null) {
+				List<IParteIT> list = getParteITDAO().getPartesEmpleado(getEmpleado());
+				partesModel = new ListDataModel(list); 
+			}
+			return partesModel;
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}			
+		
+	}
+
+	public void setPartesModel(DataModel partesModel) {
+		this.partesModel = partesModel;
+	}
+
 	// Action Listeners
 	public void onStart(ActionEvent event) {
-		params = new EmpleadoParams();
+		params = null;
 		setCurrentStep(0);
 		setEmpleadoModel(null);
 	}
@@ -113,6 +156,15 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		setCurrentStep(2);
 	}
 	
+	public void onSelectEmpleado(ActionEvent event) {
+		IEmpleado empleado = (IEmpleado) getEmpleosModel().getRowData();
+		setEmpleado(empleado);
+		onChangeEmpleado();	
+	}
+	private void onChangeEmpleado() {
+		partesModel = null;
+	}
+
 	@Override
 	public int getPageLimit() {
 		return 20;

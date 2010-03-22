@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText
+				value="#{payrollBundle.payroll_datos_parteIT}" />
+		</f:facet>
+		<aon:panelGrid columns="2" dir="true" width="auto">
+<!-- 		
+			<aon:outputLabel
+				value="#{appBundle.aon_payroll_newpayroll_status_change}" />
+			<aon:div id="trabajadorStatus">
+				<aon:outputText rendered="#{itWizard.finished}"
+					value="#{itWizard.parteRen.status}" />
+				<aon:selectOneMenu id="estado" rendered="#{!itWizard.finished}"
+					value="#{itWizard.parteRen.status}">
+					<f:selectItems value="#{itWizard.listaItStatus}" />
+					<a4j:support event="onchange" reRender="trabajadorStatus">
+						<aon:actionListener method="#{itWizard.onChangeStatus}" />
+					</a4j:support>
+				</aon:selectOneMenu>
+				<aon:outputLabel rendered="#{itWizard.renovacion}"
+					value="&#160;#{appBundle.aon_payroll_newpayroll_it_ren_number}" />
+				<aon:inputText size="2" rendered="#{itWizard.renovacion}"
+					value="#{itWizard.numParteRenovacion}" />
+			</aon:div>
+
+			<aon:outputLabel
+				value="#{appBundle.aon_payroll_principales_mntoit_fecha}" />
+			<aon:div>
+				<aon:outputText rendered="#{itWizard.finished}"
+					value="#{itWizard.parteRen.fecconf}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="fecha" value="#{itWizard.parteRen.fecconf}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					rendered="#{!itWizard.finished}" required="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{appBundle.aon_date_pattern}" />
+			</aon:div>
+
+			<aon:outputLabel
+				value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
+			<aon:div>
+				<aon:outputText rendered="#{itWizard.finished}"
+					value="#{itWizard.parteRen.numcol}" />
+				<aon:inputText id="colegiado" rendered="#{!itWizard.finished}"
+					value="#{itWizard.parteRen.numcol}">
+					<a4j:support event="onblur">
+						<aon:actionListener method="#{itWizard.onCheckNumCol}" />
+					</a4j:support>
+				</aon:inputText>
+			</aon:div>
+
+			<aon:outputLabel
+				value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
+			<aon:div>
+				<aon:outputText rendered="#{itWizard.finished}"
+					value="#{itWizard.parteRen.cias}" />
+				<aon:inputText id="cias" rendered="#{!itWizard.finished}"
+					value="#{itWizard.parteRen.cias}">
+					<a4j:support event="onblur">
+						<aon:actionListener method="#{itWizard.onCheckCias}" />
+					</a4j:support>
+				</aon:inputText>
+			</aon:div>
+
+			<aon:outputLabel
+				value="#{appBundle.aon_payroll_principales_inciit_tipoit}" />
+			<aon:div>
+				<aon:outputText rendered="#{itWizard.finished}"
+					value="#{itWizard.parteRen.parteit.tipoit}" />
+				<aon:selectOneMenu id="tipoit" rendered="#{!itWizard.finished}"
+					value="#{itWizard.parteRen.parteit.tipoit}">
+					<f:selectItems value="#{itWizard.listaTipoIt}" />
+				</aon:selectOneMenu>
+			</aon:div>
+
+			<aon:outputLabel rendered="#{itWizard.recaida}"
+				value="#{appBundle.aon_payroll_principales_integralTra_recaida_ant_it}" />
+			<aon:selectBooleanCheckbox rendered="#{itWizard.recaida}"
+				disabled="#{itWizard.finished}"
+				value="#{itWizard.parteRen.parteit.recaida}" />
+ -->
+		</aon:panelGrid>
+	</aon:panel>
+</ui:composition>

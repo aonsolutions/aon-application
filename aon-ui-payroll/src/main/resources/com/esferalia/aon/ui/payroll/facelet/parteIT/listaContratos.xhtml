@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_datos_contrato}" />
+		</f:facet>
+		<aon:dataTable id="contratosData"
+			value="#{parteITWizard.empleosModel}" var="to" rows="20"
+			columnClasses="
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-dateColumn, aon-editDataTable-dateColumn">
+
+			<aon:rowSelector actionListener="#{parteITWizard.onSelectEmpleado}"
+				reRender="parteitList" />
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.empresa.name}" />
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha_ini}" />
+				</f:facet>
+				<aon:outputText value="#{to.fechaInicio}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha_fin}" />
+				</f:facet>
+				<aon:outputText value="#{to.fechaFin}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+		</aon:dataTable>
+	</aon:panel>
+
+</ui:composition>

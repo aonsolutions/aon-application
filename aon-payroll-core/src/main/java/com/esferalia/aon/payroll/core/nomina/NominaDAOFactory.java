@@ -21,6 +21,9 @@ public class NominaDAOFactory {
 	}
 	
 	public INominaDAO getNominaDAO() {
+		if (nominaDAO == null) {
+			throw new IllegalStateException("No hay un INominaDAO registrado.");
+		}
 		return nominaDAO;
 	}
 	

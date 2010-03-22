@@ -27,8 +27,7 @@ public class ParteITCalculator {
 			params.setYear(year);
 			params.setTipo(TipoNomina.NORMAL);
 			NominaDAOFactory f = NominaDAOFactory.getInstance();
-			INominaDAO nominaDAO = NominaDAOFactory.getInstance()
-					.getNominaDAO();
+			INominaDAO nominaDAO = f.getNominaDAO();
 			INomina nomina = nominaDAO.getNomina(params);
 			if (nomina == null) {
 				throw new CalculatorException(
