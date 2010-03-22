@@ -14,8 +14,6 @@
 					value="#{financeBundle.finance_model_347_report_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSearchButton" value="true" />
-				
-
 				<ui:define name="toolbarActions">
 				</ui:define>
 
@@ -26,7 +24,6 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}" />			
 					<h:commandLink value="&#160;" target="_blank"
-						disabled="true"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="model347List" />
