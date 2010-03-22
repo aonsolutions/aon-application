@@ -36,14 +36,14 @@ public abstract class ParteITAbs implements IParteIT {
 			return 4;
 		}
 
-		// Si se est√° grabando una baja, uno de los datos, n- colegiado o CIAS
+		// Si se est· grabando una baja, uno de los datos, n∫ colegiado o CIAS
 		// es requerido.
 		if (StringUtils.isBlank(getCiasBaja())
 				&& StringUtils.isBlank(getNumeroColegiadoBaja())) {
 			return 5;
 		}
 
-		// Si se est√° grabando una alta, uno de los datos, n- colegiado o CIAS
+		// Si se est· grabando una alta, uno de los datos, n∫ colegiado o CIAS
 		// es requerido.
 		if (getFechaAlta() != null
 				&& StringUtils.isBlank(getCiasAlta())
@@ -65,12 +65,12 @@ public abstract class ParteITAbs implements IParteIT {
 			return 10;
 		}
 		
-		//No se genera Parte de I.T. por Maternidad por tratarse de un Trabajador Mayor de 65 a√±os y m√°s de 35 a√±os Cotizados.
+		//No se genera Parte de I.T. por Maternidad por tratarse de un Trabajador Mayor de 65 aÒos y m·s de 35 aÒos Cotizados.
 		if (getEmpleado().isMayor65() && getTipoContingencia() == TipoContingencia.MATERNIDAD) {
 			return 11;
 		}
 		
-		//El el caso de reca√≠da, debe indicar la primera I.T.
+		//El el caso de recaÌda, debe indicar la primera I.T.
 		if (isRecaida() && getParteITRecaida() == null) {
 			return 12;
 		}

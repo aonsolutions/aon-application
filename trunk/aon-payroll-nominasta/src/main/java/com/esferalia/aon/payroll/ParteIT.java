@@ -8,7 +8,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -42,7 +41,7 @@ public class ParteIT extends ParteITAbs implements ITransferObject  {
 	private String ciasAlta;
 	private Boolean altaProcesada;
 	private TipoIT tipoIT;
-	private Boolean recaida;
+	private String recaidaBD;
 	private IParteIT parteITRecaida;
 	private Prorrateo prorrateo;
 	private Double baseRetribucionPeriodoAnterior;
@@ -52,7 +51,7 @@ public class ParteIT extends ParteITAbs implements ITransferObject  {
 	private Double baseDiariaAccidentes;
 	private Double prestacionDiaria60;
 	private Double prestacionDiaria75;
-	private Boolean procesada;
+	private String procesadaBD;
 	private Boolean riesgo;
 	private IEmpleado empleado;
 
@@ -203,15 +202,22 @@ public class ParteIT extends ParteITAbs implements ITransferObject  {
 	}
 	
 
-	@Type(type = "siNoType")
 	@Column(name = "recaida", length = 1)
+	public String getRecaidaBD() {
+		return recaidaBD;
+	}
+	public void setRecaidaBD(String recaidaBD) {
+		this.recaidaBD = recaidaBD;
+	}
+	
 	@Override
-	public Boolean isRecaida() {
-		return (recaida != null)?recaida:Boolean.FALSE;
+	@Transient
+	public boolean isRecaida() {
+		return ("S".equals(getRecaidaBD()));
 	}
 	@Override
-	public void setRecaida(Boolean recaida) {
-		this.recaida = (recaida != null)?recaida:Boolean.FALSE;
+	public void setRecaida(boolean recaida) {
+		setRecaidaBD((recaida)?"S":"N");
 	}
 
 	//@ManyToOne(targetEntity = ParteIT.class,fetch = FetchType.EAGER)
@@ -336,15 +342,21 @@ public class ParteIT extends ParteITAbs implements ITransferObject  {
 		
 	}
 
-	@Type(type = "siNoType")
 	@Column(name = "procesado", length = 1)
+	public String getProcesadaBD() {
+		return this.procesadaBD;
+	}
+	public void setProcesadaBD(String procesadaBD) {
+		this.procesadaBD = procesadaBD;
+	}
 	@Override
+	@Transient
 	public boolean isProcesada() {
-		return this.procesada;
+		return ("S".equals(getProcesadaBD()));
 	}
 	@Override
 	public void setProcesada(boolean procesada) {
-		this.procesada = procesada;
+		setProcesadaBD((procesada)?"S":"N");
 	}
 
 	@Type(type = "siNoType")

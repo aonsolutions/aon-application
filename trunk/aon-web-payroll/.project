@@ -7,6 +7,7 @@
 		<project>aon-payroll-nominasta</project>
 		<project>aon-core</project>
 		<project>aon-payroll-core</project>
+		<project>aon-ui-resources</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

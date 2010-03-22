@@ -45,7 +45,14 @@
 						value="#{payrollBundle.payroll_empresa}" />
 					<aon:inputText id="empresa" size="20" maxlength="25"
 						value="#{parteITWizard.params.empresa}" />
-
+					
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="finalizados" 
+							value="#{parteITWizard.params.finalizados}" />
+						<aon:outputLabel for="empresa"
+							value="#{payrollBundle.payroll_contratos_fin}" />
+					</aon:div>
 				</ui:define>
 			</ui:decorate>
 	</ui:define>

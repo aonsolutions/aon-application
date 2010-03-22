@@ -35,25 +35,23 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 	private static String APEL_ALIAS = null;
 	private static String APEL2_ALIAS = null;
 	private static String EMPR_ALIAS = null;
+	private static String FEC_INI_ALIAS = null; 
+	private static String FEC_FIN_ALIAS = null; 
 
 	static {
 		EmpleadoDAOFactory.register(new EmpleadoDAO());
 
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
-			PER_ALIAS = bean
-			.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_ID);
-			DOC_ALIAS = bean
-			.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT);
-			NSS_ALIAS = bean
-					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NUM_SS);
-			NOMBRE_ALIAS = bean
-					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME);
-			APEL_ALIAS = bean
-					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME);
-			APEL2_ALIAS = bean
-					.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME);
+			PER_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_ID);
+			DOC_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT);
+			NSS_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NUM_SS);
+			NOMBRE_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME);
+			APEL_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME);
+			APEL2_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME);
 			EMPR_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_EMPRESA_NAME);
+			FEC_INI_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_INICIO);
+			FEC_FIN_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -64,7 +62,9 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 	public List<IEmpleado> getEmpleados(EmpleadoParams params) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
-			List<?> list = bean.getList(getCriteria(params));
+			Criteria c = getCriteria(params);
+			c.addOrder(FEC_INI_ALIAS, false);
+			List<?> list = bean.getList(c);
 			return (List<IEmpleado>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
@@ -97,6 +97,9 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 			if (!StringUtils.isBlank(params.getEmpresa())) {
 				c.addExpression(EMPR_ALIAS, params.getEmpresa());
 			}
+			if (params.isFinalizados()) {
+				c.addNullExpression(FEC_FIN_ALIAS);
+			}
 			return c;
 		} catch (ExpressionException e) {
 			throw new PayrollException(e);
@@ -119,7 +122,9 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 			throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
-			List<?> list = bean.getList(getCriteria(params), start, count);
+			Criteria c = getCriteria(params);
+			c.addOrder(FEC_INI_ALIAS, false);
+			List<?> list = bean.getList(c, start, count);
 			return (List<IEmpleado>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);

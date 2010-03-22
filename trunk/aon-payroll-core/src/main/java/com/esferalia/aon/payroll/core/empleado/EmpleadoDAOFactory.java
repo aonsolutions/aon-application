@@ -17,6 +17,9 @@ public class EmpleadoDAOFactory {
 	}
 
 	public IEmpleadoDAO getEmpleadoDAO() {
+		if (empleadoDAO == null) {
+			throw new IllegalStateException("No hay un IEmpleadoDAO registrado.");
+		}
 		return empleadoDAO;
 	}
 

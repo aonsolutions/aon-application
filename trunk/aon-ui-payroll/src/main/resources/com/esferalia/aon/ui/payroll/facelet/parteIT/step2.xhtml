@@ -15,56 +15,19 @@
 
 	<ui:define name="step_content">
 
-		<aon:panel>
-			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_datos_empleado}" />
-			</f:facet>
-			<aon:panelGrid columns="6" dir="true" width="100%">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/empleadoHeader.xhtml" />
+		
+		<h:panelGrid columns="2" style="width: 100%;" columnClasses="aon-width-400, aon-width-auto">
 
-				<aon:outputText value="#{payrollBundle.payroll_documento}" />
-				<aon:outputText
-					value="#{parteITWizard.persona.registry.document.value}" />
-
-				<aon:outputText value="#{payrollBundle.payroll_nombre}" />
-				<aon:outputText value="#{parteITWizard.persona.fullName}" />
-
-				<aon:outputText value="#{payrollBundle.payroll_numss}" />
-				<aon:outputText value="#{parteITWizard.persona.numSS}" />
-			</aon:panelGrid>
-		</aon:panel>
-
-		<aon:panel>
-			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_datos_contrato}" />
-			</f:facet>
-			<aon:dataTable id="contratosData"
-				value="#{parteITWizard.empleosModel}" var="to" rows="20"
-				columnClasses="
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-dateColumn, aon-editDataTable-dateColumn">
-
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_empresa}" />
-					</f:facet>
-					<aon:outputText value="#{to.empresa.name}" />
-				</aon:column>
-
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_fecha_inicio}" />
-					</f:facet>
-					<aon:outputText value="#{to.fechaInicio}" />
-				</aon:column>
-
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_fecha_fin}" />
-					</f:facet>
-					<aon:outputText value="#{to.fechaFin}" />
-				</aon:column>
-			</aon:dataTable>
-		</aon:panel>
+			<h:panelGrid columns="1" style="width: 100%;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/listaContratos.xhtml" />
+		
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/datosIT.xhtml" />
+			</h:panelGrid>
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/listaPartes.xhtml" />
+		</h:panelGrid>
+		
 	</ui:define>
 
 </ui:composition>

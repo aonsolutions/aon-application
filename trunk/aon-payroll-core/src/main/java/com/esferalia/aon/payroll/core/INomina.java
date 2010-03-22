@@ -13,7 +13,7 @@ public interface INomina extends Serializable{
 	Integer getMes();
 	void setMes(Integer mes);
 	
-	// AÃ±o de la nomina
+	// Año de la nomina
 	Integer getYear();
 	void setYear(Integer year);
 	
@@ -37,11 +37,11 @@ public interface INomina extends Serializable{
 	Double getBaseAccidentesTrabajoSinHorasExtras();
 	void setBaseAccidentesTrabajoSinHorasExtras(Double baseAccidentesTrabajoSinHorasExtras);
 	
-	//Horas Estras Estructurales
+	//Horas Extras Estructurales
 	Double getBaseHorasExtrasEstructurales();
 	void setBaseHorasExtrasEstructurales(Double baseHorasExtrasEstrcturales);
 
-	//Horas Estras No Estructurales
+	//Horas Extras No Estructurales
 	Double getBaseHorasExtrasNoEstructurales();
 	void setBaseHorasExtrasNoEstructurales(Double baseHorasExtrasNoEstrcturales);
 	
