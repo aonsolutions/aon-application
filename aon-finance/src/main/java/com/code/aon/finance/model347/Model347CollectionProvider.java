@@ -9,13 +9,14 @@ import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.finance.enumeration.Model347ReportOrder;
 import com.code.aon.finance.enumeration.Model347Type;
 import com.code.aon.registry.RegistryDocument;
 
 public class Model347CollectionProvider {
 
 	public List<Model347> getList(Model347Parameters params) throws ManagerBeanException {
-		PreparedStatement ps = null;
+		PreparedStatement ps = null; 
 		ResultSet rs = null;
 		try {
 			StringWriter stmt = new StringWriter();
@@ -67,8 +68,18 @@ public class Model347CollectionProvider {
 			}
 			stmt.append("GROUP BY  key347,i.rdocument,i.registry,i.rname,geozone,geozoneName,country,countryName ");
 			stmt.append("having total > ? ");
-			stmt.append("ORDER BY  key347,total desc ");
-
+			if (params.getOrder() == null) {
+				stmt.append(" ORDER BY key347,total desc");
+			} else if (params.getOrder() == Model347ReportOrder.INVOICE_REGISTRY_DOCUMENT) {
+				stmt.append(" ORDER BY key347,i.rdocument,total desc");
+			} else if (params.getOrder() == Model347ReportOrder.INVOICE_REGISTRY_ID) {
+				stmt.append(" ORDER BY key347,i.registry,total desc");
+			} else if (params.getOrder() == Model347ReportOrder.INVOICE_REGISTRY_NAME) {
+				stmt.append("ORDER BY key347,i.rname,total desc");
+			}else if (params.getOrder() == Model347ReportOrder.INVOICE_TOTAL_AMOUNT) {
+				stmt.append("ORDER BY key347,total desc");
+			}
+		
 			String sessionName = HibernateUtil.getSessionFactoryName();
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
