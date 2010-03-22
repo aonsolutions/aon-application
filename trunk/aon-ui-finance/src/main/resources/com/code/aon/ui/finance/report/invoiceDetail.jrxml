@@ -96,7 +96,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-8" mode="Opaque" x="437" y="0" width="24" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-8" mode="Opaque" x="426" y="0" width="35" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -109,7 +109,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_discount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-9" mode="Opaque" x="372" y="0" width="66" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-9" mode="Opaque" x="372" y="0" width="54" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -151,8 +151,8 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-4" x="437" y="0" width="24" height="14">
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement key="textField-4" x="426" y="0" width="35" height="14">
 					<printWhenExpression><![CDATA[new Boolean(!$F{discountExpression}.getDiscountExpr().equals("0.0"))]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -164,7 +164,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{discountExpression}.getDiscountExpr()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{discountExpression}.getDiscountExpr()+" %"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="461" y="0" width="74" height="14">
@@ -182,7 +182,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{taxableBase}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-3" x="372" y="0" width="65" height="14">
+				<reportElement key="textField-3" x="372" y="0" width="54" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
