@@ -14,9 +14,10 @@
 				value="#{payrollBundle.payroll_datos_parteIT}" />
 		</f:facet>
 		<aon:panelGrid columns="2" dir="true" width="auto">
-<!-- 		
+
+<!--  
 			<aon:outputLabel
-				value="#{appBundle.aon_payroll_newpayroll_status_change}" />
+				value="#{payrollBundle.payroll_tipo_parte}" />
 			<aon:div id="trabajadorStatus">
 				<aon:outputText rendered="#{itWizard.finished}"
 					value="#{itWizard.parteRen.status}" />
@@ -32,65 +33,73 @@
 				<aon:inputText size="2" rendered="#{itWizard.renovacion}"
 					value="#{itWizard.numParteRenovacion}" />
 			</aon:div>
+-->				
 
-			<aon:outputLabel
-				value="#{appBundle.aon_payroll_principales_mntoit_fecha}" />
+			<aon:outputLabel value="#{payrollBundle.payroll_fecha}" />
 			<aon:div>
+<!--  
 				<aon:outputText rendered="#{itWizard.finished}"
-					value="#{itWizard.parteRen.fecconf}">
+					value="#{parteITWizard.parteIT.fecconf}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate id="fecha" value="#{itWizard.parteRen.fecconf}"
+-->			
+				<aon:selectInputDate id="fecha" value="#{parteITWizard.parteIT.fechaBaja}"
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
-					rendered="#{!itWizard.finished}" required="true"
+					required="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{appBundle.aon_date_pattern}" />
 			</aon:div>
 
-			<aon:outputLabel
-				value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
+			<aon:outputLabel value="#{payrollBundle.payroll_colegiado}" />
 			<aon:div>
+<!--  
 				<aon:outputText rendered="#{itWizard.finished}"
 					value="#{itWizard.parteRen.numcol}" />
-				<aon:inputText id="colegiado" rendered="#{!itWizard.finished}"
-					value="#{itWizard.parteRen.numcol}">
+-->			
+				<aon:inputText id="colegiado" 
+					value="#{parteITWizard.parteIT.numeroColegiadoBaja}">
+<!--  
 					<a4j:support event="onblur">
 						<aon:actionListener method="#{itWizard.onCheckNumCol}" />
 					</a4j:support>
+-->
 				</aon:inputText>
 			</aon:div>
 
-			<aon:outputLabel
-				value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
+			<aon:outputLabel value="#{payrollBundle.payroll_cias}" />
 			<aon:div>
+<!--  
 				<aon:outputText rendered="#{itWizard.finished}"
 					value="#{itWizard.parteRen.cias}" />
-				<aon:inputText id="cias" rendered="#{!itWizard.finished}"
-					value="#{itWizard.parteRen.cias}">
+-->
+				<aon:inputText id="cias" 
+					value="#{parteITWizard.parteIT.ciasBaja}">
+<!--  
 					<a4j:support event="onblur">
 						<aon:actionListener method="#{itWizard.onCheckCias}" />
 					</a4j:support>
+-->
 				</aon:inputText>
 			</aon:div>
 
-			<aon:outputLabel
-				value="#{appBundle.aon_payroll_principales_inciit_tipoit}" />
+<!--  
+			<aon:outputLabel vslue="#{payrollBundle.payroll_tipo_it}" />
 			<aon:div>
 				<aon:outputText rendered="#{itWizard.finished}"
 					value="#{itWizard.parteRen.parteit.tipoit}" />
-				<aon:selectOneMenu id="tipoit" rendered="#{!itWizard.finished}"
-					value="#{itWizard.parteRen.parteit.tipoit}">
+				<aon:selectOneMenu id="tipoit" 
+					value="#{parteITWizard.parteIT.tipoit}">
 					<f:selectItems value="#{itWizard.listaTipoIt}" />
 				</aon:selectOneMenu>
 			</aon:div>
+-->			
 
-			<aon:outputLabel rendered="#{itWizard.recaida}"
-				value="#{appBundle.aon_payroll_principales_integralTra_recaida_ant_it}" />
-			<aon:selectBooleanCheckbox rendered="#{itWizard.recaida}"
-				disabled="#{itWizard.finished}"
-				value="#{itWizard.parteRen.parteit.recaida}" />
- -->
+			<aon:outputLabel
+				value="#{payrollBundle.payroll_recaida}" />
+			<aon:selectBooleanCheckbox 
+				value="#{parteITWizard.parteIT.recaida}" />
+
 		</aon:panelGrid>
 	</aon:panel>
 </ui:composition>

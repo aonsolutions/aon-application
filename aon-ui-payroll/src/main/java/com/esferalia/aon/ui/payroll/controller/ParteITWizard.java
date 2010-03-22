@@ -24,7 +24,6 @@ import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class ParteITWizard implements Serializable, IDataModelDataProvider,ICriteriaProvider {
 	
@@ -40,7 +39,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private DataModel partesModel; 
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0","parteITWizard_step1","parteITWizard_step2","parteITWizard_step3" };
+	private IParteIT parteIT;
 	
+	public IParteIT getParteIT() {
+		return parteIT;
+	}
+	public void setParteIT(IParteIT parteIT) {
+		this.parteIT = parteIT;
+	}
 	public IEmpleadoDAO getEmpleadoDAO() {
 		if (empleadoDAO == null) {
 			empleadoDAO = EmpleadoDAOFactory.getInstance().getEmpleadoDAO();
