@@ -34,7 +34,7 @@ public class ApplicationOption {
 	private String description;
 	
 	/** The category. */
-	private String category;
+	private ApplicationCategory category;
 	
 	private String xml;	
 	
@@ -97,7 +97,7 @@ public class ApplicationOption {
 	 * 
 	 * @return the category
 	 */
-	public String getCategory() {
+	public ApplicationCategory getCategory() {
 		return category;
 	}
 
@@ -106,7 +106,7 @@ public class ApplicationOption {
 	 * 
 	 * @param category the new category
 	 */
-	public void setCategory(String category) {
+	public void setCategory(ApplicationCategory category) {
 		this.category = category;
 	}
 	
