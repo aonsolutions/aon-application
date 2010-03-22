@@ -42,7 +42,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aon_finance_payment"
-											action="finance_search"
+											action="finance_search-Payment"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{financeBundle.finance_payment_module}" />
 									</aon:div>									
@@ -71,7 +71,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseAccumulate"
-											action="sales_accumulate_search" 
+											action="sales_accumulate_search-Purchase" 
 											value="#{statBundle.stat_menu_acumulado2}">
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -80,7 +80,7 @@
 								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseCategoryStats"
-											action="category_stats_search" 
+											action="category_stats_search-Purchase" 
 											value="#{statBundle.stat_menu_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -89,7 +89,7 @@
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseSummaryStats"
-											action="summary_stats_search" 
+											action="summary_stats_search-Purchase" 
 											value="#{statBundle.stat_menu_summary}"  >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -98,7 +98,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseABCStats"
-											action="abc_stats_search" 
+											action="abc_stats_search-Purchase" 
 											value="#{statBundle.stat_abc_supplier}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -107,7 +107,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseABCStatsProduct"
-											action="abc_stats_searchProduct" 
+											action="abc_stats_searchProduct-Purchase" 
 											value="#{statBundle.stat_abc_product}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -116,7 +116,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseABCStatsCategory"
-											action="abc_stats_searchCategory" 
+											action="abc_stats_searchCategory-Purchase" 
 											value="#{statBundle.stat_abc_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
