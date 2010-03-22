@@ -3,13 +3,13 @@
 	<parent>
 		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>5.0.0</version>
+		<version>5.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.webmail</artifactId>
 	<name>AON UI WEBMAIL</name>
-	<version>5.0.0</version>
+	<version>5.0.1</version>
 	<description>AON UI WEBMAIL</description>
 	<dependencies>
 		<dependency>
