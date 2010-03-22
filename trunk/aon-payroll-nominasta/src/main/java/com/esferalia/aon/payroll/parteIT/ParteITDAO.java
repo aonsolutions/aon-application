@@ -27,9 +27,9 @@ public class ParteITDAO implements IParteITDAO {
 		ParteITDAOFactory.register(new ParteITDAO());
 
 		try {
-			IManagerBean nominaBean = BeanManager.getManagerBean(ParteIT.class);
-			EMP_ALIAS = nominaBean.getFieldName(IPayrollAlias.PARTE_IT_EMPLEADO_ID);
-			FEC_INI_ALIAS = nominaBean.getFieldName(IPayrollAlias.PARTE_IT_ID_FECHA_BAJA);
+			IManagerBean parteITBean = BeanManager.getManagerBean(ParteIT.class);
+			EMP_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_EMPLEADO_ID);
+			FEC_INI_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_ID_FECHA_BAJA);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -67,16 +67,16 @@ public class ParteITDAO implements IParteITDAO {
 	}
 
 	@Override
-	public IParteIT initialize(IParteIT parteIT) throws PayrollException {
-		if (parteIT == null) {
-			throw new IllegalArgumentException("ParteIT a inicializar no puede ser nulo.");
-		}
-		if (parteIT.getEmpleado() == null || parteIT.getEmpleado().getId() == null) {
+	public IParteIT initialize(IEmpleado  empleado) throws PayrollException {
+		if (empleado == null || empleado.getId() == null) {
 			throw new IllegalArgumentException("El Empleado del parteIT no puede ser nulo.");
 		}
+		ParteIT parteIT = new ParteIT();
+		parteIT.setEmpleado(empleado);
 		List<IParteIT> list = getPartesEmpleado(parteIT.getEmpleado());
 		if (list.size() > 0) {
-			IParteIT ultimoParte = list.get(0);
+			setLastParteIT(list.get(0));
+			IParteIT ultimoParte = getLastParteIT();
 			parteIT.setCiasBaja(ultimoParte.getCiasBaja());
 			parteIT.setNumeroColegiadoBaja(ultimoParte.getCiasBaja());
 			parteIT.setCiasAlta(ultimoParte.getCiasAlta());
@@ -84,6 +84,18 @@ public class ParteITDAO implements IParteITDAO {
 		}
 		return parteIT;
 	}
+	
+	
+	private IParteIT lastParteIT;
+
+	public IParteIT getLastParteIT() {
+		return lastParteIT;
+	}
+
+	public void setLastParteIT(IParteIT lastParteIT) {
+		this.lastParteIT = lastParteIT;
+	}
+	
 }
 
 /*

@@ -9,6 +9,6 @@ import com.esferalia.aon.payroll.core.IEmpleado;
 public interface IParteITDAO {
 	
 	List<IParteIT> getPartesEmpleado( IEmpleado empleado) throws PayrollException;
-	IParteIT initialize( IParteIT parteIT) throws PayrollException;
+	IParteIT initialize(IEmpleado empleado) throws PayrollException;
 	Criteria getCriteria(ParteITParams params) throws PayrollException;
 }
