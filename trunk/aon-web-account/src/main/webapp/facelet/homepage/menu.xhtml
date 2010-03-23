@@ -4,44 +4,42 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
-	<aon:form>
-		<aon:menuBar id="mainMenu">
-			<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
-				<aon:commandLink id="masters"
-					value="#{appBundle.account_masters}"
-					action="menu_masters" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-master" />
-				<aon:commandLink id="pred_entries"
-					value="#{appBundle.account_pred_entries}"
-					action="menu_pred_entries" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-account-entry" />
-				<aon:commandLink id="reports"
-					value="#{appBundle.account_reports}"
-					action="menu_reports" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-account-reports" />
-				<aon:commandLink id="balance"
-					value="#{accountingBundle.accounting_balance}"
-					action="menu_balance" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-balance" />
-				<aon:commandLink id="fixed_assets"
-					value="#{appBundle.account_fixed_assets}"
-					action="menu_fixed_assets" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-fixed-asset" />
-				<aon:commandLink id="budget"
-					value="#{appBundle.account_budget}"
-					action="menu_budget" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-offer" />
-				<aon:commandLink id="finance"
-					value="#{financeBundle.finance_menu_group}"
-					action="menu_finance" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-treasury" />
-				<aon:commandLink id="configuration"
-					value="#{appBundle.account_configuration}"
-					action="menu_configuration" immediate="true"
-					styleClass="aon-top-menu-item aon-icon-config" />
-			</c:if>
-		</aon:menuBar>
-	</aon:form>
+	<ui:define name="menuContent">
+		<aon:commandLink id="masters"
+			value="#{appBundle.account_masters}"
+			action="menu_masters" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-master" />
+		<aon:commandLink id="pred_entries"
+			value="#{appBundle.account_pred_entries}"
+			action="menu_pred_entries" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-account-entry" />
+		<aon:commandLink id="reports"
+			value="#{appBundle.account_reports}"
+			action="menu_reports" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-account-reports" />
+		<aon:commandLink id="balance"
+			value="#{accountingBundle.accounting_balance}"
+			action="menu_balance" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-balance" />
+		<aon:commandLink id="fixed_assets"
+			value="#{appBundle.account_fixed_assets}"
+			action="menu_fixed_assets" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-fixed-asset" />
+		<aon:commandLink id="budget"
+			value="#{appBundle.account_budget}"
+			action="menu_budget" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-offer" />
+		<aon:commandLink id="finance"
+			value="#{financeBundle.finance_menu_group}"
+			action="menu_finance" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-treasury" />
+		<aon:commandLink id="configuration"
+			value="#{appBundle.account_configuration}"
+			action="menu_configuration" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />
+	</ui:define>
+	
 </ui:composition>
