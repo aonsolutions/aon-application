@@ -40,12 +40,13 @@
 											action="invoicingGroup_list" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payMethod" 
-											action="payMethod" 
+										<aon:commandLink id="payMethod-sales" 
+											action="payMethod-sales" 
 											value="#{configBundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bank" action="bank"
+										<aon:commandLink id="bank-sales"
+											action="bank-sales"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>																											
 								</aon:div>
@@ -76,7 +77,8 @@
 											action="invoiceRemover_search" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="aon_finance_charge" action="finance_search"
+										<aon:commandLink id="financeCharge-sales"
+											action="finance_search-sales"
 											actionListener="#{finance.onEditSearchCharge}"
 											value="#{financeBundle.finance_charge_module}" />
 									</aon:div>																	
@@ -124,7 +126,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="salesAccumulate"
-											action="sales_accumulate_search-Sales" 
+											action="sales_accumulate_search-sales" 
 											value="#{statBundle.stat_menu_acumulado}">
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -133,7 +135,7 @@
 								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleCategoryStats"
-											action="category_stats_search-Sales" 
+											action="category_stats_search-sales" 
 											value="#{statBundle.stat_menu_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -142,7 +144,7 @@
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleSummaryStats"
-											action="summary_stats_search-Sales" 
+											action="summary_stats_search-sales" 
 											value="#{statBundle.stat_menu_summary}"  >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -151,7 +153,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStats"
-											action="abc_stats_search-Sales" 
+											action="abc_stats_search-sales" 
 											value="#{statBundle.stat_abc_customer}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -160,7 +162,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStatsProduct"
-											action="abc_stats_searchProduct-Sales" 
+											action="abc_stats_searchProduct-sales" 
 											value="#{statBundle.stat_abc_product}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -169,7 +171,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStatsCategory"
-											action="abc_stats_searchCategory-Sales" 
+											action="abc_stats_searchCategory-sales" 
 											value="#{statBundle.stat_abc_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -179,6 +181,7 @@
 							</h:panelGrid>
 							
 							<ui:decorate template="/facelet/menu/utility.xhtml" >
+								<ui:param name="postfix" value="sales" />
 								<ui:define name="afterContent">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="no_fee_customers"
