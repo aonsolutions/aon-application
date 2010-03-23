@@ -17,8 +17,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
+import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
 
 /**
@@ -27,11 +27,11 @@ import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
 @Entity
 // @Lines(joinProperty="emprper")
 @Table(name = "trabajo")
-public class Trabajo implements ITransferObject, ITrabajo {
+public class Contrato implements ITransferObject, IContrato {
 
 	private static final long serialVersionUID = 7479882002322960763L;
 	
-	private TrabajoPK id;
+	private ContratoPK id;
 	private Date fechaFin;
 	private IEmpleado empleado;
 	private String indtp;
@@ -93,10 +93,10 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	@AttributeOverrides( {
 			@AttributeOverride(name = "cdg", column = @Column(name = "cdg", nullable = false, length = 4)),
 			@AttributeOverride(name = "fecini", column = @Column(name = "fecini", nullable = false, length = 10)) })
-	public TrabajoPK getId() {
+	public ContratoPK getId() {
 		return this.id;
 	}
-	public void setId(TrabajoPK id) {
+	public void setId(ContratoPK id) {
 		this.id = id;
 	}
 

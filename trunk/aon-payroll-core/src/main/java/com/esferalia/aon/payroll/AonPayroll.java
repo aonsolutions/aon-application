@@ -2,7 +2,9 @@ package com.esferalia.aon.payroll;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +14,7 @@ import com.code.aon.common.util.Classpath;
 public class AonPayroll {
 
 	private static final String PAYROLL_CONFIG_FILE = "aon-payroll.properties";
+	private static ResourceBundle BUNDLE;
 
 	private static final String PAYROLL_PARTEIT_DAO = "aon.payroll.parteIT.dao.class";
 	private static final String PAYROLL_PARTEIT_CALCULATORS = "aon.payroll.parteIT.calculators.classes";
@@ -53,4 +56,12 @@ public class AonPayroll {
 			throw new PayrollException(e);
 		}
 	}
+	
+	public static String getMessage(Locale locale,String key) {
+		if (BUNDLE == null) {
+			BUNDLE = ResourceBundle.getBundle("com.esferalia.aon.payroll.core.impl.messages");	
+		}
+		return BUNDLE.getString(key);
+	}
+	
 }

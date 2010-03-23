@@ -12,7 +12,7 @@ import javax.persistence.TemporalType;
  * Clave primaria de Trabajo
  */
 @Embeddable
-public class TrabajoPK implements Serializable {
+public class ContratoPK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -43,9 +43,9 @@ public class TrabajoPK implements Serializable {
 			return true;
 		if ((other == null))
 			return false;
-		if (!(other instanceof TrabajoPK))
+		if (!(other instanceof ContratoPK))
 			return false;
-		TrabajoPK castOther = (TrabajoPK) other;
+		ContratoPK castOther = (ContratoPK) other;
 
 		return (this.getCdg() == castOther.getCdg())
 				&& ((this.getFecini() == castOther.getFecini()) || (this

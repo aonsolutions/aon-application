@@ -2,8 +2,8 @@ package com.esferalia.aon.payroll.impl.it;
 
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.INomina;
-import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
@@ -18,8 +18,8 @@ public class ParteITTiempoCompletoCalculator extends ParteITCalculator implement
 	}
 
 	@Override
-	public boolean accept(IParteIT td,ITrabajo trabajo) {
-		TipoContrato ct = trabajo.getTipoContrato();
+	public boolean accept(IParteIT td,IContrato contrato) {
+		TipoContrato ct = contrato.getTipoContrato();
 		return (ct == TipoContrato.TIEMPO_COMPLETO)
 				&& (td.getTipoContingencia() == TipoContingencia.ENFERMEDAD_COMUN || td
 						.getTipoContingencia() == TipoContingencia.MATERNIDAD);

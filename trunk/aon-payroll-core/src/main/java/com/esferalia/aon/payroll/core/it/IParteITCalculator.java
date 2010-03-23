@@ -1,13 +1,13 @@
 package com.esferalia.aon.payroll.core.it;
 
 import com.esferalia.aon.payroll.PayrollException;
-import com.esferalia.aon.payroll.core.ITrabajo;
+import com.esferalia.aon.payroll.core.IContrato;
 
 
 
 public interface IParteITCalculator {
 
-	boolean accept(IParteIT it,ITrabajo trabajo);
+	boolean accept(IParteIT it,IContrato contrato);
 	
 	Double getBaseRetribucionPeriodoAnterior(IParteIT it) throws PayrollException;
 
