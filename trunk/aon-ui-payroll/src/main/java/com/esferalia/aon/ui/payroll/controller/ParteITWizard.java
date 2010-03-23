@@ -168,7 +168,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		onChangeEmpleado();	
 	}
 	private void onChangeEmpleado() {
-		partesModel = null;
+		try {
+			partesModel = null;
+			setParteIT( getParteITDAO().initialize( getEmpleado()) );
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
 	}
 
 	@Override

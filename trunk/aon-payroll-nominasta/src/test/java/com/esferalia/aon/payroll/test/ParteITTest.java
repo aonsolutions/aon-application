@@ -15,7 +15,9 @@ import com.esferalia.aon.payroll.AonPayroll;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Trabajo;
 import com.esferalia.aon.payroll.core.it.IParteITCalculator;
+import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
+import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 
@@ -48,7 +50,9 @@ public class ParteITTest extends TestCase{
 			duplicado.setCiasBaja( original.getCiasBaja());
 			duplicado.setNumeroColegiadoBaja(original.getNumeroColegiadoBaja());
 			
-			int err = duplicado.validate();
+			ParteITDAOFactory fac = ParteITDAOFactory.getInstance();
+			IParteITDAO parteITDAO = fac.getParteITDAO();
+			int err = parteITDAO.validate(duplicado);
 			if (err > 0) {
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.core.impl.messages");
 				fail( bundle.getString("aon_payroll_error_" + err) );
@@ -71,7 +75,7 @@ public class ParteITTest extends TestCase{
 			IParteITCalculator calc = factory.getParteITCalculator( duplicado, trabajo );
 			System.out.println( calc );
 			
-			duplicado.calculate(trabajo);
+			parteITDAO.calculate(duplicado,trabajo);
 			
 			assertEquals(original.getDiasPeriodoAnterior(), duplicado.getDiasPeriodoAnterior());
 			assertEquals(original.getBaseRetribucionPeriodoAnterior(), CommonUtil.round(duplicado.getBaseRetribucionPeriodoAnterior()));
