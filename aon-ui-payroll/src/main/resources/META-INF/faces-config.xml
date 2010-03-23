@@ -10,6 +10,15 @@
 		</resource-bundle>
 	</application>
 
+	<!-- ************ Payroll Collections **************** -->
+	<managed-bean>
+		<managed-bean-name>payrollCollections</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.PayrollCollections
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ Parte IT Wizard **************** -->
 	<managed-bean>
 		<managed-bean-name>parteITWizard</managed-bean-name>
