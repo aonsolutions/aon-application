@@ -28,13 +28,14 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_charge" action="finance_search"
+									<aon:commandLink id="financeCharge-treasury"
+										action="finance_search-treasuryCharge"
 										actionListener="#{finance.onEditSearchCharge}"
 										value="#{financeBundle.finance_charge_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_payment"
-										action="finance_search"
+									<aon:commandLink id="financePayment-treasury"
+										action="finance_search-treasuryPayment"
 										actionListener="#{finance.onEditSearchPayment}"
 										value="#{financeBundle.finance_payment_module}" />
 								</aon:div>
@@ -44,11 +45,13 @@
 										value="#{financeBundle.finance_fbatch_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="payMethod" action="payMethod"
+									<aon:commandLink id="payMethod-treasury"
+										action="payMethod-treasury"
 										value="#{configBundle.config_paymethod_module}" />
 								</aon:div>								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bank" action="bank"
+									<aon:commandLink id="bank-treasury"
+										action="bank-treasury"
 										value="#{configBundle.config_bank_module}" />
 								</aon:div>								
 							</aon:div>
