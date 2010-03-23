@@ -10,7 +10,7 @@
 	<ui:decorate template="/facelet/menu/general.xhtml" >
 		<ui:define name="beforeContent">
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="item" 
+				<aon:commandLink id="item-#{category}" 
 					action="item_search" actionListener="#{item.onEditSearch}"
 					value="#{productBundle.product_module}" />
 			</aon:div>		

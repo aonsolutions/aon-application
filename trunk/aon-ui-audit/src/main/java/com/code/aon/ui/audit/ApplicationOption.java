@@ -7,6 +7,8 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.ui.audit.controller.ApplicationOptionController;
+
 /**
  * The Class ApplicationOption.
  */
@@ -15,8 +17,6 @@ public class ApplicationOption {
 	public static final String ID_PATTERN = "(id)";
 	
 	public static final String VALUE_PATTERN = "(value)";
-	
-	public static final String AON_COMMAND_LINK = "aon:commandLink";
 	
 	public static final String AON_MENU_ITEM = "aon:menuItem";
 
@@ -117,7 +117,7 @@ public class ApplicationOption {
 	}
 
 	public String getMenuItemXml( String prefix ) {
-		return StringUtils.replace(getXml(prefix), AON_COMMAND_LINK, AON_MENU_ITEM);
+		return StringUtils.replace(getXml(prefix), ApplicationOptionController.AON_COMMAND_LINK, AON_MENU_ITEM);
 	}
 	
 	public String getRecentXml( Date date ) {

@@ -41,12 +41,12 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-sales" 
-											action="payMethod-sales" 
+											action="payMethod" 
 											value="#{configBundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="bank-sales"
-											action="bank-sales"
+											action="bank"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>																											
 								</aon:div>
@@ -77,8 +77,8 @@
 											action="invoiceRemover_search" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financeCharge-sales"
-											action="finance_search-sales"
+										<aon:commandLink id="financeCharge"
+											action="finance_search-Charge"
 											actionListener="#{finance.onEditSearchCharge}"
 											value="#{financeBundle.finance_charge_module}" />
 									</aon:div>																	
@@ -116,7 +116,9 @@
 
 						<aon:panelGroup>
 
-							<ui:include src="/facelet/menu/generalProduct.xhtml" />
+							<ui:include src="/facelet/menu/generalProduct.xhtml" >
+								<ui:param name="category" value="sales" />
+							</ui:include>
 
 							<h:panelGrid styleClass="aon-width-all"
 								headerClass="aon-icon-statistics aon-direct-access-panel">
@@ -126,7 +128,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="salesAccumulate"
-											action="sales_accumulate_search-sales" 
+											action="sales_accumulate_search" 
 											value="#{statBundle.stat_menu_acumulado}">
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -135,7 +137,7 @@
 								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleCategoryStats"
-											action="category_stats_search-sales" 
+											action="category_stats_search" 
 											value="#{statBundle.stat_menu_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -144,7 +146,7 @@
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleSummaryStats"
-											action="summary_stats_search-sales" 
+											action="summary_stats_search" 
 											value="#{statBundle.stat_menu_summary}"  >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -153,7 +155,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStats"
-											action="abc_stats_search-sales" 
+											action="abc_stats_search" 
 											value="#{statBundle.stat_abc_customer}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -162,7 +164,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStatsProduct"
-											action="abc_stats_searchProduct-sales" 
+											action="abc_stats_searchProduct" 
 											value="#{statBundle.stat_abc_product}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -171,7 +173,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleABCStatsCategory"
-											action="abc_stats_searchCategory-sales" 
+											action="abc_stats_searchCategory" 
 											value="#{statBundle.stat_abc_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onSaleType}"/>
@@ -181,7 +183,7 @@
 							</h:panelGrid>
 							
 							<ui:decorate template="/facelet/menu/utility.xhtml" >
-								<ui:param name="postfix" value="sales" />
+								<ui:param name="category" value="sales" />
 								<ui:define name="afterContent">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="no_fee_customers"

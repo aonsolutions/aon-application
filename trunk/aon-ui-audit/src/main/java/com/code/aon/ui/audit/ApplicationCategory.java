@@ -8,15 +8,18 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ApplicationCategory {
 	
-	/** The action. */
+	/** The name. */
 	private String name;
+	
+	/** The alias. */
+	private String alias;
 
-	/** The id. */
+	/** The styleClass. */
 	private String styleClass;
 
-	public ApplicationCategory(String name) {
-		super();
+	public ApplicationCategory(String name, String alias) {
 		this.name = name;
+		this.alias = alias;
 	}
 
 	public String getIconClass() {
@@ -38,6 +41,10 @@ public class ApplicationCategory {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getAlias() {
+		return alias;
 	}	
 
 }
