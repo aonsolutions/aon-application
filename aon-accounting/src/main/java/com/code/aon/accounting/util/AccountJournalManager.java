@@ -59,7 +59,7 @@ public class AccountJournalManager {
 				List<ITransferObject> list = bean.getList(criteria); 
 				int count = list.size();
 		        int i = 0;
-		        int journal = 2;
+		        int journal = (opening?2:1);
 		        for (ITransferObject to : list ) {
 		        	boolean mustAdd = false;
 		        	AccountEntry entry = (AccountEntry) to;
