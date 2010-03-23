@@ -4,7 +4,7 @@ package com.esferalia.aon.payroll.core.it;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.payroll.core.ITrabajo;
+import com.esferalia.aon.payroll.core.IContrato;
 
 public class ParteITCalculatorFactory {
 	
@@ -29,10 +29,9 @@ public class ParteITCalculatorFactory {
 		return calculators;
 	}
 
-	public IParteITCalculator getParteITCalculator(
-			IParteIT td,ITrabajo trabajo) {
+	public IParteITCalculator getParteITCalculator(IParteIT td,IContrato contrato) {
 		for (IParteITCalculator calculator: getCalculators()) {
-			if (calculator.accept(td,trabajo)) {
+			if (calculator.accept(td,contrato)) {
 				return calculator;
 			}
 		}

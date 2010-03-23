@@ -3,8 +3,8 @@ package com.esferalia.aon.payroll.impl.it;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.INomina;
-import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
@@ -18,7 +18,7 @@ public class ParteITAccidentesCalculator extends ParteITCalculator implements IP
 	}
 	
 	@Override
-	public boolean accept(IParteIT td,ITrabajo trabajo) {
+	public boolean accept(IParteIT td,IContrato contrato) {
 		return (td.getTipoContingencia() == TipoContingencia.ACCIDENTE_LABORAL);
 	}
 

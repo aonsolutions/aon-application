@@ -34,11 +34,11 @@ public class ParteIT implements IParteIT,ITransferObject  {
 	private ParteITPK id;
 	private String numeroColegiadoBaja;
 	private String ciasBaja;
-	private Boolean bajaProcesada;
+	private String bajaProcesadaBD;
 	private Date fechaAlta;
 	private String numeroColegiadoAlta;
 	private String ciasAlta;
-	private Boolean altaProcesada;
+	private String altaProcesadaBD;
 	private TipoIT tipoIT;
 	private String recaidaBD;
 	private IParteIT parteITRecaida;
@@ -97,14 +97,22 @@ public class ParteIT implements IParteIT,ITransferObject  {
 		this.ciasBaja = ciasBaja;
 	}
 
-	@Type(type = "siNoType")
 	@Column(name = "bajproc", nullable = false, length = 1)
-	public boolean isBajaProcesada() {
-		return this.bajaProcesada;
+	public String getBajaProcesadaBD() {
+		return this.bajaProcesadaBD;
+	}
+	public void setBajaProcesadaBD(String bajaProcesadaBD) {
+		this.bajaProcesadaBD = bajaProcesadaBD;
 	}
 
+	@Override
+	@Transient
+	public boolean isBajaProcesada() {
+		return ("S".equals(getBajaProcesadaBD()));
+	}
+	@Override
 	public void setBajaProcesada(boolean bajaProcesada) {
-		this.bajaProcesada = bajaProcesada;
+		setBajaProcesadaBD((bajaProcesada)?"S":"N");
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -137,15 +145,22 @@ public class ParteIT implements IParteIT,ITransferObject  {
 		this.ciasAlta = ciasAlta;
 	}
 
-	@Type(type = "siNoType")
 	@Column(name = "altproc", nullable = false, length = 1)
+	public String getAltaProcesadaBD() {
+		return this.altaProcesadaBD;
+	}
+	public void setAltaProcesadaBD(String altaProcesadaBD) {
+		this.altaProcesadaBD = altaProcesadaBD;
+	}
+
 	@Override
+	@Transient
 	public boolean isAltaProcesada() {
-		return this.altaProcesada;
+		return ("S".equals(getAltaProcesadaBD()));
 	}
 	@Override
 	public void setAltaProcesada(boolean altaProcesada) {
-		this.altaProcesada = altaProcesada;
+		setAltaProcesadaBD((altaProcesada)?"S":"N");
 	}
 
 	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.TipoIT") })

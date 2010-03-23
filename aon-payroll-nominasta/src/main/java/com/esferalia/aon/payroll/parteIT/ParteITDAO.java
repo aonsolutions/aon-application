@@ -7,16 +7,17 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.Contrato;
+import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
-import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITCalculator;
@@ -74,7 +75,7 @@ public class ParteITDAO implements IParteITDAO {
 		}
 	}
 
-@Override
+	@Override
 	public int validate(IParteIT parteIT) {
 		// El empleado es un dato requerido.
 		if (parteIT.getEmpleado() == null) {
@@ -140,9 +141,10 @@ public class ParteITDAO implements IParteITDAO {
 	}
 	
 	@Override
-	public void calculate(IParteIT parteIT,ITrabajo trabajo) throws PayrollException {
+	public void calculate(IParteIT parteIT) throws PayrollException {
+		IContrato contrato = getContrato(parteIT);
 		ParteITCalculatorFactory factory = ParteITCalculatorFactory.getInstance();
-		IParteITCalculator calculator = factory.getParteITCalculator( parteIT, trabajo );
+		IParteITCalculator calculator = factory.getParteITCalculator( parteIT, contrato );
 		parteIT.setBaseRetribucionPeriodoAnterior( calculator.getBaseRetribucionPeriodoAnterior(parteIT) );
 		parteIT.setDiasPeriodoAnterior(calculator.getDiasPeriodoAnterior(parteIT) );
 		parteIT.setBaseReguladoraDiaria( calculator.getBaseReguladoraDiaria(parteIT) );
@@ -152,6 +154,28 @@ public class ParteITDAO implements IParteITDAO {
 		parteIT.setPrestacionDiaria75(calculator.getPrestacionDiaria75(parteIT));
 	}
 	
+	
+	private IContrato getContrato(IParteIT parteIT) throws PayrollException {
+		try {
+			IManagerBean trabajoBean = BeanManager.getManagerBean(Contrato.class);
+			String eAlias = trabajoBean.getFieldName(IPayrollAlias.CONTRATO_ID_CDG);
+			String iAlias = trabajoBean.getFieldName(IPayrollAlias.CONTRATO_ID_FECINI);
+			String fAlias = trabajoBean.getFieldName(IPayrollAlias.CONTRATO_FECHA_FIN);
+			Criteria tCriteria = new Criteria();
+			tCriteria.addEqualExpression(eAlias, parteIT.getEmpleado().getId());
+			tCriteria.addLessThanOrEqualExpression(iAlias, parteIT.getFechaBaja());
+			tCriteria.addGreaterThanOrEqualExpression(fAlias, parteIT.getFechaBaja());
+			List<ITransferObject> trabajos = trabajoBean.getList(tCriteria);
+			if (trabajos.size() == 0) {
+				throw new PayrollException("No hay datos en CONTRATO");
+			}
+			Contrato trabajo = (Contrato) trabajos.get(0);
+			return trabajo;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+
 	@Override
 	public IParteIT initialize(IEmpleado  empleado) throws PayrollException {
 		if (empleado == null || empleado.getId() == null) {
@@ -159,29 +183,52 @@ public class ParteITDAO implements IParteITDAO {
 		}
 		ParteIT parteIT = new ParteIT();
 		parteIT.setEmpleado(empleado);
+		parteIT.setAltaProcesada(false);
+		parteIT.setBajaProcesada(false);
+		parteIT.setProcesada(false);
 		List<IParteIT> list = getPartesEmpleado(parteIT.getEmpleado());
 		if (list.size() > 0) {
 			IParteIT ultimoParte = list.get(0);
-			parteIT.setCiasBaja(ultimoParte.getCiasBaja());
-			parteIT.setNumeroColegiadoBaja(ultimoParte.getNumeroColegiadoBaja());
-			parteIT.setCiasAlta(ultimoParte.getCiasAlta());
-			parteIT.setNumeroColegiadoAlta(ultimoParte.getNumeroColegiadoAlta());
-			parteIT.setFechaBaja(ultimoParte.getFechaBaja());
-			if (!ultimoParte.isAltaProcesada()) {
-				parteIT.setFechaBaja(ultimoParte.getFechaBaja());
-				parteIT.setBajaProcesada(ultimoParte.isBajaProcesada());
-				parteIT.setFechaAlta(ultimoParte.getFechaAlta());
-				parteIT.setAltaProcesada(ultimoParte.isAltaProcesada());
-				parteIT.setProcesada(ultimoParte.isProcesada());
-				parteIT.setTipoContingencia(ultimoParte.getTipoContingencia());
-				parteIT.setRecaida(ultimoParte.isRecaida());
-				parteIT.setParteITRecaida(ultimoParte.getParteITRecaida());
-				parteIT.setProrrateoCotizacion(ultimoParte.getProrrateoCotizacion());
+			if (ultimoParte.getFechaAlta() != null) {
+				// NUEVA BAJA
+				parteIT.setCiasBaja(ultimoParte.getCiasBaja());
+				parteIT.setNumeroColegiadoBaja(ultimoParte.getNumeroColegiadoBaja());
+				parteIT.setCiasAlta(ultimoParte.getCiasAlta());
+				parteIT.setNumeroColegiadoAlta(ultimoParte.getNumeroColegiadoAlta());
+			} else {
+				// MODIFICACION DEL REGISTRO PARA EL ALTA 
+				// O NUEVO PARTE DE CONFIRMACION.
+				parteIT = (ParteIT) ultimoParte;
+				parteIT.setFechaAlta(new Date() );
+				parteIT.setCiasAlta(ultimoParte.getCiasBaja());
+				parteIT.setNumeroColegiadoAlta(ultimoParte.getNumeroColegiadoBaja());
+				parteIT.setAltaProcesada(false);
+				parteIT.setProcesada(false);
 			}
 		}
 		return parteIT;
 	}
+
+	@Override
+	public void accept(IParteIT parteIT) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
+			ParteIT p = (ParteIT) parteIT;
+			bean.insertOrUpdate(p);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
 }
+
+//parteIT.setBajaProcesada(ultimoParte.isBajaProcesada());
+//parteIT.setFechaAlta(ultimoParte.getFechaAlta());
+//parteIT.setAltaProcesada(ultimoParte.isAltaProcesada());
+//parteIT.setProcesada(ultimoParte.isProcesada());
+//parteIT.setTipoContingencia(ultimoParte.getTipoContingencia());
+//parteIT.setRecaida(ultimoParte.isRecaida());
+//parteIT.setParteITRecaida(ultimoParte.getParteITRecaida());
+//parteIT.setProrrateoCotizacion(ultimoParte.getProrrateoCotizacion());
 
 /*
 		Criteria allParteitCriteria = new Criteria();

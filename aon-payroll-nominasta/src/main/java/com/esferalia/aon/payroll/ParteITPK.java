@@ -8,6 +8,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 @Embeddable
 public class ParteITPK implements Serializable {
 
@@ -32,5 +34,9 @@ public class ParteITPK implements Serializable {
 	public void setFechaBaja(Date fechaBaja) {
 		this.fechaBaja = fechaBaja; 
 	}
-	
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

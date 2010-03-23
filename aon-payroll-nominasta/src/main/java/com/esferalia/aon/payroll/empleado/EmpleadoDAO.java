@@ -44,7 +44,7 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
 			PER_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_ID);
-			DOC_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT);
+			DOC_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE);
 			NSS_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NUM_SS);
 			NOMBRE_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME);
 			APEL_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME);

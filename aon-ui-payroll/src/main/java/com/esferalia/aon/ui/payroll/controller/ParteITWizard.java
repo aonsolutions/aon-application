@@ -1,8 +1,11 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -15,6 +18,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.IDataModelDataProvider;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.AonPayroll;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPersona;
@@ -24,6 +28,7 @@ import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
+import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 
 public class ParteITWizard implements Serializable, IDataModelDataProvider,ICriteriaProvider {
 	
@@ -40,6 +45,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0","parteITWizard_step1","parteITWizard_step2","parteITWizard_step3" };
 	private IParteIT parteIT;
+	private TipoOperacionIT operacion;
 	
 	public IParteIT getParteIT() {
 		return parteIT;
@@ -90,6 +96,46 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	}
 	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
+	}
+
+	public TipoOperacionIT getOperacion() {
+		return operacion;
+	}
+	public void setOperacion(TipoOperacionIT operacion) {
+		this.operacion = operacion;
+	}
+	
+	public String getCias() {
+		return getOperacion() == TipoOperacionIT.BAJA?getParteIT().getCiasBaja():getParteIT().getCiasAlta();
+	}
+	public void setCias(String cias) {
+		if (getOperacion() == TipoOperacionIT.BAJA) {
+			getParteIT().setCiasBaja(cias);
+		} else if (getOperacion() == TipoOperacionIT.ALTA) {
+			getParteIT().setCiasAlta(cias);
+		}
+	}
+
+	public String getNumeroColegiado() {
+		return getOperacion() == TipoOperacionIT.BAJA?getParteIT().getNumeroColegiadoBaja():getParteIT().getNumeroColegiadoAlta();
+	}
+	public void setNumeroColegiado(String numeroColegiado) {
+		if (getOperacion() == TipoOperacionIT.BAJA) {
+			getParteIT().setNumeroColegiadoBaja(numeroColegiado);
+		} else if (getOperacion() == TipoOperacionIT.ALTA) {
+			getParteIT().setNumeroColegiadoAlta(numeroColegiado);
+		}
+	}
+
+	public Date getFecha() {
+		return getOperacion() == TipoOperacionIT.BAJA?getParteIT().getFechaBaja():getParteIT().getFechaAlta();
+	}
+	public void setFecha(Date fecha) {
+		if (getOperacion() == TipoOperacionIT.BAJA) {
+			getParteIT().setFechaBaja(fecha);
+		} else if (getOperacion() == TipoOperacionIT.ALTA) {
+			getParteIT().setFechaAlta(fecha);
+		}
 	}
 
 	public DataModel getEmpleosModel() {
@@ -171,10 +217,36 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		try {
 			partesModel = null;
 			setParteIT( getParteITDAO().initialize( getEmpleado()) );
+			refreshOperacion();
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+	}
+	
+	private void refreshOperacion() {
+		if (getParteIT().getFechaBaja() == null) {
+			setOperacion(TipoOperacionIT.BAJA);
+		} else {
+			setOperacion(TipoOperacionIT.ALTA);
+		}
+	}
+	
+	public void onFinish(ActionEvent event) {
+		try {
+			int err = getParteITDAO().validate(getParteIT());
+			if ( err > 0) {
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+				String errorMsg = AonPayroll.getMessage(locale,"aon_payroll_error_" + err);
+				AonUtil.addErrorMessage(errorMsg);
+				throw new AbortProcessingException(errorMsg);
+			}
+			getParteITDAO().calculate(getParteIT());
+			getParteITDAO().accept( getParteIT() );
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}		
 	}
 
 	@Override
@@ -218,12 +290,15 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		this.currentStep = currentStep; 
 	}
 	public void onNext(ActionEvent event) {
-		setCurrentStep(getCurrentStep() + 1);
 		if (getCurrentStep() == 0) {
-			// nada, no se borran los parámetros.
-		} else if (getCurrentStep() == 1) {
 			onSearch(event);
+		} else if (getCurrentStep() == 1) {
+			// Seleccion de persona
+		} else if (getCurrentStep() == 2) {
+			// Mover al paso tres cuando se haga la validacion
+			onFinish(event);
 		}
+		setCurrentStep(getCurrentStep() + 1);
 	}
 	public void onPrevious(ActionEvent event) {
 		setCurrentStep(getCurrentStep() - 1);

@@ -7,7 +7,7 @@ import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.ParteIT;
-import com.esferalia.aon.payroll.Trabajo;
+import com.esferalia.aon.payroll.Contrato;
 
 /** 
 * Interface for holding entity properties constants.
@@ -88,10 +88,10 @@ public interface IPayrollAlias {
 	String  EMPLEADO_PERSONA_NUM_SS = EMPLEADO_ENTRY.getAliasNames()[10];
 
 	/** 
-	* Alias value: Empleado_persona_registry_document
-	* Hibernate value: Empleado.persona.registry.document
+	* Alias value: Empleado_persona_registry_document_value
+	* Hibernate value: Empleado.persona.registry.document.value
 	*/
-	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT = EMPLEADO_ENTRY.getAliasNames()[11];
+	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE = EMPLEADO_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Empleado_persona_surname
@@ -242,16 +242,16 @@ public interface IPayrollAlias {
 	DAOConstantsEntry PARTE_IT_ENTRY = DAOConstants.getDAOConstant(ParteIT.class);
 
 	/** 
-	* Alias value: ParteIT_altaProcesada
-	* Hibernate value: ParteIT.altaProcesada
+	* Alias value: ParteIT_altaProcesadaBD
+	* Hibernate value: ParteIT.altaProcesadaBD
 	*/
-	String  PARTE_IT_ALTA_PROCESADA = PARTE_IT_ENTRY.getAliasNames()[0];
+	String  PARTE_IT_ALTA_PROCESADA_BD = PARTE_IT_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: ParteIT_bajaProcesada
-	* Hibernate value: ParteIT.bajaProcesada
+	* Alias value: ParteIT_bajaProcesadaBD
+	* Hibernate value: ParteIT.bajaProcesadaBD
 	*/
-	String  PARTE_IT_BAJA_PROCESADA = PARTE_IT_ENTRY.getAliasNames()[1];
+	String  PARTE_IT_BAJA_PROCESADA_BD = PARTE_IT_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ParteIT_baseDiariaAccidentesTrabajo
@@ -344,10 +344,10 @@ public interface IPayrollAlias {
 	String  PARTE_IT_PRESTACION_DIARIA75 = PARTE_IT_ENTRY.getAliasNames()[16];
 
 	/** 
-	* Alias value: ParteIT_procesada
-	* Hibernate value: ParteIT.procesada
+	* Alias value: ParteIT_procesadaBD
+	* Hibernate value: ParteIT.procesadaBD
 	*/
-	String  PARTE_IT_PROCESADA = PARTE_IT_ENTRY.getAliasNames()[17];
+	String  PARTE_IT_PROCESADA_BD = PARTE_IT_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: ParteIT_prorrateo
@@ -356,10 +356,10 @@ public interface IPayrollAlias {
 	String  PARTE_IT_PRORRATEO = PARTE_IT_ENTRY.getAliasNames()[18];
 
 	/** 
-	* Alias value: ParteIT_recaida
-	* Hibernate value: ParteIT.recaida
+	* Alias value: ParteIT_recaidaBD
+	* Hibernate value: ParteIT.recaidaBD
 	*/
-	String  PARTE_IT_RECAIDA = PARTE_IT_ENTRY.getAliasNames()[19];
+	String  PARTE_IT_RECAIDA_BD = PARTE_IT_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: ParteIT_riesgo
@@ -376,39 +376,39 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Trabajo entity.
+	* DAOConstantsEntry for Contrato entity.
 	*/ 
-	DAOConstantsEntry TRABAJO_ENTRY = DAOConstants.getDAOConstant(Trabajo.class);
+	DAOConstantsEntry CONTRATO_ENTRY = DAOConstants.getDAOConstant(Contrato.class);
 
 	/** 
-	* Alias value: Trabajo_empleado_id
-	* Hibernate value: Trabajo.empleado.id
+	* Alias value: Contrato_empleado_id
+	* Hibernate value: Contrato.empleado.id
 	*/
-	String  TRABAJO_EMPLEADO_ID = TRABAJO_ENTRY.getAliasNames()[0];
+	String  CONTRATO_EMPLEADO_ID = CONTRATO_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Trabajo_fechaFin
-	* Hibernate value: Trabajo.fechaFin
+	* Alias value: Contrato_fechaFin
+	* Hibernate value: Contrato.fechaFin
 	*/
-	String  TRABAJO_FECHA_FIN = TRABAJO_ENTRY.getAliasNames()[1];
+	String  CONTRATO_FECHA_FIN = CONTRATO_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Trabajo_id_cdg
-	* Hibernate value: Trabajo.id.cdg
+	* Alias value: Contrato_id_cdg
+	* Hibernate value: Contrato.id.cdg
 	*/
-	String  TRABAJO_ID_CDG = TRABAJO_ENTRY.getAliasNames()[2];
+	String  CONTRATO_ID_CDG = CONTRATO_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Trabajo_id_fecini
-	* Hibernate value: Trabajo.id.fecini
+	* Alias value: Contrato_id_fecini
+	* Hibernate value: Contrato.id.fecini
 	*/
-	String  TRABAJO_ID_FECINI = TRABAJO_ENTRY.getAliasNames()[3];
+	String  CONTRATO_ID_FECINI = CONTRATO_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Trabajo_indtp
-	* Hibernate value: Trabajo.indtp
+	* Alias value: Contrato_indtp
+	* Hibernate value: Contrato.indtp
 	*/
-	String  TRABAJO_INDTP = TRABAJO_ENTRY.getAliasNames()[4];
+	String  CONTRATO_INDTP = CONTRATO_ENTRY.getAliasNames()[4];
 
 
 }

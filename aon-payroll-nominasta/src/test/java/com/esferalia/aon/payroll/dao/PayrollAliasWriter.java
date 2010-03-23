@@ -11,7 +11,7 @@ import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Persona;
-import com.esferalia.aon.payroll.Trabajo;
+import com.esferalia.aon.payroll.Contrato;
 
 public class PayrollAliasWriter extends TestCase{
 
@@ -23,7 +23,7 @@ public class PayrollAliasWriter extends TestCase{
 				Nomina.class.getName(),
 				Persona.class.getName(),
 				ParteIT.class.getName(),
-				Trabajo.class.getName()
+				Contrato.class.getName()
 		        };
 		AliasWriter writer = new AliasWriter("com.esferalia.aon.payroll.dao");
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());

@@ -20,7 +20,7 @@
 		<mapping class="com.esferalia.aon.payroll.Nomina"/>
 		<mapping class="com.esferalia.aon.payroll.Persona"/>
 		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
-		<mapping class="com.esferalia.aon.payroll.Trabajo"/>
+		<mapping class="com.esferalia.aon.payroll.Contrato"/>
 		
 	</session-factory>
 

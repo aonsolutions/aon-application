@@ -52,7 +52,7 @@ public class Persona implements ITransferObject, IPersona  {
 	}
 
 	@Override
-	@Column(name="descripcion", nullable=false, length=35)
+	@Column(name="nombre", length=25)
 	public String getName() {
 		return name;
 	}
@@ -63,7 +63,7 @@ public class Persona implements ITransferObject, IPersona  {
 	}
 
 	@Override
-	@Column(name="nombre", length=25)
+	@Column(name="descripcion", nullable=false, length=35)
 	public String getSurname() {
 		return surname;
 	}

@@ -13,10 +13,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.AonPayroll;
 import com.esferalia.aon.payroll.ParteIT;
-import com.esferalia.aon.payroll.Trabajo;
-import com.esferalia.aon.payroll.core.it.IParteITCalculator;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
-import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
@@ -57,26 +54,8 @@ public class ParteITTest extends TestCase{
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.core.impl.messages");
 				fail( bundle.getString("aon_payroll_error_" + err) );
 			}
-			IManagerBean trabajoBean = BeanManager.getManagerBean(Trabajo.class);
-			String eAlias = trabajoBean.getFieldName(IPayrollAlias.TRABAJO_ID_CDG);
-			String iAlias = trabajoBean.getFieldName(IPayrollAlias.TRABAJO_ID_FECINI);
-			String fAlias = trabajoBean.getFieldName(IPayrollAlias.TRABAJO_FECHA_FIN);
-			Criteria tCriteria = new Criteria();
-			tCriteria.addEqualExpression(eAlias, duplicado.getEmpleado().getId());
-			tCriteria.addLessThanOrEqualExpression(iAlias, duplicado.getFechaBaja());
-			tCriteria.addGreaterThanOrEqualExpression(fAlias, duplicado.getFechaBaja());
-			List<ITransferObject> trabajos = trabajoBean.getList(tCriteria);
-			if (trabajos.size() == 0) {
-				fail("No hay datos en Trabajo");	
-			}
-			Trabajo trabajo = (Trabajo) trabajos.get(0);
 			
-			ParteITCalculatorFactory factory = ParteITCalculatorFactory.getInstance();
-			IParteITCalculator calc = factory.getParteITCalculator( duplicado, trabajo );
-			System.out.println( calc );
-			
-			parteITDAO.calculate(duplicado,trabajo);
-			
+			parteITDAO.calculate(duplicado);
 			assertEquals(original.getDiasPeriodoAnterior(), duplicado.getDiasPeriodoAnterior());
 			assertEquals(original.getBaseRetribucionPeriodoAnterior(), CommonUtil.round(duplicado.getBaseRetribucionPeriodoAnterior()));
 			assertEquals(original.getBaseReguladoraDiaria(), CommonUtil.round(duplicado.getBaseReguladoraDiaria()));
