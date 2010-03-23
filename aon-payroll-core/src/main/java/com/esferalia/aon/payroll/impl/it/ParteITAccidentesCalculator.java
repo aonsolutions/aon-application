@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.impl.it;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.core.util.DateUtils;
+import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.INomina;
 import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
@@ -9,7 +10,6 @@ import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITCalculator;
 import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
-import com.esferalia.aon.payroll.core.nomina.CalculatorException;
 
 public class ParteITAccidentesCalculator extends ParteITCalculator implements IParteITCalculator {
 
@@ -24,7 +24,7 @@ public class ParteITAccidentesCalculator extends ParteITCalculator implements IP
 
 	@Override
 	public Double getBaseRetribucionPeriodoAnterior(IParteIT it)
-			throws CalculatorException {
+			throws PayrollException {
 		INomina nomina = getNominaAnterior(it);
 		Double baseAccidentesTrabajoSinHorasExtras = nomina.getBaseAccidentesTrabajoSinHorasExtras();
 		INomina[] nominas = getNominasAnteriores(it,12);
@@ -64,7 +64,7 @@ public class ParteITAccidentesCalculator extends ParteITCalculator implements IP
 
 	@Override
 	public Integer getDiasPeriodoAnterior(IParteIT it)
-			throws CalculatorException {
+			throws PayrollException {
 		INomina nomina = getNominaAnterior(it);
 		int diasNomina = nomina.getDiasNomina();
 		if (it.getProrrateoCotizacion() == Periodicidad.MENSUAL) {
@@ -77,13 +77,13 @@ public class ParteITAccidentesCalculator extends ParteITCalculator implements IP
 
 
 	@Override
-	public Double getBaseDiariaContingenciasComunes(IParteIT it) throws CalculatorException {
+	public Double getBaseDiariaContingenciasComunes(IParteIT it) throws PayrollException {
 		INomina nomina = getNominaAnterior(it);
 		return (nomina.getBaseContingenciasGenerales() /  it.getDiasPeriodoAnterior());
 	}
 
 	@Override
-	public Double getBaseDiariaAccidentesTrabajo(IParteIT it) throws CalculatorException {
+	public Double getBaseDiariaAccidentesTrabajo(IParteIT it) throws PayrollException {
 		return it.getBaseRetribucionPeriodoAnterior() / it.getDiasPeriodoAnterior();
 	}
 

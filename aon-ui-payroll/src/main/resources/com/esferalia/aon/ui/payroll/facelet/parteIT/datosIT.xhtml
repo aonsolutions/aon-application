@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:panel>
+	<aon:panel id="datosITPanel">
 		<f:facet name="header">
 			<aon:outputText
 				value="#{payrollBundle.payroll_datos_parteIT}" />
@@ -35,7 +35,7 @@
 			</aon:div>
 -->				
 
-			<aon:outputLabel value="#{payrollBundle.payroll_fecha}" />
+			<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha}" />
 			<aon:div>
 <!--  
 				<aon:outputText rendered="#{itWizard.finished}"
@@ -46,12 +46,11 @@
 -->			
 				<aon:selectInputDate id="fecha" value="#{parteITWizard.parteIT.fechaBaja}"
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
-					required="true"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{appBundle.aon_date_pattern}" />
+					required="true" timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
 			</aon:div>
 
-			<aon:outputLabel value="#{payrollBundle.payroll_colegiado}" />
+			<aon:outputLabel for="colegiado" value="#{payrollBundle.payroll_colegiado}" />
 			<aon:div>
 <!--  
 				<aon:outputText rendered="#{itWizard.finished}"
@@ -67,7 +66,7 @@
 				</aon:inputText>
 			</aon:div>
 
-			<aon:outputLabel value="#{payrollBundle.payroll_cias}" />
+			<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
 			<aon:div>
 <!--  
 				<aon:outputText rendered="#{itWizard.finished}"
@@ -95,9 +94,9 @@
 			</aon:div>
 -->			
 
-			<aon:outputLabel
+			<aon:outputLabel for="recaida"
 				value="#{payrollBundle.payroll_recaida}" />
-			<aon:selectBooleanCheckbox 
+			<aon:selectBooleanCheckbox id="recaida" 
 				value="#{parteITWizard.parteIT.recaida}" />
 
 		</aon:panelGrid>

@@ -15,20 +15,22 @@
 		<aon:dataTable id="contratosData"
 			value="#{parteITWizard.empleosModel}" var="to" rows="20"
 			columnClasses="
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-dateColumn, aon-editDataTable-dateColumn">
+						aon-editDataTable-textColumn aon-width-auto, 
+						aon-editDataTable-textColumn aon-width-80,
+						aon-editDataTable-textColumn aon-width-80">
 
 			<aon:rowSelector actionListener="#{parteITWizard.onSelectEmpleado}"
-				reRender="parteitList" />
+				immediate="true"
+				reRender="contratosData,partePanel,datosITPanel" />
 
-			<aon:column>
+			<aon:column style="#{to.id == parteITWizard.empleado.id?'background-color: #CAFFCA;':''}">
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
 				</f:facet>
 				<aon:outputText value="#{to.empresa.name}" />
 			</aon:column>
 
-			<aon:column>
+			<aon:column style="#{to.id == parteITWizard.empleado.id?'background-color: #CAFFCA;':''}">
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_ini}" />
 				</f:facet>
@@ -38,7 +40,7 @@
 				</aon:outputText>
 			</aon:column>
 
-			<aon:column>
+			<aon:column style="#{to.id == parteITWizard.empleado.id?'background-color: #CAFFCA;':''}">
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_fin}" />
 				</f:facet>

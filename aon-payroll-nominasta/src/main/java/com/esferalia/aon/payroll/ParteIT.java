@@ -24,11 +24,10 @@ import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.enumeration.Prorrateo;
 import com.esferalia.aon.payroll.enumeration.TipoIT;
-import com.esferalia.aon.payroll.impl.it.ParteITAbs;
 
 @Entity
 @Table(name = "parteit")
-public class ParteIT extends ParteITAbs implements ITransferObject  {
+public class ParteIT implements IParteIT,ITransferObject  {
 
 	private static final long serialVersionUID = -2204224372352983127L;
 	

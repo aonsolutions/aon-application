@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.impl.it;
 
 import com.esferalia.aon.core.util.DateUtils;
+import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.INomina;
 import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
@@ -9,7 +10,6 @@ import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITCalculator;
 import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
-import com.esferalia.aon.payroll.core.nomina.CalculatorException;
 
 public class ParteITTiempoCompletoCalculator extends ParteITCalculator implements IParteITCalculator {
 
@@ -27,14 +27,14 @@ public class ParteITTiempoCompletoCalculator extends ParteITCalculator implement
 
 	@Override
 	public Double getBaseRetribucionPeriodoAnterior(IParteIT it)
-			throws CalculatorException {
+			throws PayrollException {
 		INomina nomina = getNominaAnterior(it);
 		return nomina.getBaseContingenciasGenerales();
 	}
 
 	@Override
 	public Integer getDiasPeriodoAnterior(IParteIT it)
-			throws CalculatorException {
+			throws PayrollException {
 		INomina nomina = getNominaAnterior(it);
 		int diasNomina = nomina.getDiasNomina();
 		if (it.getProrrateoCotizacion() == Periodicidad.MENSUAL) {
@@ -53,7 +53,7 @@ public class ParteITTiempoCompletoCalculator extends ParteITCalculator implement
 	}
 
 	@Override
-	public Double getBaseDiariaAccidentesTrabajo(IParteIT it) throws CalculatorException {
+	public Double getBaseDiariaAccidentesTrabajo(IParteIT it) throws PayrollException {
 		INomina nomina = getNominaAnterior(it);
 		return nomina.getBaseAccidentesTrabajo() / it.getDiasPeriodoAnterior();
 	}
