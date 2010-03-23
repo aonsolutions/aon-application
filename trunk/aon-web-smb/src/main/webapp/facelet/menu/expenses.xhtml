@@ -47,18 +47,19 @@
 											value="#{financeBundle.finance_undeductible_invoice_management_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="aon_finance_payment"
-											action="finance_search-Payment"
+										<aon:commandLink id="financePayment-expenses"
+											action="finance_search-expenses"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{financeBundle.finance_payment_module}" />
 									</aon:div>									
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payMethod" 
-											action="payMethod" 
+										<aon:commandLink id="payMethod-expenses" 
+											action="payMethod-expenses" 
 											value="#{configBundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bank" action="bank"
+										<aon:commandLink id="bank-expenses"
+											action="bank-expenses"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>																											
 								</aon:div>
