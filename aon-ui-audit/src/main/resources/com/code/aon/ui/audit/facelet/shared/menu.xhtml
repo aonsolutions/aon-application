@@ -1,14 +1,17 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml" >
-		<ui:define name="beforeMenuContent">
-			<aon:dropDownMenu 
-				style="padding-left: 18px" styleClass="aon-dropDownMenu aon-icon-favorites"
-				value="#{auditBundle.audit_favorite_module}">
+		<ui:define name="beforeRightMenuContent">
+			<aon:dropDownMenu>
 				<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
+                <f:facet name="label"> 
+					<aon:graphicImage title="#{auditBundle.audit_favorite_module}"
+						value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-favorites.png']}" />
+                </f:facet>				
 			</aon:dropDownMenu>
 		</ui:define>
 	</ui:decorate>
