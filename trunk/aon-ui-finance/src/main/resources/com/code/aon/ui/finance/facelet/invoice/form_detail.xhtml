@@ -37,7 +37,7 @@
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 							<f:facet name="header">
-								<aon:outputLabel value="#{financeBundle.finance_invoice_detail_line}" />
+								<aon:outputLabel for="InvoiceDetail_line" value="#{financeBundle.finance_invoice_detail_line}" />
 							</f:facet>
 							<aon:outputText value="#{to.line}"
 								rendered="#{formList}" />
@@ -53,7 +53,7 @@
 		
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputLabel value="#{productBundle.product_item}" />
+								<aon:outputLabel for="InvoiceDetail_item_product_code" value="#{productBundle.product_item}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}" 
 								rendered="#{formList}">
@@ -96,10 +96,10 @@
 									style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 									<f:validateLength maximum="1024" />
 								</aon:inputTextarea>
-								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+								<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 									actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_item_product_name"
 									rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+								<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 									actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_item_product_name"
 									rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
 							</aon:div>
@@ -141,10 +141,10 @@
 										style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 										<f:validateLength maximum="1024" />
 									</aon:inputTextarea>
-									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+									<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 										actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_item_product_name-New"
 										rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+									<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 										actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_item_product_name-New"
 										rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
 								</aon:div>
@@ -153,7 +153,7 @@
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_quantity}" />
+								<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
 							</f:facet>
 							<aon:outputText value="#{to.quantity}"
 								rendered="#{formList}">
@@ -175,7 +175,7 @@
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_price}" />
+								<aon:outputLabel for="InvoiceDetail_price" value="#{bundle.aon_price}" />
 							</f:facet>
 							<aon:outputText value="#{to.price}"
 								rendered="#{formList}">
@@ -195,7 +195,7 @@
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_discount}" />
+								<aon:outputLabel for="InvoiceDetail_discount" value="#{bundle.aon_discount}" />
 							</f:facet>
 							<aon:outputText value="#{to.discountExpression.discountExpr}"
 								rendered="#{formList}">
@@ -215,7 +215,7 @@
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_amount}" />
+								<aon:outputLabel for="InvoiceDetail_amount" value="#{bundle.aon_amount}" />
 							</f:facet>
 							<aon:outputText value="#{to.taxableBase}"
 								rendered="#{formList}">
@@ -242,7 +242,7 @@
 						<c:if test="#{companyCollections.workPlacesCount > 1}">
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 								<f:facet name="header">
-									<aon:outputLabel value="#{companyBundle.company_workplace}" />
+									<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace}" />
 								</f:facet>
 								<aon:outputText
 									rendered="#{formList}"
