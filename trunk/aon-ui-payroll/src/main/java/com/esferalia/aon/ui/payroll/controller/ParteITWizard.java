@@ -111,8 +111,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	public void setCias(String cias) {
 		if (getOperacion() == TipoOperacionIT.BAJA) {
 			getParteIT().setCiasBaja(cias);
+			getParteIT().setCiasAlta(null);
 		} else if (getOperacion() == TipoOperacionIT.ALTA) {
 			getParteIT().setCiasAlta(cias);
+			getParteIT().setCiasBaja(null);
 		}
 	}
 
@@ -122,8 +124,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	public void setNumeroColegiado(String numeroColegiado) {
 		if (getOperacion() == TipoOperacionIT.BAJA) {
 			getParteIT().setNumeroColegiadoBaja(numeroColegiado);
+			getParteIT().setNumeroColegiadoAlta(null);
 		} else if (getOperacion() == TipoOperacionIT.ALTA) {
 			getParteIT().setNumeroColegiadoAlta(numeroColegiado);
+			getParteIT().setNumeroColegiadoBaja(null);
 		}
 	}
 
