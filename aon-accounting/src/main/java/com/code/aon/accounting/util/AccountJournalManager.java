@@ -10,6 +10,7 @@ import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.IProgression;
@@ -43,6 +44,19 @@ public class AccountJournalManager {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
+				AccountPeriodStatus originalStatus;
+				boolean periodChanged=false;
+				originalStatus=AccountPeriodStatus.ACTIVE;
+				Period per = null;
+				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+				if (period.getStatus() != AccountPeriodStatus.ACTIVE) {
+					ITransferObject to = periodBean.get(period.getId());
+					per = (Period) to;
+					originalStatus = per.getStatus();
+					periodChanged = true;
+					per.setStatus(AccountPeriodStatus.ACTIVE);
+					periodBean.update(per);
+				}
 				
 				AccountingUtil util = new AccountingUtil();
 				boolean opening = util.existsEntry(period, AccountEntryType.OPENING, securityLevel);
@@ -81,6 +95,11 @@ public class AccountJournalManager {
 		        		journal++;
 		        	}
 		        }
+		        
+				if(periodChanged){
+		        	per.setStatus(originalStatus);
+		        	periodBean.update(per);    	
+				}
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
