@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
@@ -38,8 +39,8 @@
 							<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<h:commandLink id="income" value="#{bundle.aon_report}"
-							target="_new" rendered="#{!income.new}"
+						<h:commandLink id="income" value="#{warehouseBundle.warehouse_income}"
+							target="_new" rendered="#{!income.new and incomeDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
 							disabled="#{incomeDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -61,28 +62,43 @@
 					<aon:outputLabel for="Income_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
-						<aon:inputText id="Income_series" 
-							value="#{income.to.series}" disabled="#{!income.pending}"
-							size="4" />
-						<aon:inputText id="Income_number" styleClass="aon-margin-left" 
-							value="#{income.to.number}" disabled="#{!income.pending}"
-							required="true" size="7" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:inputText id="Income_series" 
+									value="#{income.to.series}" rendered="#{income.pending}"
+									size="4" />
+								<aon:inputText id="Income_number" styleClass="aon-margin-left" 
+									value="#{income.to.number}" rendered="#{income.pending}"
+									required="true" size="7" />
+								<aon:outputText styleClass="aon-bold aon-margin-right"
+									value="#{income.to.referenceCode}"
+									rendered="#{!income.pending}" />
+							</aon:div>
+							<aon:div>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Income_securityLevel"
+										value="#{income.to.confidential}"
+										rendered="#{income.pending}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{income.pending}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{!income.pending and income.to.confidential}" />
+								</c:if>
 
-						<aon:selectOneMenu id="Income_securityLevel" styleClass="aon-margin-left"
-							value="#{income.to.securityLevel}" disabled="#{!income.pending}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
-
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{income.to.status}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_invoice}:"
-							rendered="#{income.invoiced}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{income.invoiceCode}"
-							rendered="#{income.invoiced}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{income.invoiced}" />
+								<aon:outputText styleClass="aon-margin-left"
+									value="#{income.to.status}" />
+								<aon:outputText styleClass="aon-italic aon-margin-left"
+									value="(#{financeBundle.finance_invoice}: "
+									rendered="#{income.invoiced}" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{income.invoiceCode}"
+									rendered="#{income.invoiced}" />
+								<aon:outputText styleClass="aon-italic" value=")"
+									rendered="#{income.invoiced}" />
+							</aon:div>
+						</h:panelGrid>
  					</aon:div>
 
 					<aon:outputLabel for="Income_issueTime" 
@@ -309,7 +325,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 									<f:facet name="header">
-										<aon:outputLabel value="#{warehouseBundle.warehouse_income_detail_line}" />
+										<aon:outputLabel for="IncomeDetail_line" value="#{warehouseBundle.warehouse_income_detail_line}" />
 									</f:facet>
 									<aon:outputText value="#{to.line}"
 										rendered="#{formList}" />
@@ -325,7 +341,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">
-										<aon:outputLabel value="#{productBundle.product_item}" />
+										<aon:outputLabel for="IncomeDetail_item_product_code" value="#{productBundle.product_item}" />
 									</f:facet>
 									<aon:outputText value="#{to.description}"
 										rendered="#{formList}">
@@ -368,10 +384,10 @@
 											style="#{!incomeDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 											<f:validateLength maximum="1024" />
 										</aon:inputTextarea>
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 											actionListener="#{incomeDetail.onShortDescription}" reRender="IncomeDetail_item_product_name"
 											rendered="#{incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 											actionListener="#{incomeDetail.onLongDescription}" reRender="IncomeDetail_item_product_name"
 											rendered="#{!incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
 									</aon:div>
@@ -413,10 +429,10 @@
 												style="#{!incomeDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 												<f:validateLength maximum="1024" />
 											</aon:inputTextarea>
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 												actionListener="#{incomeDetail.onShortDescription}" reRender="IncomeDetail_item_product_name-New"
 												rendered="#{incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 												actionListener="#{incomeDetail.onLongDescription}" reRender="IncomeDetail_item_product_name-New"
 												rendered="#{!incomeDetail.longDescription and incomeDetail.to.item.product.code != null}" />
 										</aon:div>
@@ -425,7 +441,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_quantity}" />
+										<aon:outputLabel for="IncomeDetail_quantity" value="#{bundle.aon_quantity}" />
 									</f:facet>
 									<aon:outputText value="#{to.quantity}"
 										rendered="#{formList}">
@@ -445,7 +461,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_price}" />
+										<aon:outputLabel for="IncomeDetail_price" value="#{bundle.aon_price}" />
 									</f:facet>
 									<aon:outputText value="#{to.price}"
 										rendered="#{formList}">
@@ -465,7 +481,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_discount}" />
+										<aon:outputLabel for="IncomeDetail_discount" value="#{bundle.aon_discount}" />
 									</f:facet>
 									<aon:outputText value="#{to.discountExpression.discountExpr}"
 										rendered="#{formList}">
@@ -485,7 +501,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_amount}" />
+										<aon:outputLabel for="IncomeDetail_amount" value="#{bundle.aon_amount}" />
 									</f:facet>
 									<aon:outputText value="#{controller.modelAmount}"
 										rendered="#{formList}">

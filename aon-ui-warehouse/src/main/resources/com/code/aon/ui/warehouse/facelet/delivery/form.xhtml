@@ -46,7 +46,7 @@
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
 						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery}"
-							target="_new" rendered="#{!delivery.new}"
+							target="_new" rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -65,38 +65,50 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-200">
 
-					<aon:outputLabel for="Delivery_series-New"
+					<aon:outputLabel for="Delivery_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
-						<aon:selectOneMenu id="Delivery_series-New" 
-							value="#{delivery.to.series}" rendered="#{delivery.new}"
-							valueChangeListener="#{delivery.onSeriesChanged}" 
-							reRender="Delivery_number,Delivery_securityLevel">
-							<f:selectItem itemLabel=" " itemValue="#{null}" />
-							<f:selectItems value="#{configCollections.seriesIds}" />
-						</aon:selectOneMenu>
-						<aon:inputText id="Delivery_series-Edit" 
-							value="#{delivery.to.series}" rendered="#{!delivery.new}" 
-							disabled="true" size="4" />
-						<aon:inputText id="Delivery_number" styleClass="aon-margin-left" 
-							value="#{delivery.to.number}" disabled="#{!delivery.new}" 
-							required="true" size="7" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:selectOneMenu id="Delivery_series" 
+									value="#{delivery.to.series}" rendered="#{delivery.new}"
+									valueChangeListener="#{delivery.onSeriesChanged}" 
+									reRender="Delivery_number,Delivery_securityLevel">
+									<f:selectItem itemLabel=" " itemValue="#{null}" />
+									<f:selectItems value="#{configCollections.seriesIds}" />
+								</aon:selectOneMenu>
+								<aon:inputText id="Delivery_number" styleClass="aon-margin-left" 
+									value="#{delivery.to.number}" rendered="#{delivery.new}" 
+									required="true" size="7" />
+								<aon:outputText styleClass="aon-bold aon-margin-right"
+									value="#{delivery.to.referenceCode}"
+									rendered="#{!delivery.new}" />
+							</aon:div>
+							<aon:div>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Delivery_securityLevel"
+										value="#{delivery.to.confidential}"
+										rendered="#{delivery.pending}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{delivery.pending}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{!delivery.pending and delivery.to.confidential}" />
+								</c:if>
 
-						<aon:selectOneMenu id="Delivery_securityLevel" styleClass="aon-margin-left"
-							value="#{delivery.to.securityLevel}" disabled="#{!delivery.pending}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
-
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{delivery.to.status}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_invoice}:"
-							rendered="#{delivery.invoiced}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{delivery.invoiceCode}"
-							rendered="#{delivery.invoiced}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{delivery.invoiced}" />
+								<aon:outputText styleClass="aon-margin-left"
+									value="#{delivery.to.status}" />
+								<aon:outputText styleClass="aon-italic aon-margin-left"
+									value="(#{financeBundle.finance_invoice}: "
+									rendered="#{delivery.invoiced}" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{delivery.invoiceCode}"
+									rendered="#{delivery.invoiced}" />
+								<aon:outputText styleClass="aon-italic" value=")"
+									rendered="#{delivery.invoiced}" />
+							</aon:div>
+						</h:panelGrid>
  					</aon:div>
 
 					<aon:outputLabel for="Delivery_issueTime" 
@@ -324,7 +336,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 									<f:facet name="header">
-										<aon:outputLabel value="#{warehouseBundle.warehouse_delivery_detail_line}" />
+										<aon:outputLabel for="DeliveryDetail_line" value="#{warehouseBundle.warehouse_delivery_detail_line}" />
 									</f:facet>
 									<aon:outputText value="#{to.line}"
 										rendered="#{formList}" />
@@ -340,7 +352,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">
-										<aon:outputLabel value="#{productBundle.product_item}" />
+										<aon:outputLabel for="DeliveryDetail_item_product_code" value="#{productBundle.product_item}" />
 									</f:facet>
 									<aon:outputText value="#{to.description}"
 										rendered="#{formList}">
@@ -398,10 +410,10 @@
 											style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 											<f:validateLength maximum="1024" />
 										</aon:inputTextarea>
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 											actionListener="#{deliveryDetail.onShortDescription}" reRender="DeliveryDetail_item_product_name"
 											rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 											actionListener="#{deliveryDetail.onLongDescription}" reRender="DeliveryDetail_item_product_name"
 											rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
 									</aon:div>
@@ -458,10 +470,10 @@
 												style="#{!deliveryDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 												<f:validateLength maximum="1024" />
 											</aon:inputTextarea>
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 												actionListener="#{deliveryDetail.onShortDescription}" reRender="DeliveryDetail_item_product_name-New"
 												rendered="#{deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 												actionListener="#{deliveryDetail.onLongDescription}" reRender="DeliveryDetail_item_product_name-New"
 												rendered="#{!deliveryDetail.longDescription and deliveryDetail.to.item.product.code != null}" />
 										</aon:div>
@@ -470,7 +482,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_quantity}" />
+										<aon:outputLabel for="DeliveryDetail_quantity" value="#{bundle.aon_quantity}" />
 									</f:facet>
 									<aon:outputText value="#{to.quantity}"
 										rendered="#{formList}">
@@ -492,7 +504,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_price}" />
+										<aon:outputLabel for="DeliveryDetail_price" value="#{bundle.aon_price}" />
 									</f:facet>
 									<aon:outputText value="#{to.price}"
 										rendered="#{formList}">
@@ -512,7 +524,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_discount}" />
+										<aon:outputLabel for="DeliveryDetail_discount" value="#{bundle.aon_discount}" />
 									</f:facet>
 									<aon:outputText value="#{to.discountExpression.discountExpr}"
 										rendered="#{formList}">
@@ -532,7 +544,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_amount}" />
+										<aon:outputLabel for="DeliveryDetail_amount" value="#{bundle.aon_amount}" />
 									</f:facet>
 									<aon:outputText value="#{controller.modelAmount}"
 										rendered="#{formList}">

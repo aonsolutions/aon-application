@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -21,6 +22,7 @@ public class IncomeControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		IncomeController controller = (IncomeController)event.getController();
+		((Income)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 		((Income)controller.getTo()).setStatus(IncomeStatus.PENDING);
 		controller.setAddresses(null);
 		controller.setWarehouse(null);
