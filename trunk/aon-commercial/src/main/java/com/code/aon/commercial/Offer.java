@@ -36,6 +36,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
@@ -56,7 +57,7 @@ import com.code.aon.seller.Seller;
  */
 @Entity
 @Table(name="offer")
-public class Offer implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
+public class Offer implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
 	
 	private static final long serialVersionUID = 851446217271328802L;
 
@@ -620,6 +621,16 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	@Transient
 	public PayMethod getPayment() {
 		return payMethod;
+	}
+
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
 	/**
