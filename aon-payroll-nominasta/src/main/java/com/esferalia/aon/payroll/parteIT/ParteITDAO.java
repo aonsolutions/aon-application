@@ -26,6 +26,7 @@ import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.utils.NumberValidation;
 
 public class ParteITDAO implements IParteITDAO {
 
@@ -135,6 +136,30 @@ public class ParteITDAO implements IParteITDAO {
 		//El el caso de recaída, debe indicar la primera I.T.
 		if (parteIT.isRecaida() && parteIT.getParteITRecaida() == null) {
 			return 12;
+		}
+		
+		// El CIAS debe cumplir una mascara
+		if ((!StringUtils.isBlank(parteIT.getCiasAlta()) && !NumberValidation.validCiasPattern(parteIT.getCiasAlta())) 
+				|| (!StringUtils.isBlank(parteIT.getCiasBaja()) && !NumberValidation.validCiasPattern(parteIT.getCiasBaja())) ) {
+			return 13;
+		}
+		
+		// El nº colegiado debe cumplir una mascara
+		if ((!StringUtils.isBlank(parteIT.getNumeroColegiadoAlta()) && !NumberValidation.validNumeroColegiadoPattern(parteIT.getNumeroColegiadoAlta())) 
+				|| (!StringUtils.isBlank(parteIT.getNumeroColegiadoBaja()) && !NumberValidation.validNumeroColegiadoPattern(parteIT.getNumeroColegiadoBaja())) ) {
+			return 14;
+		}
+		
+		// El CIAS debe corresponder con su digito de control
+		if ((!StringUtils.isBlank(parteIT.getCiasAlta()) && !NumberValidation.validCiasControlDigit(parteIT.getCiasAlta())) 
+				|| (!StringUtils.isBlank(parteIT.getCiasBaja()) && !NumberValidation.validCiasControlDigit(parteIT.getCiasBaja())) ) {
+			return 15;
+		}
+		
+		// El nº colegiado corresponder con su digito de control
+		if ((!StringUtils.isBlank(parteIT.getNumeroColegiadoAlta()) && !NumberValidation.validNumeroColegiadoControlDigit(parteIT.getNumeroColegiadoAlta())) 
+				|| (!StringUtils.isBlank(parteIT.getNumeroColegiadoBaja()) && !NumberValidation.validNumeroColegiadoControlDigit(parteIT.getNumeroColegiadoBaja())) ) {
+			return 16;
 		}
 		
 		return 0;
