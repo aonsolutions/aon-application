@@ -2,9 +2,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
@@ -45,14 +45,15 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
-	<aon:outputLabel for="Sales_securityLevel"
-		value="#{bundle.aon_security_level}" />
-	<aon:selectOneMenu id="Sales_securityLevel"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{commonCollections.securityLevels}" />
-	</aon:selectOneMenu>
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:outputLabel for="Sales_securityLevel"
+			value="#{bundle.aon_confidential}" />
+		<aon:selectOneRadio id="Sales_securityLevel"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</c:if>
 
 	<aon:outputLabel for="Sales_documentType"
 		value="#{bundle.aon_type}" />

@@ -1,6 +1,7 @@
 package com.code.aon.ui.purchase.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
@@ -20,6 +21,7 @@ public class PurchaseControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		PurchaseController controller = (PurchaseController)event.getController();
+		((Purchase)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 		((Purchase)controller.getTo()).setStatus(PurchaseStatus.PENDING);
 		((Purchase)controller.getTo()).setDocumentType(PurchaseDocumentType.NORMAL);
 		controller.setAddresses(null);
