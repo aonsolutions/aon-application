@@ -67,6 +67,9 @@
 		<listeners>
 	        <listener>com.code.aon.finance.event.CustomerFeeBeanListener</listener>
 		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.CustomerFeeBeanVetoListener</vetoListener>
+		</vetoListeners>
 	</bean>
 	
 </bean-config>
