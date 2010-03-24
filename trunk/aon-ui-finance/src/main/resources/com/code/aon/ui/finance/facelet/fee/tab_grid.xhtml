@@ -65,10 +65,10 @@
 						style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 						<f:validateLength maximum="1024" />
 					</aon:inputTextarea>
-					<aon:commandButton styleClass="aon-icon-edit-end"
+					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 						actionListener="#{controller.onShortDescription}" reRender="CustomerFee_item_product_name"
 						rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-					<aon:commandButton styleClass="aon-icon-edit-add"
+					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 						actionListener="#{controller.onLongDescription}" reRender="CustomerFee_item_product_name"
 						rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
 				</aon:div>
@@ -100,10 +100,10 @@
 							style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 							<f:validateLength maximum="1024" />
 						</aon:inputTextarea>
-						<aon:commandButton styleClass="aon-icon-edit-end"
+						<aon:commandButton styleClass="aon icon aon-icon-edit-end"
 							actionListener="#{controller.onShortDescription}" reRender="CustomerFee_item_product_name-New"
 							rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-						<aon:commandButton styleClass="aon-icon-edit-add"
+						<aon:commandButton styleClass="aon icon aon-icon-edit-add"
 							actionListener="#{controller.onLongDescription}" reRender="CustomerFee_item_product_name-New"
 							rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
 					</aon:div>
@@ -260,14 +260,12 @@
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 					<f:facet name="header">
 						<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
-							styleClass="aon-icon-confidential" style="padding-left:10px" />
+							styleClass="aon-icon-confidential" style="padding-left:15px" />
 					</f:facet>
 					<aon:outputText value="&#160;"
-						rendered="#{formList and to.confidential}"
-						styleClass="aon-icon-checked" style="padding-left:16px" />
-					<aon:outputText value="&#160;"
-						rendered="#{formList and !to.confidential}"
-						styleClass="aon-icon-check" style="padding-left:16px" />
+						rendered="#{formList}"
+						styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
+						style="padding-left:20px" />
 					<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
 						value="#{controller.to.confidential}" rendered="#{formEdit}" />
 					<f:facet name="footer">
