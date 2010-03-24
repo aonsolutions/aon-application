@@ -12,6 +12,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
@@ -25,6 +26,7 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
 
 public class ConfigCollectionsController {
 	
@@ -45,17 +47,20 @@ public class ConfigCollectionsController {
 	}	
 
 	@SuppressWarnings("unchecked")
-	public List<SelectItem> getSeries( boolean onlyId ) throws ManagerBeanException{
+	public List<SelectItem> getSeries(boolean onlyId) throws ManagerBeanException{
 		List<SelectItem> series = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ACTIVE), new Boolean(true));
+		if (!AonUtil.getRoleManager().isConfidentiality()) {
+			criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+		}
 		criteria.addOrder(seriesBean.getFieldName(IConfigAlias.SERIES_ID));
 		Iterator iter = seriesBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Series serie = (Series)iter.next();
 			SelectItem item;
-			if ( onlyId ) {
+			if (onlyId) {
 				item = new SelectItem(serie.getId(), serie.getId()); 
 			} else {
 				item = new SelectItem(serie, serie.getId());
