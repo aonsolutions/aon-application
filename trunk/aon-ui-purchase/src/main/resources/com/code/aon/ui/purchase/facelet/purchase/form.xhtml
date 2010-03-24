@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
@@ -44,12 +45,12 @@
 							rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0 and purchaseDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
-						<h:commandLink id="purchase" value="#{bundle.aon_report}"
-							target="_new" rendered="#{!purchase.new}"
+						<h:commandLink id="purchase" value="#{purchaseBundle.purchase_purchase}"
+							target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
 							action="#{report.onExecute}"
 							disabled="#{purchaseDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-printer">
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="purchaseForm" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
@@ -67,33 +68,47 @@
 					<aon:outputLabel for="Purchase_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div is="headerData">
-						<aon:inputText id="Purchase_series" 
-							value="#{purchase.to.series}" disabled="#{!purchase.pending}"
-							size="4" />
-						<aon:inputText id="Purchase_number" styleClass="aon-margin-left"
-							value="#{purchase.to.number}" disabled="#{!purchase.pending}" 
-							required="true" size="7" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:inputText id="Purchase_series" 
+									value="#{purchase.to.series}" rendered="#{purchase.pending}"
+									size="4" />
+								<aon:inputText id="Purchase_number" styleClass="aon-margin-left" 
+									value="#{purchase.to.number}" rendered="#{purchase.pending}"
+									required="true" size="7" />
+								<aon:outputText styleClass="aon-bold aon-margin-right"
+									value="#{purchase.to.referenceCode}"
+									rendered="#{!purchase.pending}" />
+							</aon:div>
+							<aon:div>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Purchase_securityLevel"
+										value="#{purchase.to.confidential}"
+										rendered="#{purchase.pending}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{purchase.pending}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{!purchase.pending and purchase.to.confidential}" />
+								</c:if>
 
-						<aon:selectOneMenu id="Purchase_securityLevel" styleClass="aon-margin-left"
-							value="#{purchase.to.securityLevel}" disabled="#{!purchase.pending}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
-
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{purchase.to.status}" />
-
-						<aon:commandButton id="block" value="&#160;"
-							actionListener="#{purchase.onBlock}"
-							title="#{purchaseBundle.purchase_to_block}"
-							immediate="true" rendered="#{!purchase.new and purchase.pending}"
-							styleClass="aon-icon-commandButton aon-icon-lock">
-						</aon:commandButton>										
-						<aon:commandButton id="unblock" value="&#160;"
-							actionListener="#{purchase.onUnblock}"
-							title="#{purchaseBundle.purchase_to_unblock}"
-							immediate="true" rendered="#{purchase.blocked}"
-							styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
-						</aon:commandButton>										
+								<aon:outputText styleClass="aon-margin-left aon-margin-right"
+									value="#{purchase.to.status}" />
+								<aon:commandButton id="block" value="&#160;"
+									actionListener="#{purchase.onBlock}"
+									title="#{purchaseBundle.purchase_to_block}"
+									immediate="true" rendered="#{!purchase.new and purchase.pending}"
+									styleClass="aon-icon-commandButton aon-icon-lock">
+								</aon:commandButton>										
+								<aon:commandButton id="unblock" value="&#160;"
+									actionListener="#{purchase.onUnblock}"
+									title="#{purchaseBundle.purchase_to_unblock}"
+									immediate="true" rendered="#{purchase.blocked}"
+									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
+								</aon:commandButton>										
+							</aon:div>
+						</h:panelGrid>
  					</aon:div>
 
 					<aon:outputLabel for="Purchase_issueDate" 
@@ -305,7 +320,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 									<f:facet name="header">
-										<aon:outputLabel value="#{purchaseBundle.purchase_detail_line}" />
+										<aon:outputLabel for="PurchaseDetail_line" value="#{purchaseBundle.purchase_detail_line}" />
 									</f:facet>
 									<aon:outputText value="#{to.line}"
 										rendered="#{formList}" />
@@ -321,7 +336,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">
-										<aon:outputLabel value="#{productBundle.product_item}" />
+										<aon:outputLabel for="PurchaseDetail_item_product_code" value="#{productBundle.product_item}" />
 									</f:facet>
 									<aon:outputText value="#{to.description}"
 										rendered="#{formList}">
@@ -364,10 +379,10 @@
 											style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 											<f:validateLength maximum="1024" />
 										</aon:inputTextarea>
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 											actionListener="#{purchaseDetail.onShortDescription}" reRender="PurchaseDetail_item_product_name"
 											rendered="#{purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 											actionListener="#{purchaseDetail.onLongDescription}" reRender="PurchaseDetail_item_product_name"
 											rendered="#{!purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
 									</aon:div>
@@ -409,10 +424,10 @@
 												style="#{!purchaseDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 												<f:validateLength maximum="1024" />
 											</aon:inputTextarea>
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 												actionListener="#{purchaseDetail.onShortDescription}" reRender="PurchaseDetail_item_product_name-New"
 												rendered="#{purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 												actionListener="#{purchaseDetail.onLongDescription}" reRender="PurchaseDetail_item_product_name-New"
 												rendered="#{!purchaseDetail.longDescription and purchaseDetail.to.item.product.code != null}" />
 										</aon:div>
@@ -421,7 +436,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_quantity}" />
+										<aon:outputLabel for="PurchaseDetail_quantity" value="#{bundle.aon_quantity}" />
 									</f:facet>
 									<aon:outputText value="#{to.quantity}"
 										rendered="#{formList}">
@@ -441,7 +456,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_price}" />
+										<aon:outputLabel for="PurchaseDetail_price" value="#{bundle.aon_price}" />
 									</f:facet>
 									<aon:outputText value="#{to.price}"
 										rendered="#{formList}">
@@ -461,7 +476,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_discount}" />
+										<aon:outputLabel for="PurchaseDetail_discount" value="#{bundle.aon_discount}" />
 									</f:facet>
 									<aon:outputText value="#{to.discountExpression.discountExpr}"
 										rendered="#{formList}">
@@ -481,7 +496,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_amount}" />
+										<aon:outputLabel for="PurchaseDetail_amount" value="#{bundle.aon_amount}" />
 									</f:facet>
 									<aon:outputText value="#{controller.modelAmount}"
 										rendered="#{formList}">

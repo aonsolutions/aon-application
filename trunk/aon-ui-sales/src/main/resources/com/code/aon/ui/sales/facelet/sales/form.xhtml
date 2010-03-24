@@ -45,12 +45,12 @@
 							rendered="#{!sales.new and salesDetail.model.rowCount > 0 and salesDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
-						<h:commandLink id="sales" value="#{bundle.aon_report}"
-							target="_new" rendered="#{!sales.new}"
+						<h:commandLink id="sales" value="#{salesBundle.sales_sales}"
+							target="_new" rendered="#{!sales.new and salesDetail.model.rowCount > 0}"
 							action="#{report.onExecute}"
 							disabled="#{salesDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-printer">
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="sales" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
@@ -65,43 +65,54 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-200">
 
-					<aon:outputLabel for="Sales_series-New"
+					<aon:outputLabel for="Sales_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div is="headerData">
-						<aon:selectOneMenu id="Sales_series-New" 
-							value="#{sales.to.series}" rendered="#{sales.new}"
-							valueChangeListener="#{sales.onSeriesChanged}" 
-							reRender="Sales_number,Sales_securityLevel">
-							<f:selectItem itemLabel=" " itemValue="#{null}" />
-							<f:selectItems value="#{configCollections.seriesIds}" />
-						</aon:selectOneMenu>
-						<aon:inputText id="Sales_series-Edit" 
-							value="#{sales.to.series}" rendered="#{!sales.new}" 
-							disabled="#{!sales.pending}" size="4" />
-						<aon:inputText id="Sales_number" styleClass="aon-margin-left"
-							value="#{sales.to.number}" disabled="#{!sales.pending}" 
-							required="true" size="7" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:selectOneMenu id="Sales_series" 
+									value="#{sales.to.series}" rendered="#{sales.new}"
+									valueChangeListener="#{sales.onSeriesChanged}" 
+									reRender="Sales_number,Sales_securityLevel">
+									<f:selectItem itemLabel=" " itemValue="#{null}" />
+									<f:selectItems value="#{configCollections.seriesIds}" />
+								</aon:selectOneMenu>
+								<aon:inputText id="Sales_number" styleClass="aon-margin-left" 
+									value="#{sales.to.number}" rendered="#{sales.new}" 
+									required="true" size="7" />
+								<aon:outputText styleClass="aon-bold aon-margin-right"
+									value="#{sales.to.referenceCode}"
+									rendered="#{!sales.new}" />
+							</aon:div>
+							<aon:div>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Sales_securityLevel"
+										value="#{sales.to.confidential}"
+										rendered="#{sales.pending}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{sales.pending}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{!sales.pending and sales.to.confidential}" />
+								</c:if>
 
-						<aon:selectOneMenu id="Sales_securityLevel" styleClass="aon-margin-left"
-							value="#{sales.to.securityLevel}" disabled="#{!sales.pending}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
-
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{sales.to.status}" />
-
-						<aon:commandButton id="block" value="&#160;"
-							actionListener="#{sales.onBlock}"
-							title="#{salesBundle.sales_to_block}"
-							immediate="true" rendered="#{!sales.new and sales.pending}"
-							styleClass="aon-icon-commandButton aon-icon-lock">
-						</aon:commandButton>										
-						<aon:commandButton id="unblock" value="&#160;"
-							actionListener="#{sales.onUnblock}"
-							title="#{salesBundle.sales_to_unblock}"
-							immediate="true" rendered="#{sales.blocked}"
-							styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
-						</aon:commandButton>										
+								<aon:outputText styleClass="aon-margin-left aon-margin-right"
+									value="#{sales.to.status}" />
+								<aon:commandButton id="block" value="&#160;"
+									actionListener="#{sales.onBlock}"
+									title="#{salesBundle.sales_to_block}"
+									immediate="true" rendered="#{!sales.new and sales.pending}"
+									styleClass="aon-icon-commandButton aon-icon-lock">
+								</aon:commandButton>										
+								<aon:commandButton id="unblock" value="&#160;"
+									actionListener="#{sales.onUnblock}"
+									title="#{salesBundle.sales_to_unblock}"
+									immediate="true" rendered="#{sales.blocked}"
+									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
+								</aon:commandButton>										
+							</aon:div>
+						</h:panelGrid>
  					</aon:div>
 
 					<aon:outputLabel for="Sales_issueDate" 
@@ -353,7 +364,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 									<f:facet name="header">
-										<aon:outputLabel value="#{salesBundle.sales_detail_line}" />
+										<aon:outputLabel for="SalesDetail_line" value="#{salesBundle.sales_detail_line}" />
 									</f:facet>
 									<aon:outputText value="#{to.line}"
 										rendered="#{formList}" />
@@ -369,7 +380,7 @@
 		
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">
-										<aon:outputLabel value="#{productBundle.product_item}" />
+										<aon:outputLabel for="SalesDetail_item_product_code" value="#{productBundle.product_item}" />
 									</f:facet>
 									<aon:outputText value="#{to.description}"
 										rendered="#{formList}">
@@ -426,10 +437,10 @@
 											style="#{!salesDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 											<f:validateLength maximum="1024" />
 										</aon:inputTextarea>
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 											actionListener="#{salesDetail.onShortDescription}" reRender="SalesDetail_item_product_name"
 											rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 											actionListener="#{salesDetail.onLongDescription}" reRender="SalesDetail_item_product_name"
 											rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
 									</aon:div>
@@ -485,10 +496,10 @@
 												style="#{!salesDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 												<f:validateLength maximum="1024" />
 											</aon:inputTextarea>
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 												actionListener="#{salesDetail.onShortDescription}" reRender="SalesDetail_item_product_name-New"
 												rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+											<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 												actionListener="#{salesDetail.onLongDescription}" reRender="SalesDetail_item_product_name-New"
 												rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
 										</aon:div>
@@ -497,7 +508,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_quantity}" />
+										<aon:outputLabel for="SalesDetail_quantity" value="#{bundle.aon_quantity}" />
 									</f:facet>
 									<aon:outputText value="#{to.quantity}"
 										rendered="#{formList}">
@@ -519,7 +530,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_price}" />
+										<aon:outputLabel for="SalesDetail_price" value="#{bundle.aon_price}" />
 									</f:facet>
 									<aon:outputText value="#{to.price}"
 										rendered="#{formList}">
@@ -539,7 +550,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_discount}" />
+										<aon:outputLabel for="SalesDetail_discount" value="#{bundle.aon_discount}" />
 									</f:facet>
 									<aon:outputText value="#{to.discountExpression.discountExpr}"
 										rendered="#{formList}">
@@ -559,7 +570,7 @@
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
-										<aon:outputLabel value="#{bundle.aon_amount}" />
+										<aon:outputLabel for="SalesDetail_amount" value="#{bundle.aon_amount}" />
 									</f:facet>
 									<aon:outputText value="#{controller.modelAmount}"
 										rendered="#{formList}">

@@ -1,6 +1,7 @@
 package com.code.aon.ui.sales.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
@@ -20,6 +21,7 @@ public class SalesControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		SalesController controller = (SalesController)event.getController();
+		((Sales)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 		((Sales)controller.getTo()).setStatus(SalesStatus.PENDING);
 		((Sales)controller.getTo()).setDocumentType(DocumentType.NORMAL);
 		controller.setAddresses(null);
