@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.core.it;
 
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IContrato;
+import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 
 
 
@@ -22,5 +23,7 @@ public interface IParteITCalculator {
 	Double getPrestacionDiaria60(IParteIT it) throws PayrollException;
 
 	Double getPrestacionDiaria75(IParteIT it) throws PayrollException;
+	
+	Periodicidad getProrrateoCotizacion(IParteIT it) throws PayrollException;
 
 }
