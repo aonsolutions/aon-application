@@ -4,6 +4,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.INomina;
+import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
@@ -71,6 +72,10 @@ public class ParteITCalculator {
 
 	public Double getPrestacionDiaria75(IParteIT it) {
 		return CommonUtil.round((it.getBaseReguladoraDiaria() * 75) / 100);
+	}
+	
+	public Periodicidad getProrrateoCotizacion(IParteIT it) throws PayrollException{
+		return it.getProrrateoCotizacion();
 	}
 
 }
