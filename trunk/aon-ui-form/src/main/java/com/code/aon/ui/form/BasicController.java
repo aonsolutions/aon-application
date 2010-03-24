@@ -26,6 +26,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -37,6 +38,8 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerListenerSupport;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.form.listener.ConfidentialityFilterListener;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller for Basic Structures.
@@ -74,6 +77,8 @@ public class BasicController extends AbstractPojoController implements IControll
 	private List<IControllerListener> optionalListenerClasses;
 
 	private List<DataModelListener> dataModelListeners;
+
+	private boolean interfaceListenersFlag;
 
 	private boolean saveState;
 
@@ -998,6 +1003,33 @@ public class BasicController extends AbstractPojoController implements IControll
 				}
 			}
 			updateInitExpression();
+		}
+	}
+
+	@Override
+	public void setPojo(String bean) {
+		super.setPojo(bean);
+		addInterfaceListeners();
+	}
+
+	@SuppressWarnings("unchecked")
+	private void addInterfaceListeners() {
+		if (!interfaceListenersFlag) {
+			interfaceListenersFlag = true;
+
+			List<IControllerListener> interfaceListeners = new LinkedList<IControllerListener>();
+			try {
+				Class clazz = Class.forName(getPojo());
+				Class[] interfaces = clazz.getInterfaces();
+				for (Class interfaz : interfaces) {
+					if (IConfidentialable.class.equals(interfaz) && !AonUtil.getRoleManager().isConfidentiality()) {
+						interfaceListeners.add(new ConfidentialityFilterListener());
+					}
+				}
+				addListeners(interfaceListeners);
+			} catch (ClassNotFoundException e) {
+				LOGGER.error(">>>> ClassNotFoundException for pojo: " + getPojo(), e);
+			}
 		}
 	}
 
