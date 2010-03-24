@@ -213,10 +213,6 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-	<!-- Listener, that enables Audit Sessions per User. -->
-	<listener>
-		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
-	</listener>
 
 	<!-- Sessions Filter -->
 	<filter>
