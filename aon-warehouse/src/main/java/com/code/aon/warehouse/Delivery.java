@@ -32,6 +32,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
@@ -50,7 +51,7 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 @Entity
 @Table(name="delivery")
-public class Delivery implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
+public class Delivery implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
 	
 	private static final long serialVersionUID = 5865460388758611455L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Delivery.class.getName());
@@ -267,6 +268,16 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	@Transient
 	public PayMethod getPayment() {
 		return payMethod;
+	}
+
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
 	@Transient
