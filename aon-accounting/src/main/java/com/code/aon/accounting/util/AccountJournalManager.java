@@ -10,6 +10,7 @@ import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.IProgression;
@@ -43,6 +44,24 @@ public class AccountJournalManager {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
+				AccountPeriodStatus originalStatus;
+				boolean periodChanged=false;
+				originalStatus=AccountPeriodStatus.ACTIVE;
+				
+				if(period.getStatus()!=AccountPeriodStatus.ACTIVE){
+					IManagerBean bean = BeanManager.getManagerBean(Period.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.PERIOD_ID), period.getId());
+					List<ITransferObject> list = bean.getList(criteria);
+					   for (ITransferObject to : list ) {
+				        	Period  per = (Period) to;
+				        	originalStatus=per.getStatus();
+				        	periodChanged=true;
+				        	per.setStatus(AccountPeriodStatus.ACTIVE);
+					        bean.update(per);    	
+				        
+				        }
+				}
 				
 				AccountingUtil util = new AccountingUtil();
 				boolean opening = util.existsEntry(period, AccountEntryType.OPENING, securityLevel);
@@ -81,6 +100,19 @@ public class AccountJournalManager {
 		        		journal++;
 		        	}
 		        }
+		        
+				if(periodChanged){
+					IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+					Criteria criteria2 = new Criteria();
+					criteria2.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), period.getId());
+					List<ITransferObject> list2 = periodBean.getList(criteria2);
+					   for (ITransferObject to : list2 ) {
+				        	Period  per = (Period) to;
+				        	per.setStatus(originalStatus);
+				        	periodBean.update(per);    	
+				        
+				        }
+				}
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
