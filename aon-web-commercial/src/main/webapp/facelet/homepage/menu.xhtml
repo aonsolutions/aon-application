@@ -24,10 +24,13 @@
 			value="#{bundle.aon_configuration}"
 			action="menu_config" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-config" />
+	</ui:define>
+	
+	<ui:define name="afterMenuContent">
 		<aon:commandLink id="communicationCenter"
 			value="#{commercialBundle.commercial_communication_center_module}"
 			styleClass="aon-top-menu-item aon-icon-telephone" immediate="true" 
 			action="communicationCenter" actionListener="#{communicationCenter.onInit}" />
-	</ui:define>
+	</ui:define>	
 
 </ui:composition>
