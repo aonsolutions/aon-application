@@ -4,6 +4,7 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.commercial.controller.OfferController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -20,6 +21,7 @@ public class OfferControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		OfferController controller = (OfferController)event.getController();
+		((Offer)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 		((Offer)controller.getTo()).setStatus(OfferStatus.PENDING);
 		((Offer)controller.getTo()).setType(OfferType.NORMAL);
 		controller.setAddresses(null);

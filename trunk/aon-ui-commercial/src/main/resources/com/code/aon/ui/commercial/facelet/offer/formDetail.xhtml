@@ -31,7 +31,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 				<f:facet name="header">
-					<aon:outputLabel value="#{commercialBundle.commercial_offer_detail_line}" />
+					<aon:outputLabel for="OfferDetail_line" value="#{commercialBundle.commercial_offer_detail_line}" />
 				</f:facet>
 				<aon:outputText value="#{to.line}"
 					rendered="#{formList}" />
@@ -47,7 +47,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel value="#{productBundle.product_item}" />
+					<aon:outputLabel for="OfferDetail_item_product_code" value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" 
 					rendered="#{formList}"
@@ -88,10 +88,10 @@
 						style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 						<f:validateLength maximum="1024" />
 					</aon:inputTextarea>
-					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 						actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_item_product_name"
 						rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
-					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 						actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_item_product_name"
 						rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 				</aon:div>
@@ -130,10 +130,10 @@
 							style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 							<f:validateLength maximum="1024" />
 						</aon:inputTextarea>
-						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
+						<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 							actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_item_product_name-New"
 							rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
-						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
+						<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 							actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_item_product_name-New"
 							rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 					</aon:div>
@@ -142,7 +142,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_quantity}" />
+					<aon:outputLabel for="OfferDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
@@ -164,7 +164,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_price}" />
+					<aon:outputLabel for="OfferDetail_price" value="#{bundle.aon_price}" />
 				</f:facet>
 				<aon:outputText value="#{to.price}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
@@ -184,7 +184,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_discount}" />
+					<aon:outputLabel for="OfferDetail_discount" value="#{bundle.aon_discount}" />
 				</f:facet>
 				<aon:outputText value="#{to.discountExpression.discountExpr}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
@@ -204,7 +204,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_amount}" />
+					<aon:outputLabel for="OfferDetail_amount" value="#{bundle.aon_amount}" />
 				</f:facet>
 				<aon:outputText value="#{controller.modelAmount}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
