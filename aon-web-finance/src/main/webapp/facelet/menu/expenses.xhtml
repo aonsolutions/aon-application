@@ -48,14 +48,16 @@
 										value="#{financeBundle.finance_undeductible_invoice_management_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_payment"
+									<aon:commandLink id="financePayment-expenses"
 										action="finance_search"	actionListener="#{finance.onEditSearchPayment}"
 										value="#{financeBundle.finance_payment_module}" />
 								</aon:div>
 							</aon:div>
 						</h:panelGrid>
 	
-						<ui:include src="/facelet/menu/general.xhtml" />
+						<ui:include src="/facelet/menu/general.xhtml" >
+							<ui:param name="category" value="expenses" />
+						</ui:include>
 	
 					</h:panelGrid>
 				</aon:componentGroup>

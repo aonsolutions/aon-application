@@ -14,22 +14,22 @@
 		</f:facet>
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="productCategory" 
+				<aon:commandLink id="productCategory-#{category}" 
 					action="productCategory"
 					value="#{productBundle.product_category_module}" />
 			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="geotreeParent" 
+				<aon:commandLink id="geotreeParent-#{category}" 
 					action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
 					value="#{geozoneBundle.geozone_module}" />
 			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="payMethod" 
+				<aon:commandLink id="payMethod-#{category}" 
 					action="payMethod"
 					value="#{configBundle.config_paymethod_module}" />
 			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="bank" 
+				<aon:commandLink id="bank-#{category}" 
 					action="bank"
 					value="#{configBundle.config_bank_module}" />
 			</aon:div>

@@ -43,14 +43,16 @@
 										value="#{financeBundle.finance_purchase_invoice_management_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_payment"
+									<aon:commandLink id="financePayment-purchase"
 										action="finance_search-Payment" actionListener="#{finance.onEditSearchPayment}"
 										value="#{financeBundle.finance_payment_module}" />
 								</aon:div>
 							</aon:div>
 						</h:panelGrid>
 	
-						<ui:include src="/facelet/menu/general.xhtml" />
+						<ui:include src="/facelet/menu/general.xhtml" >
+							<ui:param name="category" value="purchase" />
+						</ui:include>						
 	
 					</h:panelGrid>
 				</aon:componentGroup>
