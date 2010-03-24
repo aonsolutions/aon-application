@@ -47,20 +47,15 @@ public class AccountJournalManager {
 				AccountPeriodStatus originalStatus;
 				boolean periodChanged=false;
 				originalStatus=AccountPeriodStatus.ACTIVE;
-				
-				if(period.getStatus()!=AccountPeriodStatus.ACTIVE){
-					IManagerBean bean = BeanManager.getManagerBean(Period.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.PERIOD_ID), period.getId());
-					List<ITransferObject> list = bean.getList(criteria);
-					   for (ITransferObject to : list ) {
-				        	Period  per = (Period) to;
-				        	originalStatus=per.getStatus();
-				        	periodChanged=true;
-				        	per.setStatus(AccountPeriodStatus.ACTIVE);
-					        bean.update(per);    	
-				        
-				        }
+				Period per = null;
+				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+				if (period.getStatus() != AccountPeriodStatus.ACTIVE) {
+					ITransferObject to = periodBean.get(period.getId());
+					per = (Period) to;
+					originalStatus = per.getStatus();
+					periodChanged = true;
+					per.setStatus(AccountPeriodStatus.ACTIVE);
+					periodBean.update(per);
 				}
 				
 				AccountingUtil util = new AccountingUtil();
@@ -102,16 +97,8 @@ public class AccountJournalManager {
 		        }
 		        
 				if(periodChanged){
-					IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-					Criteria criteria2 = new Criteria();
-					criteria2.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), period.getId());
-					List<ITransferObject> list2 = periodBean.getList(criteria2);
-					   for (ITransferObject to : list2 ) {
-				        	Period  per = (Period) to;
-				        	per.setStatus(originalStatus);
-				        	periodBean.update(per);    	
-				        
-				        }
+		        	per.setStatus(originalStatus);
+		        	periodBean.update(per);    	
 				}
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
