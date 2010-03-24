@@ -66,38 +66,52 @@
 					<aon:outputLabel for="Invoice_referenceCode"
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
-						<aon:inputText id="Invoice_referenceCode" 
-							value="#{undeductibleInvoice.to.referenceCode}"
-							rendered="#{!undeductibleInvoice.readOnly}" size="15" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{undeductibleInvoice.to.referenceCode}"
-							rendered="#{undeductibleInvoice.readOnly}" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:inputText id="Invoice_referenceCode" 
+									value="#{undeductibleInvoice.to.referenceCode}"
+									rendered="#{!undeductibleInvoice.readOnly}" size="15" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{undeductibleInvoice.to.referenceCode}"
+									rendered="#{undeductibleInvoice.readOnly}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Invoice_investment"
+									value="#{undeductibleInvoice.to.investment}" 
+									rendered="#{!undeductibleInvoice.readOnly}" />
+								<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+									value="#{financeBundle.finance_invoice_investment}"
+									rendered="#{!undeductibleInvoice.readOnly or undeductibleInvoice.to.investment}" />
 
-						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left"
-							value="#{undeductibleInvoice.to.securityLevel}" disabled="#{undeductibleInvoice.readOnly}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
+										value="#{undeductibleInvoice.to.confidential}"
+										rendered="#{!undeductibleInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{!undeductibleInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{undeductibleInvoice.readOnly and undeductibleInvoice.to.confidential}" />
+								</c:if>
 
-						<c:if test="#{company.EInvoice}">
-							<aon:outputText value="&#160;"
-								rendered="#{!undeductibleInvoice.new and undeductibleInvoice.to.signed}"
-								title="#{signBundle.sign_signed}"
-								styleClass="aon-icon aon-icon-signed" />
-							<aon:outputText value="&#160;"
-								rendered="#{!undeductibleInvoice.new and !undeductibleInvoice.to.signed}"
-								title="#{signBundle.sign_sign_pending}"
-								styleClass="aon-icon aon-icon-unsigned" />
-						</c:if>						
+								<c:if test="#{company.EInvoice}">
+									<aon:outputText value="&#160;"
+										rendered="#{!undeductibleInvoice.new and undeductibleInvoice.to.signed}"
+										title="#{signBundle.sign_signed}"
+										styleClass="aon-icon aon-icon-signed" />
+								</c:if>						
 
-						<aon:outputText value="#{undeductibleInvoice.to.status}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_account_entry}:"
-							rendered="#{undeductibleInvoice.recorded}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{undeductibleInvoice.accountEntryId}"
-							rendered="#{undeductibleInvoice.recorded}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{undeductibleInvoice.recorded}" />
+								<c:if test="#{aonRole.accountingOperator and undeductibleInvoice.recorded}">
+									<aon:outputText value="#{undeductibleInvoice.to.status}" />
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="(#{financeBundle.finance_account_entry}: " />
+									<aon:outputText styleClass="aon-bold"
+										value="#{undeductibleInvoice.accountEntryId}" />
+									<aon:outputText styleClass="aon-italic" value=")" />
+								</c:if>
+							</aon:div>
+						</h:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel for="Invoice_issueDate"

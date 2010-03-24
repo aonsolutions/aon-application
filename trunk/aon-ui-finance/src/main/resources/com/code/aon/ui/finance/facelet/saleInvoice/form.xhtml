@@ -90,52 +90,59 @@
 					<aon:outputLabel for="Invoice_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
-						<aon:selectOneMenu id="Invoice_series"
-							value="#{saleInvoice.to.series}" rendered="#{saleInvoice.new}"
-							valueChangeListener="#{saleInvoice.onSeriesChanged}"
-							reRender="Invoice_number,Invoice_securityLevel">
-							<f:selectItem itemLabel=" " value="#{null}" />
-							<f:selectItems value="#{configCollections.seriesIds}" />
-						</aon:selectOneMenu>
-						<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
-							value="#{saleInvoice.to.number}" rendered="#{saleInvoice.new}"
-							required="true" size="7" />
-						<aon:commandButton value="&#160;"
-							title="#{financeBundle.finance_invoice_find_next_number}"
-							styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
- 							style="aon-margin-left" rendered="#{saleInvoice.new}"
-							actionListener="#{saleInvoice.onFindNextFreeNumber}"
-							reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
-						</aon:commandButton>															
-						<aon:outputText styleClass="aon-bold"
-							value="#{saleInvoice.to.referenceCode}"
-							rendered="#{!saleInvoice.new}" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:selectOneMenu id="Invoice_series"
+									value="#{saleInvoice.to.series}" rendered="#{saleInvoice.new}"
+									valueChangeListener="#{saleInvoice.onSeriesChanged}"
+									reRender="Invoice_number,Invoice_securityLevel">
+									<f:selectItem itemLabel=" " value="#{null}" />
+									<f:selectItems value="#{configCollections.seriesIds}" />
+								</aon:selectOneMenu>
+								<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
+									value="#{saleInvoice.to.number}" rendered="#{saleInvoice.new}"
+									required="true" size="7" />
+								<aon:commandButton value="&#160;"
+									title="#{financeBundle.finance_invoice_find_next_number}"
+									styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
+		 							style="aon-margin-left aon-margin-right" rendered="#{saleInvoice.new}"
+									actionListener="#{saleInvoice.onFindNextFreeNumber}"
+									reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
+								</aon:commandButton>															
+								<aon:outputText styleClass="aon-bold aon-margin-right"
+									value="#{saleInvoice.to.referenceCode}"
+									rendered="#{!saleInvoice.new}" />
+							</aon:div>
+							<aon:div>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
+										value="#{saleInvoice.to.confidential}"
+										rendered="#{!saleInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{!saleInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{saleInvoice.readOnly and saleInvoice.to.confidential}" />
+								</c:if>
 
-						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left aon-margin-right"
-							value="#{saleInvoice.to.securityLevel}" disabled="#{saleInvoice.readOnly}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
+								<c:if test="#{company.EInvoice}">
+									<aon:outputText value="&#160;"
+										rendered="#{!saleInvoice.new and saleInvoice.to.signed}"
+										title="#{signBundle.sign_signed}"
+										styleClass="aon-icon aon-icon-signed" />
+								</c:if>						
 
-						<c:if test="#{company.EInvoice}">
-							<aon:outputText value="&#160;"
-								rendered="#{!saleInvoice.new and saleInvoice.to.signed}"
-								title="#{signBundle.sign_signed}"
-								styleClass="aon-icon aon-icon-signed" />
-							<aon:outputText value="&#160;"
-								rendered="#{!saleInvoice.new and !saleInvoice.to.signed}"
-								title="#{signBundle.sign_sign_pending}"
-								styleClass="aon-icon aon-icon-unsigned" />
-						</c:if>						
-
-						<aon:outputText value="#{saleInvoice.to.status}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_account_entry}:"
-							rendered="#{saleInvoice.recorded}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{saleInvoice.accountEntryId}"
-							rendered="#{saleInvoice.recorded}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{saleInvoice.recorded}" />
+								<c:if test="#{aonRole.accountingOperator and saleInvoice.recorded}">
+									<aon:outputText value="#{saleInvoice.to.status}" />
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="(#{financeBundle.finance_account_entry}: " />
+									<aon:outputText styleClass="aon-bold"
+										value="#{saleInvoice.accountEntryId}" />
+									<aon:outputText styleClass="aon-italic" value=")" />
+								</c:if>
+							</aon:div>
+						</h:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel for="Invoice_issueDate"
