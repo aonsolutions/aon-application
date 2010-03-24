@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.0.2</version>
+		<version>5.0.3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.csb</artifactId>
-	<version>5.0.2</version>
+	<version>5.0.3</version>
 	<description>AON CSB</description>
 	<name>AON CSB</name>
 	<dependencies>
