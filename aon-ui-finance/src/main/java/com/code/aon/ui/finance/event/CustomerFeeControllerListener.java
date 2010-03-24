@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
@@ -30,6 +31,7 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 		CustomerFee customerFee = (CustomerFee)controller.getTo();
 		customerFee.setQuantity(1.0);
 		customerFee.setInitialDate(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), 1));
+		customerFee.setSecurityLevel(SecurityLevel.OFFICIAL);
 
 		controller.setLongDescription(false);
 		try {
