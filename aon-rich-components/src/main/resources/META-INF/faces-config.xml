@@ -238,7 +238,16 @@
 		   <var>richBundle</var>
 		</resource-bundle>
 	</application>
-	    
+
+	<!-- ************* Menu Selection ***************** -->
+	<managed-bean>
+		<managed-bean-name>selectedMenu</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.SelectedMenuController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+		    
 	<!-- ************* File Manager ***************** -->
 	<managed-bean>
 		<managed-bean-name>fileManager</managed-bean-name>

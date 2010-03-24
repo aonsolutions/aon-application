@@ -10,7 +10,11 @@
 		<aon:form>
 			<aon:menuBar id="mainMenu">
 				<ui:insert name="beforeMenuContent"/>
-				<ui:insert name="menuContent"/>		
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{selectedMenu.updateCommands}">	
+					<ui:insert name="menuContent"/>
+				</aon:componentGroup>		
 				<ui:insert name="afterMenuContent"/>		
 				<rich:toolBarGroup style="padding-right: 6px;padding-left: 6px"
 					location="right" itemSeparator="line">
