@@ -209,8 +209,8 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		
 		vcp.setFromInvoiceDate(getToInvoiceDate());
 		vcp.setToInvoiceDate(getToInvoiceDate());
-		vcp.setFromSeries(getFromSeries());
-		vcp.setToSeries(getToSeries());
+		vcp.setFromSeries(StringUtils.isBlank(getFromSeries())?null:getFromSeries());
+		vcp.setToSeries(StringUtils.isBlank(getToSeries())?null:getToSeries());
 		vcp.setFromNumber(getFromNumber());
 		vcp.setToNumber(getToNumber());
 		
@@ -483,7 +483,7 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 			setFromDate(vp.getStartDate(getYear()));	
 			setToDate(vp.getDueDate(getYear()));
 		} else {
-			String msg = "El Periodo IVA es necesario para calcular las fecha de incio y fin del periodo.";
+			String msg = "El Periodo IVA es necesario para calcular las fecha de inicio y fin del periodo.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
