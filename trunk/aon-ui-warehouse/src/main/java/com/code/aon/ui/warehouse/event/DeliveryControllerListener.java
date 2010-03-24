@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -21,6 +22,7 @@ public class DeliveryControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		DeliveryController controller = (DeliveryController)event.getController();
+		((Delivery)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 		((Delivery)controller.getTo()).setStatus(DeliveryStatus.PENDING);
 		controller.setAddresses(null);
 		controller.setWarehouse(null);
