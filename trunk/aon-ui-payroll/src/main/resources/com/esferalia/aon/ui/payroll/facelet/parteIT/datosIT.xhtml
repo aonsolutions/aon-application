@@ -37,20 +37,25 @@
 			<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
 			<aon:inputText id="cias" value="#{parteITWizard.cias}" />
 
-			<aon:outputLabel vslue="#{payrollBundle.payroll_tipo_it}" />
-			<aon:div>
-				<aon:outputText rendered="#{itWizard.finished}"
-					value="#{payrollBundle.payroll_tipo_it}" />
-				<aon:selectOneMenu id="tipoit" 
-					value="#{parteITWizard.parteIT.tipoContingencia}">
-					<f:selectItems value="#{payrollCollections.tiposContingencia}" />
-				</aon:selectOneMenu>
-			</aon:div>
-<!-- 
-			<aon:outputLabel for="recaida"
+			<aon:outputLabel for="tipoit" value="#{payrollBundle.payroll_tipo_it}" />
+			<aon:selectOneMenu id="tipoit" 
+				value="#{parteITWizard.parteIT.tipoContingencia}">
+				<f:selectItems value="#{payrollCollections.tiposContingencia}" />
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="prorrateo" value="#{payrollBundle.payroll_periodicidad}" />
+			<aon:selectOneRadio id="prorrateo" 
+				value="#{parteITWizard.parteIT.prorrateoCotizacion}">
+				<f:selectItems value="#{payrollCollections.periodicidades}" />
+			</aon:selectOneRadio>
+
+			<aon:outputLabel for="recaida" 
+				rendered="#{parteITWizard.parteIT.recaida}"
 				value="#{payrollBundle.payroll_recaida}" />
 			<aon:selectBooleanCheckbox id="recaida" 
+				rendered="#{parteITWizard.parteIT.recaida}"
 				value="#{parteITWizard.parteIT.recaida}" />
+<!--
 -->			
 		</aon:panelGrid>
 	</aon:panel>

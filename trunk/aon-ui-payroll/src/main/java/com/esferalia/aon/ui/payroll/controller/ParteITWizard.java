@@ -11,6 +11,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -46,7 +48,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private static final String[] STEPS = { "parteITWizard_step0","parteITWizard_step1","parteITWizard_step2","parteITWizard_step3" };
 	private IParteIT parteIT;
 	private TipoOperacionIT operacion;
+	private boolean recaidaAnterior;
 	
+	public boolean isRecaidaAnterior() {
+		return recaidaAnterior;
+	}
+	public void setRecaidaAnterior(boolean recaidaAnterior) {
+		this.recaidaAnterior = recaidaAnterior;
+	}
 	public IParteIT getParteIT() {
 		return parteIT;
 	}
@@ -109,12 +118,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		return getOperacion() == TipoOperacionIT.BAJA?getParteIT().getCiasBaja():getParteIT().getCiasAlta();
 	}
 	public void setCias(String cias) {
+		if(StringUtils.isBlank(cias)){
+			cias=null;
+		}
 		if (getOperacion() == TipoOperacionIT.BAJA) {
 			getParteIT().setCiasBaja(cias);
-			getParteIT().setCiasAlta(null);
 		} else if (getOperacion() == TipoOperacionIT.ALTA) {
 			getParteIT().setCiasAlta(cias);
-			getParteIT().setCiasBaja(null);
 		}
 	}
 
@@ -122,12 +132,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		return getOperacion() == TipoOperacionIT.BAJA?getParteIT().getNumeroColegiadoBaja():getParteIT().getNumeroColegiadoAlta();
 	}
 	public void setNumeroColegiado(String numeroColegiado) {
+		if(StringUtils.isBlank(numeroColegiado)){
+			numeroColegiado=null;
+		}
 		if (getOperacion() == TipoOperacionIT.BAJA) {
 			getParteIT().setNumeroColegiadoBaja(numeroColegiado);
-			getParteIT().setNumeroColegiadoAlta(null);
 		} else if (getOperacion() == TipoOperacionIT.ALTA) {
 			getParteIT().setNumeroColegiadoAlta(numeroColegiado);
-			getParteIT().setNumeroColegiadoBaja(null);
 		}
 	}
 
