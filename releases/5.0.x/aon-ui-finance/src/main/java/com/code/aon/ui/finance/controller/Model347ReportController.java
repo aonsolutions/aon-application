@@ -24,6 +24,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD347.MOD347Format;
 import com.code.aon.finance.enumeration.Model347ReportOrder;
@@ -148,7 +149,7 @@ public class Model347ReportController implements ICollectionProvider, IFinanceMe
 		getParams().setType(Model347Type.ALL);
 		getParams().setOrder(Model347ReportOrder.INVOICE_REGISTRY_DOCUMENT);
 		getParams().setSecurityLevel(null);
-		getParams().setMinimunAmount(3000.0);
+		getParams().setMinimunAmount(3005.06);
 		setModel(null);
 		setSummary(null);
 		setTotalKeyA(null);
@@ -207,7 +208,10 @@ public class Model347ReportController implements ICollectionProvider, IFinanceMe
 			getParams().setToDate(c.getTime());
 		}
 	}
-
+	public void onTotalChanged(ActionEvent event) {
+		initializeTotals();
+	}
+	
 	public void onDisable(ActionEvent event) {
 		Model347  to = (Model347) getModel().getRowData();
 		to.setDisabled(!to.isDisabled());
@@ -253,10 +257,14 @@ public class Model347ReportController implements ICollectionProvider, IFinanceMe
         if (getFileOutput() != null) {
         	if (getFileOutput().getErrors().size() > 0) {
         		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
-        		for (Exception e : getFileOutput().getErrors()) {
-        			AonUtil.addErrorMessage(e.getMessage());
-        			e.printStackTrace();
-        		}
+//        		for (Exception e : getFileOutput().getErrors()) {
+//        			String msg = e.getMessage();
+//        			if (e instanceof Fd0Exception) {
+//        				Fd0Exception fde = (Fd0Exception) e;
+//        				msg = fde.getDetail() + ": " + e.getMessage();
+//        			}
+//        			AonUtil.addErrorMessage(msg);
+//        		}
             }
         }
 	}

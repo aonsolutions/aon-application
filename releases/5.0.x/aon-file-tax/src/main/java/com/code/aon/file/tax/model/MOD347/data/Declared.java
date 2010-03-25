@@ -28,7 +28,7 @@ public class Declared {
 	/**
 	 * The country
 	 */
-	private Integer country;
+	private String country;
 	/**
 	 * The key
 	 */
@@ -61,13 +61,13 @@ public class Declared {
 	/**
 	 * @return the country
 	 */
-	public Integer getCountry() {
+	public String getCountry() {
 		return country;
 	}
 	/**
 	 * @param country the country to set
 	 */
-	public void setCountry(Integer country) {
+	public void setCountry(String country) {
 		this.country = country;
 	}
 	/**

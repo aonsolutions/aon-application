@@ -62,6 +62,11 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
 
+					<aon:outputLabel for="Model_347_minimum"
+						value="#{financeBundle.finance_minimun}" />
+					<aon:inputText id="Model_347_minimum" size="8"
+						value="#{model347Report.params.minimunAmount}" style="margin-left: 0.5em;" />
+
 					<aon:outputLabel for="Model_347_type"
 						value="#{financeBundle.finance_show_key}" />
 					<aon:selectOneMenu id="Model_347_type" 
