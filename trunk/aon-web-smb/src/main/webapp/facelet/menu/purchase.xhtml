@@ -59,13 +59,17 @@
 								</aon:div>
 							</h:panelGrid>
 
+							<ui:include src="/facelet/menu/utility.xhtml" >
+								<ui:param name="category" value="purchase" />
+							</ui:include>
+
+						</aon:panelGroup>
+
+						<aon:panelGroup>
 							<ui:include src="/facelet/menu/generalProduct.xhtml" >
 								<ui:param name="category" value="purchase" />
 							</ui:include>
 							
-						</aon:panelGroup>
-
-						<aon:panelGroup>
 							<h:panelGrid styleClass="aon-width-all"
 								headerClass="aon-icon-statistics aon-direct-access-panel">		
 								<f:facet name="header">
@@ -128,10 +132,6 @@
 								</aon:div>
 							</h:panelGrid>
 							
-							<ui:include src="/facelet/menu/utility.xhtml" >
-								<ui:param name="category" value="purchase" />
-							</ui:include>
-
 						</aon:panelGroup>						
 					</h:panelGrid>
 				</aon:componentGroup>

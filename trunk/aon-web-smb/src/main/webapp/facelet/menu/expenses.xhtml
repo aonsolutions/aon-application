@@ -65,22 +65,23 @@
 								</aon:div>
 							</h:panelGrid>
 						
-							<ui:decorate template="/facelet/menu/general.xhtml" >
+							<ui:include src="/facelet/menu/utility.xhtml" >
 								<ui:param name="category" value="expenses" />
-								<ui:define name="beforeContent">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="expenseItem" 
-											action="expenseItem" 
-											value="#{productBundle.product_expense_module}" />
-									</aon:div>								
-								</ui:define>
-							</ui:decorate>
+							</ui:include>
+						
 						</aon:panelGroup>						
 
-						<ui:include src="/facelet/menu/utility.xhtml" >
+						<ui:decorate template="/facelet/menu/general.xhtml" >
 							<ui:param name="category" value="expenses" />
-						</ui:include>
-						
+							<ui:define name="beforeContent">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="expenseItem" 
+										action="expenseItem" 
+										value="#{productBundle.product_expense_module}" />
+								</aon:div>								
+							</ui:define>
+						</ui:decorate>
+
 					</h:panelGrid>
 					
 				</aon:componentGroup>
