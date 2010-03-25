@@ -20,7 +20,7 @@ public class Model347CollectionProvider {
 		ResultSet rs = null;
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT ELT(i.type+1, 'B', 'A', 'B') key347 ");
+			stmt.append("SELECT ELT(i.type+1, 'A', 'B', 'A') key347 ");
 			stmt.append(",i.registry ");
 			stmt.append(",i.rdocument ");
 			stmt.append(",i.rname ");
