@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>5.0.3</version>
+		<version>5.0.4</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-enterprise</artifactId>
 	<packaging>war</packaging>
-	<version>5.0.3</version>
+	<version>5.0.4</version>
 	<description>AON WEB ENTERPRISE</description>
 	<name>AON WEB ENTERPRISE</name>
 	<properties>
