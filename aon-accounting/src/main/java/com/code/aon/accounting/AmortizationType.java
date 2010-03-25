@@ -121,7 +121,7 @@ public class AmortizationType implements ITransferObject {
 
 	@Transient
     public int getYears() {
-		if (percentage!= 0) {
+		if (percentage != null && percentage!= 0) {
 			return (int) CommonUtil.round( 100 / percentage,0);	
 		}
 		return 0;
