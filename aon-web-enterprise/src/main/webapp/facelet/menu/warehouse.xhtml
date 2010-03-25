@@ -37,6 +37,11 @@
 										action="stock_search" actionListener="#{stock.onEditSearch}"
 										value="#{warehouseBundle.warehouse_stock_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="warehouse" 
+										action="warehouse" 
+										value="#{warehouseBundle.warehouse_warehouse_module}" />
+								</aon:div>
 							</aon:div>
 						</h:panelGrid>
 	
@@ -45,13 +50,6 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_reports}"/>
 							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="itemRotationModule" disabled="true" 
-										value="#{warehouseBundle.warehouse_item_rotation_module}" />
-								</aon:div>
-							</aon:div>
-							
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<h:commandLink value="#{warehouseBundle.warehouse_order_proposal_module}"

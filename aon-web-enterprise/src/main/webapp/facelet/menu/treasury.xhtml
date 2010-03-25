@@ -13,7 +13,7 @@
 		<aon:form id="treasuryMenu">
 
 			<aon:div styleClass="aon-scroll-area">
-			
+
 				<aon:componentGroup
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">			
@@ -28,13 +28,13 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_charge"
-										action="finance_search"
+									<aon:commandLink id="financeCharge-treasury"
+										action="finance_search-Charge"
 										actionListener="#{finance.onEditSearchCharge}"
 										value="#{financeBundle.finance_charge_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_payment"
+									<aon:commandLink id="financePayment-treasury"
 										action="finance_search-Payment"
 										actionListener="#{finance.onEditSearchPayment}"
 										value="#{financeBundle.finance_payment_module}" />
@@ -44,9 +44,19 @@
 										actionListener="#{fbatch.onEditSearch}"
 										value="#{financeBundle.finance_fbatch_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="payMethod-treasury"
+										action="payMethod"
+										value="#{configBundle.config_paymethod_module}" />
+								</aon:div>								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bank-treasury"
+										action="bank"
+										value="#{configBundle.config_bank_module}" />
+								</aon:div>								
 							</aon:div>
 						</h:panelGrid>
-	
+
 						<h:panelGrid styleClass="aon-width-all"
 							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
@@ -57,19 +67,11 @@
 									<aon:commandLink id="checks" action="util_checking"
 										value="#{financeBundle.finance_checking_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bank" action="bank"
-										value="#{configBundle.config_bank_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="payMethod" action="payMethod"
-										value="#{configBundle.config_paymethod_module}" />
-								</aon:div>
 							</aon:div>
 						</h:panelGrid>
 					</h:panelGrid>
 				</aon:componentGroup>
-				
+
 			</aon:div>
 
 		</aon:form>

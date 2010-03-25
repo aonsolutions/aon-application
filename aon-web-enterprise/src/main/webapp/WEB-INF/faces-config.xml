@@ -66,8 +66,8 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>menu_product</from-outcome>
-			<to-view-id>/facelet/menu/product.xhtml</to-view-id> 
+			<from-outcome>menu_expenses</from-outcome>
+			<to-view-id>/facelet/menu/expenses.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_commercial</from-outcome>
@@ -88,10 +88,6 @@
 		<navigation-case>
 			<from-outcome>menu_treasury</from-outcome>
 			<to-view-id>/facelet/menu/treasury.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_accounting</from-outcome>
-			<to-view-id>/facelet/menu/accounting.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_config</from-outcome>
