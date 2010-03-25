@@ -132,6 +132,16 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 					
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="Finance_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio id="Finance_securityLevel"
+							valueChangeListener="#{controller.addExpression}">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+						</aon:selectOneRadio>				
+					</c:if>
+
 					<aon:outputLabel for="Finance_registryBank_id"
 						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="Finance_registryBank_id"
