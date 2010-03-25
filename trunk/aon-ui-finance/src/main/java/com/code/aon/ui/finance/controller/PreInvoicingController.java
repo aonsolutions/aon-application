@@ -10,7 +10,6 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
@@ -45,7 +44,7 @@ public class PreInvoicingController implements ICollectionProvider {
 
 	public void onInitialize(ActionEvent event) {
 		this.invoicingParams = new InvoicingParameters();
-		this.invoicingParams.setSecurityLevel(SecurityLevel.OFFICIAL);
+		this.invoicingParams.setConfidential(false);
 		this.invoicingParams.setInvoiceDate(new Date());
 		this.invoicingParams.setCustomer(new Customer());
 		Item item = new Item();

@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -88,12 +88,15 @@
 								value="#{feeInvoicing.params.year}" />
 						</aon:panelGrid>
 	
-						<aon:outputLabel for="Invoicing_securityLevel"
-							value="#{bundle.aon_security_level}" />
-						<aon:selectOneMenu id="Invoicing_securityLevel"
-							value="#{feeInvoicing.params.securityLevel}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:outputLabel for="Invoicing_Confidential"
+								value="#{bundle.aon_confidential}" />
+							<aon:selectOneRadio id="Invoicing_Confidential" 
+								value="#{feeInvoicing.params.confidential}">
+								<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+							</aon:selectOneRadio>
+						</c:if>
 	
 						<aon:outputLabel for="Invoicing_WorkPlace"
 							value="#{companyBundle.company_workplace}" />
@@ -116,12 +119,12 @@
 							<aon:selectOneMenu id="Invoice_series"
 								value="#{feeInvoicing.params.invoiceSeries}"
 								valueChangeListener="#{feeInvoicing.onInvoiceSeriesChanged}"
-								reRender="Invoice_number">
+								reRender="Invoice_number,Invoicing_Confidential">
 								<f:selectItem itemLabel=" " value="#{null}"/>
 								<f:selectItems value="#{configCollections.series}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="Invoice_number" required="true"
-								 styleClass="aon-margin-left"
+								styleClass="aon-margin-left"
 								value="#{feeInvoicing.params.invoiceNumber}" size="7" />
 						</aon:div>
 	
@@ -132,12 +135,15 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 	
-						<aon:outputLabel for="Invoice_record"
-							value="#{financeBundle.finance_record}" />
-						<aon:selectOneRadio id="Invoice_record" value="#{feeInvoicing.params.invoiceRecordable}">
-							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
-							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
-						</aon:selectOneRadio>
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:outputLabel for="Invoice_record"
+								value="#{financeBundle.finance_record}" />
+							<aon:selectOneRadio id="Invoice_record" 
+								value="#{feeInvoicing.params.invoiceRecordable}">
+								<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+							</aon:selectOneRadio>
+						</c:if>
 					</aon:panelGrid>
 				</aon:panel>
 			</aon:div>

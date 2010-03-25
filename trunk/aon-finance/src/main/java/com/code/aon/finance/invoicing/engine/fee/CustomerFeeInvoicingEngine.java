@@ -16,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
@@ -72,11 +73,9 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Expression dateExpression = createFromToExpression(params.getMonth(), params.getYear());
 		criteria.addExpression(dateExpression);
 		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
 		if (params.getItem() != null && params.getItem().getId() != null) {
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
-		}
-		if (params.getSecurityLevel() != null) {
-			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_SECURITY_LEVEL), params.getSecurityLevel());
 		}
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
@@ -334,7 +333,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
-		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
 		return invoice;
 	}
 	
@@ -348,8 +347,12 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
-		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
 		return invoice;
+	}
+
+	private SecurityLevel getSecurityLevel(boolean confidential) {
+		return confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
 	}
 
 	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice, InvoicingParameters params) {

@@ -3,7 +3,6 @@ package com.code.aon.finance.invoicing;
 import java.util.Date;
 
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
@@ -20,7 +19,7 @@ public class InvoicingParameters {
 	private Integer toNumber;
 	private Date fromDate;
 	private Date toDate;
-	private SecurityLevel securityLevel;
+	private boolean confidential;
 	private WorkPlace workPlace;
 	
 	private Series invoiceSeries;
@@ -100,12 +99,12 @@ public class InvoicingParameters {
 		this.toDate = toDate;
 	}
 
-	public SecurityLevel getSecurityLevel() {
-		return securityLevel;
+	public boolean isConfidential() {
+		return confidential;
 	}
 
-	public void setSecurityLevel(SecurityLevel securityLevel) {
-		this.securityLevel = securityLevel;
+	public void setConfidential(boolean confidential) {
+		this.confidential = confidential;
 	}
 
 	public WorkPlace getWorkPlace() {
