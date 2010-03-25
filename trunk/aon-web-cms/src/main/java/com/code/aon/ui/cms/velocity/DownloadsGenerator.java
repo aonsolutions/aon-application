@@ -37,11 +37,12 @@ public class DownloadsGenerator extends Generator {
 		try {
 			Section configSection = GeneratorConfigController.currentSection(DownloadConfig.class);
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
-			Criteria criteria = null;
+			Criteria criteria = new Criteria();
 			if (selectedCategory!=null){
-				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), selectedCategory.getId());
 			}
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_POSITION));			
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			ArrayList<DownloadCategoryHandler> downloadCategoryHandlerList = new ArrayList<DownloadCategoryHandler>();
 			for (int i=0; i < l.size(); i++) {
