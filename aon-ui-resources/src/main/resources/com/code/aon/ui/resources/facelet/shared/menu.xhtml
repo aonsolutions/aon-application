@@ -29,11 +29,8 @@
 		                <f:facet name="label"> 
 	                        <aon:graphicImage title="#{bundle.aon_help}"
 	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
-		                </f:facet>						
-						<c:if test="#{webMap != null}">
-							<aon:menuItem id="webMap" action="webMap"
-								value="#{bundle.aon_web_map}" />
-						</c:if>
+		                </f:facet>			
+		                <ui:insert name="beforeHelpMenuContent"/>			
 						<aon:menuItem id="about"
 							value="#{bundle.aon_about}" />
 					</aon:dropDownMenu>						
