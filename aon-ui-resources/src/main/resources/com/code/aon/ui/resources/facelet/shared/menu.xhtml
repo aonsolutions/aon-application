@@ -31,11 +31,14 @@
 	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
 		                </f:facet>			
 		                <ui:insert name="beforeHelpMenuContent"/>			
-						<aon:menuItem id="about"
-							value="#{bundle.aon_about}" />
+						<aon:menuItem id="about" reRender="aboutWindowPanel"
+							value="#{bundle.aon_about}" >
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
+						</aon:menuItem>
 					</aon:dropDownMenu>						
 				</rich:toolBarGroup>	 		
 	 		</aon:menuBar>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/about.xhtml" />
 	</c:if>
  </ui:composition>
