@@ -13,14 +13,14 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{customerBundle.customer_module}" />
 				<ui:param name="controller" value="#{customer}" />
-				<c:if test="#{aonConfiguration.bean.customer.showHistory and !customer.new}">
 					<ui:define name="beforeSpinToolbarContent">
+					<c:if test="#{aonConfiguration.bean.customer.showHistory and !customer.new}">
 						<aon:commandButton id="CustomerHistory" 
 							action="registry_stats" actionListener="#{customer.onCustomerHistory}"
 							value="#{bundle.aon_history}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-assume" />
+					</c:if>		
 					</ui:define>
-				</c:if>
 			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
