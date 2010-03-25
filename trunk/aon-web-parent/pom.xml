@@ -56,7 +56,9 @@
 	     </manifest>
 	    <manifestEntries>
               <dbVersion>${dbVersion}</dbVersion>
-              <buildNumber>${maven.build.timestamp}</buildNumber>	   
+              <buildNumber>${env.BUILD_NUMBER}</buildNumber>	   
+              <buildDate>${maven.build.timestamp}</buildDate>	   
+              <buildRevision>${buildNumber}</buildRevision>	   
             </manifestEntries>
           </archive>
         </configuration>
