@@ -198,7 +198,7 @@
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
 	</context-param>
-	
+ 	
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -267,11 +267,6 @@
 		</listener-class>
 	</listener>
 	    
-    <context-param>
-       <param-name>config-file</param-name>
-       <param-value>/WEB-INF/conf/bean_config.xml</param-value>
-    </context-param> 
-
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
