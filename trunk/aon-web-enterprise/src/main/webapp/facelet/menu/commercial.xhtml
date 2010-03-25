@@ -12,17 +12,17 @@
 
 		<aon:form id="commercialMenu">
 		
-			<aon:div styleClass="aon-scroll-area">
-			
+			<aon:div styleClass="aon-scroll-area">		
+		
 				<aon:componentGroup
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">
 					
-					<h:panelGrid styleClass="aon-width-all" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300">
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 		
 						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-sales aon-direct-access-panel">
+							headerClass="aon-icon-offer aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.menu_commercial}"/>
 							</f:facet>						
@@ -33,17 +33,32 @@
 										value="#{commercialBundle.commercial_target_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="seller" 
+										action="seller_search" actionListener="#{seller.onEditSearch}"
+										value="#{salesBundle.sales_seller_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="offer" 
 										action="offer_search" actionListener="#{offer.onEditSearch}"
 										value="#{commercialBundle.commercial_offer_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="seller" 
-										action="seller_search" actionListener="#{seller.onEditSearch}"
-										value="#{salesBundle.sales_seller_module}" />
+									<aon:commandLink id="tariff-commercial" 
+										action="tariff_list" actionListener="#{tariff.onSearch}"
+										value="#{productBundle.product_tariff_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="catalogue-commercial" 
+										action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
+										value="#{productBundle.product_catalogue_module}" />
+								</aon:div>								
 							</aon:div>
 						</h:panelGrid>
+						
+						<ui:include src="/facelet/menu/general.xhtml" >
+							<ui:param name="category" value="commercial" />
+						</ui:include>
+						
 					</h:panelGrid>
 					
 				</aon:componentGroup>
