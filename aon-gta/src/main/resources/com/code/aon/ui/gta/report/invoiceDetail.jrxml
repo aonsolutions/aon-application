@@ -48,9 +48,9 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{delivery}.getSeries()!=null && !$F{delivery}.getSeries().equals("")?$F{delivery}.getSeries()+"/":"") + $F{delivery}.getNumber()) + " de "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{delivery}.getSeries()!=null && !$F{delivery}.getSeries().equals("")?$F{delivery}.getSeries()+"/":"") + $F{delivery}.getNumber()) + "     de "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -63,7 +63,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_delivery}+": "]]></textFieldExpression>
 				</textField>
@@ -78,7 +78,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supportOrder}!=null)?$R{offer_tasItem}+": ":null]]></textFieldExpression>
 				</textField>
@@ -93,7 +93,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supportOrder}!=null)?$F{supportOrder}.getTasItem().getModel().getMake().getName() + " " + $F{supportOrder}.getTasItem().getModel().getName():null]]></textFieldExpression>
 				</textField>
@@ -108,7 +108,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supportOrder}!=null)?$R{offer_tasItem_publicCode}+": ":null]]></textFieldExpression>
 				</textField>
@@ -123,7 +123,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supportOrder}!=null)?$F{supportOrder}.getTasItem().getPublicCode():null]]></textFieldExpression>
 				</textField>
@@ -138,7 +138,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supportOrder}!=null)?$R{invoice_support_order_counter}+":":null]]></textFieldExpression>
 				</textField>
@@ -146,14 +146,14 @@
 					<reportElement
 						x="503"
 						y="3"
-						width="38"
+						width="40"
 						height="16"
 						key="textField-35">
 							<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[($F{supportOrder}!=null)?new Double($F{supportOrder}.getCounterti()):null]]></textFieldExpression>
 				</textField>
@@ -168,7 +168,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{delivery}.getIssueTime()]]></textFieldExpression>
 				</textField>

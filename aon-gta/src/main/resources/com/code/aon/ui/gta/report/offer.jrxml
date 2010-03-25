@@ -49,10 +49,10 @@
 				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Blank" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="5"
-						y="8"
-						width="83"
-						height="59"
+						x="8"
+						y="2"
+						width="250"
+						height="73"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="image-1"
@@ -63,21 +63,8 @@
 				</image>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="100"
-						y="30"
-						width="201"
-						height="24"
-						key="textField-27"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
 						x="332"
-						y="40"
+						y="47"
 						width="112"
 						height="12"
 						key="textField-65"/>
@@ -90,7 +77,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="444"
-						y="40"
+						y="47"
 						width="111"
 						height="12"
 						key="textField-66"/>
@@ -103,7 +90,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="332"
-						y="28"
+						y="35"
 						width="223"
 						height="12"
 						key="textField-67"/>
@@ -116,7 +103,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="332"
-						y="16"
+						y="23"
 						width="223"
 						height="12"
 						key="textField-68"/>
@@ -129,7 +116,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="332"
-						y="52"
+						y="59"
 						width="223"
 						height="12"
 						key="textField-69"/>
@@ -138,6 +125,19 @@
 						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{target_document} + ": " + $P{company}.getDocument()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="332"
+						y="7"
+						width="223"
+						height="16"
+						key="textField-73"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageHeader>
