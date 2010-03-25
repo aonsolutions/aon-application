@@ -103,10 +103,10 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		params.getItem().setProduct(new Product());
 		params.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		params.setYear(calendar.get(Calendar.YEAR));
-		params.setSecurityLevel(SecurityLevel.OFFICIAL);
+		params.setConfidential(false);
 		params.setInvoiceNumber(obtainMaxNumber(null));
 		params.setInvoiceDate(new Date());
-		params.setInvoiceRecordable(true);
+		params.setInvoiceRecordable(false);
 		setParams(params);
 
 		setProgressionPanelVisible(false);
@@ -121,7 +121,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		Series series = (Series) event.getNewValue();
 		getParams().setInvoiceNumber(obtainMaxNumber(series));
-		getParams().setSecurityLevel(obtainSeriesSecurityLevel(series));
+		getParams().setConfidential(isSeriesConfidential(series));
 	}
 
 	private int obtainMaxNumber(Series series) throws ManagerBeanException {
@@ -141,11 +141,11 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		return 1;
 	}
 
-	private SecurityLevel obtainSeriesSecurityLevel(Series series) {
+	private boolean isSeriesConfidential(Series series) {
 		if (series != null) {
-			return series.getSecurityLevel();
+			return (series.getSecurityLevel() == SecurityLevel.CONFIDENTIAL) ? true : false;
 		}
-		return null;
+		return false;
 	}
 
 	public void onInvoice(ActionEvent event) {

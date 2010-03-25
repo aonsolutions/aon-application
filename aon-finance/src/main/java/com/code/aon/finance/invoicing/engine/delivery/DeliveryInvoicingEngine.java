@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
@@ -69,6 +70,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
 		if (params.getFromDate() != null) {
 			criteria.addGreaterThanOrEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME), params.getFromDate());
 		}
@@ -84,16 +86,13 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		if (params.getToNumber() != null) {
 			criteria.addLessThanOrEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER), params.getToNumber());
 		}
-		if (params.getSecurityLevel() != null) {
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), params.getSecurityLevel());
-		}
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_REGISTRY_ADDRESS_ID));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAY_METHOD_ID));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_REGISTRY_ADDRESS));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAY_METHOD));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK_ACCOUNT));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER_OF_PAYMENTS));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_DAYS_TO_FIRST_PAYMENT));
@@ -219,7 +218,6 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		Collections.sort(deliveryList, new DeliveryComparator());
 		return deliveryList;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private void invoiceDeliveries(List deliveryList, Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
@@ -392,7 +390,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
-		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
 		return invoice;
 	}
 
@@ -408,8 +406,12 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
-		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
 		return invoice;
+	}
+
+	private SecurityLevel getSecurityLevel(boolean confidential) {
+		return confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
 	}
 
 	public void invoiceDeliveryList(Invoice invoice, List<Delivery> deliveryList) throws ManagerBeanException {
