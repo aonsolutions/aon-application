@@ -16,7 +16,7 @@
 		<finalName>aon-web-cms</finalName>
 	</build>
 	<properties>
-		<dbVersion>2.0.5</dbVersion>
+		<dbVersion>2.1.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
