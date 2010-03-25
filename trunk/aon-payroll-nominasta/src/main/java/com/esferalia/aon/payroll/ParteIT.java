@@ -393,6 +393,12 @@ public class ParteIT implements IParteIT,ITransferObject  {
 	@Override
 	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
+		if(empleado!=null && empleado.getId()!=null){
+			if(getId()==null){
+				setId(new ParteITPK());
+			}
+			getId().setCdg(empleado.getId());
+		}
 	}
 
 }
