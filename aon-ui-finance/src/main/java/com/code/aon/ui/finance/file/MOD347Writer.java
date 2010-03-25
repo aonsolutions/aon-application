@@ -53,11 +53,7 @@ public class MOD347Writer implements IFinanceConstants {
 			Deponent deponent = new  Deponent();
 			deponent.setCode(getCompany().getDocument());
 			deponent.setComplementary(false);
-			
-			// TODO
-			deponent.setJustify(347000); 
-
-			
+			deponent.setJustify(1); 
 			deponent.setName(getCompany().getName());
 			deponent.setRelName(getCompany().getName());
 			RegistryMedia  phone = getCompany().getPhone();
