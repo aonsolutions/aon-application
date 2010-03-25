@@ -2,7 +2,6 @@
 	color:#2152A5;
 	font-weight: bold !important;
 }
-
 .aon-outputLabel {
 	font-weight: normal;
 }
@@ -10,4 +9,8 @@
 	width:920px;
     height:178px;
     overflow:auto;
+}
+.aon-dropDownMenu-label{
+	padding: 2px 4px 2px 22px;
+	background-position:4px !important;
 }
