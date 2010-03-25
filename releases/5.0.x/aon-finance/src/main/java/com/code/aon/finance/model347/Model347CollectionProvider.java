@@ -39,9 +39,7 @@ public class Model347CollectionProvider {
 			stmt.append("it.surcharge_quota=0, ");
 			stmt.append("ROUND(it.surcharge * id.taxable_base / 100,2) ");
 			stmt.append(",IF(it.surcharge_quota is NULL,0,it.surcharge_quota) ");
-			stmt.append(") ");
-			stmt.append(") * IF(it.tax_type=2,-1,1) ");
-			stmt.append(") total ");
+			stmt.append("))) total ");
 			stmt.append("FROM invoice_detail id ");
 			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id) ");
 			stmt.append("LEFT OUTER JOIN invoice_tax it ON it.invoice_detail = id.id ");
@@ -54,6 +52,7 @@ public class Model347CollectionProvider {
 			stmt.append("LEFT OUTER JOIN geotree gt ON gz.id = gt.child ");
 			stmt.append("LEFT OUTER JOIN geozone gz2 ON gt.parent = gz2.id ");
 			stmt.append("WHERE i.id=i.id");
+			stmt.append(" AND it.tax_type=1 ");
 			if (params.getType() == Model347Type.A_KEY ) {
 				stmt.append(" AND i.type = 1");			
 			}
