@@ -204,8 +204,8 @@
 						value="#{delivery.defaultPayMethod}"
 						disabled="#{!delivery.pending}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{warehouseBundle.warehouse_delivery_customer_pay_method}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{warehouseBundle.warehouse_delivery_define_another_one}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{warehouseBundle.warehouse_delivery_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{warehouseBundle.warehouse_delivery_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Delivery_total" 
