@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -80,17 +81,14 @@
 				<aon:dataTable id="model347ReportList" value="#{model347Report.model}"
 					style="width: 100%;"
 					rows="20" var="to" rendered="#{model347Report.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-numberColumn">
-								
-					<aon:rowSelector								
-								actionListener="#{model347Report.onDisable}"
-								reRender="accountEntryData,totalPanel"/>
+					columnClasses="aon-editDataTable-textColumn aon-width-60,
+								aon-editDataTable-textColumn aon-width-60,
+								aon-editDataTable-textColumn aon-width-80,
+								aon-editDataTable-textColumn aon-width-auto,
+								aon-editDataTable-textColumn aon-width-150,
+								aon-editDataTable-textColumn aon-width-130,
+								aon-editDataTable-numberColumn aon-width-80,
+								aon-editDataTable-iconColumn">
 								
 					<aon:column>
 						<f:facet name="header">
@@ -110,7 +108,11 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_company_document}" />
 						</f:facet>
-						<aon:outputText value="#{to.document.document}" 
+						<aon:outputText rendered="#{to.disabled}" value="#{to.document.document}" 
+							style="text-decoration: line-through; color: #BBB;"/>
+						<aon:inputText id="m347_nif" value="#{to.document.document}"
+							rendered="#{!to.disabled}"
+							size="7" required="true" reRender="m347_nif" 
 							style="#{!to.document.valid?'color: red;':''};#{to.disabled?'text-decoration: line-through; color: #BBB;':''};"/>
 					</aon:column>
 
@@ -118,31 +120,69 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_company_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.name}" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
+						<aon:outputText value="#{to.name}"
+							rendered="#{to.disabled}" 
+							style="text-decoration: line-through; color: #BBB;"/>
+						<aon:inputText id="m347_name" value="#{to.name}"
+							rendered="#{!to.disabled}"
+							size="50" required="true" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{geozoneBundle.geozone_province}" />
 						</f:facet>
-						<aon:outputText value="#{to.geozoneName} (#{to.geozone})" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
+						<aon:inputText value="#{to.geozone}"
+							rendered="#{!to.disabled}"
+							size="1" required="true"/>
+						<aon:outputText value="#{to.geozoneName}" 
+							style="margin-left:5px;#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{geozoneBundle.geozone_country}" />
 						</f:facet>
-						<aon:outputText value="#{to.countryName} (#{to.country})" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
+						<aon:inputText value="#{to.country}"
+							rendered="#{!to.disabled}"
+							size="1"/>
+						<aon:outputText value="#{to.countryName}" 
+							style="margin-left:5px;#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_total}" />
 						</f:facet>
-							<aon:outputText value="#{to.total}" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}">
-									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column>
+						<aon:inputText rendered="#{!to.disabled}" size="8"
+							value="#{to.total}"  required="true">
+							<a4j:support event="onchange"
+							 	actionListener="#{model347Report.onTotalChanged}"
+							 	reRender="totalPanel" />
+						</aon:inputText>
+						<aon:outputText rendered="#{to.disabled}"  value="#{to.total}" style="text-decoration: line-through; color: #BBB;">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandButton id="disable-declarado"
+							title="#{financeBundle.finance_disable}"
+							rendered="#{!to.disabled}" 
+							actionListener="#{model347Report.onDisable}" 
+							styleClass="aon-editDataTable-button aon-icon-file-entrance"
+							reRender="accountEntryData,totalPanel"/>
+						<aon:commandButton id="enable-declarado"
+							title="#{financeBundle.finance_enable}"
+							rendered="#{to.disabled}" 
+							actionListener="#{model347Report.onDisable}"
+							styleClass="aon-editDataTable-button aon-icon-file-exit-cancel"
+							reRender="accountEntryData,totalPanel"/> 
+					</aon:column>
+					
 				</aon:dataTable>
 
 				<aon:dataScroller2 for="model347ReportList" showNote="true" />

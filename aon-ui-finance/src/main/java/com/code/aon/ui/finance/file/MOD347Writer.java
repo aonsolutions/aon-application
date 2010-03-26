@@ -39,10 +39,10 @@ public class MOD347Writer implements IFinanceConstants {
 		try {
 			Deponent deponent = getDeponent(year,summary);
 			File file = File.createTempFile("MOD347_", ".txt");
-			FileFiller csb19 = new MOD347(deponent, format, file.getAbsolutePath());
+			FileFiller mod347 = new MOD347(deponent, format, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
 			output.setFile(file);
-			output.setErrors(csb19.create());
+			output.setErrors(mod347.create());
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
@@ -53,11 +53,7 @@ public class MOD347Writer implements IFinanceConstants {
 			Deponent deponent = new  Deponent();
 			deponent.setCode(getCompany().getDocument());
 			deponent.setComplementary(false);
-			
-			// TODO
-			deponent.setJustify(347000); 
-
-			
+			deponent.setJustify(1); 
 			deponent.setName(getCompany().getName());
 			deponent.setRelName(getCompany().getName());
 			RegistryMedia  phone = getCompany().getPhone();
