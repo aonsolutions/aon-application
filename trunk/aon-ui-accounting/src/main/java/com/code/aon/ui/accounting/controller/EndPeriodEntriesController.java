@@ -37,8 +37,7 @@ import com.code.aon.ui.util.AonUtil;
 public class EndPeriodEntriesController {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	private static final Logger LOGGER = LoggerFactory.getLogger(EndPeriodEntriesController.class
-			.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(EndPeriodEntriesController.class.getName());
 
 	private Date date;
 	private Period period;
@@ -100,7 +99,7 @@ public class EndPeriodEntriesController {
 		setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
 
-	private void validateParameters(AccountEntryType accountEntryType)  {
+	private void validateParameters(AccountEntryType accountEntryType) {
 		try {
 			if (period == null) {
 				String msg = "El periodo es un campo requerido.";
@@ -123,49 +122,44 @@ public class EndPeriodEntriesController {
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-	
+
 			if (accountEntryType == AccountEntryType.OPENING) {
 				if (period.equals(previousPeriod)) {
 					String msg = "Los periodos no pueden ser iguales.";
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				}
-	
+
 				if (!util.existsEntry(previousPeriod, AccountEntryType.CLOSING, getSecurityLevel())) {
-					String msg = "No existe asiento de cierre el ejercicio " + previousPeriod.getId()
-							+ ".";
+					String msg = "No existe asiento de cierre el ejercicio " + previousPeriod.getId() + ".";
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				}
 			} else if (accountEntryType == AccountEntryType.OPERATING) {
-				// Si no existe asiento de apertura y el ejercicio no es el primero cerrado,
+				// Si no existe asiento de apertura y el ejercicio no es el
+				// primero cerrado,
 				// se lanza el error.
 				if (!util.existsEntry(getPeriod(), AccountEntryType.OPENING, getSecurityLevel())) {
 					IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 					Criteria c = new Criteria();
-					c.addLessThanExpression(periodBean
-							.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), getPeriod()
-							.getInitiationDate());
-					c.addEqualExpression(periodBean
-							.getFieldName(IAccountingAlias.PERIOD_STATUS), AccountPeriodStatus.CLOSED);
+					c.addLessThanExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), getPeriod().getInitiationDate());
+					c.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_STATUS), AccountPeriodStatus.CLOSED);
 					if (periodBean.getList(c).size() > 0) {
-						String msg = "No existe el asiento de apertura en el ejercicio "
-								+ getPeriod().getId() + ".";
+						String msg = "No existe el asiento de apertura en el ejercicio " + getPeriod().getId() + ".";
 						AonUtil.addErrorMessage(msg);
 						throw new AbortProcessingException(msg);
 					}
 				}
 			} else if (accountEntryType == AccountEntryType.CLOSING) {
 				if (!util.existsEntry(getPeriod(), AccountEntryType.OPERATING, getSecurityLevel())) {
-					String msg = "No existe el asiento de explotación en el ejercicio "
-							+ getPeriod().getId() + ".";
+					String msg = "No existe el asiento de explotación en el ejercicio " + getPeriod().getId() + ".";
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				}
 			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(),e);
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 
 	}
@@ -195,35 +189,24 @@ public class EndPeriodEntriesController {
 
 				if (getPreviousPeriod() != null) {
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(entryBean
-							.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD),
-							getPreviousPeriod().getId());
-					criteria.addEqualExpression(entryBean
-							.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
-							AccountEntryType.CLOSING);
-					criteria.addEqualExpression(entryBean
-							.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL),
-							getSecurityLevel());
+					criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPreviousPeriod().getId());
+					criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING);
+					criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
 					List<ITransferObject> list = entryBean.getList(criteria);
 					if (list.size() <= 0) {
-						String msg = "No existe asiento de cierre en el ejercicio "
-								+ getPreviousPeriod().getId() + " (" + getSecurityLevel() + ").";
+						String msg = "No existe asiento de cierre en el ejercicio " + getPreviousPeriod().getId() + " (" + getSecurityLevel() + ").";
 						AonUtil.addErrorMessage(msg);
 						throw new AbortProcessingException(msg);
 					}
 					previous = (AccountEntry) list.get(0);
-					IManagerBean entryDetailBean = BeanManager
-							.getManagerBean(AccountEntryDetail.class);
+					IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 					Criteria detailCriteria = new Criteria();
-					detailCriteria.addEqualExpression(entryDetailBean
-							.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID),
-							previous.getId());
-					detailCriteria.addOrder(entryDetailBean
-							.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_LINE));
+					detailCriteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), previous
+							.getId());
+					detailCriteria.addOrder(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_LINE));
 					List<ITransferObject> details = entryDetailBean.getList(detailCriteria);
 					if (details.size() <= 0) {
-						String msg = "El asiento de cierre en el ejercicio "
-								+ getPreviousPeriod().getId() + " no tiene apuntes.";
+						String msg = "El asiento de cierre en el ejercicio " + getPreviousPeriod().getId() + " no tiene apuntes.";
 						AonUtil.addErrorMessage(msg);
 						throw new AbortProcessingException(msg);
 					}
@@ -237,14 +220,18 @@ public class EndPeriodEntriesController {
 						detail.setCredit(det.getDebit());
 						detail.setDebit(det.getCredit());
 						detail.setLine(det.getLine());
-						entryDetailBean.insert(detail);
+						if (CommonUtil.round(det.getDebit())==0 && CommonUtil.round(det.getCredit())==0) {
+							// Nada
+						} else {
+							entryDetailBean.insert(detail);
+						}
 					}
 				}
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 				getPeriod().setStatus(AccountPeriodStatus.OPENING);
-				setPeriod( (Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
-				setPeriod( (Period) periodBean.update( getPeriod() ) );
-				
+				setPeriod((Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
+				setPeriod((Period) periodBean.update(getPeriod()));
+
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
@@ -257,8 +244,7 @@ public class EndPeriodEntriesController {
 					String msg = "Unable to rollback transaction!";
 					LOGGER.error(msg, e);
 				}
-				String msg = "Error al generar el asiento de apertura del ejercicio " + getPeriod()
-						+ ". (" + e.getMessage() + ")";
+				String msg = "Error al generar el asiento de apertura del ejercicio " + getPeriod() + ". (" + e.getMessage() + ")";
 				LOGGER.error(msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -295,8 +281,8 @@ public class EndPeriodEntriesController {
 
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 				getPeriod().setStatus(AccountPeriodStatus.CLOSED);
-				setPeriod( (Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
-				setPeriod( (Period) periodBean.update( getPeriod() ) );
+				setPeriod((Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
+				setPeriod((Period) periodBean.update(getPeriod()));
 
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
@@ -310,8 +296,7 @@ public class EndPeriodEntriesController {
 					String msg = "Unable to rollback transaction!";
 					LOGGER.error(msg, e);
 				}
-				String msg = "Error al generar el asiento de cierre del ejercicio " + getPeriod()
-				+ ". (" + e.getMessage() + ")";
+				String msg = "Error al generar el asiento de cierre del ejercicio " + getPeriod() + ". (" + e.getMessage() + ")";
 				LOGGER.error(msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -346,16 +331,18 @@ public class EndPeriodEntriesController {
 			Double debit = (Double) data[1];
 			Double credit = (Double) data[2];
 			double balance = CommonUtil.round(credit - debit);
-			if (balance > 0) {
-				detail.setDebit(balance);
-				detail.setCredit(0);
-			} else {
-				balance = CommonUtil.round(balance * (-1));
-				detail.setCredit(balance);
-				detail.setDebit(0);
+			if (balance !=  0) {
+				if (balance > 0) {
+					detail.setDebit(balance);
+					detail.setCredit(0);
+				} else {
+					balance = CommonUtil.round(balance * (-1));
+					detail.setCredit(balance);
+					detail.setDebit(0);
+				}
+				detail.setLine(i);
+				entryDetailBean.insert(detail);
 			}
-			detail.setLine(i);
-			entryDetailBean.insert(detail);
 		}
 		return entry;
 	}
@@ -376,11 +363,11 @@ public class EndPeriodEntriesController {
 				this.navigationKey = "accountEntry_form";
 				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.OPERATING);
 				AccountEntry entry = saveOperatingEntry(list);
-				
+
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 				getPeriod().setStatus(AccountPeriodStatus.OPERATING);
-				setPeriod( (Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
-				setPeriod( (Period) periodBean.update( getPeriod() ) );
+				setPeriod((Period) HibernateUtil.getSession(sessionName).merge(getPeriod()));
+				setPeriod((Period) periodBean.update(getPeriod()));
 
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
@@ -394,8 +381,7 @@ public class EndPeriodEntriesController {
 					String msg = "Unable to rollback transaction!";
 					LOGGER.error(msg, e);
 				}
-				String msg = "Error al generar el asiento de explotación del ejercicio " + getPeriod()
-					+ ". (" + e.getMessage() + ")";
+				String msg = "Error al generar el asiento de explotación del ejercicio " + getPeriod() + ". (" + e.getMessage() + ")";
 				LOGGER.error(msg, e);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -432,16 +418,18 @@ public class EndPeriodEntriesController {
 			Double credit = (Double) data[2];
 			double balance = CommonUtil.round(credit - debit);
 			sum = CommonUtil.round(sum + balance);
-			if (balance > 0) {
-				detail.setDebit(balance);
-				detail.setCredit(0);
-			} else {
-				balance = CommonUtil.round(balance * (-1));
-				detail.setCredit(balance);
-				detail.setDebit(0);
+			if (balance !=  0) {
+				if (balance > 0) {
+					detail.setDebit(balance);
+					detail.setCredit(0);
+				} else {
+					balance = CommonUtil.round(balance * (-1));
+					detail.setCredit(balance);
+					detail.setDebit(0);
+				}
+				detail.setLine(i);
+				entryDetailBean.insert(detail);
 			}
-			detail.setLine(i);
-			entryDetailBean.insert(detail);
 		}
 
 		AccountEntryDetail detail = new AccountEntryDetail();
@@ -493,8 +481,7 @@ public class EndPeriodEntriesController {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		Session session = HibernateUtil.getSession(sessionName);
 		StringWriter sw = new StringWriter();
-		sw
-				.append("SELECT account.id,SUM(debit),SUM(credit) FROM AccountSummary WHERE accountPeriod = '");
+		sw.append("SELECT account.id,SUM(debit),SUM(credit) FROM AccountSummary WHERE accountPeriod = '");
 		sw.append(period.getId());
 		sw.append("'");
 		if (accountEntryType == AccountEntryType.OPERATING) {
@@ -506,11 +493,9 @@ public class EndPeriodEntriesController {
 	}
 
 	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryController entryController = (AccountEntryController) FormUtil
-				.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		AccountEntryController entryController = (AccountEntryController) FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-				IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 		entryController.setCriteria(criteria);
 		entryController.onSearch(null);
 		entryController.getModel().setRowIndex(0);
