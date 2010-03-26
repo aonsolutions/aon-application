@@ -13,7 +13,7 @@ public class Model347 {
 	RegistryDocument document;
 	Integer geozone;
 	String geozoneName;
-	Integer country;
+	String country;
 	String countryName;
 	double total;
 	public boolean isDisabled() {
@@ -58,10 +58,10 @@ public class Model347 {
 	public void setGeozoneName(String geozoneName) {
 		this.geozoneName = geozoneName;
 	}
-	public Integer getCountry() {
+	public String getCountry() {
 		return country;
 	}
-	public void setCountry(Integer country) {
+	public void setCountry(String country) {
 		this.country = country;
 	}
 	public String getCountryName() {
