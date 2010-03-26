@@ -28,7 +28,14 @@
 				<aon:selectInputDate id="fecha" value="#{parteITWizard.fecha}"
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}" />
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" 
+						actionListener="#{parteITWizard.onChangeFechaInicio}" 
+						reRender="prorrateo"/>
+					<a4j:support event="ondateselected" 
+						actionListener="#{parteITWizard.onChangeFechaInicio}" 
+						reRender="prorrateo"/>
+				</aon:selectInputDate>
 			</aon:div>
 
 			<aon:outputLabel for="colegiado" value="#{payrollBundle.payroll_colegiado}" />
@@ -55,8 +62,6 @@
 			<aon:selectBooleanCheckbox id="recaida" 
 				rendered="#{parteITWizard.parteIT.recaida}"
 				value="#{parteITWizard.parteIT.recaida}" />
-<!--
--->			
 		</aon:panelGrid>
 	</aon:panel>
 </ui:composition>

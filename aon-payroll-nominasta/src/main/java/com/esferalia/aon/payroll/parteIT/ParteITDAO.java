@@ -179,8 +179,8 @@ public class ParteITDAO implements IParteITDAO {
 		parteIT.setPrestacionDiaria75(calculator.getPrestacionDiaria75(parteIT));
 	}
 	
-	
-	private IContrato getContrato(IParteIT parteIT) throws PayrollException {
+	@Override
+	public IContrato getContrato(IParteIT parteIT) throws PayrollException {
 		try {
 			IManagerBean trabajoBean = BeanManager.getManagerBean(Contrato.class);
 			String eAlias = trabajoBean.getFieldName(IPayrollAlias.CONTRATO_ID_CDG);

@@ -42,12 +42,12 @@
 			</aon:div>
 			<aon:outputFormat value="#{bundle.aon_version}"
 				styleClass="aon-version-label"
-				title="DB: #{aonConfiguration.dataBaseVersion}"
-				rendered="#{aonConfiguration.applicationVersion != null}" >
-				<f:param value="#{aonConfiguration.applicationVersion}" />
+				title="DB: #{aonConfiguration.properties.databaseVersion}"
+				rendered="#{aonConfiguration.properties.applicationVersion != null}" >
+				<f:param value="#{aonConfiguration.properties.applicationVersion}" />
 			</aon:outputFormat>
 			<aon:outputText style="display: none"
-				 value="DB: #{aonConfiguration.dataBaseVersion}" />			
+				 value="DB: #{aonConfiguration.properties.databaseVersion}" />			
 			<ui:insert name="afterVersionContent" />
 		</aon:div>
 	</aon:div>
