@@ -12,7 +12,7 @@
 				<rich:modalPanel 
 					id="aboutWindow"
 					rendered="#{aonConfiguration.properties.showAbout}" showWhenRendered="true"
-					minWidth="400" height="180">
+					minWidth="400" height="240">
 	
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
@@ -36,17 +36,22 @@
 								<aon:outputText value=" / #{appBundle.aon_application_title}"
 									style="margin-left: 0px;" styleClass="aon-header-title" />							
 							</aon:div>
-							<h:panelGrid styleClass="aon-margin-top">						
-								<aon:outputFormat value="#{bundle.aon_full_version}"
-									style="color: #000;" styleClass="aon-version-label"
-									rendered="#{aonConfiguration.properties.applicationVersion != null}" >
-									<f:param value="#{aonConfiguration.properties.applicationVersion}" />
-									<f:param value="#{aonConfiguration.properties.buildDate}" />
-									<f:param value="#{aonConfiguration.properties.buildNumber}" />
-									<f:param value="#{aonConfiguration.properties.buildRevision}" />
-								</aon:outputFormat>
-								<aon:outputFormat value="#{bundle.aon_db_version}"
-									style="color: #000;" styleClass="aon-version-label"
+							<h:panelGrid styleClass="aon-margin-top" columnClasses="aon-version-label">
+								<c:if test="#{aonConfiguration.properties.applicationVersion != null}" >						
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_about_version}" >
+										<f:param value="#{aonConfiguration.properties.applicationVersion}" />
+									</aon:outputFormat>
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_about_date}" >
+										<f:param value="#{aonConfiguration.properties.buildDate}" />
+									</aon:outputFormat>
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_build}" >
+										<f:param value="#{aonConfiguration.properties.buildNumber}" />
+									</aon:outputFormat>
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_revision}" >
+										<f:param value="#{aonConfiguration.properties.buildRevision}" />
+									</aon:outputFormat>
+								</c:if>
+								<aon:outputFormat style="color: #000;" value="#{bundle.aon_db_version}"
 									rendered="#{aonConfiguration.properties.databaseVersion != null}" >
 									<f:param value="#{aonConfiguration.properties.databaseVersion}" />
 								</aon:outputFormat>
