@@ -73,7 +73,7 @@ public class FinanceGenerator {
 			for(int i = 2;i <= payMethod.getNumberOfPayments() - 1;i++){
 				date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
 				financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
-				}
+			}
 			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (payMethod.getNumberOfPayments() - 1)), 2);
 			date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
@@ -100,7 +100,7 @@ public class FinanceGenerator {
 			for(int i = 2;i <= rPayMethod.getNumberOfPayments() - 1;i++){
 				date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 				financeList.add(createFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank));
-				}
+			}
 			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1)), 2);
 			date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank));
