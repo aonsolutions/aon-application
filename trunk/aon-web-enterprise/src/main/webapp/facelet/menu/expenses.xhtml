@@ -71,9 +71,34 @@
 						
 						</aon:panelGroup>						
 
-						<ui:decorate template="/facelet/menu/general.xhtml" >
-							<ui:param name="category" value="expenses" />
-						</ui:decorate>
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_general}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="expenseItem-#{category}"
+										action="expenseItem" 
+										value="#{productBundle.product_expense_module}" />
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="productCategory-expenses" 
+										action="productCategory"
+										value="#{productBundle.product_category_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="segment-expenses" 
+										action="segment_form" 
+										value="#{registryBundle.registry_segment_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geotreeParent-expenses" 
+										action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+										value="#{geozoneBundle.geozone_module}" />
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>
 
 					</h:panelGrid>
 					

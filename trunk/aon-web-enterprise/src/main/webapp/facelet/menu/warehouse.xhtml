@@ -21,29 +21,65 @@
 					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-warehouse aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{warehouseBundle.warehouse_menu_group}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="inventory_remake" 
-										action="inventoryClose" actionListener="#{inventory.onStartClosing}"
-										value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+						<aon:panelGroup>
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-icon-warehouse aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{warehouseBundle.warehouse_menu_group}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="inventory_remake" 
+											action="inventoryClose" actionListener="#{inventory.onStartClosing}"
+											value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="stock" 
+											action="stock_search" actionListener="#{stock.onEditSearch}"
+											value="#{warehouseBundle.warehouse_stock_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="warehouse" 
+											action="warehouse" 
+											value="#{warehouseBundle.warehouse_warehouse_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="stock" 
-										action="stock_search" actionListener="#{stock.onEditSearch}"
-										value="#{warehouseBundle.warehouse_stock_module}" />
+							</h:panelGrid>
+
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-direct-access-panel aon-icon-product">
+								<f:facet name="header">
+									<aon:outputText value="#{productBundle.product_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="item-warehouse" 
+											action="item_search" actionListener="#{item.onEditSearch}"
+											value="#{productBundle.product_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="productCategory-warehouse" 
+											action="productCategory"
+											value="#{productBundle.product_category_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="brand-warehouse"
+											action="brand"
+											value="#{productBundle.product_brand_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-warehouse" 
+											action="tariff_list" actionListener="#{tariff.onSearch}"
+											value="#{productBundle.product_tariff_module}" />
+									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="catalogue-warehouse" 
+											action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
+											value="#{productBundle.product_catalogue_module}" />
+									</aon:div>								
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="warehouse" 
-										action="warehouse" 
-										value="#{warehouseBundle.warehouse_warehouse_module}" />
-								</aon:div>
-							</aon:div>
-						</h:panelGrid>
+							</h:panelGrid>
+						</aon:panelGroup>							
 	
 						<h:panelGrid styleClass="aon-width-all"
 							headerClass="aon-icon-report aon-direct-access-panel">
