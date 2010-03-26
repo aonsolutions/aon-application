@@ -190,8 +190,8 @@
 						value="#{purchase.defaultPayMethod}"
 						disabled="#{!purchase.pending}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{purchaseBundle.purchase_supplier_pay_method}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{purchaseBundle.purchase_define_another_one}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{purchaseBundle.purchase_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{purchaseBundle.purchase_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Purchase_total" 

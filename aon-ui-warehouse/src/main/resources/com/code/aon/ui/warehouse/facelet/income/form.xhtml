@@ -194,8 +194,8 @@
 						value="#{income.defaultPayMethod}"
 						disabled="#{!income.pending}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{warehouseBundle.warehouse_income_supplier_pay_method}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{warehouseBundle.warehouse_income_define_another_one}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{warehouseBundle.warehouse_income_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{warehouseBundle.warehouse_income_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Income_total" 
