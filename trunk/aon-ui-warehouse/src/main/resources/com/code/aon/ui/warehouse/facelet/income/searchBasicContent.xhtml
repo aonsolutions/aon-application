@@ -45,6 +45,15 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
+	<aon:outputLabel for="Income_workPlace_id"
+		value="#{companyBundle.company_workplace}" />
+	<aon:selectOneMenu id="Income_workPlace_id"
+		value="#{companyCollections.workPlace}"
+		valueChangeListener="#{controller.addIdEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{companyCollections.workPlaces}" />
+	</aon:selectOneMenu>					
+
 	<c:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Income_securityLevel"
 			value="#{bundle.aon_confidential}" />
@@ -54,15 +63,6 @@
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 		</aon:selectOneRadio>				
 	</c:if>
-
-	<aon:outputLabel for="Income_workPlace_id"
-		value="#{companyBundle.company_workplace}" />
-	<aon:selectOneMenu id="Income_workPlace_id"
-		value="#{companyCollections.workPlace}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{companyCollections.workPlaces}" />
-	</aon:selectOneMenu>					
 
 	<aon:outputText value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox value="#{incomeSearch.incomeStatuses}">
