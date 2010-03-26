@@ -22,6 +22,7 @@ import com.code.aon.ui.form.IDataModelDataProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AonPayroll;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
@@ -331,6 +332,16 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 
 	public boolean isNextAvailable() {
 		return (getCurrentStep() < 4);
+	}
+	
+	public void onChangeFechaInicio( ActionEvent event ) {
+		try {
+			IContrato  contrato = getParteITDAO().getContrato(getParteIT());
+			getParteIT().setProrrateoCotizacion( contrato.getProrrateoCotizacion() );
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
 	}
 	
 }

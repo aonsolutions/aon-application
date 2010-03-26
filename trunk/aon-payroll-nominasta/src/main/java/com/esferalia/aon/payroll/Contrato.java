@@ -16,10 +16,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
+import com.esferalia.aon.payroll.enumeration.Prorrateo;
 
 /**
  * Mantenimiento de Trabajo
@@ -35,6 +40,7 @@ public class Contrato implements ITransferObject, IContrato {
 	private Date fechaFin;
 	private IEmpleado empleado;
 	private String indtp;
+	private Prorrateo prorrateo;
 //	private Date fecant;
 //	private String ctacar;
 //	private String profesion;
@@ -152,6 +158,36 @@ public class Contrato implements ITransferObject, IContrato {
 		setIndtp(null);
 	}
 
+
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.Prorrateo") })
+	@Column(name = "procot", nullable = false, length = 1)
+	public Prorrateo getProrrateo() {
+		return this.prorrateo;
+	}
+
+	public void setProrrateo(Prorrateo prorrateo) {
+		this.prorrateo = prorrateo;
+	}
+	@Transient
+	@Override
+	public Periodicidad getProrrateoCotizacion() {
+		if (getProrrateo() == Prorrateo.PRODIARIO) {
+			return Periodicidad.DIARIO;	
+		} else if (getProrrateo() == Prorrateo.PROMENSUAL) {
+			return Periodicidad.MENSUAL;
+		} 
+		return null;
+	}
+	@Override
+	public void setProrrateoCotizacion(Periodicidad period) {
+		if (period == Periodicidad.DIARIO) {
+			setProrrateo(Prorrateo.PRODIARIO);	
+		} else if (period == Periodicidad.MENSUAL) {
+			setProrrateo(Prorrateo.PROMENSUAL);
+		} else {
+			setProrrateo(null);
+		}
+	}
 	/*
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fecant", nullable = false, length = 10)
