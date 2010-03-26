@@ -177,7 +177,6 @@ public class ParteITDAO implements IParteITDAO {
 		parteIT.setBaseDiariaAccidentesTrabajo(calculator.getBaseDiariaAccidentesTrabajo(parteIT) );
 		parteIT.setPrestacionDiaria60(calculator.getPrestacionDiaria60(parteIT));
 		parteIT.setPrestacionDiaria75(calculator.getPrestacionDiaria75(parteIT));
-		parteIT.setProrrateoCotizacion(calculator.getProrrateoCotizacion(parteIT));
 	}
 	
 	
