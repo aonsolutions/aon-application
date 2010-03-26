@@ -12,7 +12,7 @@
 				<rich:modalPanel 
 					id="aboutWindow"
 					rendered="#{aonConfiguration.properties.showAbout}" showWhenRendered="true"
-					minWidth="240" height="180">
+					minWidth="400" height="180">
 	
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
@@ -32,18 +32,24 @@
 	
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div styleClass="aon-popupWindow-content-internal">
-						
-							<h:panelGrid styleClass="aon-margin-top">						
+							<aon:div style="margin-top: 20px;">
 								<aon:outputText value=" / #{appBundle.aon_application_title}"
 									style="margin-left: 0px;" styleClass="aon-header-title" />							
-								<aon:outputFormat value="#{bundle.aon_version}"
+							</aon:div>
+							<h:panelGrid styleClass="aon-margin-top">						
+								<aon:outputFormat value="#{bundle.aon_full_version}"
 									style="color: #000;" styleClass="aon-version-label"
-									rendered="#{aonConfiguration.applicationVersion != null}" >
-									<f:param value="#{aonConfiguration.applicationVersion}" />
+									rendered="#{aonConfiguration.properties.applicationVersion != null}" >
+									<f:param value="#{aonConfiguration.properties.applicationVersion}" />
+									<f:param value="#{aonConfiguration.properties.buildDate}" />
+									<f:param value="#{aonConfiguration.properties.buildNumber}" />
+									<f:param value="#{aonConfiguration.properties.buildRevision}" />
 								</aon:outputFormat>
-								<aon:outputText value="DB: #{aonConfiguration.dataBaseVersion}" 
+								<aon:outputFormat value="#{bundle.aon_db_version}"
 									style="color: #000;" styleClass="aon-version-label"
-									rendered="#{aonConfiguration.dataBaseVersion != null}" />											
+									rendered="#{aonConfiguration.properties.databaseVersion != null}" >
+									<f:param value="#{aonConfiguration.properties.databaseVersion}" />
+								</aon:outputFormat>
 							</h:panelGrid>	
 							<aon:div styleClass="aon-footer-box">
 								<aon:outputText value="#{bundle.aon_trademark}" />
