@@ -13,32 +13,21 @@
 			<aon:outputText value="#{appBundle.menu_general}" />
 		</f:facet>
 		<aon:div styleClass="aon-direct-access-list">
-			<c:if test="#{category != 'expenses'}" >
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="item-#{category}" 
-						action="item_search" actionListener="#{item.onEditSearch}"
-						value="#{productBundle.product_module}" />
-				</aon:div>
-			</c:if>
-			<c:if test="#{category == 'expenses'}" >
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="expenseItem-#{category}"
-						action="expenseItem" 
-						value="#{productBundle.product_expense_module}" />
-				</aon:div>
-			</c:if>							
+			<aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink id="item-#{category}" 
+					action="item_search" actionListener="#{item.onEditSearch}"
+					value="#{productBundle.product_module}" />
+			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
 				<aon:commandLink id="productCategory-#{category}" 
 					action="productCategory"
 					value="#{productBundle.product_category_module}" />
 			</aon:div>
-			<c:if test="#{category != 'expenses'}" >
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="brand-#{category}"
-						action="brand"
-						value="#{productBundle.product_brand_module}" />
-				</aon:div>
-			</c:if>			
+			<aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink id="brand-#{category}"
+					action="brand"
+					value="#{productBundle.product_brand_module}" />
+			</aon:div>
 			<aon:div styleClass="aon-direct-access-list-element">
 				<aon:commandLink id="segment-#{category}" 
 					action="segment_form" 
