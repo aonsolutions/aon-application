@@ -233,8 +233,8 @@
 						value="#{sales.defaultPayMethod}"
 						disabled="#{!sales.pending}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{salesBundle.sales_customer_pay_method}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{salesBundle.sales_define_another_one}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{salesBundle.sales_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{salesBundle.sales_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Sales_total" 
