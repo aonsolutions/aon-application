@@ -162,20 +162,18 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
 			Manifest m = new Manifest(in);
 			Attributes attrs = m.getMainAttributes();
-			/*
-			String value = attrs.getValue(IMPLEMENTATION_VERSION);
-			if (! StringUtils.isEmpty(value)) {
-			*/
-				// StringUtils.trim(value);
-				getProperties().put(APPLICATION_VERSION, "5.1.0-SNAPSHOT" );
-				getProperties().put(BUILD_NUMBER, "136" ); // attrs.getValue(BUILD_NUMBER));
-				getProperties().put(BUILD_DATE, "26/03/2010" ); // attrs.getValue(BUILD_DATE));
-				getProperties().put(BUILD_REVISION, "11929"); // attrs.getValue(BUILD_REVISION));
-			/*
+			String applicationVersion = attrs.getValue(IMPLEMENTATION_VERSION);
+			if (! StringUtils.isEmpty(applicationVersion)) {
+				getProperties().put(APPLICATION_VERSION, StringUtils.trim(applicationVersion) );
+				String buildNumber = StringUtils.trim( attrs.getValue(BUILD_NUMBER) );
+				getProperties().put(BUILD_NUMBER, buildNumber );
+				String buildDate = StringUtils.trim( attrs.getValue(BUILD_DATE) );
+				getProperties().put(BUILD_DATE, buildDate );
+				String buildRevision = StringUtils.trim( attrs.getValue(BUILD_REVISION) );
+				getProperties().put(BUILD_REVISION, buildRevision );
 			} else {
 				LOGGER.warn("Imposible determinar la versión");
 			}
-			*/
 		} catch (Throwable e) {
 			LOGGER.warn("Imposible determinar la versión");
 		}
