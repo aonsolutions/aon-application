@@ -73,9 +73,5 @@ public class ParteITCalculator {
 	public Double getPrestacionDiaria75(IParteIT it) {
 		return CommonUtil.round((it.getBaseReguladoraDiaria() * 75) / 100);
 	}
-	
-	public Periodicidad getProrrateoCotizacion(IParteIT it) throws PayrollException{
-		return it.getProrrateoCotizacion();
-	}
 
 }

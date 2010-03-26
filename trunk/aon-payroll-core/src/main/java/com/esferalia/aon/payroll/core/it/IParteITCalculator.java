@@ -24,6 +24,4 @@ public interface IParteITCalculator {
 
 	Double getPrestacionDiaria75(IParteIT it) throws PayrollException;
 	
-	Periodicidad getProrrateoCotizacion(IParteIT it) throws PayrollException;
-
 }
