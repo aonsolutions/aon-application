@@ -5,14 +5,16 @@ import java.util.Date;
 
 public interface IConfirmacionParteIT extends Serializable{
 
+	Serializable getId();
+	
 	IParteIT getParteIT();
-	void setParteIT();
+	void setParteIT(IParteIT parteIT);
 	
 	Integer getNumero();
-	void setNumero();
+	void setNumero(Integer numero);
 	
 	Date getFecha();
-	void getFecha(Date fecha);
+	void setFecha(Date fecha);
 	
 	String getNumeroColegiado();
 	void setNumeroColegiado(String numeroColegiado);
