@@ -229,13 +229,56 @@
 							styleClass="aon-italic" />
 					</aon:div>
 
-					<aon:outputLabel for="Offer_scope" 
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Offer_scope" 
-						value="#{offer.to.scope}"
-						disabled="#{offer.readOnly}">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					<aon:outputLabel for="Offer_type" 
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Offer_type" 
+						value="#{offer.to.type}"
+						disabled="#{offer.readOnly}"
+						reRender="offerForm">
+						<f:selectItems value="#{commercialCollections.offerTypes}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ThirdParty_id" 
+						value="#{commercialBundle.commercial_offer_distributor}"
+						rendered="#{offer.thirdPartyType}" />
+					<aon:div styleClass="aon-lookup" rendered="#{offer.thirdPartyType}">
+						<a4j:region>
+							<aon:lookupInputText id="ThirdParty_id" 
+								value="#{offer.to.thirdParty.registry.id}"
+								disabled="#{offer.readOnly}" size="5" 
+								lookupProperty="registry" lookup="#{targetLookup}"
+								lookupChangeListener="#{offer.thirdPartyData}" 
+								reRender="ThirdParty_full_name,ThirdParty_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"
+								ajaxSingle="true" />
+							<aon:lookupButton
+								windowTitle="#{commercialBundle.commercial_target_selection}"
+								disabled="#{offer.readOnly}" minHeight="470" minWidth="650"
+								property="#{offer.to.thirdParty.registry}" lookupProperty="registry" lookup="#{targetLookup}"
+								lookupChangeListener="#{offer.thirdPartyData}"
+								selectReRender="ThirdParty_id,ThirdParty_full_name,ThirdParty_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"
+								actionType="search">
+							</aon:lookupButton>
+							<aon:lookupButton 
+								windowTitle="#{commercialBundle.commercial_target_new}"
+								disabled="#{offer.readOnly}" minWidth="650" minHeight="600"
+								property="#{offer.to.thirdParty.registry}" lookupProperty="registry" lookup="#{targetLookup}"
+								lookupChangeListener="#{offer.thirdPartyData}"
+								selectReRender="ThirdParty_id,ThirdParty_full_name,ThirdParty_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"		 
+								actionType="new">
+							</aon:lookupButton>							
+							<aon:inputText id="ThirdParty_full_name" 
+								value="#{(offer.to.thirdParty.registry.fullName!=null)?(offer.to.thirdParty.registry.fullName):('')}"
+								disabled="true" size="60" />
+						</a4j:region>
+					</aon:div>
+
+					<aon:outputLabel for="ThirdParty_registry_document" 
+						value="#{bundle.aon_company_document}"
+						rendered="#{offer.thirdPartyType}" />
+					<aon:inputText id="ThirdParty_registry_document" 
+						value="#{offer.to.thirdParty.registry.document}"
+						rendered="#{offer.thirdPartyType}"
+						disabled="true" size="10" />
 
 					<aon:outputLabel for="Seller_id" 
 						value="#{salesBundle.sales_seller}" />
@@ -287,12 +330,12 @@
 						<f:selectItems value="#{configCollections.tariffs}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Offer_type" 
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Offer_type" 
-						value="#{offer.to.type}"
+					<aon:outputLabel for="Offer_scope" 
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Offer_scope" 
+						value="#{offer.to.scope}"
 						disabled="#{offer.readOnly}">
-						<f:selectItems value="#{commercialCollections.offerTypes}" />
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_defaultPayMethod" 
@@ -301,8 +344,8 @@
 						value="#{offer.defaultPayMethod}"
 						disabled="#{offer.readOnly}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_customer_pay_method}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_define_another_one}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Offer_total" 
