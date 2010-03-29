@@ -25,7 +25,8 @@
 
 			<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha}" />
 			<aon:div>
-				<aon:selectInputDate id="fecha" value="#{parteITWizard.fecha}"
+				<aon:selectInputDate id="fecha" rendered="#{!confirmView}"
+					value="#{parteITWizard.fecha}"
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
@@ -36,35 +37,66 @@
 						actionListener="#{parteITWizard.onChangeFechaInicio}" 
 						reRender="prorrateo"/>
 				</aon:selectInputDate>
+				
+				<aon:outputText value="#{parteITWizard.fecha}" rendered="#{confirmView}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
 			</aon:div>
 
 			<aon:outputLabel for="colegiado" value="#{payrollBundle.payroll_colegiado}" />
-			<aon:inputText id="colegiado"  value="#{parteITWizard.numeroColegiado}" />
+			<aon:div>
+				<aon:inputText id="colegiado" rendered="#{!confirmView}" 
+					value="#{parteITWizard.numeroColegiado}" />
+				<aon:outputText rendered="#{confirmView}" 
+					value="#{parteITWizard.numeroColegiado}"/>
+			</aon:div>
 
 			<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
-			<aon:inputText id="cias" value="#{parteITWizard.cias}" />
+			<aon:div>
+				<aon:inputText id="cias" rendered="#{!confirmView}"
+					value="#{parteITWizard.cias}" />
+				<aon:outputText rendered="#{confirmView}" 
+					value="#{parteITWizard.cias}"/>
+			</aon:div>
 
 			<aon:outputLabel for="tipoit" value="#{payrollBundle.payroll_tipo_it}" />
-			<aon:selectOneMenu id="tipoit" 
-				value="#{parteITWizard.parteIT.tipoContingencia}">
-				<f:selectItems value="#{payrollCollections.tiposContingencia}" />
-				<a4j:support event="onchange" 
-					actionListener="#{parteITWizard.onChangeTipoContingencia}" 
-					reRender="datosITPanel"/>
-			</aon:selectOneMenu>
+			<aon:div>
+				<aon:selectOneMenu id="tipoit" rendered="#{!confirmView}"
+					value="#{parteITWizard.parteIT.tipoContingencia}">
+					<f:selectItems value="#{payrollCollections.tiposContingencia}" />
+					<a4j:support event="onchange" 
+						actionListener="#{parteITWizard.onChangeTipoContingencia}" 
+						reRender="datosITPanel"/>
+				</aon:selectOneMenu>
+				<aon:outputText rendered="#{confirmView}"
+					value="#{parteITWizard.parteIT.tipoContingencia}"/>
+			</aon:div>
 
 			<aon:outputLabel for="prorrateo" value="#{payrollBundle.payroll_periodicidad}" />
-			<aon:selectOneRadio id="prorrateo" 
-				value="#{parteITWizard.parteIT.prorrateoCotizacion}">
-				<f:selectItems value="#{payrollCollections.periodicidades}" />
-			</aon:selectOneRadio>
+			<aon:div>
+				<aon:selectOneRadio id="prorrateo" rendered="#{!confirmView}" 
+					value="#{parteITWizard.parteIT.prorrateoCotizacion}">
+					<f:selectItems value="#{payrollCollections.periodicidades}" />
+				</aon:selectOneRadio>
+				<aon:outputText rendered="#{confirmView}"
+					value="#{parteITWizard.parteIT.prorrateoCotizacion}"/>
+			</aon:div>
 
 			<aon:outputLabel for="recaida" 
 				rendered="#{parteITWizard.recaidaAnterior}"
 				value="#{payrollBundle.payroll_recaida}" />
-			<aon:selectBooleanCheckbox id="recaida"
-				rendered="#{parteITWizard.recaidaAnterior}"
-				value="#{parteITWizard.parteIT.recaida}" />
+			<aon:div>
+				<aon:selectBooleanCheckbox id="recaida"
+					rendered="#{parteITWizard.recaidaAnterior and !confirmView}"
+					value="#{parteITWizard.parteIT.recaida}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-check" 
+					rendered="#{parteITWizard.recaidaAnterior and confirmView and !parteITWizard.parteIT.recaida}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-checked" 
+					rendered="#{parteITWizard.recaidaAnterior and confirmView and parteITWizard.parteIT.recaida}" />
+			</aon:div>
 
 		</aon:panelGrid>
 	</aon:panel>
