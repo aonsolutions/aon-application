@@ -31,12 +31,16 @@ public class ComponentGroupHandler extends TagHandler implements IRichFacesTags 
 
     public void apply(FaceletContext ctx, UIComponent parent)
             throws IOException, FacesException, FaceletException, ELException {
-		UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
-		MethodExpression me = method.getMethodExpression(ctx, null, FaceletUtil.COMPONENT_GROUP_SIG);
-		ComponentGroup cg = new ComponentGroup( family.getValue(ctx), me );
-		root.getAttributes().put( ComponentGroup.CURRENT_COMPONENT_GROUP, cg );    	
-        this.nextHandler.apply(ctx, parent);
-		root.getAttributes().remove( ComponentGroup.CURRENT_COMPONENT_GROUP );        
+		if ( FaceletUtil.isRendered(ctx, tag) ) {
+			UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
+			MethodExpression me = method.getMethodExpression(ctx, null, FaceletUtil.COMPONENT_GROUP_SIG);
+			ComponentGroup cg = new ComponentGroup( family.getValue(ctx), me );
+			root.getAttributes().put( ComponentGroup.CURRENT_COMPONENT_GROUP, cg );
+	        this.nextHandler.apply(ctx, parent);
+			root.getAttributes().remove( ComponentGroup.CURRENT_COMPONENT_GROUP );        			
+		} else {
+	        this.nextHandler.apply(ctx, parent);
+		}
     }
     
 }
