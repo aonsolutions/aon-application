@@ -48,6 +48,9 @@
 			<aon:selectOneMenu id="tipoit" 
 				value="#{parteITWizard.parteIT.tipoContingencia}">
 				<f:selectItems value="#{payrollCollections.tiposContingencia}" />
+				<a4j:support event="onchange" 
+					actionListener="#{parteITWizard.onChangeTipoContingencia}" 
+					reRender="datosITPanel"/>
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="prorrateo" value="#{payrollBundle.payroll_periodicidad}" />
@@ -57,11 +60,12 @@
 			</aon:selectOneRadio>
 
 			<aon:outputLabel for="recaida" 
-				rendered="#{parteITWizard.parteIT.recaida}"
+				rendered="#{parteITWizard.recaidaAnterior}"
 				value="#{payrollBundle.payroll_recaida}" />
-			<aon:selectBooleanCheckbox id="recaida" 
-				rendered="#{parteITWizard.parteIT.recaida}"
+			<aon:selectBooleanCheckbox id="recaida"
+				rendered="#{parteITWizard.recaidaAnterior}"
 				value="#{parteITWizard.parteIT.recaida}" />
+
 		</aon:panelGrid>
 	</aon:panel>
 </ui:composition>
