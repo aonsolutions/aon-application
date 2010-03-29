@@ -15,6 +15,13 @@ public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Offer offer = (Offer) evt.getTo();
 		setDefaultValues(offer);
+		checkThirdParty(offer);
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		Offer offer = (Offer) evt.getTo();
+		checkThirdParty(offer);
 	}
 
 	private void setDefaultValues(Offer offer) {
@@ -31,4 +38,11 @@ public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			offer.setStatus(OfferStatus.PENDING);
 		}
 	}
+
+	private void checkThirdParty(Offer offer) {
+		if (OfferType.THIRD_PARTY != offer.getType()) {
+			offer.setThirdParty(null);
+		}
+	}
+
 }

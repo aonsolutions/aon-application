@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_master?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://volga:3306/aon_master?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -16,20 +16,20 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.commercial.Offer"/>
-		<mapping class="com.code.aon.commercial.OfferDetail"/>
-		<mapping class="com.code.aon.commercial.OfferAttachment"/>
-		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
-		<mapping class="com.code.aon.commercial.TargetItem"/>
-		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		<mapping class="com.code.aon.commercial.Expense"/>
 		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
 		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
-		
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferAttachment"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferTerm"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.TargetThirdParty"/>
 		
 		<mapping class="com.code.aon.seller.Seller"/>
 
@@ -52,11 +52,11 @@
 
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 
+		<mapping class="com.code.aon.product.Brand"/>
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>		
-		<mapping class="com.code.aon.product.Brand"/>
  
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.PayMethod"/>

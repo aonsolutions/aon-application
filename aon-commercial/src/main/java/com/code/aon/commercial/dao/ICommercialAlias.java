@@ -4,6 +4,7 @@ import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Expense;
 import com.code.aon.commercial.ExpenseAccount;
 import com.code.aon.commercial.ExpenseAccountDetail;
@@ -14,7 +15,7 @@ import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetSeller;
-import com.code.aon.commercial.CommercialTerm;
+import com.code.aon.commercial.TargetThirdParty;
 
 /** 
 * Interface for holding entity properties constants.
@@ -94,6 +95,37 @@ public interface ICommercialAlias {
 	* Hibernate value: CommercialTracking.target.id
 	*/
 	String  COMMERCIAL_TRACKING_TARGET_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommercialTerm entity.
+	*/ 
+	DAOConstantsEntry COMMERCIAL_TERM_ENTRY = DAOConstants.getDAOConstant(CommercialTerm.class);
+
+	/** 
+	* Alias value: CommercialTerm_description
+	* Hibernate value: CommercialTerm.description
+	*/
+	String  COMMERCIAL_TERM_DESCRIPTION = COMMERCIAL_TERM_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommercialTerm_general
+	* Hibernate value: CommercialTerm.general
+	*/
+	String  COMMERCIAL_TERM_GENERAL = COMMERCIAL_TERM_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CommercialTerm_id
+	* Hibernate value: CommercialTerm.id
+	*/
+	String  COMMERCIAL_TERM_ID = COMMERCIAL_TERM_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CommercialTerm_name
+	* Hibernate value: CommercialTerm.name
+	*/
+	String  COMMERCIAL_TERM_NAME = COMMERCIAL_TERM_ENTRY.getAliasNames()[3];
 
 
 
@@ -346,16 +378,22 @@ public interface ICommercialAlias {
 	String  OFFER_TARIFF_ID = OFFER_ENTRY.getAliasNames()[20];
 
 	/** 
+	* Alias value: Offer_thirdParty_id
+	* Hibernate value: Offer.thirdParty.id
+	*/
+	String  OFFER_THIRD_PARTY_ID = OFFER_ENTRY.getAliasNames()[21];
+
+	/** 
 	* Alias value: Offer_type
 	* Hibernate value: Offer.type
 	*/
-	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[21];
+	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[22];
 
 	/** 
 	* Alias value: Offer_workPlace_id
 	* Hibernate value: Offer.workPlace.id
 	*/
-	String  OFFER_WORK_PLACE_ID = OFFER_ENTRY.getAliasNames()[22];
+	String  OFFER_WORK_PLACE_ID = OFFER_ENTRY.getAliasNames()[23];
 
 
 
@@ -660,33 +698,93 @@ public interface ICommercialAlias {
 
 
 	/** 
-	* DAOConstantsEntry for CommercialTerm entity.
+	* DAOConstantsEntry for TargetThirdParty entity.
 	*/ 
-	DAOConstantsEntry COMMERCIAL_TERM_ENTRY = DAOConstants.getDAOConstant(CommercialTerm.class);
+	DAOConstantsEntry TARGET_THIRD_PARTY_ENTRY = DAOConstants.getDAOConstant(TargetThirdParty.class);
 
 	/** 
-	* Alias value: CommercialTerm_description
-	* Hibernate value: CommercialTerm.description
+	* Alias value: TargetThirdParty_id
+	* Hibernate value: TargetThirdParty.id
 	*/
-	String  COMMERCIAL_TERM_DESCRIPTION = COMMERCIAL_TERM_ENTRY.getAliasNames()[0];
+	String  TARGET_THIRD_PARTY_ID = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: CommercialTerm_general
-	* Hibernate value: CommercialTerm.general
+	* Alias value: TargetThirdParty_target_id
+	* Hibernate value: TargetThirdParty.target.id
 	*/
-	String  COMMERCIAL_TERM_GENERAL = COMMERCIAL_TERM_ENTRY.getAliasNames()[1];
+	String  TARGET_THIRD_PARTY_TARGET_ID = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: CommercialTerm_id
-	* Hibernate value: CommercialTerm.id
+	* Alias value: TargetThirdParty_thirdParty_id
+	* Hibernate value: TargetThirdParty.thirdParty.id
 	*/
-	String  COMMERCIAL_TERM_ID = COMMERCIAL_TERM_ENTRY.getAliasNames()[2];
+	String  TARGET_THIRD_PARTY_THIRD_PARTY_ID = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: CommercialTerm_name
-	* Hibernate value: CommercialTerm.name
+	* Alias value: TargetThirdParty_thirdParty_registry_name
+	* Hibernate value: TargetThirdParty.thirdParty.registry.name
 	*/
-	String  COMMERCIAL_TERM_NAME = COMMERCIAL_TERM_ENTRY.getAliasNames()[3];
+	String  TARGET_THIRD_PARTY_THIRD_PARTY_REGISTRY_NAME = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: TargetThirdParty_thirdParty_registry_surname
+	* Hibernate value: TargetThirdParty.thirdParty.registry.surname
+	*/
+	String  TARGET_THIRD_PARTY_THIRD_PARTY_REGISTRY_SURNAME = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: TargetThirdParty_targetExternalCode
+	* Hibernate value: TargetThirdParty.targetExternalCode
+	*/
+	String  TARGET_THIRD_PARTY_TARGET_EXTERNAL_CODE = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: TargetThirdParty_tariff_id
+	* Hibernate value: TargetThirdParty.tariff.id
+	*/
+	String  TARGET_THIRD_PARTY_TARIFF_ID = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: TargetThirdParty_payMethod_id
+	* Hibernate value: TargetThirdParty.payMethod.id
+	*/
+	String  TARGET_THIRD_PARTY_PAY_METHOD_ID = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: TargetThirdParty_numberOfPayments
+	* Hibernate value: TargetThirdParty.numberOfPayments
+	*/
+	String  TARGET_THIRD_PARTY_NUMBER_OF_PAYMENTS = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: TargetThirdParty_daysToFirstPayment
+	* Hibernate value: TargetThirdParty.daysToFirstPayment
+	*/
+	String  TARGET_THIRD_PARTY_DAYS_TO_FIRST_PAYMENT = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: TargetThirdParty_daysBetweenPayments
+	* Hibernate value: TargetThirdParty.daysBetweenPayments
+	*/
+	String  TARGET_THIRD_PARTY_DAYS_BETWEEN_PAYMENTS = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: TargetThirdParty_paymentDays
+	* Hibernate value: TargetThirdParty.paymentDays
+	*/
+	String  TARGET_THIRD_PARTY_PAYMENT_DAYS = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: TargetThirdParty_bank_id
+	* Hibernate value: TargetThirdParty.bank.id
+	*/
+	String  TARGET_THIRD_PARTY_BANK_ID = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: TargetThirdParty_bankAccount
+	* Hibernate value: TargetThirdParty.bankAccount
+	*/
+	String  TARGET_THIRD_PARTY_BANK_ACCOUNT = TARGET_THIRD_PARTY_ENTRY.getAliasNames()[13];
 
 
 }
