@@ -4,7 +4,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.INomina;
-import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
