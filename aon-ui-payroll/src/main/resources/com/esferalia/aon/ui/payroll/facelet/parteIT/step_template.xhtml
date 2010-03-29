@@ -36,14 +36,15 @@
 							actionListener="#{parteITWizard.onNext}"
 							rendered="#{parteITWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
-<!-- 
+
 						<aon:commandButton id="end"
-							value="#{campaignBundle.process_wizard_finalice}"
-							action="#{processWizard.finalice}"
-							disabled="#{processWizard.dossiersModel.rowCount == 0}"
-							rendered="#{processWizard.finaliceAvailable}"
+							value="#{payrollBundle.payroll_finalice}"
+							action="#{parteITWizard.next}"
+							actionListener="#{parteITWizard.onNext}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
+							rendered="#{!parteITWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
- -->
+
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>

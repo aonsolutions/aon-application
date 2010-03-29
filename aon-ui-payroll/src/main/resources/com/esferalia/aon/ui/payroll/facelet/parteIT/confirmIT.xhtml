@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panel id="datosITPanel">
+		<f:facet name="header">
+			<aon:outputText
+				value="#{payrollBundle.payroll_datos_parteIT}" />
+		</f:facet>
+		<aon:panelGrid columns="2"
+			columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto" 
+			style="width: 100%;">
+
+			<aon:outputText value="&#160;" />
+			<aon:div>
+				<aon:outputText
+					styleClass="aon-bold"
+					style="font-size: 1.2em;" 
+					value="#{parteITWizard.operacion}"/>
+			</aon:div>
+
+			<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+			<aon:outputText value="#{parteITWizard.fecha}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+			<aon:outputText value="#{payrollBundle.payroll_colegiado}" />
+			<aon:outputText value="#{parteITWizard.numeroColegiado}"/>
+
+			<aon:outputText value="#{payrollBundle.payroll_cias}" />
+			<aon:outputText value="#{parteITWizard.cias}"/>
+
+			<aon:outputText value="#{payrollBundle.payroll_tipo_it}" />
+			<aon:outputText value="#{parteITWizard.parteIT.tipoContingencia}"/>
+
+			<aon:outputText value="#{payrollBundle.payroll_periodicidad}" />
+			<aon:outputText value="#{parteITWizard.parteIT.prorrateoCotizacion}"/>
+
+			<aon:outputText rendered="#{parteITWizard.recaidaAnterior}"
+				value="#{payrollBundle.payroll_recaida}" />
+			<aon:div rendered="#{parteITWizard.recaidaAnterior}">
+				<aon:outputText value="#{bundle.aon_yes}" rendered="#{parteITWizard.parteIT.recaida}" />
+				<aon:outputText value="#{bundle.aon_no}" rendered="#{!parteITWizard.parteIT.recaida}" />
+			</aon:div>
+			
+			<aon:outputText value="#{payrollBundle.payroll_baseRetPerAnt}" />
+			<aon:outputText value="#{parteITWizard.parteIT.baseRetribucionPeriodoAnterior}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
+			</aon:outputText>
+			
+			<aon:outputText value="#{payrollBundle.payroll_diasPerAnt}" />
+			<aon:outputText value="#{parteITWizard.parteIT.diasPeriodoAnterior}" >
+				<f:convertNumber pattern="#{bundle.aon_integer_pattern}"/>
+			</aon:outputText>
+			
+			<aon:outputText value="#{payrollBundle.payroll_baseDiaAccTra}" />
+			<aon:outputText value="#{parteITWizard.parteIT.baseDiariaAccidentesTrabajo}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
+			</aon:outputText>
+			
+			<aon:outputText value="#{payrollBundle.payroll_baseRegDia}" />
+			<aon:outputText value="#{parteITWizard.parteIT.baseReguladoraDiaria}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
+			</aon:outputText>
+			
+			<aon:outputText value="#{payrollBundle.payroll_baseDiaCG}" />
+			<aon:outputText value="#{parteITWizard.parteIT.baseDiariaContingenciasComunes}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
+			</aon:outputText>
+			
+			<aon:outputText value="#{payrollBundle.payroll_presta60}" />
+			<aon:outputText value="#{parteITWizard.parteIT.prestacionDiaria60}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
+			</aon:outputText>
+			
+			<aon:outputText value="#{payrollBundle.payroll_presta75}" />
+			<aon:outputText value="#{parteITWizard.parteIT.prestacionDiaria75}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
+			</aon:outputText>
+
+		</aon:panelGrid>
+	</aon:panel>
+</ui:composition>
