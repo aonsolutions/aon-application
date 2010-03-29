@@ -220,13 +220,7 @@ public class ParteITDAO implements IParteITDAO {
 				parteIT.setNumeroColegiadoBaja(ultimoParte.getNumeroColegiadoBaja());
 				parteIT.setCiasAlta(ultimoParte.getCiasAlta());
 				parteIT.setNumeroColegiadoAlta(ultimoParte.getNumeroColegiadoAlta());
-				if(ultimoParte.getTipoContingencia().equals(TipoContingencia.ENFERMEDAD_COMUN) 
-						|| ultimoParte.getTipoContingencia().equals(TipoContingencia.ACCIDENTE_LABORAL) 
-						|| ultimoParte.getTipoContingencia().equals(TipoContingencia.ACCIDENTE_NO_LABORAL)){
-					parteIT.setRecaida(true);
-				} else {
-					parteIT.setRecaida(false);
-				}
+				parteIT.setTipoContingencia(TipoContingencia.ENFERMEDAD_COMUN);
 			} else {
 				// MODIFICACION DEL REGISTRO PARA EL ALTA 
 				// O NUEVO PARTE DE CONFIRMACION.
