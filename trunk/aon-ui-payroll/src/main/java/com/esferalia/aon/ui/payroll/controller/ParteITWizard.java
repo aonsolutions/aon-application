@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
+import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
@@ -234,6 +235,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 			partesModel = null;
 			setParteIT( getParteITDAO().initialize( getEmpleado()) );
 			refreshOperacion();
+			searchRecaidaAnterior();
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -248,7 +250,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		}
 	}
 	
-	public void onFinish(ActionEvent event) {
+	public void onValidate(ActionEvent event) {
 		try {
 			int err = getParteITDAO().validate(getParteIT());
 			if ( err > 0) {
@@ -258,6 +260,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				throw new AbortProcessingException(errorMsg);
 			}
 			getParteITDAO().calculate(getParteIT());
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}		
+	}
+	
+	public void onFinish(ActionEvent event) {
+		try {
 			getParteITDAO().accept( getParteIT() );
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -311,7 +321,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		} else if (getCurrentStep() == 1) {
 			// Seleccion de persona
 		} else if (getCurrentStep() == 2) {
-			// Mover al paso tres cuando se haga la validacion
+			// Validacion de la IT
+			onValidate(event);
+		} else if (getCurrentStep() == 3) {
 			onFinish(event);
 		}
 		setCurrentStep(getCurrentStep() + 1);
@@ -341,6 +353,30 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		}
+	}
+	
+	public void onChangeTipoContingencia( ActionEvent event ) {
+		searchRecaidaAnterior();
+	}
+	
+	private void searchRecaidaAnterior(){
+		try {
+			List<IParteIT> list = getParteITDAO().getPartesEmpleado(getEmpleado());
+			if (list.size() > 0) {
+				IParteIT ultimoParte = list.get(0);
+				
+				if((getParteIT().getTipoContingencia().equals(TipoContingencia.ENFERMEDAD_COMUN) 
+						|| getParteIT().getTipoContingencia().equals(TipoContingencia.ACCIDENTE_LABORAL) 
+						|| getParteIT().getTipoContingencia().equals(TipoContingencia.ACCIDENTE_NO_LABORAL))
+						&& (getParteIT().getTipoContingencia().equals(ultimoParte.getTipoContingencia()))){
+					setRecaidaAnterior(true);
+				} else {
+					setRecaidaAnterior(false);
+				}
+			}
+		} catch (PayrollException e) {
+			e.printStackTrace();
 		}
 	}
 	
