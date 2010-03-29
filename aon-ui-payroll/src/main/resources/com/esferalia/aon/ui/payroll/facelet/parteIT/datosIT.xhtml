@@ -15,12 +15,28 @@
 		</f:facet>
 		<aon:panelGrid columns="2" style="width: 100%;">
 
-			<aon:outputText value="&#160;" />
+			<aon:div>
+				<aon:outputText value="&#160;" />
+				<aon:selectOneMenu id="operaciones"
+					rendered="#{parteITWizard.tiposOperacion != null}" 
+					value="#{parteITWizard.operacion}">
+					<f:selectItems value="#{parteITWizard.tiposOperacion}" />
+					<a4j:support event="onchange" reRender="datosITPanel"
+						actionListener="#{parteITWizard.onChangeTipoOperacion}" />
+				</aon:selectOneMenu>
+			</aon:div>
 			<aon:div>
 				<aon:outputText
 					styleClass="aon-bold"
 					style="font-size: 1.2em;" 
 					value="#{parteITWizard.operacion}"/>
+						
+					<aon:outputLabel
+						rendered="#{parteITWizard.numParteRenovacion != null}"
+						value="&#160;#{payrollBundle.payroll_number}&#160;" />
+					<aon:inputText size="1" maxlength="2" 
+						rendered="#{parteITWizard.numParteRenovacion != null}"
+						value="#{parteITWizard.numParteRenovacion}"/>
 			</aon:div>
 
 			<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha}" />

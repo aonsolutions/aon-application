@@ -1,7 +1,10 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,6 +13,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -31,6 +35,7 @@ import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
+import com.esferalia.aon.payroll.core.it.IConfirmacionParteIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
@@ -51,8 +56,24 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0","parteITWizard_step1","parteITWizard_step2","parteITWizard_step3" };
 	private IParteIT parteIT;
+	private IConfirmacionParteIT confirmacionParteIT;
 	private TipoOperacionIT operacion;
 	private boolean recaidaAnterior;
+	private Integer numParteRenovacion;
+	
+	public IConfirmacionParteIT getConfirmacionParteIT() {
+		return confirmacionParteIT;
+	}
+	public void setConfirmacionParteIT(IConfirmacionParteIT confirmacionParteIT) {
+		this.confirmacionParteIT = confirmacionParteIT;
+	}
+
+	public Integer getNumParteRenovacion() {
+		return numParteRenovacion;
+	}
+	public void setNumParteRenovacion(Integer numParteRenovacion) {
+		this.numParteRenovacion = numParteRenovacion;
+	}
 	
 	public boolean isRecaidaAnterior() {
 		return recaidaAnterior;
@@ -129,6 +150,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 			getParteIT().setCiasBaja(cias);
 		} else if (getOperacion() == TipoOperacionIT.ALTA) {
 			getParteIT().setCiasAlta(cias);
+		} else if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
+			getConfirmacionParteIT().setCias(cias);
 		}
 	}
 
@@ -143,6 +166,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 			getParteIT().setNumeroColegiadoBaja(numeroColegiado);
 		} else if (getOperacion() == TipoOperacionIT.ALTA) {
 			getParteIT().setNumeroColegiadoAlta(numeroColegiado);
+		} else if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
+			getConfirmacionParteIT().setNumeroColegiado(numeroColegiado);
 		}
 	}
 
@@ -154,6 +179,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 			getParteIT().setFechaBaja(fecha);
 		} else if (getOperacion() == TipoOperacionIT.ALTA) {
 			getParteIT().setFechaAlta(fecha);
+		} else if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
+			getConfirmacionParteIT().setFecha(fecha);
 		}
 	}
 
@@ -236,11 +263,18 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		try {
 			partesModel = null;
 			setParteIT( getParteITDAO().initialize( getEmpleado()) );
+			setConfirmacionParteIT(getParteITDAO().initialize( getParteIT()));
 			refreshOperacion();
+			searchNumeroRenovacion();
+			completeComfirmationDate();
 			searchRecaidaAnterior();
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -278,7 +312,11 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
-				getParteITDAO().accept( getParteIT() );
+				if(getOperacion().equals(TipoOperacionIT.CONFIRMACION)){
+					getParteITDAO().accept( getConfirmacionParteIT() );
+				} else {
+					getParteITDAO().accept( getParteIT() );
+				}
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -409,6 +447,62 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		} catch (PayrollException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void onChangeTipoOperacion( ActionEvent event ) {
+		try {
+			searchNumeroRenovacion();
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		} catch (PayrollException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void searchNumeroRenovacion() throws NumberFormatException, ManagerBeanException, PayrollException {
+		if(!getOperacion().equals(TipoOperacionIT.BAJA)){
+			setNumParteRenovacion(maxParteconfCode()+1);
+			getConfirmacionParteIT().setNumero(getNumParteRenovacion());
+		} else {
+			setNumParteRenovacion(null);
+		}
+	}
+	
+	private Integer maxParteconfCode() throws ManagerBeanException, PayrollException{
+		List<IParteIT> listaPartes = getParteITDAO().getPartesEmpleado(getEmpleado());
+		IParteIT ultimoParte = listaPartes.get(0);
+		
+		List<IConfirmacionParteIT> list = getParteITDAO().getPartesConfirmacion(ultimoParte);
+		if(list.size()>0){
+			return list.get(0).getNumero();
+		} else {
+			return 0;
+		}
+	}
+	
+	public List<SelectItem> getTiposOperacion() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> ops=null;
+		if(getOperacion().equals(TipoOperacionIT.ALTA) || getOperacion().equals(TipoOperacionIT.CONFIRMACION)){
+			ops = new LinkedList<SelectItem>();
+			String name = TipoOperacionIT.CONFIRMACION.getName(locale);
+			SelectItem item = new SelectItem(TipoOperacionIT.CONFIRMACION, name);
+			ops.add(item);
+			name = TipoOperacionIT.ALTA.getName(locale);
+			item = new SelectItem(TipoOperacionIT.ALTA, name);
+			ops.add(item);
+		}
+		return ops;
+	}
+	
+	private void completeComfirmationDate(){
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(getParteIT().getFechaBaja());
+		cal.add(Calendar.DAY_OF_YEAR, 3+(((getNumParteRenovacion()-1)*7)));
+		getConfirmacionParteIT().setFecha(cal.getTime());
+		setFecha(cal.getTime());
 	}
 	
 }
