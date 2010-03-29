@@ -91,6 +91,11 @@
 							</aon:panelTab>
 						</c:if>
 						
+							<aon:panelTab id="targetThirdParty" label="#{commercialBundle.commercial_target_distributor_info}">
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetThirdParty/tab_include.xhtml">
+									<ui:param name="controller" value="#{targetThirdParty}" />
+								</ui:include>
+ 							</aon:panelTab>
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
@@ -108,6 +113,8 @@
 			<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 				<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 			</c:if>					
+			<aon:lookupButtonPopup lookup="#{targetLookup}" />
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>	
 	</ui:define>
 </ui:composition>
