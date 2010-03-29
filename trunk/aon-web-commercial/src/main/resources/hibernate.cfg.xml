@@ -57,6 +57,7 @@
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>		
+		<mapping class="com.code.aon.commercial.TargetThirdParty"/>
 		
 		<!-- AON-MARKETING Mapping files -->
 		<mapping class="com.code.aon.marketing.MarketingAction"/>
