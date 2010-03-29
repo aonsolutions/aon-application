@@ -9,6 +9,8 @@ import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 
 public interface IParteIT extends Serializable{
 
+	Serializable getId();
+	
 	IEmpleado getEmpleado();
 	void setEmpleado(IEmpleado empleado);
 	

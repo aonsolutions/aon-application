@@ -53,8 +53,9 @@ public class ParteIT implements IParteIT,ITransferObject  {
 	private String procesadaBD;
 	private Boolean riesgo;
 	private IEmpleado empleado;
-
+	
 	@EmbeddedId
+	@Override
 	public ParteITPK getId() {
 		return this.id;
 	}

@@ -34,6 +34,8 @@ public class ParteITDAO implements IParteITDAO {
 
 	private static String EMP_ALIAS;
 	private static String FEC_INI_ALIAS;
+	private static String BAJ_PROC_ALIAS;
+	private static String ALT_PROC_ALIAS;
 
 	static {
 		ParteITDAOFactory.register(new ParteITDAO());
@@ -42,6 +44,8 @@ public class ParteITDAO implements IParteITDAO {
 			IManagerBean parteITBean = BeanManager.getManagerBean(ParteIT.class);
 			EMP_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_EMPLEADO_ID);
 			FEC_INI_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_ID_FECHA_BAJA);
+			ALT_PROC_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_BAJA_PROCESADA_BD);
+			BAJ_PROC_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_ALTA_PROCESADA_BD);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -54,6 +58,13 @@ public class ParteITDAO implements IParteITDAO {
 			if (!StringUtils.isBlank(params.getEmpleadoID())) {
 				c.addExpression(EMP_ALIAS, params.getEmpleadoID());
 			}
+			if (params.isBaja()) {
+				c.addEqualExpression(BAJ_PROC_ALIAS, "N");
+			}
+			if (params.isAlta()) {
+				c.addEqualExpression(ALT_PROC_ALIAS, "N");
+			}
+			//TODO Dar soporte al campo confirmación.
 			c.addOrder(FEC_INI_ALIAS,false);
 			return c;
 		} catch (ExpressionException e) {
@@ -245,6 +256,40 @@ public class ParteITDAO implements IParteITDAO {
 			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
 			ParteIT p = (ParteIT) parteIT;
 			bean.insertOrUpdate(p);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+
+	@Override
+	public int getCount(ParteITParams params) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
+			return bean.getCount( getCriteria(params) );
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IParteIT> getPartes(ParteITParams params) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
+			List<?> list = bean.getList( getCriteria(params) ); 
+			return (List<IParteIT>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IParteIT> getPartes(ParteITParams params, int start, int count) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
+			List<?> list = bean.getList( getCriteria(params), start, count ); 
+			return (List<IParteIT>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
