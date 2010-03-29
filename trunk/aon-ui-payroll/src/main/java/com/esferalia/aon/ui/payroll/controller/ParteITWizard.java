@@ -363,7 +363,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private void searchRecaidaAnterior(){
 		try {
 			List<IParteIT> list = getParteITDAO().getPartesEmpleado(getEmpleado());
-			if (list.size() > 0) {
+			if (list.size() > 0 && getOperacion().equals(TipoOperacionIT.BAJA)) {
 				IParteIT ultimoParte = list.get(0);
 				
 				if((getParteIT().getTipoContingencia().equals(TipoContingencia.ENFERMEDAD_COMUN) 
@@ -374,6 +374,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				} else {
 					setRecaidaAnterior(false);
 				}
+			} else {
+				setRecaidaAnterior(false);
 			}
 		} catch (PayrollException e) {
 			e.printStackTrace();
