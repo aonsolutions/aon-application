@@ -30,6 +30,16 @@
 									value="#{payrollBundle.parteIT_module}" />
 							</aon:div>
 						</aon:div>
+						
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="remesaITWizard" 
+									action="remesaITWizard_step0"
+									actionListener="#{remesaITWizard.onStart}"
+									value="#{payrollBundle.remesaIT_module}" />
+							</aon:div>
+						</aon:div>
+						
 					</h:panelGrid>
 				</h:panelGrid>
 			</aon:div>

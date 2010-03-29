@@ -27,9 +27,18 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ Parte IT Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>remesaITWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.RemesaITWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- =================== Undeductible Invoice Management========================== -->
-	<navigation-rule>
+	<navigation-rule id="parteITWizard">
 	    <navigation-case>
     	  	<from-outcome>parteITWizard_step0</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step0.xhtml</to-view-id>
@@ -48,4 +57,19 @@
 	    </navigation-case>
 	</navigation-rule>
 	
+	<navigation-rule id="remesaITWizard">
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step2.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
 </faces-config>
