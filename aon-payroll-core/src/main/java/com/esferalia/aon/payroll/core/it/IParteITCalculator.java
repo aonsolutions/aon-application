@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll.core.it;
 
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IContrato;
-import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 
 
 
