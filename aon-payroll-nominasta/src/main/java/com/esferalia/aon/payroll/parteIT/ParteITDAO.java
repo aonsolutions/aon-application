@@ -10,7 +10,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.core.util.DateUtils;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.PayrollException;
@@ -189,7 +191,9 @@ public class ParteITDAO implements IParteITDAO {
 			Criteria tCriteria = new Criteria();
 			tCriteria.addEqualExpression(eAlias, parteIT.getEmpleado().getId());
 			tCriteria.addLessThanOrEqualExpression(iAlias, parteIT.getFechaBaja());
-			tCriteria.addGreaterThanOrEqualExpression(fAlias, parteIT.getFechaBaja());
+			Expression or1 = ExpressionUtilities.getGreaterThanOrEqualExpression(fAlias, parteIT.getFechaBaja());  
+			Expression or2 = ExpressionUtilities.getNullExpression(fAlias);
+			tCriteria.addExpression(ExpressionUtilities.getOrExpression(or1, or2));
 			List<ITransferObject> trabajos = trabajoBean.getList(tCriteria);
 			if (trabajos.size() == 0) {
 				throw new PayrollException("No hay datos en CONTRATO");
