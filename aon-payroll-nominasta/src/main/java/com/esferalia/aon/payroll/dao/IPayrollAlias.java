@@ -7,6 +7,7 @@ import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.ParteIT;
+import com.esferalia.aon.payroll.ConfirmacionParteIT;
 import com.esferalia.aon.payroll.Contrato;
 
 /** 
@@ -376,6 +377,67 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for ConfirmacionParteIT entity.
+	*/ 
+	DAOConstantsEntry CONFIRMACION_PARTE_IT_ENTRY = DAOConstants.getDAOConstant(ConfirmacionParteIT.class);
+
+	/** 
+	* Alias value: ConfirmacionParteIT_cias
+	* Hibernate value: ConfirmacionParteIT.cias
+	*/
+	String  CONFIRMACION_PARTE_IT_CIAS = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_fecha
+	* Hibernate value: ConfirmacionParteIT.fecha
+	*/
+	String  CONFIRMACION_PARTE_IT_FECHA = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_id_cdg
+	* Hibernate value: ConfirmacionParteIT.id.cdg
+	*/
+	String  CONFIRMACION_PARTE_IT_ID_CDG = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_id_fechaBaja
+	* Hibernate value: ConfirmacionParteIT.id.fechaBaja
+	*/
+	String  CONFIRMACION_PARTE_IT_ID_FECHA_BAJA = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_id_numero
+	* Hibernate value: ConfirmacionParteIT.id.numero
+	*/
+	String  CONFIRMACION_PARTE_IT_ID_NUMERO = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_numeroColegiado
+	* Hibernate value: ConfirmacionParteIT.numeroColegiado
+	*/
+	String  CONFIRMACION_PARTE_IT_NUMERO_COLEGIADO = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_parteIT_id_cdg
+	* Hibernate value: ConfirmacionParteIT.parteIT.id.cdg
+	*/
+	String  CONFIRMACION_PARTE_IT_PARTE_IT_ID_CDG = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_parteIT_id_fechaBaja
+	* Hibernate value: ConfirmacionParteIT.parteIT.id.fechaBaja
+	*/
+	String  CONFIRMACION_PARTE_IT_PARTE_IT_ID_FECHA_BAJA = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ConfirmacionParteIT_procesadoBD
+	* Hibernate value: ConfirmacionParteIT.procesadoBD
+	*/
+	String  CONFIRMACION_PARTE_IT_PROCESADO_BD = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
 	* DAOConstantsEntry for Contrato entity.
 	*/ 
 	DAOConstantsEntry CONTRATO_ENTRY = DAOConstants.getDAOConstant(Contrato.class);
@@ -409,6 +471,12 @@ public interface IPayrollAlias {
 	* Hibernate value: Contrato.indtp
 	*/
 	String  CONTRATO_INDTP = CONTRATO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Contrato_prorrateo
+	* Hibernate value: Contrato.prorrateo
+	*/
+	String  CONTRATO_PRORRATEO = CONTRATO_ENTRY.getAliasNames()[5];
 
 
 }

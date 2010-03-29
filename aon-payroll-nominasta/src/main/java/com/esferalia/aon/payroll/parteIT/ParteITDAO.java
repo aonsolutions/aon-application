@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.parteIT;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,13 +16,17 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.core.util.DateUtils;
+import com.esferalia.aon.payroll.ConfirmacionParteIT;
+import com.esferalia.aon.payroll.ConfirmacionParteITPK;
 import com.esferalia.aon.payroll.ParteIT;
+import com.esferalia.aon.payroll.ParteITPK;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
+import com.esferalia.aon.payroll.core.it.IConfirmacionParteIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITCalculator;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
@@ -86,6 +92,26 @@ public class ParteITDAO implements IParteITDAO {
 			return (List<IParteIT>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException( e );
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IConfirmacionParteIT> getPartesConfirmacion(IParteIT parteIT) throws PayrollException {
+		try {
+			ParteIT parte = (ParteIT)parteIT; 
+			IManagerBean bean = BeanManager.getManagerBean(ConfirmacionParteIT.class);
+			Criteria criteria = new Criteria();
+			String id = bean.getFieldName(IPayrollAlias.CONFIRMACION_PARTE_IT_ID_CDG);
+			criteria.addEqualExpression(id, parte.getId().getCdg());
+			id = bean.getFieldName(IPayrollAlias.CONFIRMACION_PARTE_IT_ID_FECHA_BAJA);
+			criteria.addEqualExpression(id, parte.getId().getFechaBaja());
+			id = bean.getFieldName(IPayrollAlias.CONFIRMACION_PARTE_IT_ID_NUMERO);
+			criteria.addOrder(id, false);
+			List<?> list = bean.getList( criteria ); 
+			return (List<IConfirmacionParteIT>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
 		}
 	}
 
@@ -249,6 +275,23 @@ public class ParteITDAO implements IParteITDAO {
 		}
 		return parteIT;
 	}
+	
+	@Override
+	public IConfirmacionParteIT initialize(IParteIT  parteIT) throws PayrollException {
+		ConfirmacionParteIT confirmacionParteIT = new ConfirmacionParteIT();
+		ParteIT newParteIT = new ParteIT();
+		newParteIT.setId(new ParteITPK());
+		newParteIT.getId().setCdg(((ParteIT)parteIT).getId().getCdg());
+		newParteIT.getId().setFechaBaja(((ParteIT)parteIT).getId().getFechaBaja());
+		confirmacionParteIT.setParteIT(newParteIT);
+		confirmacionParteIT.setId(new ConfirmacionParteITPK());
+		confirmacionParteIT.setProcesado(false);
+		confirmacionParteIT.getId().setCdg(((ParteIT)parteIT).getId().getCdg());
+		confirmacionParteIT.getId().setFechaBaja(((ParteIT)parteIT).getId().getFechaBaja());
+		
+		return confirmacionParteIT;
+	}
+	
 
 	@Override
 	public void accept(IParteIT parteIT) throws PayrollException {
@@ -256,6 +299,17 @@ public class ParteITDAO implements IParteITDAO {
 			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
 			ParteIT p = (ParteIT) parteIT;
 			bean.insertOrUpdate(p);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@Override
+	public void accept(IConfirmacionParteIT confirmacionParteIT) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ConfirmacionParteIT.class);
+			ConfirmacionParteIT c = (ConfirmacionParteIT) confirmacionParteIT;
+			bean.insertOrUpdate(c);
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
