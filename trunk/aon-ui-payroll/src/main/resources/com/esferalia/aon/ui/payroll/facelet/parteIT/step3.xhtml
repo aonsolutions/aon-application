@@ -17,21 +17,8 @@
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/empleadoHeader.xhtml" />
 		
-		<h:panelGrid columns="2" style="width: 100%;" 
-			columnClasses="aon-width-500 aon-vertical-align-top, aon-width-auto aon-vertical-align-top">
-
-			<h:panelGrid columns="1" style="width: 100%;"
-				columnClasses="aon-vertical-align-top">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/listaContratos.xhtml" />
-		
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/datosIT.xhtml" >
-					<ui:param name="confirmView" value="#{true}" />
-				</ui:include>
-			</h:panelGrid>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/confirmIT.xhtml" />
 			
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/listaPartes.xhtml" />
-		</h:panelGrid>
-		
 	</ui:define>
 
 </ui:composition>

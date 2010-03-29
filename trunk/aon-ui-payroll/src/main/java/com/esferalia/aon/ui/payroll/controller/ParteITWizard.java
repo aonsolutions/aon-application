@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.IDataModelDataProvider;
@@ -267,12 +269,36 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	}
 	
 	public void onFinish(ActionEvent event) {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			getParteITDAO().accept( getParteIT() );
-		} catch (PayrollException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}		
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// BEGIN operaciones de la transaccion
+				getParteITDAO().accept( getParteIT() );
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+				onStart(event);
+			} catch (Exception e) {
+				String msg = e.getMessage();
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					msg = "Unable to rollback transaction! (" + msg + ")";
+				}
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
 	@Override
@@ -318,16 +344,19 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	public void onNext(ActionEvent event) {
 		if (getCurrentStep() == 0) {
 			onSearch(event);
+			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 			// Seleccion de persona
+			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			// Validacion de la IT
 			onValidate(event);
+			setCurrentStep(getCurrentStep() + 1);			
 		} else if (getCurrentStep() == 3) {
 			onFinish(event);
 		}
-		setCurrentStep(getCurrentStep() + 1);
 	}
+	
 	public void onPrevious(ActionEvent event) {
 		setCurrentStep(getCurrentStep() - 1);
 	}
@@ -343,7 +372,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	}
 
 	public boolean isNextAvailable() {
-		return (getCurrentStep() < 4);
+		return (getCurrentStep() < 3);
 	}
 	
 	public void onChangeFechaInicio( ActionEvent event ) {
