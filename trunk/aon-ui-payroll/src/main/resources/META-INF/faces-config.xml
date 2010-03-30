@@ -70,6 +70,10 @@
     	  	<from-outcome>remesaITWizard_step2</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step2.xhtml</to-view-id>
 	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step3.xhtml</to-view-id>
+	    </navigation-case>
 	</navigation-rule>
 
 </faces-config>
