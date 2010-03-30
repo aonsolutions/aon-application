@@ -1,17 +1,26 @@
 package com.esferalia.aon.file.payroll.fdi;
 
 
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
+import com.esferalia.aon.file.payroll.fdi.data.DEC;
+import com.esferalia.aon.file.payroll.fdi.data.DIT;
+import com.esferalia.aon.file.payroll.fdi.data.DOM;
 import com.esferalia.aon.file.payroll.fdi.data.ETI;
+import com.esferalia.aon.file.payroll.fdi.data.EMP;
+import com.esferalia.aon.file.payroll.fdi.data.LDD;
+import com.esferalia.aon.file.payroll.fdi.data.ODP;
+import com.esferalia.aon.file.payroll.fdi.data.TRA;
 
 public class FDI  extends AbstractFileFiller{
 
@@ -59,26 +68,43 @@ public class FDI  extends AbstractFileFiller{
 			Map<String,Object> properties = new HashMap<String,Object>();
 			properties.put(ETI, eti);
 			createLine(ETI,properties);
-/*
-			for (Declared declared: deponent.getDeclareds()){
-				properties.put(FDI.DECLARED, declared);
-				try{
-					if (CheckDeclared.parse(declared,exceptions)==false) {
-						throw new Fd0Exception( "ABORTED: ",declared.toString());
+			for (EMP emp: eti.getEmpresas()) {
+				properties.put(EMP , emp);
+				createLine(EMP,properties);
+				for (TRA tra: emp.getTrabajadores()) {
+					properties.put(TRA , tra);
+					createLine(TRA,properties);
+					if (tra.getDom() != null) {
+						properties.put(DOM , tra.getDom());
+						createLine(DOM,properties);
 					}
-					createLine("Declarado",properties);
-				} catch (Exception ex) {
-					if ( ex instanceof Fd0Exception ) {
-						exceptions.add (ex);
-					} 
-					else {
-						Fd0Exception e = new Fd0Exception( ex.getMessage(),declared.toString());
-						exceptions.add (e);
+					if (tra.getLdd() != null) {
+						properties.put(LDD , tra.getLdd());
+						createLine(LDD ,properties);
+					}
+					if (tra.getDatosIT() != null) {
+						for (DIT dit: tra.getDatosIT()) {
+							properties.put(DIT , dit);
+							createLine(DIT,properties);
+						}
+					}
+					if (tra.getDec() != null) {
+						properties.put(DEC , tra.getDec());
+						createLine(DEC ,properties);
+					}
+					if (tra.getPartesConfirmacion() != null) {
+						for (ODP odp: tra.getPartesConfirmacion()) {
+							properties.put(ODP , odp);
+							createLine(ODP,properties);
+						}
 					}
 				}
 			}
-*/				
+			properties.put(ETF, eti.getEtf());
+			createLine(ETF,properties);
+
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			if ( ex instanceof Fd0Exception ) {
 				exceptions.add (ex);
 			} 

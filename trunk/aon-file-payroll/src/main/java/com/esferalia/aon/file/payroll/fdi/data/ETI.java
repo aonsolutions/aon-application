@@ -1,5 +1,10 @@
 package com.esferalia.aon.file.payroll.fdi.data;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 public class ETI {
 
 	private Integer clave;
@@ -7,7 +12,29 @@ public class ETI {
 	private Integer hora;
 	private String fichero;
 	private String identificacion;
+	private List<EMP> empresas;
+	private ETF etf;
 
+	public ETI() {
+		clave = new Integer(0);
+		identificacion = "123456789";
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		String f =  formatter.format(date);
+		fecha = Integer.parseInt(f);
+		formatter = new SimpleDateFormat("HHmm");
+		String t =  formatter.format(date);
+		hora = Integer.parseInt(t);
+		formatter = new SimpleDateFormat("ddHHmmss");
+		fichero =  formatter.format(date);
+		
+		etf = new ETF();
+		etf.setClave(clave);
+		etf.setFichero(fichero);
+		etf.setFecha(fecha);
+		etf.setHora(hora);
+	}
+	
 	public Integer getClave() {
 		return clave;
 	}
@@ -42,4 +69,23 @@ public class ETI {
 	public void setIdentificacion(String identificacion) {
 		this.identificacion = identificacion;
 	}
+	
+	public List<EMP> getEmpresas() {
+		if (empresas == null) {
+			empresas = new LinkedList<EMP>();
+		}
+		return empresas;
+	}
+
+	public void setEmpresas(List<EMP> empresas) {
+		this.empresas = empresas;
+	}
+
+	public ETF getEtf() {
+		return etf;
+	}
+	public void setEtf(ETF etf) {
+		this.etf = etf;
+	}
+	
 }
