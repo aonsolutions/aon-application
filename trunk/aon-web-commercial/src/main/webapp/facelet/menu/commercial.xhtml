@@ -18,33 +18,113 @@
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">			
 
-					<h:panelGrid styleClass="aon-width-all" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300">
-	
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-commercial aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{commercialBundle.commercial_module_group}" />
-							</f:facet>							
-							<aon:div styleClass="aon-direct-access-list">								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="commercialTracking"
-										action="commercialTracking_form" actionListener="#{commercialTracking.onReset}"
-										value="#{commercialBundle.commercial_tracking_module}" />
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+						<aon:panelGroup>	
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-icon-target aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{commercialBundle.commercial_target_module}" />
+								</f:facet>							
+								<aon:div styleClass="aon-direct-access-list">			
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="target"
+											action="target_search" actionListener="#{target.onEditSearch}"
+											value="#{commercialBundle.commercial_target_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="segment"
+											action="segment_form"
+											value="#{registryBundle.registry_segment_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="offer_form"
-										action="offer_search" actionListener="#{offer.onEditSearch}"
-										value="#{commercialBundle.commercial_offer_module}" />
+							</h:panelGrid>						
+
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-icon-commercial aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="agenda comercial" />
+								</f:facet>							
+								<aon:div styleClass="aon-direct-access-list">								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="commercialTracking"
+											action="commercialTracking_form" actionListener="#{commercialTracking.onReset}"
+											value="#{commercialBundle.commercial_tracking_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="commercialActivity"
+											action="commercialActivity" actionListener="#{commercialActivity.onSearch}" 
+											value="#{commercialBundle.commercial_activity_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="expense_form"
-										action="expenseAccount_search" actionListener="#{expenseAccount.onEditSearch}"
-										value="#{commercialBundle.commercial_expense_control_module}" />
+							</h:panelGrid>
+
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-icon-offer aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_commercial}"/>
+								</f:facet>						
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="offer" 
+											action="offer_search" actionListener="#{offer.onEditSearch}"
+											value="#{commercialBundle.commercial_offer_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="commercialTerm"
+											action="commercialTerm" actionListener="#{commercialTerm.onSearch}" 
+											value="#{commercialBundle.commercial_term_module}" />
+									</aon:div>
 								</aon:div>
-							</aon:div>
-						</h:panelGrid>
-	
+							</h:panelGrid>
+							
+						</aon:panelGroup>
+						
+						<aon:panelGroup>
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-direct-access-panel aon-icon-product">
+								<f:facet name="header">
+									<aon:outputText value="#{productBundle.product_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="item-warehouse" 
+											action="item_search" actionListener="#{item.onEditSearch}"
+											value="#{productBundle.product_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="productCategory-warehouse" 
+											action="productCategory"
+											value="#{productBundle.product_category_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="brand-warehouse"
+											action="brand"
+											value="#{productBundle.product_brand_module}" />
+									</aon:div>
+								</aon:div>
+							</h:panelGrid>				
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-direct-access-panel aon-icon-treasury">
+								<f:facet name="header">
+									<aon:outputText value="precios" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-warehouse" 
+											action="tariff_list" actionListener="#{tariff.onSearch}"
+											value="#{productBundle.product_tariff_module}" />
+									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="catalogue-warehouse" 
+											action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
+											value="#{productBundle.product_catalogue_module}" />
+									</aon:div>								
+								</aon:div>
+							</h:panelGrid>									
+						</aon:panelGroup>
+							
 					</h:panelGrid>
 				</aon:componentGroup>
 			</aon:div>

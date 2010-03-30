@@ -10,7 +10,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="auxiliaryMenu">
+		<aon:form id="statisticsMenu">
 
 			<aon:div styleClass="aon-scroll-area">
 			
@@ -22,49 +22,43 @@
 						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
 						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-auxiliary aon-direct-access-panel">
+							headerClass="aon-icon-statistics aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_auxiliaries}" />
+								<aon:outputText value="#{appBundle.menu_statistics}" />
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">							
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="segment"
-										action="segment_form"
-										value="#{registryBundle.registry_segment_module}" />
+									<aon:commandLink value="Ventas por Categoria y Articulo" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="commercialActivity"
-										action="commercialActivity" actionListener="#{commercialActivity.onSearch}" 
-										value="#{commercialBundle.commercial_activity_module}" />
+									<aon:commandLink value="Ventas por Zona" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="commercialTerm"
-										action="commercialTerm" actionListener="#{commercialTerm.onSearch}" 
-										value="#{commercialBundle.commercial_term_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="commercialExpense"
-										action="commercialExpense" actionListener="#{expense.onSearch}" 
-										value="#{commercialBundle.commercial_expense_module}" />
+									<aon:commandLink value="Ventas por Agente Comercial" />								
 								</aon:div>
 							</aon:div>
 						</h:panelGrid>
 
 						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-product aon-direct-access-panel">
+							headerClass="aon-icon-task aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{commercialBundle.commercial_product_auxiliars_module_group}" />
+								<aon:outputText value="cuadro de mando" />
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">														
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="productCategory" 
-										action="productCategory" 
-										value="#{productBundle.product_category_module}" />
+									<aon:commandLink value="Visitas Realizadas (Dia, Semana, Mes, Rango Fechas)" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="tax" 
-										action="tax" 
-										value="#{configBundle.config_tax_module}" />
+									<aon:commandLink value="Presupuestos Realizados (Cantidad e Importes)" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink value="Presupuestos Cerrados (Cantidad e Importes)" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink value="Presupuestos Perdidos (Cantidad e Importes)" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink value="Ratios" />
 								</aon:div>
 							</aon:div>
 						</h:panelGrid>

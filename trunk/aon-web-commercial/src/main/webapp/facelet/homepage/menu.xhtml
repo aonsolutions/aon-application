@@ -4,14 +4,10 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
-		<aon:commandLink id="master"
-			value="#{bundle.aon_masters}"
-			action="menu_master" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-master" />
-		<aon:commandLink id="auxiliary"
-			value="#{bundle.aon_auxiliaries}"
-			action="menu_auxiliary" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-auxiliary" />
+		<aon:commandLink id="agent"
+			value="#{appBundle.menu_agents}"
+			action="menu_agent" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-sales" />
 		<aon:commandLink id="commercial"
 			value="#{commercialBundle.commercial_module_group}"
 			action="menu_commercial" immediate="true"
@@ -20,17 +16,14 @@
 			value="#{marketingBundle.marketing_marketing}"
 			action="menu_marketing" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-marketing" />
+		<aon:commandLink id="statistics"
+			value="#{appBundle.menu_statistics}"
+			action="menu_statistics" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-statistics" />
 		<aon:commandLink id="config"
 			value="#{bundle.aon_configuration}"
 			action="menu_config" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-config" />
 	</ui:define>
-	
-	<ui:define name="afterMenuContent">
-		<aon:commandLink id="communicationCenter"
-			value="#{commercialBundle.commercial_communication_center_module}"
-			styleClass="aon-top-menu-item aon-icon-telephone" immediate="true" 
-			action="communicationCenter" actionListener="#{communicationCenter.onInit}" />
-	</ui:define>	
 
 </ui:composition>

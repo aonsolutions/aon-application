@@ -18,8 +18,8 @@
 					family="javax.faces.Command"
 					method="#{actionDenied.renderedCommand}">			
 
-					<h:panelGrid styleClass="aon-width-all" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300">
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
 						<h:panelGrid styleClass="aon-width-all"
 							headerClass="aon-icon-marketing aon-direct-access-panel">
@@ -33,9 +33,23 @@
 										value="#{marketingBundle.marketing_campaign_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="survey"
-										action="survey_list" actionListener="#{survey.onSearch}" 
-										value="#{marketingBundle.marketing_survey_module}" />
+									<aon:commandLink id="communicationCenter"
+										action="communicationCenter" actionListener="#{communicationCenter.onInit}"
+										value="#{commercialBundle.commercial_communication_center_module}" />										
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>
+						
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_general}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="question"
+										action="question_list" actionListener="#{question.onSearch}"
+										value="#{marketingBundle.marketing_question_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="surveyResponse"
@@ -43,13 +57,13 @@
 										value="#{marketingBundle.marketing_survey_response_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="question"
-										action="question_list" actionListener="#{question.onSearch}"
-										value="#{marketingBundle.marketing_question_module}" />
-								</aon:div>
+									<aon:commandLink id="survey"
+										action="survey_list" actionListener="#{survey.onSearch}" 
+										value="#{marketingBundle.marketing_survey_module}" />
+								</aon:div>								
 							</aon:div>
-						</h:panelGrid>
-	
+						</h:panelGrid>							
+						
 					</h:panelGrid>
 				</aon:componentGroup>
 			</aon:div>
