@@ -67,11 +67,15 @@
 									<aon:commandLink value="Calculo y Control" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Tipos" />
-								</aon:div>
+									<aon:commandLink id="commission-type" 
+										action="commissionType_list" actionListener="#{commissionType.onSearch}"
+										value="#{commercialBundle.commercial_commission_type_module}" />
+								</aon:div>									
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Tablas de Comisiones" />
-								</aon:div>
+									<aon:commandLink id="commission" 
+										action="commission_search" actionListener="#{commission.onEditSearch}"
+										value="#{commercialBundle.commercial_commission_module}" />
+								</aon:div>								
 							</aon:div>
 						</h:panelGrid>
 	
