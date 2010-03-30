@@ -20,14 +20,14 @@
 					<aon:outputText value="#{productBundle.product_category}" />
 				</f:facet>
 				<aon:outputText value="#{to.category.name}"
-					rendered="#{to!=catalogueCategory.to}" />
+					rendered="#{formList}" />
 				<aon:selectOneMenu value="#{catalogueCategory.to.category}"
-					rendered="#{to==catalogueCategory.to}" required="#{true}">
+					rendered="#{formEdit}" required="#{true}">
 					<f:selectItems value="#{productCollections.categories}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu value="#{catalogueCategory.to.category}"
-						rendered="#{catalogueCategory.new}" required="#{true}">
+						rendered="#{formNew}" required="#{true}">
 						<f:selectItems value="#{productCollections.categories}" />
 					</aon:selectOneMenu>
 				</f:facet>
@@ -38,16 +38,16 @@
 					<aon:outputText value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
-					rendered="#{to.id!=catalogueCategory.to.id}">
+					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 				</aon:outputText>
 				<aon:inputText value="#{catalogueCategory.to.quantity}" 
-					rendered="#{to.id==catalogueCategory.to.id}" required="#{true}" size="7">
+					rendered="#{formEdit}" required="#{true}" size="7">
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText value="#{catalogueCategory.to.quantity}"
-						rendered="#{catalogueCategory.new}" required="#{true}" size="7">
+						rendered="#{formNew}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
 				</f:facet>
@@ -58,16 +58,16 @@
 					<aon:outputText value="#{bundle.aon_discount}" />
 				</f:facet>
 				<aon:outputText value="#{to.discount}" 
-					rendered="#{to.id!=catalogueCategory.to.id}">
+					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 				<aon:inputText value="#{catalogueCategory.to.discount}"
-					rendered="#{to.id==catalogueCategory.to.id}" required="#{true}" size="7">
+					rendered="#{formEdit}" required="#{true}" size="7">
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText value="#{catalogueCategory.to.discount}"
-						rendered="#{catalogueCategory.new}" required="#{true}" size="7">
+						rendered="#{formNew}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
 				</f:facet>

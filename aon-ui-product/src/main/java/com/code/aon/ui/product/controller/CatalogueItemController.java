@@ -8,12 +8,15 @@ import com.code.aon.ui.form.LinesController;
 public class CatalogueItemController extends LinesController {
 
 	public void itemData(LookupChangeEvent event) {
+		CatalogueItem catalogueItem = (CatalogueItem) this.getTo();
 		double price = 0;
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Item item = (Item)event.getNewValue();
+			catalogueItem.setItem(item);
+
 			price = item.getPrice();
 		}
-		((CatalogueItem) this.getTo()).setPrice(price);
+		catalogueItem.setPrice(price);
 	}
 
 }
