@@ -5,6 +5,10 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.CommercialTerm;
+import com.code.aon.commercial.Commission;
+import com.code.aon.commercial.CommissionCategory;
+import com.code.aon.commercial.CommissionItem;
+import com.code.aon.commercial.CommissionTypeCommission;
 import com.code.aon.commercial.Expense;
 import com.code.aon.commercial.ExpenseAccount;
 import com.code.aon.commercial.ExpenseAccountDetail;
@@ -126,6 +130,148 @@ public interface ICommercialAlias {
 	* Hibernate value: CommercialTerm.name
 	*/
 	String  COMMERCIAL_TERM_NAME = COMMERCIAL_TERM_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Commission entity.
+	*/ 
+	DAOConstantsEntry COMMISSION_ENTRY = DAOConstants.getDAOConstant(Commission.class);
+
+	/** 
+	* Alias value: Commission_endDate
+	* Hibernate value: Commission.endDate
+	*/
+	String  COMMISSION_END_DATE = COMMISSION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Commission_id
+	* Hibernate value: Commission.id
+	*/
+	String  COMMISSION_ID = COMMISSION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Commission_name
+	* Hibernate value: Commission.name
+	*/
+	String  COMMISSION_NAME = COMMISSION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Commission_startDate
+	* Hibernate value: Commission.startDate
+	*/
+	String  COMMISSION_START_DATE = COMMISSION_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommissionCategory entity.
+	*/ 
+	DAOConstantsEntry COMMISSION_CATEGORY_ENTRY = DAOConstants.getDAOConstant(CommissionCategory.class);
+
+	/** 
+	* Alias value: CommissionCategory_category_id
+	* Hibernate value: CommissionCategory.category.id
+	*/
+	String  COMMISSION_CATEGORY_CATEGORY_ID = COMMISSION_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommissionCategory_commission_id
+	* Hibernate value: CommissionCategory.commission.id
+	*/
+	String  COMMISSION_CATEGORY_COMMISSION_ID = COMMISSION_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CommissionCategory_id
+	* Hibernate value: CommissionCategory.id
+	*/
+	String  COMMISSION_CATEGORY_ID = COMMISSION_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CommissionCategory_quantity
+	* Hibernate value: CommissionCategory.quantity
+	*/
+	String  COMMISSION_CATEGORY_QUANTITY = COMMISSION_CATEGORY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CommissionCategory_rate
+	* Hibernate value: CommissionCategory.rate
+	*/
+	String  COMMISSION_CATEGORY_RATE = COMMISSION_CATEGORY_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommissionItem entity.
+	*/ 
+	DAOConstantsEntry COMMISSION_ITEM_ENTRY = DAOConstants.getDAOConstant(CommissionItem.class);
+
+	/** 
+	* Alias value: CommissionItem_amount
+	* Hibernate value: CommissionItem.amount
+	*/
+	String  COMMISSION_ITEM_AMOUNT = COMMISSION_ITEM_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommissionItem_commission_id
+	* Hibernate value: CommissionItem.commission.id
+	*/
+	String  COMMISSION_ITEM_COMMISSION_ID = COMMISSION_ITEM_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CommissionItem_id
+	* Hibernate value: CommissionItem.id
+	*/
+	String  COMMISSION_ITEM_ID = COMMISSION_ITEM_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CommissionItem_item_id
+	* Hibernate value: CommissionItem.item.id
+	*/
+	String  COMMISSION_ITEM_ITEM_ID = COMMISSION_ITEM_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CommissionItem_quantity
+	* Hibernate value: CommissionItem.quantity
+	*/
+	String  COMMISSION_ITEM_QUANTITY = COMMISSION_ITEM_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CommissionItem_rate
+	* Hibernate value: CommissionItem.rate
+	*/
+	String  COMMISSION_ITEM_RATE = COMMISSION_ITEM_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommissionTypeCommission entity.
+	*/ 
+	DAOConstantsEntry COMMISSION_TYPE_COMMISSION_ENTRY = DAOConstants.getDAOConstant(CommissionTypeCommission.class);
+
+	/** 
+	* Alias value: CommissionTypeCommission_id
+	* Hibernate value: CommissionTypeCommission.id
+	*/
+	String  COMMISSION_TYPE_COMMISSION_ID = COMMISSION_TYPE_COMMISSION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommissionTypeCommission_commissionType_id
+	* Hibernate value: CommissionTypeCommission.commissionType.id
+	*/
+	String  COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE_ID = COMMISSION_TYPE_COMMISSION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CommissionTypeCommission_commission_id
+	* Hibernate value: CommissionTypeCommission.commission.id
+	*/
+	String  COMMISSION_TYPE_COMMISSION_COMMISSION_ID = COMMISSION_TYPE_COMMISSION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CommissionTypeCommission_commission_name
+	* Hibernate value: CommissionTypeCommission.commission.name
+	*/
+	String  COMMISSION_TYPE_COMMISSION_COMMISSION_NAME = COMMISSION_TYPE_COMMISSION_ENTRY.getAliasNames()[3];
 
 
 
