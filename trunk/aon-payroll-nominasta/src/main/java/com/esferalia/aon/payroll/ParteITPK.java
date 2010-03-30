@@ -8,12 +8,13 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Embeddable
-public class ParteITPK implements Serializable {
+public class ParteITPK implements Serializable, Comparable<ParteITPK> {
 
 	private static final long serialVersionUID = -775104683033314551L;
 	
@@ -48,17 +49,24 @@ public class ParteITPK implements Serializable {
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
 		final ParteITPK o = (ParteITPK) obj;
-		if (o.getCdg() == null && getCdg() == null) {
-			return new EqualsBuilder()
-				.append(this.fechaBaja, o.fechaBaja)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getCdg(), o.getCdg()) && ObjectUtils.equals(getFechaBaja(), o.getFechaBaja());		
+		return new EqualsBuilder()
+			.append(this.cdg, o.cdg)
+			.append(this.fechaBaja, o.fechaBaja)
+			.isEquals();
 	}
-	
-//	@Override
-//	public int hashCode() {
-//		return new HashCodeBuilder().append(cdg).append(fechaBaja).hashCode();
-//	}
-	
+
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	@Override
+	public int compareTo(ParteITPK o) {
+		ParteITPK myClass = (ParteITPK) o;
+	     return new CompareToBuilder()
+	       .append(this.cdg, myClass.cdg)
+	       .append(this.fechaBaja, myClass.fechaBaja)
+	       .toComparison();
+   }
+
 }

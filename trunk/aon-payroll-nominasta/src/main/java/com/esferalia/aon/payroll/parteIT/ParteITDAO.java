@@ -66,6 +66,9 @@ public class ParteITDAO implements IParteITDAO {
 				c.addEqualExpression(BAJ_PROC_ALIAS, "N");
 			}
 			if (params.isAlta()) {
+				if (!params.isBaja()) {
+					c.addEqualExpression(BAJ_PROC_ALIAS, "S");	
+				}
 				c.addEqualExpression(ALT_PROC_ALIAS, "N");
 			}
 			//TODO Dar soporte al campo confirmación.
