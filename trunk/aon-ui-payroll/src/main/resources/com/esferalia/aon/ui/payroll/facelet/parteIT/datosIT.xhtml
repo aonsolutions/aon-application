@@ -14,21 +14,28 @@
 				<aon:outputText value="#{payrollBundle.payroll_datos_parteIT}" />
 			</f:facet>
 			<aon:panelGrid columns="2" style="width: 100%;">
-
-				<aon:outputText value="&#160;" />
-
-				<aon:selectOneMenu id="operaciones"
-					rendered="#{!parteITWizard.baja}"
-					value="#{parteITWizard.operacion}">
-					<f:selectItems value="#{parteITWizard.tiposOperacion}" />
-					<a4j:support event="onchange" reRender="datosITContainer"
-						ajaxSingle="true"
-						actionListener="#{parteITWizard.onChangeTipoOperacion}" />
-				</aon:selectOneMenu>
+			
+				<aon:outputLabel for="operaciones"
+					value="#{payrollBundle.payroll_tipo_parte}" />
+				<aon:div>
+					<aon:outputText
+						styleClass="aon-bold" style="font-size: 1.2em;" 
+						rendered="#{parteITWizard.baja}"
+						value="#{parteITWizard.operacion}"/>
+					<aon:selectOneMenu id="operaciones"
+						styleClass="aon-bold" style="font-size: 1.2em;" 
+						rendered="#{!parteITWizard.baja}"
+						value="#{parteITWizard.operacion}">
+						<f:selectItems value="#{parteITWizard.tiposOperacion}" />
+						<a4j:support event="onchange" reRender="datosITContainer"
+							ajaxSingle="true"
+							actionListener="#{parteITWizard.onChangeTipoOperacion}" />
+					</aon:selectOneMenu>
+				</aon:div>
 
 				<aon:outputLabel for="numParteRenovacion"
 					rendered="#{parteITWizard.confirmacion}"
-					value="&#160;#{payrollBundle.payroll_number}" />
+					value="#{payrollBundle.payroll_numero_renovacion}" />
 				<aon:inputText id="numParteRenovacion" size="1" maxlength="2"
 					rendered="#{parteITWizard.confirmacion}"
 					value="#{parteITWizard.numParteRenovacion}" />
@@ -76,7 +83,10 @@
 					value="#{payrollBundle.payroll_recaida}" />
 				<aon:selectBooleanCheckbox id="recaida"
 					rendered="#{parteITWizard.recaidaAnterior}"
-					value="#{parteITWizard.parteIT.recaida}" />
+					value="#{parteITWizard.parteIT.recaida}" >
+					<a4j:support event="onclick"
+						actionListener="#{parteITWizard.onChangeRecaida}" />
+				</aon:selectBooleanCheckbox>
 
 			</aon:panelGrid>
 		</aon:panel>
