@@ -30,6 +30,12 @@
 			<version>1.2_14</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>junit</groupId>

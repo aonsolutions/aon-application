@@ -14,7 +14,13 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-
+		<h:commandLink target="_blank"
+			title="#{remesaITWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
+			value="#{remesaITWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
+			style="border-width: 0px 0px 0px 0px;"
+			actionListener="#{remesaITWizard.onDownloadDisk}" 
+			rendered="#{remesaITWizard.fileOutput!=null}"
+			styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 	</ui:define>
 
 </ui:composition>
