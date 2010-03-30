@@ -13,6 +13,9 @@ public interface IEmpleado extends ITransferObject{
 	IEmpresa getEmpresa();
 	void setEmpresa(IEmpresa empresa);
 	
+	IActividad getActividad();
+	void setActividad(IActividad actividad);
+
 	IPersona getPersona();
 	void setPersona(IPersona persona);
 	
