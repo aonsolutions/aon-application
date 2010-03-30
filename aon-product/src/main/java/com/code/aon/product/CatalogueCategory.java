@@ -18,37 +18,18 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
-/**
- * Transfer Object that represents a CatalogueCategory.
- * 
- * @author Consulting & Development. Gorka Irazu - 18/07/2008
- */
 @Entity
 @Table(name="catalogue_category")
 public class CatalogueCategory implements ITransferObject {
 
 	private static final long serialVersionUID = -1595222928098471123L;
 
-	/** The id. */
 	private Integer id;
-
-	/** The catalogue. */
 	private Catalogue catalogue;
-
-	/** The product category. */
 	private ProductCategory category;
-
-	/** The quantity. */
 	private double quantity;
-	
-	/** The discount. */
 	private double discount;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -56,20 +37,10 @@ public class CatalogueCategory implements ITransferObject {
 		return id;
 	}
 
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	/**
-	 * Gets the catalogue.
-	 * 
-	 * @return the catalogue
-	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="catalogue", nullable=false)
 	@ForeignKey(name = "FK_CATALOGUE_CATEGORY_CATALOGUE")
@@ -78,20 +49,10 @@ public class CatalogueCategory implements ITransferObject {
 		return catalogue;
 	}
 
-	/**
-	 * Sets the catalogue.
-	 * 
-	 * @param catalogue the catalogue
-	 */
 	public void setCatalogue(Catalogue catalogue) {
 		this.catalogue = catalogue;
 	}
 
-	/**
-	 * Gets the product category.
-	 * 
-	 * @return the product category
-	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="category", nullable=false)
 	@ForeignKey(name = "FK_CATALOGUE_CATEGORY_CATEGORY")
@@ -100,49 +61,23 @@ public class CatalogueCategory implements ITransferObject {
 		return category;
 	}
 
-	/**
-	 * Sets the product category.
-	 * 
-	 * @param category the product category
-	 */
 	public void setCategory(ProductCategory category) {
 		this.category = category;
 	}
 
-	/**
-	 * Gets the quantity.
-	 * 
-	 * @return the quantity
-	 */
-	@Column(nullable = true)
 	public double getQuantity() {
 		return quantity;
 	}
 
-	/**
-	 * Sets the quantity.
-	 * 
-	 * @param quantity the quantity
-	 */
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 
-	/**
-	 * Gets the discount.
-	 * 
-	 * @return the discount
-	 */
-	@Column(nullable = true, precision = 6, scale = 2)
+	@Column(precision = 6, scale = 2)
 	public double getDiscount() {
 		return discount;
 	}
 
-	/**
-	 * Sets the discount.
-	 * 
-	 * @param discount the discount
-	 */
 	public void setDiscount(double discount) {
 		this.discount = discount;
 	}
@@ -157,8 +92,8 @@ public class CatalogueCategory implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.catalogue, o.catalogue)
 				.append(this.category, o.category)				
-				.append(this.discount, o.discount)				
 				.append(this.quantity, o.quantity)								
+				.append(this.discount, o.discount)				
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -167,11 +102,11 @@ public class CatalogueCategory implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(id)			
 			.append(catalogue)
 			.append(category)
-			.append(discount)
-			.append(id)			
 			.append(quantity)						
+			.append(discount)
 			.toHashCode();
 	}
 
