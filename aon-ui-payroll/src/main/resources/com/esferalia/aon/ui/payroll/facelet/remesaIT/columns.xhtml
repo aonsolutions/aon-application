@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="&#160;" />
+		</f:facet>
+		<aon:outputText value="#{payrollBundle.payroll_baja}" rendered="#{to.fechaAlta == null}"/>
+		<aon:outputText value="#{payrollBundle.payroll_alta}" rendered="#{to.fechaAlta != null}"/>
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_documento}" />
+		</f:facet>
+		<aon:outputText value="#{to.empleado.persona.registry.document.value}" />
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_nombre}" />
+		</f:facet>
+		<aon:outputText value="#{to.empleado.persona.fullName}" />
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
+		</f:facet>
+		<aon:outputText value="#{to.fechaBaja}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_fecha_alta}" />
+		</f:facet>
+		<aon:outputText value="#{to.fechaAlta}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_tipo_it}" />
+		</f:facet>
+		<aon:outputText value="#{to.tipoIT}" />
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_recaida}" />
+		</f:facet>
+		<aon:outputText value="&#160;" style="padding-left: 15px;"
+			styleClass="aon-icon-check" rendered="#{!to.recaida}" />
+		<aon:outputText value="&#160;" style="padding-left: 15px;"
+			styleClass="aon-icon-checked" rendered="#{to.recaida}" />
+	</aon:column>
+
+</ui:composition>

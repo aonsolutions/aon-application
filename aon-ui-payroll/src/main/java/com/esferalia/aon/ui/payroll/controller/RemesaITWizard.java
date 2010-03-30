@@ -1,17 +1,20 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
 
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.IDataModelDataProvider;
@@ -28,10 +31,12 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 	
 	private IParteITDAO parteITDAO;
 	private int currentStep;
-	private static final String[] STEPS = { "remesaITWizard_step0","remesaITWizard_step1","remesaITWizard_step2"};
+	private static final String[] STEPS = { "remesaITWizard_step0","remesaITWizard_step1","remesaITWizard_step2","remesaITWizard_step3"};
 	private ParteITParams params;
 	private Map<Serializable,IParteIT> checks;
 	private DataModel model;
+	private DataModel selectedModel;
+	private FileOutput fileOutput;
 	
 	public ParteITParams getParams() {
 		if (params == null) {
@@ -61,6 +66,18 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 	public void setModel(DataModel model) {
 		this.model = model;
 	}
+	public DataModel getSelectedModel() {
+		return selectedModel;
+	}
+	public void setSelectedModel(DataModel selectedModel) {
+		this.selectedModel = selectedModel;
+	}
+	public FileOutput getFileOutput() {
+		return fileOutput;
+	}
+	public void setFileOutput(FileOutput fileOutput) {
+		this.fileOutput = fileOutput;
+	}
 	// *********************************************
 	public int getCurrentStep() {
 		return this.currentStep;
@@ -74,8 +91,11 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 			onValidate(event);
-			setCurrentStep(getCurrentStep() + 1);			
+			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
+			onDiskGenerate(event);
+			setCurrentStep(getCurrentStep() + 1);			
+		} else if (getCurrentStep() == 3) {
 			onFinish(event);
 		}
 	}
@@ -95,7 +115,7 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 	}
 
 	public boolean isNextAvailable() {
-		return (getCurrentStep() < 2);
+		return (getCurrentStep() < 3);
 	}
 
 	// ***************************************************
@@ -103,6 +123,7 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 		setParams(null);
 		setChecks(null);
 		setModel(null);
+		setCurrentStep(0);
 	}
 
 	private void onSearch(ActionEvent event) {
@@ -123,20 +144,27 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 	}
 	
 	private void onValidate(ActionEvent event) {
-		// TODO Auto-generated method stub
+		Collection<IParteIT> c = getChecks().values();
+		setSelectedModel( new ArrayDataModel(c.toArray()) );
 	}
+	
+	public void onDiskGenerate(ActionEvent event) {
+		
+	}
+	
 	private void onFinish(ActionEvent event) {
 		// TODO Auto-generated method stub
 	}
 	
 	public void onSelectAll(ActionEvent event) {
-		processAll(false);
+		processAll(true);
 	}
 	public void onDeselectAll(ActionEvent event) {
 		processAll(false);
 	}
 	private void processAll(boolean selected) {
 		for (int i = 0; i < getModel().getRowCount(); i++) {
+			getModel().setRowIndex(i);
 			IParteIT parte = (IParteIT) getModel().getRowData();
 			processCheck(parte,selected);
 		}
