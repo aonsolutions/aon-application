@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="ODP">
+	<field name="cabecera" value="ODP" format="AlphaNumeric" pattern="X(3)" />
+	<field name="fecha" value="bean" bean="ODP" property="fecha" format="Numeric" pattern="9(8)" />
+	<field name="numero" value="bean" bean="ODP" property="numero" format="Numeric" pattern="9(2)" />
+	<field name="entidadAseguradora" value="bean" bean="ODP" property="entidadAseguradora" format="Numeric" pattern="9(3)" />
+	<field name="fechaCambioEntidad" value="bean" bean="ODP" property="fechaCambioEntidad" format="Numeric" pattern="9(8)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(46)" />
+</register>
+
