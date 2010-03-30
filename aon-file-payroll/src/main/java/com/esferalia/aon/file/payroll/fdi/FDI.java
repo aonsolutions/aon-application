@@ -1,14 +1,17 @@
-package com.esferalila.aon.file.payroll.fdi;
+package com.esferalia.aon.file.payroll.fdi;
 
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
-import com.esferalila.aon.file.payroll.fdi.data.ETI;
+import com.code.aon.file.format.model.Fd0Exception;
+import com.esferalia.aon.file.payroll.fdi.data.ETI;
 
 public class FDI  extends AbstractFileFiller{
 
@@ -30,39 +33,33 @@ public class FDI  extends AbstractFileFiller{
 			throw new IllegalArgumentException("El registro ETI no puede ser nulo!");
 		}
 		this.eti = eti;
-		InputStream input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/DEC.xml");
+		InputStream input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/DEC.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/DIT.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/DIT.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/DOM.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/DOM.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/EMP.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/EMP.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/ETF.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/ETF.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/ETI.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/ETI.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/LDD.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/LDD.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/ODP.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/ODP.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = FDI.class.getResourceAsStream("com/esferalila/aon/file/payroll/fdi/xml/TRA.xml");
+		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/TRA.xml");
 		DiskRegisterLoader.load(input, manager);
 	}
 	
 	@Override
 	public ArrayList<Exception> create() {
-		/*
 		try{
 			Map<String,Object> properties = new HashMap<String,Object>();
-			properties.put(FDI.DEPONENT, deponent);
-			
-			if (CheckDeponent.parse(deponent,exceptions)==false) {
-				throw new Fd0Exception( "ABORTED: ",deponent.toString());
-			}
-			
-			createLine("Declarante",properties);
-
+			properties.put(ETI, eti);
+			createLine(ETI,properties);
+/*
 			for (Declared declared: deponent.getDeclareds()){
 				properties.put(FDI.DECLARED, declared);
 				try{
@@ -80,20 +77,19 @@ public class FDI  extends AbstractFileFiller{
 					}
 				}
 			}
+*/				
 		} catch (Exception ex) {
 			if ( ex instanceof Fd0Exception ) {
 				exceptions.add (ex);
 			} 
 			else {
-				Fd0Exception e = new Fd0Exception( ex.getMessage(),deponent.toString());
+				Fd0Exception e = new Fd0Exception( ex.getMessage(),eti.toString());
 				exceptions.add (e);
 			}
 		}
 		output.flush();
 		writeErrorsFile();
 		return exceptions;
-		*/
-		return null;
 	}
 	
 }
