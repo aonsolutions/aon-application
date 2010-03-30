@@ -7,7 +7,7 @@ import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.ParteIT;
-import com.esferalia.aon.payroll.ConfirmacionParteIT;
+import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.Contrato;
 
 /** 
@@ -377,63 +377,63 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for ConfirmacionParteIT entity.
+	* DAOConstantsEntry for ParteConfirmacionIT entity.
 	*/ 
-	DAOConstantsEntry CONFIRMACION_PARTE_IT_ENTRY = DAOConstants.getDAOConstant(ConfirmacionParteIT.class);
+	DAOConstantsEntry PARTE_CONFIRMACION_IT_ENTRY = DAOConstants.getDAOConstant(ParteConfirmacionIT.class);
 
 	/** 
-	* Alias value: ConfirmacionParteIT_cias
-	* Hibernate value: ConfirmacionParteIT.cias
+	* Alias value: ParteConfirmacionIT_cias
+	* Hibernate value: ParteConfirmacionIT.cias
 	*/
-	String  CONFIRMACION_PARTE_IT_CIAS = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[0];
+	String  PARTE_CONFIRMACION_IT_CIAS = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_fecha
-	* Hibernate value: ConfirmacionParteIT.fecha
+	* Alias value: ParteConfirmacionIT_fecha
+	* Hibernate value: ParteConfirmacionIT.fecha
 	*/
-	String  CONFIRMACION_PARTE_IT_FECHA = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[1];
+	String  PARTE_CONFIRMACION_IT_FECHA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_id_cdg
-	* Hibernate value: ConfirmacionParteIT.id.cdg
+	* Alias value: ParteConfirmacionIT_id_cdg
+	* Hibernate value: ParteConfirmacionIT.id.cdg
 	*/
-	String  CONFIRMACION_PARTE_IT_ID_CDG = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[2];
+	String  PARTE_CONFIRMACION_IT_ID_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_id_fechaBaja
-	* Hibernate value: ConfirmacionParteIT.id.fechaBaja
+	* Alias value: ParteConfirmacionIT_id_fechaBaja
+	* Hibernate value: ParteConfirmacionIT.id.fechaBaja
 	*/
-	String  CONFIRMACION_PARTE_IT_ID_FECHA_BAJA = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[3];
+	String  PARTE_CONFIRMACION_IT_ID_FECHA_BAJA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_id_numero
-	* Hibernate value: ConfirmacionParteIT.id.numero
+	* Alias value: ParteConfirmacionIT_id_numero
+	* Hibernate value: ParteConfirmacionIT.id.numero
 	*/
-	String  CONFIRMACION_PARTE_IT_ID_NUMERO = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[4];
+	String  PARTE_CONFIRMACION_IT_ID_NUMERO = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_numeroColegiado
-	* Hibernate value: ConfirmacionParteIT.numeroColegiado
+	* Alias value: ParteConfirmacionIT_numeroColegiado
+	* Hibernate value: ParteConfirmacionIT.numeroColegiado
 	*/
-	String  CONFIRMACION_PARTE_IT_NUMERO_COLEGIADO = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[5];
+	String  PARTE_CONFIRMACION_IT_NUMERO_COLEGIADO = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_parteIT_id_cdg
-	* Hibernate value: ConfirmacionParteIT.parteIT.id.cdg
+	* Alias value: ParteConfirmacionIT_parteIT_id_cdg
+	* Hibernate value: ParteConfirmacionIT.parteIT.id.cdg
 	*/
-	String  CONFIRMACION_PARTE_IT_PARTE_IT_ID_CDG = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[6];
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_ID_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_parteIT_id_fechaBaja
-	* Hibernate value: ConfirmacionParteIT.parteIT.id.fechaBaja
+	* Alias value: ParteConfirmacionIT_parteIT_id_fechaBaja
+	* Hibernate value: ParteConfirmacionIT.parteIT.id.fechaBaja
 	*/
-	String  CONFIRMACION_PARTE_IT_PARTE_IT_ID_FECHA_BAJA = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[7];
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_ID_FECHA_BAJA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: ConfirmacionParteIT_procesadoBD
-	* Hibernate value: ConfirmacionParteIT.procesadoBD
+	* Alias value: ParteConfirmacionIT_procesadoBD
+	* Hibernate value: ParteConfirmacionIT.procesadoBD
 	*/
-	String  CONFIRMACION_PARTE_IT_PROCESADO_BD = CONFIRMACION_PARTE_IT_ENTRY.getAliasNames()[8];
+	String  PARTE_CONFIRMACION_IT_PROCESADO_BD = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[8];
 
 
 

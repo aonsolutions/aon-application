@@ -15,13 +15,13 @@
 
 		<mapping package="com.esferalia.aon.payroll.type"/>
 
+		<mapping class="com.esferalia.aon.payroll.Contrato"/>
 		<mapping class="com.esferalia.aon.payroll.Empleado"/>			
 		<mapping class="com.esferalia.aon.payroll.Empresa"/>
 		<mapping class="com.esferalia.aon.payroll.Nomina"/>
-		<mapping class="com.esferalia.aon.payroll.Persona"/>
+		<mapping class="com.esferalia.aon.payroll.ParteConfirmacionIT"/>		
 		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
-		<mapping class="com.esferalia.aon.payroll.ConfirmacionParteIT"/>		
-		<mapping class="com.esferalia.aon.payroll.Contrato"/>
+		<mapping class="com.esferalia.aon.payroll.Persona"/>
 		
 	</session-factory>
 

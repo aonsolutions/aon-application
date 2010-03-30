@@ -6,13 +6,13 @@ import junit.framework.TestCase;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.esferalia.aon.payroll.ConfirmacionParteIT;
+import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
+import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Persona;
-import com.esferalia.aon.payroll.Contrato;
 
 public class PayrollAliasWriter extends TestCase{
 
@@ -24,7 +24,7 @@ public class PayrollAliasWriter extends TestCase{
 				Nomina.class.getName(),
 				Persona.class.getName(),
 				ParteIT.class.getName(),
-				ConfirmacionParteIT.class.getName(),
+				ParteConfirmacionIT.class.getName(),
 				Contrato.class.getName()
 		        };
 		AliasWriter writer = new AliasWriter("com.esferalia.aon.payroll.dao");
