@@ -3,7 +3,7 @@ package com.esferalia.aon.payroll.core.it;
 import java.io.Serializable;
 import java.util.Date;
 
-public interface IConfirmacionParteIT extends Serializable{
+public interface IParteConfirmacionIT extends Serializable{
 
 	Serializable getId();
 	

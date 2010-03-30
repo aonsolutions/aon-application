@@ -15,13 +15,15 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.payroll.core.it.IConfirmacionParteIT;
+import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 
 @Entity
 @Table(name = "parteconf")
-public class ConfirmacionParteIT implements IConfirmacionParteIT, ITransferObject {
+public class ParteConfirmacionIT implements IParteConfirmacionIT, ITransferObject {
 
+	private static final long serialVersionUID = 6644659085176397815L;
+	
 	private ConfirmacionParteITPK id;
 	private String numeroColegiado;
 	private String cias;
@@ -29,19 +31,6 @@ public class ConfirmacionParteIT implements IConfirmacionParteIT, ITransferObjec
 	private String procesadoBD;
 	private IParteIT parteIT;
 
-//	@EmbeddedId
-//	@AttributeOverrides( {
-//			@AttributeOverride(name = "cdg", column = @Column(name = "cdg", nullable = false, length = 4)),
-//			@AttributeOverride(name = "fecini", column = @Column(name = "fecini", nullable = false, length = 10)),
-//			@AttributeOverride(name = "numero", column = @Column(name = "numero", nullable = false, length = 2)) })
-//	public ParteconfId getId() {
-//		return this.id;
-//	}
-//
-//	public void setId(ParteconfId id) {
-//		this.id = id;
-//	}
-	
 	@EmbeddedId
 	@Override
 	public ConfirmacionParteITPK getId() {
@@ -54,10 +43,12 @@ public class ConfirmacionParteIT implements IConfirmacionParteIT, ITransferObjec
 	@Override
 	@Transient
 	public Integer getNumero() {
-		return getId().getNumero();
+		return getId()==null?null:getId().getNumero();
 	}
-	@Transient
 	public void setNumero(Integer numero) {
+		if (getId() == null) {
+			setId( new ConfirmacionParteITPK());
+		}
 		getId().setNumero(numero);
 	}
 

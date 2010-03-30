@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +34,7 @@ import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
-import com.esferalia.aon.payroll.core.it.IConfirmacionParteIT;
+import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
@@ -56,16 +55,18 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0","parteITWizard_step1","parteITWizard_step2","parteITWizard_step3" };
 	private IParteIT parteIT;
-	private IConfirmacionParteIT confirmacionParteIT;
+	private IParteConfirmacionIT parteConfirmacionIT;
 	private TipoOperacionIT operacion;
 	private boolean recaidaAnterior;
+	private boolean bonificacion;
 	private Integer numParteRenovacion;
+	private List<SelectItem> operations;
 	
-	public IConfirmacionParteIT getConfirmacionParteIT() {
-		return confirmacionParteIT;
+	public IParteConfirmacionIT getParteConfirmacionIT() {
+		return parteConfirmacionIT;
 	}
-	public void setConfirmacionParteIT(IConfirmacionParteIT confirmacionParteIT) {
-		this.confirmacionParteIT = confirmacionParteIT;
+	public void setParteConfirmacionIT(IParteConfirmacionIT parteConfirmacionIT) {
+		this.parteConfirmacionIT = parteConfirmacionIT;
 	}
 
 	public Integer getNumParteRenovacion() {
@@ -81,6 +82,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	public void setRecaidaAnterior(boolean recaidaAnterior) {
 		this.recaidaAnterior = recaidaAnterior;
 	}
+
+	public boolean isBonificacion() {
+		return bonificacion;
+	}
+	public void setBonificacion(boolean bonificacion) {
+		this.bonificacion = bonificacion;
+	}
+
 	public IParteIT getParteIT() {
 		return parteIT;
 	}
@@ -146,12 +155,12 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		if(StringUtils.isBlank(cias)){
 			cias=null;
 		}
-		if (getOperacion() == TipoOperacionIT.BAJA) {
+		if (isBaja()) {
 			getParteIT().setCiasBaja(cias);
-		} else if (getOperacion() == TipoOperacionIT.ALTA) {
+		} else if (isAlta()) {
 			getParteIT().setCiasAlta(cias);
-		} else if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
-			getConfirmacionParteIT().setCias(cias);
+		} else if (isConfirmacion()) {
+			getParteConfirmacionIT().setCias(cias);
 		}
 	}
 
@@ -162,25 +171,32 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		if(StringUtils.isBlank(numeroColegiado)){
 			numeroColegiado=null;
 		}
-		if (getOperacion() == TipoOperacionIT.BAJA) {
+		if (isBaja()) {
 			getParteIT().setNumeroColegiadoBaja(numeroColegiado);
-		} else if (getOperacion() == TipoOperacionIT.ALTA) {
+		} else if (isAlta()) {
 			getParteIT().setNumeroColegiadoAlta(numeroColegiado);
-		} else if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
-			getConfirmacionParteIT().setNumeroColegiado(numeroColegiado);
+		} else if (isConfirmacion()) {
+			getParteConfirmacionIT().setNumeroColegiado(numeroColegiado);
 		}
 	}
 
 	public Date getFecha() {
-		return getOperacion() == TipoOperacionIT.BAJA?getParteIT().getFechaBaja():getParteIT().getFechaAlta();
+		if (isBaja()) {
+			return  getParteIT().getFechaBaja();
+		} else if (isAlta()) {
+			return getParteIT().getFechaAlta(); 
+		} else if (isConfirmacion()) {
+			return getParteConfirmacionIT().getFecha();
+		}
+		return null;
 	}
 	public void setFecha(Date fecha) {
-		if (getOperacion() == TipoOperacionIT.BAJA) {
+		if (isBaja()) {
 			getParteIT().setFechaBaja(fecha);
-		} else if (getOperacion() == TipoOperacionIT.ALTA) {
+		} else if (isAlta()) {
 			getParteIT().setFechaAlta(fecha);
-		} else if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
-			getConfirmacionParteIT().setFecha(fecha);
+		} else if (isConfirmacion()) {
+			getParteConfirmacionIT().setFecha(fecha);
 		}
 	}
 
@@ -263,18 +279,27 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		try {
 			partesModel = null;
 			setParteIT( getParteITDAO().initialize( getEmpleado()) );
-			setConfirmacionParteIT(getParteITDAO().initialize( getParteIT()));
 			refreshOperacion();
-			searchNumeroRenovacion();
-			completeComfirmationDate();
 			searchRecaidaAnterior();
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+	
+	public void onChangeTipoOperacion(ActionEvent event) {
+		try {
+			if (isConfirmacion()) {
+				setParteConfirmacionIT(getParteITDAO().initialize(getParteIT()));
+				searchNumeroRenovacion();
+				completeComfirmationDate();
+			}
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
 	}
 	
@@ -313,7 +338,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
 				if(getOperacion().equals(TipoOperacionIT.CONFIRMACION)){
-					getParteITDAO().accept( getConfirmacionParteIT() );
+					getParteITDAO().accept( getParteConfirmacionIT() );
 				} else {
 					getParteITDAO().accept( getParteIT() );
 				}
@@ -445,28 +470,21 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				setRecaidaAnterior(false);
 			}
 		} catch (PayrollException e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
 	}
 	
-	public void onChangeTipoOperacion( ActionEvent event ) {
+	private void searchNumeroRenovacion() throws PayrollException {
 		try {
-			searchNumeroRenovacion();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			if (!getOperacion().equals(TipoOperacionIT.BAJA)) {
+				setNumParteRenovacion(maxParteconfCode() + 1);
+				getParteConfirmacionIT().setNumero(getNumParteRenovacion());
+			} else {
+				setNumParteRenovacion(null);
+			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		} catch (PayrollException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void searchNumeroRenovacion() throws NumberFormatException, ManagerBeanException, PayrollException {
-		if(!getOperacion().equals(TipoOperacionIT.BAJA)){
-			setNumParteRenovacion(maxParteconfCode()+1);
-			getConfirmacionParteIT().setNumero(getNumParteRenovacion());
-		} else {
-			setNumParteRenovacion(null);
+			throw new PayrollException(e.getMessage(), e);
 		}
 	}
 	
@@ -474,7 +492,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		List<IParteIT> listaPartes = getParteITDAO().getPartesEmpleado(getEmpleado());
 		IParteIT ultimoParte = listaPartes.get(0);
 		
-		List<IConfirmacionParteIT> list = getParteITDAO().getPartesConfirmacion(ultimoParte);
+		List<IParteConfirmacionIT> list = getParteITDAO().getPartesConfirmacion(ultimoParte);
 		if(list.size()>0){
 			return list.get(0).getNumero();
 		} else {
@@ -484,25 +502,36 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	
 	public List<SelectItem> getTiposOperacion() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		List<SelectItem> ops=null;
-		if(getOperacion().equals(TipoOperacionIT.ALTA) || getOperacion().equals(TipoOperacionIT.CONFIRMACION)){
-			ops = new LinkedList<SelectItem>();
+		if (operations ==  null) {
+			operations = new LinkedList<SelectItem>();
 			String name = TipoOperacionIT.CONFIRMACION.getName(locale);
 			SelectItem item = new SelectItem(TipoOperacionIT.CONFIRMACION, name);
-			ops.add(item);
+			operations.add(item);
 			name = TipoOperacionIT.ALTA.getName(locale);
 			item = new SelectItem(TipoOperacionIT.ALTA, name);
-			ops.add(item);
+			operations.add(item);
 		}
-		return ops;
+		return operations;
+	}
+	
+	public boolean isBaja() {
+		return getOperacion() == TipoOperacionIT.BAJA;
+	}
+	public boolean isAlta() {
+		return getOperacion() == TipoOperacionIT.ALTA;
+	}
+	public boolean isConfirmacion() {
+		return getOperacion() == TipoOperacionIT.CONFIRMACION;
+	}
+	public boolean isAltaMaternidad() {
+		return getOperacion() == TipoOperacionIT.ALTA && getParteIT().getTipoContingencia() == TipoContingencia.MATERNIDAD;
 	}
 	
 	private void completeComfirmationDate(){
-		Calendar cal = new GregorianCalendar();
+		Calendar cal = Calendar.getInstance(); 
 		cal.setTime(getParteIT().getFechaBaja());
 		cal.add(Calendar.DAY_OF_YEAR, 3+(((getNumParteRenovacion()-1)*7)));
-		getConfirmacionParteIT().setFecha(cal.getTime());
-		setFecha(cal.getTime());
+		getParteConfirmacionIT().setFecha(cal.getTime());
 	}
 	
 }

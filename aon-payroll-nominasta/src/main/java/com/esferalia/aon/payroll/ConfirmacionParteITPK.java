@@ -15,6 +15,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @Embeddable
 public class ConfirmacionParteITPK implements Serializable {
 
+	private static final long serialVersionUID = 2546392503337461449L;
+	
 	private Integer cdg;
 	private Date fechaBaja;
 	private Integer numero;

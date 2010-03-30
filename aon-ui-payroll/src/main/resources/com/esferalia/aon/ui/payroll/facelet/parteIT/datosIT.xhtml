@@ -8,80 +8,103 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:panel id="datosITPanel">
-		<f:facet name="header">
-			<aon:outputText
-				value="#{payrollBundle.payroll_datos_parteIT}" />
-		</f:facet>
-		<aon:panelGrid columns="2" style="width: 100%;">
+	<aon:div id="datosITContainer" layout="none">
+		<aon:panel id="datosITPanel">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_datos_parteIT}" />
+			</f:facet>
+			<aon:panelGrid columns="2" style="width: 100%;">
 
-			<aon:div>
 				<aon:outputText value="&#160;" />
+
 				<aon:selectOneMenu id="operaciones"
-					rendered="#{parteITWizard.tiposOperacion != null}" 
+					rendered="#{!parteITWizard.baja}"
 					value="#{parteITWizard.operacion}">
 					<f:selectItems value="#{parteITWizard.tiposOperacion}" />
-					<a4j:support event="onchange" reRender="datosITPanel"
+					<a4j:support event="onchange" reRender="datosITContainer"
+						ajaxSingle="true"
 						actionListener="#{parteITWizard.onChangeTipoOperacion}" />
 				</aon:selectOneMenu>
-			</aon:div>
-			<aon:div>
-				<aon:outputText
-					styleClass="aon-bold"
-					style="font-size: 1.2em;" 
-					value="#{parteITWizard.operacion}"/>
-						
-					<aon:outputLabel
-						rendered="#{parteITWizard.numParteRenovacion != null}"
-						value="&#160;#{payrollBundle.payroll_number}&#160;" />
-					<aon:inputText size="1" maxlength="2" 
-						rendered="#{parteITWizard.numParteRenovacion != null}"
-						value="#{parteITWizard.numParteRenovacion}"/>
-			</aon:div>
 
-			<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha}" />
-			<aon:selectInputDate id="fecha" 
-				value="#{parteITWizard.fecha}"
-				inputSize="10" renderAsPopup="true" enableManualInput="true"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" 
-					actionListener="#{parteITWizard.onChangeFechaInicio}" 
-					reRender="prorrateo"/>
-				<a4j:support event="onchanged" 
-					actionListener="#{parteITWizard.onChangeFechaInicio}" 
-					reRender="prorrateo"/>
-			</aon:selectInputDate>
+				<aon:outputLabel for="numParteRenovacion"
+					rendered="#{parteITWizard.confirmacion}"
+					value="&#160;#{payrollBundle.payroll_number}" />
+				<aon:inputText id="numParteRenovacion" size="1" maxlength="2"
+					rendered="#{parteITWizard.confirmacion}"
+					value="#{parteITWizard.numParteRenovacion}" />
 
-			<aon:outputLabel for="colegiado" value="#{payrollBundle.payroll_colegiado}" />
-			<aon:inputText id="colegiado"  
-				value="#{parteITWizard.numeroColegiado}" />
+				<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha}" />
+				<aon:selectInputDate id="fecha" value="#{parteITWizard.fecha}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange"
+						actionListener="#{parteITWizard.onChangeFechaInicio}"
+						reRender="prorrateo" />
+					<a4j:support event="onchanged"
+						actionListener="#{parteITWizard.onChangeFechaInicio}"
+						reRender="prorrateo" />
+				</aon:selectInputDate>
 
-			<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
-			<aon:inputText id="cias" 
-				value="#{parteITWizard.cias}" />
+				<aon:outputLabel for="colegiado"
+					value="#{payrollBundle.payroll_colegiado}" />
+				<aon:inputText id="colegiado"
+					value="#{parteITWizard.numeroColegiado}" />
 
-			<aon:outputLabel for="tipoit" value="#{payrollBundle.payroll_tipo_it}" />
-			<aon:selectOneMenu id="tipoit" 
-				value="#{parteITWizard.parteIT.tipoContingencia}">
-				<f:selectItems value="#{payrollCollections.tiposContingencia}" />
-				<a4j:support event="onchange" 
-					actionListener="#{parteITWizard.onChangeTipoContingencia}" 
-					reRender="datosITPanel"/>
-			</aon:selectOneMenu>
+				<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
+				<aon:inputText id="cias" value="#{parteITWizard.cias}" />
 
-			<aon:outputLabel for="prorrateo" value="#{payrollBundle.payroll_periodicidad}" />
-			<aon:selectOneRadio id="prorrateo"  
-				value="#{parteITWizard.parteIT.prorrateoCotizacion}">
-				<f:selectItems value="#{payrollCollections.periodicidades}" />
-			</aon:selectOneRadio>
+				<aon:outputLabel for="tipoit"
+					value="#{payrollBundle.payroll_tipo_it}" />
+				<aon:selectOneMenu id="tipoit"
+					value="#{parteITWizard.parteIT.tipoContingencia}">
+					<f:selectItems value="#{payrollCollections.tiposContingencia}" />
+					<a4j:support event="onchange"
+						actionListener="#{parteITWizard.onChangeTipoContingencia}"
+						reRender="datosITContainer" />
+				</aon:selectOneMenu>
 
-			<aon:outputLabel for="recaida" 
-				rendered="#{parteITWizard.recaidaAnterior}"
-				value="#{payrollBundle.payroll_recaida}" />
-			<aon:selectBooleanCheckbox id="recaida"
-				rendered="#{parteITWizard.recaidaAnterior}"
-				value="#{parteITWizard.parteIT.recaida}" />
-		</aon:panelGrid>
-	</aon:panel>
+				<aon:outputLabel for="prorrateo"
+					value="#{payrollBundle.payroll_periodicidad}" />
+				<aon:selectOneRadio id="prorrateo"
+					value="#{parteITWizard.parteIT.prorrateoCotizacion}">
+					<f:selectItems value="#{payrollCollections.periodicidades}" />
+				</aon:selectOneRadio>
+
+				<aon:outputLabel for="recaida"
+					rendered="#{parteITWizard.recaidaAnterior}"
+					value="#{payrollBundle.payroll_recaida}" />
+				<aon:selectBooleanCheckbox id="recaida"
+					rendered="#{parteITWizard.recaidaAnterior}"
+					value="#{parteITWizard.parteIT.recaida}" />
+
+			</aon:panelGrid>
+		</aon:panel>
+
+		<aon:panel id="bonificaPanel"
+			rendered="#{parteITWizard.altaMaternidad}">
+			<f:facet name="header">
+				<aon:div layout="none">
+					<aon:selectBooleanCheckbox id="bonificacion"
+						value="#{parteITWizard.bonificacion}" />
+					<aon:outputLabel for="bonificacion"
+						value="Aplicar bonificacion por finalizacion de una IT por maternidad [i18n]" />
+				</aon:div>
+			</f:facet>
+			<aon:panelGrid columns="2" style="width: 100%;">
+
+<!-- 
+				<aon:outputText value="&#160;" />
+				<aon:selectOneMenu id="operaciones"
+					rendered="#{!parteITWizard.baja}"
+					value="#{parteITWizard.operacion}">
+					<f:selectItems value="#{parteITWizard.tiposOperacion}" />
+					<a4j:support event="onchange" reRender="datosITContainer"
+						ajaxSingle="true"
+						actionListener="#{parteITWizard.onChangeTipoOperacion}" />
+				</aon:selectOneMenu>
+-->				
+			</aon:panelGrid>
+		</aon:panel>
+	</aon:div>
 </ui:composition>
