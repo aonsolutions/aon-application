@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
@@ -19,6 +20,7 @@ public class PayrollAliasWriter extends TestCase{
 	public void testAlias() throws Exception {
 		File file = new File("/AON-TRUNK/aon-payroll-nominasta/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] {
+				Actividad.class.getName(),
 				Empleado.class.getName(),			
 				Empresa.class.getName(),
 				Nomina.class.getName(),
