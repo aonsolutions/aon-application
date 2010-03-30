@@ -1,19 +1,29 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.ExtendedPageDataModel;
@@ -24,67 +34,88 @@ import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
+import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
-public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICriteriaProvider{
+public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICriteriaProvider {
 
 	private static final long serialVersionUID = 7495900117871108096L;
-	
+
 	private IParteITDAO parteITDAO;
 	private int currentStep;
-	private static final String[] STEPS = { "remesaITWizard_step0","remesaITWizard_step1","remesaITWizard_step2","remesaITWizard_step3"};
+	private static final String[] STEPS = { "remesaITWizard_step0", "remesaITWizard_step1", "remesaITWizard_step2", "remesaITWizard_step3" };
 	private ParteITParams params;
-	private Map<Serializable,IParteIT> checks;
+	private Map<Serializable, IParteIT> checks;
 	private DataModel model;
 	private DataModel selectedModel;
 	private FileOutput fileOutput;
-	
+	private FDIWriter fdiWriter;
+
 	public ParteITParams getParams() {
 		if (params == null) {
-			setParams( new ParteITParams());
+			setParams(new ParteITParams());
 		}
 		return params;
 	}
+
 	public void setParams(ParteITParams params) {
 		this.params = params;
 	}
-	
-	public Map<Serializable,IParteIT> getChecks() {
-		if ( checks == null) {
-			setChecks(new HashMap<Serializable,IParteIT>());;
+
+	private FDIWriter getFDIWriter() {
+		if (fdiWriter == null) {
+			fdiWriter = new FDIWriter();
+		}
+		return fdiWriter;
+	}
+
+	public Map<Serializable, IParteIT> getChecks() {
+		if (checks == null) {
+			setChecks(new HashMap<Serializable, IParteIT>());
+			;
 		}
 		return checks;
 	}
-	public void setChecks(Map<Serializable,IParteIT> checks) {
+
+	public void setChecks(Map<Serializable, IParteIT> checks) {
 		this.checks = checks;
 	}
+
 	public DataModel getModel() {
 		if (model == null) {
-			model = new ExtendedPageDataModel(this, this);	
+			model = new ExtendedPageDataModel(this, this);
 		}
 		return model;
 	}
+
 	public void setModel(DataModel model) {
 		this.model = model;
 	}
+
 	public DataModel getSelectedModel() {
 		return selectedModel;
 	}
+
 	public void setSelectedModel(DataModel selectedModel) {
 		this.selectedModel = selectedModel;
 	}
+
 	public FileOutput getFileOutput() {
 		return fileOutput;
 	}
+
 	public void setFileOutput(FileOutput fileOutput) {
 		this.fileOutput = fileOutput;
 	}
+
 	// *********************************************
 	public int getCurrentStep() {
 		return this.currentStep;
 	}
+
 	public void setCurrentStep(int currentStep) {
-		this.currentStep = currentStep; 
+		this.currentStep = currentStep;
 	}
+
 	public void onNext(ActionEvent event) {
 		if (getCurrentStep() == 0) {
 			onSearch(event);
@@ -94,18 +125,20 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			onDiskGenerate(event);
-			setCurrentStep(getCurrentStep() + 1);			
+			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
 			onFinish(event);
 		}
 	}
-	
+
 	public void onPrevious(ActionEvent event) {
 		setCurrentStep(getCurrentStep() - 1);
 	}
+
 	public String previous() {
 		return STEPS[getCurrentStep()];
 	}
+
 	public String next() {
 		return STEPS[getCurrentStep()];
 	}
@@ -123,6 +156,7 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 		setParams(null);
 		setChecks(null);
 		setModel(null);
+		setSelectedModel(null);
 		setCurrentStep(0);
 	}
 
@@ -142,76 +176,130 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 			throw new AbortProcessingException(e);
 		}
 	}
-	
+
 	private void onValidate(ActionEvent event) {
 		Collection<IParteIT> c = getChecks().values();
-		setSelectedModel( new ArrayDataModel(c.toArray()) );
+		List<IParteIT> list = new LinkedList<IParteIT>();
+		list.addAll(c);
+		setSelectedModel(new ListDataModel(list));
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public void onDiskGenerate(ActionEvent event) {
-		
+		try {
+			List<IParteIT> list = (List<IParteIT>) getSelectedModel().getWrappedData();
+			setFileOutput(getFDIWriter().createFDI(list));
+			if (getFileOutput() != null) {
+				if (getFileOutput().getErrors().size() > 0) {
+					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
+				}
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			// No se lanza excepción, que vaya a la última página.
+		}
 	}
-	
+
+	public void onDownloadDisk(ActionEvent event) {
+		try {
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+			String fileName = getFDIWriter().getEti().getFichero() + ".FDI";
+			response.setContentType(MimeType.MIME_TXT.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
+
+			ServletOutputStream output = response.getOutputStream();
+			InputStream input = new FileInputStream(getFileOutput().getFile());
+			int size = IOUtils.copy(input, output);
+			if (size > 0) {
+				response.setHeader("Content-Length", String.valueOf(size));
+			}
+			output.close();
+			input.close();
+
+			response.flushBuffer();
+			faces.responseComplete();
+		} catch (IOException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+
+	public boolean isDiskOk() {
+		int errors = 0;
+		if (getFileOutput() != null) {
+			errors = getFileOutput().getErrors().size();
+		}
+		return (errors == 0);
+	}
+
 	private void onFinish(ActionEvent event) {
-		// TODO Auto-generated method stub
+		onStart(event);
 	}
-	
+
 	public void onSelectAll(ActionEvent event) {
 		processAll(true);
 	}
+
 	public void onDeselectAll(ActionEvent event) {
 		processAll(false);
 	}
+
 	private void processAll(boolean selected) {
 		for (int i = 0; i < getModel().getRowCount(); i++) {
 			getModel().setRowIndex(i);
 			IParteIT parte = (IParteIT) getModel().getRowData();
-			processCheck(parte,selected);
+			processCheck(parte, selected);
 		}
 	}
-	
+
 	public boolean isSelected() {
 		IParteIT parte = getParteIT();
-		boolean selected = getChecks().containsKey(parte.getId()); 
+		boolean selected = getChecks().containsKey(parte.getId());
 		return selected;
 	}
+
 	public void setSelected(boolean selected) {
 		IParteIT parte = getParteIT();
-		processCheck(parte,selected);
+		processCheck(parte, selected);
 	}
 
 	private void processCheck(IParteIT parte, boolean selected) {
 		if (selected) {
-			check( parte );
+			check(parte);
 		} else {
-			uncheck( parte );
+			uncheck(parte);
 		}
 	}
+
 	private void uncheck(IParteIT parte) {
 		if (getChecks().containsKey(parte.getId())) {
 			getChecks().remove(parte.getId());
 		}
 	}
+
 	private void check(IParteIT parte) {
 		if (!getChecks().containsKey(parte.getId())) {
-			getChecks().put(parte.getId(),parte);
+			getChecks().put(parte.getId(), parte);
 		}
 	}
-	
+
 	private IParteIT getParteIT() {
 		return (IParteIT) getModel().getRowData();
 	}
-	
+
 	public IParteITDAO getParteITDAO() {
 		if (parteITDAO == null) {
 			parteITDAO = ParteITDAOFactory.getInstance().getParteITDAO();
 		}
 		return parteITDAO;
 	}
+
 	@Override
 	public int getPageLimit() {
 		return 20;
 	}
+
 	@Override
 	public int getRowCount() throws ManagerBeanException {
 		try {
@@ -220,8 +308,7 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider,ICri
 			throw new ManagerBeanException(e);
 		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
