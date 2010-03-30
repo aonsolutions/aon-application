@@ -484,7 +484,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Action_campaign_id</key>
+					<key>MarketingAction_campaign_id</key>
 					<value>id</value>
 				</map-entry>
 			</map-entries>
@@ -570,7 +570,7 @@
 			<property-name>defaultExpressions</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Action_campaign_active</key>
+					<key>MarketingAction_campaign_active</key>
 					<value>#{true}</value>
 				</map-entry>
 			</map-entries>
