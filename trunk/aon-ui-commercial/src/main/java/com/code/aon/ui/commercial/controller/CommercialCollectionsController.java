@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.Commission;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
@@ -261,6 +262,20 @@ public class CommercialCollectionsController {
 			SelectItem item = new SelectItem(activity, activity.getName());
 			activities.add(item);
 		}
+	}
+	
+	public List<SelectItem> getCommissions() throws ManagerBeanException {
+		List<SelectItem> commissions = new LinkedList<SelectItem>();
+		IManagerBean commissionBean = BeanManager.getManagerBean(Commission.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(commissionBean.getFieldName(ICommercialAlias.COMMISSION_NAME));
+		Iterator<ITransferObject> iter = commissionBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Commission commission = (Commission) iter.next();
+			SelectItem item = new SelectItem(commission,commission.getName());
+			commissions.add(item);
+		}
+		return commissions;
 	}
 	
 }
