@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.CommissionType;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
@@ -367,6 +368,20 @@ public class ConfigCollectionsController {
 	}
 
 	public void setInvoiceTransactionType( InvoiceTransactionType invoiceTransactionType ) {
+	}
+
+	public List<SelectItem> getCommissionTypes() throws ManagerBeanException {
+		List<SelectItem> commissionTypes = new LinkedList<SelectItem>();
+		IManagerBean commissionTypeBean = BeanManager.getManagerBean(CommissionType.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(commissionTypeBean.getFieldName(IConfigAlias.COMMISSION_TYPE_NAME));
+		Iterator<ITransferObject> iter = commissionTypeBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			CommissionType commissionType = (CommissionType) iter.next();
+			SelectItem item = new SelectItem(commissionType, commissionType.getName());
+			commissionTypes.add(item);
+		}
+		return commissionTypes;
 	}
 
 }
