@@ -23,10 +23,10 @@ public interface ISellerAlias {
 	String  SELLER_ID = SELLER_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Seller_description
-	* Hibernate value: Seller.description
+	* Alias value: Seller_commercialType
+	* Hibernate value: Seller.commercialType
 	*/
-	String  SELLER_DESCRIPTION = SELLER_ENTRY.getAliasNames()[1];
+	String  SELLER_COMMERCIAL_TYPE = SELLER_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Seller_status
