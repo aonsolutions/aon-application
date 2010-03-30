@@ -15,6 +15,7 @@
 
 		<mapping package="com.esferalia.aon.payroll.type"/>
 
+		<mapping class="com.esferalia.aon.payroll.Actividad"/>
 		<mapping class="com.esferalia.aon.payroll.Contrato"/>
 		<mapping class="com.esferalia.aon.payroll.Empleado"/>			
 		<mapping class="com.esferalia.aon.payroll.Empresa"/>

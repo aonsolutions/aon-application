@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
@@ -14,6 +15,55 @@ import com.esferalia.aon.payroll.Contrato;
 * Interface for holding entity properties constants.
 */ 
 public interface IPayrollAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Actividad entity.
+	*/ 
+	DAOConstantsEntry ACTIVIDAD_ENTRY = DAOConstants.getDAOConstant(Actividad.class);
+
+	/** 
+	* Alias value: Actividad_alias
+	* Hibernate value: Actividad.alias
+	*/
+	String  ACTIVIDAD_ALIAS = ACTIVIDAD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Actividad_empresa_cdg
+	* Hibernate value: Actividad.empresa.cdg
+	*/
+	String  ACTIVIDAD_EMPRESA_CDG = ACTIVIDAD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Actividad_fecfin
+	* Hibernate value: Actividad.fecfin
+	*/
+	String  ACTIVIDAD_FECFIN = ACTIVIDAD_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Actividad_fecini
+	* Hibernate value: Actividad.fecini
+	*/
+	String  ACTIVIDAD_FECINI = ACTIVIDAD_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Actividad_id
+	* Hibernate value: Actividad.id
+	*/
+	String  ACTIVIDAD_ID = ACTIVIDAD_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Actividad_indregimen
+	* Hibernate value: Actividad.indregimen
+	*/
+	String  ACTIVIDAD_INDREGIMEN = ACTIVIDAD_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Actividad_name
+	* Hibernate value: Actividad.name
+	*/
+	String  ACTIVIDAD_NAME = ACTIVIDAD_ENTRY.getAliasNames()[6];
 
 
 
@@ -53,52 +103,64 @@ public interface IPayrollAlias {
 	String  EMPLEADO_MAYOR65 = EMPLEADO_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: Empleado_actividad_cdg
+	* Hibernate value: Empleado.actividad.cdg
+	*/
+	String  EMPLEADO_ACTIVIDAD_CDG = EMPLEADO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Empleado_actividad_name
+	* Hibernate value: Empleado.actividad.name
+	*/
+	String  EMPLEADO_ACTIVIDAD_NAME = EMPLEADO_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: Empleado_empresa_cdg
 	* Hibernate value: Empleado.empresa.cdg
 	*/
-	String  EMPLEADO_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[5];
+	String  EMPLEADO_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Empleado_empresa_name
 	* Hibernate value: Empleado.empresa.name
 	*/
-	String  EMPLEADO_EMPRESA_NAME = EMPLEADO_ENTRY.getAliasNames()[6];
+	String  EMPLEADO_EMPRESA_NAME = EMPLEADO_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Empleado_persona_id
 	* Hibernate value: Empleado.persona.id
 	*/
-	String  EMPLEADO_PERSONA_ID = EMPLEADO_ENTRY.getAliasNames()[7];
+	String  EMPLEADO_PERSONA_ID = EMPLEADO_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Empleado_persona_lastName
 	* Hibernate value: Empleado.persona.lastName
 	*/
-	String  EMPLEADO_PERSONA_LAST_NAME = EMPLEADO_ENTRY.getAliasNames()[8];
+	String  EMPLEADO_PERSONA_LAST_NAME = EMPLEADO_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Empleado_persona_name
 	* Hibernate value: Empleado.persona.name
 	*/
-	String  EMPLEADO_PERSONA_NAME = EMPLEADO_ENTRY.getAliasNames()[9];
+	String  EMPLEADO_PERSONA_NAME = EMPLEADO_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Empleado_persona_numSS
 	* Hibernate value: Empleado.persona.numSS
 	*/
-	String  EMPLEADO_PERSONA_NUM_SS = EMPLEADO_ENTRY.getAliasNames()[10];
+	String  EMPLEADO_PERSONA_NUM_SS = EMPLEADO_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Empleado_persona_registry_document_value
 	* Hibernate value: Empleado.persona.registry.document.value
 	*/
-	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE = EMPLEADO_ENTRY.getAliasNames()[11];
+	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE = EMPLEADO_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Empleado_persona_surname
 	* Hibernate value: Empleado.persona.surname
 	*/
-	String  EMPLEADO_PERSONA_SURNAME = EMPLEADO_ENTRY.getAliasNames()[12];
+	String  EMPLEADO_PERSONA_SURNAME = EMPLEADO_ENTRY.getAliasNames()[14];
 
 
 

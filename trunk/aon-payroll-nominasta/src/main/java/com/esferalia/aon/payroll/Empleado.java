@@ -17,6 +17,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.IPersona;
@@ -37,7 +38,9 @@ public class Empleado implements ITransferObject,IEmpleado {
 	private Date fechaFin;
 	private Boolean mayor65;
 	private IEmpresa empresa;
+	private IActividad actividad;
 	private IPersona persona;
+	
 	
 	public Empleado() {
 	}
@@ -98,6 +101,15 @@ public class Empleado implements ITransferObject,IEmpleado {
 	}
 	public void setEmpresa(IEmpresa empresa) {
 		this.empresa = empresa;
+	}
+
+	@ManyToOne(targetEntity = Actividad.class,fetch = FetchType.EAGER)
+	@JoinColumn(name = "codact", nullable = false)
+	public IActividad getActividad() {
+		return this.actividad;
+	}
+	public void setActividad(IActividad actividad) {
+		this.actividad = actividad;
 	}
 
 	@ManyToOne(targetEntity = Persona.class,fetch = FetchType.EAGER)
