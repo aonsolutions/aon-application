@@ -42,14 +42,14 @@
 												<aon:outputText value="#{productBundle.product_catalogue}" />
 											</f:facet>
 											<aon:outputText value="#{to.catalogue.name}"
-												rendered="#{to!=tariffCatalogue.to}" />
+												rendered="#{formList}" />
 											<aon:selectOneMenu value="#{tariffCatalogue.to.catalogue}"
-												rendered="#{to==tariffCatalogue.to}" required="#{true}">
+												rendered="#{formEdit}" required="#{true}">
 												<f:selectItems value="#{productCollections.catalogues}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
 												<aon:selectOneMenu value="#{tariffCatalogue.to.catalogue}"
-													rendered="#{tariffCatalogue.new}" required="#{true}">
+													rendered="#{formNew}" required="#{true}">
 													<f:selectItems value="#{productCollections.catalogues}" />
 												</aon:selectOneMenu>
 											</f:facet>

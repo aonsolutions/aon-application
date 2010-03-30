@@ -21,10 +21,10 @@
 					<aon:outputText value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
-					rendered="#{to!=catalogueItem.to}" />
-				<aon:div styleClass="aon-lookup" rendered="#{to==catalogueItem.to}">
-					<aon:lookupInputText id="CatalogueItem_item_product_code-Edit" value="#{catalogueItem.to.item.product.code}"
-						lookup="#{itemLookup}" reRender="CatalogueItem_item_product_name-Edit,CatalogueItem_price-Edit"
+					rendered="#{formList}" />
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<aon:lookupInputText id="CatalogueItem_item_product_code" value="#{catalogueItem.to.item.product.code}"
+						lookup="#{itemLookup}" reRender="CatalogueItem_item_product_name,CatalogueItem_price"
 						lookupChangeListener="#{catalogueItem.itemData}" onblur="toUpperCase(this);"
 						required="true" size="10">
 						<aon:joinProperty alias="Item_product_code" value="#{catalogueItem.to.item.product.code}" />
@@ -35,12 +35,12 @@
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
 						lookupChangeListener="#{catalogueItem.itemData}">
 					</aon:lookupButton>
-					<aon:inputText id="CatalogueItem_item_product_name-Edit" 
+					<aon:inputText id="CatalogueItem_item_product_name" 
 						value="#{(catalogueItem.to.item.product.name!=null)?(catalogueItem.to.item.product.name):('')}"
 						disabled="true" size="60" />
 				</aon:div>
 				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{catalogueItem.new}">
+					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
 						<aon:lookupInputText id="CatalogueItem_item_product_code-New" value="#{catalogueItem.to.item.product.code}"
 							lookup="#{itemLookup}" reRender="CatalogueItem_item_product_name-New,CatalogueItem_price-New"
 							lookupChangeListener="#{catalogueItem.itemData}" onblur="toUpperCase(this);"
@@ -65,16 +65,16 @@
 					<aon:outputText value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
-					rendered="#{to.id!=catalogueItem.to.id}">
+					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 				</aon:outputText>
 				<aon:inputText value="#{catalogueItem.to.quantity}" 
-					rendered="#{to.id==catalogueItem.to.id}" required="#{true}" size="7">
+					rendered="#{formEdit}" required="#{true}" size="7">
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText value="#{catalogueItem.to.quantity}"
-						rendered="#{catalogueItem.new}" required="#{true}" size="7">
+						rendered="#{formNew}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
 				</f:facet>
@@ -85,16 +85,16 @@
 					<aon:outputText value="#{bundle.aon_price}" />
 				</f:facet>
 				<aon:outputText value="#{to.price}"
-					rendered="#{to.id!=catalogueItem.to.id}">
+					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:inputText id="CatalogueItem_price-Edit" value="#{catalogueItem.to.price}"
-					rendered="#{to.id==catalogueItem.to.id}" required="#{true}" size="7">
+				<aon:inputText id="CatalogueItem_price" value="#{catalogueItem.to.price}"
+					rendered="#{formEdit}" required="#{true}" size="7">
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="CatalogueItem_price-New" value="#{catalogueItem.to.price}"
-						rendered="#{catalogueItem.new}" required="#{true}" size="7">
+						rendered="#{formNew}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
 				</f:facet>
@@ -105,16 +105,16 @@
 					<aon:outputText value="#{bundle.aon_discount}" />
 				</f:facet>
 				<aon:outputText value="#{to.discount}" 
-					rendered="#{to.id!=catalogueItem.to.id}">
+					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 				<aon:inputText value="#{catalogueItem.to.discount}"
-					rendered="#{to.id==catalogueItem.to.id}" required="#{true}" size="7">
+					rendered="#{formEdit}" required="#{true}" size="7">
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText value="#{catalogueItem.to.discount}"
-						rendered="#{catalogueItem.new}" required="#{true}" size="7">
+						rendered="#{formNew}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
 				</f:facet>
