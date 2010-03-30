@@ -7,6 +7,7 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
+import com.code.aon.config.CommissionType;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
@@ -25,21 +26,22 @@ public class ConfigAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-config/src/main/java/com/code/aon/config/dao/IConfigAlias.java");
-		String[] classes = new String[12]; 
-		classes[0] = ApplicationParameter.class.getName();
-		classes[1] = Bank.class.getName();
-		classes[2] = PayMethod.class.getName();
-		classes[3] = Scope.class.getName();
-		classes[4] = Series.class.getName();
-		classes[5] = Tariff.class.getName();
-		classes[6] = Tax.class.getName();
-		classes[7] = TaxDetail.class.getName();
-		classes[8] = User.class.getName();
-		classes[9] = UserScope.class.getName();
-		classes[10] = UserWorkGroup.class.getName();
-		classes[11] = WorkGroup.class.getName();
-		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
+		File file = new File("/AON-TRUNK/aon-config/src/main/java/com/code/aon/config/dao/IConfigAlias.java");
+		String[] classes = new String[] { 
+			ApplicationParameter.class.getName(),
+			Bank.class.getName(),
+			CommissionType.class.getName(),
+			PayMethod.class.getName(),
+			Scope.class.getName(),
+			Series.class.getName(),
+			Tariff.class.getName(),
+			Tax.class.getName(),
+			TaxDetail.class.getName(),
+			User.class.getName(),
+			UserScope.class.getName(),
+			UserWorkGroup.class.getName(),
+			WorkGroup.class.getName(), };
+		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.config.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

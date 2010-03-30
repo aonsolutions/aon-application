@@ -4,6 +4,7 @@ import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
+import com.code.aon.config.CommissionType;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
@@ -63,6 +64,31 @@ public interface IConfigAlias {
 	* Hibernate value: Bank.name
 	*/
 	String  BANK_NAME = BANK_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommissionType entity.
+	*/ 
+	DAOConstantsEntry COMMISSION_TYPE_ENTRY = DAOConstants.getDAOConstant(CommissionType.class);
+
+	/** 
+	* Alias value: CommissionType_id
+	* Hibernate value: CommissionType.id
+	*/
+	String  COMMISSION_TYPE_ID = COMMISSION_TYPE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommissionType_name
+	* Hibernate value: CommissionType.name
+	*/
+	String  COMMISSION_TYPE_NAME = COMMISSION_TYPE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CommissionType_rate
+	* Hibernate value: CommissionType.rate
+	*/
+	String  COMMISSION_TYPE_RATE = COMMISSION_TYPE_ENTRY.getAliasNames()[2];
 
 
 
