@@ -475,6 +475,23 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		}
 	}
 	
+	public void onChangeRecaida( ActionEvent event ) {
+		if(getParteIT().isRecaida()){
+			try {
+				List<IParteIT> list = getParteITDAO().getPartesEmpleado(getEmpleado());
+				if (list.size() > 0 && getOperacion().equals(TipoOperacionIT.BAJA)) {
+					IParteIT ultimoParte = list.get(0);
+					getParteIT().setParteITRecaida(ultimoParte);
+				}
+			} catch (PayrollException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e);
+			}
+		} else {
+			getParteIT().setParteITRecaida(null);
+		}
+	}
+	
 	private void searchNumeroRenovacion() throws PayrollException {
 		try {
 			if (!getOperacion().equals(TipoOperacionIT.BAJA)) {
