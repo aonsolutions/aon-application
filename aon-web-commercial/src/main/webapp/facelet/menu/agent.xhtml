@@ -48,10 +48,14 @@
 								</f:facet>							
 								<aon:div styleClass="aon-direct-access-list">			
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink value="Control de Gastos" />
+										<aon:commandLink id="expense_form"
+											action="expenseAccount_search" actionListener="#{expenseAccount.onEditSearch}"
+											value="#{commercialBundle.commercial_expense_control_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink value="Definicion de Gastos" />
+										<aon:commandLink id="commercialExpense" 
+											value="#{commercialBundle.commercial_expense_module}"
+											action="commercialExpense" actionListener="#{expense.onSearch}" />
 									</aon:div>								
 								</aon:div>
 							</h:panelGrid>
