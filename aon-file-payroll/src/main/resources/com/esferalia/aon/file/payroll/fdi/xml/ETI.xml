@@ -11,7 +11,7 @@
 	<field name="sufijo" value="FDI" format="AlphaNumeric" pattern="X(3)" />
 	<field name="prioridad" value="N" format="AlphaNumeric" pattern="X(1)" />
 	<field name="prueba" value=" " format="AlphaNumeric" pattern="X(1)" />
-	<field name="identificacion" value="bean" bean="ETI" property="identifiacion" format="AlphaNumeric" pattern="X(14)" />
+	<field name="identificacion" value="bean" bean="ETI" property="identificacion" format="AlphaNumeric" pattern="X(14)" />
 	<field name="tgss" value=" " format="AlphaNumeric" pattern="X(1)" />
 	<field name="free2" value=" " format="AlphaNumeric" pattern="X(1)" />
 </register>

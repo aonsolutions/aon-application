@@ -1,5 +1,8 @@
 package com.esferalia.aon.file.payroll.fdi.data;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class EMP {
 	private String codigoCuentaCotizacionSeguridadSocial;
 	private String tipo;
@@ -7,6 +10,8 @@ public class EMP {
 	private String numero;
 	private String calificador;
 	private String codigoCuentaCotizacionPrincipal;
+	
+	private List<TRA> trabajadores;
 	
 	public String getCodigoCuentaCotizacionSeguridadSocial() {
 		return codigoCuentaCotizacionSeguridadSocial;
@@ -43,5 +48,15 @@ public class EMP {
 	}
 	public void setCodigoCuentaCotizacionPrincipal(String codigoCuentaCotizacionPrincipal) {
 		this.codigoCuentaCotizacionPrincipal = codigoCuentaCotizacionPrincipal;
+	}
+
+	public List<TRA> getTrabajadores() {
+		if (trabajadores == null) {
+			trabajadores = new LinkedList<TRA>();
+		}
+		return trabajadores;
+	}
+	public void setTrabajadores(List<TRA> trabajadores) {
+		this.trabajadores = trabajadores;
 	}
 }

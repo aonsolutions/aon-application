@@ -1,12 +1,12 @@
 package com.esferalia.aon.file.payroll.fdi.data;
 
+
 public class ETF {
 
 	private Integer clave;
 	private Integer fecha;
 	private Integer hora;
 	private String fichero;
-	private String identificacion;
 	private Integer contador;
 	private Integer contadorTotal;
 
@@ -38,12 +38,6 @@ public class ETF {
 		this.fichero = fichero;
 	}
 
-	public String getIdentificacion() {
-		return identificacion;
-	}
-	public void setIdentificacion(String identificacion) {
-		this.identificacion = identificacion;
-	}
 	public Integer getContador() {
 		return contador;
 	}
