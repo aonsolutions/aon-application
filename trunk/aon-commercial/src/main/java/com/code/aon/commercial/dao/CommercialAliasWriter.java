@@ -6,6 +6,10 @@ import java.io.IOException;
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.Commission;
+import com.code.aon.commercial.CommissionCategory;
+import com.code.aon.commercial.CommissionItem;
+import com.code.aon.commercial.CommissionTypeCommission;
 import com.code.aon.commercial.Expense;
 import com.code.aon.commercial.ExpenseAccount;
 import com.code.aon.commercial.ExpenseAccountDetail;
@@ -36,6 +40,10 @@ public class CommercialAliasWriter {
 				CommercialActivity.class.getName(),
 				CommercialTracking.class.getName(),
 				CommercialTerm.class.getName(),
+				Commission.class.getName(),
+				CommissionCategory.class.getName(),
+				CommissionItem.class.getName(),
+				CommissionTypeCommission.class.getName(),
 				Expense.class.getName(),
 				ExpenseAccount.class.getName(),
 				ExpenseAccountDetail.class.getName(),

@@ -12,4 +12,8 @@
 		<alias names="id,target_id,thirdParty_id,thirdParty_registry_name,thirdParty_registry_surname,targetExternalCode,tariff_id,payMethod_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank_id,bankAccount"/>
 		<hibernate names="id,target.id,thirdParty.id,thirdParty.registry.name,thirdParty.registry.surname,targetExternalCode,tariff.id,payMethod.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank.id,bankAccount"/>
 	</bean>
+	<bean class="com.code.aon.commercial.CommissionTypeCommission" sqlName="commission_type_commission">
+		<alias names="id,commissionType_id,commission_id,commission_name"/>
+		<hibernate names="id,commissionType.id,commission.id,commission.name"/>
+	</bean>
 </dao>
