@@ -248,6 +248,7 @@
 	<security-role><role-name>Guest</role-name></security-role>
 	<security-role><role-name>Admin</role-name></security-role>
 	<security-role><role-name>Auditor</role-name></security-role>
+	<security-role><role-name>Confidentiality</role-name></security-role>
 	<security-role><role-name>Statistics</role-name></security-role>
 	
 	<resource-env-ref>
