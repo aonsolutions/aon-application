@@ -1235,6 +1235,297 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ****** COMMISSION ****** -->
+	<managed-bean>
+		<managed-bean-name>commission</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.Commission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Commission_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{commissionSearch}</value>
+				<value>#{commissionControllerListener}</value>
+				<value>#{commissionItemChildListener}</value>
+				<value>#{commissionCategoryChildListener}</value>
+				</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>commissionSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.CommissionSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>commissionControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.CommissionControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>commissionItemChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>commissionItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CommissionItem_commission_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>commissionCategoryChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>commissionCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CommissionCategory_commission_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ****** COMMISSION ITEM ****** -->
+	<managed-bean>
+		<managed-bean-name>commissionItem</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.CommissionItemController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommissionItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commissionItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>commission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>commission.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CommissionItem_item_product_name,CommissionItem_quantity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ****** COMMISSION CATEGORY ****** -->
+	<managed-bean>
+		<managed-bean-name>commissionCategory</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommissionCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commissionCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>commission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>commission.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CommissionCategory_category_name,CommissionCategory_quantity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>commissionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commissionLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.commercial.Commission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Commission_id</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/commercial/facelet/lookup/commission/list.xhtml</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ****** COMMISSION TYPE ****** -->
+	<managed-bean>
+		<managed-bean-name>commissionType</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.CommissionType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commissionType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CommissionType_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{commissionTypeCommissionChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>commissionTypeCommissionChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>commissionTypeCommission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CommissionTypeCommission_commissionType_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ****** COMMISSION TYPE COMMISSION ****** -->
+	<managed-bean>
+		<managed-bean-name>commissionTypeCommission</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommissionTypeCommission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commissionTypeCommission</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>commissionType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>commissionType.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CommissionTypeCommission_commission_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+	
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -1248,6 +1539,18 @@
 		<navigation-case>
 			<from-outcome>target_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/commercial/facelet/target/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercialTracking_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercialTracking_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercialTracking_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>commercialActivity</from-outcome>
@@ -1285,23 +1588,26 @@
 			<from-outcome>expenseAccount_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/commercial/facelet/expenseAccount/search.xhtml</to-view-id>
 		</navigation-case>	
-	</navigation-rule>
-		
-	
-	<!-- =================== Commercial Tracking ================= -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>commercialTracking_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>commercialTracking_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>commercialTracking_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/search.xhtml</to-view-id>
-		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>commission_form</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/commission/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>commission_list</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/commission/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>commission_search</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/commission/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>commissionType_form</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/commissionType/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>commissionType_list</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/commissionType/list.xhtml</to-view-id>
+	    </navigation-case>
 	</navigation-rule>		
 
 </faces-config>
