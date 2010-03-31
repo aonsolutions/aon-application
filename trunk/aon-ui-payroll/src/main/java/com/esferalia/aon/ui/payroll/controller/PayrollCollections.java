@@ -11,8 +11,8 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.PayrollException;
-import com.esferalia.aon.payroll.core.CommonsPayrollDAOFactory;
-import com.esferalia.aon.payroll.core.ICommonsPayrollDAO;
+import com.esferalia.aon.payroll.core.commons.CommonsPayrollDAOFactory;
+import com.esferalia.aon.payroll.core.commons.ICommonsPayrollDAO;
 import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
