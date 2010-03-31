@@ -50,6 +50,7 @@
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
