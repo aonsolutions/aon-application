@@ -45,9 +45,11 @@
 				</value-class>
 				<value>#{targetControllerListener}</value>
 				<value>#{targetSearch}</value>
+				<value>#{targetForm}</value>
 				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
 				<value>#{targetSegmentListener}</value>
+				<value>#{targetAddInfoListener}</value>				
 			</list-entries>
 		</managed-property>
 		<managed-property>
