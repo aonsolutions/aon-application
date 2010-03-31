@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="yearStatGraph" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -31,13 +34,13 @@
 			<band splitType="Stretch"/>
 		</groupHeader>
 		<groupFooter>
-			<band height="285" splitType="Stretch">
+			<band height="424" splitType="Stretch">
 				<pie3DChart>
-					<chart>
+					<chart theme="default">
 						<reportElement key="element-1" positionType="Float" x="77" y="49" width="407" height="219"/>
 						<chartTitle/>
 						<chartSubtitle/>
-						<chartLegend textColor="#000000" backgroundColor="#FFFFFF">
+						<chartLegend textColor="#000000" backgroundColor="#CCCCCC" position="Top">
 							<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						</chartLegend>
 					</chart>
@@ -45,7 +48,7 @@
 						<keyExpression><![CDATA[$F{name}]]></keyExpression>
 						<valueExpression><![CDATA[$F{amount}]]></valueExpression>
 					</pieDataset>
-					<pie3DPlot depthFactor="0.2" labelFormat="{2}">
+					<pie3DPlot depthFactor="0.2" isCircular="true" labelFormat="{2}">
 						<plot backcolor="#FFFFFF"/>
 						<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
 					</pie3DPlot>
