@@ -13,17 +13,8 @@ import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 
 public class CommonsPayrollDAO implements ICommonsPayrollDAO {
 
-//	private static String PER_ALIAS = null;
-
 	static {
 		CommonsPayrollDAOFactory.register(new CommonsPayrollDAO());
-
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(TipoBonificacion.class);
-//			PER_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_ID);
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@SuppressWarnings("unchecked")
