@@ -14,6 +14,7 @@ import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Persona;
+import com.esferalia.aon.payroll.TipoBonificacion;
 
 public class PayrollAliasWriter extends TestCase{
 
@@ -27,6 +28,7 @@ public class PayrollAliasWriter extends TestCase{
 				Persona.class.getName(),
 				ParteIT.class.getName(),
 				ParteConfirmacionIT.class.getName(),
+				TipoBonificacion.class.getName(),
 				Contrato.class.getName()
 		        };
 		AliasWriter writer = new AliasWriter("com.esferalia.aon.payroll.dao");

@@ -9,6 +9,7 @@ import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
+import com.esferalia.aon.payroll.TipoBonificacion;
 import com.esferalia.aon.payroll.Contrato;
 
 /** 
@@ -496,6 +497,67 @@ public interface IPayrollAlias {
 	* Hibernate value: ParteConfirmacionIT.procesadoBD
 	*/
 	String  PARTE_CONFIRMACION_IT_PROCESADO_BD = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for TipoBonificacion entity.
+	*/ 
+	DAOConstantsEntry TIPO_BONIFICACION_ENTRY = DAOConstants.getDAOConstant(TipoBonificacion.class);
+
+	/** 
+	* Alias value: TipoBonificacion_description
+	* Hibernate value: TipoBonificacion.description
+	*/
+	String  TIPO_BONIFICACION_DESCRIPTION = TIPO_BONIFICACION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TipoBonificacion_id
+	* Hibernate value: TipoBonificacion.id
+	*/
+	String  TIPO_BONIFICACION_ID = TIPO_BONIFICACION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TipoBonificacion_mayor60
+	* Hibernate value: TipoBonificacion.mayor60
+	*/
+	String  TIPO_BONIFICACION_MAYOR60 = TIPO_BONIFICACION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: TipoBonificacion_porcentajeAccidentes
+	* Hibernate value: TipoBonificacion.porcentajeAccidentes
+	*/
+	String  TIPO_BONIFICACION_PORCENTAJE_ACCIDENTES = TIPO_BONIFICACION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: TipoBonificacion_porcentajeBaseConjunto
+	* Hibernate value: TipoBonificacion.porcentajeBaseConjunto
+	*/
+	String  TIPO_BONIFICACION_PORCENTAJE_BASE_CONJUNTO = TIPO_BONIFICACION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: TipoBonificacion_porcentajeBonificacionSS
+	* Hibernate value: TipoBonificacion.porcentajeBonificacionSS
+	*/
+	String  TIPO_BONIFICACION_PORCENTAJE_BONIFICACION_SS = TIPO_BONIFICACION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: TipoBonificacion_porcentajeContingenciasGenerales
+	* Hibernate value: TipoBonificacion.porcentajeContingenciasGenerales
+	*/
+	String  TIPO_BONIFICACION_PORCENTAJE_CONTINGENCIAS_GENERALES = TIPO_BONIFICACION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: TipoBonificacion_realDecretoLey052006
+	* Hibernate value: TipoBonificacion.realDecretoLey052006
+	*/
+	String  TIPO_BONIFICACION_REAL_DECRETO_LEY052006 = TIPO_BONIFICACION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: TipoBonificacion_restarIT
+	* Hibernate value: TipoBonificacion.restarIT
+	*/
+	String  TIPO_BONIFICACION_RESTAR_IT = TIPO_BONIFICACION_ENTRY.getAliasNames()[8];
 
 
 
