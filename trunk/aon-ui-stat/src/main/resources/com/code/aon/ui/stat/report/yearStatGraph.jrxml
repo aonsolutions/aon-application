@@ -40,7 +40,7 @@
 						<reportElement key="element-1" positionType="Float" x="77" y="49" width="407" height="219"/>
 						<chartTitle/>
 						<chartSubtitle/>
-						<chartLegend textColor="#000000" backgroundColor="#CCCCCC" position="Top">
+						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" position="Top">
 							<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						</chartLegend>
 					</chart>
