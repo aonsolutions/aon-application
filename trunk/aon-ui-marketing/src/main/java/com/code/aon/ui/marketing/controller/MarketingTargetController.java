@@ -22,13 +22,16 @@ public class MarketingTargetController extends TargetController {
 	
 	private IManagerBean mtBean;
 	
+	private String updateAlias( String alias ) {
+		if ( alias.startsWith("Target_") ) {
+			return alias.replace("Target_", "MarketingTarget_target_");
+		}			
+		return alias;
+	}
+	
 	@Override
 	public String resolveAlias( String alias ) {
-		String newKey = alias;
-		if ( newKey.startsWith("Target_") ) {
-			newKey = newKey.replace("Target_", "MarketingTarget_target_");
-		}			
-		return super.resolveAlias( newKey );
+		return super.resolveAlias( updateAlias(alias) );
 	}
 
 	public MarketingTarget getMT() {
@@ -73,14 +76,13 @@ public class MarketingTargetController extends TargetController {
 
 		@Override
 		public String getFieldName(String alias) throws ManagerBeanException {
-			String newAlias = alias.replace("Target_", "MarketingTarget_target_");
-			return bean.getFieldName(newAlias);
+			return bean.getFieldName( updateAlias(alias) );
 		}
 
 		@Override
 		public Serializable getId(ITransferObject to)
 				throws ManagerBeanException {
-			return bean.getId(to);
+			return getBean(to).getId(to);
 		}
 
 		@Override
@@ -106,6 +108,10 @@ public class MarketingTargetController extends TargetController {
 			return bean.getPOJOClass();
 		}
 
+		private IManagerBean getBean( ITransferObject to ) {
+			return ( to instanceof Target ) ? targetBean : bean;
+		}
+		
 		@Override
 		public Object getUniqueResult(Projection projection, Criteria criteria)
 				throws ManagerBeanException {
@@ -115,21 +121,13 @@ public class MarketingTargetController extends TargetController {
 		@Override
 		public void setId(ITransferObject to, Serializable id)
 				throws ManagerBeanException {
-			if ( to instanceof Target) {
-				targetBean.setId(to, id);
-			} else {
-				bean.setId(to, id);	
-			}
+			getBean(to).setId(to, id);
 		}
 
 		@Override
 		public void setProperty(ITransferObject to, String propertyName,
 				Object value) throws ManagerBeanException {
-			if ( to instanceof Target) {
-				targetBean.setProperty(to, propertyName, value);
-			} else {
-				bean.setProperty(to, propertyName, value);	
-			}
+			getBean(to).setProperty(to, propertyName, value);
 		}
 
 		@Override
