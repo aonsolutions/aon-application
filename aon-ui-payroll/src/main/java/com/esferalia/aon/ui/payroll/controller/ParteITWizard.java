@@ -30,6 +30,7 @@ import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPersona;
+import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
@@ -58,7 +59,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private IParteConfirmacionIT parteConfirmacionIT;
 	private TipoOperacionIT operacion;
 	private boolean recaidaAnterior;
-	private boolean bonificacion;
+	private boolean bonificacionMaternidad;
+	private ITipoBonificacion tipoBonificacion;
 	private Integer numParteRenovacion;
 	private List<SelectItem> operations;
 	
@@ -83,11 +85,18 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		this.recaidaAnterior = recaidaAnterior;
 	}
 
-	public boolean isBonificacion() {
-		return bonificacion;
+	public boolean isBonificacionMaternidad() {
+		return bonificacionMaternidad;
 	}
-	public void setBonificacion(boolean bonificacion) {
-		this.bonificacion = bonificacion;
+	public void setBonificacionMaternidad(boolean bonificacionMaternidad) {
+		this.bonificacionMaternidad = bonificacionMaternidad;
+	}
+
+	public ITipoBonificacion getTipoBonificacion() {
+		return tipoBonificacion;
+	}
+	public void setTipoBonificacion(ITipoBonificacion tipoBonificacion) {
+		this.tipoBonificacion = tipoBonificacion;
 	}
 
 	public IParteIT getParteIT() {
@@ -455,7 +464,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private void searchRecaidaAnterior(){
 		try {
 			List<IParteIT> list = getParteITDAO().getPartesEmpleado(getEmpleado());
-			if (list.size() > 0 && getOperacion().equals(TipoOperacionIT.BAJA)) {
+			if (list.size() > 0) {
 				IParteIT ultimoParte = list.get(0);
 				
 				if((getParteIT().getTipoContingencia().equals(TipoContingencia.ENFERMEDAD_COMUN) 
@@ -463,6 +472,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 						|| getParteIT().getTipoContingencia().equals(TipoContingencia.ACCIDENTE_NO_LABORAL))
 						&& (getParteIT().getTipoContingencia().equals(ultimoParte.getTipoContingencia()))){
 					setRecaidaAnterior(true);
+					getParteIT().setParteITRecaida(ultimoParte);
 				} else {
 					setRecaidaAnterior(false);
 				}
@@ -477,6 +487,23 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	
 	public void onChangeRecaida( ActionEvent event ) {
 		if(getParteIT().isRecaida()){
+			try {
+				List<IParteIT> list = getParteITDAO().getPartesEmpleado(getEmpleado());
+				if (list.size() > 0) {
+					IParteIT ultimoParte = list.get(0);
+					getParteIT().setParteITRecaida(ultimoParte);
+				}
+			} catch (PayrollException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e);
+			}
+		} else {
+			getParteIT().setParteITRecaida(null);
+		}
+	}
+	
+	public void onChangeBonificacionMaternidad( ActionEvent event ) {
+		if(bonificacionMaternidad){
 			try {
 				List<IParteIT> list = getParteITDAO().getPartesEmpleado(getEmpleado());
 				if (list.size() > 0 && getOperacion().equals(TipoOperacionIT.BAJA)) {
@@ -541,7 +568,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		return getOperacion() == TipoOperacionIT.CONFIRMACION;
 	}
 	public boolean isAltaMaternidad() {
-		return getOperacion() == TipoOperacionIT.ALTA && getParteIT().getTipoContingencia() == TipoContingencia.MATERNIDAD;
+		return getOperacion() == TipoOperacionIT.BAJA && getParteIT().getTipoContingencia() == TipoContingencia.MATERNIDAD;
 	}
 	
 	private void completeComfirmationDate(){
