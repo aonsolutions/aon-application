@@ -76,7 +76,7 @@ public class ActionFavoriteController implements IAuditConstants {
 	}
 	
 	public void onInit( ActionEvent event ) {
-		this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions() );
+		this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions(false) );
 		this.options.removeAll(this.favorites);
 		Collection<ApplicationOption> deniedList = getDeniedController().getDeniedActionsMap().values();
 		this.options.removeAll(deniedList);

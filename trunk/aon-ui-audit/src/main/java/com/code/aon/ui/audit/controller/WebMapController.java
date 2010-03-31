@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.util.AonUtil;
 
@@ -16,15 +17,19 @@ public class WebMapController implements IAuditConstants {
 	}
 		
 	public String getTemplate() throws IOException {
-		Map<String,List<ApplicationOption>> map = new TreeMap<String, List<ApplicationOption>>();
-		for( ApplicationOption option : getOptionController().getOptions() ) {
-			String category = option.getCategory().getName();
-			List<ApplicationOption> list = map.get(category);
-			if ( list == null ) {
-				list = new ArrayList<ApplicationOption>();
-				map.put(category, list);
+		Map<ApplicationCategory,List<ApplicationOption>> map = new TreeMap<ApplicationCategory, List<ApplicationOption>>();
+		for( ApplicationCategory category : getOptionController().getCategories() ) {
+			if ( category.isRendered() ) {
+				List<ApplicationOption> list = new ArrayList<ApplicationOption>();
+				for( ApplicationOption option : category.getOptions() ) {
+					if ( option.isRendered() ) {
+						list.add(option);	
+					}
+				}
+				if (! list.isEmpty() ) {
+					map.put(category, list);
+				}
 			}
-			list.add(option);
 		}
 		return getOptionController().getTemplate(WEB_MAP_TEMPLATE,
 				CATEGORIES_VM, getOptionController().getCategories(),
