@@ -64,6 +64,7 @@
 				<aon:outputLabel for="tipoit"
 					value="#{payrollBundle.payroll_tipo_it}" />
 				<aon:selectOneMenu id="tipoit"
+					disabled="#{!parteITWizard.baja}"
 					value="#{parteITWizard.parteIT.tipoContingencia}">
 					<f:selectItems value="#{payrollCollections.tiposContingencia}" />
 					<a4j:support event="onchange"
@@ -79,10 +80,10 @@
 				</aon:selectOneRadio>
 
 				<aon:outputLabel for="recaida"
-					rendered="#{parteITWizard.recaidaAnterior}"
+					rendered="#{parteITWizard.recaidaAnterior and parteITWizard.baja}"
 					value="#{payrollBundle.payroll_recaida}" />
 				<aon:selectBooleanCheckbox id="recaida"
-					rendered="#{parteITWizard.recaidaAnterior}"
+					rendered="#{parteITWizard.recaidaAnterior and parteITWizard.baja}"
 					value="#{parteITWizard.parteIT.recaida}" >
 					<a4j:support event="onclick"
 						actionListener="#{parteITWizard.onChangeRecaida}" />
@@ -96,24 +97,22 @@
 			<f:facet name="header">
 				<aon:div layout="none">
 					<aon:selectBooleanCheckbox id="bonificacion"
-						value="#{parteITWizard.bonificacion}" />
+						value="#{parteITWizard.bonificacionMaternidad}">
+<!--  
+-->
+						<a4j:support event="onclick"
+							actionListener="#{parteITWizard.onChangeBonificacionMaterdidad}" />
+					</aon:selectBooleanCheckbox>
 					<aon:outputLabel for="bonificacion"
 						value="Aplicar bonificacion por finalizacion de una IT por maternidad [i18n]" />
 				</aon:div>
 			</f:facet>
 			<aon:panelGrid columns="2" style="width: 100%;">
-
-<!-- 
-				<aon:outputText value="&#160;" />
-				<aon:selectOneMenu id="operaciones"
-					rendered="#{!parteITWizard.baja}"
-					value="#{parteITWizard.operacion}">
-					<f:selectItems value="#{parteITWizard.tiposOperacion}" />
-					<a4j:support event="onchange" reRender="datosITContainer"
-						ajaxSingle="true"
-						actionListener="#{parteITWizard.onChangeTipoOperacion}" />
+				<aon:selectOneMenu id="tipoBonificacion"
+					value="#{parteITWizard.tipoBonificacion}">
+					<f:selectItems value="#{payrollCollections.tiposBonificacion}" />
 				</aon:selectOneMenu>
--->				
+							
 			</aon:panelGrid>
 		</aon:panel>
 	</aon:div>
