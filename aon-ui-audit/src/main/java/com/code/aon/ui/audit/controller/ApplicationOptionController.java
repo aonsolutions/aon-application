@@ -52,6 +52,10 @@ public class ApplicationOptionController {
 
 	private static final String ACTION_ATTRIBUTE = "action";
 	
+	private static final String RENDERED_ATTRIBUTE = "rendered";
+	
+	private static final String TEST_ATTRIBUTE = "test";
+	
 	private static final String STYLE_CLASS_ATTRIBUTE = "styleClass";
 	
 	private static final String SRC_ATTRIBUTE = "src";
@@ -66,6 +70,8 @@ public class ApplicationOptionController {
 	
 	public static final String UI_DECORATE = "ui:decorate";
 	
+	public static final String C_IF = "c:if";
+	
 	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/audit/controller/";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationOptionController.class);
@@ -73,8 +79,6 @@ public class ApplicationOptionController {
 	private ResourceResolver resolver;
 	
 	private Map<String,ApplicationOption> optionMap;
-	
-	private List<ApplicationOption> options;
 	
 	private List<ApplicationCategory> categories;
 	
@@ -109,13 +113,23 @@ public class ApplicationOptionController {
 		return this.optionMap;
 	}
 
-	public List<ApplicationOption> getOptions() {
-		return this.options;
-	}
-
 	public List<ApplicationCategory> getCategories() {
 		return categories;
 	}
+	
+	public List<ApplicationOption> getOptions( boolean allOptions ) {
+		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
+		for( ApplicationCategory category : getCategories() ) {
+			if ( allOptions || category.isRendered() ) {
+				for( ApplicationOption option : category.getOptions() ) {
+					if ( allOptions || option.isRendered() ) {
+						list.add(option);	
+					}
+				}
+			}
+		}
+		return list;
+	}		
 
 	public Application getApplication() {
 		return application;
@@ -139,7 +153,6 @@ public class ApplicationOptionController {
 	}
 	
 	private void init() {
-		this.options = new ArrayList<ApplicationOption>();
 		this.optionMap = new HashMap<String, ApplicationOption>();
 		this.categories = new ArrayList<ApplicationCategory>();
 		Document document = getDocument(MENU_TEMPLATE_PATH);
@@ -175,12 +188,25 @@ public class ApplicationOptionController {
 	}
 	
 	private boolean isDuplicatedId( String id ) {
-		for( ApplicationOption option : this.options ) {
-			if ( StringUtils.equals(option.getId(), id) ) {
-				return true;
+		for( ApplicationCategory category : this.categories ) {
+			for( ApplicationOption option : category.getOptions() ) {
+				if ( StringUtils.equals(option.getId(), id) ) {
+					return true;
+				}
 			}
 		}
 		return false;
+	}
+	
+	private String getRendered( Element element ) {
+		Element parent = element.getParent();
+		while ( parent != null ) {
+			if ( C_IF.equals(parent.getQualifiedName()) ) {
+				return parent.attributeValue(TEST_ATTRIBUTE);
+			}
+			parent = parent.getParent();
+		}
+		return null;
 	}
 	
 	private ApplicationOption getApplicationOption( Element element, ApplicationCategory category ) {
@@ -197,6 +223,11 @@ public class ApplicationOptionController {
 				option.setId(id);	
 			} else {
 				LOGGER.warn( "Element without id {}", element );
+			}
+			String rendered = getRendered(element);
+			if (! StringUtils.isEmpty(rendered) ) {
+				option.setRendered(rendered);
+				element.addAttribute(RENDERED_ATTRIBUTE, rendered);
 			}
 			option.setCategory(category);
 			option.setDescription( getStringValue(element.attributeValue(VALUE_ATTRIBUTE)) );
@@ -221,8 +252,8 @@ public class ApplicationOptionController {
 		String id = option.getId();
 		if ( (! StringUtils.isEmpty(id)) && isDuplicatedId(id) ) {
 			LOGGER.error( "Duplicated id {}", id );
-		}			
-		options.add(option);		
+		}				
+		option.getCategory().addOption(option);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -257,6 +288,10 @@ public class ApplicationOptionController {
 			String styleClass = element.attributeValue(STYLE_CLASS_ATTRIBUTE);
 			if (! StringUtils.isEmpty(styleClass) ) {
 				category.setStyleClass(styleClass);	
+			}
+			String rendered = getRendered(element);
+			if (! StringUtils.isEmpty(rendered) ) {
+				category.setRendered(rendered);
 			}
 			this.categories.add(category);
 			String viewId = getPath(action);
