@@ -43,7 +43,7 @@
 						</chartTitle>
 						<chartSubtitle/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" position="Top">
-							<font fontName="Courier" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+							<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 						</chartLegend>
 					</chart>
 					<pieDataset maxCount="7">
