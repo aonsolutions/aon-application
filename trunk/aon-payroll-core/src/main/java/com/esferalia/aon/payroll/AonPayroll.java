@@ -16,6 +16,7 @@ public class AonPayroll {
 	private static final String PAYROLL_CONFIG_FILE = "aon-payroll.properties";
 	private static ResourceBundle BUNDLE;
 
+	private static final String PAYROLL_COMMONS_DAO = "aon.payroll.commons.dao.class";
 	private static final String PAYROLL_PARTEIT_DAO = "aon.payroll.parteIT.dao.class";
 	private static final String PAYROLL_PARTEIT_CALCULATORS = "aon.payroll.parteIT.calculators.classes";
 	private static final String PAYROLL_NOMINA_DAO = "aon.payroll.nomina.dao.class";
@@ -46,6 +47,10 @@ public class AonPayroll {
 					Class.forName(clazz);
 				}
 				clazz = props.getProperty(PAYROLL_PARTEIT_DAO);
+				if (clazz != null ) {
+					Class.forName(clazz);
+				}
+				clazz = props.getProperty(PAYROLL_COMMONS_DAO);
 				if (clazz != null ) {
 					Class.forName(clazz);
 				}
