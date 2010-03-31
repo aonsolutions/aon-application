@@ -43,7 +43,7 @@
 						</chartTitle>
 						<chartSubtitle/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" position="Top">
-							<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+							<font fontName="Courier" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						</chartLegend>
 					</chart>
 					<pieDataset maxCount="7">
@@ -52,7 +52,9 @@
 					</pieDataset>
 					<pie3DPlot depthFactor="0.2" isCircular="true" labelFormat="{2}">
 						<plot backcolor="#FFFFFF"/>
-						<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+						<itemLabel color="#000000" backgroundColor="#FFFFFF">
+							<font fontName="Courier"/>
+						</itemLabel>
 					</pie3DPlot>
 				</pie3DChart>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
