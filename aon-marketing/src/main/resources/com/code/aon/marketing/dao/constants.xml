@@ -4,4 +4,8 @@
 		<alias names="campaign_id,endDate,id,mediaType,startDate,survey_id,campaign_active"/>
 		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active"/>
 	</bean>
+	<bean class="com.code.aon.marketing.MarketingTarget" sqlName="target">
+		<alias names="customer,id,registry_id,target_id,registry_document"/>
+		<hibernate names="customer,id,registry.id,target.id,registry.document"/>
+	</bean>	
 </dao>
