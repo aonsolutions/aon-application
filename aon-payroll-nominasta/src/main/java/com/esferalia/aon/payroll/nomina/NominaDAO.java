@@ -25,7 +25,10 @@ public class NominaDAO implements INominaDAO {
 	
 	static {
 		NominaDAOFactory.register( new NominaDAO() );
-		
+	}
+	
+	@Override
+	public void configure() {	
 		try {
 			IManagerBean nominaBean = BeanManager.getManagerBean(Nomina.class);
 			EMP_ALIAS = nominaBean.getFieldName(IPayrollAlias.NOMINA_EMPLEADO_ID);
@@ -36,8 +39,7 @@ public class NominaDAO implements INominaDAO {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	@Override
 	public INomina getNomina(NominaParams params) throws PayrollException {
 		try {

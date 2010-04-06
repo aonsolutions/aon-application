@@ -8,6 +8,8 @@ import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPersona;
 
 public interface IEmpleadoDAO {
+	
+	void configure();
 
 	List<IEmpleado> getEmpleados(EmpleadoParams params) throws PayrollException;
 	List<IEmpleado> getEmpleados(EmpleadoParams params, int start, int count) throws PayrollException;

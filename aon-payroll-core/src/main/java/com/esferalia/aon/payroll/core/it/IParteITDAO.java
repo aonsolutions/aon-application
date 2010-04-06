@@ -9,6 +9,8 @@ import com.esferalia.aon.payroll.core.IEmpleado;
 
 public interface IParteITDAO {
 	
+	void configure();
+	
 	Criteria getCriteria(ParteITParams params) throws PayrollException;
 
 	int getCount(ParteITParams params) throws PayrollException;;

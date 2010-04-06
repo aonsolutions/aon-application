@@ -4,7 +4,8 @@ public class EmpleadoDAOFactory {
 
 	private static EmpleadoDAOFactory instance;
 	private IEmpleadoDAO empleadoDAO;
-
+	private boolean configured;
+	
 	private EmpleadoDAOFactory() {
 
 	}
@@ -20,6 +21,10 @@ public class EmpleadoDAOFactory {
 		if (empleadoDAO == null) {
 			throw new IllegalStateException("No hay un IEmpleadoDAO registrado.");
 		}
+		if (! configured ) {
+			empleadoDAO.configure();
+			configured = true;
+		}		
 		return empleadoDAO;
 	}
 

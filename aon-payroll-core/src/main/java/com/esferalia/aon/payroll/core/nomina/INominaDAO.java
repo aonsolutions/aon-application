@@ -6,6 +6,9 @@ import com.esferalia.aon.payroll.core.INomina;
 
 public interface INominaDAO {
 	
+	void configure();
+	
 	INomina getNomina(NominaParams params) throws PayrollException;
 	Criteria getCriteria(NominaParams params);
+	
 }
