@@ -6,10 +6,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.payroll.PayrollException;
-import com.esferalia.aon.payroll.TipoBonificacion;
 import com.esferalia.aon.payroll.core.commons.CommonsPayrollDAOFactory;
 import com.esferalia.aon.payroll.core.commons.ICommonsPayrollDAO;
 import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
+import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 
 public class CommonsPayrollDAO implements ICommonsPayrollDAO {
 

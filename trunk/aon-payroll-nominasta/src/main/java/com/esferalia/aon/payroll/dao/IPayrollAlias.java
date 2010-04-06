@@ -3,13 +3,14 @@ package com.esferalia.aon.payroll.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.esferalia.aon.payroll.Actividad;
+import com.esferalia.aon.payroll.cotizacion.Bonificacion;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
-import com.esferalia.aon.payroll.TipoBonificacion;
+import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 import com.esferalia.aon.payroll.Contrato;
 
 /** 
@@ -65,6 +66,61 @@ public interface IPayrollAlias {
 	* Hibernate value: Actividad.name
 	*/
 	String  ACTIVIDAD_NAME = ACTIVIDAD_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for Bonificacion entity.
+	*/ 
+	DAOConstantsEntry BONIFICACION_ENTRY = DAOConstants.getDAOConstant(Bonificacion.class);
+
+	/** 
+	* Alias value: Bonificacion_empleado_id
+	* Hibernate value: Bonificacion.empleado.id
+	*/
+	String  BONIFICACION_EMPLEADO_ID = BONIFICACION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Bonificacion_fechaFin
+	* Hibernate value: Bonificacion.fechaFin
+	*/
+	String  BONIFICACION_FECHA_FIN = BONIFICACION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Bonificacion_horas
+	* Hibernate value: Bonificacion.horas
+	*/
+	String  BONIFICACION_HORAS = BONIFICACION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Bonificacion_id_cdg
+	* Hibernate value: Bonificacion.id.cdg
+	*/
+	String  BONIFICACION_ID_CDG = BONIFICACION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Bonificacion_id_fechaInicio
+	* Hibernate value: Bonificacion.id.fechaInicio
+	*/
+	String  BONIFICACION_ID_FECHA_INICIO = BONIFICACION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Bonificacion_id_numero
+	* Hibernate value: Bonificacion.id.numero
+	*/
+	String  BONIFICACION_ID_NUMERO = BONIFICACION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Bonificacion_importe
+	* Hibernate value: Bonificacion.importe
+	*/
+	String  BONIFICACION_IMPORTE = BONIFICACION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Bonificacion_tipoBonificacion_id
+	* Hibernate value: Bonificacion.tipoBonificacion.id
+	*/
+	String  BONIFICACION_TIPO_BONIFICACION_ID = BONIFICACION_ENTRY.getAliasNames()[7];
 
 
 
@@ -516,48 +572,6 @@ public interface IPayrollAlias {
 	* Hibernate value: TipoBonificacion.id
 	*/
 	String  TIPO_BONIFICACION_ID = TIPO_BONIFICACION_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: TipoBonificacion_mayor60
-	* Hibernate value: TipoBonificacion.mayor60
-	*/
-	String  TIPO_BONIFICACION_MAYOR60 = TIPO_BONIFICACION_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: TipoBonificacion_porcentajeAccidentes
-	* Hibernate value: TipoBonificacion.porcentajeAccidentes
-	*/
-	String  TIPO_BONIFICACION_PORCENTAJE_ACCIDENTES = TIPO_BONIFICACION_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: TipoBonificacion_porcentajeBaseConjunto
-	* Hibernate value: TipoBonificacion.porcentajeBaseConjunto
-	*/
-	String  TIPO_BONIFICACION_PORCENTAJE_BASE_CONJUNTO = TIPO_BONIFICACION_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: TipoBonificacion_porcentajeBonificacionSS
-	* Hibernate value: TipoBonificacion.porcentajeBonificacionSS
-	*/
-	String  TIPO_BONIFICACION_PORCENTAJE_BONIFICACION_SS = TIPO_BONIFICACION_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: TipoBonificacion_porcentajeContingenciasGenerales
-	* Hibernate value: TipoBonificacion.porcentajeContingenciasGenerales
-	*/
-	String  TIPO_BONIFICACION_PORCENTAJE_CONTINGENCIAS_GENERALES = TIPO_BONIFICACION_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: TipoBonificacion_realDecretoLey052006
-	* Hibernate value: TipoBonificacion.realDecretoLey052006
-	*/
-	String  TIPO_BONIFICACION_REAL_DECRETO_LEY052006 = TIPO_BONIFICACION_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: TipoBonificacion_restarIT
-	* Hibernate value: TipoBonificacion.restarIT
-	*/
-	String  TIPO_BONIFICACION_RESTAR_IT = TIPO_BONIFICACION_ENTRY.getAliasNames()[8];
 
 
 
