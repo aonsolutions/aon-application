@@ -23,7 +23,9 @@
 		<mapping class="com.esferalia.aon.payroll.ParteConfirmacionIT"/>		
 		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
 		<mapping class="com.esferalia.aon.payroll.Persona"/>
-		<mapping class="com.esferalia.aon.payroll.TipoBonificacion"/>
+
+		<mapping class="com.esferalia.aon.payroll.cotizacion.Bonificacion"/>
+		<mapping class="com.esferalia.aon.payroll.cotizacion.TipoBonificacion"/>
 		
 	</session-factory>
 
