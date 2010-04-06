@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-commercial</property>				
+		<property name="connection.url">jdbc:mysql://volga:3306/aon-esferalia-com</property>				
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.username">dbuser</property>		
@@ -27,6 +27,7 @@
 		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
 		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>
 		<mapping class="com.code.aon.marketing.TargetProfile"/>
+		<mapping class="com.code.aon.marketing.MarketingTarget"/>
 
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
@@ -53,6 +54,7 @@
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
 		
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Item"/>

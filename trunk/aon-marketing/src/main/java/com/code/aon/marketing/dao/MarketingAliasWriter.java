@@ -5,9 +5,10 @@ import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.Campaign;
+import com.code.aon.marketing.MarketingAction;
+import com.code.aon.marketing.MarketingTarget;
 import com.code.aon.marketing.Question;
 import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.Survey;
@@ -40,7 +41,8 @@ public class MarketingAliasWriter {
 				SurveyResponse.class.getName(),
 				SurveyResponseDetail.class.getName(),
 				SurveyWorkflow.class.getName(),
-				TargetProfile.class.getName()};
+				TargetProfile.class.getName(),
+				MarketingTarget.class.getName()};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.marketing.dao");
 		writer.write(classes, file);
