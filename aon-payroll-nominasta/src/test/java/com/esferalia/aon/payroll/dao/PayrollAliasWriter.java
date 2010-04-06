@@ -14,7 +14,8 @@ import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Persona;
-import com.esferalia.aon.payroll.TipoBonificacion;
+import com.esferalia.aon.payroll.cotizacion.Bonificacion;
+import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 
 public class PayrollAliasWriter extends TestCase{
 
@@ -22,6 +23,7 @@ public class PayrollAliasWriter extends TestCase{
 		File file = new File("/AON-TRUNK/aon-payroll-nominasta/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] {
 				Actividad.class.getName(),
+				Bonificacion.class.getName(),
 				Empleado.class.getName(),			
 				Empresa.class.getName(),
 				Nomina.class.getName(),
