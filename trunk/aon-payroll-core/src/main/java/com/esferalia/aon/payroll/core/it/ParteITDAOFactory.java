@@ -5,6 +5,7 @@ public class ParteITDAOFactory {
 
 	private static ParteITDAOFactory instance;
 	private IParteITDAO parteITDAO;
+	private boolean configured;
 
 	public static void register(IParteITDAO parteITDAO) {
 		ParteITDAOFactory.getInstance().parteITDAO = parteITDAO;
@@ -24,6 +25,10 @@ public class ParteITDAOFactory {
 		if (parteITDAO == null) {
 			throw new IllegalStateException("No hay un IParteITDAO registrado.");
 		}
+		if (! configured ) {
+			parteITDAO.configure();
+			configured = true;
+		}		
 		return parteITDAO;
 	}
 	

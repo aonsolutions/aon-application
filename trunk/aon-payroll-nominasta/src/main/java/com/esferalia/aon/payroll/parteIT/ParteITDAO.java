@@ -43,7 +43,10 @@ public class ParteITDAO implements IParteITDAO {
 
 	static {
 		ParteITDAOFactory.register(new ParteITDAO());
-
+	}
+	
+	@Override
+	public void configure() {
 		try {
 			IManagerBean parteITBean = BeanManager.getManagerBean(ParteIT.class);
 			EMP_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_EMPLEADO_ID);
@@ -53,7 +56,7 @@ public class ParteITDAO implements IParteITDAO {
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
-	}
+	}	
 
 	@Override
 	public Criteria getCriteria(ParteITParams params) throws PayrollException {

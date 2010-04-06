@@ -40,7 +40,10 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 
 	static {
 		EmpleadoDAOFactory.register(new EmpleadoDAO());
-
+	}
+	
+	@Override
+	public void configure() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
 			PER_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_ID);
