@@ -30,7 +30,6 @@ import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPersona;
-import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
@@ -60,7 +59,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private TipoOperacionIT operacion;
 	private boolean recaidaAnterior;
 	private boolean bonificacionMaternidad;
-	private ITipoBonificacion tipoBonificacion;
+	private Integer tipoBonificacion;
 	private Integer numParteRenovacion;
 	private List<SelectItem> operations;
 	
@@ -92,10 +91,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		this.bonificacionMaternidad = bonificacionMaternidad;
 	}
 
-	public ITipoBonificacion getTipoBonificacion() {
+	public Integer getTipoBonificacion() {
 		return tipoBonificacion;
 	}
-	public void setTipoBonificacion(ITipoBonificacion tipoBonificacion) {
+	public void setTipoBonificacion(Integer tipoBonificacion) {
 		this.tipoBonificacion = tipoBonificacion;
 	}
 
