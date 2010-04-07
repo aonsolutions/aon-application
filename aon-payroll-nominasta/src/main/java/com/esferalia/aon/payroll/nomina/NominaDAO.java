@@ -9,11 +9,16 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IBonificacion;
+import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.INomina;
+import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
 import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
 import com.esferalia.aon.payroll.core.nomina.NominaParams;
+import com.esferalia.aon.payroll.cotizacion.Bonificacion;
+import com.esferalia.aon.payroll.cotizacion.BonificacionPK;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class NominaDAO implements INominaDAO {
@@ -74,6 +79,16 @@ public class NominaDAO implements INominaDAO {
 			c.addEqualExpression(TIPO_ALIAS, "A");	
 		}
 		return c;
+	}
+
+	@Override
+	public void accept(IBonificacion bonifacion) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Bonificacion.class);
+			bean.insertOrUpdate((Bonificacion) bonifacion);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
 	}
 
 }

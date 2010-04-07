@@ -6,6 +6,9 @@ import com.esferalia.aon.payroll.core.enumeration.Regimen;
 
 public interface IActividad extends Serializable{
 
+	Integer getId();
+	void setId(Integer id);
+
 	IEmpresa getEmpresa();
 	void setEmpresa(IEmpresa empresa);
 	

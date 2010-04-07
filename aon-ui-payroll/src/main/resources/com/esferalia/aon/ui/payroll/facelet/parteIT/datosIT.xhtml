@@ -98,9 +98,8 @@
 				<aon:div layout="none">
 					<aon:selectBooleanCheckbox id="bonificacion"
 						value="#{parteITWizard.bonificacionMaternidad}">
-<!--  
--->
-						<a4j:support event="onclick"
+						<a4j:support event="onclick" ajaxSingle="true"
+							limitToList="true" reRender="tipoBonificacion"
 							actionListener="#{parteITWizard.onChangeBonificacionMaternidad}" />
 					</aon:selectBooleanCheckbox>
 					<aon:outputLabel for="bonificacion"
@@ -109,6 +108,7 @@
 			</f:facet>
 			<aon:panelGrid columns="2" style="width: 100%;">
 				<aon:selectOneMenu id="tipoBonificacion"
+					disabled="#{!parteITWizard.bonificacionMaternidad}"
 					value="#{parteITWizard.tipoBonificacion}">
 					<f:selectItems value="#{payrollCollections.tiposBonificacion}" />
 				</aon:selectOneMenu>

@@ -24,6 +24,7 @@
 		<mapping package="com.esferalia.aon.payroll.type"/>
 
 		<mapping class="com.esferalia.aon.payroll.Actividad"/>
+		<mapping class="com.esferalia.aon.payroll.ActividadCCC"/>
 		<mapping class="com.esferalia.aon.payroll.Contrato"/>
 		<mapping class="com.esferalia.aon.payroll.Empleado"/>			
 		<mapping class="com.esferalia.aon.payroll.Empresa"/>
@@ -31,6 +32,7 @@
 		<mapping class="com.esferalia.aon.payroll.ParteConfirmacionIT"/>		
 		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
 		<mapping class="com.esferalia.aon.payroll.Persona"/>
+		<mapping class="com.esferalia.aon.payroll.Usuario"/>
 		
 		<mapping class="com.esferalia.aon.payroll.cotizacion.Bonificacion"/>
 		<mapping class="com.esferalia.aon.payroll.cotizacion.TipoBonificacion"/>

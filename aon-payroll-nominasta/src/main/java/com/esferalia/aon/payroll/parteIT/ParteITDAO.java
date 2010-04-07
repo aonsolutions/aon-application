@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.parteIT;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +21,10 @@ import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.ParteITPK;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IBonificacion;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
@@ -31,6 +34,8 @@ import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
+import com.esferalia.aon.payroll.cotizacion.Bonificacion;
+import com.esferalia.aon.payroll.cotizacion.BonificacionPK;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.utils.NumberValidation;
 
@@ -132,7 +137,7 @@ public class ParteITDAO implements IParteITDAO {
 		}
 
 		// El empresa del empleado debe estar activa.
-		if (!parteIT.getEmpleado().getEmpresa().isActive()) {
+		if (!parteIT.getEmpleado().getActividad().getEmpresa().isActive()) {
 			return 3;
 		}
 
@@ -351,6 +356,28 @@ public class ParteITDAO implements IParteITDAO {
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
+	}
+
+	@Override
+	public IBonificacion initializeBonificacion(IParteIT parteIT, ITipoBonificacion tipoBonificacion) {
+		Bonificacion b = new Bonificacion();
+		BonificacionPK pk = new BonificacionPK();
+		pk.setCdg(parteIT.getEmpleado().getId());
+		pk.setNumero(tipoBonificacion.getId());
+		Calendar c = Calendar.getInstance();
+		c.setTime(parteIT.getFechaAlta());
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		Date fechaInicio = c.getTime();
+		c.setTime(parteIT.getFechaAlta());
+		c.add(Calendar.YEAR, 1);
+		Date fechaFin = c.getTime();
+		pk.setFechaInicio(fechaInicio);
+		b.setFechaFin(fechaFin);
+		b.setId(pk);
+		b.setHoras(0);
+		b.setImporte(0.0);
+		b.setTipoBonificacion(tipoBonificacion);
+		return b;
 	}
 }
 

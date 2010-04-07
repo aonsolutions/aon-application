@@ -19,6 +19,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
@@ -187,8 +188,10 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICr
 	@SuppressWarnings("unchecked")
 	public void onDiskGenerate(ActionEvent event) {
 		try {
+			String loggedUser = AonUtil.getRemoteUser();
+			loggedUser = StringUtils.substringBefore(loggedUser, "@");
 			List<IParteIT> list = (List<IParteIT>) getSelectedModel().getWrappedData();
-			setFileOutput(getFDIWriter().createFDI(list));
+			setFileOutput(getFDIWriter().createFDI(list, loggedUser));
 			if (getFileOutput() != null) {
 				if (getFileOutput().getErrors().size() > 0) {
 					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");

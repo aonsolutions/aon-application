@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IBonificacion;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 
 public interface IParteITDAO {
 	
@@ -29,5 +31,7 @@ public interface IParteITDAO {
 	List<IParteConfirmacionIT> getPartesConfirmacion(IParteIT parteIT) throws PayrollException;
 	IParteConfirmacionIT initialize(IParteIT  parte) throws PayrollException;
 	void accept(IParteConfirmacionIT confirmacionParteIT) throws PayrollException;;
-	
+
+	IBonificacion initializeBonificacion(IParteIT parteIT, ITipoBonificacion tipoBonificacion);
+
 }

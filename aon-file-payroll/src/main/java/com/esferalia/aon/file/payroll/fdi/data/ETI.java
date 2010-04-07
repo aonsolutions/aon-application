@@ -16,8 +16,6 @@ public class ETI {
 	private ETF etf;
 
 	public ETI() {
-		clave = new Integer(0);
-		identificacion = "123456789";
 		Date date = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		String f =  formatter.format(date);
@@ -29,7 +27,6 @@ public class ETI {
 		fichero =  formatter.format(date);
 		
 		etf = new ETF();
-		etf.setClave(clave);
 		etf.setFichero(fichero);
 		etf.setFecha(fecha);
 		etf.setHora(hora);
@@ -40,6 +37,7 @@ public class ETI {
 	}
 	public void setClave(Integer clave) {
 		this.clave = clave;
+		etf.setClave(clave);
 	}
 
 	public Integer getFecha() {

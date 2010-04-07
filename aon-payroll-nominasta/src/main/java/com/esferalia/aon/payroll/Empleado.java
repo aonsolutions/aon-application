@@ -19,7 +19,6 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 
@@ -37,7 +36,7 @@ public class Empleado implements ITransferObject,IEmpleado {
 	private Date fechaInicio;
 	private Date fechaFin;
 	private Boolean mayor65;
-	private IEmpresa empresa;
+	//private IEmpresa empresa;
 	private IActividad actividad;
 	private IPersona persona;
 	
@@ -94,30 +93,24 @@ public class Empleado implements ITransferObject,IEmpleado {
 		this.mayor65 = mayor65;
 	}
 
-	@ManyToOne(targetEntity = Empresa.class,fetch = FetchType.EAGER)
-	@JoinColumn(name = "codemp", referencedColumnName = "cdg", nullable = false)
-	public IEmpresa getEmpresa() {
-		return this.empresa;
-	}
-	public void setEmpresa(IEmpresa empresa) {
-		this.empresa = empresa;
-	}
-
 	@ManyToOne(targetEntity = Actividad.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "codact", nullable = false)
+	@Override
 	public IActividad getActividad() {
 		return this.actividad;
 	}
+	@Override
 	public void setActividad(IActividad actividad) {
 		this.actividad = actividad;
 	}
 
 	@ManyToOne(targetEntity = Persona.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "codper", nullable = false)
+	@Override
 	public IPersona getPersona() {
 		return this.persona;
 	}
-
+	@Override
 	public void setPersona(IPersona persona) {
 		this.persona = persona;
 	}
