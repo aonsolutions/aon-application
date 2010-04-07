@@ -57,6 +57,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private IEmpleado empleado;
 	private DataModel empleosModel; 
 	private DataModel partesModel; 
+	private DataModel partesConfirmacionModel; 
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0","parteITWizard_step1","parteITWizard_step2","parteITWizard_step3" };
 	private IParteIT parteIT;
@@ -276,6 +277,24 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	public void setPartesModel(DataModel partesModel) {
 		this.partesModel = partesModel;
 	}
+	
+	public DataModel getPartesConfirmacionModel() {
+		try {
+			if (partesConfirmacionModel == null) {
+				List<IParteConfirmacionIT> list = getParteITDAO().getPartesConfirmacion(getParteIT());
+				partesConfirmacionModel = new ListDataModel(list); 
+			}
+			return partesConfirmacionModel;
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}			
+		
+	}
+	
+	public void setPartesConfirmacionModel(DataModel partesConfirmacionModel) {
+		this.partesConfirmacionModel = partesConfirmacionModel;
+	}
 
 	// Action Listeners
 	public void onStart(ActionEvent event) {
@@ -306,6 +325,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private void onChangeEmpleado() {
 		try {
 			partesModel = null;
+			partesConfirmacionModel = null;
 			setParteIT( getParteITDAO().initialize( getEmpleado()) );
 			refreshOperacion();
 			searchRecaidaAnterior();
@@ -353,7 +373,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				throw new AbortProcessingException(errorMsg);
 			}
 			getParteITDAO().calculate(getParteIT());
-			if (isAltaMaternidad()) {
+			if (isBonificacionMaternidad()) {
 				setBonificacion( getParteITDAO().initializeBonificacion(getParteIT(), getTipoBonificacion()));	
 			}
 		} catch (PayrollException e) {
