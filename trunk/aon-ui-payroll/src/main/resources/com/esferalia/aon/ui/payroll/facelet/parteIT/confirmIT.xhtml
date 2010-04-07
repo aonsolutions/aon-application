@@ -92,17 +92,23 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
 			</aon:outputText>
 
-			<aon:outputText value="#{payrollBundle.parteIT_bonificacion_maternidad}" />
-			<aon:outputText value="#{parteITWizard.bonificacion.tipoBonificacion.descripcion}" />
+			<aon:outputText value="#{payrollBundle.parteIT_bonificacion_maternidad}"  
+				rendered="#{parteITWizard.bonificacionMaternidad}"/>
+			<aon:outputText value="#{parteITWizard.bonificacion.tipoBonificacion.descripcion}"  
+				rendered="#{parteITWizard.bonificacionMaternidad}"/>
 
-			<aon:outputText value="XX #{payrollBundle.payroll_fecha}" />
-			<aon:outputText value="#{parteITWizard.bonificacion.id.fechaInicio}">
+			<aon:outputText value="#{payrollBundle.payroll_fecha_ini}"  
+				rendered="#{parteITWizard.bonificacionMaternidad}"/>
+			<aon:outputText value="#{parteITWizard.bonificacion.id.fechaInicio}" 
+				rendered="#{parteITWizard.bonificacionMaternidad}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 
-			<aon:outputText value="XX #{payrollBundle.payroll_fecha}" />
-			<aon:outputText value="#{parteITWizard.bonificacion.fechaFin}">
+			<aon:outputText value="#{payrollBundle.payroll_fecha_fin}" 
+				rendered="#{parteITWizard.bonificacionMaternidad}"/>
+			<aon:outputText value="#{parteITWizard.bonificacion.fechaFin}" 
+				rendered="#{parteITWizard.bonificacionMaternidad}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
