@@ -10,7 +10,6 @@
 			<supported-locale>en</supported-locale>
 		</locale-config>
 		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
-		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
 		<resource-bundle>
 			<base-name>com.esferalia.aon.web.payroll.i18n.messages</base-name>
 			<var>appBundle</var>
