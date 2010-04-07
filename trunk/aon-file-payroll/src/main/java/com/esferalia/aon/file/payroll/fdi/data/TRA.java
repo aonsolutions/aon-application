@@ -3,18 +3,16 @@ package com.esferalia.aon.file.payroll.fdi.data;
 import java.util.List;
 
 public class TRA {
-	private Integer numeroAfiliacion;
+	private String numeroAfiliacion;
 	private String ipf;
 	private DOM dom;
 	private LDD ldd;
 	private List<DIT> datosIT;;
-	private DEC dec;
-	private List<ODP> partesConfirmacion;;
 	
-	public Integer getNumeroAfiliacion() {
+	public String getNumeroAfiliacion() {
 		return numeroAfiliacion;
 	}
-	public void setNumeroAfiliacion(Integer numeroAfiliacion) {
+	public void setNumeroAfiliacion(String numeroAfiliacion) {
 		this.numeroAfiliacion = numeroAfiliacion;
 	}
 	
@@ -42,17 +40,5 @@ public class TRA {
 	}
 	public void setDatosIT(List<DIT> datosIT) {
 		this.datosIT = datosIT;
-	}
-	public DEC getDec() {
-		return dec;
-	}
-	public void setDec(DEC dec) {
-		this.dec = dec;
-	}
-	public List<ODP> getPartesConfirmacion() {
-		return partesConfirmacion;
-	}
-	public void setPartesConfirmacion(List<ODP> partesConfirmacion) {
-		this.partesConfirmacion = partesConfirmacion;
 	}
 }

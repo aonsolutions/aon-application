@@ -7,19 +7,14 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.esferalia.aon.file.payroll.fdi.data.DEC;
 import com.esferalia.aon.file.payroll.fdi.data.DIT;
-import com.esferalia.aon.file.payroll.fdi.data.DOM;
-import com.esferalia.aon.file.payroll.fdi.data.ETI;
 import com.esferalia.aon.file.payroll.fdi.data.EMP;
-import com.esferalia.aon.file.payroll.fdi.data.LDD;
-import com.esferalia.aon.file.payroll.fdi.data.ODP;
+import com.esferalia.aon.file.payroll.fdi.data.ETI;
 import com.esferalia.aon.file.payroll.fdi.data.TRA;
 
 public class FDI  extends AbstractFileFiller{
@@ -68,38 +63,52 @@ public class FDI  extends AbstractFileFiller{
 			Map<String,Object> properties = new HashMap<String,Object>();
 			properties.put(ETI, eti);
 			createLine(ETI,properties);
+			int numEmp = 0;
+			int numTotal = 0;
 			for (EMP emp: eti.getEmpresas()) {
+				++numEmp;
 				properties.put(EMP , emp);
 				createLine(EMP,properties);
+				++numTotal;
 				for (TRA tra: emp.getTrabajadores()) {
 					properties.put(TRA , tra);
 					createLine(TRA,properties);
+					++numTotal;
 					if (tra.getDom() != null) {
 						properties.put(DOM , tra.getDom());
 						createLine(DOM,properties);
+						++numTotal;
 					}
 					if (tra.getLdd() != null) {
 						properties.put(LDD , tra.getLdd());
 						createLine(LDD ,properties);
+						++numTotal;
 					}
 					if (tra.getDatosIT() != null) {
 						for (DIT dit: tra.getDatosIT()) {
 							properties.put(DIT , dit);
 							createLine(DIT,properties);
-						}
-					}
-					if (tra.getDec() != null) {
-						properties.put(DEC , tra.getDec());
-						createLine(DEC ,properties);
-					}
-					if (tra.getPartesConfirmacion() != null) {
-						for (ODP odp: tra.getPartesConfirmacion()) {
-							properties.put(ODP , odp);
-							createLine(ODP,properties);
+							++numTotal;
+							if ("PB ".equals(dit.getAccion())) {
+								if (dit.getDec() != null) {
+									properties.put(DEC , dit.getDec());
+									createLine(DEC ,properties);
+									++numTotal;
+								}
+							}
+							if ("PC ".equals(dit.getAccion())) {
+								if (dit.getOdp() != null) {
+									properties.put(ODP , dit.getOdp());
+									createLine(ODP ,properties);
+									++numTotal;
+								}
+							}
 						}
 					}
 				}
 			}
+			eti.getEtf().setContador(numEmp);
+			eti.getEtf().setContadorTotal(numTotal);
 			properties.put(ETF, eti.getEtf());
 			createLine(ETF,properties);
 

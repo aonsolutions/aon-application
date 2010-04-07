@@ -10,7 +10,7 @@
 	<field name="fechaATEP" value="bean" bean="DIT" property="fechaATEP" format="Numeric" pattern="9(8)" />
 	<field name="numeroColegiado" value="bean" bean="DIT" property="numeroColegiado" format="AlphaNumeric" pattern="X(10)" />
 	<field name="cias" value="bean" bean="DIT" property="cias" format="AlphaNumeric" pattern="X(11)" />
-	<field name="duracionDias" value="bean" bean="DIT" property="duracionDias" format="Numeric" pattern="9(2)" />
+	<field name="duracionDias" value="bean" bean="DIT" property="duracionDias" format="Numeric" pattern="9(3)" />
 	<field name="duracionMeses" value="bean" bean="DIT" property="duracionMeses" format="Numeric" pattern="9(2)" />
 	<field name="categoria" value="bean" bean="DIT" property="categoria" format="Numeric" pattern="9(7)" />
 	<field name="recaida" value="bean" bean="DIT" property="recaida" format="AlphaNumeric" pattern="X(1)" />

@@ -2,11 +2,11 @@
 
 <register name="TRA">
 	<field name="cabecera" value="TRA" format="AlphaNumeric" pattern="X(3)" />
-	<field name="numAfiProv" value="bean" bean="EMP" property="numeroAfiliacion" format="AlphaNumeric" pattern="9(12)" />
-	<field name="ipf" value="bean" bean="EMP" property="ipf" format="AlphaNumeric" pattern="X(14)" />
+	<field name="numAfiProv" value="bean" bean="TRA" property="numeroAfiliacion" format="AlphaNumeric" pattern="9(12)" />
+	<field name="ipf" value="bean" bean="TRA" property="ipf" format="AlphaNumeric" pattern="X(18)" />
 	<field name="free1" value=" " format="AlphaNumeric" pattern="X(3)" />
 	<field name="free2" value=" " format="AlphaNumeric" pattern="X(25)" />
 	<field name="free3" value=" " format="AlphaNumeric" pattern="X(3)" />
 	<field name="free4" value=" " format="AlphaNumeric" pattern="X(1)" />
-	<field name="free5" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free5" value=" " format="AlphaNumeric" pattern="X(5)" />
 </register>

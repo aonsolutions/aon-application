@@ -16,6 +16,12 @@
 		</resource-bundle>
 	</application>
 
+	<!-- ********* ITransferObject CONVERTER ************* -->
+	<converter>
+	 <converter-for-class>com.code.aon.common.ITransferObject</converter-for-class>
+	 <converter-class>com.code.aon.ui.common.converter.MappedTransferObjectConverter</converter-class>
+	</converter>
+	
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
 	<managed-bean>
 		<managed-bean-name>aonResource</managed-bean-name>

@@ -13,6 +13,9 @@ public class DIT {
 	private Integer duracionMeses;
 	private Integer categoria;
 	private String recaida;
+	private DEC dec;
+	private ODP odp;
+	
 	public String getAccion() {
 		return accion;
 	}
@@ -85,4 +88,17 @@ public class DIT {
 	public void setRecaida(String recaida) {
 		this.recaida = recaida;
 	}
+	public DEC getDec() {
+		return dec;
+	}
+	public void setDec(DEC dec) {
+		this.dec = dec;
+	}
+	public ODP getOdp() {
+		return odp;
+	}
+	public void setOdp(ODP odp) {
+		this.odp = odp;
+	}
+	
 }
