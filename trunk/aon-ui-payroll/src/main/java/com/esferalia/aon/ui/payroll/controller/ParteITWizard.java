@@ -349,7 +349,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				throw new AbortProcessingException(errorMsg);
 			}
 			getParteITDAO().calculate(getParteIT());
-			setBonificacion( getParteITDAO().initializeBonificacion(getParteIT(), getTipoBonificacion()));
+			if (isAltaMaternidad()) {
+				setBonificacion( getParteITDAO().initializeBonificacion(getParteIT(), getTipoBonificacion()));	
+			}
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
