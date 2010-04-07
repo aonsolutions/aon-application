@@ -12,7 +12,7 @@
 	<field name="prioridad" value="N" format="AlphaNumeric" pattern="X(1)" />
 	<field name="prueba" value=" " format="AlphaNumeric" pattern="X(1)" />
 	<field name="contador" value="bean" bean="ETF" property="contador" format="Numeric" pattern="N(5)" />
-	<field name="contadorTotal" value="bean" bean="ETF" property="contador" format="Numeric" pattern="N(8)" />
+	<field name="contadorTotal" value="bean" bean="ETF" property="contadorTotal" format="Numeric" pattern="N(8)" />
 	<field name="free1" value=" " format="AlphaNumeric" pattern="X(3)" />
 </register>
 

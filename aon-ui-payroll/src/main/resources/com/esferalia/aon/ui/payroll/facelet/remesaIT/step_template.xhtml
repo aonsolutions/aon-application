@@ -50,19 +50,26 @@
 			</aon:div>
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div style="width: 100%;margin-bottom: 10px;">
-					<h:panelGrid columns="6" styleClass="aon-text-center" style="width: 800px;"
-						columnClasses="aon-width-200,aon-width-200,aon-width-200,aon-width-200">
-						<aon:div style="border: solid 1px black;width: 100%;color: #{remesaITWizard.currentStep==0?'black;':'#CCCCCC;'}">
-							<aon:outputText value="#{payrollBundle.remesaIT_step0}" />
+					<h:panelGrid columns="6" styleClass="aon-text-left" >
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{remesaITWizard.currentStep==0?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{remesaITWizard.currentStep==0?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="01" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.remesaIT_step0}" />
 						</aon:div>
-						<aon:div style="border: solid 1px black;width: 100%;color: #{remesaITWizard.currentStep==1?'black;':'#CCCCCC;'}">
-							<aon:outputText value="#{payrollBundle.remesaIT_step1}" />
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{remesaITWizard.currentStep==1?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{remesaITWizard.currentStep==1?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="02" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.remesaIT_step1}" />
 						</aon:div>
-						<aon:div style="border: solid 1px black;width: 100%;color: #{remesaITWizard.currentStep==2?'black;':'#CCCCCC;'}">
-							<aon:outputText value="#{payrollBundle.remesaIT_step2}" />
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{remesaITWizard.currentStep==2?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{remesaITWizard.currentStep==2?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="03" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.remesaIT_step2}" />
 						</aon:div>
-						<aon:div style="border: solid 1px black;width: 100%;color: #{remesaITWizard.currentStep==3?'black;':'#CCCCCC;'}">
-							<aon:outputText value="#{payrollBundle.remesaIT_step3}" />
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{remesaITWizard.currentStep==3?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{remesaITWizard.currentStep==3?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="04" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.remesaIT_step3}" />
 						</aon:div>
 					</h:panelGrid>
 				</aon:div>
