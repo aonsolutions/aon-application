@@ -38,7 +38,11 @@
 					value="#{payrollBundle.payroll_numero_renovacion}" />
 				<aon:inputText id="numParteRenovacion" size="1" maxlength="2"
 					rendered="#{parteITWizard.confirmacion}"
-					value="#{parteITWizard.numParteRenovacion}" />
+					value="#{parteITWizard.numParteRenovacion}" >
+					<a4j:support event="onchange"
+						actionListener="#{parteITWizard.onChangeNumeroRenovacion}"
+						reRender="fecha" />
+				</aon:inputText>
 
 				<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha}" />
 				<aon:selectInputDate id="fecha" value="#{parteITWizard.fecha}"

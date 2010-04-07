@@ -31,6 +31,7 @@ import com.esferalia.aon.payroll.core.IBonificacion;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPersona;
+import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
@@ -41,7 +42,6 @@ import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
 import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
-import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 
 public class ParteITWizard implements Serializable, IDataModelDataProvider,ICriteriaProvider {
@@ -64,7 +64,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private TipoOperacionIT operacion;
 	private boolean recaidaAnterior;
 	private boolean bonificacionMaternidad;
-	private TipoBonificacion tipoBonificacion;
+	private ITipoBonificacion tipoBonificacion;
 	private IBonificacion bonificacion;
 	private Integer numParteRenovacion;
 	private List<SelectItem> operations;
@@ -97,10 +97,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		this.bonificacionMaternidad = bonificacionMaternidad;
 	}
 
-	public TipoBonificacion getTipoBonificacion() {
+	public ITipoBonificacion getTipoBonificacion() {
 		return tipoBonificacion;
 	}
-	public void setTipoBonificacion(TipoBonificacion tipoBonificacion) {
+	public void setTipoBonificacion(ITipoBonificacion tipoBonificacion) {
 		this.tipoBonificacion = tipoBonificacion;
 	}
 
@@ -329,6 +329,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+	}
+
+	public void onChangeNumeroRenovacion(ActionEvent event) {
+		completeComfirmationDate();
 	}
 	
 	private void refreshOperacion() {
