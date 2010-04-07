@@ -21,6 +21,7 @@ public class AonPayroll {
 	private static final String PAYROLL_PARTEIT_CALCULATORS = "aon.payroll.parteIT.calculators.classes";
 	private static final String PAYROLL_NOMINA_DAO = "aon.payroll.nomina.dao.class";
 	private static final String PAYROLL_EMPLEADO_DAO = "aon.payroll.empleado.dao.class";
+	private static final String PAYROLL_EMPRESA_DAO = "aon.payroll.empresa.dao.class";
 
 	public static void configure() throws PayrollException {
 		try {
@@ -43,6 +44,10 @@ public class AonPayroll {
 					Class.forName(clazz);	
 				}
 				clazz = props.getProperty(PAYROLL_EMPLEADO_DAO);
+				if (clazz != null ) {
+					Class.forName(clazz);
+				}
+				clazz = props.getProperty(PAYROLL_EMPRESA_DAO);
 				if (clazz != null ) {
 					Class.forName(clazz);
 				}

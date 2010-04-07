@@ -92,6 +92,21 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
 			</aon:outputText>
 
+			<aon:outputText value="#{payrollBundle.parteIT_bonificacion_maternidad}" />
+			<aon:outputText value="#{parteITWizard.bonificacion.tipoBonificacion.descripcion}" />
+
+			<aon:outputText value="XX #{payrollBundle.payroll_fecha}" />
+			<aon:outputText value="#{parteITWizard.bonificacion.id.fechaInicio}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+			<aon:outputText value="XX #{payrollBundle.payroll_fecha}" />
+			<aon:outputText value="#{parteITWizard.bonificacion.fechaFin}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
 		</aon:panelGrid>
 	</aon:panel>
 </ui:composition>

@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
@@ -20,7 +23,7 @@ public class TipoBonificacion implements ITransferObject, ITipoBonificacion {
 	private static final long serialVersionUID = 3418444674669580634L;
 	
 	private Integer id;
-	private String description;
+	private String descripcion;
 
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 2)
@@ -34,17 +37,41 @@ public class TipoBonificacion implements ITransferObject, ITipoBonificacion {
 
 	@Column(name = "descripcion", nullable = false, length = 50)
 	@Override
-	public String getDescription() {
-		return this.description;
+	public String getDescripcion() {
+		return this.descripcion;
 	}
 
 	@Override
-	public void setDescription(String descripcion) {
-		this.description = descripcion;
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final TipoBonificacion o = (TipoBonificacion) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.descripcion, o.descripcion)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)
+			.append(descripcion)
+			.toHashCode();
+	}	
 
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+	
+	
 }

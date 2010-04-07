@@ -10,9 +10,6 @@ public interface IEmpleado extends ITransferObject{
 	Integer getId();
 	void setId(Integer  id);
 
-	IEmpresa getEmpresa();
-	void setEmpresa(IEmpresa empresa);
-	
 	IActividad getActividad();
 	void setActividad(IActividad actividad);
 

@@ -72,8 +72,8 @@ public class PayrollCollections implements Serializable {
 				List<ITipoBonificacion> list = getCommonsPayrollDAO()
 						.getTiposBonificacion();
 				for (ITipoBonificacion tb : list) {
-					String name = tb.getDescription();
-					SelectItem item = new SelectItem(tb.getId(), name);
+					String name = tb.getDescripcion();
+					SelectItem item = new SelectItem(tb, name);
 					tiposBonificacion.add(item);
 				}
 			}

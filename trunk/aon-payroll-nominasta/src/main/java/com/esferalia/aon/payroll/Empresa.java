@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -16,16 +17,18 @@ public class Empresa implements ITransferObject, IEmpresa {
 
 	private static final long serialVersionUID = -3266513951564213596L;
 	
-	private Integer cdg;
+	private Integer id;
+    private Registry registry;
 	private String name;
+	
 
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 4)
-	public Integer getCdg() {
-		return this.cdg;
+	public Integer getId() {
+		return this.id;
 	}
-	public void setCdg(Integer cdg) {
-		this.cdg = cdg;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	@Override
 	@Column(name = "descripcion", nullable = false, length = 60)
@@ -38,13 +41,13 @@ public class Empresa implements ITransferObject, IEmpresa {
 	}
 
 	@Override
-	@Transient
-	public IRegistry getRegistry() {
-		return null;
+    @Embedded
+	public Registry getRegistry() {
+		return registry;
 	}
 	@Override
 	public void setRegistry(IRegistry registry) {
-		// TODO Auto-generated method stub
+		this.registry = (Registry) registry;
 	}
 	
 	@Override

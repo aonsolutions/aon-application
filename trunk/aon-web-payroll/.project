@@ -8,6 +8,8 @@
 		<project>aon-core</project>
 		<project>aon-payroll-core</project>
 		<project>aon-ui-resources</project>
+		<project>aon-file-payroll</project>
+		<project>aon-file-format</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

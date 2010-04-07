@@ -8,7 +8,7 @@ public interface ITipoBonificacion extends ITransferObject{
 	Integer getId();
 	void setId(Integer id);
 	
-	String getDescription();
-	void setDescription(String description);
+	String getDescripcion();
+	void setDescripcion(String description);
 
 }

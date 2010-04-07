@@ -27,6 +27,7 @@ import com.code.aon.ui.form.IDataModelDataProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AonPayroll;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IBonificacion;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPersona;
@@ -38,6 +39,9 @@ import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
+import com.esferalia.aon.payroll.core.nomina.INominaDAO;
+import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
+import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 
 public class ParteITWizard implements Serializable, IDataModelDataProvider,ICriteriaProvider {
@@ -46,6 +50,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	
 	private IEmpleadoDAO empleadoDAO;
 	private IParteITDAO parteITDAO;
+	private INominaDAO nominaDAO;
 	private EmpleadoParams params;
 	private DataModel empleadoModel;
 	private IPersona persona;
@@ -59,7 +64,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 	private TipoOperacionIT operacion;
 	private boolean recaidaAnterior;
 	private boolean bonificacionMaternidad;
-	private Integer tipoBonificacion;
+	private TipoBonificacion tipoBonificacion;
+	private IBonificacion bonificacion;
 	private Integer numParteRenovacion;
 	private List<SelectItem> operations;
 	
@@ -91,11 +97,18 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		this.bonificacionMaternidad = bonificacionMaternidad;
 	}
 
-	public Integer getTipoBonificacion() {
+	public TipoBonificacion getTipoBonificacion() {
 		return tipoBonificacion;
 	}
-	public void setTipoBonificacion(Integer tipoBonificacion) {
+	public void setTipoBonificacion(TipoBonificacion tipoBonificacion) {
 		this.tipoBonificacion = tipoBonificacion;
+	}
+
+	public IBonificacion getBonificacion() {
+		return bonificacion;
+	}
+	public void setBonificacion(IBonificacion bonificacion) {
+		this.bonificacion = bonificacion;
 	}
 
 	public IParteIT getParteIT() {
@@ -117,6 +130,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		return parteITDAO;
 	}
 
+	public INominaDAO getNominaDAO() {
+		if (nominaDAO == null) {
+			nominaDAO = NominaDAOFactory.getInstance().getNominaDAO();
+		}
+		return nominaDAO;
+	}
+	
 	public EmpleadoParams getParams() {
 		if (params == null) {
 			params = new EmpleadoParams();
@@ -329,6 +349,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 				throw new AbortProcessingException(errorMsg);
 			}
 			getParteITDAO().calculate(getParteIT());
+			setBonificacion( getParteITDAO().initializeBonificacion(getParteIT(), getTipoBonificacion()));
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -349,6 +370,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 					getParteITDAO().accept( getParteConfirmacionIT() );
 				} else {
 					getParteITDAO().accept( getParteIT() );
+					if ( isAltaMaternidad() ) {
+						getNominaDAO().accept(getBonificacion());
+					}
 				}
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
@@ -567,7 +591,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,ICrit
 		return getOperacion() == TipoOperacionIT.CONFIRMACION;
 	}
 	public boolean isAltaMaternidad() {
-		return getOperacion() == TipoOperacionIT.BAJA && getParteIT().getTipoContingencia() == TipoContingencia.MATERNIDAD;
+		return getOperacion() == TipoOperacionIT.ALTA && getParteIT().getTipoContingencia() == TipoContingencia.MATERNIDAD;
 	}
 	
 	private void completeComfirmationDate(){
