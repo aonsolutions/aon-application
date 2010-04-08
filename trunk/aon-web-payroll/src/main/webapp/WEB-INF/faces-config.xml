@@ -9,7 +9,8 @@
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
-		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
+		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
+		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>  
 		<resource-bundle>
 			<base-name>com.esferalia.aon.web.payroll.i18n.messages</base-name>
 			<var>appBundle</var>
@@ -71,6 +72,10 @@
 			<from-outcome>menu_procesos</from-outcome>
 			<to-view-id>/facelet/menu/procesos.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_config</from-outcome>
+			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
+		</navigation-case>		
 	</navigation-rule>
 
 </faces-config>

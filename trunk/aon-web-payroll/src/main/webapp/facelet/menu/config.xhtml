@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="configMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">
+		
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+						<c:if test="#{aonRole.admin}">
+							<h:panelGrid styleClass="aon-width-all"
+								headerClass="aon-icon-security aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_security}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="actionDenied" action="actionDenied"
+											actionListener="#{actionDenied.onInit}"
+											value="#{auditBundle.audit_option_denied_module}" />
+									</aon:div>
+								</aon:div>
+							</h:panelGrid>
+						</c:if>
+						
+					</h:panelGrid>
+				</aon:componentGroup>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

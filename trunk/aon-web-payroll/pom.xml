@@ -50,6 +50,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.audit</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>				
+		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.payroll.nominasta</artifactId>
 			<version>${pom.version}</version>

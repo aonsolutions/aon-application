@@ -13,35 +13,42 @@
 		<aon:form id="procesosMenu">
 
 			<aon:div styleClass="aon-scroll-area">
-
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
-
-					<h:panelGrid styleClass="aon-width-all"
-						headerClass="aon-icon-config aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_procesos}" />
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="parteITWizard" 
-									action="parteITWizard_step0"
-									actionListener="#{parteITWizard.onStart}"
-									value="#{payrollBundle.parteIT_module}" />
+			
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{actionDenied.renderedCommand}">
+			
+					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+	
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-icon-config aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_procesos}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="parteITWizard" 
+										action="parteITWizard_step0"
+										actionListener="#{parteITWizard.onStart}"
+										value="#{payrollBundle.parteIT_module}" />
+								</aon:div>
 							</aon:div>
-						</aon:div>
-						
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="remesaITWizard" 
-									action="remesaITWizard_step0"
-									actionListener="#{remesaITWizard.onStart}"
-									value="#{payrollBundle.remesaIT_module}" />
+							
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="remesaITWizard" 
+										action="remesaITWizard_step0"
+										actionListener="#{remesaITWizard.onStart}"
+										value="#{payrollBundle.remesaIT_module}" />
+								</aon:div>
 							</aon:div>
-						</aon:div>
-						
+							
+						</h:panelGrid>
 					</h:panelGrid>
-				</h:panelGrid>
+				
+				</aon:componentGroup>
+					
 			</aon:div>
 		</aon:form>
 	</ui:define>
