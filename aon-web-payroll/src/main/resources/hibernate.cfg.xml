@@ -37,6 +37,32 @@
 		<mapping class="com.esferalia.aon.payroll.cotizacion.Bonificacion"/>
 		<mapping class="com.esferalia.aon.payroll.cotizacion.TipoBonificacion"/>
 		
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+		
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>		
+		
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		
+		<mapping resource="orm.xml"/>
+		
 	</session-factory>
 
 </hibernate-configuration>
