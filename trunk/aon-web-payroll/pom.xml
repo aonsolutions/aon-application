@@ -14,7 +14,7 @@
 	<name>AON WEB PAYROLL</name>
 	<properties>
 		<dbVersion>5.0.0</dbVersion>
-	</properties>
+	</properties> 
 	<build>
 		<finalName>aon-payroll</finalName>
 	</build>
