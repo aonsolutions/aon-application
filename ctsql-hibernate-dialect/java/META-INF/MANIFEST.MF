@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Transtools ctsql dialect for hibernate
-Bundle-SymbolicName: com.transtools.ctsql.hibernate.dialect
-Bundle-Version: 2.2.0
-Bundle-Vendor: TTH GmbH.
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
