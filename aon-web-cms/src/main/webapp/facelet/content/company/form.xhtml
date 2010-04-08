@@ -80,8 +80,14 @@
 					<aon:outputLabel for="Company_postal_code" style="width:100px"
 						value="#{appBundle.company_postal_code}" />
 					<aon:inputText id="Company_postal_code"
-						size="7" maxlength="5"
+						size="7" maxlength="16"
 						value="#{company.to.postal_code}" />
+
+					<aon:outputLabel for="Company_coordinates" style="width:100px"
+						value="#{appBundle.company_coordinates}" />
+					<aon:inputText id="Company_coordinates"
+						size="90" maxlength="255"
+						value="#{company.to.coordinates}" />
 
 					<aon:outputLabel for="Company_web" style="width:100px"
 						value="#{appBundle.company_web}" />
@@ -92,7 +98,7 @@
 					<aon:outputLabel for="Company_logo" style="width:100px"
 						value="#{appBundle.company_logo}" />
 					<aon:panelGroup id="thumbnail_preview">
-						<aon:graphicImage 
+						<aon:graphicImage id="Company_logo" 
 							url="#{company.to.logo}.thumbnail" 
 							alt="#{company.to.logo}"/>
 		                <aon:commandLink

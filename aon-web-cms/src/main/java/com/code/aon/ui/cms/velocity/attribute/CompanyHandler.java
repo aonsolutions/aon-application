@@ -18,11 +18,13 @@ public class CompanyHandler {
 	
 	private String province;
 	
-	private Integer postal_code;
+	private String postal_code;
 	
 	private String web;
 	
-	private String logo; 	
+	private String logo;
+	
+	private String coordinates;
 	
 	public CompanyHandler (Company obj) {
 		this.name=obj.getName();
@@ -35,6 +37,7 @@ public class CompanyHandler {
 		this.postal_code=obj.getPostal_code();
 		this.web=obj.getWeb();
 		this.logo=obj.getLogo(); 	
+		this.coordinates=obj.getCoordinates();
 	}
 
 	public String getName() {
@@ -66,7 +69,7 @@ public class CompanyHandler {
 	}
 
 	public String getPostal_code() {
-		return postal_code==null?"":postal_code.toString();
+		return postal_code==null?"":postal_code;
 	}
 
 	public String getWeb() {
@@ -77,6 +80,8 @@ public class CompanyHandler {
 		return logo==null?"":logo;
 	}
 
-	
+	public String getCoordinates() {
+		return coordinates==null?"":coordinates;
+	}
 	
 }
