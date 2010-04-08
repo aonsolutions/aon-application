@@ -39,7 +39,7 @@ public class Company implements ITransferObject {
 	
 	private String province;
 	
-	private Integer postal_code;
+	private String postal_code;
 	
 	private String web;
 	
@@ -123,11 +123,12 @@ public class Company implements ITransferObject {
 		this.province = province;
 	}
 
-	public Integer getPostal_code() {
+	@Column(length=16)
+	public String getPostal_code() {
 		return postal_code;
 	}
 
-	public void setPostal_code(Integer postal_code) {
+	public void setPostal_code(String postal_code) {
 		this.postal_code = postal_code;
 	}
 
