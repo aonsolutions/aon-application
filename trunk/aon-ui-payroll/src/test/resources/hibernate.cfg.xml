@@ -29,7 +29,6 @@
 		<mapping class="com.esferalia.aon.payroll.cotizacion.Bonificacion"/>
 		<mapping class="com.esferalia.aon.payroll.cotizacion.TipoBonificacion"/>
 		
-		
 	</session-factory>
 
 </hibernate-configuration>

@@ -52,7 +52,7 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 			NOMBRE_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME);
 			APEL_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME);
 			APEL2_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME);
-			EMPR_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_EMPRESA_NAME);
+			EMPR_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME);
 			FEC_INI_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_INICIO);
 			FEC_FIN_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN);
 		} catch (ManagerBeanException e) {

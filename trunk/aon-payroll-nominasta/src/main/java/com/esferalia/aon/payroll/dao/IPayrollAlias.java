@@ -248,16 +248,16 @@ public interface IPayrollAlias {
 	String  EMPLEADO_ACTIVIDAD_NAME = EMPLEADO_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Empleado_empresa_cdg
-	* Hibernate value: Empleado.empresa.cdg
+	* Alias value: Empleado_actividad_empresa_cdg
+	* Hibernate value: Empleado.actividad.empresa.cdg
 	*/
-	String  EMPLEADO_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[7];
+	String  EMPLEADO_ACTIVIDAD_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: Empleado_empresa_name
-	* Hibernate value: Empleado.empresa.name
+	* Alias value: Empleado_actividad_empresa_name
+	* Hibernate value: Empleado.actividad.empresa.name
 	*/
-	String  EMPLEADO_EMPRESA_NAME = EMPLEADO_ENTRY.getAliasNames()[8];
+	String  EMPLEADO_ACTIVIDAD_EMPRESA_NAME = EMPLEADO_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Empleado_persona_id
