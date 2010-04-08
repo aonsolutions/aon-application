@@ -665,7 +665,7 @@ CREATE TABLE `company` (
   `address` VARCHAR(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'direccion',
   `locality` VARCHAR(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'localidad',
   `province` VARCHAR(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'provincia',
-  `postal_code` INTEGER(5) DEFAULT NULL COMMENT 'codigo postal',
+  `postal_code` VARCHAR(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'codigo postal',
   `web` VARCHAR(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'web',
   `logo` VARCHAR(255) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'logotipo',
   `coordinates` VARCHAR(255) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Coordinadas GPS de la Empresa',
