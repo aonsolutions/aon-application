@@ -15,39 +15,88 @@
 		<aon:dataTable id="contratosData"
 			value="#{parteITWizard.empleosModel}" var="to" rows="20"
 			columnClasses="
+						aon-editDataTable-iconColumn,
 						aon-editDataTable-textColumn aon-width-auto, 
 						aon-editDataTable-textColumn aon-width-80,
-						aon-editDataTable-textColumn aon-width-80">
+						aon-editDataTable-textColumn aon-width-80,
+						aon-editDataTable-textColumn aon-width-80,
+						aon-editDataTable-textColumn">
 
 			<aon:rowSelector actionListener="#{parteITWizard.onSelectEmpleado}"
 				immediate="true"
 				reRender="contratosData,partePanel,datosITPanel" />
 
-			<aon:column style="#{to.id == parteITWizard.empleado.id?'background-color: #CAFFCA;':''}">
+			<aon:column>
+				<f:facet name="header">
+					<aon:div layout="none">
+						<aon:commandButton id="selectButton" 
+							actionListener="#{parteITWizard.onSelectAll}"
+							reRender="contratosData"
+							onclick="if (!confirm('Desea marcar #{parteITWizard.empleosModel.rowCount} filas?')) {return false;}"
+							value="&#160;" style="margin-right: 0px; padding-right: 16px;"
+							styleClass="aon-editDataTable-button aon-icon-checkAll aon-vertical-align-top" />
+						<aon:commandButton id="deselectButton" 	
+							actionListener="#{parteITWizard.onDeselectAll}"
+							reRender="contratosData"
+							onclick="if (!confirm('Desea desmarcar #{parteITWizard.empleosModel.rowCount} filas?')) {return false;}"
+							value="&#160;" style="margin-right: 0px; padding-left: 16px;"
+							styleClass="aon-editDataTable-button aon-icon-checkNone aon-vertical-align-top" />
+					</aon:div>
+				</f:facet>
+				<aon:selectBooleanCheckbox id="checkMessage" value="#{to.selected}"
+					style="cursor: default;" styleClass="aon-vertical-align-middle">
+					<a4j:support event="onclick"
+						ajaxSingle="true"
+						reRender="checkMessage"
+						limitToList="true" />
+				</aon:selectBooleanCheckbox>
+
+			</aon:column>
+
+			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
 				</f:facet>
-				<aon:outputText value="#{to.actividad.empresa.name}" />
+				<aon:outputText value="#{to.empleado.actividad.empresa.name}" >
+					<aon:abbreviateConverter maxWidth="4" />
+				</aon:outputText>
 			</aon:column>
 
-			<aon:column style="#{to.id == parteITWizard.empleado.id?'background-color: #CAFFCA;':''}">
+			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_ini}" />
 				</f:facet>
-				<aon:outputText value="#{to.fechaInicio}">
+				<aon:outputText value="#{to.empleado.fechaInicio}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 			</aon:column>
 
-			<aon:column style="#{to.id == parteITWizard.empleado.id?'background-color: #CAFFCA;':''}">
+			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_fin}" />
 				</f:facet>
-				<aon:outputText value="#{to.fechaFin}">
+				<aon:outputText value="#{to.empleado.fechaFin}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
+				</f:facet>
+				<aon:outputText value="#{to.fechaBaja}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_confirmacion}" />
+				</f:facet>
+				<aon:outputText value="#{to.numeroRenovaciones}"/>
 			</aon:column>
 		</aon:dataTable>
 	</aon:panel>
