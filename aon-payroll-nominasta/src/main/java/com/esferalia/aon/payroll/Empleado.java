@@ -36,7 +36,6 @@ public class Empleado implements ITransferObject,IEmpleado {
 	private Date fechaInicio;
 	private Date fechaFin;
 	private Boolean mayor65;
-	//private IEmpresa empresa;
 	private IActividad actividad;
 	private IPersona persona;
 	
