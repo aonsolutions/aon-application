@@ -51,11 +51,25 @@
 							<aon:outputText value="#{to.name}" />
 						</aon:column>
 	
-						<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.company_locality}" />
+							</f:facet>
+							<aon:outputText value="#{to.locality}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-width-100 aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.company_telephone}" />
 							</f:facet>
 							<aon:outputText value="#{to.telephone}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-width-100 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.company_fax}" />
+							</f:facet>
+							<aon:outputText value="#{to.fax}" />
 						</aon:column>
 
 					</ui:define>
