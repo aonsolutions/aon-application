@@ -29,6 +29,8 @@ ALTER TABLE `faq_category` ADD `items_per_page` TINYINT(2) DEFAULT '20' COMMENT 
 
 ALTER TABLE `article_category` ADD `items_per_page` TINYINT(2) DEFAULT '20' COMMENT 'Items que se mostraran por pagina';
 
+ALTER TABLE `company` CHANGE `postal_code` `postal_code` VARCHAR(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'codigo postal';
+
 UPDATE `db_version` SET `version_number` = '2.1.0';
 
 COMMIT;
