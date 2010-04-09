@@ -88,13 +88,15 @@
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
 				</f:facet>
-				<aon:outputText value="#{to.fechaBaja}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-				<aon:outputText
-					rendered="#{to.numeroRenovaciones gt 0}" 
-					value=" [#{to.numeroRenovaciones}]"/>
+				<aon:div styleClass="aon-nowrap">
+					<aon:outputText value="#{to.fechaBaja}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:outputText
+						rendered="#{to.numeroRenovaciones gt 0}" 
+						value=" [#{to.numeroRenovaciones}]"/>
+				</aon:div>
 			</aon:column>
 
 		</aon:dataTable>

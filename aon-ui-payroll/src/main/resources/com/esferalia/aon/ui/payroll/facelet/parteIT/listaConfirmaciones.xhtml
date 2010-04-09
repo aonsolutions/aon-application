@@ -17,17 +17,19 @@
 				aon-editDataTable-iconColumn, 
 				aon-editDataTable-iconColumn">
 
-		<rich:column colspan="4" style="padding-left: 15px;">
-			<aon:outputText value="#{payrollBundle.payroll_renov}: " />
-			<aon:outputText value="#{payrollBundle.payroll_numero}" />
-			<aon:outputText value="#{to.numero}" style="margin-left: 5px;" >
-				<f:convertNumber pattern="00"/>			
-			</aon:outputText>
-			<aon:outputText value="#{payrollBundle.payroll_de_fecha}" style="margin-left: 5px;" />
-			<aon:outputText value="#{to.fecha}" style="margin-left: 5px;">
-				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-			</aon:outputText>
+		<rich:column colspan="4" style="padding-left: 15px;" >
+			<aon:div styleClass="aon-nowrap">
+				<aon:outputText value="#{payrollBundle.payroll_renov}: " />
+				<aon:outputText value="#{payrollBundle.payroll_numero}" />
+				<aon:outputText value="#{to.numero}" style="margin-left: 5px;" >
+					<f:convertNumber pattern="00"/>			
+				</aon:outputText>
+				<aon:outputText value="#{payrollBundle.payroll_de_fecha}" style="margin-left: 5px;" />
+				<aon:outputText value="#{to.fecha}" style="margin-left: 5px;">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:div>
 		</rich:column>>
 
 		<aon:column>
