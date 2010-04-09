@@ -50,8 +50,11 @@ public class AuditSessionFilter implements Filter {
 				manager.configureAudit();
 			}			
 			AuthPrincipal principal = getPrincipal(request);
+			LOGGER.info( "Principal {}", principal );
 			Application application = manager.getApplication(principal);
+			LOGGER.info( "Application {}", application );
 			User user = manager.getUser( principal.getShortName() );
+			LOGGER.info( "User {}", user );
 			if ( application.getAuditLevel() != AuditLevel.NONE ) {
 				Session session = new Session();
 				session.setApplication( application );
@@ -75,10 +78,15 @@ public class AuditSessionFilter implements Filter {
 
 		if ( (servletRequest != null) && (servletRequest instanceof HttpServletRequest) ) {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
-			HttpSession session = request.getSession(false);
+			HttpSession httpSession = request.getSession(false);
 
-			if ( (session != null) && (session.getAttribute(AuditManager.AUDIT_SESSION_PROPERTY) == null) ) {
-				insertLoginAudit(session, request );
+			if ( httpSession != null) {
+				Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+				if ( session == null ) {
+					insertLoginAudit(httpSession, request );
+				} else {
+					LOGGER.info( "Session already exists {}", session );
+				}
 			}
 		}
 		filterChain.doFilter(servletRequest, servletResponse);
