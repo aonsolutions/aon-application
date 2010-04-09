@@ -412,6 +412,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 
 	public void onValidate(ActionEvent event) {
 		try {
+			if(!isAnyEmpleadoSelected()){
+				throw new PayrollException("Debe seleccionar algun contrato.");
+			}
 			int err = getParteITDAO().validate(getParteIT());
 			if (err > 0) {
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -428,6 +431,17 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 			throw new AbortProcessingException(e);
 		}
 	}
+	
+	private Boolean isAnyEmpleadoSelected(){
+		for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
+			getEmpleosModel().setRowIndex(i);
+			ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
+			if(empleado.getSelected()){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public void onFinish(ActionEvent event) {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -440,11 +454,28 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
 				if (getOperacion().equals(TipoOperacionIT.CONFIRMACION)) {
-					getParteITDAO().accept(getParteConfirmacionIT());
+					for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
+						getEmpleosModel().setRowIndex(i);
+						ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
+						if(empleado.getSelected()){
+							setParteITEmpleado(empleado);
+							onChangeEmpleado();
+							getParteConfirmacionIT().setParteIT(getParteIT());
+							getParteITDAO().accept(getParteConfirmacionIT());
+						}
+					}
 				} else {
-					getParteITDAO().accept(getParteIT());
-					if (isAltaMaternidad()) {
-						getNominaDAO().accept(getBonificacion());
+					for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
+						getEmpleosModel().setRowIndex(i);
+						ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
+						if(empleado.getSelected()){
+							setParteITEmpleado(empleado);
+							onChangeEmpleado();
+							getParteITDAO().accept(getParteIT());
+							if (isAltaMaternidad()) {
+								getNominaDAO().accept(getBonificacion());
+							}
+						}
 					}
 				}
 				// FIN operaciones de la transaccion
