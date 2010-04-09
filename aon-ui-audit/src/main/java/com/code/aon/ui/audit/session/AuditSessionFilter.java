@@ -44,16 +44,12 @@ public class AuditSessionFilter implements Filter {
 	}	
 	
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
-		AuditManager manager = AuditManager.getInstance();
 		try {
-			if (! manager.isAuditConfigured() ) {
-				manager.configureAudit();
-			}			
 			AuthPrincipal principal = getPrincipal(request);
 			LOGGER.info( "Principal {}", principal );
-			Application application = manager.getApplication(principal);
+			Application application = AuditManager.getApplication(principal);
 			LOGGER.info( "Application {}", application );
-			User user = manager.getUser( principal.getShortName() );
+			User user = AuditManager.getUser( principal.getShortName() );
 			LOGGER.info( "User {}", user );
 			if ( application.getAuditLevel() != AuditLevel.NONE ) {
 				Session session = new Session();
@@ -63,7 +59,7 @@ public class AuditSessionFilter implements Filter {
 				session.setStartDate( new Date(httpSession.getCreationTime()) );
 				session.setRemoteAddress( request.getRemoteAddr() );
 				session.setRemoteHost( request.getRemoteHost() );
-				manager.insertSession( session );
+				AuditManager.insertSession( session );
 				httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );				
 			}
 		} catch ( Throwable th ) {
