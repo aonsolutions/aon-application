@@ -16,32 +16,33 @@
 			value="#{parteITWizard.empleosModel}" var="to" rows="20"
 			columnClasses="
 						aon-editDataTable-iconColumn,
+						aon-editDataTable-textColumn aon-width-80,
 						aon-editDataTable-textColumn aon-width-auto, 
-						aon-editDataTable-textColumn aon-width-80,
-						aon-editDataTable-textColumn aon-width-80,
-						aon-editDataTable-textColumn aon-width-80,
+						aon-editDataTable-textColumn aon-width-100,
 						aon-editDataTable-textColumn">
 
 			<aon:rowSelector actionListener="#{parteITWizard.onSelectEmpleado}"
 				immediate="true"
 				reRender="contratosData,partePanel,datosITPanel" />
 
-			<aon:column>
+			<aon:column style="#{to == parteITWizard.parteITEmpleado?'background-color: #CAFFCA;':''}">
 				<f:facet name="header">
+<!-- 
 					<aon:div layout="none">
 						<aon:commandButton id="selectButton" 
 							actionListener="#{parteITWizard.onSelectAll}"
-							reRender="contratosData"
+							reRender="contratosData" ajaxSingle="true"
 							onclick="if (!confirm('Desea marcar #{parteITWizard.empleosModel.rowCount} filas?')) {return false;}"
 							value="&#160;" style="margin-right: 0px; padding-right: 16px;"
 							styleClass="aon-editDataTable-button aon-icon-checkAll aon-vertical-align-top" />
 						<aon:commandButton id="deselectButton" 	
 							actionListener="#{parteITWizard.onDeselectAll}"
-							reRender="contratosData"
+							reRender="contratosData" ajaxSingle="true"
 							onclick="if (!confirm('Desea desmarcar #{parteITWizard.empleosModel.rowCount} filas?')) {return false;}"
 							value="&#160;" style="margin-right: 0px; padding-left: 16px;"
 							styleClass="aon-editDataTable-button aon-icon-checkNone aon-vertical-align-top" />
 					</aon:div>
+ -->
 				</f:facet>
 				<aon:selectBooleanCheckbox id="checkMessage" value="#{to.selected}"
 					style="cursor: default;" styleClass="aon-vertical-align-middle">
@@ -53,16 +54,7 @@
 
 			</aon:column>
 
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
-				</f:facet>
-				<aon:outputText value="#{to.empleado.actividad.empresa.name}" >
-					<aon:abbreviateConverter maxWidth="4" />
-				</aon:outputText>
-			</aon:column>
-
-			<aon:column>
+			<aon:column style="#{to == parteITWizard.parteITEmpleado?'background-color: #CAFFCA;':''}">
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_ini}" />
 				</f:facet>
@@ -72,7 +64,16 @@
 				</aon:outputText>
 			</aon:column>
 
-			<aon:column>
+			<aon:column style="#{to == parteITWizard.parteITEmpleado?'background-color: #CAFFCA;':''}">
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.empleado.actividad.empresa.name}" >
+					<aon:abbreviateConverter maxWidth="50" />
+				</aon:outputText>
+			</aon:column>
+<!-- 
+			<aon:column style="#{to == parteITWizard.parteITEmpleado?'background-color: #CAFFCA;':''}">
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_fin}" />
 				</f:facet>
@@ -81,8 +82,9 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 			</aon:column>
-
-			<aon:column>
+ -->
+			<aon:column style="#{to == parteITWizard.parteITEmpleado?'background-color: #CAFFCA;':''}"
+				styleClass="aon-nowrap">
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
 				</f:facet>
@@ -90,14 +92,11 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
+				<aon:outputText
+					rendered="#{to.numeroRenovaciones gt 0}" 
+					value=" [#{to.numeroRenovaciones}]"/>
 			</aon:column>
 
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_confirmacion}" />
-				</f:facet>
-				<aon:outputText value="#{to.numeroRenovaciones}"/>
-			</aon:column>
 		</aon:dataTable>
 	</aon:panel>
 

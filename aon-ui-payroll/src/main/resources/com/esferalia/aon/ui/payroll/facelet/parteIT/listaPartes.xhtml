@@ -27,7 +27,7 @@
 						aon-editDataTable-iconColumn, 
 						aon-editDataTable-iconColumn">
 
-				<aon:column style="#{to.id == parteITWizard.parteIT.id?'background-color: #CAFFCA;':''}">
+				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
 					</f:facet>
@@ -37,7 +37,7 @@
 					</aon:outputText>
 				</aon:column>
 
-				<aon:column style="#{to.id == parteITWizard.parteIT.id?'background-color: #CAFFCA;':''}">
+				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_fecha_alta}" />
 					</f:facet>
@@ -47,14 +47,14 @@
 					</aon:outputText>
 				</aon:column>
 
-				<aon:column style="#{to.id == parteITWizard.parteIT.id?'background-color: #CAFFCA;':''}">
+				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_tipo_it}" />
 					</f:facet>
 					<aon:outputText value="#{to.tipoContingencia}" />
 				</aon:column>
 
-				<aon:column style="#{to.id == parteITWizard.parteIT.id?'background-color: #CAFFCA;':''}">
+				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_recaida}" />
 					</f:facet>
@@ -64,7 +64,7 @@
 						styleClass="aon-icon-checked" rendered="#{to.recaida}" />
 				</aon:column>
 
-				<aon:column style="#{to.id == parteITWizard.parteIT.id?'background-color: #CAFFCA;':''}">
+				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_procesado}" />
 					</f:facet>
@@ -73,6 +73,8 @@
 					<aon:outputText value="&#160;" style="padding-left: 15px;"
 						styleClass="aon-icon-checked" rendered="#{to.procesada}" />
 				</aon:column>
+				
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/parteIT/listaConfirmaciones.xhtml" />
 			</aon:dataTable>
 		</c:if>
 

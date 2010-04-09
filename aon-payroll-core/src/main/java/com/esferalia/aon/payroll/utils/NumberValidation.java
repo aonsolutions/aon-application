@@ -147,20 +147,24 @@ public class NumberValidation {
 	 */
 	public static final boolean validarMascara(String pDato, String pMask) {
 		boolean valido=false;
-		
 		if(pDato.length() == pMask.length()){
 			for(int i=0;i<pDato.length();i++){
-				switch (pMask.charAt(i)){
-					case '#': 
-						if(pDato.charAt(i)<='9' && pDato.charAt(i)>='0') valido=true;
+				valido=false;
+				if ('#' == pMask.charAt(i)) {
+					if (pDato.charAt(i)<='9' && pDato.charAt(i)>='0') {
+						valido=true;
+					}
+				} else if ('A' == pMask.charAt(i)) {
+					if((pDato.charAt(i)>='A' && pDato.charAt(i)<='Z') || (pDato.charAt(i)>='a' && pDato.charAt(i)<='z')) {
+						valido=true;
+					}
+				} else if ('X' == pMask.charAt(i)) {
+					if((pDato.charAt(i)>='A' && pDato.charAt(i)<='Z') || (pDato.charAt(i)>='a' && pDato.charAt(i)<='z') || (pDato.charAt(i)<='9' && pDato.charAt(i)>='0')) {
+						valido=true;
+					}
+				}
+				if (!valido) {
 					break;
-					case 'A': 
-						if((pDato.charAt(i)>='A' && pDato.charAt(i)<='Z') || (pDato.charAt(i)>='a' && pDato.charAt(i)<='z')) valido=true;
-					break;
-					case 'X': 
-						if((pDato.charAt(i)>='A' && pDato.charAt(i)<='Z') || (pDato.charAt(i)>='a' && pDato.charAt(i)<='z') || (pDato.charAt(i)<='9' && pDato.charAt(i)>='0')) valido=true;
-					break;
-					default: valido=false;
 				}
 			}
 		}
@@ -168,4 +172,7 @@ public class NumberValidation {
 		return valido;
 	}
 
+	public static void main(String[] args) {
+		NumberValidation.validarMascara("111a1F", "#####X");
+	} 
 }
