@@ -30,11 +30,10 @@ public class AuditSessionListener implements HttpSessionListener {
 	}
 
 	private void closeLoginAudit( HttpSession httpSession ) {
-		AuditManager manager = AuditManager.getInstance();
 		try {
 			Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
 			if ( session != null ) {
-				manager.closeLoginAudit(session);	
+				AuditManager.closeLoginAudit(session);	
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error closing login audit", th );

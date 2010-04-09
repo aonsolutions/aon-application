@@ -136,8 +136,7 @@ public class ApplicationOptionController {
 	}
 
 	public Action getAction( String name ) throws ManagerBeanException {
-		AuditManager manager = AuditManager.getInstance();
-		return manager.getAction(name, application);		
+		return AuditManager.getAction(name, application);		
 	}
 	
 	private Document getDocument( String path ) {
@@ -161,7 +160,7 @@ public class ApplicationOptionController {
 		}
 		AuthPrincipal principal = UserUtils.getInstance().getPrincipal();
 		try {
-			this.application = AuditManager.getInstance().getApplication(principal);
+			this.application = AuditManager.getApplication(principal);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error getting application for " + principal, e );
 		}		
