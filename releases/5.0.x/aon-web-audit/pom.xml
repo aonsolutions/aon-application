@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>5.0.4</version>
+		<version>5.0.5</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-audit</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB AUDIT</name>
-	<version>5.0.4</version>
+	<version>5.0.5</version>
 	<description>AON WEB AUDIT</description>
 	<properties>
 		<dbVersion>5.0.0</dbVersion>
