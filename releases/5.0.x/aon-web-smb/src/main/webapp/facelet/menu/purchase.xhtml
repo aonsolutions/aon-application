@@ -42,24 +42,26 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financePayment-purchase"
-											action="finance_search-purchase"
+											action="finance_search"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{financeBundle.finance_payment_module}" />
 									</aon:div>									
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payMethod-purchase" 
-											action="payMethod-purchase" 
+										<aon:commandLink id="payMethod" 
+											action="payMethod" 
 											value="#{configBundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bank-purchase"
-											action="bank-purchase"
+										<aon:commandLink id="bank"
+											action="bank"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>																											
 								</aon:div>
 							</h:panelGrid>
 
-							<ui:include src="/facelet/menu/generalProduct.xhtml" />
+							<ui:include src="/facelet/menu/generalProduct.xhtml" >
+								<ui:param name="category" value="purchase" />
+							</ui:include>
 							
 						</aon:panelGroup>
 
@@ -72,7 +74,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseAccumulate"
-											action="sales_accumulate_search-purchase" 
+											action="sales_accumulate_search" 
 											value="#{statBundle.stat_menu_acumulado2}">
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -81,7 +83,7 @@
 								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseCategoryStats"
-											action="category_stats_search-purchase" 
+											action="category_stats_search" 
 											value="#{statBundle.stat_menu_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -90,7 +92,7 @@
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseSummaryStats"
-											action="summary_stats_search-purchase" 
+											action="summary_stats_search" 
 											value="#{statBundle.stat_menu_summary}"  >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -99,7 +101,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseABCStats"
-											action="abc_stats_search-purchase" 
+											action="abc_stats_search" 
 											value="#{statBundle.stat_abc_supplier}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -108,7 +110,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseABCStatsProduct"
-											action="abc_stats_searchProduct-purchase" 
+											action="abc_stats_searchProduct" 
 											value="#{statBundle.stat_abc_product}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -117,7 +119,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseABCStatsCategory"
-											action="abc_stats_searchCategory-purchase" 
+											action="abc_stats_searchCategory" 
 											value="#{statBundle.stat_abc_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onPurchaseType}"/>
@@ -126,7 +128,9 @@
 								</aon:div>
 							</h:panelGrid>
 							
-							<ui:include src="/facelet/menu/utility.xhtml" />
+							<ui:include src="/facelet/menu/utility.xhtml" >
+								<ui:param name="category" value="purchase" />
+							</ui:include>
 
 						</aon:panelGroup>						
 					</h:panelGrid>

@@ -4,6 +4,7 @@ import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.sun.facelets.FaceletContext;
@@ -13,17 +14,17 @@ public class ComponentGroup {
 	
 	public static final String CURRENT_COMPONENT_GROUP = "com.code.aon.faces.ComponentGroup.current";
 
-	private String componentFamily;
+	private String[] componentFamilies;
 	
 	private MethodExpression method;
 
 	public ComponentGroup(String componentFamily, MethodExpression method ) {
-		this.componentFamily = componentFamily;
+		this.componentFamilies = StringUtils.split(componentFamily, ",");
 		this.method = method;
 	}
 
 	public boolean isAppicable( UIComponent component ) {
-		return StringUtils.startsWith( component.getFamily(), this.componentFamily);
+		return ArrayUtils.contains(this.componentFamilies, component.getFamily());
 	}
 	
 	public void apply( FaceletContext ctx, UIComponent component, UIComponent parent ) {

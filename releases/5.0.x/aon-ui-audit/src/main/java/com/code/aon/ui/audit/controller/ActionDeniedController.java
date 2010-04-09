@@ -167,7 +167,7 @@ public class ActionDeniedController implements IAuditConstants {
 		} else {
 			this.deniedActions = getDeniedActions( (User) event.getNewValue() );
 			this.selected = getOptions( this.deniedActions );
-			this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions() );
+			this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions(true) );
 			this.options.removeAll(this.selected);			
 		}
 	}

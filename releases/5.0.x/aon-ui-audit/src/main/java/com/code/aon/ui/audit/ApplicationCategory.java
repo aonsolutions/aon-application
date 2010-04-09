@@ -1,22 +1,38 @@
 package com.code.aon.ui.audit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.code.aon.ui.util.AonUtil;
 
 
 /**
  * The Class ApplicationCategory.
  */
-public class ApplicationCategory {
+public class ApplicationCategory implements Comparable<ApplicationCategory> {
 	
-	/** The action. */
+	/** The name. */
 	private String name;
+	
+	/** The alias. */
+	private String alias;
 
-	/** The id. */
+	/** The styleClass. */
 	private String styleClass;
+	
+	/** The rendered. */
+	private String rendered;
+	
+	private List<ApplicationOption> options;
 
-	public ApplicationCategory(String name) {
-		super();
+	public ApplicationCategory(String name, String alias) {
+		this.options = new ArrayList<ApplicationOption>();		
 		this.name = name;
+		this.alias = alias;
 	}
 
 	public String getIconClass() {
@@ -38,6 +54,92 @@ public class ApplicationCategory {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getAlias() {
+		return alias;
 	}	
 
+	/**
+	 * Gets the rendered.
+	 * 
+	 * @return the rendered
+	 */
+	public String getRendered() {
+		return rendered;
+	}
+
+	/**
+	 * Sets the rendered.
+	 * 
+	 * @param rendered the new rendered
+	 */
+	public void setRendered(String rendered) {
+		this.rendered = rendered;
+	}	
+
+	/**
+	 * Gets the value of the expression.
+	 * 
+	 * @param expression
+	 *            the expression
+	 * 
+	 * @return the expression value
+	 */
+	public boolean isRendered() {
+		if ( this.rendered != null ) {
+			return (Boolean) AonUtil.getValue(this.rendered);			
+		}
+		return true;
+	}	
+	
+	/**
+	 * Adds the option.
+	 * 
+	 * @param option the option
+	 */
+	public void addOption( ApplicationOption option) {
+		this.options.add(option);
+	}
+	
+	/**
+	 * Gets the options.
+	 * 
+	 * @return the options
+	 */
+	public List<ApplicationOption> getOptions() {
+		return this.options;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) { return false; }
+		if (obj == this) { return true; }
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		ApplicationCategory rhs = (ApplicationCategory) obj;
+		return new EqualsBuilder().append(name, rhs.name).isEquals();		
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
+	@Override
+	public int compareTo(ApplicationCategory o) {
+		return name.compareTo( o.getName() );
+	}
+
+	@Override
+	public String toString() {
+	     return new ToStringBuilder(this).
+	       append("name", name).
+	       append("alias", alias).
+	       append("rendered", rendered).
+	       append("styleClass", styleClass).
+	       toString();
+	}	
+	
 }

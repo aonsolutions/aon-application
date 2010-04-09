@@ -10,7 +10,11 @@
 		<aon:form>
 			<aon:menuBar id="mainMenu">
 				<ui:insert name="beforeMenuContent"/>
-				<ui:insert name="menuContent"/>		
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{selectedMenu.updateCommands}">	
+					<ui:insert name="menuContent"/>
+				</aon:componentGroup>		
 				<ui:insert name="afterMenuContent"/>		
 				<rich:toolBarGroup style="padding-right: 6px;padding-left: 6px"
 					location="right" itemSeparator="line">
@@ -25,16 +29,16 @@
 		                <f:facet name="label"> 
 	                        <aon:graphicImage title="#{bundle.aon_help}"
 	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
-		                </f:facet>						
-						<c:if test="#{webMap != null}">
-							<aon:menuItem id="webMap" action="webMap"
-								value="#{bundle.aon_web_map}" />
-						</c:if>
-						<aon:menuItem id="about"
-							value="#{bundle.aon_about}" />
+		                </f:facet>			
+		                <ui:insert name="beforeHelpMenuContent"/>			
+						<aon:menuItem id="about" reRender="aboutWindowPanel"
+							value="#{bundle.aon_about}" >
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
+						</aon:menuItem>
 					</aon:dropDownMenu>						
 				</rich:toolBarGroup>	 		
 	 		</aon:menuBar>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/about.xhtml" />
 	</c:if>
  </ui:composition>

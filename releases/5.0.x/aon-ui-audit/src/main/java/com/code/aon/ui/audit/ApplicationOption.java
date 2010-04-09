@@ -7,6 +7,9 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.ui.audit.controller.ApplicationOptionController;
+import com.code.aon.ui.util.AonUtil;
+
 /**
  * The Class ApplicationOption.
  */
@@ -15,8 +18,6 @@ public class ApplicationOption {
 	public static final String ID_PATTERN = "(id)";
 	
 	public static final String VALUE_PATTERN = "(value)";
-	
-	public static final String AON_COMMAND_LINK = "aon:commandLink";
 	
 	public static final String AON_MENU_ITEM = "aon:menuItem";
 
@@ -32,6 +33,9 @@ public class ApplicationOption {
 	
 	/** The description. */
 	private String description;
+	
+	/** The rendered. */
+	private String rendered;
 	
 	/** The category. */
 	private ApplicationCategory category;
@@ -91,7 +95,40 @@ public class ApplicationOption {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	/**
+	 * Gets the rendered.
+	 * 
+	 * @return the rendered
+	 */
+	public String getRendered() {
+		return rendered;
+	}
 
+	/**
+	 * Sets the rendered.
+	 * 
+	 * @param rendered the new rendered
+	 */
+	public void setRendered(String rendered) {
+		this.rendered = rendered;
+	}
+
+	/**
+	 * Gets the value of the expression.
+	 * 
+	 * @param expression
+	 *            the expression
+	 * 
+	 * @return the expression value
+	 */
+	public boolean isRendered() {
+		if ( this.rendered != null ) {
+			return (Boolean) AonUtil.getValue(this.rendered);			
+		}
+		return true;
+	}	
+	
 	/**
 	 * Gets the category.
 	 * 
@@ -117,7 +154,7 @@ public class ApplicationOption {
 	}
 
 	public String getMenuItemXml( String prefix ) {
-		return StringUtils.replace(getXml(prefix), AON_COMMAND_LINK, AON_MENU_ITEM);
+		return StringUtils.replace(getXml(prefix), ApplicationOptionController.AON_COMMAND_LINK, AON_MENU_ITEM);
 	}
 	
 	public String getRecentXml( Date date ) {

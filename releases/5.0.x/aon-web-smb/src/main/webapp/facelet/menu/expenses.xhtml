@@ -47,25 +47,26 @@
 											value="#{financeBundle.finance_undeductible_invoice_management_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financePayment-expenses"
-											action="finance_search-expenses"
+										<aon:commandLink id="financePayment"
+											action="finance_search"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{financeBundle.finance_payment_module}" />
 									</aon:div>									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-expenses" 
-											action="payMethod-expenses" 
+											action="payMethod" 
 											value="#{configBundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="bank-expenses"
-											action="bank-expenses"
+											action="bank"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>																											
 								</aon:div>
 							</h:panelGrid>
 						
 							<ui:decorate template="/facelet/menu/general.xhtml" >
+								<ui:param name="category" value="expenses" />
 								<ui:define name="beforeContent">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseItem" 
@@ -76,7 +77,9 @@
 							</ui:decorate>
 						</aon:panelGroup>						
 
-						<ui:include src="/facelet/menu/utility.xhtml" />
+						<ui:include src="/facelet/menu/utility.xhtml" >
+							<ui:param name="category" value="expenses" />
+						</ui:include>
 						
 					</h:panelGrid>
 					

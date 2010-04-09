@@ -90,6 +90,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	@Override
 	protected void onComponentCreated(FaceletContext ctx, UIComponent c,
 			UIComponent parent) {
+		super.onComponentCreated(ctx, c, parent);
 		addConfirmButtonState( ctx, c );		
 		insertInnerTemplate(ctx, c);
 	}

@@ -29,21 +29,19 @@ public class AuditNavigationHandler extends NavigationHandler {
 			AuditManager manager = AuditManager.getInstance();
 			try {
 				Action action = manager.getAction( name, session.getApplication() );
-				if ( isActionExecutionAuditEnabled(httpSession) ) {
+				if ( isActionExecutionAuditEnabled(session) ) {
 					manager.createActionEntry(session, action);
 				}
 			} catch ( Throwable th ) {
 				LOGGER.error( "Error in insert action execution", th );
 			}
+		} else {
+			LOGGER.error( "Not found {}", AuditManager.AUDIT_SESSION_PROPERTY  );
 		}
 	}	
 	
-	private boolean isActionExecutionAuditEnabled( HttpSession httpSession ) {
-		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
-		if ( session != null ) {
-			return session.getApplication().getAuditLevel() == AuditLevel.MODULE;
-		}
-		return false;
+	private boolean isActionExecutionAuditEnabled( Session session ) {
+		return session.getApplication().getAuditLevel() == AuditLevel.MODULE;
 	}
 	
 	@Override

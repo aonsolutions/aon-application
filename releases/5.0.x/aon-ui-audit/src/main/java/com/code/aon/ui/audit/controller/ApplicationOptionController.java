@@ -42,11 +42,19 @@ import com.sun.faces.application.ConfigNavigationCase;
  */
 public class ApplicationOptionController {
 	
+	private static final String CATEGORY_EXPRESSION = "#{category}";
+
+	private static final String MENU_ACTION_PREFFIX = "menu_";
+
 	private static final String ID_ATTRIBUTE = "id";
 	
 	private static final String VALUE_ATTRIBUTE = "value";
 
 	private static final String ACTION_ATTRIBUTE = "action";
+	
+	private static final String RENDERED_ATTRIBUTE = "rendered";
+	
+	private static final String TEST_ATTRIBUTE = "test";
 	
 	private static final String STYLE_CLASS_ATTRIBUTE = "styleClass";
 	
@@ -56,9 +64,13 @@ public class ApplicationOptionController {
 	
 	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
 	
+	public static final String AON_COMMAND_LINK = "aon:commandLink";
+	
 	public static final String UI_INCLUDE = "ui:include";
 	
 	public static final String UI_DECORATE = "ui:decorate";
+	
+	public static final String C_IF = "c:if";
 	
 	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/audit/controller/";
 	
@@ -67,8 +79,6 @@ public class ApplicationOptionController {
 	private ResourceResolver resolver;
 	
 	private Map<String,ApplicationOption> optionMap;
-	
-	private List<ApplicationOption> options;
 	
 	private List<ApplicationCategory> categories;
 	
@@ -103,13 +113,23 @@ public class ApplicationOptionController {
 		return this.optionMap;
 	}
 
-	public List<ApplicationOption> getOptions() {
-		return this.options;
-	}
-
 	public List<ApplicationCategory> getCategories() {
 		return categories;
 	}
+	
+	public List<ApplicationOption> getOptions( boolean allOptions ) {
+		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
+		for( ApplicationCategory category : getCategories() ) {
+			if ( allOptions || category.isRendered() ) {
+				for( ApplicationOption option : category.getOptions() ) {
+					if ( allOptions || option.isRendered() ) {
+						list.add(option);	
+					}
+				}
+			}
+		}
+		return list;
+	}		
 
 	public Application getApplication() {
 		return application;
@@ -133,7 +153,6 @@ public class ApplicationOptionController {
 	}
 	
 	private void init() {
-		this.options = new ArrayList<ApplicationOption>();
 		this.optionMap = new HashMap<String, ApplicationOption>();
 		this.categories = new ArrayList<ApplicationCategory>();
 		Document document = getDocument(MENU_TEMPLATE_PATH);
@@ -162,19 +181,32 @@ public class ApplicationOptionController {
 
 	@SuppressWarnings("unchecked")
 	private void parseMenu( Document document ) {
-		List<Element> list = document.selectNodes("//" + ApplicationOption.AON_COMMAND_LINK );
+		List<Element> list = document.selectNodes("//" + AON_COMMAND_LINK );
 		for ( Element element : list ) {
 			parseMainCommandLink(element);
         }		
 	}
 	
 	private boolean isDuplicatedId( String id ) {
-		for( ApplicationOption option : this.options ) {
-			if ( StringUtils.equals(option.getId(), id) ) {
-				return true;
+		for( ApplicationCategory category : this.categories ) {
+			for( ApplicationOption option : category.getOptions() ) {
+				if ( StringUtils.equals(option.getId(), id) ) {
+					return true;
+				}
 			}
 		}
 		return false;
+	}
+	
+	private String getRendered( Element element ) {
+		Element parent = element.getParent();
+		while ( parent != null ) {
+			if ( C_IF.equals(parent.getQualifiedName()) ) {
+				return parent.attributeValue(TEST_ATTRIBUTE);
+			}
+			parent = parent.getParent();
+		}
+		return null;
 	}
 	
 	private ApplicationOption getApplicationOption( Element element, ApplicationCategory category ) {
@@ -185,9 +217,17 @@ public class ApplicationOptionController {
 			option.setAction(action);
 			String id = element.attributeValue(ID_ATTRIBUTE);
 			if (! StringUtils.isEmpty(id) ) {
+				if ( StringUtils.contains(id, CATEGORY_EXPRESSION) ) {
+					id = StringUtils.replace(id, CATEGORY_EXPRESSION, category.getAlias());
+				}
 				option.setId(id);	
 			} else {
 				LOGGER.warn( "Element without id {}", element );
+			}
+			String rendered = getRendered(element);
+			if (! StringUtils.isEmpty(rendered) ) {
+				option.setRendered(rendered);
+				element.addAttribute(RENDERED_ATTRIBUTE, rendered);
 			}
 			option.setCategory(category);
 			option.setDescription( getStringValue(element.attributeValue(VALUE_ATTRIBUTE)) );
@@ -205,52 +245,53 @@ public class ApplicationOptionController {
 	
 	private void addOption( ApplicationOption option ) {
 		if (! this.optionMap.containsKey(option.getAction()) ) {
-			String id = option.getId();
-			if ( (! StringUtils.isEmpty(id)) && isDuplicatedId(id) ) {
-				LOGGER.error( "Duplicated id {}", id );
-			}			
-			options.add(option);
 			optionMap.put( option.getAction(), option );
 		} else {
 			LOGGER.debug( "Duplicated action for option {}", option );
 		}		
+		String id = option.getId();
+		if ( (! StringUtils.isEmpty(id)) && isDuplicatedId(id) ) {
+			LOGGER.error( "Duplicated id {}", id );
+		}				
+		option.getCategory().addOption(option);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void parseTemplate( Document document, ApplicationCategory category ) {
-		List<Element> list = document.selectNodes("//" + ApplicationOption.AON_COMMAND_LINK );
+		String search = "//" + AON_COMMAND_LINK + " | //" + UI_INCLUDE + " | //" + UI_DECORATE;
+		List<Element> list = document.selectNodes( search );
 		for ( Element element : list ) {
-			ApplicationOption option = getApplicationOption(element, category);
-			if ( option != null ) {
-				addOption(option);
+			if ( AON_COMMAND_LINK.equals(element.getQualifiedName()) ) {
+				ApplicationOption option = getApplicationOption(element, category);
+				if ( option != null ) {
+					addOption(option);
+				}				
+			} else {
+				String viewId = element.attributeValue(SRC_ATTRIBUTE);
+				if ( StringUtils.isEmpty(viewId) ) {
+					viewId = element.attributeValue(TEMPLATE_ATTRIBUTE);
+				}
+				Document template = getDocument(viewId);
+				if ( template != null ) {
+					parseTemplate(template, category);
+				}
 			}
         }	
-		List<Element> includes = document.selectNodes("//" + UI_INCLUDE );
-		for ( Element include : includes ) {
-			String viewId = include.attributeValue(SRC_ATTRIBUTE);
-			Document template = getDocument(viewId);
-			if ( template != null ) {
-				parseTemplate(template, category);
-			}
-		}
-		List<Element> decorates = document.selectNodes("//" + UI_DECORATE);
-		for ( Element decorate : decorates ) {
-			String viewId = decorate.attributeValue(TEMPLATE_ATTRIBUTE);
-			Document template = getDocument(viewId);
-			if ( template != null ) {
-				parseTemplate(template, category);
-			}
-		}
 	}
 	
 	private void parseMainCommandLink( Element element ) {
 		String action = element.attributeValue(ACTION_ATTRIBUTE);
-		if ( StringUtils.startsWith(action, "menu") ) {
+		if ( StringUtils.startsWith(action, MENU_ACTION_PREFFIX) ) {
 			String categoryName = getStringValue(element.attributeValue(VALUE_ATTRIBUTE));
-			ApplicationCategory category = new ApplicationCategory(categoryName);
+			String alias = StringUtils.substringAfter(action, MENU_ACTION_PREFFIX);
+			ApplicationCategory category = new ApplicationCategory(categoryName, alias);
 			String styleClass = element.attributeValue(STYLE_CLASS_ATTRIBUTE);
 			if (! StringUtils.isEmpty(styleClass) ) {
 				category.setStyleClass(styleClass);	
+			}
+			String rendered = getRendered(element);
+			if (! StringUtils.isEmpty(rendered) ) {
+				category.setRendered(rendered);
 			}
 			this.categories.add(category);
 			String viewId = getPath(action);

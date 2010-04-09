@@ -138,7 +138,6 @@ input:focus{
 
 .aon-footer-company-label{
 	font-family:arial narrow, arial, sans;
-	text-transform:uppercase;
 }
 
 /* Layer that contains all the error messages. Use a id with the same name and a forceId if you don´t want them to scroll */
