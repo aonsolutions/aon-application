@@ -56,6 +56,22 @@ public class AonUtil {
 		ValueExpression ve = ef.createValueExpression(elctx,"#{" + name + "}",Object.class);
 		return ve.getValue(elctx);
 	}
+	
+	/**
+	 * Gets the value of the EL expression.
+	 * 
+	 * @param expression
+	 *            the expression
+	 * 
+	 * @return the expression value
+	 */
+	public static Object getValue(String expression) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ELContext elctx = ctx.getELContext();
+		ExpressionFactory ef = ctx.getApplication().getExpressionFactory();
+		ValueExpression ve = ef.createValueExpression(elctx, expression, Object.class);
+		return ve.getValue(elctx);
+	}	
 
 	/**
 	 * Gets the configuration controller.

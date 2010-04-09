@@ -4,14 +4,14 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-#foreach($category in ${categories})
+#foreach($entry in ${categoryMap.entrySet()})
 	<h:panelGrid styleClass="aon-width-all"
-		headerClass="aon-direct-access-panel ${category.iconClass}">		
+		headerClass="aon-direct-access-panel ${entry.key.iconClass}">		
 		<f:facet name="header">
-			<aon:outputText value="${category.name}"/>
+			<aon:outputText value="${entry.key.name}"/>
 		</f:facet>					
 		<aon:div styleClass="aon-direct-access-list">
-			#foreach($option in $categoryMap.get($category.name))		
+			#foreach($option in $entry.value)		
 			<aon:div styleClass="aon-direct-access-list-element">
 				${option.getXml("")}
 			</aon:div>

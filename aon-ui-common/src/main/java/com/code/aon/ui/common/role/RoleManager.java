@@ -1,5 +1,8 @@
 package com.code.aon.ui.common.role;
 
+import javax.el.MethodExpression;
+import javax.faces.component.UICommand;
+import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
@@ -117,4 +120,19 @@ public class RoleManager {
 		return isUserInRole(IAonRole.INVOICE_SIGNER)
 				|| isUserInRole(IAonRole.ADMIN);
 	}
+	
+	/**
+	 * Rendered command.
+	 * 
+	 * @param component the component
+	 * @param parent the parent
+	 */
+	public void renderedCommand( UIComponent component, UIComponent parent ) {
+		if ( component.isRendered() ) {
+			String id = component.getId();
+			if ( id.contains("reset") || id.contains("remove") || id.contains("save") ) {
+				component.setRendered(false);
+			}
+		}
+	}	
 }
