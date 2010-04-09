@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.payroll.core.IEmpleado;
 
-public class EmpleadoExtended {
+public class ParteITEmpleado {
 	
 	private IEmpleado empleado;
 	private Date fechaBaja;

@@ -45,8 +45,7 @@ import com.esferalia.aon.payroll.core.nomina.INominaDAO;
 import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
 import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 
-public class ParteITWizard implements Serializable, IDataModelDataProvider,
-		ICriteriaProvider {
+public class ParteITWizard implements Serializable, IDataModelDataProvider, ICriteriaProvider {
 
 	private static final long serialVersionUID = -6091663393601321263L;
 
@@ -56,13 +55,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	private EmpleadoParams params;
 	private DataModel empleadoModel;
 	private IPersona persona;
-	private IEmpleado empleado;
+	private ParteITEmpleado parteITEmpleado;
 	private DataModel empleosModel;
 	private DataModel partesModel;
 	private DataModel partesConfirmacionModel;
-	private int currentStep;
-	private static final String[] STEPS = { "parteITWizard_step0",
-			"parteITWizard_step1", "parteITWizard_step2", "parteITWizard_step3" };
 	private IParteIT parteIT;
 	private IParteConfirmacionIT parteConfirmacionIT;
 	private TipoOperacionIT operacion;
@@ -71,8 +67,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	private ITipoBonificacion tipoBonificacion;
 	private IBonificacion bonificacion;
 	private Integer numParteRenovacion;
-	private Integer numConfirmaciones;
 	private List<SelectItem> operations;
+
+	private int currentStep;
+	private static final String[] STEPS = { "parteITWizard_step0", "parteITWizard_step1", "parteITWizard_step2", "parteITWizard_step3" };
 
 	public IParteConfirmacionIT getParteConfirmacionIT() {
 		return parteConfirmacionIT;
@@ -88,14 +86,6 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 
 	public void setNumParteRenovacion(Integer numParteRenovacion) {
 		this.numParteRenovacion = numParteRenovacion;
-	}
-
-	public Integer getNumConfirmaciones() {
-		return numConfirmaciones;
-	}
-	
-	public void setNumConfirmaciones(Integer numConfirmaciones) {
-		this.numConfirmaciones = numConfirmaciones;
 	}
 
 	public boolean isRecaidaAnterior() {
@@ -133,7 +123,6 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	public IParteIT getParteIT() {
 		return parteIT;
 	}
-
 	public void setParteIT(IParteIT parteIT) {
 		this.parteIT = parteIT;
 	}
@@ -186,12 +175,12 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 		this.persona = persona;
 	}
 
-	public IEmpleado getEmpleado() {
-		return empleado;
+	public ParteITEmpleado getParteITEmpleado() {
+		return parteITEmpleado;
 	}
 
-	public void setEmpleado(IEmpleado empleado) {
-		this.empleado = empleado;
+	public void setParteITEmpleado(ParteITEmpleado parteITEmpleado) {
+		this.parteITEmpleado = parteITEmpleado;
 	}
 
 	public TipoOperacionIT getOperacion() {
@@ -203,8 +192,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	}
 
 	public String getCias() {
-		return getOperacion() == TipoOperacionIT.BAJA ? getParteIT()
-				.getCiasBaja() : getParteIT().getCiasAlta();
+		return getOperacion() == TipoOperacionIT.BAJA ? getParteIT().getCiasBaja() : getParteIT().getCiasAlta();
 	}
 
 	public void setCias(String cias) {
@@ -221,9 +209,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	}
 
 	public String getNumeroColegiado() {
-		return getOperacion() == TipoOperacionIT.BAJA ? getParteIT()
-				.getNumeroColegiadoBaja() : getParteIT()
-				.getNumeroColegiadoAlta();
+		return getOperacion() == TipoOperacionIT.BAJA ? getParteIT().getNumeroColegiadoBaja() : getParteIT().getNumeroColegiadoAlta();
 	}
 
 	public void setNumeroColegiado(String numeroColegiado) {
@@ -267,20 +253,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 				ep.setFinalizados(getParams().isFinalizados());
 				ep.setPersonaId(Integer.toString(getPersona().getId()));
 				List<IEmpleado> list = getEmpleadoDAO().getEmpleados(ep);
-				List<EmpleadoExtended> extendedList = new ArrayList<EmpleadoExtended>();
-				if (list.size() > 0) {
-					for (IEmpleado e : list) {
-						setEmpleado(e);
-						onChangeEmpleado();
-						EmpleadoExtended ee = new EmpleadoExtended();
-						ee.setEmpleado(getEmpleado());
-						ee.setFechaBaja(getParteIT().getFechaBaja());
-						searchNumeroRenovaciones();
-						ee.setNumeroRenovaciones(getNumConfirmaciones());
-						extendedList.add(ee);
-					}
-				}
-
+				List<ParteITEmpleado> extendedList = transformEmpleadoModel(list);
 				empleosModel = new ListDataModel(extendedList);
 			}
 			return empleosModel;
@@ -288,6 +261,31 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+	}
+
+	private List<ParteITEmpleado> transformEmpleadoModel(List<IEmpleado> list) throws PayrollException {
+		List<ParteITEmpleado> extendedList = new ArrayList<ParteITEmpleado>();
+		if (list.size() > 0) {
+			for (IEmpleado e : list) {
+				ParteITEmpleado pe = new ParteITEmpleado();
+				pe.setEmpleado(e);
+				IParteIT p = getParteITDAO().initialize(e);
+				pe.setFechaBaja(p.getFechaBaja());
+				// En la primera iteración incializamos los selected.
+				if (getParteIT() == null) {
+					setParteIT(p);
+				}
+				pe.setNumeroRenovaciones(getMaxParteconfCode(e));
+				// En la primera iteración incializamos los selected. 
+				if (getParteITEmpleado() == null) {
+					setParteITEmpleado(pe); 
+					onChangeEmpleado();
+				}
+				
+				extendedList.add(pe);				
+			}
+		}
+		return extendedList;
 	}
 
 	private void initializeEmpleadoModel() throws ManagerBeanException {
@@ -304,8 +302,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	public DataModel getPartesModel() {
 		try {
 			if (partesModel == null) {
-				List<IParteIT> list = getParteITDAO().getPartesEmpleado(
-						getEmpleado());
+				IEmpleado emp = getParteITEmpleado().getEmpleado();
+				List<IParteIT> list = getParteITDAO().getPartesEmpleado(emp);
 				partesModel = new ListDataModel(list);
 			}
 			return partesModel;
@@ -323,8 +321,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	public DataModel getPartesConfirmacionModel() {
 		try {
 			if (partesConfirmacionModel == null) {
-				List<IParteConfirmacionIT> list = getParteITDAO()
-						.getPartesConfirmacion(getParteIT());
+				List<IParteConfirmacionIT> list = getParteITDAO().getPartesConfirmacion(getParteIT());
 				partesConfirmacionModel = new ListDataModel(list);
 			}
 			return partesConfirmacionModel;
@@ -359,12 +356,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 		IPersona persona = (IPersona) getEmpleadoModel().getRowData();
 		setPersona(persona);
 		empleosModel = null;
+		setParteITEmpleado(null);
+		setParteIT(null);
 		setCurrentStep(2);
 	}
 
 	public void onSelectEmpleado(ActionEvent event) {
-		IEmpleado empleado = (IEmpleado) getEmpleosModel().getRowData();
-		setEmpleado(empleado);
+		ParteITEmpleado emp = (ParteITEmpleado) getEmpleosModel().getRowData();
+		setParteITEmpleado(emp);
 		onChangeEmpleado();
 	}
 
@@ -372,7 +371,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 		try {
 			partesModel = null;
 			partesConfirmacionModel = null;
-			setParteIT(getParteITDAO().initialize(getEmpleado()));
+			IEmpleado emp = getParteITEmpleado().getEmpleado();
+			setParteIT(getParteITDAO().initialize(emp));
 			refreshOperacion();
 			searchRecaidaAnterior();
 		} catch (PayrollException e) {
@@ -388,7 +388,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 		try {
 			if (isConfirmacion()) {
 				setParteConfirmacionIT(getParteITDAO().initialize(getParteIT()));
-				searchNumeroRenovaciones();
+				getNextNumeroRenovaciones(getParteITEmpleado());
 				getParteConfirmacionIT().setNumero(getNumParteRenovacion());
 				completeComfirmationDate();
 			}
@@ -414,17 +414,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 		try {
 			int err = getParteITDAO().validate(getParteIT());
 			if (err > 0) {
-				Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-						.getLocale();
-				String errorMsg = AonPayroll.getMessage(locale,
-						"aon_payroll_error_" + err);
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+				String errorMsg = AonPayroll.getMessage(locale, "aon_payroll_error_" + err);
 				AonUtil.addErrorMessage(errorMsg);
 				throw new AbortProcessingException(errorMsg);
 			}
 			getParteITDAO().calculate(getParteIT());
 			if (isBonificacionMaternidad()) {
-				setBonificacion(getParteITDAO().initializeBonificacion(
-						getParteIT(), getTipoBonificacion()));
+				setBonificacion(getParteITDAO().initializeBonificacion(getParteIT(), getTipoBonificacion()));
 			}
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -488,11 +485,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ITransferObject> search(int start, int count)
-			throws ManagerBeanException {
+	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		try {
-			List<?> list = getEmpleadoDAO().getDistinctEmpleados(getParams(),
-					start, count);
+			List<?> list = getEmpleadoDAO().getDistinctEmpleados(getParams(), start, count);
 			return (List<ITransferObject>) list;
 		} catch (PayrollException e) {
 			throw new ManagerBeanException(e);
@@ -556,8 +551,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	public void onChangeFechaInicio(ActionEvent event) {
 		try {
 			IContrato contrato = getParteITDAO().getContrato(getParteIT());
-			getParteIT().setProrrateoCotizacion(
-					contrato.getProrrateoCotizacion());
+			getParteIT().setProrrateoCotizacion(contrato.getProrrateoCotizacion());
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -570,19 +564,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 
 	private void searchRecaidaAnterior() {
 		try {
-			List<IParteIT> list = getParteITDAO().getPartesEmpleado(
-					getEmpleado());
+			List<IParteIT> list = getParteITDAO().getPartesEmpleado(getParteITEmpleado().getEmpleado());
 			if (list.size() > 0) {
 				IParteIT ultimoParte = list.get(0);
 
-				if ((getParteIT().getTipoContingencia().equals(
-						TipoContingencia.ENFERMEDAD_COMUN)
-						|| getParteIT().getTipoContingencia().equals(
-								TipoContingencia.ACCIDENTE_LABORAL) || getParteIT()
-						.getTipoContingencia().equals(
-								TipoContingencia.ACCIDENTE_NO_LABORAL))
-						&& (getParteIT().getTipoContingencia()
-								.equals(ultimoParte.getTipoContingencia()))) {
+				if ((getParteIT().getTipoContingencia().equals(TipoContingencia.ENFERMEDAD_COMUN)
+						|| getParteIT().getTipoContingencia().equals(TipoContingencia.ACCIDENTE_LABORAL) || getParteIT().getTipoContingencia()
+						.equals(TipoContingencia.ACCIDENTE_NO_LABORAL))
+						&& (getParteIT().getTipoContingencia().equals(ultimoParte.getTipoContingencia()))) {
 					setRecaidaAnterior(true);
 					getParteIT().setParteITRecaida(ultimoParte);
 				} else {
@@ -600,8 +589,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	public void onChangeRecaida(ActionEvent event) {
 		if (getParteIT().isRecaida()) {
 			try {
-				List<IParteIT> list = getParteITDAO().getPartesEmpleado(
-						getEmpleado());
+				List<IParteIT> list = getParteITDAO().getPartesEmpleado(getParteITEmpleado().getEmpleado());
 				if (list.size() > 0) {
 					IParteIT ultimoParte = list.get(0);
 					getParteIT().setParteITRecaida(ultimoParte);
@@ -618,10 +606,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	public void onChangeBonificacionMaternidad(ActionEvent event) {
 		if (bonificacionMaternidad) {
 			try {
-				List<IParteIT> list = getParteITDAO().getPartesEmpleado(
-						getEmpleado());
-				if (list.size() > 0
-						&& getOperacion().equals(TipoOperacionIT.BAJA)) {
+				List<IParteIT> list = getParteITDAO().getPartesEmpleado(getParteITEmpleado().getEmpleado());
+				if (list.size() > 0 && getOperacion().equals(TipoOperacionIT.BAJA)) {
 					IParteIT ultimoParte = list.get(0);
 					getParteIT().setParteITRecaida(ultimoParte);
 				}
@@ -633,7 +619,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 			getParteIT().setParteITRecaida(null);
 		}
 	}
-	
+
 	public void onSelectAll(ActionEvent event) {
 		processAll(true);
 	}
@@ -645,46 +631,22 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	private void processAll(boolean selected) {
 		for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
 			getEmpleosModel().setRowIndex(i);
-			EmpleadoExtended empleado = (EmpleadoExtended) getEmpleosModel().getRowData();
+			ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
 			empleado.setSelected(selected);
-//			processCheck(parte, selected);
-		}
-	}
-	
-//	public boolean isSelected() {
-//		IParteIT parte = getParteIT();
-////		boolean selected = getChecks().containsKey(parte.getId());
-//		boolean selected = false;
-//		return selected;
-//	}
-
-	private void searchNumeroRenovaciones() throws PayrollException {
-		try {
-			setNumConfirmaciones(maxParteconfCode());
-			setNumParteRenovacion(getNumConfirmaciones()+1);
-		} catch (ManagerBeanException e) {
-			throw new PayrollException(e.getMessage(), e);
 		}
 	}
 
-	private Integer maxParteconfCode() throws ManagerBeanException,
-			PayrollException {
-		List<IParteIT> listaPartes = getParteITDAO().getPartesEmpleado(
-				getEmpleado());
-		IParteIT ultimoParte = listaPartes.get(0);
+	private void getNextNumeroRenovaciones( ParteITEmpleado pe ) throws PayrollException {
+		setNumParteRenovacion(pe.getNumeroRenovaciones() + 1);
+	}
 
-		List<IParteConfirmacionIT> list = getParteITDAO()
-				.getPartesConfirmacion(ultimoParte);
-		if (list.size() > 0) {
-			return list.get(0).getNumero();
-		} else {
-			return 0;
-		}
+	private Integer getMaxParteconfCode(IEmpleado e) throws PayrollException {
+		List<IParteConfirmacionIT> list = getParteITDAO().getPartesConfirmacion(getParteIT());
+		return list.size();
 	}
 
 	public List<SelectItem> getTiposOperacion() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-				.getLocale();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		if (operations == null) {
 			operations = new LinkedList<SelectItem>();
 			String name = TipoOperacionIT.CONFIRMACION.getName(locale);
@@ -710,16 +672,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider,
 	}
 
 	public boolean isAltaMaternidad() {
-		return getOperacion() == TipoOperacionIT.ALTA
-				&& getParteIT().getTipoContingencia() == TipoContingencia.MATERNIDAD;
+		return getOperacion() == TipoOperacionIT.ALTA && getParteIT().getTipoContingencia() == TipoContingencia.MATERNIDAD;
 	}
 
 	private void completeComfirmationDate() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(getParteIT().getFechaBaja());
-		cal
-				.add(Calendar.DAY_OF_YEAR,
-						3 + (((getNumParteRenovacion() - 1) * 7)));
+		cal.add(Calendar.DAY_OF_YEAR, 3 + (((getNumParteRenovacion() - 1) * 7)));
 		getParteConfirmacionIT().setFecha(cal.getTime());
 	}
 
