@@ -12,29 +12,40 @@
 		<f:facet name="header">
 			<aon:outputText value="&#160;" />
 		</f:facet>
-		<aon:outputText value="#{payrollBundle.payroll_baja}" rendered="#{to.fechaAlta == null}"/>
-		<aon:outputText value="#{payrollBundle.payroll_alta}" rendered="#{to.fechaAlta != null}"/>
+		<aon:outputText value="B" rendered="#{!to.parteIT.bajaProcesada}"/>
+		<aon:outputText value="&#160;" />
+		<aon:outputText value="A" rendered="#{!to.parteIT.altaProcesada}"/>
+		<aon:outputText value="&#160;" />
+		<aon:outputText value="C" rendered="#{to.confirmacionIT != null}"/>
+		
 	</aon:column>
 
 	<aon:column>
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_documento}" />
 		</f:facet>
-		<aon:outputText value="#{to.empleado.persona.registry.document.value}" />
+		<aon:outputText value="#{to.parteIT.empleado.persona.registry.document.value}" />
 	</aon:column>
 
 	<aon:column>
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_nombre}" />
 		</f:facet>
-		<aon:outputText value="#{to.empleado.persona.fullName}" />
+		<aon:outputText value="#{to.parteIT.empleado.persona.fullName}" />
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+		</f:facet>
+		<aon:outputText value="#{to.parteIT.empleado.actividad.empresa.name}" />
 	</aon:column>
 
 	<aon:column>
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
 		</f:facet>
-		<aon:outputText value="#{to.fechaBaja}">
+		<aon:outputText value="#{to.parteIT.fechaBaja}">
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
@@ -44,7 +55,7 @@
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_fecha_alta}" />
 		</f:facet>
-		<aon:outputText value="#{to.fechaAlta}">
+		<aon:outputText value="#{to.parteIT.fechaAlta}">
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
@@ -54,7 +65,7 @@
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_tipo_it}" />
 		</f:facet>
-		<aon:outputText value="#{to.tipoIT}" />
+		<aon:outputText value="#{to.parteIT.tipoIT}" />
 	</aon:column>
 
 	<aon:column>
@@ -62,9 +73,9 @@
 			<aon:outputText value="#{payrollBundle.payroll_recaida}" />
 		</f:facet>
 		<aon:outputText value="&#160;" style="padding-left: 15px;"
-			styleClass="aon-icon-check" rendered="#{!to.recaida}" />
+			styleClass="aon-icon-check" rendered="#{!to.parteIT.recaida}" />
 		<aon:outputText value="&#160;" style="padding-left: 15px;"
-			styleClass="aon-icon-checked" rendered="#{to.recaida}" />
+			styleClass="aon-icon-checked" rendered="#{to.parteIT.recaida}" />
 	</aon:column>
 
 </ui:composition>
