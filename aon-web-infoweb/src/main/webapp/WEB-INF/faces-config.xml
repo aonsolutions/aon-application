@@ -91,7 +91,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
-			<to-view-id>/home.jsf</to-view-id> 
+			<to-view-id>/</to-view-id> 
 			<redirect/>
 		</navigation-case>
 	</navigation-rule>
