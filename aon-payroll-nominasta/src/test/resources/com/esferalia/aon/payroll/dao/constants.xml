@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.esferalia.aon.payroll.Empleado" sqlName="empreper">
+		<alias names="id,codccc,fechaFin,fechaInicio,mayor65,actividad_cdg,actividad_name,actividad_empresa_cdg,actividad_empresa_name,persona_id,persona_lastName,persona_name,persona_numSS,persona_registry_document_tipo,persona_registry_document_pais,persona_registry_document_value,persona_surname" />
+		<hibernate names="id,codccc,fechaFin,fechaInicio,mayor65,actividad.cdg,actividad.name,actividad.empresa.cdg,actividad.empresa.name,persona.id,persona.lastName,persona.name,persona.numSS,persona.registry.document.tipo,persona.registry.document.pais,persona.registry.document.value,persona.surname" />
+	</bean>
+
+	<bean class="com.esferalia.aon.payroll.Empresa" sqlName="emprnif">
+		<alias names="id,registry_document_tipo,registry_document_pais,registry_document_value,descripcion" />
+		<hibernate names="id,registry.document.tipo,registry.document.pais,registry.document.value,descripcion" />
+	</bean>
+
+	<bean class="com.esferalia.aon.payroll.ParteConfirmacionIT" sqlName="parteconf">
+		<alias names="id_cdg,id_fechaBaja,id_numero,numeroColegiado,cias,fecha,procesadoBD,parteIT_id_cdg,parteIT_id_fechaBaja,parteIT_empleado_id,parteIT_empleado_actividad_cdg,parteIT_empleado_actividad_name,parteIT_empleado_actividad_empresa_id,parteIT_empleado_actividad_empresa_name,parteIT_empleado_persona_id,parteIT_empleado_persona_registry_document_tipo,parteIT_empleado_persona_registry_document_pais,parteIT_empleado_persona_registry_document_value,parteIT_empleado_persona_name,parteIT_empleado_persona_lastName,parteIT_empleado_persona_surname,parteIT_empleado_persona_numSS" />
+		<hibernate names="id.cdg,id.fechaBaja,id.numero,numeroColegiado,cias,fecha,procesadoBD,parteIT.id_cdg,parteIT.id_fechaBaja,parteIT.empleado.id,parteIT.empleado.actividad.cdg,parteIT.empleado.actividad.name,parteIT.empleado.actividad.empresa.id,parteIT.empleado.actividad.empresa.name,parteIT.empleado.persona.id,parteIT.empleado.persona.registry.document.tipo,parteIT.empleado.persona.registry.document.pais,parteIT.empleado.persona.registry.document.value,parteIT.empleado.persona.name,parteIT.empleado.persona.lastName,parteIT.empleado.persona.surname,parteIT.empleado.persona.numSS" />
+	</bean>
+
+	<bean class="com.esferalia.aon.payroll.ParteIT" sqlName="parteit">
+		<alias names="altaProcesadaBD,bajaProcesadaBD,baseDiariaAccidentesTrabajo,baseDiariaContingenciasComunes,baseReguladoraDiaria,baseRetribucionPeriodoAnterior,ciasAlta,ciasBaja,diasPeriodoAnterior,empleado_id,empleado_actividad_cdg,empleado_actividad_name,empleado_actividad_empresa_id,empleado_actividad_empresa_name,empleado_persona_id,empleado_persona_registry_document_tipo,empleado_persona_registry_document_pais,empleado_persona_registry_document_value,empleado_persona_name,empleado_persona_lastName,empleado_persona_surname,empleado_persona_numSS,fechaAlta,id_cdg,id_fechaBaja,numeroColegiadoAlta,numeroColegiadoBaja,prestacionDiaria60,prestacionDiaria75,procesadaBD,prorrateo,recaidaBD,riesgo,tipoIT" />
+		<hibernate names="altaProcesadaBD,bajaProcesadaBD,baseDiariaAccidentesTrabajo,baseDiariaContingenciasComunes,baseReguladoraDiaria,baseRetribucionPeriodoAnterior,ciasAlta,ciasBaja,diasPeriodoAnterior,empleado.id,empleado.actividad.cdg,empleado.actividad.name,empleado.actividad.empresa.id,empleado.actividad.empresa.name,empleado.persona.id,empleado.persona.registry.document.tipo,empleado.persona.registry.document.pais,empleado.persona.registry.document.value,empleado.persona.name,empleado.persona.lastName,empleado.persona.surname,empleado.persona.numSS,fechaAlta,id.cdg,id.fechaBaja,numeroColegiadoAlta,numeroColegiadoBaja,prestacionDiaria60,prestacionDiaria75,procesadaBD,prorrateo,recaidaBD,riesgo,tipoIT" />
+	</bean>
+
+	<bean class="com.esferalia.aon.payroll.Persona" sqlName="persona">
+		<alias names="id,registry_document_tipo,registry_document_pais,registry_document_value,name,surname,lastName" />
+		<hibernate names="id,registry.document.tipo,registry.document.pais,registry.document.value,name,surname,lastName" />
+	</bean>
+
+</dao>
+
+
+
+
+
