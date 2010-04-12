@@ -14,6 +14,7 @@ import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.commons.CommonsPayrollDAOFactory;
 import com.esferalia.aon.payroll.core.commons.ICommonsPayrollDAO;
 import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
+import com.esferalia.aon.payroll.core.enumeration.CausaAlta;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 
@@ -24,6 +25,7 @@ public class PayrollCollections implements Serializable {
 	private List<SelectItem> tiposContigencia;
 	private List<SelectItem> periodicidades;
 	private List<SelectItem> tiposBonificacion;
+	private List<SelectItem> causasAlta;
 
 	private ICommonsPayrollDAO commonsPayrollDAO;
 
@@ -82,6 +84,21 @@ public class PayrollCollections implements Serializable {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+	}
+	
+	public List<SelectItem> getCausasAlta() {
+		if (causasAlta == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
+			causasAlta = new LinkedList<SelectItem>();
+			CausaAlta[] causas = CausaAlta.values();
+			for (CausaAlta ca : causas) {
+				String name = ca.getName(locale);
+				SelectItem item = new SelectItem(ca, name);
+				causasAlta.add(item);
+			}
+		}
+		return causasAlta;
 	}
 
 }
