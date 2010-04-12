@@ -19,6 +19,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.enumeration.CausaAlta;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
@@ -53,6 +54,7 @@ public class ParteIT implements IParteIT,ITransferObject  {
 	private String procesadaBD;
 	private Boolean riesgo;
 	private IEmpleado empleado;
+	private CausaAlta causaAlta;
 	
 	@EmbeddedId
 	@Override
@@ -400,6 +402,18 @@ public class ParteIT implements IParteIT,ITransferObject  {
 			}
 			getId().setCdg(empleado.getId());
 		}
+	}
+	
+	
+	/*
+	 * Se debe crear el campo en la tabla
+	 */
+	@Transient
+	public CausaAlta getCausaAlta() {
+		return causaAlta;
+	}
+	public void setCausaAlta(CausaAlta causaAlta) {
+		this.causaAlta = causaAlta;
 	}
 
 }
