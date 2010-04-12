@@ -453,24 +453,16 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
-				if (getOperacion().equals(TipoOperacionIT.CONFIRMACION)) {
-					for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
-						getEmpleosModel().setRowIndex(i);
-						ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
-						if(empleado.getSelected()){
-							setParteITEmpleado(empleado);
-							onChangeEmpleado();
+				for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
+					getEmpleosModel().setRowIndex(i);
+					ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
+					if (empleado.getSelected()) {
+						setParteITEmpleado(empleado);
+						onChangeEmpleado();
+						if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
 							getParteConfirmacionIT().setParteIT(getParteIT());
 							getParteITDAO().accept(getParteConfirmacionIT());
-						}
-					}
-				} else {
-					for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
-						getEmpleosModel().setRowIndex(i);
-						ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
-						if(empleado.getSelected()){
-							setParteITEmpleado(empleado);
-							onChangeEmpleado();
+						} else {
 							getParteITDAO().accept(getParteIT());
 							if (isAltaMaternidad()) {
 								getNominaDAO().accept(getBonificacion());
