@@ -1,11 +1,8 @@
 package com.esferalia.aon.payroll.test;
 
-import java.util.List;
-
 import junit.framework.TestCase;
 
 import com.esferalia.aon.payroll.AonPayroll;
-import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
@@ -19,11 +16,7 @@ public class EmpleadoTest extends TestCase{
 			IEmpleadoDAO dao = EmpleadoDAOFactory.getInstance().getEmpleadoDAO();
 			EmpleadoParams params = new EmpleadoParams();
 			params.setEmpresa("*ALAN*");
-			List<IEmpleado> list = dao.getEmpleados(params);
-			System.out.println(list.size());
-			for (IEmpleado empleado: list) {
-				
-			}
+			dao.getEmpleados(params);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			fail(e.getMessage());

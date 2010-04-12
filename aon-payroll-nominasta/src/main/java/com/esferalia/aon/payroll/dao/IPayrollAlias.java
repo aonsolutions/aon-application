@@ -425,58 +425,136 @@ public interface IPayrollAlias {
 	DAOConstantsEntry PARTE_CONFIRMACION_IT_ENTRY = DAOConstants.getDAOConstant(ParteConfirmacionIT.class);
 
 	/** 
-	* Alias value: ParteConfirmacionIT_cias
-	* Hibernate value: ParteConfirmacionIT.cias
-	*/
-	String  PARTE_CONFIRMACION_IT_CIAS = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: ParteConfirmacionIT_fecha
-	* Hibernate value: ParteConfirmacionIT.fecha
-	*/
-	String  PARTE_CONFIRMACION_IT_FECHA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: ParteConfirmacionIT_id_cdg
 	* Hibernate value: ParteConfirmacionIT.id.cdg
 	*/
-	String  PARTE_CONFIRMACION_IT_ID_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[2];
+	String  PARTE_CONFIRMACION_IT_ID_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: ParteConfirmacionIT_id_fechaBaja
 	* Hibernate value: ParteConfirmacionIT.id.fechaBaja
 	*/
-	String  PARTE_CONFIRMACION_IT_ID_FECHA_BAJA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[3];
+	String  PARTE_CONFIRMACION_IT_ID_FECHA_BAJA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ParteConfirmacionIT_id_numero
 	* Hibernate value: ParteConfirmacionIT.id.numero
 	*/
-	String  PARTE_CONFIRMACION_IT_ID_NUMERO = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[4];
+	String  PARTE_CONFIRMACION_IT_ID_NUMERO = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ParteConfirmacionIT_numeroColegiado
 	* Hibernate value: ParteConfirmacionIT.numeroColegiado
 	*/
-	String  PARTE_CONFIRMACION_IT_NUMERO_COLEGIADO = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[5];
+	String  PARTE_CONFIRMACION_IT_NUMERO_COLEGIADO = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: ParteConfirmacionIT_parteIT_id_cdg
-	* Hibernate value: ParteConfirmacionIT.parteIT.id.cdg
+	* Alias value: ParteConfirmacionIT_cias
+	* Hibernate value: ParteConfirmacionIT.cias
 	*/
-	String  PARTE_CONFIRMACION_IT_PARTE_IT_ID_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[6];
+	String  PARTE_CONFIRMACION_IT_CIAS = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: ParteConfirmacionIT_parteIT_id_fechaBaja
-	* Hibernate value: ParteConfirmacionIT.parteIT.id.fechaBaja
+	* Alias value: ParteConfirmacionIT_fecha
+	* Hibernate value: ParteConfirmacionIT.fecha
 	*/
-	String  PARTE_CONFIRMACION_IT_PARTE_IT_ID_FECHA_BAJA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[7];
+	String  PARTE_CONFIRMACION_IT_FECHA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ParteConfirmacionIT_procesadoBD
 	* Hibernate value: ParteConfirmacionIT.procesadoBD
 	*/
-	String  PARTE_CONFIRMACION_IT_PROCESADO_BD = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[8];
+	String  PARTE_CONFIRMACION_IT_PROCESADO_BD = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_id_cdg
+	* Hibernate value: ParteConfirmacionIT.parteIT.id_cdg
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_ID_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_id_fechaBaja
+	* Hibernate value: ParteConfirmacionIT.parteIT.id_fechaBaja
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_ID_FECHA_BAJA = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_id
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.id
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ID = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_actividad_cdg
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.actividad.cdg
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_actividad_name
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.actividad.name
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_NAME = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_actividad_empresa_id
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.actividad.empresa.id
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_ID = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_actividad_empresa_name
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.actividad.empresa.name
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_NAME = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_id
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.id
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_ID = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_registry_document_tipo
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.registry.document.tipo
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_REGISTRY_DOCUMENT_TIPO = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_registry_document_pais
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.registry.document.pais
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_REGISTRY_DOCUMENT_PAIS = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_registry_document_value
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.registry.document.value
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_name
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.name
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_NAME = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_lastName
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.lastName
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_LAST_NAME = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_surname
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.surname
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_SURNAME = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_persona_numSS
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.persona.numSS
+	*/
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_NUM_SS = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[21];
 
 
 
@@ -546,76 +624,148 @@ public interface IPayrollAlias {
 	String  PARTE_IT_EMPLEADO_ID = PARTE_IT_ENTRY.getAliasNames()[9];
 
 	/** 
+	* Alias value: ParteIT_empleado_actividad_cdg
+	* Hibernate value: ParteIT.empleado.actividad.cdg
+	*/
+	String  PARTE_IT_EMPLEADO_ACTIVIDAD_CDG = PARTE_IT_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: ParteIT_empleado_actividad_name
+	* Hibernate value: ParteIT.empleado.actividad.name
+	*/
+	String  PARTE_IT_EMPLEADO_ACTIVIDAD_NAME = PARTE_IT_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: ParteIT_empleado_actividad_empresa_id
+	* Hibernate value: ParteIT.empleado.actividad.empresa.id
+	*/
+	String  PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_ID = PARTE_IT_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: ParteIT_empleado_actividad_empresa_name
+	* Hibernate value: ParteIT.empleado.actividad.empresa.name
+	*/
+	String  PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_NAME = PARTE_IT_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_id
+	* Hibernate value: ParteIT.empleado.persona.id
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_ID = PARTE_IT_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_registry_document_tipo
+	* Hibernate value: ParteIT.empleado.persona.registry.document.tipo
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_REGISTRY_DOCUMENT_TIPO = PARTE_IT_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_registry_document_pais
+	* Hibernate value: ParteIT.empleado.persona.registry.document.pais
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_REGISTRY_DOCUMENT_PAIS = PARTE_IT_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_registry_document_value
+	* Hibernate value: ParteIT.empleado.persona.registry.document.value
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE = PARTE_IT_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_name
+	* Hibernate value: ParteIT.empleado.persona.name
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_NAME = PARTE_IT_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_lastName
+	* Hibernate value: ParteIT.empleado.persona.lastName
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_LAST_NAME = PARTE_IT_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_surname
+	* Hibernate value: ParteIT.empleado.persona.surname
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_SURNAME = PARTE_IT_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: ParteIT_empleado_persona_numSS
+	* Hibernate value: ParteIT.empleado.persona.numSS
+	*/
+	String  PARTE_IT_EMPLEADO_PERSONA_NUM_SS = PARTE_IT_ENTRY.getAliasNames()[21];
+
+	/** 
 	* Alias value: ParteIT_fechaAlta
 	* Hibernate value: ParteIT.fechaAlta
 	*/
-	String  PARTE_IT_FECHA_ALTA = PARTE_IT_ENTRY.getAliasNames()[10];
+	String  PARTE_IT_FECHA_ALTA = PARTE_IT_ENTRY.getAliasNames()[22];
 
 	/** 
 	* Alias value: ParteIT_id_cdg
 	* Hibernate value: ParteIT.id.cdg
 	*/
-	String  PARTE_IT_ID_CDG = PARTE_IT_ENTRY.getAliasNames()[11];
+	String  PARTE_IT_ID_CDG = PARTE_IT_ENTRY.getAliasNames()[23];
 
 	/** 
 	* Alias value: ParteIT_id_fechaBaja
 	* Hibernate value: ParteIT.id.fechaBaja
 	*/
-	String  PARTE_IT_ID_FECHA_BAJA = PARTE_IT_ENTRY.getAliasNames()[12];
+	String  PARTE_IT_ID_FECHA_BAJA = PARTE_IT_ENTRY.getAliasNames()[24];
 
 	/** 
 	* Alias value: ParteIT_numeroColegiadoAlta
 	* Hibernate value: ParteIT.numeroColegiadoAlta
 	*/
-	String  PARTE_IT_NUMERO_COLEGIADO_ALTA = PARTE_IT_ENTRY.getAliasNames()[13];
+	String  PARTE_IT_NUMERO_COLEGIADO_ALTA = PARTE_IT_ENTRY.getAliasNames()[25];
 
 	/** 
 	* Alias value: ParteIT_numeroColegiadoBaja
 	* Hibernate value: ParteIT.numeroColegiadoBaja
 	*/
-	String  PARTE_IT_NUMERO_COLEGIADO_BAJA = PARTE_IT_ENTRY.getAliasNames()[14];
+	String  PARTE_IT_NUMERO_COLEGIADO_BAJA = PARTE_IT_ENTRY.getAliasNames()[26];
 
 	/** 
 	* Alias value: ParteIT_prestacionDiaria60
 	* Hibernate value: ParteIT.prestacionDiaria60
 	*/
-	String  PARTE_IT_PRESTACION_DIARIA60 = PARTE_IT_ENTRY.getAliasNames()[15];
+	String  PARTE_IT_PRESTACION_DIARIA60 = PARTE_IT_ENTRY.getAliasNames()[27];
 
 	/** 
 	* Alias value: ParteIT_prestacionDiaria75
 	* Hibernate value: ParteIT.prestacionDiaria75
 	*/
-	String  PARTE_IT_PRESTACION_DIARIA75 = PARTE_IT_ENTRY.getAliasNames()[16];
+	String  PARTE_IT_PRESTACION_DIARIA75 = PARTE_IT_ENTRY.getAliasNames()[28];
 
 	/** 
 	* Alias value: ParteIT_procesadaBD
 	* Hibernate value: ParteIT.procesadaBD
 	*/
-	String  PARTE_IT_PROCESADA_BD = PARTE_IT_ENTRY.getAliasNames()[17];
+	String  PARTE_IT_PROCESADA_BD = PARTE_IT_ENTRY.getAliasNames()[29];
 
 	/** 
 	* Alias value: ParteIT_prorrateo
 	* Hibernate value: ParteIT.prorrateo
 	*/
-	String  PARTE_IT_PRORRATEO = PARTE_IT_ENTRY.getAliasNames()[18];
+	String  PARTE_IT_PRORRATEO = PARTE_IT_ENTRY.getAliasNames()[30];
 
 	/** 
 	* Alias value: ParteIT_recaidaBD
 	* Hibernate value: ParteIT.recaidaBD
 	*/
-	String  PARTE_IT_RECAIDA_BD = PARTE_IT_ENTRY.getAliasNames()[19];
+	String  PARTE_IT_RECAIDA_BD = PARTE_IT_ENTRY.getAliasNames()[31];
 
 	/** 
 	* Alias value: ParteIT_riesgo
 	* Hibernate value: ParteIT.riesgo
 	*/
-	String  PARTE_IT_RIESGO = PARTE_IT_ENTRY.getAliasNames()[20];
+	String  PARTE_IT_RIESGO = PARTE_IT_ENTRY.getAliasNames()[32];
 
 	/** 
 	* Alias value: ParteIT_tipoIT
 	* Hibernate value: ParteIT.tipoIT
 	*/
-	String  PARTE_IT_TIPO_IT = PARTE_IT_ENTRY.getAliasNames()[21];
+	String  PARTE_IT_TIPO_IT = PARTE_IT_ENTRY.getAliasNames()[33];
 
 
 

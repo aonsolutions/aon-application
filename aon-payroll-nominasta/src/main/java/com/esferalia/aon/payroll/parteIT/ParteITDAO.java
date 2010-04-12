@@ -45,6 +45,12 @@ public class ParteITDAO implements IParteITDAO {
 	private static String FEC_INI_ALIAS;
 	private static String BAJ_PROC_ALIAS;
 	private static String ALT_PROC_ALIAS;
+	private static String EMPRESA_CDG_ALIAS;
+	private static String PERSONA_CDG_ALIAS;
+	private static String CONF_PROC_ALIAS;
+	private static String CONF_FEC_ALIAS;
+	private static String CONF_EMPRESA_CDG_ALIAS;
+	private static String CONF_PERSONA_CDG_ALIAS;
 
 	static {
 		ParteITDAOFactory.register(new ParteITDAO());
@@ -56,21 +62,31 @@ public class ParteITDAO implements IParteITDAO {
 			IManagerBean parteITBean = BeanManager.getManagerBean(ParteIT.class);
 			EMP_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_EMPLEADO_ID);
 			FEC_INI_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_ID_FECHA_BAJA);
-			ALT_PROC_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_BAJA_PROCESADA_BD);
-			BAJ_PROC_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_ALTA_PROCESADA_BD);
+			BAJ_PROC_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_BAJA_PROCESADA_BD);
+			ALT_PROC_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_ALTA_PROCESADA_BD);
+			EMPRESA_CDG_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_ID);
+			PERSONA_CDG_ALIAS = parteITBean.getFieldName(IPayrollAlias.PARTE_IT_EMPLEADO_PERSONA_ID);
+			IManagerBean parteConfITBean = BeanManager.getManagerBean(ParteConfirmacionIT.class);
+			CONF_PROC_ALIAS = parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PROCESADO_BD);
+			CONF_FEC_ALIAS = parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_FECHA);
+			CONF_EMPRESA_CDG_ALIAS= parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_ID);
+			CONF_PERSONA_CDG_ALIAS= parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_ID);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
 	}	
 
 	@Override
-	public Criteria getCriteria(ParteITParams params) throws PayrollException {
+	public Criteria getParteITCriteria(ParteITParams params) throws PayrollException {
 		try {
 			Criteria c = new Criteria();
 			if (!StringUtils.isBlank(params.getEmpleadoID())) {
 				c.addExpression(EMP_ALIAS, params.getEmpleadoID());
 			}
 			if (params.isBaja()) {
+				if (!params.isAlta()) {
+					c.addEqualExpression(ALT_PROC_ALIAS, "S");	
+				}
 				c.addEqualExpression(BAJ_PROC_ALIAS, "N");
 			}
 			if (params.isAlta()) {
@@ -79,8 +95,9 @@ public class ParteITDAO implements IParteITDAO {
 				}
 				c.addEqualExpression(ALT_PROC_ALIAS, "N");
 			}
-			//TODO Dar soporte al campo confirmación.
-			c.addOrder(FEC_INI_ALIAS,false);
+			c.addOrder(EMPRESA_CDG_ALIAS);
+			c.addOrder(PERSONA_CDG_ALIAS);
+			c.addOrder(FEC_INI_ALIAS);
 			return c;
 		} catch (ExpressionException e) {
 			throw new PayrollException( e );
@@ -97,7 +114,7 @@ public class ParteITDAO implements IParteITDAO {
 			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
 			ParteITParams p = new ParteITParams();
 			p.setEmpleadoID( Integer.toString(empleado.getId()) );
-			List<?> list = bean.getList( getCriteria(p) );
+			List<?> list = bean.getList( getParteITCriteria(p) );
 			return (List<IParteIT>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException( e );
@@ -328,7 +345,7 @@ public class ParteITDAO implements IParteITDAO {
 	public int getCount(ParteITParams params) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
-			return bean.getCount( getCriteria(params) );
+			return bean.getCount( getParteITCriteria(params) );
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
@@ -339,7 +356,7 @@ public class ParteITDAO implements IParteITDAO {
 	public List<IParteIT> getPartes(ParteITParams params) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
-			List<?> list = bean.getList( getCriteria(params) ); 
+			List<?> list = bean.getList( getParteITCriteria(params) ); 
 			return (List<IParteIT>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
@@ -351,7 +368,7 @@ public class ParteITDAO implements IParteITDAO {
 	public List<IParteIT> getPartes(ParteITParams params, int start, int count) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ParteIT.class);
-			List<?> list = bean.getList( getCriteria(params), start, count ); 
+			List<?> list = bean.getList( getParteITCriteria(params), start, count ); 
 			return (List<IParteIT>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
@@ -378,6 +395,30 @@ public class ParteITDAO implements IParteITDAO {
 		b.setImporte(0.0);
 		b.setTipoBonificacion(tipoBonificacion);
 		return b;
+	}
+
+	@Override
+	public Criteria getParteConfCriteria(ParteITParams params) throws PayrollException {
+		Criteria c = new Criteria();
+		if (params.isConfirmacion()) {
+			c.addEqualExpression(CONF_PROC_ALIAS, "N");
+		}
+		c.addOrder(CONF_EMPRESA_CDG_ALIAS);
+		c.addOrder(CONF_PERSONA_CDG_ALIAS);
+		c.addOrder(CONF_FEC_ALIAS);
+		return c;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IParteConfirmacionIT> getPartesConfirmacion(ParteITParams params) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ParteConfirmacionIT.class);
+			List<?> list = bean.getList( getParteConfCriteria(params) ); 
+			return (List<IParteConfirmacionIT>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
 	}
 }
 

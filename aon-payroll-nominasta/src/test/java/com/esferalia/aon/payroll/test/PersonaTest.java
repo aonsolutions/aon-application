@@ -7,12 +7,7 @@ import junit.framework.TestCase;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.payroll.AonPayroll;
-import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Persona;
-import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
-import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
-import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
 
 
 public class PersonaTest extends TestCase{
