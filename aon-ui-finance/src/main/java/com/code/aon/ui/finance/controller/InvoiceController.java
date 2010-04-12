@@ -24,6 +24,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
@@ -201,7 +202,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			Finance finance = (Finance)iterator.next();
 			financeTotal += finance.getAmount();
 		}
-		return financeTotal;
+		return CommonUtil.round(financeTotal);
 	}
 
 	public String getPayMethod() throws ManagerBeanException {
@@ -292,7 +293,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
-		if (getToInvoiceFinanceTotal() != 0 && getToInvoiceTotalPrice() != getToInvoiceFinanceTotal()) {
+		double invoiceTotal = getToInvoiceTotalPrice();
+		double financeTotal = getToInvoiceFinanceTotal();
+		if (financeTotal != 0 && invoiceTotal != financeTotal) {
 			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
