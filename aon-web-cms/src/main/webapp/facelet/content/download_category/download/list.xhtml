@@ -70,6 +70,13 @@
 								<aon:abbreviateConverter maxWidth="70" />
 							</aon:outputText>														
 						</aon:column>
+						
+						<aon:column styleClass="aon-width-200 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.banner_category}" />
+							</f:facet>
+							<aon:outputText value="#{to.downloadCategory.alias}" />
+						</aon:column>						
 	
 						<aon:column styleClass="aon-width-70 aon-editDataTable-numberColumn">
 							<f:facet name="header">
