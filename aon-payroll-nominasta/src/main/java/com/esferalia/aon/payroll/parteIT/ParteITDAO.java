@@ -97,7 +97,7 @@ public class ParteITDAO implements IParteITDAO {
 			}
 			c.addOrder(EMPRESA_CDG_ALIAS);
 			c.addOrder(PERSONA_CDG_ALIAS);
-			c.addOrder(FEC_INI_ALIAS);
+			c.addOrder(FEC_INI_ALIAS,false);
 			return c;
 		} catch (ExpressionException e) {
 			throw new PayrollException( e );
