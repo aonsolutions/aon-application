@@ -4,11 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -21,23 +18,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.ICriteriaProvider;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.ExtendedPageDataModel;
-import com.code.aon.ui.form.IDataModelDataProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
-public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICriteriaProvider {
+public class RemesaITWizard implements Serializable {
 
 	private static final long serialVersionUID = 7495900117871108096L;
 
@@ -45,7 +38,6 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICr
 	private int currentStep;
 	private static final String[] STEPS = { "remesaITWizard_step0", "remesaITWizard_step1", "remesaITWizard_step2", "remesaITWizard_step3" };
 	private ParteITParams params;
-	private Map<Serializable, IParteIT> checks;
 	private DataModel model;
 	private DataModel selectedModel;
 	private FileOutput fileOutput;
@@ -69,23 +61,39 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICr
 		return fdiWriter;
 	}
 
-	public Map<Serializable, IParteIT> getChecks() {
-		if (checks == null) {
-			setChecks(new HashMap<Serializable, IParteIT>());
-			;
-		}
-		return checks;
-	}
-
-	public void setChecks(Map<Serializable, IParteIT> checks) {
-		this.checks = checks;
-	}
-
 	public DataModel getModel() {
-		if (model == null) {
-			model = new ExtendedPageDataModel(this, this);
+		try {
+			if (model == null) {
+				model = initializeModel();
+			}
+			return model;
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
-		return model;
+	}
+
+	private DataModel initializeModel() throws PayrollException {
+		List<RemesableIT> list = new LinkedList<RemesableIT>();
+		if (getParams().isAlta() || getParams().isBaja()) {
+			List<IParteIT> partes = getParteITDAO().getPartes(getParams());
+			for (IParteIT parteIT : partes) {
+				RemesableIT r = new RemesableIT();
+				r.setParteIT(parteIT);
+				list.add(r);
+			}
+		}
+		if (getParams().isConfirmacion()) {
+			List<IParteConfirmacionIT> confs = getParteITDAO().getPartesConfirmacion(getParams());
+			for (IParteConfirmacionIT conf : confs) {
+				RemesableIT r = new RemesableIT();
+				r.setConfirmacionIT(conf);
+				r.setParteIT(conf.getParteIT());
+				list.add(r);
+			}
+		}
+		// TODO Ordenar las listas.
+		return new ListDataModel(list);
 	}
 
 	public void setModel(DataModel model) {
@@ -155,33 +163,28 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICr
 	// ***************************************************
 	public void onStart(ActionEvent event) {
 		setParams(null);
-		setChecks(null);
 		setModel(null);
 		setSelectedModel(null);
 		setCurrentStep(0);
 	}
 
 	private void onSearch(ActionEvent event) {
-		try {
-			if (!getParams().isAlta() && !getParams().isBaja() && !getParams().isConfirmacion()) {
-				String msg = "Realice alguna selección";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
-			if (model == null) {
-				model = new ExtendedPageDataModel(this, this);
-			}
-			((ExtendedPageDataModel) model).update(0, getPageLimit());
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+		if (!getParams().isAlta() && !getParams().isBaja() && !getParams().isConfirmacion()) {
+			String msg = "Realice alguna selección";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
+		model = null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void onValidate(ActionEvent event) {
-		Collection<IParteIT> c = getChecks().values();
-		List<IParteIT> list = new LinkedList<IParteIT>();
-		list.addAll(c);
+		List<RemesableIT> list = new LinkedList<RemesableIT>();
+		for (RemesableIT remesable : (List<RemesableIT>) getModel().getWrappedData()) {
+			if (remesable.isSelected()) {
+				list.add(remesable);
+			}
+		}
 		setSelectedModel(new ListDataModel(list));
 	}
 
@@ -190,7 +193,7 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICr
 		try {
 			String loggedUser = AonUtil.getRemoteUser();
 			loggedUser = StringUtils.substringBefore(loggedUser, "@");
-			List<IParteIT> list = (List<IParteIT>) getSelectedModel().getWrappedData();
+			List<RemesableIT> list = (List<RemesableIT>) getSelectedModel().getWrappedData();
 			setFileOutput(getFDIWriter().createFDI(list, loggedUser));
 			if (getFileOutput() != null) {
 				if (getFileOutput().getErrors().size() > 0) {
@@ -251,44 +254,9 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICr
 	private void processAll(boolean selected) {
 		for (int i = 0; i < getModel().getRowCount(); i++) {
 			getModel().setRowIndex(i);
-			IParteIT parte = (IParteIT) getModel().getRowData();
-			processCheck(parte, selected);
+			RemesableIT r = (RemesableIT) getModel().getRowData();
+			r.setSelected(selected);
 		}
-	}
-
-	public boolean isSelected() {
-		IParteIT parte = getParteIT();
-		boolean selected = getChecks().containsKey(parte.getId());
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		IParteIT parte = getParteIT();
-		processCheck(parte, selected);
-	}
-
-	private void processCheck(IParteIT parte, boolean selected) {
-		if (selected) {
-			check(parte);
-		} else {
-			uncheck(parte);
-		}
-	}
-
-	private void uncheck(IParteIT parte) {
-		if (getChecks().containsKey(parte.getId())) {
-			getChecks().remove(parte.getId());
-		}
-	}
-
-	private void check(IParteIT parte) {
-		if (!getChecks().containsKey(parte.getId())) {
-			getChecks().put(parte.getId(), parte);
-		}
-	}
-
-	private IParteIT getParteIT() {
-		return (IParteIT) getModel().getRowData();
 	}
 
 	public IParteITDAO getParteITDAO() {
@@ -296,40 +264,6 @@ public class RemesaITWizard implements Serializable, IDataModelDataProvider, ICr
 			parteITDAO = ParteITDAOFactory.getInstance().getParteITDAO();
 		}
 		return parteITDAO;
-	}
-
-	@Override
-	public int getPageLimit() {
-		return 20;
-	}
-
-	@Override
-	public int getRowCount() throws ManagerBeanException {
-		try {
-			return getParteITDAO().getCount(getParams());
-		} catch (PayrollException e) {
-			throw new ManagerBeanException(e);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
-		try {
-			List<?> list = getParteITDAO().getPartes(getParams(), start, count);
-			return (List<ITransferObject>) list;
-		} catch (PayrollException e) {
-			throw new ManagerBeanException(e);
-		}
-	}
-
-	@Override
-	public Criteria getCriteria() throws ManagerBeanException {
-		try {
-			return getParteITDAO().getCriteria(getParams());
-		} catch (PayrollException e) {
-			throw new ManagerBeanException(e);
-		}
 	}
 
 }
