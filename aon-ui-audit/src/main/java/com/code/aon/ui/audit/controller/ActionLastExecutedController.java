@@ -35,6 +35,7 @@ public class ActionLastExecutedController extends BasicController implements IAu
 	private List<ActionEntry> getLastExecutedActions( int count ) {
 		try {
 			IManagerBean bean = getManagerBean();
+			LOGGER.info( "Criteria: " + getCriteria() );
 			return (List) bean.getList(getCriteria(), 0, count);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading last executed actions", e);
