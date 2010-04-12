@@ -67,6 +67,15 @@
 				<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
 				<aon:inputText id="cias" value="#{parteITWizard.cias}" />
 
+				<aon:outputLabel for="causaAlta"
+					rendered="#{parteITWizard.alta}"
+					value="#{payrollBundle.payroll_causa_alta}" />
+				<aon:selectOneMenu id="causaAlta"
+					rendered="#{parteITWizard.alta}"
+					value="#{parteITWizard.parteIT.causaAlta}">
+					<f:selectItems value="#{payrollCollections.causasAlta}" />
+				</aon:selectOneMenu>
+				
 				<aon:outputLabel for="tipoit"
 					value="#{payrollBundle.payroll_tipo_it}" />
 				<aon:selectOneMenu id="tipoit"
@@ -125,7 +134,6 @@
 				SUGGESTION BOX
 			-->
 <!--  
-
 			<h:panelGrid columns="2">
 				<h:outputText value="Input with states names suggestions" />
 				<h:panelGrid columns="2" border="0" cellpadding="0" cellspacing="0">
@@ -155,6 +163,7 @@
 				</h:column>
 			</rich:suggestionbox>
 -->
+
 
 
 
