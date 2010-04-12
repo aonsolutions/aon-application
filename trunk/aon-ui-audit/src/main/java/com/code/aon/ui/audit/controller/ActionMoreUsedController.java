@@ -79,6 +79,7 @@ public class ActionMoreUsedController implements IAuditConstants {
 	        if ( maxResults > 0 ) {
 	        	criteria.setMaxResults(maxResults);
 	        }
+	        LOGGER.info( "Criteria: " + criteria );
 	        List<?> actions = criteria.list();
 	        if (! actions.isEmpty() ) {
 	        	Map<String,ApplicationOption> options = getOptionController().getOptionMap();
