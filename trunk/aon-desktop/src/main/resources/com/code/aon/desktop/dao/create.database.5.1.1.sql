@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.0.0
+# Version: 5.1.1
 # Created by: girazu
-# Creation Date: 12/03/2010 10:53
+# Creation Date: 30/03/2010 16:39
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1266,14 +1266,27 @@ CREATE TABLE `commercial_term` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones Comerciales';
 
 #
+# Structure for the `commission_type` table : 
+#
+
+CREATE TABLE `commission_type` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Comision',
+  `rate` double(6,2) default '0.00' COMMENT 'Porcentaje de Comision',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Comisiones';
+
+#
 # Structure for the `seller` table : 
 #
 
 CREATE TABLE `seller` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Agente Comercial',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Agente Comercial',
+  `commission_type` int(4) default NULL COMMENT 'Identificador del Tipo de Comision',
   `status` tinyint(2) default '0' COMMENT 'Estado del Agente Comercial',
   PRIMARY KEY  (`registry`),
+  KEY `IDX_SELLER_COMMISSION_TYPE` (`commission_type`),
+  CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
   CONSTRAINT `seller_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
 
@@ -1315,6 +1328,68 @@ CREATE TABLE `commercial_tracking` (
   CONSTRAINT `commercial_tracking_fk2` FOREIGN KEY (`activity`) REFERENCES `commercial_activity` (`id`),
   CONSTRAINT `commercial_tracking_fk3` FOREIGN KEY (`next_commercial_tracking`) REFERENCES `commercial_tracking` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimientos Comerciales';
+
+#
+# Structure for the `commission` table : 
+#
+
+CREATE TABLE `commission` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Comision',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio de la Comision',
+  `end_date` date default NULL COMMENT 'Fecha de fin de la Comision',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones';
+
+#
+# Structure for the `commission_category` table : 
+#
+
+CREATE TABLE `commission_category` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
+  `category` int(4) NOT NULL COMMENT 'Identificador de la Categoria',
+  `quantity` double default '0' COMMENT 'Cantidad a partir de la cual se aplica la Comision',
+  `rate` double(6,2) default '0.00' COMMENT 'Porcentaje de Comision',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_COMMISSION_CATEGORY_COMMISSION` (`commission`),
+  KEY `IDX_COMMISSION_CATEGORY_CATEGORY` (`category`),
+  CONSTRAINT `FK_COMMISSION_CATEGORY_CATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`),
+  CONSTRAINT `FK_COMMISSION_CATEGORY_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Categoria';
+
+#
+# Structure for the `commission_item` table : 
+#
+
+CREATE TABLE `commission_item` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
+  `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
+  `quantity` double default '0' COMMENT 'Cantidad a partir de la cual se aplica la Comision',
+  `amount` double default '0' COMMENT 'Importe de la Comision',
+  `rate` double(6,2) default '0.00' COMMENT 'Porcentaje de Comision',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_COMMISSION_ITEM_COMMISSION` (`commission`),
+  KEY `IDX_COMMISSION_ITEM_ITEM` (`item`),
+  CONSTRAINT `FK_COMMISSION_ITEM_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
+  CONSTRAINT `FK_COMMISSION_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Articulo';
+
+#
+# Structure for the `commission_type_commission` table : 
+#
+
+CREATE TABLE `commission_type_commission` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `commission_type` int(4) NOT NULL COMMENT 'Identificador del Tipo de Comision',
+  `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` (`commission_type`),
+  KEY `IDX_COMMISSION_TYPE_COMMISSION_COMMISSION` (`commission`),
+  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
+  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Tipo de Comision';
 
 #
 # Structure for the `company` table : 
@@ -1837,6 +1912,7 @@ CREATE TABLE `offer` (
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
   `signed` tinyint(1) default '0' COMMENT 'Indica si el Presupuesto esta firmada electronicamente',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Presupuesto',
+  `third_party` int(4) default NULL COMMENT 'Identificador del Cliente Potencial representado',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `series` (`series`,`number`),
   KEY `target` (`target`),
@@ -1846,6 +1922,8 @@ CREATE TABLE `offer` (
   KEY `tariff` (`tariff`),
   KEY `IDX_OFFER_SCOPE` (`scope`),
   KEY `IDX_OFFER_BANK` (`bank`),
+  KEY `IDX_OFFER_THIRD_PARTY` (`third_party`),
+  CONSTRAINT `FK_OFFER_THIRD_PARTY` FOREIGN KEY (`third_party`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_OFFER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_OFFER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `offer_ibfk_1` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
@@ -2886,6 +2964,7 @@ CREATE TABLE `loan` (
   `fee_amount` double(15,3) default '0.000' COMMENT 'Importe de la cuota',
   `recurrence` int(4) default '0' COMMENT 'Periodicidad',
   `pay_day` int(4) default '1' COMMENT 'Dia de Pago',
+  `status` tinyint(2) default '0' COMMENT 'Estado',
   PRIMARY KEY  (`id`),
   KEY `rbank` (`rbank`),
   CONSTRAINT `loan_fk` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
@@ -3787,6 +3866,36 @@ CREATE TABLE `target_seller` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comerciales relacionado con Cliente Potencial';
 
 #
+# Structure for the `target_third_party` table : 
+#
+
+CREATE TABLE `target_third_party` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
+  `third_party` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial representado',
+  `target_external_code` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Cliente Potencial para el representado',
+  `tariff` int(4) default NULL COMMENT 'Identificador de Tarifa',
+  `pay_method` int(4) default NULL COMMENT 'Identificador de la Forma de Pago',
+  `number_of_pymnts` smallint(2) default '0' COMMENT 'Numero de Vencimientos',
+  `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
+  `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
+  `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
+  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
+  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_TARGET_THIRD_PARTY_TARGET` (`target`),
+  KEY `IDX_TARGET_THIRD_PARTY_THIRD_PARTY` (`third_party`),
+  KEY `IDX_TARGET_THIRD_PARTY_TARIFF` (`tariff`),
+  KEY `IDX_TARGET_THIRD_PARTY_PAY_METHOD` (`pay_method`),
+  KEY `IDX_TARGET_THIRD_PARTY_BANK` (`bank`),
+  CONSTRAINT `FK_TARGET_THIRD_PARTY_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
+  CONSTRAINT `FK_TARGET_THIRD_PARTY_THIRD_PARTY` FOREIGN KEY (`third_party`) REFERENCES `target` (`registry`),
+  CONSTRAINT `FK_TARGET_THIRD_PARTY_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
+  CONSTRAINT `FK_TARGET_THIRD_PARTY_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
+  CONSTRAINT `FK_TARGET_THIRD_PARTY_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion de Clientes potenciales con representados';
+
+#
 # Structure for the `tariff_catalogue` table : 
 #
 
@@ -4043,7 +4152,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.0.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.1.1');
 
 COMMIT;
 

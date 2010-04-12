@@ -392,12 +392,15 @@ public class DesktopController extends BasicController implements IDesktopConsta
 
 	public boolean isHideHeaderContent() {
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		AonUserController userController = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
-		if ( userController.isPasswordExpired() ) {
-			companyController.setHideHeaderContent(true);
-			return true;
+		boolean hide = companyController.isHideHeaderContent();
+		if (! hide) {
+			AonUserController userController = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
+			if ( userController.isPasswordExpired() ) {
+				companyController.setHideHeaderContent(true);
+				return true;
+			}			
 		}
-		return companyController.isHideHeaderContent();
+		return hide;
 	}
 	
 }
