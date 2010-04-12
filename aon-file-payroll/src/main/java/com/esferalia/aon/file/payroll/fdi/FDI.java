@@ -2,12 +2,15 @@ package com.esferalia.aon.file.payroll.fdi;
 
 
 
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
@@ -65,11 +68,15 @@ public class FDI  extends AbstractFileFiller{
 			createLine(ETI,properties);
 			int numEmp = 0;
 			int numTotal = 0;
+			String empresa = null;
 			for (EMP emp: eti.getEmpresas()) {
-				++numEmp;
-				properties.put(EMP , emp);
-				createLine(EMP,properties);
-				++numTotal;
+				if (!ObjectUtils.equals(empresa, emp.getNumero())) {
+					++numEmp;
+					properties.put(EMP , emp);
+					createLine(EMP,properties);
+					++numTotal;
+					empresa = emp.getNumero();
+				}
 				for (TRA tra: emp.getTrabajadores()) {
 					properties.put(TRA , tra);
 					createLine(TRA,properties);
