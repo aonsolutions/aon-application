@@ -413,7 +413,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	public void onValidate(ActionEvent event) {
 		try {
 			if(!isAnyEmpleadoSelected()){
-				throw new PayrollException("Debe seleccionar algun contrato.");
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+				String errorMsg = AonPayroll.getMessage(locale, "aon_payroll_error_no_contract_selected");
+				throw new PayrollException(errorMsg);
 			}
 			int err = getParteITDAO().validate(getParteIT());
 			if (err > 0) {
@@ -457,14 +459,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 					getEmpleosModel().setRowIndex(i);
 					ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
 					if (empleado.getSelected()) {
-						setParteITEmpleado(empleado);
-						onChangeEmpleado();
+						getParteIT().setEmpleado(empleado.getEmpleado());
 						if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
 							getParteConfirmacionIT().setParteIT(getParteIT());
 							getParteITDAO().accept(getParteConfirmacionIT());
 						} else {
 							getParteITDAO().accept(getParteIT());
-							if (isAltaMaternidad()) {
+							if (isAltaMaternidad() && getOperacion() == TipoOperacionIT.ALTA) {
 								getNominaDAO().accept(getBonificacion());
 							}
 						}
