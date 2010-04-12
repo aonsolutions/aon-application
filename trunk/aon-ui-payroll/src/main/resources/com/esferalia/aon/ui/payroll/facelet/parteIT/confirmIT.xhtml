@@ -43,6 +43,11 @@
 
 			<aon:outputText value="#{payrollBundle.payroll_cias}" />
 			<aon:outputText value="#{parteITWizard.cias}"/>
+			
+			<aon:outputLabel rendered="#{parteITWizard.alta}"
+				value="#{payrollBundle.payroll_causa_alta}" />
+			<aon:outputText rendered="#{parteITWizard.alta}"
+				value="#{parteITWizard.parteIT.causaAlta}"/>
 
 			<aon:outputText value="#{payrollBundle.payroll_tipo_it}" />
 			<aon:outputText value="#{parteITWizard.parteIT.tipoContingencia}"/>
