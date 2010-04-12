@@ -13,7 +13,8 @@ public interface IParteITDAO {
 	
 	void configure();
 	
-	Criteria getCriteria(ParteITParams params) throws PayrollException;
+	Criteria getParteITCriteria(ParteITParams params) throws PayrollException;
+	Criteria getParteConfCriteria(ParteITParams params) throws PayrollException;
 
 	int getCount(ParteITParams params) throws PayrollException;;
 	List<IParteIT> getPartes( ParteITParams params) throws PayrollException;
@@ -28,10 +29,12 @@ public interface IParteITDAO {
 	IContrato getContrato(IParteIT parteIT) throws PayrollException;
 
 	// Partes de Confimacion
+	List<IParteConfirmacionIT> getPartesConfirmacion(ParteITParams params) throws PayrollException;
 	List<IParteConfirmacionIT> getPartesConfirmacion(IParteIT parteIT) throws PayrollException;
 	IParteConfirmacionIT initialize(IParteIT  parte) throws PayrollException;
 	void accept(IParteConfirmacionIT confirmacionParteIT) throws PayrollException;;
 
 	IBonificacion initializeBonificacion(IParteIT parteIT, ITipoBonificacion tipoBonificacion);
+
 
 }
