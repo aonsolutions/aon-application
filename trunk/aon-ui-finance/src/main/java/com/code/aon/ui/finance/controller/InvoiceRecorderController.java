@@ -15,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -108,7 +109,9 @@ public class InvoiceRecorderController extends BasicController{
 	}
 	
 	private boolean isRecordable(Invoice invoice) throws ManagerBeanException {
-		return InvoiceStatus.PENDING.equals(invoice.getStatus()) && (getInvoiceTotal(invoice) == getFinanceTotal(invoice));
+		double invoiceTotal = getInvoiceTotal(invoice);
+		double financeTotal = getFinanceTotal(invoice);
+		return InvoiceStatus.PENDING.equals(invoice.getStatus()) && (financeTotal == 0 || invoiceTotal == financeTotal);
 	}
 
 	private double getInvoiceTotal(Invoice invoice) {
@@ -125,7 +128,7 @@ public class InvoiceRecorderController extends BasicController{
 			Finance finance = (Finance)iterator.next();
 			financeTotal += finance.getAmount();
 		}
-		return financeTotal;
+		return CommonUtil.round(financeTotal);
 	}
 
 	public void onRecordSelected(ActionEvent event){
