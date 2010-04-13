@@ -103,7 +103,6 @@
 					<a4j:support event="onclick"
 						actionListener="#{parteITWizard.onChangeRecaida}" />
 				</aon:selectBooleanCheckbox>
-
 			</aon:panelGrid>
 		</aon:panel>
 
@@ -121,49 +120,65 @@
 						value="#{payrollBundle.parteIT_bonificacion_maternidad}" />
 				</aon:div>
 			</f:facet>
+
+<!--  
 			<aon:panelGrid columns="2" style="width: 100%;">
 				<aon:selectOneMenu id="tipoBonificacion"
 					disabled="#{!parteITWizard.bonificacionMaternidad}"
 					value="#{parteITWizard.tipoBonificacion}">
 					<f:selectItems value="#{payrollCollections.tiposBonificacion}" />
 				</aon:selectOneMenu>
-							
 			</aon:panelGrid>
-			
+-->
+
+
 			<!--  
 				SUGGESTION BOX
 			-->
-<!--  
-			<h:panelGrid columns="2">
-				<h:outputText value="Input with states names suggestions" />
-				<h:panelGrid columns="2" border="0" cellpadding="0" cellspacing="0">
-					<h:inputText style="margin:0px;" id="statesinput" />
-					<h:graphicImage value="/images/icons/arrow.png"
-						onclick="#{rich:component('suggestion')}.callSuggestion(true)"
-						alt="" />
-				</h:panelGrid>
-				<h:outputText value="States capitals for suggested capitals" />
-				<h:outputText id="objects" style="font-weight:bold" />
-			</h:panelGrid>
 			
-			<rich:suggestionbox height="200" width="200"
-				id="suggestion"
-				for="statesinput" 
-				var="cap"
-				fetchValue="#{cap.name}" 
-				usingSuggestObjects="true"
-				onobjectchange="printObjectsSelected(#{rich:element('objects')}, #{rich:component('suggestion')});"
-				suggestionAction="#{capitalsBean.autocomplete}" 
-				tokens=",">
-				<h:column>
-					<h:graphicImage value="#{cap.stateFlag}" />
-				</h:column>
-				<h:column>
-					<h:outputText value="#{cap.name}" />
-				</h:column>
-			</rich:suggestionbox>
--->
-
+			<a4j:region>
+				<aon:inputText id="box" value="#{parteITWizard.tipoBonificacion}" disabled="false" >
+					<a4j:support event="onkeyup"
+						onsubmit="if(event.keyCode != 113) return false;"
+						ignoreDupResponses="true"
+						requestDelay="100" 
+						immediate="true" reRender="bonificaPanel"
+						oncomplete="searchFieldForFocus('boxSearchName')">
+					</a4j:support>
+				</aon:inputText>
+			</a4j:region>
+			
+			<a4j:region>
+				<rich:suggestionbox for="box"
+					suggestionAction="#{parteITWizard.autocompleteId}" var="result"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{result.id}" />
+					</aon:column>
+					<aon:column>
+						<aon:outputText value="#{result.descripcion}" />
+					</aon:column>
+					<a4j:support event="onselect" limitToList="true" reRender="bonificaPanel" oncomplete="searchFieldForFocus('box')">
+						<f:setPropertyActionListener target="#{parteITWizard.tipoBonificacion}" value="#{result}" />
+					</a4j:support>
+					<a4j:support event="onclick" limitToList="true" reRender="bonificaPanel" oncomplete="searchFieldForFocus('box')">
+						<f:setPropertyActionListener target="#{parteITWizard.tipoBonificacion}" value="#{result}" />
+					</a4j:support>
+				</rich:suggestionbox>
+			</a4j:region>
+			
+			<a4j:region>
+				<aon:inputText id="boxSearchName" value="#{parteITWizard.tipoBonificacion.descripcion}" size="40">
+					<a4j:support event="onchange" limitToList="true" ajaxSingle="true"
+						ignoreDupResponses="true"
+						requestDelay="100"  />
+				</aon:inputText>
+			</a4j:region>
+			
+		
 
 
 
