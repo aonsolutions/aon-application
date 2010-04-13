@@ -14,9 +14,10 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		<aon:dataTable id="remesaITList" var="to" rows="20" width="auto"
-			value="#{remesaITWizard.selectedModel}"
-			columnClasses="
+		<aon:div id="remesaITListContainer" layout="none">
+			<aon:dataTable id="remesaITList" var="to" rows="20" width="auto"
+				value="#{remesaITWizard.selectedModel}"
+				columnClasses="
 						aon-editDataTable-iconColumn, 
 						aon-editDataTable-textColumn aon-width-50,
 						aon-editDataTable-textColumn aon-width-100,
@@ -27,21 +28,23 @@
 						aon-editDataTable-textColumn aon-width-150, 
 						aon-editDataTable-iconColumn">
 
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:commandButton id="deselectButton" 	
-					actionListener="#{remesaITWizard.onDeselectAll}"
-					reRender="remesaITList"
-					styleClass="aon-editDataTable-button aon-icon-delete" />
-			</aon:column>
-			
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaIT/columns.xhtml" />
-			
-		</aon:dataTable>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:commandButton id="deselectButton"
+						actionListener="#{remesaITWizard.onRemoveSelected}"
+						reRender="remesaITListContainer"
+						styleClass="aon-editDataTable-button aon-icon-delete" />
+				</aon:column>
 
-		<aon:dataScroller2 for="remesaITList" showNote="true" />
+				<ui:include
+					src="/com/esferalia/aon/ui/payroll/facelet/remesaIT/columns.xhtml" />
+
+			</aon:dataTable>
+
+			<aon:dataScroller2 for="remesaITList" showNote="true" />
+		</aon:div>
 	</ui:define>
 
 </ui:composition>

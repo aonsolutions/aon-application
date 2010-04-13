@@ -33,5 +33,15 @@ public class RemesableIT implements Serializable {
 	public void setConfirmacionIT(IParteConfirmacionIT confirmacionIT) {
 		this.confirmacionIT = confirmacionIT;
 	}
-
+	
+	public boolean isBaja() {
+		return (getParteIT().getFechaAlta() == null);
+	}
+	public boolean isAlta() {
+		return (getParteIT().getFechaAlta() != null && getConfirmacionIT() == null);
+	}
+	public boolean isConfirmacion() {
+		return (getParteIT().getFechaAlta() != null && getConfirmacionIT() != null);
+	}
+	
 }

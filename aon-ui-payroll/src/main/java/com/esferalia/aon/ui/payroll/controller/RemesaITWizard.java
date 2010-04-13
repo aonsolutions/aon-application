@@ -74,26 +74,100 @@ public class RemesaITWizard implements Serializable {
 	}
 
 	private DataModel initializeModel() throws PayrollException {
-		List<RemesableIT> list = new LinkedList<RemesableIT>();
+		List<RemesableIT> pList = null;
+		List<RemesableIT> cList = null;
 		if (getParams().isAlta() || getParams().isBaja()) {
+			pList = new LinkedList<RemesableIT>(); 
 			List<IParteIT> partes = getParteITDAO().getPartes(getParams());
 			for (IParteIT parteIT : partes) {
 				RemesableIT r = new RemesableIT();
 				r.setParteIT(parteIT);
-				list.add(r);
+				pList.add(r);
 			}
 		}
 		if (getParams().isConfirmacion()) {
+			cList = new LinkedList<RemesableIT>();
 			List<IParteConfirmacionIT> confs = getParteITDAO().getPartesConfirmacion(getParams());
 			for (IParteConfirmacionIT conf : confs) {
 				RemesableIT r = new RemesableIT();
 				r.setConfirmacionIT(conf);
 				r.setParteIT(conf.getParteIT());
-				list.add(r);
+				cList.add(r);
 			}
 		}
-		// TODO Ordenar las listas.
-		return new ListDataModel(list);
+		List<RemesableIT> orderedList = null;
+		if (cList != null && pList != null) {
+			if (pList.size()==0) {
+				orderedList = cList;
+			} else if (pList.size()==0) {
+				orderedList = pList;
+			} else {
+				orderedList = sortList(pList,cList);	
+			}
+		} else {
+			orderedList = pList;
+			if (pList == null) {
+				orderedList = cList;
+			}
+			if (orderedList == null) {
+				orderedList = new LinkedList<RemesableIT>();
+			}
+		}
+		return new ListDataModel(orderedList);
+	}
+
+	private List<RemesableIT> sortList(List<RemesableIT> pList, List<RemesableIT> cList) {
+		List<RemesableIT> list = new LinkedList<RemesableIT>();
+		int x = 0;
+		int y = 0;
+		while (list.size() < (pList.size()+cList.size())) {
+			RemesableIT a = pList.get(x);
+			RemesableIT b = cList.get(y);
+			int empresaA = a.getParteIT().getEmpleado().getActividad().getEmpresa().getId();
+			int personaA = a.getParteIT().getEmpleado().getPersona().getId();
+			long fechaA = a.getParteIT().getFechaBaja().getTime();
+			int empresaB = b.getParteIT().getEmpleado().getActividad().getEmpresa().getId();
+			int personaB = b.getParteIT().getEmpleado().getPersona().getId();
+			long fechaB = b.getParteIT().getFechaBaja().getTime();
+			boolean addA = false;
+			boolean addB = false;
+			if ( empresaA < empresaB ) {
+				addA = true;
+			} else if ( empresaA > empresaB ) {
+				addB = true;
+			} else {
+				if ( personaA < personaB ) {
+					addA = true;
+				} else if ( personaA > personaB ) {
+					addB = true;
+				} else {
+					if ( fechaA < fechaB ) {
+						addB = true;
+					} else if ( fechaA > fechaB ) {
+						addB = true;
+					} else {
+						addA = true;
+						addB = true;
+					}
+				}
+			}
+			if (addA) {
+				list.add(a);
+				++x;
+			}
+			if (x == pList.size()) {
+				list.addAll(cList.subList(y,cList.size()));
+			} else {
+				if (addB) {
+					list.add(b);
+					++y;
+				}
+				if (y == cList.size()) {
+					list.addAll(pList.subList(x,pList.size()));
+				}
+			}
+		};
+		return list;
 	}
 
 	public void setModel(DataModel model) {
@@ -186,6 +260,14 @@ public class RemesaITWizard implements Serializable {
 			}
 		}
 		setSelectedModel(new ListDataModel(list));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onRemoveSelected(ActionEvent event) {
+		RemesableIT r = (RemesableIT) getSelectedModel().getRowData();
+		r.setSelected(false);
+		List<RemesableIT> list = (List<RemesableIT>) getSelectedModel().getWrappedData();
+		list.remove(r);
 	}
 
 	@SuppressWarnings("unchecked")

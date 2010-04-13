@@ -12,12 +12,18 @@
 		<f:facet name="header">
 			<aon:outputText value="&#160;" />
 		</f:facet>
-		<aon:outputText value="B" rendered="#{!to.parteIT.bajaProcesada}"/>
-		<aon:outputText value="&#160;" />
-		<aon:outputText value="A" rendered="#{!to.parteIT.altaProcesada}"/>
-		<aon:outputText value="&#160;" />
-		<aon:outputText value="C" rendered="#{to.confirmacionIT != null}"/>
-		
+		<aon:outputText value="B" rendered="#{to.baja}"/>
+		<aon:outputText value="A" rendered="#{to.alta}"/>
+		<aon:outputText value="C" rendered="#{to.confirmacion}"/>
+	</aon:column>
+
+	<aon:column style="font-size: 0.8em;" styleClass="aon-nowrap">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+		</f:facet>
+		<aon:outputText value="#{to.parteIT.empleado.actividad.empresa.name}">
+			<aon:abbreviateConverter maxWidth="50" />
+		</aon:outputText>
 	</aon:column>
 
 	<aon:column>
@@ -27,18 +33,11 @@
 		<aon:outputText value="#{to.parteIT.empleado.persona.registry.document.value}" />
 	</aon:column>
 
-	<aon:column>
+	<aon:column style="font-size: 0.8em;" styleClass="aon-nowrap">
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_nombre}" />
 		</f:facet>
 		<aon:outputText value="#{to.parteIT.empleado.persona.fullName}" />
-	</aon:column>
-
-	<aon:column>
-		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_empresa}" />
-		</f:facet>
-		<aon:outputText value="#{to.parteIT.empleado.actividad.empresa.name}" />
 	</aon:column>
 
 	<aon:column>
@@ -62,6 +61,23 @@
 	</aon:column>
 
 	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_numero}" />
+		</f:facet>
+		<aon:outputText value="#{to.confirmacionIT.numero}" />
+	</aon:column>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_fecha_confirmacion}" />
+		</f:facet>
+		<aon:outputText value="#{to.confirmacionIT.fecha}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+
+	<aon:column  styleClass="aon-nowrap">
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_tipo_it}" />
 		</f:facet>
