@@ -438,7 +438,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
 			getEmpleosModel().setRowIndex(i);
 			ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
-			if(empleado.getSelected()){
+			if(empleado.isSelected()){
 				return true;
 			}
 		}
@@ -458,14 +458,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 				for (int i = 0; i < getEmpleosModel().getRowCount(); i++) {
 					getEmpleosModel().setRowIndex(i);
 					ParteITEmpleado empleado = (ParteITEmpleado) getEmpleosModel().getRowData();
-					if (empleado.getSelected()) {
+					if (empleado.isSelected()) {
 						getParteIT().setEmpleado(empleado.getEmpleado());
 						if (getOperacion() == TipoOperacionIT.CONFIRMACION) {
 							getParteConfirmacionIT().setParteIT(getParteIT());
 							getParteITDAO().accept(getParteConfirmacionIT());
 						} else {
 							getParteITDAO().accept(getParteIT());
-							if (isAltaMaternidad() && getOperacion() == TipoOperacionIT.ALTA) {
+							if (isAltaMaternidad()) {
 								getNominaDAO().accept(getBonificacion());
 							}
 						}
