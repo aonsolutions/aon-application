@@ -4,6 +4,7 @@ public class CommonsPayrollDAOFactory {
 
 	private static CommonsPayrollDAOFactory instance;
 	private ICommonsPayrollDAO commonsPayrollDAO;
+	private boolean configured;
 
 	private CommonsPayrollDAOFactory() {
 
@@ -20,14 +21,15 @@ public class CommonsPayrollDAOFactory {
 		if (commonsPayrollDAO == null) {
 			throw new IllegalStateException("No hay un ICommonsPayrollDAO registrado.");
 		}
+		if (! configured ) {
+			commonsPayrollDAO.configure();
+			configured = true;
+		}	
 		return commonsPayrollDAO;
 	}
 
 	public static void register(ICommonsPayrollDAO commonsPayrollDAO) {
-		CommonsPayrollDAOFactory.getInstance().setCommonsPayrollDAO(commonsPayrollDAO);
+		CommonsPayrollDAOFactory.getInstance().commonsPayrollDAO = commonsPayrollDAO;
 	}
 
-	public void setCommonsPayrollDAO(ICommonsPayrollDAO commonsPayrollDAO) {
-		this.commonsPayrollDAO = commonsPayrollDAO;
-	}
 }

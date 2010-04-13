@@ -9,6 +9,7 @@ import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 
 public interface ICommonsPayrollDAO {
 
-	List<ITipoBonificacion> getTiposBonificacion() throws PayrollException;
+	void configure();
+	List<ITipoBonificacion> getTiposBonificacion(String condition) throws PayrollException;
 	IUsuario getUsuarioActivo(String loggedUser) throws PayrollException;
 }
