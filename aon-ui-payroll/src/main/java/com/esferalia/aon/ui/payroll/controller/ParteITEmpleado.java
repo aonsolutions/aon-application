@@ -9,7 +9,7 @@ public class ParteITEmpleado {
 	private IEmpleado empleado;
 	private Date fechaBaja;
 	private Integer numeroRenovaciones;
-	private Boolean selected;
+	private boolean selected;
 
 	public IEmpleado getEmpleado() {
 		return empleado;
@@ -29,10 +29,10 @@ public class ParteITEmpleado {
 	public void setNumeroRenovaciones(Integer numeroRenovaciones) {
 		this.numeroRenovaciones = numeroRenovaciones;
 	}
-	public Boolean getSelected() {
+	public boolean isSelected() {
 		return selected;
 	}
-	public void setSelected(Boolean selected) {
+	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
 	
