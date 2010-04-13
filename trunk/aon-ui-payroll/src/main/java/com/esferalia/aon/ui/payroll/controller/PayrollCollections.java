@@ -72,10 +72,10 @@ public class PayrollCollections implements Serializable {
 			if (tiposBonificacion == null) {
 				tiposBonificacion = new LinkedList<SelectItem>();
 				List<ITipoBonificacion> list = getCommonsPayrollDAO()
-						.getTiposBonificacion();
+						.getTiposBonificacion(null);
 				for (ITipoBonificacion tb : list) {
 					String name = tb.getDescripcion();
-					SelectItem item = new SelectItem(tb, name);
+					SelectItem item = new SelectItem(tb, name, name);
 					tiposBonificacion.add(item);
 				}
 			}
