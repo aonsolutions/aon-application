@@ -3,6 +3,8 @@ package com.code.aon.stat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.code.aon.commercial.enumeration.OfferStatus;
+
 public class StatParams {
 	
 	private Date fromDate;
@@ -14,6 +16,7 @@ public class StatParams {
 	private Integer customer;
 	private Locale locale;
 	private Integer invoiceType;
+	private OfferStatus[] offerStatuses;
 	
 	
 	public Integer getInvoiceType() {
@@ -72,4 +75,12 @@ public class StatParams {
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
+	public OfferStatus[] getOfferStatuses() {
+		return offerStatuses;
+	}
+	public void setOfferStatuses(OfferStatus[] offerStatuses) {
+		this.offerStatuses = offerStatuses;
+	}
+	
+	
 }
