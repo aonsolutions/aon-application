@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -24,7 +23,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.IDataModelDataProvider;
 import com.code.aon.ui.util.AonUtil;
@@ -53,7 +51,6 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 
 	private static final long serialVersionUID = -6091663393601321263L;
 
-	private final static String ASTERISK = "*";
 	private final static String PERCENT = "%";
 	
 	private IEmpleadoDAO empleadoDAO;
@@ -276,6 +273,10 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+	}
+	
+	public ArrayList<?> getEmpleos(){
+		return (ArrayList<?>)empleosModel.getWrappedData();
 	}
 
 	private List<ParteITEmpleado> transformEmpleadoModel(List<IEmpleado> list) throws PayrollException {
