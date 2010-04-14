@@ -147,7 +147,7 @@
 					<aon:column>
 						<aon:outputText value="#{result.descripcion}" />
 					</aon:column>
-					<a4j:support event="onselect" limitToList="true" reRender="bonificaPanel" oncomplete="searchFieldForFocus('tipoBonificacion')">
+					<a4j:support event="onselect" limitToList="true" reRender="bonificaPanel" >
 						<f:setPropertyActionListener target="#{parteITWizard.tipoBonificacion}" value="#{result}" />
 					</a4j:support>
 				</rich:suggestionbox>
@@ -155,4 +155,5 @@
 		
 		</aon:panel>
 	</aon:div>
+	
 </ui:composition>
