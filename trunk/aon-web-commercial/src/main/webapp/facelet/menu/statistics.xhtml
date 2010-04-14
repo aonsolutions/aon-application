@@ -21,23 +21,27 @@
 					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
-						<h:panelGrid styleClass="aon-width-all"
+					 	<h:panelGrid styleClass="aon-width-all"
 							headerClass="aon-icon-statistics aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.menu_statistics}" />
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">							
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Ventas por Categoria y Articulo" />
+									<aon:commandLink id="statCategory" value="#{statBundle.stat_menu_commercial_category}"
+									action="commercial_category_stat_search" actionListener="#{commercialStat.onReset}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Ventas por Zona" />
+									<aon:commandLink id="statZone" value="#{statBundle.stat_menu_commercial_geozone}"
+									action="commercial_geozone_stat_search" actionListener="#{commercialStat.onReset}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Ventas por Agente Comercial" />								
-								</aon:div>
+								 <aon:div  styleClass="aon-direct-access-list-element">
+									<aon:commandLink  id="statSeller" value="#{statBundle.stat_menu_commercial_seller}"
+									action="commercial_seller_stat_search" actionListener="#{commercialStat.onReset}" />								
+								</aon:div>  
 							</aon:div>
-						</h:panelGrid>
+						</h:panelGrid>  
+						
 
 						<h:panelGrid styleClass="aon-width-all"
 							headerClass="aon-icon-task aon-direct-access-panel">
