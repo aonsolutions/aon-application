@@ -28,6 +28,9 @@
 	<variable name="vTotalInvoices" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{numInvoice}]]></variableExpression>
 	</variable>
+	<variable name="vProm" class="java.lang.Double" calculation="Average">
+		<variableExpression><![CDATA[$F{numInvoice}]]></variableExpression>
+	</variable>
 	<group name="reportGroup">
 		<groupExpression><![CDATA["never"]]></groupExpression>
 		<groupHeader>
@@ -38,11 +41,9 @@
 				<pie3DChart>
 					<chart theme="default">
 						<reportElement key="element-1" positionType="Float" x="77" y="49" width="407" height="219" isRemoveLineWhenBlank="true"/>
-						<chartTitle>
-							<titleExpression><![CDATA[$F{name}]]></titleExpression>
-						</chartTitle>
+						<chartTitle/>
 						<chartSubtitle/>
-						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" position="Top">
+						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" position="Bottom">
 							<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 						</chartLegend>
 					</chart>
