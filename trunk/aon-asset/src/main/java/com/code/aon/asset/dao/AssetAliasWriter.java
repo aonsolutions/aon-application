@@ -19,7 +19,7 @@ public class AssetAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-asset/src/main/java/com/code/aon/asset/dao/IAssetAlias.java");
+		File file = new File("/AON-TRUNK/aon-asset/src/main/java/com/code/aon/asset/dao/IAssetAlias.java");
 		String[] classes = new String[] {
 				Asset.class.getName(),
 				AssetActivity.class.getName(),
