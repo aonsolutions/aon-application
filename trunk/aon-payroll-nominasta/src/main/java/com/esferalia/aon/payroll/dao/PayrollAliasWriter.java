@@ -2,8 +2,7 @@ package com.esferalia.aon.payroll.dao;
 
 
 import java.io.File;
-
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -20,10 +19,10 @@ import com.esferalia.aon.payroll.Usuario;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
 import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 
-public class PayrollAliasWriter extends TestCase{
+public class PayrollAliasWriter {
 
-	public void testAlias() throws Exception {
-		File file = new File("/AON-TRUNK/aon-payroll-nominasta/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+	public static void main(String[] args) throws IOException {
+		File file = new File("/AON-PROJECT/aon-payroll-nominasta/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] {
 				Actividad.class.getName(),
 				ActividadCCC.class.getName(),
@@ -44,4 +43,5 @@ public class PayrollAliasWriter extends TestCase{
 		System.out.println( file.getAbsolutePath() );
 		System.out.println("Alias generados");
 	}
+	
 }
