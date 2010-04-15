@@ -15,8 +15,6 @@
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 	-->
 	
-<!--  
--->
 		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
 		<property name="connection.service">jboss.admin:service=AonLdap</property>
 		<property name="connection.datasource">java:comp/env/jdbc/AonAsset</property>
@@ -31,9 +29,8 @@
 		<property name="c3p0.min_size">1</property>
 		<property name="c3p0.max_statements">0</property>
 		<property name="c3p0.preferredTestQuery">select 1;</property>
-<!--  
--->
-				
+
+
 		<mapping package="com.code.aon.common.dao.hibernate.type" />
  
 		<!-- AON-ASSET Mapping files --> 
@@ -46,10 +43,11 @@
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
-
+		
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
@@ -59,7 +57,7 @@
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
-		
+				
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>
