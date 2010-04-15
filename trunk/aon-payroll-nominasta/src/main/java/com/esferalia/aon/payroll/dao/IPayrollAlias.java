@@ -248,10 +248,10 @@ public interface IPayrollAlias {
 	String  EMPLEADO_ACTIVIDAD_NAME = EMPLEADO_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Empleado_actividad_empresa_cdg
-	* Hibernate value: Empleado.actividad.empresa.cdg
+	* Alias value: Empleado_actividad_empresa_id
+	* Hibernate value: Empleado.actividad.empresa.id
 	*/
-	String  EMPLEADO_ACTIVIDAD_EMPRESA_CDG = EMPLEADO_ENTRY.getAliasNames()[7];
+	String  EMPLEADO_ACTIVIDAD_EMPRESA_ID = EMPLEADO_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Empleado_actividad_empresa_name
@@ -485,10 +485,10 @@ public interface IPayrollAlias {
 	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ID = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[9];
 
 	/** 
-	* Alias value: ParteConfirmacionIT_parteIT_empleado_actividad_cdg
-	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.actividad.cdg
+	* Alias value: ParteConfirmacionIT_parteIT_empleado_actividad_id
+	* Hibernate value: ParteConfirmacionIT.parteIT.empleado.actividad.id
 	*/
-	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_CDG = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[10];
+	String  PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_ID = PARTE_CONFIRMACION_IT_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: ParteConfirmacionIT_parteIT_empleado_actividad_name
@@ -624,10 +624,10 @@ public interface IPayrollAlias {
 	String  PARTE_IT_EMPLEADO_ID = PARTE_IT_ENTRY.getAliasNames()[9];
 
 	/** 
-	* Alias value: ParteIT_empleado_actividad_cdg
-	* Hibernate value: ParteIT.empleado.actividad.cdg
+	* Alias value: ParteIT_empleado_actividad_id
+	* Hibernate value: ParteIT.empleado.actividad.id
 	*/
-	String  PARTE_IT_EMPLEADO_ACTIVIDAD_CDG = PARTE_IT_ENTRY.getAliasNames()[10];
+	String  PARTE_IT_EMPLEADO_ACTIVIDAD_ID = PARTE_IT_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: ParteIT_empleado_actividad_name
@@ -805,16 +805,22 @@ public interface IPayrollAlias {
 	String  PERSONA_NAME = PERSONA_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: Persona_numSS
+	* Hibernate value: Persona.numSS
+	*/
+	String  PERSONA_NUM_SS = PERSONA_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: Persona_surname
 	* Hibernate value: Persona.surname
 	*/
-	String  PERSONA_SURNAME = PERSONA_ENTRY.getAliasNames()[5];
+	String  PERSONA_SURNAME = PERSONA_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Persona_lastName
 	* Hibernate value: Persona.lastName
 	*/
-	String  PERSONA_LAST_NAME = PERSONA_ENTRY.getAliasNames()[6];
+	String  PERSONA_LAST_NAME = PERSONA_ENTRY.getAliasNames()[7];
 
 
 
