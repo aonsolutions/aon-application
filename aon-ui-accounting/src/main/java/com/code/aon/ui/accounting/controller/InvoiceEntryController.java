@@ -1077,14 +1077,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private String obtainReferenceCode(String series, int number) {
-		StringBuilder sb = new StringBuilder();
+    	String referenceCode = StringUtils.leftPad(Integer.toString(number), 6, "0");
 		if (!StringUtils.isEmpty(series)) {
-			sb.append(series);
-			sb.append("/");
+			referenceCode = series + "/" + referenceCode;
 		}
-		sb.append(number);
-
-		return sb.toString();
+		return referenceCode;
 	}
 
 	private int calculateNextNumber(String series, InvoiceType invoiceType)
