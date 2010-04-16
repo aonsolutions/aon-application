@@ -123,17 +123,17 @@ public class RemesaITWizard implements Serializable {
 		while (list.size() < (pList.size()+cList.size())) {
 			RemesableIT a = pList.get(x);
 			RemesableIT b = cList.get(y);
-			int empresaA = a.getParteIT().getEmpleado().getActividad().getEmpresa().getId();
+			String empresaA = a.getParteIT().getEmpleado().getActividad().getEmpresa().getName();
 			int personaA = a.getParteIT().getEmpleado().getPersona().getId();
 			long fechaA = a.getParteIT().getFechaBaja().getTime();
-			int empresaB = b.getParteIT().getEmpleado().getActividad().getEmpresa().getId();
+			String empresaB = b.getParteIT().getEmpleado().getActividad().getEmpresa().getName();
 			int personaB = b.getParteIT().getEmpleado().getPersona().getId();
 			long fechaB = b.getParteIT().getFechaBaja().getTime();
 			boolean addA = false;
 			boolean addB = false;
-			if ( empresaA < empresaB ) {
+			if ( empresaA.compareToIgnoreCase(empresaB)<0 ) {
 				addA = true;
-			} else if ( empresaA > empresaB ) {
+			} else if ( empresaA.compareToIgnoreCase(empresaB)>0 ) {
 				addB = true;
 			} else {
 				if ( personaA < personaB ) {
