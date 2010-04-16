@@ -284,6 +284,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		if (list.size() > 0) {
 			for (IEmpleado e : list) {
 				ParteITEmpleado pe = new ParteITEmpleado();
+				if(list.size()==1){
+					pe.setSelected(true);
+				}
 				pe.setEmpleado(e);
 				IParteIT p = getParteITDAO().initialize(e);
 				pe.setFechaBaja(p.getFechaBaja());
@@ -689,9 +692,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		if (operations == null) {
 			operations = new LinkedList<SelectItem>();
-			String name = TipoOperacionIT.CONFIRMACION.getName(locale);
-			SelectItem item = new SelectItem(TipoOperacionIT.CONFIRMACION, name);
-			operations.add(item);
+			String name;
+			SelectItem item;
+			if(!isAltaMaternidad()){
+				name = TipoOperacionIT.CONFIRMACION.getName(locale);
+				item = new SelectItem(TipoOperacionIT.CONFIRMACION, name);
+				operations.add(item);
+			}
 			name = TipoOperacionIT.ALTA.getName(locale);
 			item = new SelectItem(TipoOperacionIT.ALTA, name);
 			operations.add(item);
@@ -727,7 +734,6 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		try {
 			String condition = (String) suggest;
 			condition = condition.concat(PERCENT);
-//			condition = condition.replace(ASTERISK, PERCENT);
 			return getCommonsPayrollDAO().getTiposBonificacion(condition);
 		} catch (PayrollException e) {
 			e.printStackTrace();
