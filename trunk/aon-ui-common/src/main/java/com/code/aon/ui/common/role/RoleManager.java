@@ -1,7 +1,5 @@
 package com.code.aon.ui.common.role;
 
-import javax.el.MethodExpression;
-import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -20,8 +18,7 @@ public class RoleManager {
 	 * @return TRUE if user has role, false otherwise.
 	 */
 	public boolean isUserInRole(String role) {
-		ExternalContext ec = FacesContext.getCurrentInstance()
-				.getExternalContext();
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		return ec.isUserInRole(role);
 	}
 
@@ -57,8 +54,14 @@ public class RoleManager {
 	 * @return TRUE if user has IAonRole.CONFIDENTIALITY role, false otherwise.
 	 */
 	public boolean isConfidentiality() {
-		return isUserInRole(IAonRole.CONFIDENTIALITY)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.CONFIDENTIALITY) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.COMMERCIAL role, false otherwise.
+	 */
+	public boolean isCommercialOperator() {
+		return isUserInRole(IAonRole.COMMERCIAL) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
@@ -83,42 +86,38 @@ public class RoleManager {
 	}
 
 	/**
-	 * @return TRUE if user has IAonRole.INVOICING role, false otherwise.
+	 * @return TRUE if user has IAonRole.FINANCE role, false otherwise.
 	 */
-	public boolean isInvoicingOperator() {
-		return isUserInRole(IAonRole.INVOICING) || isUserInRole(IAonRole.ADMIN);
+	public boolean isFinanceOperator() {
+		return isUserInRole(IAonRole.FINANCE) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.ACCOUNTING role, false otherwise.
 	 */
 	public boolean isAccountingOperator() {
-		return isUserInRole(IAonRole.ACCOUNTING)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.ACCOUNTING) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.STATISTICS role, false otherwise.
 	 */
 	public boolean isStatisticsOperator() {
-		return isUserInRole(IAonRole.STATISTICS)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.STATISTICS) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.TASK_MOPNITORING role, false otherwise.
 	 */
 	public boolean isTaskMonitor() {
-		return isUserInRole(IAonRole.TASK_MONITORING)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.TASK_MONITORING) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
-	 * @return TRUE if user has IAonRole.INVOICE_SIGNER role, false otherwise.
+	 * @return TRUE if user has IAonRole.E_SIGNATURE role, false otherwise.
 	 */
-	public boolean isInvoiceSigner() {
-		return isUserInRole(IAonRole.INVOICE_SIGNER)
-				|| isUserInRole(IAonRole.ADMIN);
+	public boolean isESignature() {
+		return isUserInRole(IAonRole.E_SIGNATURE) || isUserInRole(IAonRole.ADMIN);
 	}
 	
 	/**
@@ -130,7 +129,7 @@ public class RoleManager {
 	public void renderedCommand( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			String id = component.getId();
-			if ( id.contains("reset") || id.contains("remove") || id.contains("save") ) {
+			if ( !id.contains("search") && !id.contains("back") && !id.contains("Spin") ) {
 				component.setRendered(false);
 			}
 		}
