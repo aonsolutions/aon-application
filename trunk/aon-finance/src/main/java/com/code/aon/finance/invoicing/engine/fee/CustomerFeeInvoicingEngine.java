@@ -383,7 +383,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if (!invoice.getRegistry().getId().equals(customerFee.getCustomer().getId())) {
         	description += " - " + customerFee.getCustomer().getRegistry().getName() + " " + customerFee.getCustomer().getRegistry().getSurname();
         }
-		return (description.length()>64)?description.substring(0, 64):description;
+		return (description.length()>1024)?description.substring(0, 1024):description;
 	}
 
 	private int calculateNextNumber(Series series, int number) throws ManagerBeanException {
