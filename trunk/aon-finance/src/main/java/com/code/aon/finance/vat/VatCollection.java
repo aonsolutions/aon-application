@@ -212,17 +212,17 @@ public class VatCollection {
 			if (order == null) {
 				stmt.append(" ORDER BY vatType,i.transaction,i.tax_date,i.reference_code");
 			} else if (order == VatReportOrder.INVOICE_DATE) {
-				stmt.append(" ORDER BY i.issue_date,i.reference_code");
+				stmt.append(" ORDER BY i.issue_date,i.series,i.number");
 			} else if (order == VatReportOrder.TAX_DATE) {
-				stmt.append(" ORDER BY i.tax_date,i.reference_code");
+				stmt.append(" ORDER BY i.tax_date,i.series,i.number");
 			} else if (order == VatReportOrder.INVOICE_REFERENCE) {
 				stmt.append(" ORDER BY i.reference_code");
 			} else if (order == VatReportOrder.INVOICE_ORDER_NUMBER) {
 				stmt.append(" ORDER BY vatType,i.series,i.number");
 			} else if (order == VatReportOrder.INVOICE_REGISTRY_DOCUMENT) {
-				stmt.append(" ORDER BY i.rdocument,i.reference_code");
+				stmt.append(" ORDER BY i.rdocument,i.series,i.number");
 			} else if (order == VatReportOrder.INVOICE_REGISTRY_NAME) {
-				stmt.append(" ORDER BY i.rname,i.reference_code");
+				stmt.append(" ORDER BY i.rname,i.series,i.number");
 			}
 			String sessionName = HibernateUtil.getSessionFactoryName();
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
