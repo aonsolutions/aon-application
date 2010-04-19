@@ -20,9 +20,17 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 
     private int index;
     private Date lastDate;
+    private String lastPeriod;
     
 
-    public Date getLastDate() {
+    public String getLastPeriod() {
+		return lastPeriod;
+	}
+	public void setLastPeriod(String lastPeriod) {
+		this.lastPeriod = lastPeriod;
+	}
+	
+	public Date getLastDate() {
     	if (lastDate == null) {
     		lastDate = new Date();
     	}
@@ -40,9 +48,12 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 	        AccountEntry to = (AccountEntry)event.getController().getTo();
 	        to.setType(AccountEntryType.MANUAL);
 	        to.setEntryDate(getLastDate());
-	        Period period = AccountingPeriodUtil.getDefaultPeriod();
-	        if (period != null) {
-	        	to.setAccountPeriod(period.getId());
+	        to.setAccountPeriod(getLastPeriod());
+	        if (to.getAccountPeriod() == null) {
+		        Period period = AccountingPeriodUtil.getDefaultPeriod();
+		        if (period != null) {
+		        	to.setAccountPeriod(period.getId());
+		        }
 	        }
 	        c.setTotalCredit(null);
 	        c.setTotalDebit(null);
@@ -86,6 +97,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
         	AccountEntryController c = (AccountEntryController) event.getController();
         	AccountEntry entry = (AccountEntry)event.getController().getTo();
         	setLastDate(entry.getEntryDate());
+        	setLastPeriod(entry.getAccountPeriod());
             Integer id = entry.getId();
             IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
             Criteria criteria = new Criteria();
