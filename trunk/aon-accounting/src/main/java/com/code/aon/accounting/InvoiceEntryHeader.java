@@ -8,6 +8,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryDocument;
 
 public class InvoiceEntryHeader implements ITransferObject {
 	
@@ -66,6 +67,10 @@ public class InvoiceEntryHeader implements ITransferObject {
 	}
 	public void setDocument(String document) {
 		this.document = document;
+	}
+	public boolean isValidDocument() {
+		RegistryDocument rd = new RegistryDocument( getDocument() );
+		return rd.isValid();
 	}
 
 	public String getConcept() {
