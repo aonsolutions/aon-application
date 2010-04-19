@@ -38,6 +38,11 @@
 										value="#{financeBundle.finance_payment_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_fbatch" action="fbatch_search"
+										actionListener="#{fbatch.onEditSearch}"
+										value="#{financeBundle.finance_fbatch_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financialStatement" 
 										action="financialStatement_search" actionListener="#{financialStatement.onReset}"
 										value="#{accountingBundle.accounting_financial_statements}" />
