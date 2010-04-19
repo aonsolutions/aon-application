@@ -108,6 +108,20 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>htmlCommandLink</tag-name>
+		<component>
+			<component-type>
+				javax.faces.HtmlCommandLink
+			</component-type>
+			<renderer-type>
+				org.ajax4jsf.HtmlCommandLinkRenderer
+			</renderer-type>
+			<handler-class>
+				com.code.aon.faces.component.AonComponentHandler
+			</handler-class>			
+		</component>
+	</tag>
+	<tag>
 		<tag-name>outputLink</tag-name>
 		<component>
 			<component-type>
