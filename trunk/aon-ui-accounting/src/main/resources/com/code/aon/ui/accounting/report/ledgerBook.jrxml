@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="journalBook" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -11,6 +14,7 @@
 	<parameter name="toDate" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="period" class="com.code.aon.accounting.Period" isForPrompting="false"/>
 	<parameter name="date" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="journalOrdered" class="java.lang.Boolean" isForPrompting="false"/>
 	<field name="accountEntry" class="com.code.aon.accounting.AccountEntry"/>
 	<field name="account" class="com.code.aon.account.Account"/>
 	<field name="concept" class="java.lang.String"/>
@@ -293,7 +297,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{accountEntry}.getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$P{journalOrdered}.booleanValue()?$F{accountEntry}.getJournal():$F{accountEntry}.getId()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-9" x="442" y="0" width="93" height="11"/>
