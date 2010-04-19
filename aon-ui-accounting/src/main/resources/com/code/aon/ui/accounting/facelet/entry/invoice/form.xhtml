@@ -251,7 +251,11 @@
 										value="#{bundle.aon_company_document}" />
 									<aon:inputText id="Customer_document"
 										value="#{invoiceEntry.header.document}" size="12"
-										disabled="#{invoiceEntry.newDetail}" />
+										disabled="#{invoiceEntry.newDetail}" >
+											<f:validateLength minimum="1" maximum="16" />
+											<a4j:support event="onchange" focus="Account_Related"
+												reRender="registryDocumentPanel" ajaxSingle="true"/>
+									</aon:inputText>
 								</a4j:region>
 							</aon:panelGroup>
 
@@ -294,7 +298,11 @@
 										value="#{bundle.aon_company_document}" />
 									<aon:inputText id="Supplier_document"
 										value="#{invoiceEntry.header.document}" size="12"
-										disabled="#{invoiceEntry.newDetail}" />
+										disabled="#{invoiceEntry.newDetail}" >
+											<f:validateLength minimum="1" maximum="16" />
+											<a4j:support event="onchange" focus="Account_Related"
+												reRender="registryDocumentPanel" ajaxSingle="true"/>
+									</aon:inputText>
 								</a4j:region>
 							</aon:panelGroup>
 
@@ -338,8 +346,24 @@
 										value="#{bundle.aon_company_document}" />
 									<aon:inputText id="Creditor_document"
 										value="#{invoiceEntry.header.document}" size="12"
-										disabled="#{invoiceEntry.newDetail}" />
+										disabled="#{invoiceEntry.newDetail}" >
+											<f:validateLength minimum="1" maximum="16" />
+											<a4j:support event="onchange" focus="Account_Related"
+												reRender="registryDocumentPanel" ajaxSingle="true"/>
+									</aon:inputText>
 								</a4j:region>
+							</aon:panelGroup>
+							<aon:panelGroup id="registryDocumentPanel">
+								<aon:outputText 
+									rendered="#{invoiceEntry.header.validDocument}"
+									styleClass="aon-icon-predetermine"
+									style="padding-left: 15px;"
+									value="&#160;" />
+								<aon:outputText 
+									rendered="#{!invoiceEntry.header.validDocument}"
+									styleClass="aon-icon-exception"
+									style="padding-left: 15px;"
+									value="&#160;" />
 							</aon:panelGroup>
 							<aon:panelGroup>
 								<aon:panelGroup
