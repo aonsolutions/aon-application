@@ -240,6 +240,7 @@
 			<param id="toDate" value="#{ledgerReport.getToDate}" />
 			<param id="date" value="#{ledgerReport.getDate}" />
 			<param id="period" value="#{ledgerReport.getPeriod}" />
+			<param id="journalOrdered" value="#{ledgerReport.isJournalOrdered}" />
 		</params>
 	</report>
 

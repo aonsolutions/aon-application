@@ -135,7 +135,8 @@
 										title="#{accountingBundle.accounting_lookup_account_entry}"
 										actionListener="#{ledgerReport.onAccountEntry}"
 										action="accountEntry_form">
-										<aon:outputText value="#{to.accountEntry.id}" />
+										<aon:outputText value="#{to.accountEntry.id}" rendered="#{!ledgerReport.journalOrdered}"/>
+										<aon:outputText value="#{to.accountEntry.journal}" rendered="#{ledgerReport.journalOrdered}"/>
 									</h:commandLink>
 						</aon:column>
 
