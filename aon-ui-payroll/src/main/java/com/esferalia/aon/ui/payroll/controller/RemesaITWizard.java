@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
+import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
 public class RemesaITWizard implements Serializable {
@@ -80,9 +81,18 @@ public class RemesaITWizard implements Serializable {
 			pList = new LinkedList<RemesableIT>(); 
 			List<IParteIT> partes = getParteITDAO().getPartes(getParams());
 			for (IParteIT parteIT : partes) {
-				RemesableIT r = new RemesableIT();
-				r.setParteIT(parteIT);
-				pList.add(r);
+				if (!parteIT.isBajaProcesada()) {
+					RemesableIT r = new RemesableIT();
+					r.setOperacion(TipoOperacionIT.BAJA);
+					r.setParteIT(parteIT);
+					pList.add(r);
+				}
+				if (!parteIT.isAltaProcesada()) {
+					RemesableIT r = new RemesableIT();
+					r.setOperacion(TipoOperacionIT.ALTA);
+					r.setParteIT(parteIT);
+					pList.add(r);
+				}
 			}
 		}
 		if (getParams().isConfirmacion()) {
@@ -90,6 +100,7 @@ public class RemesaITWizard implements Serializable {
 			List<IParteConfirmacionIT> confs = getParteITDAO().getPartesConfirmacion(getParams());
 			for (IParteConfirmacionIT conf : confs) {
 				RemesableIT r = new RemesableIT();
+				r.setOperacion(TipoOperacionIT.CONFIRMACION);
 				r.setConfirmacionIT(conf);
 				r.setParteIT(conf.getParteIT());
 				cList.add(r);
