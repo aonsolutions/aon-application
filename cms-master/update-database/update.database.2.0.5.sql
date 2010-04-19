@@ -31,6 +31,10 @@ ALTER TABLE `article_category` ADD `items_per_page` TINYINT(2) DEFAULT '20' COMM
 
 ALTER TABLE `company` CHANGE `postal_code` `postal_code` VARCHAR(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'codigo postal';
 
+ALTER TABLE `config_i18n` MODIFY `description` TEXT COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Meta tag de descripcion del sitio.';
+
+ALTER TABLE `config_i18n` MODIFY `keywords` TEXT COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Meta tag de palabras claves del sitio.';
+
 UPDATE `db_version` SET `version_number` = '2.1.0';
 
 COMMIT;
