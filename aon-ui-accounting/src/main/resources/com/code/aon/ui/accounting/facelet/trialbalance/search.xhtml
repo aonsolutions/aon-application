@@ -20,9 +20,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener"
-						value="#{trialBalance.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="trialBalance_list" />
+					<ui:param name="skipSearchButton" value="true" />
 
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
@@ -34,10 +32,12 @@
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu required="true"
+					<aon:selectOneMenu 
+						reRender="SearchButton,SearchWarning" ajaxSingle="true"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{trialBalance.parameters.period}">
-						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_id"
@@ -67,7 +67,10 @@
 							id="AccountEntryDetail_accountEntry_entryDate-From"
 							value="#{trialBalance.parameters.fromDate}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						</aon:selectInputDate>
 
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-To"
@@ -77,7 +80,10 @@
 							id="AccountEntryDetail_accountEntry_entryDate-To"
 							value="#{trialBalance.parameters.toDate}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						</aon:selectInputDate>
 					</aon:div>
 
 					<aon:outputLabel
@@ -159,6 +165,25 @@
 						<f:selectItem itemLabel="#{bundle.aon_common_all}" itemValue="0" />
 					</aon:selectOneMenu>
 
+					<aon:outputText value="" />
+					<aon:div id="SearchWarning">
+						<aon:outputText value="#{accountingBundle.accounting_statement_warning}"
+							style="color:red;" styleClass="aon-bold" 	
+							rendered="#{!trialBalance.dateValid}"/>
+					</aon:div>
+					
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-search-commandButton-left">
+						<aon:div styleClass="aon-search-commandButton-right">
+							<aon:commandButton id="SearchButton"   
+								value="#{bundle.aon_search}"
+								action="trialBalance_list"
+								actionListener="#{trialBalance.onSearch}"
+								disabled="#{!trialBalance.dateValid}"
+								reRender="#{searchReRender}"
+								accesskey="#{bundle.aon_key_search}" />
+						</aon:div>
+					</aon:div>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

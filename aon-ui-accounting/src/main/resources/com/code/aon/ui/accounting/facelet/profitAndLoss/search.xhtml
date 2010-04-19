@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
@@ -19,10 +20,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener"
-						value="#{profitAndLossReport.calculateSummaryCollections}"
-						type="actionListener" />
-					<aon:methodParam name="searchAction" value="profit_and_loss_list" />
+					<ui:param name="skipSearchButton" value="true" />
 
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
@@ -35,9 +33,11 @@
 						for="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu
+						reRender="SearchButton,SearchWarning" ajaxSingle="true"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{profitAndLossReport.parameters.period}">
-						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{bundle.aon_date_select}" />
@@ -50,7 +50,10 @@
 							id="AccountEntryDetail_accountEntry_entryDate-From"
 							value="#{profitAndLossReport.parameters.fromDate}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						</aon:selectInputDate>
 
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-To"
@@ -60,7 +63,11 @@
 							id="AccountEntryDetail_accountEntry_entryDate-To"
 							value="#{profitAndLossReport.parameters.toDate}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						</aon:selectInputDate>
+
 					</aon:panelGrid>
 
 					<aon:outputLabel
@@ -108,6 +115,26 @@
 							<f:selectItem itemLabel="4" itemValue="4" />
 							<f:selectItem itemLabel="5" itemValue="5" />
 						</aon:selectOneRadio>
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div id="SearchWarning">
+						<aon:outputText value="#{accountingBundle.accounting_statement_warning}"
+							style="color:red;" styleClass="aon-bold" 	
+							rendered="#{!profitAndLossReport.dateValid}"/>
+					</aon:div>
+					
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-search-commandButton-left">
+						<aon:div styleClass="aon-search-commandButton-right">
+							<aon:commandButton id="SearchButton"   
+								value="#{bundle.aon_search}"
+								action="profit_and_loss_list"
+								actionListener="#{profitAndLossReport.calculateSummaryCollections}"
+								disabled="#{!profitAndLossReport.dateValid}"
+								reRender="#{searchReRender}"
+								accesskey="#{bundle.aon_key_search}" />
+						</aon:div>
 					</aon:div>
 				</ui:define>
 			</ui:decorate>
