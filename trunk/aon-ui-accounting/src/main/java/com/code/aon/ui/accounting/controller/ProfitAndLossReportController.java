@@ -2,6 +2,7 @@ package com.code.aon.ui.accounting.controller;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -355,5 +356,20 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 
 	public void setGrossMarginList(List<Summary> grossMarginList) {
 		this.grossMarginList = grossMarginList;
+	}
+	
+	public boolean isDateValid() {
+		if (getParameters().getPeriod() != null) {
+			return true;
+		}
+		Date from = getParameters().getFromDate();
+		Date to = getParameters().getToDate();
+		if ( from == null || to == null) {
+			return false;
+		}
+		if (to.compareTo(from) < 0 ) {
+			return false;
+		}
+		return true;
 	}
 }
