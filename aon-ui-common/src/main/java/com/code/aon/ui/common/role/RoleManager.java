@@ -44,6 +44,13 @@ public class RoleManager {
 	}
 
 	/**
+	 * @return TRUE if user has IAonRole.CONFIG role, false otherwise.
+	 */
+	public boolean isConfig() {
+		return isUserInRole(IAonRole.CONFIG) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
 	 * @return TRUE if user has IAonRole.AUDITOR role, false otherwise.
 	 */
 	public boolean isAuditor() {
@@ -55,6 +62,13 @@ public class RoleManager {
 	 */
 	public boolean isConfidentiality() {
 		return isUserInRole(IAonRole.CONFIDENTIALITY) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.PRODUCT role, false otherwise.
+	 */
+	public boolean isProductOperator() {
+		return isUserInRole(IAonRole.PRODUCT) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
