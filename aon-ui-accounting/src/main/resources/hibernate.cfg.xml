@@ -32,7 +32,6 @@
 		<mapping class="com.code.aon.accounting.Balance"/>
 		<mapping class="com.code.aon.accounting.BalanceDetail"/>
 		<mapping class="com.code.aon.accounting.Loan"/>
-		<mapping class="com.code.aon.accounting.Leasing"/>
 		<mapping class="com.code.aon.accounting.Period"/>
 		
 		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
@@ -43,7 +42,6 @@
 		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
-		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
 		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
 		<mapping class="com.code.aon.account.bridge.ProductAccount"/>
 		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
