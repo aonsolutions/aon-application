@@ -30,15 +30,17 @@
 							<f:setPropertyActionListener target="#{delivery.showSalesTransferWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<aon:commandButton id="invoice"
-							value="#{warehouseBundle.warehouse_delivery_to_invoice}"
-							immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
-							styleClass="aon-finding-toolbar-item aon-icon-favorite"
-							actionListener="#{delivery.onInvoiceShow}"
-							reRender="showInvoiceWindow">
-							<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
-								value="#{true}" />
-						</aon:commandButton>
+						<c:if test="#{aonRole.financeOperator}">
+							<aon:commandButton id="invoice"
+								value="#{warehouseBundle.warehouse_delivery_to_invoice}"
+								immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
+								styleClass="aon-finding-toolbar-item aon-icon-favorite"
+								actionListener="#{delivery.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
 						<aon:commandButton value="&#160;" id="email"
 							title="#{webmailBundle.webmail_send_email}"
 							rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"

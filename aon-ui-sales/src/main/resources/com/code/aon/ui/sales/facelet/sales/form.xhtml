@@ -21,24 +21,28 @@
 					<ui:param name="skipSaveButton" value="#{!sales.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!sales.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:commandButton id="delivery"
-							value="#{salesBundle.sales_to_delivery}"
-							immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
-							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-							actionListener="#{sales.onDeliveryShow}"
-							reRender="showDeliveryWindow">
-							<f:setPropertyActionListener target="#{sales.showDeliveryWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-						<aon:commandButton id="invoice"
-							value="#{salesBundle.sales_to_invoice}"
-							immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
-							styleClass="aon-finding-toolbar-item aon-icon-favorite"
-							actionListener="#{sales.onInvoiceShow}"
-							reRender="showInvoiceWindow">
-							<f:setPropertyActionListener target="#{sales.showInvoiceWindow}"
-								value="#{true}" />
-						</aon:commandButton>
+						<c:if test="#{aonRole.warehouseOperator}">
+							<aon:commandButton id="delivery"
+								value="#{salesBundle.sales_to_delivery}"
+								immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
+								styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
+								actionListener="#{sales.onDeliveryShow}"
+								reRender="showDeliveryWindow">
+								<f:setPropertyActionListener target="#{sales.showDeliveryWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
+						<c:if test="#{aonRole.financeOperator}">
+							<aon:commandButton id="invoice"
+								value="#{salesBundle.sales_to_invoice}"
+								immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
+								styleClass="aon-finding-toolbar-item aon-icon-favorite"
+								actionListener="#{sales.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{sales.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
 						<aon:commandButton value="&#160;" id="email"
 							title="#{webmailBundle.webmail_send_email}"
 							actionListener="#{sales.onSendByEmail}"

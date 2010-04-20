@@ -102,8 +102,8 @@
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>						
 
+								<aon:outputText value="#{undeductibleInvoice.to.status}" />
 								<c:if test="#{aonRole.accountingOperator and undeductibleInvoice.recorded}">
-									<aon:outputText value="#{undeductibleInvoice.to.status}" />
 									<aon:outputText styleClass="aon-italic aon-margin-left"
 										value="(#{financeBundle.finance_account_entry}: " />
 									<aon:outputText styleClass="aon-bold"
