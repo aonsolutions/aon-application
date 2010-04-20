@@ -85,7 +85,7 @@
 			showProduct="true"
 			showSeller="true"
 			showAddInfo="true"
-			showThirdParty="false"			
+			showThirdParty="true"
 		/>
 	</commercial:config>
 		
