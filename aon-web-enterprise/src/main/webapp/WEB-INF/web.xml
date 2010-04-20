@@ -301,15 +301,18 @@
 	<security-role><role-name>User</role-name></security-role>
 	<security-role><role-name>Guest</role-name></security-role>
 	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Config</role-name></security-role>
 	<security-role><role-name>Auditor</role-name></security-role>
-	<security-role><role-name>Accounting</role-name></security-role>
-	<security-role><role-name>Invoicing</role-name></security-role>
 	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Product</role-name></security-role>
+	<security-role><role-name>Commercial</role-name></security-role>
 	<security-role><role-name>Sale</role-name></security-role>
 	<security-role><role-name>Purchase</role-name></security-role>
 	<security-role><role-name>Warehouse</role-name></security-role>
+	<security-role><role-name>Finance</role-name></security-role>
+	<security-role><role-name>Accounting</role-name></security-role>
 	<security-role><role-name>Statistics</role-name></security-role>
-	<security-role><role-name>InvoiceSigner</role-name></security-role>
+	<security-role><role-name>eSignature</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonEnterprise</resource-env-ref-name>
