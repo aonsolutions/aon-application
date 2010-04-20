@@ -25,6 +25,11 @@ public interface IAonRole {
 	String ADMIN = "Admin";
 
 	/**
+	 * Role de Configuración
+	 */
+	String CONFIG = "Config";
+	
+	/**
 	 * Role de Auditor
 	 */
 	String AUDITOR = "Auditor";
@@ -34,6 +39,11 @@ public interface IAonRole {
 	 */
 	String CONFIDENTIALITY = "Confidentiality";
 
+	/**
+	 * Role de Acceso a Productos
+	 */
+	String PRODUCT = "Product";
+	
 	/**
 	 * Role de Acceso a Comercial
 	 */
@@ -78,4 +88,5 @@ public interface IAonRole {
 	 * Role para dar capacidad de firmar documentos electrónicos.
 	 */
 	String E_SIGNATURE = "eSignature";
+
 }
