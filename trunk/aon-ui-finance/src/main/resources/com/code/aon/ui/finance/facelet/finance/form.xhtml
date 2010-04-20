@@ -146,8 +146,7 @@
 							disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4"
 							property="#{finance.to.bank}" lookup="#{bankLookup}"
 							lookupChangeListener="#{finance.onBankChanged}"
-							reRender="Finance_bankAccount"
-							>
+							reRender="Finance_bankAccount">
 							<aon:joinProperty alias="Bank_code"
 								value="#{finance.to.bank.code}" />
 						</aon:lookupInputText>

@@ -31,7 +31,7 @@
 						<f:param name="reportKey" value="supplierReport" />
 						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
-					<h:commandLink id="creditorDetailReportExcel" value="&#160;"
+					<h:commandLink id="supplierDetailReportExcel" value="&#160;"
 						target="_new" rendered="#{!supplier.new}"
 						action="#{report.onExecute}"
 						disabled="#{supplier.to != null}"
@@ -40,7 +40,7 @@
 						<f:param name="reportKey" value="supplierDetailExcelReport" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</h:commandLink>
-					<h:commandLink id="creditorDetailReportPdf" value="#{bundle.aon_detailed_listing}"
+					<h:commandLink id="supplierDetailReportPdf" value="#{bundle.aon_detailed_listing}"
 						target="_new" rendered="#{!supplier.new}"
 						action="#{report.onExecute}"
 						disabled="#{supplier.to != null}"

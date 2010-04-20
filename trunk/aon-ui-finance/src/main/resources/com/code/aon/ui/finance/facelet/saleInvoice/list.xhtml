@@ -85,15 +85,13 @@
 							<aon:outputText value="#{to.registryDocument}" />
 						</aon:column>
 
-						<c:if test="#{aonRole.accountingOperator}">
-							<aon:column alias="Invoice.status" 
-								styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_status}" />
-								</f:facet>
-								<aon:outputText value="#{to.status}" />
-							</aon:column>
-						</c:if>
+						<aon:column alias="Invoice.status" 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">

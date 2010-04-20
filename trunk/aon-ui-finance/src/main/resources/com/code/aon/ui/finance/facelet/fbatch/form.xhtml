@@ -37,20 +37,21 @@
 						action="fbatch_form" actionListener="#{fbatch.onCreateDisk}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
-					<aon:commandButton id="recordPopup" value="#{financeBundle.finance_record}"
-						rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
-						styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-						reRender="showFbatchRecordWindow">	
-						<f:setPropertyActionListener target="#{fbatch.showFbatchRecordWindow}"
-							value="#{true}" />
-					</aon:commandButton>								
-					<aon:commandButton id="unrecord" value="#{financeBundle.finance_unrecord}"
-						rendered="#{fbatch.recorded}"
-						styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-						action="fbatch_form" actionListener="#{fbatch.onUnrecord}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
-
+					<c:if test="#{aonRole.accountingOperator}">
+						<aon:commandButton id="recordPopup" value="#{financeBundle.finance_record}"
+							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
+							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+							reRender="showFbatchRecordWindow">	
+							<f:setPropertyActionListener target="#{fbatch.showFbatchRecordWindow}"
+								value="#{true}" />
+						</aon:commandButton>								
+						<aon:commandButton id="unrecord" value="#{financeBundle.finance_unrecord}"
+							rendered="#{fbatch.recorded}"
+							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+							action="fbatch_form" actionListener="#{fbatch.onUnrecord}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				     </c:if>	
 				</ui:define>				
 				
 			</ui:decorate>
@@ -72,14 +73,13 @@
 
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{fbatch.to.financeBatchStatus}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{accountingBundle.accounting_account_entry}:"
-							rendered="#{fbatch.recorded}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{fbatch.accountEntryId}"
-							rendered="#{fbatch.recorded}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{fbatch.recorded}" />
+						<c:if test="#{aonRole.accountingOperator and fbatch.recorded}">
+							<aon:outputText styleClass="aon-italic aon-margin-left"
+								value="(#{financeBundle.finance_account_entry}:" />
+							<aon:outputText styleClass="aon-bold"
+								value="#{fbatch.accountEntryId}" />
+							<aon:outputText styleClass="aon-italic" value=")" />
+						</c:if>
 					</aon:div>
 
 					<aon:outputLabel for="FinanceBatch_issueDate"
@@ -108,7 +108,7 @@
 						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="RegistryBank_Lookup_id"
 						value="#{fbatch.to.registryBank}"
-						disabled="#{!fbatch.todo}">
+						disabled="#{fbatch.recorded}">
 						<f:selectItem itemLabel="-" value="#{null}"  />
 						<f:selectItems value="#{companyCollections.companyBanks}" />
 					</aon:selectOneMenu>

@@ -11,7 +11,7 @@
 	<aon:methodParam name="signActionListener" default="#{signController.onSign}" type="actionListener" />
 	<aon:methodParam name="cancelSignActionListener" default="#{signController.onCancelSign}" type="actionListener" />
 
-	<c:if test="#{company.EInvoice}">
+	<c:if test="#{company.EInvoice and aonRole.ESignature}">
 		<c:if test="#{!skipSignButton and !certificate.sessionCertificateStored}">
 			<aon:commandButton id="sign"
 				value="#{signBundle.sign_sign}"

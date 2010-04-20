@@ -121,7 +121,7 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
+						<c:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
 							<aon:panelTab id="finance"
 								label="#{registryBundle.registry_finance_data_module}">
 								<aon:panel>
@@ -146,7 +146,7 @@
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
+						<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}">
 							<aon:panelTab id="fee"
 								label="#{financeBundle.finance_fees_module}">
 								<ui:include

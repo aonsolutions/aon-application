@@ -30,15 +30,17 @@
 							<f:setPropertyActionListener target="#{income.showPurchaseTransferWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<aon:commandButton id="invoice"
-							value="#{warehouseBundle.warehouse_income_to_invoice}"
-							immediate="#{true}" rendered="#{income.pending and incomeDetail.model.rowCount > 0}"
-							styleClass="aon-finding-toolbar-item aon-icon-favorite"
-							actionListener="#{income.onInvoiceShow}"
-							reRender="showInvoiceWindow">
-							<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
-								value="#{true}" />
-						</aon:commandButton>
+						<c:if test="#{aonRole.financeOperator}">
+							<aon:commandButton id="invoice"
+								value="#{warehouseBundle.warehouse_income_to_invoice}"
+								immediate="#{true}" rendered="#{income.pending and incomeDetail.model.rowCount > 0}"
+								styleClass="aon-finding-toolbar-item aon-icon-favorite"
+								actionListener="#{income.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
 						<h:commandLink id="income" value="#{warehouseBundle.warehouse_income}"
 							target="_new" rendered="#{!income.new and incomeDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
