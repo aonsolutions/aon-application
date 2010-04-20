@@ -34,7 +34,8 @@ public class ComponentGroupHandler extends TagHandler implements IRichFacesTags 
 		if ( FaceletUtil.isRendered(ctx, tag) ) {
 			UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
 			MethodExpression me = method.getMethodExpression(ctx, null, FaceletUtil.COMPONENT_GROUP_SIG);
-			ComponentGroup cg = new ComponentGroup( family.getValue(ctx), me );
+			ComponentGroupMethod cgm = new ComponentGroupMethod( family.getValue(ctx), me );
+			ComponentGroup cg = new ComponentGroup( cgm );
 			root.getAttributes().put( ComponentGroup.CURRENT_COMPONENT_GROUP, cg );
 	        this.nextHandler.apply(ctx, parent);
 			root.getAttributes().remove( ComponentGroup.CURRENT_COMPONENT_GROUP );        			

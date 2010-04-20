@@ -1,11 +1,10 @@
 package com.code.aon.faces.component.richfaces.componentGroup;
 
-import javax.el.MethodExpression;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.jsf.ComponentSupport;
@@ -14,21 +13,23 @@ public class ComponentGroup {
 	
 	public static final String CURRENT_COMPONENT_GROUP = "com.code.aon.faces.ComponentGroup.current";
 
-	private String[] componentFamilies;
-	
-	private MethodExpression method;
+	private List<ComponentGroupMethod> componentGroupMethods;
 
-	public ComponentGroup(String componentFamily, MethodExpression method ) {
-		this.componentFamilies = StringUtils.split(componentFamily, ",");
-		this.method = method;
-	}
-
-	public boolean isAppicable( UIComponent component ) {
-		return ArrayUtils.contains(this.componentFamilies, component.getFamily());
+	public ComponentGroup( ComponentGroupMethod cgm ) {
+		this.componentGroupMethods = new LinkedList<ComponentGroupMethod>();
+		add(cgm);
 	}
 	
+	public void add( ComponentGroupMethod cgm ) {
+		this.componentGroupMethods.add( cgm );
+	}
+
 	public void apply( FaceletContext ctx, UIComponent component, UIComponent parent ) {
-		this.method.invoke( ctx, new Object[] {component, parent} );
+		for( ComponentGroupMethod cgm : this.componentGroupMethods ) {
+			if ( cgm.isAppicable(component) ) {
+				cgm.apply(ctx, component, parent);		
+			}
+		}
 	}
 	
 	public static ComponentGroup getComponentGroup( FaceletContext ctx,  UIComponent component ) {
