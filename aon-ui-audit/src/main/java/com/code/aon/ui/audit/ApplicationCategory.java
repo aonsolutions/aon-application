@@ -9,7 +9,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.ui.util.AonUtil;
 
-
 /**
  * The Class ApplicationCategory.
  */
@@ -27,10 +26,10 @@ public class ApplicationCategory implements Comparable<ApplicationCategory> {
 	/** The rendered. */
 	private String rendered;
 	
-	private List<ApplicationOption> options;
+	private List<OptionGroup> groups;
 
 	public ApplicationCategory(String name, String alias) {
-		this.options = new ArrayList<ApplicationOption>();		
+		this.groups = new ArrayList<OptionGroup>();		
 		this.name = name;
 		this.alias = alias;
 	}
@@ -94,21 +93,21 @@ public class ApplicationCategory implements Comparable<ApplicationCategory> {
 	}	
 	
 	/**
-	 * Adds the option.
+	 * Adds the group.
 	 * 
-	 * @param option the option
+	 * @param group the group
 	 */
-	public void addOption( ApplicationOption option) {
-		this.options.add(option);
+	public void addGroup( OptionGroup group ) {
+		this.groups.add(group);
 	}
 	
 	/**
-	 * Gets the options.
+	 * Gets the groups.
 	 * 
-	 * @return the options
+	 * @return the groups
 	 */
-	public List<ApplicationOption> getOptions() {
-		return this.options;
+	public List<OptionGroup> getGroups() {
+		return this.groups;
 	}
 	
 	@Override

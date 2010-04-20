@@ -7,7 +7,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.ui.audit.controller.ApplicationOptionController;
+import com.code.aon.ui.audit.controller.MenuParser;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -37,8 +37,8 @@ public class ApplicationOption {
 	/** The rendered. */
 	private String rendered;
 	
-	/** The category. */
-	private ApplicationCategory category;
+	/** The group. */
+	private OptionGroup group;
 	
 	private String xml;	
 	
@@ -129,24 +129,25 @@ public class ApplicationOption {
 		return true;
 	}	
 	
+	
 	/**
-	 * Gets the category.
+	 * Gets the group.
 	 * 
-	 * @return the category
+	 * @return the group
 	 */
-	public ApplicationCategory getCategory() {
-		return category;
+	public OptionGroup getGroup() {
+		return group;
 	}
 
 	/**
-	 * Sets the category.
+	 * Sets the group.
 	 * 
-	 * @param category the new category
+	 * @param group the new group
 	 */
-	public void setCategory(ApplicationCategory category) {
-		this.category = category;
+	public void setGroup(OptionGroup group) {
+		this.group = group;
 	}
-	
+
 	public String getXml( String prefix ) {
 		String newId = prefix + this.id;
 		String newXml = StringUtils.replace(this.xml, VALUE_PATTERN, this.description);
@@ -154,7 +155,7 @@ public class ApplicationOption {
 	}
 
 	public String getMenuItemXml( String prefix ) {
-		return StringUtils.replace(getXml(prefix), ApplicationOptionController.AON_COMMAND_LINK, AON_MENU_ITEM);
+		return StringUtils.replace(getXml(prefix), MenuParser.AON_COMMAND_LINK, AON_MENU_ITEM);
 	}
 	
 	public String getRecentXml( Date date ) {

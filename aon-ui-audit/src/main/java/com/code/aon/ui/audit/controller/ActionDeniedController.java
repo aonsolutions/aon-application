@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIPanel;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -25,6 +26,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -182,6 +184,24 @@ public class ActionDeniedController implements IAuditConstants {
 					parent.setRendered(false);
 					component.setRendered(false);
 				}				
+			}
+		}
+	}
+	
+	public void renderedGroup( UIComponent component, UIComponent parent ) {
+		if ( component.isRendered() ) {
+			String id = component.getId();
+			OptionGroup group = getOptionController().getGroupMap().get(id);
+			if ( group != null ) {
+				if ( group.isRendered() ) {
+					for( ApplicationOption option : group.getOptions() ) {
+						boolean denied = this.deniedActionsMap.containsKey(option.getAction()); 
+						if ( (!denied) && option.isRendered() ) {
+							return;
+						}
+					}
+				}
+				component.setRendered(false);
 			}
 		}
 	}
