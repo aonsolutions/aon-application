@@ -44,16 +44,18 @@
 										actionListener="#{fbatch.onEditSearch}"
 										value="#{financeBundle.finance_fbatch_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="payMethod-treasury"
-										action="payMethod"
-										value="#{configBundle.config_paymethod_module}" />
-								</aon:div>								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bank-treasury"
-										action="bank"
-										value="#{configBundle.config_bank_module}" />
-								</aon:div>								
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="payMethod-treasury"
+											action="payMethod"
+											value="#{configBundle.config_paymethod_module}" />
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bank-treasury"
+											action="bank"
+											value="#{configBundle.config_bank_module}" />
+									</aon:div>								
+								</c:if>
 							</aon:div>
 						</h:panelGrid>
 
