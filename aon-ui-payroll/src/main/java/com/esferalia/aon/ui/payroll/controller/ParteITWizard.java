@@ -39,13 +39,13 @@ import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
+import com.esferalia.aon.payroll.core.enumeration.TipoOperacionIT;
 import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
 import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
-import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 
 public class ParteITWizard implements Serializable, IDataModelDataProvider, ICriteriaProvider {
 

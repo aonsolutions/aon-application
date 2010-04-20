@@ -23,12 +23,12 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.enumeration.TipoOperacionIT;
 import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
-import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
 public class RemesaITWizard implements Serializable {
