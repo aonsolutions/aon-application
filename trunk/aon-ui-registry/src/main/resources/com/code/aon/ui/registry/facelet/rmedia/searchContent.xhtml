@@ -20,12 +20,12 @@
 						<a4j:support event="onchange" reRender="mediaTypeDiv"/>
 					</aon:selectOneMenu>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="mediaTypeDiv"
-						actionListener="#{searchController.onRemoveMediaType}"
+						actionListener="#{searchController.onRemoveMediaType}" value="&#160;"
 						rendered="#{mediaType != null}">
 						<f:param name="index" value="#{index}" />
 					</aon:commandButton>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
-						actionListener="#{searchController.onAddMediaType}"
+						actionListener="#{searchController.onAddMediaType}" value="&#160;"
 						rendered="#{(mediaType != null) and (index == (searchController.mediaTypesSize-1))}"/>					
 				</aon:div>						
 			</a4j:repeat>

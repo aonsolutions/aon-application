@@ -18,12 +18,12 @@
 					<a4j:support event="onchange" reRender="segmentDiv"/>
 				</aon:selectOneMenu>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
-					actionListener="#{searchController.onRemoveSegment}" reRender="segmentDiv"
+					actionListener="#{searchController.onRemoveSegment}" reRender="segmentDiv" value="&#160;"
 					rendered="#{segment != null}">
 					<f:param name="index" value="#{index}" />
 				</aon:commandButton>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
-					actionListener="#{searchController.onAddSegment}" reRender="segmentDiv"
+					actionListener="#{searchController.onAddSegment}" reRender="segmentDiv" value="&#160;"
 					rendered="#{(segment != null) and (index == (searchController.segmentsSize-1))}"/>					
 			</aon:div>						
 		</a4j:repeat>

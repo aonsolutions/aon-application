@@ -18,12 +18,12 @@
 					<a4j:support event="onchange" reRender="payMethodDiv"/>
 				</aon:selectOneMenu>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
-					actionListener="#{searchController.onRemovePayMethod}" reRender="payMethodDiv"
+					actionListener="#{searchController.onRemovePayMethod}" reRender="payMethodDiv" value="&#160;"
 					rendered="#{pay_method.id != null}">
 					<f:param name="index" value="#{index}" />
 				</aon:commandButton>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" ajaxSingle="true"
-					actionListener="#{searchController.onAddPayMethod}" reRender="payMethodDiv"
+					actionListener="#{searchController.onAddPayMethod}" reRender="payMethodDiv" value="&#160;"
 					rendered="#{(pay_method.id != null) and (index == (searchController.payMethodsSize-1))}"/>					
 			</aon:div>						
 		</a4j:repeat>
