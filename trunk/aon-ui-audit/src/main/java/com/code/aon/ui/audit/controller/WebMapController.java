@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.util.AonUtil;
 
 public class WebMapController implements IAuditConstants {
@@ -21,9 +22,13 @@ public class WebMapController implements IAuditConstants {
 		for( ApplicationCategory category : getOptionController().getCategories() ) {
 			if ( category.isRendered() ) {
 				List<ApplicationOption> list = new ArrayList<ApplicationOption>();
-				for( ApplicationOption option : category.getOptions() ) {
-					if ( option.isRendered() ) {
-						list.add(option);	
+				for( OptionGroup group : category.getGroups() ) {
+					if ( group.isRendered() ) {
+						for( ApplicationOption option : group.getOptions() ) {
+							if ( option.isRendered() ) {
+								list.add(option);	
+							}
+						}						
 					}
 				}
 				if (! list.isEmpty() ) {

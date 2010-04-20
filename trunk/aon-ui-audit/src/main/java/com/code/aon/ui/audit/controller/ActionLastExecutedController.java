@@ -92,7 +92,7 @@ public class ActionLastExecutedController extends BasicController implements IAu
 
 	public ApplicationCategory getCategory() throws ManagerBeanException {
 		ApplicationOption option = getOption();
-		return (option != null) ? option.getCategory() : null; 
+		return (option != null) ? option.getGroup().getCategory() : null; 
 	}
 
 }
