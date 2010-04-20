@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,58 +14,55 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:componentGroup family="javax.faces.Command"
-					method="#{actionDenied.renderedCommand}">
+				<h:panelGrid styleClass="aon-width-all" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300">
 
-					<aon:panelGrid columns="1" styleClass="aon-width-all"
-						columnClasses="aon-vertical-align-top aon-width-300">
+					<aon:panelGrid id="group_balance"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-balance aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{accountingBundle.accounting_balance}" />
+						</f:facet>
 
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-balance aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{accountingBundle.accounting_balance}" />
-							</f:facet>
-
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="closing_balance_sheet"
-										action="balance_sheet_search-closing"
-										actionListener="#{balanceSheet.onClosingBalance}"
-										value="#{accountingBundle.accounting_balance_menu_bs}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="operating_balance_sheet"
-										action="balance_sheet_search-operating"
-										actionListener="#{balanceSheet.onOperatingBalance}"
-										value="#{accountingBundle.accounting_balance_menu_pyg}" />
-								</aon:div>
-
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="patrimony_balance_sheet"
-										action="balance_sheet_search-patrimony"
-										actionListener="#{balanceSheet.onPatrimonyBalance}"
-										value="#{accountingBundle.accounting_balance_menu_patrimony}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="custom_balance_sheet"
-										action="balance_sheet_search-custom"
-										actionListener="#{balanceSheet.onCustomBalance}"
-										value="#{accountingBundle.accounting_balance_menu_custom}" />
-								</aon:div>
-
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accounting_balance" action="balance_list"
-										value="#{accountingBundle.accounting_balance_menu}" />
-								</aon:div>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="closing_balance_sheet"
+									action="balance_sheet_search-closing"
+									actionListener="#{balanceSheet.onClosingBalance}"
+									value="#{accountingBundle.accounting_balance_menu_bs}" />
 							</aon:div>
-						</h:panelGrid>
-						
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="operating_balance_sheet"
+									action="balance_sheet_search-operating"
+									actionListener="#{balanceSheet.onOperatingBalance}"
+									value="#{accountingBundle.accounting_balance_menu_pyg}" />
+							</aon:div>
+
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="patrimony_balance_sheet"
+									action="balance_sheet_search-patrimony"
+									actionListener="#{balanceSheet.onPatrimonyBalance}"
+									value="#{accountingBundle.accounting_balance_menu_patrimony}" />
+							</aon:div>
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="custom_balance_sheet"
+									action="balance_sheet_search-custom"
+									actionListener="#{balanceSheet.onCustomBalance}"
+									value="#{accountingBundle.accounting_balance_menu_custom}" />
+							</aon:div>
+
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="accounting_balance" action="balance_list"
+									value="#{accountingBundle.accounting_balance_menu}" />
+							</aon:div>
+						</aon:div>
 					</aon:panelGrid>
-				</aon:componentGroup>
+					
+				</h:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>

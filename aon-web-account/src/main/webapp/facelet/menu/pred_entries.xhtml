@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,94 +14,92 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<aon:componentGroup
-					family="javax.faces.Command"
-					method="#{actionDenied.renderedCommand}">
-		
-					<aon:panelGrid columns="1" styleClass="aon-width-all"
-						columnClasses="aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300">
 
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.account_pred_entries}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="invoiceEntry" 
-										action="account_invoice_entry" actionListener="#{invoiceEntry.onReset}"
-										value="#{accountingBundle.accounting_entry_invoice_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="financeEntry" 
-										action="account_finance_entry" actionListener="#{financeEntry.onReset}"
-										value="#{accountingBundle.accounting_entry_finance_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="expenseEntry" 
-										action="account_expense_entry" actionListener="#{expenseEntry.onReset}"
-										value="#{accountingBundle.accounting_expense_entry_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="salaryEntry" 
-										action="account_salary_entry" actionListener="#{salaryEntry.onReset}"
-										value="#{accountingBundle.accounting_salary_entry_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="socialInsuranceEntry" 
-										action="account_social_insurance_entry" actionListener="#{socialInsuranceEntry.onReset}"
-										value="#{accountingBundle.accounting_social_insurance_entry_module}" />
-								</aon:div>
+					<aon:panelGrid id="group_pred_entries"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-account-entry aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.account_pred_entries}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="invoiceEntry" 
+									action="account_invoice_entry" actionListener="#{invoiceEntry.onReset}"
+									value="#{accountingBundle.accounting_entry_invoice_module}" />
 							</aon:div>
-						</h:panelGrid>
-
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-sales aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{accountingBundle.accounting_loan_module}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="loanEntry" 
-										action="account_loan_entry" actionListener="#{loanEntry.onReset}"
-										value="#{accountingBundle.accounting_loan_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="loanFeeEntry" 
-										action="account_loan_fee_entry" actionListener="#{loanFeeEntry.onReset}"
-										value="#{accountingBundle.accounting_loan_fee_entry_module}" />
-								</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="financeEntry" 
+									action="account_finance_entry" actionListener="#{financeEntry.onReset}"
+									value="#{accountingBundle.accounting_entry_finance_module}" />
 							</aon:div>
-						</h:panelGrid>
 
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.account_end_period_entries}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountOperatingEntry" 
-										action="accountOperatingEntry" actionListener="#{endPeriodEntries.onInit}"
-										value="#{accountingBundle.accounting_operating_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountClosingEntry" 
-										action="accountClosingEntry" actionListener="#{endPeriodEntries.onInit}"
-										value="#{accountingBundle.accounting_closing_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountOpeningEntry" 
-										action="accountOpeningEntry" actionListener="#{endPeriodEntries.onInit}"
-										value="#{accountingBundle.accounting_opening_entry_module}" />
-								</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="expenseEntry" 
+									action="account_expense_entry" actionListener="#{expenseEntry.onReset}"
+									value="#{accountingBundle.accounting_expense_entry_module}" />
 							</aon:div>
-						</h:panelGrid>
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="salaryEntry" 
+									action="account_salary_entry" actionListener="#{salaryEntry.onReset}"
+									value="#{accountingBundle.accounting_salary_entry_module}" />
+							</aon:div>
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="socialInsuranceEntry" 
+									action="account_social_insurance_entry" actionListener="#{socialInsuranceEntry.onReset}"
+									value="#{accountingBundle.accounting_social_insurance_entry_module}" />
+							</aon:div>
+						</aon:div>
 					</aon:panelGrid>
-				</aon:componentGroup>
+
+					<aon:panelGrid id="group_pred_entries_loan"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-sales aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{accountingBundle.accounting_loan_module}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="loanEntry" 
+									action="account_loan_entry" actionListener="#{loanEntry.onReset}"
+									value="#{accountingBundle.accounting_loan_entry_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="loanFeeEntry" 
+									action="account_loan_fee_entry" actionListener="#{loanFeeEntry.onReset}"
+									value="#{accountingBundle.accounting_loan_fee_entry_module}" />
+							</aon:div>
+						</aon:div>
+					</aon:panelGrid>
+
+					<aon:panelGrid id="group_pred_entries_end_period"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-account-entry aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.account_end_period_entries}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="accountOperatingEntry" 
+									action="accountOperatingEntry" actionListener="#{endPeriodEntries.onInit}"
+									value="#{accountingBundle.accounting_operating_entry_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="accountClosingEntry" 
+									action="accountClosingEntry" actionListener="#{endPeriodEntries.onInit}"
+									value="#{accountingBundle.accounting_closing_entry_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="accountOpeningEntry" 
+									action="accountOpeningEntry" actionListener="#{endPeriodEntries.onInit}"
+									value="#{accountingBundle.accounting_opening_entry_module}" />
+							</aon:div>
+						</aon:div>
+					</aon:panelGrid>
+				</h:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>
