@@ -7,7 +7,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<h:panelGrid styleClass="aon-width-all"
+	<aon:panelGrid id="group_utility_#{category}"
+		styleClass="aon-width-all" columnClasses="aon-padding"
 		headerClass="aon-icon-utilities aon-direct-access-panel">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_utilities}" />
@@ -29,6 +30,6 @@
 			</aon:div>
 			<ui:insert name="afterContent"/>
 		</aon:div>
-	</h:panelGrid>
+	</aon:panelGrid>
 
 </ui:composition>
