@@ -7,7 +7,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<h:panelGrid styleClass="aon-width-all"
+	<aon:panelGrid id="group_general_#{category}"
+		styleClass="aon-width-all" columnClasses="aon-padding"
 		headerClass="aon-direct-access-panel aon-icon-general">
 		<f:facet name="header">
 			<aon:outputText value="#{appBundle.menu_general}" />
@@ -30,6 +31,6 @@
 					value="#{geozoneBundle.geozone_module}" />
 			</aon:div>
 		</aon:div>
-	</h:panelGrid>
+	</aon:panelGrid>
 
 </ui:composition>
