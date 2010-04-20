@@ -139,7 +139,7 @@ public class ComponentManager {
 	
 	private void updateComponent(FaceletContext ctx, UIComponent c, UIComponent parent) {
 		ComponentGroup componentGroup = ComponentGroup.getComponentGroup(ctx, c);
-		if ( (componentGroup != null) && (componentGroup.isAppicable(c)) ) {
+		if ( componentGroup != null ) {
 			componentGroup.apply(ctx, c, parent);
 		}		
 	}

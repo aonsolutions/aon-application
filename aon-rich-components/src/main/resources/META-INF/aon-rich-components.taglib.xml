@@ -615,6 +615,12 @@
 		</handler-class>
 	</tag>
 	<tag>
+		<tag-name>componentGroupMethod</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.componentGroup.ComponentGroupMethodHandler
+		</handler-class>
+	</tag>
+	<tag>
 		<tag-name>dynamicInclude</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.dynamicInclude.DynamicIncludeHandler
