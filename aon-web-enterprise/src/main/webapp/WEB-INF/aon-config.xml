@@ -96,6 +96,7 @@
 			showProduct="true"
 			showSeller="true"
 			showAddInfo="true"
+			showThirdParty="false"
 		/>
 	</commercial:config>
 
