@@ -27,32 +27,38 @@
 								<aon:outputText value="#{appBundle.menu_purchase}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="purchaseItem" 
-										action="item_search-Purchase" actionListener="#{item.onEditSearch}"
-										value="#{productBundle.product_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="supplier" 
-										action="supplier_search" actionListener="#{supplier.onEditSearch}"
-										value="#{supplierBundle.supplier_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="purchaseInvoiceManagement"
-										action="purchaseInvoice_search"	actionListener="#{purchaseInvoice.onEditSearch}"
-										value="#{financeBundle.finance_purchase_invoice_management_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="financePayment-purchase"
-										action="finance_search-Payment" actionListener="#{finance.onEditSearchPayment}"
-										value="#{financeBundle.finance_payment_module}" />
-								</aon:div>
+								<c:if test="#{aonRole.productOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="purchaseItem" 
+											action="item_search-Purchase" actionListener="#{item.onEditSearch}"
+											value="#{productBundle.product_module}" />
+									</aon:div>
+								</c:if>
+								<c:if test="#{aonRole.financeOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="supplier" 
+											action="supplier_search" actionListener="#{supplier.onEditSearch}"
+											value="#{supplierBundle.supplier_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="purchaseInvoiceManagement"
+											action="purchaseInvoice_search"	actionListener="#{purchaseInvoice.onEditSearch}"
+											value="#{financeBundle.finance_purchase_invoice_management_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financePayment-purchase"
+											action="finance_search-Payment" actionListener="#{finance.onEditSearchPayment}"
+											value="#{financeBundle.finance_payment_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</h:panelGrid>
 	
-						<ui:include src="/facelet/menu/general.xhtml" >
-							<ui:param name="category" value="purchase" />
-						</ui:include>						
+						<c:if test="#{aonRole.config}">
+							<ui:include src="/facelet/menu/general.xhtml" >
+								<ui:param name="category" value="purchase" />
+							</ui:include>						
+						</c:if>
 	
 					</h:panelGrid>
 				</aon:componentGroup>
