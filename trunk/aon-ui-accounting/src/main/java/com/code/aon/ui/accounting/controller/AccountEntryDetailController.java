@@ -29,7 +29,7 @@ public class AccountEntryDetailController extends LinesController {
 
 	public boolean isUpdatable() {
 		AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ACCOUNT_ENTRY_CONTROLLER_NAME);
-		if (c.isUpdatable()) {
+		if (c.getTo() != null && c.isUpdatable()) {
 			if (c.isAonInvoice()) {
 				try {
 					AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();

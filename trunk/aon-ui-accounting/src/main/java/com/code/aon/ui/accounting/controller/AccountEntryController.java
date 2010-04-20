@@ -38,6 +38,7 @@ public class AccountEntryController extends BasicController {
 	
 	private boolean updatable;
 	private boolean aonInvoice;
+	private String documentNumber;
 	
 	private Double totalDebit;
 	private Double totalCredit;
@@ -80,20 +81,22 @@ public class AccountEntryController extends BasicController {
 	public void setAonInvoice(boolean aonInvoice) {
 		this.aonInvoice = aonInvoice;
 	}
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
 	
 	public void calculateUpdatableFlag() {
 		setAonInvoice(false);
+		setDocumentNumber(null);
 		boolean flag = false;
 		try {
 			AccountEntry entry = (AccountEntry) this.getTo();
 			flag = (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL));
-			if (!flag) {
-				if (entry.getType() == AccountEntryType.SALES_INVOICE
-					|| entry.getType() == AccountEntryType.PURCHASE_INVOICE
-					|| entry.getType() == AccountEntryType.EXPENSE_INVOICE
-					|| entry.getType() == AccountEntryType.INVESTMENT_INVOICE) {
-					flag = !isAccountInvoice(entry);
-				}
+			if (!flag && isInvoice()) {
+				flag = !isAccountInvoice(entry);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al identificar la posibilidad de modificar el apunte";
@@ -103,6 +106,15 @@ public class AccountEntryController extends BasicController {
 		}
 		setUpdatable(flag);
 	}
+	
+	public boolean isInvoice() {
+		AccountEntry entry = (AccountEntry) this.getTo();
+		return (entry != null && (entry.getType() == AccountEntryType.SALES_INVOICE
+				|| entry.getType() == AccountEntryType.PURCHASE_INVOICE
+				|| entry.getType() == AccountEntryType.EXPENSE_INVOICE
+				|| entry.getType() == AccountEntryType.INVESTMENT_INVOICE));
+	}
+	
 	private boolean isAccountInvoice(AccountEntry entry) throws ManagerBeanException {
 		IManagerBean aeiBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
@@ -111,6 +123,7 @@ public class AccountEntryController extends BasicController {
 		if (list.size() > 0  ) {
 			AccountEntryInvoice aei = (AccountEntryInvoice) list.get(0);
 			IManagerBean idBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			setDocumentNumber( aei.getInvoice().getDocumentNumber() );
 			criteria = new Criteria();
 			criteria.addEqualExpression(idBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), aei.getInvoice().getId());
 			List<ITransferObject> details = idBean.getList(criteria);
