@@ -2,9 +2,9 @@ package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.payroll.core.enumeration.TipoOperacionIT;
 import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
 import com.esferalia.aon.payroll.core.it.IParteIT;
-import com.esferalia.aon.ui.payroll.enumeration.TipoOperacionIT;
 
 public class RemesableIT implements Serializable {
 	
