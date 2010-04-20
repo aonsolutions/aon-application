@@ -12,7 +12,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
-import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -216,9 +215,11 @@ public class AccountingCollectionsController {
 			AccountEntryType[] aeTypes = AccountEntryType.values();
 			for (int i = 0; i < aeTypes.length; i++) {
 				AccountEntryType type = aeTypes[i];
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				accountEntryTypes.add(item);
+				if (type != AccountEntryType.LEASING_FEE && type != AccountEntryType.LEASING) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					accountEntryTypes.add(item);	
+				}
 			}
 		}
 		return accountEntryTypes;
@@ -243,18 +244,6 @@ public class AccountingCollectionsController {
 		while (iter.hasNext()) {
 			Loan loan = (Loan) iter.next();
 			SelectItem item = new SelectItem(loan, loan.getDescription());
-			loans.add(item);
-		}
-		return loans;
-	}
-
-	public List<SelectItem> getLeasings() throws ManagerBeanException {
-		List<SelectItem> loans = new LinkedList<SelectItem>();
-		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
-		Iterator<?> iter = leasingBean.getList(null).iterator();
-		while (iter.hasNext()) {
-			Leasing leasing = (Leasing) iter.next();
-			SelectItem item = new SelectItem(leasing, leasing.getDescription());
 			loans.add(item);
 		}
 		return loans;
