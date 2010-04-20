@@ -6,82 +6,79 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
 		<aon:form id="configMenu">
 			<aon:div styleClass="aon-scroll-area">		
-				<aon:componentGroup
-					family="javax.faces.Command"
-					method="#{actionDenied.renderedCommand}">
 		
-					<h:panelGrid styleClass="aon-width-all" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300">
-		
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-config aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_configuration}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="company" 
-										action="company" actionListener="#{company.onLoad}"
-										value="#{companyBundle.company_data_module}">
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="workplace" 
-										action="workplace" 
-										value="#{companyBundle.company_workplace_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="series" 
-										action="series" 
-										value="#{configBundle.config_series_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="tax" 
-										action="tax_list" 
-										value="#{configBundle.config_tax_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="segment" 
-										action="segment_form" 
-										value="#{registryBundle.registry_segment_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="geotreeParent" 
-										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
-										value="#{geozoneBundle.geozone_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="relationship" 
-										action="relationship_form"
-										value="#{registryBundle.registry_relationship_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="productCategory" 
-										action="productCategory"
-										value="#{productBundle.product_category_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="tariff" 
-										action="tariff_list"
-										actionListener="#{tariff.onSearch}"
-										value="#{productBundle.product_tariff_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="catalogue" 
-										action="catalogue_search"
-										actionListener="#{catalogue.onEditSearch}"
-										value="#{productBundle.product_catalogue_module}" />
-								</aon:div>
+				<h:panelGrid styleClass="aon-width-all" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300">
+	
+					<aon:panelGrid id="group_config"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-config aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_configuration}"/>
+						</f:facet>					
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="company" 
+									action="company" actionListener="#{company.onLoad}"
+									value="#{companyBundle.company_data_module}">
+								</aon:commandLink>
 							</aon:div>
-						</h:panelGrid>
-					</h:panelGrid>
-				</aon:componentGroup>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="workplace" 
+									action="workplace" 
+									value="#{companyBundle.company_workplace_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="series" 
+									action="series" 
+									value="#{configBundle.config_series_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="tax" 
+									action="tax_list" 
+									value="#{configBundle.config_tax_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="segment" 
+									action="segment_form" 
+									value="#{registryBundle.registry_segment_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="geotreeParent" 
+									action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
+									value="#{geozoneBundle.geozone_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="relationship" 
+									action="relationship_form"
+									value="#{registryBundle.registry_relationship_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="productCategory" 
+									action="productCategory"
+									value="#{productBundle.product_category_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="tariff" 
+									action="tariff_list"
+									actionListener="#{tariff.onSearch}"
+									value="#{productBundle.product_tariff_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="catalogue" 
+									action="catalogue_search"
+									actionListener="#{catalogue.onEditSearch}"
+									value="#{productBundle.product_catalogue_module}" />
+							</aon:div>
+						</aon:div>
+					</aon:panelGrid>
+				</h:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>
