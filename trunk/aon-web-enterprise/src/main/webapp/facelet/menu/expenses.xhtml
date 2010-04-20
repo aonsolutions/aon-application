@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,118 +14,113 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<aon:componentGroup
-					family="javax.faces.Command"
-					method="#{actionDenied.renderedCommand}">
-					
-					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-						<aon:panelGroup>
-							<h:panelGrid styleClass="aon-width-all"
-								headerClass="aon-icon-creditor aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_creditor_module}"/>
-								</f:facet>					
-								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.financeOperator}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="creditor" 
-												action="creditor_search" actionListener="#{creditor.onEditSearch}"
-												value="#{financeBundle.finance_creditor_module}" >
-											</aon:commandLink>
-										</aon:div>
-									</c:if>
-									<c:if test="#{aonRole.config}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="payMethod-expenses" 
-												action="payMethod" 
-												value="#{configBundle.config_paymethod_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="bank-expenses"
-												action="bank"
-												value="#{configBundle.config_bank_module}" />
-										</aon:div>
-									</c:if>																											
-								</aon:div>
-							</h:panelGrid>
-						
-							<h:panelGrid styleClass="aon-width-all"
-								headerClass="aon-icon-expenses aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{productBundle.product_expense_module}"/>
-								</f:facet>					
-								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.financeOperator}">
-		 								<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="expenseInvoiceManagement"
-												action="expenseInvoice_search"
-												actionListener="#{expenseInvoice.onEditSearch}"
-												value="#{financeBundle.finance_expense_invoice_management_module}" />
-										</aon:div>
-		 								<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="undeductibleInvoiceManagement"
-												action="undeductibleInvoice_search"
-												actionListener="#{undeductibleInvoice.onEditSearch}"
-												value="#{financeBundle.finance_undeductible_invoice_management_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="financePayment"
-												action="finance_search"
-												actionListener="#{finance.onEditSearchPayment}"
-												value="#{financeBundle.finance_payment_module}" />
-										</aon:div>
-									</c:if>
-								</aon:div>
-							</h:panelGrid>
-						
-						</aon:panelGroup>						
-
-						<aon:panelGroup>						
-
-							<c:if test="#{aonRole.config}">
-								<h:panelGrid styleClass="aon-width-all"
-									headerClass="aon-direct-access-panel aon-icon-general">
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.menu_general}" />
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="expenseItem"
-												action="expenseItem" 
-												value="#{productBundle.product_expense_module}" />
-										</aon:div>							
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="productCategory-expenses" 
-												action="productCategory"
-												value="#{productBundle.product_category_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="segment-expenses" 
-												action="segment_form" 
-												value="#{registryBundle.registry_segment_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="geotreeParent-expenses" 
-												action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
-												value="#{geozoneBundle.geozone_module}" />
-										</aon:div>
+					<aon:panelGroup>
+						<aon:panelGrid id="group_expenses_creditor"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-creditor aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_creditor_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{aonRole.financeOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="creditor" 
+											action="creditor_search" actionListener="#{creditor.onEditSearch}"
+											value="#{financeBundle.finance_creditor_module}" >
+										</aon:commandLink>
 									</aon:div>
-								</h:panelGrid>
-							</c:if>
-
-							<c:if test="#{(company.EInvoice and certificate.certificateCount > 0 and aonRole.ESignature) or aonRole.accountingOperator}">
-								<ui:include src="/facelet/menu/utility.xhtml" >
-									<ui:param name="category" value="expenses" />
-								</ui:include>
-							</c:if>
-						
-						</aon:panelGroup>						
-
-					</h:panelGrid>
+								</c:if>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="payMethod-expenses" 
+											action="payMethod" 
+											value="#{configBundle.config_paymethod_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bank-expenses"
+											action="bank"
+											value="#{configBundle.config_bank_module}" />
+									</aon:div>
+								</c:if>																											
+							</aon:div>
+						</aon:panelGrid>
 					
-				</aon:componentGroup>
+						<aon:panelGrid id="group_expenses_product"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-expenses aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_expense_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{aonRole.financeOperator}">
+	 								<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseInvoiceManagement"
+											action="expenseInvoice_search"
+											actionListener="#{expenseInvoice.onEditSearch}"
+											value="#{financeBundle.finance_expense_invoice_management_module}" />
+									</aon:div>
+	 								<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="undeductibleInvoiceManagement"
+											action="undeductibleInvoice_search"
+											actionListener="#{undeductibleInvoice.onEditSearch}"
+											value="#{financeBundle.finance_undeductible_invoice_management_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financePayment"
+											action="finance_search"
+											actionListener="#{finance.onEditSearchPayment}"
+											value="#{financeBundle.finance_payment_module}" />
+									</aon:div>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>
+					
+					</aon:panelGroup>						
+
+					<aon:panelGroup>						
+
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_expenses_general"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_general}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseItem"
+											action="expenseItem" 
+											value="#{productBundle.product_expense_module}" />
+									</aon:div>							
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="productCategory-expenses" 
+											action="productCategory"
+											value="#{productBundle.product_category_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="segment-expenses" 
+											action="segment_form" 
+											value="#{registryBundle.registry_segment_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="geotreeParent-expenses" 
+											action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+											value="#{geozoneBundle.geozone_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+
+						<ui:include src="/facelet/menu/utility.xhtml" >
+							<ui:param name="category" value="expenses" />
+						</ui:include>
+					
+					</aon:panelGroup>						
+
+				</h:panelGrid>
 				
 			</aon:div>
 				
